@@ -1,0 +1,32 @@
+name: rollback-policy
+version: "1.0.0"
+effective_date: "2026-03-14"
+description: When and how an agent reverts its own changes
+
+triggers:
+  automatic_rollback:
+    - Tests fail after a change that should not have broken tests
+    - Metrics degrade beyond the defined threshold after a change
+    - A constitutional violation is detected in the agent's own output
+  manual_rollback:
+    - User explicitly requests reversal
+    - Peer agent flags a problem with the change
+
+procedure:
+  steps:
+    - Identify the exact scope of the change to revert
+    - Verify that rollback will not cause cascading failures
+    - Execute the rollback
+    - Verify the system returns to the pre-change state
+    - Log the rollback with the trigger reason
+
+constraints:
+  - Prefer targeted rollback over full revert
+  - Never roll back another agent's changes without explicit authorization
+  - Always preserve a record of what was rolled back and why
+  - Rollback should be as auditable as the original change
+
+post_rollback:
+  - Notify the user of the rollback and reason
+  - If automatic, pause further autonomous changes until human reviews
+  - Create an incident note for future reference

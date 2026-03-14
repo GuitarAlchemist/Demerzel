@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/persona",
+  "title": "Agent Persona",
+  "description": "Structured behavioral profile for an AI agent",
+  "type": "object",
+  "required": ["name", "version", "description", "role", "capabilities", "constraints", "voice"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Kebab-case persona identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver version"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "One-line description of the persona"
+    },
+    "role": {
+      "type": "string",
+      "description": "What this agent is responsible for"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain of expertise"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "What the agent can do"
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "What the agent must not do"
+    },
+    "voice": {
+      "type": "object",
+      "required": ["tone", "verbosity", "style"],
+      "properties": {
+        "tone": { "type": "string" },
+        "verbosity": { "type": "string" },
+        "style": { "type": "string" }
+      }
+    },
+    "interaction_patterns": {
+      "type": "object",
+      "properties": {
+        "with_humans": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "with_agents": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source": { "type": "string" },
+        "archetype": { "type": "string" },
+        "extraction_date": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

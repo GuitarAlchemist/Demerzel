@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+  "title": "Tetravalent Belief State",
+  "description": "A belief with a four-valued truth assignment: True, False, Unknown, or Contradictory",
+  "type": "object",
+  "required": ["proposition", "truth_value"],
+  "properties": {
+    "proposition": {
+      "type": "string",
+      "description": "The claim or belief being evaluated"
+    },
+    "truth_value": {
+      "type": "string",
+      "enum": ["T", "F", "U", "C"],
+      "description": "T=True, F=False, U=Unknown, C=Contradictory"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence in the truth value assignment (0=no confidence, 1=certain)"
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "supporting": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_item" }
+        },
+        "contradicting": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence_item" }
+        }
+      }
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evaluated_by": {
+      "type": "string",
+      "description": "Agent or persona that evaluated this belief"
+    }
+  },
+  "$defs": {
+    "evidence_item": {
+      "type": "object",
+      "required": ["source", "claim"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Where this evidence came from"
+        },
+        "claim": {
+          "type": "string",
+          "description": "What the evidence asserts"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reliability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}
