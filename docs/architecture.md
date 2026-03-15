@@ -69,6 +69,7 @@ Multi-valued reasoning frameworks:
 - **Kaizen PDCA state**: Extends tetravalent logic for Plan-Do-Check-Act improvement cycles
 - **Knowledge state**: Tracks knowledge transfer events with tetravalent belief state assessment for the Streeling framework
 - **Loop state**: Tracks autonomous Ralph Loop orchestration with convergence, regression, and drift detection
+- **Governance evolution**: Tracks artifact effectiveness over time — citation counts, violation rates, promotion/deprecation candidates for meta-compounding
 
 ### Schemas (`schemas/`)
 
