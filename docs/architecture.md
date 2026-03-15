@@ -49,6 +49,9 @@ Operational rules for specific scenarios:
 - **Alignment policy**: How the agent verifies its actions serve user intent
 - **Rollback policy**: When and how the agent reverts its own changes
 - **Self-modification policy**: Rules for when an agent modifies its own behavior
+- **Kaizen policy**: Universal continuous improvement methodology — PDCA cycle, waste taxonomy, 5 Whys, three improvement models
+- **Reconnaissance policy**: Three-tier mandatory discovery protocol
+- **Scientific objectivity policy**: LawZero principles — fact/opinion separation, generator/estimator accountability
 
 ### Logic (`logic/`)
 
@@ -57,6 +60,7 @@ Multi-valued reasoning frameworks:
 - **Tetravalent logic**: True, False, Unknown, Contradictory
 - Used for belief state management in TARS reasoning loops
 - Provides a formal framework for handling uncertainty and contradiction
+- **Kaizen PDCA state**: Extends tetravalent logic for Plan-Do-Check-Act improvement cycles
 
 ### Schemas (`schemas/`)
 
