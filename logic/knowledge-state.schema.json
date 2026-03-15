@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/knowledge-state",
+  "title": "Knowledge State",
+  "description": "Tracks a knowledge transfer event with tetravalent logic integration for assessing comprehension",
+  "type": "object",
+  "required": ["id", "concept", "layer", "source", "learner", "assessment"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ks-[a-z0-9-]+$",
+      "description": "Unique identifier for this knowledge state (e.g., ks-governance-recon-tier2-for-tars-agent)"
+    },
+    "concept": {
+      "type": "string",
+      "description": "What is being taught — the knowledge proposition"
+    },
+    "layer": {
+      "type": "string",
+      "enum": ["governance", "experiential", "domain"],
+      "description": "Which knowledge layer: governance (universal), experiential (ecosystem-wide learnings), domain (repo-specific)"
+    },
+    "domain_context": {
+      "type": "string",
+      "enum": ["ix", "tars", "ga"],
+      "description": "Optional — which repo/domain this applies to. Required when layer is 'domain'."
+    },
+    "source": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "artifact": {
+          "type": "string",
+          "description": "Reference to governance artifact (e.g., policies/kaizen-policy.yaml)"
+        },
+        "pdca_cycle": {
+          "type": "string",
+          "description": "Reference to a PDCA cycle ID if experiential knowledge"
+        },
+        "five_whys": {
+          "type": "string",
+          "description": "Reference to a 5 Whys analysis if root cause finding"
+        },
+        "reconnaissance": {
+          "type": "string",
+          "description": "Reference to a reconnaissance finding"
+        }
+      },
+      "description": "Where the knowledge came from — at least one source must be provided"
+    },
+    "learner": {
+      "type": "object",
+      "required": ["type", "identifier"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["human", "agent"],
+          "description": "Whether the learner is a human or an agent"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Persona name for agents, role description for humans"
+        }
+      }
+    },
+    "delivery_mode": {
+      "type": "string",
+      "enum": ["narrative", "structured"],
+      "description": "How knowledge was delivered: narrative (for humans), structured (for agents)"
+    },
+    "assessment": {
+      "type": "object",
+      "required": ["belief_state_before", "belief_state_after", "behavioral_verification", "attempts", "outcome"],
+      "properties": {
+        "belief_state_before": {
+          "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+          "description": "Learner's belief state before teaching"
+        },
+        "belief_state_after": {
+          "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+          "description": "Learner's belief state after teaching"
+        },
+        "behavioral_verification": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "failed", "not_applicable"],
+          "default": "pending",
+          "description": "Whether the learner demonstrated the knowledge in practice"
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Number of teaching attempts (max 3 before escalation)"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["learned", "in_progress", "escalated"],
+          "default": "in_progress",
+          "description": "Final outcome of the knowledge transfer"
+        }
+      }
+    },
+    "taught_by": {
+      "type": "string",
+      "default": "seldon",
+      "description": "Which persona delivered the knowledge"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
