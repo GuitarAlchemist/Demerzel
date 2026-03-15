@@ -1,0 +1,129 @@
+name: Streeling Daily Harvest & Report
+
+on:
+  schedule:
+    # Run daily at 13:17 UTC (8:17 AM EST)
+    - cron: '17 13 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  harvest-and-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Checkout ix
+        uses: actions/checkout@v4
+        with:
+          repository: GuitarAlchemist/ix
+          path: ../ix
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout tars
+        uses: actions/checkout@v4
+        with:
+          repository: GuitarAlchemist/tars
+          path: ../tars
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout ga
+        uses: actions/checkout@v4
+        with:
+          repository: GuitarAlchemist/ga
+          path: ../ga
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Scan repos for knowledge
+        id: harvest
+        run: |
+          echo "## Streeling Daily Harvest" > harvest-report.md
+          echo "**Date:** $(date -u +%Y-%m-%d)" >> harvest-report.md
+          echo "" >> harvest-report.md
+
+          # Count governance artifacts
+          PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
+          POLICIES=$(ls policies/*.yaml 2>/dev/null | wc -l)
+          SCHEMAS=$(ls schemas/contracts/*.json 2>/dev/null | wc -l)
+          TESTS=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+          echo "### Demerzel Governance Inventory" >> harvest-report.md
+          echo "- Personas: $PERSONAS" >> harvest-report.md
+          echo "- Policies: $POLICIES" >> harvest-report.md
+          echo "- Contract schemas: $SCHEMAS" >> harvest-report.md
+          echo "- Behavioral test suites: $TESTS" >> harvest-report.md
+          echo "" >> harvest-report.md
+
+          # Check each repo for recent activity
+          for REPO in ix tars ga; do
+            REPO_PATH="../$REPO"
+            if [ -d "$REPO_PATH" ]; then
+              echo "### $REPO repo" >> harvest-report.md
+              # Recent commits (last 24h)
+              RECENT=$(cd "$REPO_PATH" && git log --oneline --since="24 hours ago" 2>/dev/null | wc -l)
+              echo "- Recent commits (24h): $RECENT" >> harvest-report.md
+              # State directory
+              if [ -d "$REPO_PATH/state" ]; then
+                BELIEFS=$(ls "$REPO_PATH/state/beliefs/"*.json 2>/dev/null | wc -l)
+                PDCA=$(ls "$REPO_PATH/state/pdca/"*.json 2>/dev/null | wc -l)
+                echo "- Belief states: $BELIEFS" >> harvest-report.md
+                echo "- PDCA cycles: $PDCA" >> harvest-report.md
+              else
+                echo "- State directory: not yet initialized" >> harvest-report.md
+              fi
+              # Check for ungoverned personas
+              if [ -d "$REPO_PATH/personas" ]; then
+                UNGOVERNED=$(cd "$REPO_PATH" && ls personas/*.yaml 2>/dev/null | while read f; do
+                  grep -L "affordances" "$f" 2>/dev/null
+                done | wc -l)
+                echo "- Ungoverned personas (missing affordances): $UNGOVERNED" >> harvest-report.md
+              fi
+              echo "" >> harvest-report.md
+            fi
+          done
+
+          # Store report for next step
+          echo "HARVEST_COMPLETE=true" >> $GITHUB_OUTPUT
+
+      - name: Post to Demerzel Discussions
+        if: steps.harvest.outputs.HARVEST_COMPLETE == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          BODY=$(cat harvest-report.md | jq -Rs .)
+
+          gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDS\",
+              title: \"🤖 Demerzel Governance Report — $DATE\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url'
+
+      - name: Post to org Discussions
+        if: steps.harvest.outputs.HARVEST_COMPLETE == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          BODY=$(cat harvest-report.md | jq -Rs .)
+
+          gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORn5ugA\",
+              categoryId: \"DIC_kwDORn5ugM4C4eEU\",
+              title: \"🤖 Seldon Knowledge Digest — $DATE\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url'
