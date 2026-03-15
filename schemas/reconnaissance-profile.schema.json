@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/reconnaissance-profile",
+  "title": "Reconnaissance Profile",
+  "description": "Schema for per-repo discovery profiles used by the reconnaissance policy",
+  "type": "object",
+  "required": ["name", "description", "applies_to", "checks"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Kebab-case profile identifier"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "One-line description of the profile's purpose"
+    },
+    "extends": {
+      "type": "string",
+      "description": "Name of the base profile this extends (e.g., 'base')"
+    },
+    "applies_to": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "List of repos or contexts this profile applies to"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "check", "method", "tier"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Unique identifier for this check"
+          },
+          "check": {
+            "type": "string",
+            "description": "What to verify"
+          },
+          "method": {
+            "type": "string",
+            "description": "How to perform the check"
+          },
+          "tier": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3,
+            "description": "Which reconnaissance tier this check belongs to (1=self, 2=environment, 3=situational)"
+          },
+          "severity_if_failed": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity level if this check fails"
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "List of discovery checks to perform"
+    }
+  }
+}
