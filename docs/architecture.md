@@ -56,6 +56,7 @@ Operational rules for specific scenarios:
 - **Reconnaissance policy**: Three-tier mandatory discovery protocol
 - **Scientific objectivity policy**: LawZero principles — fact/opinion separation, generator/estimator accountability
 - **Streeling policy**: Knowledge transfer protocol — three-layer curriculum (governance/experiential/domain), adaptive delivery, two-stage verification
+- **Governance audit policy**: Three-level validation checklist — schema validation, cross-reference integrity, full governance audit
 
 ### Logic (`logic/`)
 
@@ -105,6 +106,21 @@ File-based belief state persistence. Each consumer repo maintains a `state/` dir
 - `state/snapshots/` — belief snapshots for reconnaissance sync
 
 Files follow the naming convention: `{date}-{short-description}.{type}.json`. Staleness detection flags beliefs older than 7 days during reconnaissance.
+
+### Examples (`examples/`)
+
+Operational examples demonstrating governance frameworks in action:
+
+- **Scenarios** (`examples/scenarios/`): Step-by-step walkthroughs of governance flows — constitutional violations, PDCA cycles, knowledge transfer, reconnaissance, Zeroth Law escalation
+- **Sample data** (`examples/sample-data/`): Valid JSON instances of all contract and state schemas, suitable for testing and reference
+
+### Templates (`templates/`)
+
+Ready-to-copy artifacts for consumer repos adopting Demerzel governance:
+
+- **CLAUDE.md snippet**: Template governance text for consumer repo instructions
+- **State directory**: Pre-structured `state/` directory with convention guide
+- **Agent config**: Template persona file with all required governance fields
 
 ### Reconnaissance (`policies/reconnaissance-policy.yaml`)
 
