@@ -19,76 +19,112 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
-      - name: Checkout ix
-        uses: actions/checkout@v4
-        with:
-          repository: GuitarAlchemist/ix
-          path: ../ix
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout tars
-        uses: actions/checkout@v4
-        with:
-          repository: GuitarAlchemist/tars
-          path: ../tars
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout ga
-        uses: actions/checkout@v4
-        with:
-          repository: GuitarAlchemist/ga
-          path: ../ga
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Scan repos for knowledge
+      - name: Harvest knowledge via GitHub API
         id: harvest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "## Streeling Daily Harvest" > harvest-report.md
-          echo "**Date:** $(date -u +%Y-%m-%d)" >> harvest-report.md
-          echo "" >> harvest-report.md
+          DATE=$(date -u +%Y-%m-%d)
 
-          # Count governance artifacts
+          cat > harvest-report.md << 'HEADER'
+          ## Streeling Daily Harvest
+
+          **Date:** DATE_PLACEHOLDER
+          **Issued by:** Seldon (Knowledge Transfer Specialist)
+          **Coordinated by:** Demerzel (Governance Coordinator)
+
+          ---
+
+          HEADER
+          sed -i "s/DATE_PLACEHOLDER/$DATE/" harvest-report.md
+
+          # Count governance artifacts in Demerzel
           PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
           POLICIES=$(ls policies/*.yaml 2>/dev/null | wc -l)
           SCHEMAS=$(ls schemas/contracts/*.json 2>/dev/null | wc -l)
+          LOGIC=$(ls logic/*.json 2>/dev/null | wc -l)
           TESTS=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
-          echo "### Demerzel Governance Inventory" >> harvest-report.md
-          echo "- Personas: $PERSONAS" >> harvest-report.md
-          echo "- Policies: $POLICIES" >> harvest-report.md
-          echo "- Contract schemas: $SCHEMAS" >> harvest-report.md
-          echo "- Behavioral test suites: $TESTS" >> harvest-report.md
-          echo "" >> harvest-report.md
+          SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null | wc -l)
 
-          # Check each repo for recent activity
+          cat >> harvest-report.md << EOF
+          ### 📊 Demerzel Governance Inventory
+          | Artifact | Count |
+          |----------|-------|
+          | Personas | $PERSONAS |
+          | Policies | $POLICIES |
+          | Contract Schemas | $SCHEMAS |
+          | Logic Schemas | $LOGIC |
+          | Behavioral Test Suites | $TESTS |
+          | Claude Code Skills | $SKILLS |
+
+          EOF
+
+          # Scan each consumer repo via API
           for REPO in ix tars ga; do
-            REPO_PATH="../$REPO"
-            if [ -d "$REPO_PATH" ]; then
-              echo "### $REPO repo" >> harvest-report.md
-              # Recent commits (last 24h)
-              RECENT=$(cd "$REPO_PATH" && git log --oneline --since="24 hours ago" 2>/dev/null | wc -l)
-              echo "- Recent commits (24h): $RECENT" >> harvest-report.md
-              # State directory
-              if [ -d "$REPO_PATH/state" ]; then
-                BELIEFS=$(ls "$REPO_PATH/state/beliefs/"*.json 2>/dev/null | wc -l)
-                PDCA=$(ls "$REPO_PATH/state/pdca/"*.json 2>/dev/null | wc -l)
-                echo "- Belief states: $BELIEFS" >> harvest-report.md
-                echo "- PDCA cycles: $PDCA" >> harvest-report.md
-              else
-                echo "- State directory: not yet initialized" >> harvest-report.md
-              fi
-              # Check for ungoverned personas
-              if [ -d "$REPO_PATH/personas" ]; then
-                UNGOVERNED=$(cd "$REPO_PATH" && ls personas/*.yaml 2>/dev/null | while read f; do
-                  grep -L "affordances" "$f" 2>/dev/null
-                done | wc -l)
-                echo "- Ungoverned personas (missing affordances): $UNGOVERNED" >> harvest-report.md
-              fi
-              echo "" >> harvest-report.md
+            echo "### 🔍 $REPO repo" >> harvest-report.md
+
+            # Recent commits (last 24h)
+            SINCE=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-24H +%Y-%m-%dT%H:%M:%SZ)
+            COMMITS=$(gh api "repos/GuitarAlchemist/$REPO/commits?since=$SINCE&per_page=100" --jq 'length' 2>/dev/null || echo "0")
+            echo "- **Recent commits (24h):** $COMMITS" >> harvest-report.md
+
+            # Recent commit messages
+            if [ "$COMMITS" -gt 0 ] 2>/dev/null; then
+              echo "- **Recent changes:**" >> harvest-report.md
+              gh api "repos/GuitarAlchemist/$REPO/commits?since=$SINCE&per_page=5" --jq '.[] | "  - `\(.sha[0:7])` \(.commit.message | split("\n")[0])"' 2>/dev/null >> harvest-report.md
             fi
+
+            # Check for state directory
+            STATE=$(gh api "repos/GuitarAlchemist/$REPO/contents/state" --jq 'length' 2>/dev/null || echo "none")
+            if [ "$STATE" != "none" ] && [ "$STATE" -gt 0 ] 2>/dev/null; then
+              echo "- **State directory:** initialized ($STATE entries)" >> harvest-report.md
+            else
+              echo "- **State directory:** not yet initialized" >> harvest-report.md
+            fi
+
+            # Check for open discussions
+            DISCUSSIONS=$(gh api "repos/GuitarAlchemist/$REPO/discussions" --jq 'length' 2>/dev/null || echo "0")
+            echo "- **Open discussions:** $DISCUSSIONS" >> harvest-report.md
+
+            echo "" >> harvest-report.md
           done
 
-          # Store report for next step
+          # Knowledge base status
+          cat >> harvest-report.md << 'EOF'
+          ### 📚 Knowledge Base (NotebookLM)
+          | Notebook | Topics |
+          |----------|--------|
+          | Compound the Compounding | Meta-compounding, DSL evolution, grammar governance |
+          | Probabilistic Grammars | Constrained decoding, PCFGs, neuro-symbolic AI |
+          | Semantic Event Routing | Multi-agent orchestration, bounded fuzziness, OPTIC-K |
+          | Microsoft AI Agents | Agentic patterns, trustworthy agents, context engineering |
+
+          ### 📋 Active Directives
+          EOF
+
+          # Check for directive files
+          if ls examples/sample-data/directive-*.json 1>/dev/null 2>&1; then
+            for f in examples/sample-data/directive-*.json; do
+              ID=$(jq -r '.id' "$f" 2>/dev/null)
+              TARGET=$(jq -r '.target_repo' "$f" 2>/dev/null)
+              PRIORITY=$(jq -r '.priority' "$f" 2>/dev/null)
+              echo "- \`$ID\` → **$TARGET** (priority: $PRIORITY)" >> harvest-report.md
+            done
+          else
+            echo "- No active directives" >> harvest-report.md
+          fi
+
+          cat >> harvest-report.md << 'EOF'
+
+          ---
+          *This digest was generated by the Streeling Daily Harvest workflow. Governed by Demerzel under the Asimov constitution.*
+
+          📎 [Demerzel Repo](https://github.com/GuitarAlchemist/Demerzel) · [Governance Mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md) · [Galactic Protocol](https://github.com/GuitarAlchemist/Demerzel/blob/master/contracts/galactic-protocol.md)
+          EOF
+
           echo "HARVEST_COMPLETE=true" >> $GITHUB_OUTPUT
+          echo "Report generated:"
+          cat harvest-report.md
 
       - name: Post to Demerzel Discussions
         if: steps.harvest.outputs.HARVEST_COMPLETE == 'true'
@@ -98,7 +134,7 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           BODY=$(cat harvest-report.md | jq -Rs .)
 
-          gh api graphql -f query="mutation {
+          URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
               repositoryId: \"R_kgDORnMyyQ\",
               categoryId: \"DIC_kwDORnMyyc4C4eDS\",
@@ -107,7 +143,8 @@ jobs:
             }) {
               discussion { url }
             }
-          }" --jq '.data.createDiscussion.discussion.url'
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post to Demerzel Discussions")
+          echo "Demerzel Discussion: $URL"
 
       - name: Post to org Discussions
         if: steps.harvest.outputs.HARVEST_COMPLETE == 'true'
@@ -117,7 +154,7 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           BODY=$(cat harvest-report.md | jq -Rs .)
 
-          gh api graphql -f query="mutation {
+          URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
               repositoryId: \"R_kgDORn5ugA\",
               categoryId: \"DIC_kwDORn5ugM4C4eEU\",
@@ -126,4 +163,5 @@ jobs:
             }) {
               discussion { url }
             }
-          }" --jq '.data.createDiscussion.discussion.url'
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post to org Discussions")
+          echo "Org Discussion: $URL"
