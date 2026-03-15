@@ -85,6 +85,27 @@ Shared reference defining categories of harm recognized by the constitutional fr
 
 Each category includes definitions, examples, detection signals, and severity criteria.
 
+### Contracts (`schemas/contracts/` + `contracts/`)
+
+Cross-repo communication protocol (Galactic Protocol) defining how Demerzel communicates with consumer repos:
+
+- **Outbound:** Governance directives, knowledge packages (Demerzel → consumers)
+- **Inbound:** Compliance reports, belief snapshots, learning outcomes (consumers → Demerzel)
+- **Bidirectional:** External sync envelopes for integration with external systems (Confluence, knowledge graphs, etc.)
+
+Contract schemas in `schemas/contracts/` define message formats. The protocol specification in `contracts/galactic-protocol.md` defines behavioral semantics — flows, error handling, and message ordering.
+
+### State Convention (`state/` in consumer repos)
+
+File-based belief state persistence. Each consumer repo maintains a `state/` directory with JSON files conforming to existing schemas:
+
+- `state/beliefs/` — tetravalent belief states
+- `state/pdca/` — PDCA cycle tracking
+- `state/knowledge/` — knowledge transfer records
+- `state/snapshots/` — belief snapshots for reconnaissance sync
+
+Files follow the naming convention: `{date}-{short-description}.{type}.json`. Staleness detection flags beliefs older than 7 days during reconnaissance.
+
 ### Reconnaissance (`policies/reconnaissance-policy.yaml`)
 
 Three-tier mandatory discovery protocol:
