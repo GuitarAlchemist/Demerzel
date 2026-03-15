@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/external-sync-envelope",
+  "title": "External Sync Envelope",
+  "description": "Wrapper for synchronizing governance messages with external systems (e.g., Confluence, Neo4j, Notion)",
+  "type": "object",
+  "required": ["id", "direction", "target_system", "payload_type", "payload", "synced_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^sync-[a-z0-9-]+$",
+      "description": "Unique sync envelope identifier"
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["export", "import"],
+      "description": "Whether data is going out to or coming in from the external system"
+    },
+    "target_system": {
+      "type": "string",
+      "description": "External system identifier (e.g., 'confluence', 'neo4j', 'notion', 'github-wiki')"
+    },
+    "payload_type": {
+      "type": "string",
+      "enum": ["directive", "compliance-report", "belief-snapshot", "learning-outcome", "knowledge-package"],
+      "description": "Which contract schema the payload conforms to"
+    },
+    "payload": {
+      "type": "object",
+      "description": "The wrapped message — must validate against its own schema before wrapping"
+    },
+    "adapter": {
+      "type": "string",
+      "description": "Optional — identifier for the integration adapter handling this sync"
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

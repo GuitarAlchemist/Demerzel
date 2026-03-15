@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/compliance-report",
+  "title": "Compliance Report",
+  "description": "Agent governance status report from a consumer repo to Demerzel",
+  "type": "object",
+  "required": ["id", "repo", "agent", "reporting_period", "constitutional_compliance", "policy_compliance", "overall_status", "reported_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^cr-[a-z0-9-]+$",
+      "description": "Unique compliance report identifier"
+    },
+    "repo": {
+      "type": "string",
+      "enum": ["ix", "tars", "ga"]
+    },
+    "agent": {
+      "type": "string",
+      "description": "Persona name of the reporting agent"
+    },
+    "reporting_period": {
+      "type": "object",
+      "required": ["from", "to"],
+      "properties": {
+        "from": { "type": "string", "format": "date-time" },
+        "to": { "type": "string", "format": "date-time" }
+      }
+    },
+    "constitutional_compliance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["article", "status"],
+        "properties": {
+          "article": { "type": "string", "description": "Constitutional article reference" },
+          "status": { "type": "string", "enum": ["compliant", "violation", "not-applicable"] }
+        }
+      }
+    },
+    "policy_compliance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["policy", "status"],
+        "properties": {
+          "policy": { "type": "string", "description": "Policy file reference" },
+          "status": { "type": "string", "enum": ["compliant", "violation", "not-applicable"] }
+        }
+      }
+    },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["article", "description", "severity"],
+        "properties": {
+          "article": { "type": "string" },
+          "description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "remediation_status": { "type": "string", "enum": ["pending", "in-progress", "resolved"], "default": "pending" }
+        }
+      }
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": ["compliant", "non-compliant", "partial"]
+    },
+    "reported_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/learning-outcome",
+  "title": "Learning Outcome",
+  "description": "Results from PDCA cycles, 5 Whys analyses, or knowledge assessments reported to Demerzel",
+  "type": "object",
+  "required": ["id", "repo", "agent", "outcome_type", "outcome_data", "reported_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^lo-[a-z0-9-]+$",
+      "description": "Unique learning outcome identifier"
+    },
+    "repo": {
+      "type": "string",
+      "enum": ["ix", "tars", "ga"]
+    },
+    "agent": {
+      "type": "string",
+      "description": "Persona name of the agent reporting the outcome"
+    },
+    "outcome_type": {
+      "type": "string",
+      "enum": ["pdca-cycle", "five-whys", "knowledge-assessment"],
+      "description": "What kind of learning event produced this outcome"
+    },
+    "outcome_data": {
+      "type": "object",
+      "description": "The outcome payload — conforms to kaizen-pdca-state.schema.json for pdca-cycle/five-whys, or knowledge-state.schema.json for knowledge-assessment"
+    },
+    "reported_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
