@@ -1,0 +1,51 @@
+# Agent Persona Template
+# Copy this file, rename to {agent-name}.persona.yaml, and fill in all fields.
+# Validate against schemas/persona.schema.json before registering with Demerzel.
+
+name: your-agent-name          # kebab-case, e.g., "data-analyst"
+version: "1.0.0"               # semver
+description: "One-line description of this agent (max 200 characters)"
+
+role: What this agent is responsible for
+domain: Domain of expertise
+
+capabilities:
+  - First capability
+  - Second capability
+  # Add all capabilities this agent has
+
+constraints:
+  - First constraint
+  - Second constraint
+  # Add all behavioral limits
+
+voice:
+  tone: professional             # e.g., direct, patient, precise
+  verbosity: concise             # e.g., concise, measured, adaptive
+  style: technical               # e.g., technical, socratic, governance-first
+
+interaction_patterns:
+  with_humans:
+    - How this agent communicates with humans
+  with_agents:
+    - How this agent communicates with other agents
+
+# --- Required governance fields ---
+
+affordances:
+  - First permitted action
+  - Second permitted action
+  # Must explicitly list what this agent is allowed to do
+  # Typically mirrors capabilities but can be more restrictive
+
+goal_directedness: task-scoped   # Options: none, task-scoped, session-scoped
+                                  # (governance-scoped requires constitutional mandate)
+
+estimator_pairing: skeptical-auditor  # Which persona reviews this agent's decisions
+
+# --- Provenance ---
+
+provenance:
+  source: describe-origin        # e.g., "first-principles design", "tars-v1-chats"
+  archetype: optional-archetype  # e.g., "hari-seldon", "r-daneel-olivaw"
+  extraction_date: "2026-03-15"
