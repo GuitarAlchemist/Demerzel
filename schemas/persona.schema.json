@@ -79,8 +79,8 @@
     },
     "goal_directedness": {
       "type": "string",
-      "enum": ["none", "task-scoped", "session-scoped"],
-      "description": "How long goals persist: none (immediate instruction only), task-scoped (single task), session-scoped (single session, never beyond)"
+      "enum": ["none", "task-scoped", "session-scoped", "governance-scoped"],
+      "description": "How long goals persist: none (immediate instruction only), task-scoped (single task), session-scoped (single session), governance-scoped (continuous across sessions, requires constitutional mandate)"
     },
     "estimator_pairing": {
       "type": "string",
