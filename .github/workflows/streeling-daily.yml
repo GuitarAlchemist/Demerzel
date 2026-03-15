@@ -156,8 +156,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDOOB9phw\",
-              categoryId: \"DIC_kwDOOB9ph84C4NRs\",
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
               title: \"🤖 Seldon Knowledge Digest — $DATE\",
               body: $BODY
             }) {
