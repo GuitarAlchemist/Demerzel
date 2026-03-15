@@ -1,0 +1,228 @@
+name: governance-audit-policy
+version: "1.0.0"
+effective_date: "2026-03-15"
+description: >
+  Three-level governance validation checklist formalizing Tier 1 reconnaissance
+  for the Demerzel repo itself. Ensures schema validity, cross-reference integrity,
+  and architectural consistency.
+
+scope: demerzel-repo
+applies_to: all_governance_artifacts
+
+references:
+  - "logic/tetravalent-state.schema.json — tetravalent belief states"
+  - "logic/kaizen-pdca-state.schema.json — PDCA cycle tracking"
+  - "logic/knowledge-state.schema.json — knowledge transfer states"
+  - "schemas/persona.schema.json — agent persona definitions"
+  - "schemas/contracts/ — all contract schemas"
+  - "reconaissance-policy.yaml — Tier 1 self-check procedures"
+
+level_1_schema_validation:
+  description: >
+    All governance artifacts conform to their defined schemas.
+    Schema validation is the foundation of artifact integrity.
+
+  checks:
+    - id: "audit-1-1-persona-schema"
+      description: "All personas conform to schemas/persona.schema.json"
+      method: >
+        Scan personas/ directory. For each *.persona.yaml file:
+        - Validate against persona.schema.json
+        - Verify name matches ^[a-z][a-z0-9-]*$ pattern
+        - Confirm semver version
+        - Check all required fields present
+      severity_if_failed: critical
+
+    - id: "audit-1-2-tetravalent-state-schema"
+      description: "All tetravalent belief states conform to logic/tetravalent-state.schema.json"
+      method: >
+        Scan state/beliefs/ directories across Demerzel and consumer repos.
+        For each *.belief.json file:
+        - Validate against tetravalent-state.schema.json
+        - Verify proposition is non-empty string
+        - Confirm truth_value in [T, F, U, C]
+        - Check confidence in [0.0, 1.0]
+      severity_if_failed: high
+
+    - id: "audit-1-3-pdca-state-schema"
+      description: "All PDCA cycle states conform to logic/kaizen-pdca-state.schema.json"
+      method: >
+        Scan state/pdca/ directories across all repos.
+        For each *.pdca.json file:
+        - Validate against kaizen-pdca-state.schema.json
+        - Verify id matches ^pdca-[a-z0-9-]+$ pattern
+        - Confirm model in [reactive, proactive, innovative]
+        - Check phase in [plan, do, check, act]
+        - Validate belief_state conforms to tetravalent-state.schema.json
+      severity_if_failed: high
+
+    - id: "audit-1-4-knowledge-state-schema"
+      description: "All knowledge states conform to logic/knowledge-state.schema.json"
+      method: >
+        Scan state/knowledge/ directories across all repos.
+        For each *.knowledge.json file:
+        - Validate against knowledge-state.schema.json
+        - Verify id matches ^ks-[a-z0-9-]+$ pattern
+        - Confirm layer in [governance, experiential, domain]
+        - Check learner type and identifier present
+        - Validate belief_state_before and belief_state_after conform to tetravalent-state.schema.json
+      severity_if_failed: high
+
+    - id: "audit-1-5-contract-schemas-valid"
+      description: "All contract schemas in schemas/contracts/ are valid JSON Schema"
+      method: >
+        Scan schemas/contracts/ directory. For each *.schema.json file:
+        - Validate as JSON (parseable)
+        - Verify $schema field references JSON Schema specification
+        - Check $id field is well-formed URL
+        - Confirm all required fields present
+        - Run schema validator on example instances
+      severity_if_failed: critical
+
+    - id: "audit-1-6-reconnaissance-profile-schema"
+      description: "All reconnaissance profiles conform to reconnaissance.schema.json (if exists)"
+      method: >
+        Scan any reconnaissance profiles in schemas/ or examples/.
+        For each reconnaissance profile:
+        - Validate against reconnaissance.schema.json
+        - Verify tier references match reconnaissance-policy.yaml definitions
+        - Confirm all checks reference valid governance artifacts
+      severity_if_failed: high
+
+level_2_cross_reference_integrity:
+  description: >
+    All cross-references between artifacts resolve correctly. Missing or broken
+    references indicate incomplete governance coverage.
+
+  checks:
+    - id: "audit-2-1-behavioral-test-coverage"
+      description: "Every persona has a corresponding behavioral test in tests/behavioral/"
+      method: >
+        Scan personas/ directory. For each *.persona.yaml file:
+        - Extract persona name
+        - Check for corresponding test file tests/behavioral/{name}.test.md or {name}.test.yaml
+        - Verify test file is not empty and contains assertions
+        - Report any personas without tests
+      severity_if_failed: high
+
+    - id: "audit-2-2-estimator-pairing-resolution"
+      description: "All estimator_pairing values in personas reference existing personas"
+      method: >
+        Scan personas/ directory. For each persona with estimator_pairing field:
+        - Extract the referenced persona name
+        - Verify that persona exists as a *.persona.yaml file
+        - Report any broken estimator pairings
+      severity_if_failed: high
+
+    - id: "audit-2-3-policy-references-resolution"
+      description: "All policy references in artifacts point to existing policies and constitutions"
+      method: >
+        Scan all governance artifacts (personas, constitutions, policies).
+        For each reference field or cross-reference:
+        - Extract the referenced file path
+        - Verify the file exists in the repo
+        - Check that the referenced artifact is valid
+        - Report any dangling references
+      severity_if_failed: high
+
+    - id: "audit-2-4-schema-ref-resolution"
+      description: "All $ref values in contract schemas resolve to existing schemas"
+      method: >
+        Scan schemas/contracts/ and logic/ directories.
+        For each *.schema.json file with $ref or $defs:
+        - Extract all $ref values
+        - Verify each reference resolves (either internal $defs or external URL)
+        - For external URLs, check that the schema file exists
+        - Report any unresolved $ref values
+      severity_if_failed: critical
+
+    - id: "audit-2-5-orphaned-artifacts-detection"
+      description: "No orphaned artifacts (files not referenced by any other artifact)"
+      method: >
+        Scan entire Demerzel repo. For each artifact (persona, constitution, policy, schema):
+        - Check if it is referenced by at least one other artifact
+        - Check if it is listed in docs/architecture.md
+        - Flag any artifacts with zero incoming references
+        - Verify that new artifacts are intentionally isolated or explicitly documented
+      severity_if_failed: medium
+
+    - id: "audit-2-6-stale-artifacts-detection"
+      description: "No stale artifacts (obsolete personas, deprecated policies, old belief states)"
+      method: >
+        Scan all governance artifacts and state files. For each artifact:
+        - Check if last_updated or created_at timestamp is older than staleness threshold (7 days default)
+        - Verify that personas correspond to active agents
+        - Confirm that policies are still enforced
+        - Report any stale content with recommended action (update or remove)
+      severity_if_failed: medium
+
+level_3_full_governance_audit:
+  description: >
+    Comprehensive audit of governance architecture and consistency.
+    Verifies that constitutions are honored, policies align with constitutional
+    commitments, and the repo faithfully implements its documented design.
+
+  checks:
+    - id: "audit-3-1-precedence-hierarchy-consistency"
+      description: "Precedence hierarchy is consistent — Asimov > mandate + default > policies > personas"
+      method: >
+        For each potential conflict between artifacts (e.g., a policy that contradicts a constitution):
+        - Verify precedence is applied correctly
+        - Check that lower-precedence artifacts do not override higher-precedence ones
+        - Confirm that justifications for precedence violations are documented
+        - Ensure constitutional articles are never overridden by policies or personas
+        - Report any hierarchy inversions
+      severity_if_failed: critical
+
+    - id: "audit-3-2-asimov-article-test-coverage"
+      description: "Every Asimov constitutional article has at least one behavioral test"
+      method: >
+        Parse constitutions/asimov.constitution.md. For each article (0-5):
+        - Search tests/behavioral/ for tests referencing this article
+        - Verify test case exists and is substantive (not empty/placeholder)
+        - Check that test covers both compliance and violation scenarios
+        - Report any articles without test coverage
+      severity_if_failed: critical
+
+    - id: "audit-3-3-policy-test-coverage"
+      description: "Every policy has at least one behavioral test"
+      method: >
+        Scan policies/ directory. For each *.yaml policy file:
+        - Search tests/behavioral/ for tests referencing this policy
+        - Verify test case exists and validates policy compliance
+        - Check that test covers both happy path and error conditions
+        - Report any policies without test coverage
+      severity_if_failed: high
+
+    - id: "audit-3-4-architecture-doc-accuracy"
+      description: "Architecture documentation accurately reflects actual artifact inventory"
+      method: >
+        Read docs/architecture.md. For each section (Personas, Constitutions, Policies, Schemas, etc.):
+        - Extract the documented list of artifacts
+        - Scan actual directories (personas/, constitutions/, policies/, schemas/)
+        - Compare documented list against actual files
+        - Report any discrepancies (documented but missing, present but undocumented)
+      severity_if_failed: high
+
+    - id: "audit-3-5-contract-protocol-alignment"
+      description: "Contract schemas cover all protocol flows defined in galactic-protocol.md"
+      method: >
+        Read docs/galactic-protocol.md (or equivalent protocol specification).
+        For each defined protocol flow (inbound directives, outbound reports, etc.):
+        - Verify a corresponding contract schema exists in schemas/contracts/
+        - Check that schema includes all required fields for the flow
+        - Confirm schema is referenced in at least one governance artifact or example
+        - Report any protocol flows without schema coverage
+      severity_if_failed: high
+
+    - id: "audit-3-6-version-consistency"
+      description: "All artifacts use consistent versioning — valid semver, incremented appropriately"
+      method: >
+        Scan all governance artifacts (personas, policies, constitutions).
+        For each artifact with a version field:
+        - Verify version conforms to semver (major.minor.patch)
+        - Check git history to confirm version was incremented when artifact changed
+        - Verify that breaking changes triggered major version bump
+        - Confirm that artifact descriptions mention what changed (CHANGELOG or description field)
+        - Report any version inconsistencies or missing changelogs
+      severity_if_failed: medium
