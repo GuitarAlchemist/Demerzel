@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/loop-state",
+  "title": "Loop State",
+  "description": "Tracks the orchestration state of a governed Ralph Loop (autonomous iterative development cycle)",
+  "type": "object",
+  "required": ["id", "goal", "risk_level", "governance_mode", "initiator", "target_repo", "worker", "reviewer", "max_iterations", "current_iteration", "iterations", "convergence", "outcome"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^loop-[a-z0-9-]+$",
+      "description": "Unique loop identifier (e.g., loop-ix-compliance-remediation-2026-03-15)"
+    },
+    "goal": {
+      "type": "string",
+      "description": "What the loop is trying to accomplish"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Risk classification determined via reconnaissance Tier 3 before loop starts"
+    },
+    "governance_mode": {
+      "type": "string",
+      "enum": ["boundary-only", "per-iteration"],
+      "description": "boundary-only for low/medium risk, per-iteration for high/critical risk"
+    },
+    "initiator": {
+      "type": "string",
+      "enum": ["agent", "demerzel"],
+      "description": "Who started the loop: agent (self-initiated) or demerzel (governance-initiated)"
+    },
+    "target_repo": {
+      "type": "string",
+      "enum": ["ix", "tars", "ga"],
+      "description": "Which repo the loop operates in"
+    },
+    "worker": {
+      "type": "string",
+      "description": "Persona name executing the work"
+    },
+    "reviewer": {
+      "type": "string",
+      "description": "Persona name reviewing iterations (typically the worker's estimator_pairing)"
+    },
+    "max_iterations": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 25,
+      "default": 10,
+      "description": "Hard cap on iterations (default 10, absolute max 25)"
+    },
+    "current_iteration": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current iteration counter"
+    },
+    "iterations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["number", "started_at", "work_summary", "review_decision", "governance_check"],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "work_summary": {
+            "type": "string",
+            "description": "What the worker did in this iteration"
+          },
+          "review_decision": {
+            "type": "string",
+            "enum": ["SHIP", "REVISE", "HALT"],
+            "description": "Reviewer's decision after evaluating the iteration"
+          },
+          "review_feedback": {
+            "type": "string",
+            "description": "Reviewer's notes and reasoning"
+          },
+          "belief_state": {
+            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+            "description": "Tetravalent belief state for the iteration outcome"
+          },
+          "governance_check": {
+            "type": "string",
+            "enum": ["passed", "failed", "skipped"],
+            "description": "Governance gate result — skipped only in boundary-only mode"
+          },
+          "governance_notes": {
+            "type": "string",
+            "description": "Any governance concerns flagged during this iteration"
+          }
+        }
+      }
+    },
+    "convergence": {
+      "type": "object",
+      "required": ["iterations_without_progress", "max_stall_iterations"],
+      "properties": {
+        "iterations_without_progress": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Counter of consecutive iterations without measurable progress"
+        },
+        "max_stall_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3,
+          "description": "Halt threshold — loop stops if this many iterations pass without progress"
+        }
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["in_progress", "shipped", "halted", "escalated"],
+      "default": "in_progress",
+      "description": "Final outcome of the loop"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
