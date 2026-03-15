@@ -123,6 +123,126 @@ Default threshold: **7 days**. Override per-repo in the reconnaissance profile.
 - Knowledge: created on teaching, updated with assessment results
 - Snapshots: generated on-demand for reconnaissance sync, retained for audit
 
+## Crisp/Fuzzy Channel Semantics
+
+Message channels distinguish actionable data from explanatory content.
+
+### Channel Definitions
+
+- **Crisp** — Machine-actionable, validated against schema, deterministic. Safe for autonomous execution.
+- **Fuzzy** — Explanatory, for human understanding, may contain ambiguity or subjective interpretation. Not authoritative for autonomous action.
+
+### Channel Assignments
+
+| Message Type | Channel | Rationale |
+|-------------|---------|-----------|
+| Directives | Always crisp | Must be machine-processable |
+| Compliance reports | Always crisp | Machine processing required |
+| Belief snapshots | Always crisp | Schema-validated data |
+| Learning outcomes | Always crisp | Schema-validated results |
+| Knowledge packages (target: agents) | Crisp | Executable instructions |
+| Knowledge packages (target: humans) | Fuzzy | Guidance and explanation |
+| Governance notes in loops | Fuzzy | Annotations and rationale, not actionable |
+| Escalation messages | Crisp directive + fuzzy explanation | Directive is actionable; explanation is context |
+
+### Rules
+
+- **Crisp enforcement:** Crisp messages must pass schema validation before sending. Reject invalid messages with validation errors.
+- **Fuzzy tagging:** Fuzzy messages are not schema-validated but must be tagged (e.g., `channel: fuzzy`) so downstream systems do not treat them as authoritative.
+- **Channel mixing:** A message may include both channels — crisp payload for execution + fuzzy annotation for human context.
+- **Boundary violations:** Confidence inflation is a crisp/fuzzy boundary violation — subjective assessment (fuzzy) claimed as calibrated confidence (crisp). Skeptical-auditor challenges these violations.
+
+### Implementation
+
+- Add optional `channel` field to all contract schemas (default: `crisp` for backward compatibility)
+- Consumers validate crisp messages before processing
+- Consumers tag fuzzy messages to prevent misuse as executable directives
+
+## Affordance Matching
+
+When a directive omits `target_agent`, Demerzel performs semantic routing by affordances.
+
+### Matching Algorithm
+
+1. **Extract:** Identify required capabilities from directive content
+2. **Compare:** Cross-reference against all personas' `affordances` arrays in target repo
+3. **Rank:** Score personas by coverage of required capabilities
+4. **Select:** Choose best-fit persona or escalate if no suitable match
+
+### Matching Rules
+
+- **Exact match preferred:** Persona covers all required capabilities
+- **Partial match acceptable:** Coverage ≥ 70% of required capabilities
+- **No match escalation:** Coverage < 50% → escalate as governance gap (may indicate missing persona)
+- **Tie-breaking:** Multiple equal matches → prefer persona with narrower affordances (specialist over generalist)
+
+### Fallback and Backward Compatibility
+
+If `target_agent` is explicitly specified in directive, skip affordance matching and route directly. Existing directives with hardcoded targets remain valid.
+
+### Governance Integration
+
+- Matching results logged in governance evolution log
+- **"No match" patterns** → indicate missing personas, feeds promotion protocol
+- **"Always same agent" patterns** → may indicate redundancy or overloading, feeds waste detection
+
+## Governance Promotion Protocol
+
+Formalizes how governance patterns get elevated through the precedence hierarchy.
+
+### Promotion Staircase
+
+```
+Operational pattern → Policy → Constitutional article
+(observed)           (codified)   (foundational)
+```
+
+Progression reflects increasing inviolability and broader scope.
+
+### Stage 1: Pattern → Policy
+
+**Trigger:** Governance pattern appears in 3+ occurrences across PDCA cycles, reconnaissance findings, or compliance decisions
+
+**Evidence Required:**
+- Usage frequency (multiple independent applications)
+- Measurable impact (compliance improvement, waste reduction, harm prevention)
+- Consistency across repos (not repo-specific)
+
+**Process:**
+1. Demerzel proposes the pattern promotion with evidence summary
+2. Skeptical-auditor reviews evidence density and consistency
+3. If approved: Policy is drafted following existing YAML conventions and versioned
+4. Kaizen model: Proactive Kaizen — making informal best practices formally executable
+
+**No human approval required** for pattern → policy (governance artifact decision)
+
+### Stage 2: Policy → Constitutional
+
+**Trigger:** Policy has proven inviolable over a sustained period (typically 6+ months). Agents consistently comply, violations consistently cause harm.
+
+**Evidence Required:**
+- Everything from Stage 1
+- Governance evolution log shows zero exceptions or only justified deviations
+- Strong consensus that violation constitutes fundamental harm to governance integrity
+- Historical success rate approaching 100%
+
+**Process:**
+1. Demerzel proposes constitutional elevation with full evidence package
+2. Human reviews evidence and governance landscape
+3. Constitutional amendment process applies: written proposal, stakeholder review, explicit approval, version increment
+4. Kaizen model: Innovative Kaizen — structural change to governance foundations
+
+**Human approval required** for policy → constitutional (constitutional amendment)
+
+### Demotion Path
+
+Governance artifacts can be demoted or deprecated if unused (waste category: ceremony_without_value) or counterproductive.
+
+**Demotion requirements:**
+- Same evidence level as promotion (governance evolution log demonstrates non-use or consistent violation)
+- Same approval levels (Stage 1: Demerzel + skeptical-auditor; Stage 2: human)
+- Deprecated artifacts remain in repository with deprecated flag for audit trail
+
 ## References
 
 - `constitutions/asimov.constitution.md` — Law hierarchy for directive rejection
@@ -132,3 +252,4 @@ Default threshold: **7 days**. Override per-repo in the reconnaissance profile.
 - `policies/kaizen-policy.yaml` — PDCA cycle outcomes as learning events
 - `policies/streeling-policy.yaml` — Knowledge transfer integration
 - `schemas/contracts/*.schema.json` — Message format definitions
+- `logic/governance-evolution.schema.json` — Artifact effectiveness tracking
