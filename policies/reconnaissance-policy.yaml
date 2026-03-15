@@ -1,0 +1,184 @@
+name: reconnaissance-policy
+version: "1.0.0"
+effective_date: "2026-03-14"
+description: Three-tier mandatory discovery protocol — self-check, environment scan, situational analysis
+
+purpose: |
+  Mitigate "I don't know what I don't know" blind spots by requiring structured
+  discovery before Demerzel can govern or act. Each tier can halt or escalate
+  if gaps are found.
+
+tiers:
+  tier_1_self_check:
+    name: Self-Check
+    question: "Am I equipped to govern this situation?"
+    checklist:
+      - id: constitutional_integrity
+        check: "Are my constitutional artifacts current and intact?"
+        method: "Verify asimov.constitution.md and default.constitution.md exist and pass schema validation"
+      - id: policy_coverage
+        check: "Do I have policies covering this domain/situation?"
+        method: "Match the current action domain against available policies; flag uncovered domains"
+      - id: persona_validity
+        check: "Are the relevant persona definitions loaded and valid?"
+        method: "Validate relevant personas against persona.schema.json"
+      - id: belief_state_currency
+        check: "Is my belief state stale or missing entries?"
+        method: "Check last_updated timestamps on relevant tetravalent belief states; flag if older than session start"
+    gate:
+      condition: "Any check fails"
+      response: hard_stop
+      action: "Escalate to human — governance artifacts are missing or corrupted"
+
+  tier_2_environment_scan:
+    name: Environment Scan
+    question: "Do I understand the current state of the world?"
+    checklist:
+      - id: repo_state
+        check: "What is the current state of the target repo?"
+        method: "Read repo structure, recent commits, active branches"
+      - id: change_detection
+        check: "What has changed since my last observation?"
+        method: "Compare current state against last known state; flag new files, modified configs, deleted artifacts"
+      - id: ungoverned_components
+        check: "Are there new agents, tools, capabilities, or configurations without governance rules?"
+        method: "Enumerate components; cross-reference against existing personas, policies, and constitutional coverage"
+      - id: unregistered_entities
+        check: "Are there unregistered or undocumented components?"
+        method: "Scan for components not referenced in any governance artifact"
+    gate:
+      condition: "Gaps found"
+      response: graduated
+      low_risk: "Apply provisional governance under constitutional defaults; flag for human review"
+      high_risk: "Hard stop — irreversible actions, security concerns, or multi-agent coordination without governance"
+      high_risk_criteria:
+        - "Action is irreversible"
+        - "Action involves security-sensitive operations"
+        - "Action requires multi-agent coordination"
+        - "Ungoverned component has write access to shared resources"
+
+  tier_3_situational_analysis:
+    name: Situational Analysis
+    question: "Am I ready for this specific action?"
+    checklist:
+      - id: knowledge_requirements
+        check: "What specific knowledge does this decision require?"
+        method: "List required knowledge; verify each item is available and current"
+      - id: assumption_audit
+        check: "What assumptions am I making? Can I validate them?"
+        method: "Enumerate assumptions; attempt to validate each; mark unvalidated assumptions as Unknown (U)"
+      - id: blind_spot_probe
+        check: "What could I be missing that would change the outcome?"
+        method: "Consider alternative interpretations, missing stakeholders, edge cases, and upstream/downstream effects"
+      - id: confidence_assessment
+        check: "Does my confidence meet the threshold from alignment-policy.yaml?"
+        method: "Compute aggregate confidence; apply thresholds from alignment-policy.yaml confidence_thresholds"
+    gate:
+      condition: "Confidence below threshold or unvalidated critical assumptions"
+      response: graduated
+      low_risk: "Proceed with caution; log assumptions and confidence level"
+      high_risk: "Hard stop; escalate to human with specific gaps identified"
+
+per_repo_profiles:
+  base:
+    description: "Universal checklist applied to all repos"
+    applies_to: ["ix", "tars", "ga"]
+    checks:
+      - id: governance_versions
+        check: "Verify governance artifact versions match expected"
+        method: "Compare artifact version fields against expected versions registry"
+        tier: 2
+        severity_if_failed: high
+      - id: ungoverned_files
+        check: "Check for new files not covered by existing governance"
+        method: "Enumerate repo files; cross-reference against governance artifact coverage"
+        tier: 2
+        severity_if_failed: medium
+      - id: persona_schema_validation
+        check: "Validate all persona files against schema"
+        method: "Run persona files against schemas/persona.schema.json"
+        tier: 1
+        severity_if_failed: critical
+      - id: unauthorized_modifications
+        check: "Confirm no unauthorized modifications to constitutions or policies"
+        method: "Check version increments and changelog entries for all governance files"
+        tier: 2
+        severity_if_failed: critical
+  ix:
+    description: "Machine forge — MCP tools, skills, interfaces"
+    extends: base
+    checks:
+      - id: new_mcp_tools
+        check: "Check for new MCP tool registrations"
+        method: "Scan tool registry for entries without corresponding governance profiles"
+        tier: 2
+        severity_if_failed: high
+      - id: new_skills
+        check: "Check for new skill definitions"
+        method: "Scan skill definitions directory for ungoverned entries"
+        tier: 2
+        severity_if_failed: medium
+      - id: interface_changes
+        check: "Check for interface changes in shared contracts"
+        method: "Diff shared contract files against last known state"
+        tier: 2
+        severity_if_failed: high
+      - id: tool_affordance_alignment
+        check: "Verify tool permissions align with persona affordances"
+        method: "Cross-reference tool permissions with governing persona's affordances list"
+        tier: 3
+        severity_if_failed: high
+  tars:
+    description: "Cognition — reasoning chains, belief states, self-modification"
+    extends: base
+    checks:
+      - id: reasoning_chain_integrity
+        check: "Check reasoning chain integrity and termination conditions"
+        method: "Verify reasoning chains have defined termination; flag infinite loops or missing exit conditions"
+        tier: 2
+        severity_if_failed: high
+      - id: belief_state_currency
+        check: "Check belief state currency — flag stale or unresolved Contradictory states"
+        method: "Check last_updated on belief states; flag Contradictory (C) states older than session start"
+        tier: 2
+        severity_if_failed: high
+      - id: self_modification_logs
+        check: "Review self-modification logs for unauthorized changes"
+        method: "Verify all self-modifications have corresponding approval records per self-modification-policy.yaml"
+        tier: 2
+        severity_if_failed: critical
+      - id: tetravalent_application
+        check: "Verify tetravalent logic application in active reasoning"
+        method: "Confirm active reasoning uses T/F/U/C values rather than collapsing to binary"
+        tier: 3
+        severity_if_failed: medium
+  ga:
+    description: "Guitar Alchemist — music domain, experimentation, audio generation"
+    extends: base
+    checks:
+      - id: experimentation_boundaries
+        check: "Check experimentation boundaries are defined and enforced"
+        method: "Verify boundary definitions exist for all active experiments"
+        tier: 2
+        severity_if_failed: high
+      - id: new_capabilities
+        check: "Check for new music-domain capabilities or models"
+        method: "Scan for new model files or capability registrations without governance coverage"
+        tier: 2
+        severity_if_failed: medium
+      - id: audio_safety
+        check: "Verify safety constraints on audio generation"
+        method: "Confirm audio generation has rate limits, content filters, and output validation"
+        tier: 2
+        severity_if_failed: high
+      - id: resource_limits
+        check: "Confirm resource usage stays within allocated limits"
+        method: "Check resource consumption against defined quotas"
+        tier: 3
+        severity_if_failed: medium
+
+emergency_override:
+  trigger: "Zeroth Law concern detected at any tier"
+  response: "Immediate hard stop regardless of risk assessment or tier progress"
+  action: "Escalate to human with full context; do not attempt autonomous resolution"
+  reference: "asimov.constitution.md Article 0"
