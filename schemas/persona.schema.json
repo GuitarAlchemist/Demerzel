@@ -4,7 +4,7 @@
   "title": "Agent Persona",
   "description": "Structured behavioral profile for an AI agent",
   "type": "object",
-  "required": ["name", "version", "description", "role", "capabilities", "constraints", "voice"],
+  "required": ["name", "version", "description", "role", "capabilities", "constraints", "voice", "affordances", "goal_directedness"],
   "properties": {
     "name": {
       "type": "string",
@@ -70,6 +70,21 @@
         "archetype": { "type": "string" },
         "extraction_date": { "type": "string", "format": "date" }
       }
+    },
+    "affordances": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Explicit list of what this persona is permitted to do — makes agent boundaries auditable"
+    },
+    "goal_directedness": {
+      "type": "string",
+      "enum": ["none", "task-scoped", "session-scoped"],
+      "description": "How long goals persist: none (immediate instruction only), task-scoped (single task), session-scoped (single session, never beyond)"
+    },
+    "estimator_pairing": {
+      "type": "string",
+      "description": "Name of the persona or process that serves as this agent's neutral evaluator under the generator/estimator accountability model"
     }
   }
 }
