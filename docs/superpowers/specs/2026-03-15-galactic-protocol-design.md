@@ -30,7 +30,7 @@ Six message type schemas covering bidirectional governance communication and ext
 - `id`, `repo` (ix/tars/ga), `agent` (persona name), `reporting_period`, `constitutional_compliance` (array of article statuses), `policy_compliance` (array of policy statuses), `violations` (array, each with article/description/severity/remediation_status), `overall_status` (compliant/non-compliant/partial), `reported_at`
 
 **`belief-snapshot.schema.json`** — Current belief state export
-- `id`, `repo`, `agent`, `beliefs` (array of tetravalent state tuples — reuses existing schema via $ref), `snapshot_at`
+- `id`, `repo`, `agent`, `beliefs` (array of objects conforming to `tetravalent-state.schema.json` via $ref — fields: proposition, truth_value, confidence, evidence), `snapshot_at`
 - This is what gets persisted to `state/` directories as JSON files
 
 **`learning-outcome.schema.json`** — PDCA/5 Whys/knowledge results
@@ -55,7 +55,7 @@ Markdown document defining behavioral semantics — when messages are sent, how 
 - Consumer receives and acknowledges
 - Consumer acts on the directive
 - Consumer sends a compliance report confirming remediation
-- If directive is rejected: consumer must provide constitutional justification (Second Law — human authority override is the only valid reason)
+- If directive is rejected: consumer must provide constitutional justification. Valid reasons follow the Asimov law hierarchy — First Law (directive would cause harm to a human) overrides Second Law (human authority override). Both are valid rejection grounds with logged reasoning.
 
 **2. Reconnaissance Sync Flow:**
 - Demerzel sends a reconnaissance request to a consumer repo
@@ -125,9 +125,11 @@ Example: `2026-03-15-cache-invalidation-fix.pdca.json`
 
 ### Staleness Detection
 
-- Beliefs with `last_updated` older than a configurable threshold are flagged during reconnaissance Tier 1
+Default staleness threshold: 7 days. This value is defined in the protocol specification (`contracts/galactic-protocol.md`) and can be overridden per-repo in the reconnaissance profile.
+
+- Beliefs with `last_updated` older than the staleness threshold are flagged during reconnaissance Tier 1
 - PDCA cycles in `do` or `check` phase for longer than the threshold are flagged
-- Knowledge states with `outcome: in_progress` and `attempts: 3` that haven't been escalated are flagged
+- Knowledge states with `assessment.outcome: in_progress` and `assessment.attempts: 3` that haven't been escalated are flagged
 
 ### Future Extension: Demerzel's Own State
 
@@ -152,7 +154,7 @@ If Demerzel later needs governance-level belief persistence, she creates her own
 
 | File | Change |
 |------|--------|
-| `docs/architecture.md` | Add contracts section, state convention, external sync extensibility |
+| `docs/architecture.md` | Add Contracts subsection under Artifact Types (listing 6 schemas + protocol spec), add State Convention subsection describing `state/` directory structure, add external sync to cross-repo diagram |
 
 ### Unchanged
 
