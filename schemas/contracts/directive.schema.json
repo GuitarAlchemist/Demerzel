@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/directive",
+  "title": "Governance Directive",
+  "description": "A governance directive from Demerzel to a consumer repo agent",
+  "type": "object",
+  "required": ["id", "type", "priority", "source_article", "target_repo", "directive_content", "issued_by", "issued_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^dir-[a-z0-9-]+$",
+      "description": "Unique directive identifier"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["compliance-requirement", "policy-update", "violation-remediation", "reconnaissance-request"],
+      "description": "What kind of directive this is"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Processing priority — critical > high > medium > low"
+    },
+    "source_article": {
+      "type": "string",
+      "description": "Constitutional article or policy reference that authorizes this directive (e.g., asimov.constitution.md Article 0)"
+    },
+    "target_repo": {
+      "type": "string",
+      "enum": ["ix", "tars", "ga"],
+      "description": "Which consumer repo this directive is for"
+    },
+    "target_agent": {
+      "type": "string",
+      "description": "Optional — specific persona name if directive targets a single agent"
+    },
+    "directive_content": {
+      "type": "string",
+      "description": "What the consumer must do"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional — when this directive must be acted on"
+    },
+    "issued_by": {
+      "type": "string",
+      "default": "demerzel",
+      "description": "Who issued the directive"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

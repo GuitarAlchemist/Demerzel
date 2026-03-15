@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/knowledge-package",
+  "title": "Knowledge Package",
+  "description": "Seldon teaching content for cross-repo delivery via the Streeling framework",
+  "type": "object",
+  "required": ["id", "layer", "concept", "delivery_mode", "content", "source", "target_learner", "taught_by", "created_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^kp-[a-z0-9-]+$",
+      "description": "Unique knowledge package identifier"
+    },
+    "layer": {
+      "type": "string",
+      "enum": ["governance", "experiential", "domain"],
+      "description": "Which knowledge layer this belongs to"
+    },
+    "concept": {
+      "type": "string",
+      "description": "What is being taught"
+    },
+    "delivery_mode": {
+      "type": "string",
+      "enum": ["narrative", "structured"],
+      "description": "How to deliver: narrative (humans), structured (agents)"
+    },
+    "content": {
+      "type": "string",
+      "description": "The teaching material"
+    },
+    "source": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "artifact": { "type": "string", "description": "Governance artifact reference" },
+        "pdca_cycle": { "type": "string", "description": "PDCA cycle ID" },
+        "five_whys": { "type": "string", "description": "5 Whys analysis reference" },
+        "reconnaissance": { "type": "string", "description": "Reconnaissance finding reference" }
+      },
+      "description": "Where the knowledge came from — at least one source required"
+    },
+    "target_learner": {
+      "type": "object",
+      "required": ["type", "identifier"],
+      "properties": {
+        "type": { "type": "string", "enum": ["human", "agent"] },
+        "identifier": { "type": "string", "description": "Persona name for agents, role for humans" }
+      }
+    },
+    "taught_by": {
+      "type": "string",
+      "default": "seldon"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
