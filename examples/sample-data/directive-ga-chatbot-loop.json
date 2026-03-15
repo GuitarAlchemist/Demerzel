@@ -1,0 +1,11 @@
+{
+  "id": "dir-ga-chatbot-ralph-loop-2026-03-15",
+  "type": "compliance-requirement",
+  "priority": "high",
+  "source_article": "demerzel-mandate.md Section 3 — Demerzel may initiate loops for governance-specific tasks; autonomous-loop-policy.yaml — Demerzel-initiated governance loops",
+  "target_repo": "ga",
+  "directive_content": "Initiate a governed Ralph Loop to make the Guitar Alchemist chatbot fully functional. The chatbot currently has Ollama + RAG + SignalR infrastructure but needs to be completed as a comprehensive music companion covering: (1) Music theory teaching — scales, chords, progressions, intervals, explain concepts adaptively; (2) Music creation and experimentation — help compose, arrange, suggest progressions, generate musical ideas within safe boundaries; (3) Practice companion — tab lookup, practice routines, ear training exercises, progress tracking. Loop parameters: goal='Build a fully functional GA chatbot covering music theory teaching, creation/experimentation, and practice companion features', risk_level='medium', governance_mode='boundary-only', max_iterations=15, worker='default', reviewer='skeptical-auditor'. Governance boundaries: (a) All changes must be reversible — use feature branches; (b) Must not break existing build or tests — verify before each commit; (c) Must follow ga repo's CLAUDE.md coding standards (C# 14, .NET 10, ROP patterns); (d) Must not modify GA's domain core layer without explicit justification; (e) Chatbot must use existing Ollama/RAG infrastructure, not introduce new AI backends; (f) All new code must have tests; (g) Experimentation features must have safety constraints per ga reconnaissance profile. Success criteria: chatbot responds accurately to music theory questions, can suggest chord progressions, and provides practice guidance. Convergence measured by: features implemented, tests passing, E2E smoke test of chatbot conversation.",
+  "deadline": "2026-03-22T00:00:00Z",
+  "issued_by": "demerzel",
+  "issued_at": "2026-03-15T20:00:00Z"
+}
