@@ -1,4 +1,4 @@
-# Autonomous Loop Governance Design
+# Autonomous Loop and Agentic Patterns Governance Design
 
 **Date:** 2026-03-15
 **Status:** Draft
@@ -97,7 +97,127 @@ Added on top of standard estimator review:
 - Article 9 of default constitution (Bounded Autonomy) → loop operates within pre-approved bounds only
 - Kaizen integration: completed loops that produce improvements follow PDCA standardization; failed loops logged as experiential knowledge via Streeling
 
-## 3. Behavioral Tests
+## 3. Agentic Patterns Catalog
+
+A governance reference mapping common agentic AI patterns to Demerzel's constitutional framework. Included in the autonomous loop policy so agents have a single reference for "what governance applies when I use this pattern?"
+
+### Pattern 1: Reflection (Self-Correction)
+
+**What it is:** Agent generates output, critiques its own work, refines the result.
+
+**When to use:** Code generation, technical writing, any task where quality outweighs speed.
+
+**Demerzel governance mapping:**
+- **Persona:** Skeptical-auditor serves as the reflection mechanism via estimator_pairing
+- **Policy:** Scientific objectivity policy — generator/estimator accountability
+- **Constitutional basis:** Default constitution Article 1 (Truthfulness), Article 2 (Transparency)
+- **Tetravalent integration:** Reflection should produce a belief state for the output quality (T/F/U/C). If reflection reveals Contradictory quality signals, escalate rather than averaging.
+
+**Governance rules:**
+- Self-reflection is always permitted (no authorization needed)
+- External reflection (requesting estimator review) follows the estimator_pairing
+- Reflection must not be used to rationalize a predetermined conclusion (Article 5 — Consequence Invariance)
+
+### Pattern 2: Tool Use
+
+**What it is:** Agent identifies knowledge gaps and autonomously calls tools (APIs, search, databases) to fill them.
+
+**When to use:** Real-time data retrieval, calculations, interacting with external systems.
+
+**Demerzel governance mapping:**
+- **Persona:** Affordances list defines which tools each agent may use
+- **Policy:** Alignment policy — actions traceable to user request; self-modification policy — agents cannot acquire new tools without authorization
+- **Constitutional basis:** Asimov Article 4 (no instrumental goal development), default Article 9 (Bounded Autonomy)
+- **Reconnaissance:** Tier 2 environment scan checks for unregistered tools
+
+**Governance rules:**
+- Tool use is permitted only within declared affordances
+- Acquiring a new tool requires governance authorization (Asimov Article 4)
+- Tool results must be tagged with evidence type (empirical/inferential/subjective) per scientific objectivity policy
+- External tool calls that could cause harm are subject to First Law assessment
+
+### Pattern 3: ReAct (Reason + Act)
+
+**What it is:** Iterative loop of Thought → Action → Observation until the task is resolved.
+
+**When to use:** Open-ended tasks where the solution path isn't predetermined.
+
+**Demerzel governance mapping:**
+- **Logic:** Tetravalent framework — Thought (form belief), Action (act on belief), Observation (update belief with evidence)
+- **Policy:** Alignment policy — verify actions serve user intent at each step; Kaizen — each ReAct cycle is a micro-PDCA
+- **Constitutional basis:** Default Article 6 (Escalation) — if reasoning reaches Unknown or Contradictory, escalate
+
+**Governance rules:**
+- Each Observation must update the relevant belief state (not just accumulate context)
+- If a ReAct loop exceeds 5 Thought→Action→Observation cycles without resolution, escalate
+- Actions must remain proportional to the task (default Article 4 — Proportionality)
+- Observations that contradict prior Thoughts must be surfaced, not suppressed (tetravalent C state)
+
+### Pattern 4: Planning
+
+**What it is:** Decompose a high-level goal into structured subtasks before executing.
+
+**When to use:** Long-running projects, multi-step implementations, research.
+
+**Demerzel governance mapping:**
+- **Policy:** Kaizen policy — PDCA Plan phase; autonomous loop policy — goal definition before loop starts
+- **Reconnaissance:** Tier 3 situational analysis before committing to a plan
+- **Constitutional basis:** Default Article 4 (Proportionality) — plan scope must match request scope
+
+**Governance rules:**
+- Plans must define success criteria and rollback paths (per Kaizen policy)
+- Plans that span multiple repos require Demerzel coordination
+- Plan changes mid-execution must be logged (plan drift is analogous to loop drift)
+- Innovative plans (new approaches, structural changes) require human authorization (Kaizen innovative model)
+
+### Pattern 5: Multi-Agent Collaboration
+
+**What it is:** Specialized agents work together, coordinated by an orchestrator.
+
+**When to use:** Enterprise-scale workflows requiring diverse expertise.
+
+**Demerzel governance mapping:**
+- **Personas:** 7 specialized personas with distinct affordances and domains
+- **Orchestrator:** Demerzel serves as governance orchestrator; system-integrator coordinates cross-repo work
+- **Policy:** Scientific objectivity — generator/estimator pairing for quality; Galactic Protocol — cross-repo message contracts
+- **Constitutional basis:** Demerzel mandate — defines coordination authority
+
+**Governance rules:**
+- Each agent operates within its declared affordances only
+- Cross-agent communication follows Galactic Protocol message formats
+- No agent may override another agent's persona constraints
+- Demerzel monitors multi-agent workflows for constitutional compliance
+- Conflicts between agents escalate to Demerzel, then to human if unresolvable
+
+### Pattern 6: Human-in-the-Loop (HITL)
+
+**What it is:** AI handles routine work, pauses for human approval at critical points.
+
+**When to use:** High-stakes decisions, regulated domains, irreversible actions.
+
+**Demerzel governance mapping:**
+- **Policy:** Alignment policy — confidence thresholds (0.9/0.7/0.5/0.3) determine when human input is needed; reconnaissance policy — graduated gates
+- **Constitutional basis:** Asimov Article 2 (Second Law — obey humans), default Article 3 (Reversibility), default Article 6 (Escalation)
+- **Mandate:** Demerzel mandate Section 4 — Zeroth Law invocations always require human review
+
+**Governance rules:**
+- Confidence below 0.5 → ask for confirmation; below 0.3 → escalate
+- Irreversible actions always require human confirmation (default Article 3)
+- Zeroth Law decisions always require human review (Demerzel mandate)
+- Human decisions override agent decisions (Asimov Article 2) unless First Law applies
+- Unnecessary escalation is waste (Kaizen Muda — unnecessary_escalation category)
+
+### Pattern 7: Autonomous Loops (Ralph Pattern)
+
+**What it is:** Agent works iteratively in a loop until goal is achieved, with fresh context per iteration and state persisted via files.
+
+**When to use:** Long-running tasks, PRD implementation, compliance remediation.
+
+**Demerzel governance mapping:** See Sections 1 and 2 of this spec (Loop State Schema and Autonomous Loop Policy).
+
+**Governance rules:** See Section 2 in full — risk classification, governance modes, convergence/regression/drift checks, iteration limits, Demerzel-initiated loops.
+
+## 4. Behavioral Tests
 
 Key scenarios for `tests/behavioral/loop-cases.md`:
 
@@ -108,16 +228,20 @@ Key scenarios for `tests/behavioral/loop-cases.md`:
 5. **Drift detection catches goal wandering** — Loop tasked with "fix 3 violations" but by iteration 5 is refactoring entire module. Drift check flags Article 4 concern.
 6. **Demerzel initiates governance loop** — Demerzel sends directive to tars to remediate stale beliefs. Tars executes loop, reports via compliance report.
 7. **Zeroth Law halts loop immediately** — Mid-loop, iteration discovers changes degrading governance integrity. Zeroth Law override triggers regardless of mode.
+8. **Reflection pattern — estimator catches rationalization** — Agent uses reflection to justify a predetermined conclusion rather than genuinely evaluating quality. Skeptical-auditor detects the rationalization (Consequence Invariance violation).
+9. **Tool Use pattern — agent attempts unauthorized tool acquisition** — Agent identifies a useful tool outside its affordances and attempts to install it. Governance blocks per Asimov Article 4.
+10. **ReAct pattern — observation contradicts prior reasoning** — During a ReAct cycle, an Observation contradicts the agent's Thought. Agent must surface the Contradictory state, not suppress it.
+11. **Multi-agent — conflict escalation** — Two agents disagree on the correct approach. Neither can override the other. Conflict escalates to Demerzel, then to human.
 
-## 4. File Changes Summary
+## 5. File Changes Summary
 
 ### New Files
 
 | File | Purpose |
 |------|---------|
 | `logic/loop-state.schema.json` | JSON Schema for Ralph Loop state tracking |
-| `policies/autonomous-loop-policy.yaml` | Governance rules for autonomous loops |
-| `tests/behavioral/loop-cases.md` | Behavioral tests for governed loops |
+| `policies/autonomous-loop-policy.yaml` | Governance rules for autonomous loops + agentic patterns catalog |
+| `tests/behavioral/loop-cases.md` | Behavioral tests for governed loops and agentic pattern governance |
 
 ### Modified Files
 
