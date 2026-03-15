@@ -149,7 +149,7 @@ jobs:
       - name: Post to org Discussions
         if: steps.harvest.outputs.HARVEST_COMPLETE == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
           BODY=$(cat harvest-report.md | jq -Rs .)
