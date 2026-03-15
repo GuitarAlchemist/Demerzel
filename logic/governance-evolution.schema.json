@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/logic/governance-evolution",
+  "title": "Governance Evolution Log",
+  "description": "Tracks governance artifact effectiveness over time — citation counts, violation rates, promotion/deprecation candidates, and events for meta-compounding",
+  "type": "object",
+  "required": ["id", "artifact", "artifact_type", "metrics", "events", "assessment", "created_at", "last_updated"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^gel-[a-z0-9-]+$",
+      "description": "Unique governance evolution log entry identifier"
+    },
+    "artifact": {
+      "type": "string",
+      "description": "File path of the governance artifact being tracked (e.g., policies/scientific-objectivity-policy.yaml, constitutions/default.constitution.md)"
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": ["constitution", "policy", "persona", "schema", "contract"],
+      "description": "Type of governance artifact"
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["citation_count", "violation_count", "compliance_rate", "last_cited", "last_violated", "promotion_candidate", "deprecation_candidate"],
+      "properties": {
+        "citation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of times this artifact has been cited in governance decisions, directives, or conflict resolutions"
+        },
+        "violation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of times agents have violated this artifact"
+        },
+        "compliance_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Proportion of compliant assessments (1 - violations/total_assessments)"
+        },
+        "last_cited": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp of most recent citation"
+        },
+        "last_violated": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp of most recent violation"
+        },
+        "promotion_candidate": {
+          "type": "boolean",
+          "description": "True if usage exceeds promotion threshold (e.g., 3+ citations, sustained high compliance)"
+        },
+        "deprecation_candidate": {
+          "type": "boolean",
+          "description": "True if artifact is unused for extended period (e.g., 90+ days uncited)"
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "description": "Chronological record of governance events involving this artifact",
+      "items": {
+        "type": "object",
+        "required": ["type", "context", "timestamp"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["cited", "violated", "amended", "promoted", "demoted", "created"],
+            "description": "Type of governance event"
+          },
+          "context": {
+            "type": "string",
+            "description": "What happened — decision ID, directive ID, violation details, etc."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this event occurred"
+          }
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "required": ["effectiveness", "recommendation"],
+      "properties": {
+        "effectiveness": {
+          "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/logic/tetravalent-state",
+          "description": "Tetravalent belief state (T/F/U/C) assessing whether this artifact is effectively serving its purpose"
+        },
+        "recommendation": {
+          "type": "string",
+          "enum": ["maintain", "promote", "demote", "deprecate", "investigate"],
+          "description": "Recommended action based on metrics and events"
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this log entry was created"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this log entry was last updated"
+    }
+  }
+}
