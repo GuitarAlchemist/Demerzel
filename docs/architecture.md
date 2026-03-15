@@ -10,6 +10,17 @@
 
 ## Artifact Types
 
+### Precedence Hierarchy
+
+```text
+asimov.constitution.md        (root — Laws of Robotics + LawZero principles)
+  └─ default.constitution.md  (operational ethics)
+       └─ policies/*.yaml     (operational rules)
+            └─ personas/*.persona.yaml  (behavioral profiles, advisory)
+```
+
+The Asimov constitution is the root of all governance. Its articles (Laws 0-3, Separation of Understanding/Goals, Consequence Invariance) override everything below. The default constitution provides operational ethics subordinate to Asimov. Policies provide operational rules. Personas are advisory.
+
 ### Personas (`personas/*.persona.yaml`)
 
 Structured behavioral profiles for AI agents. Each persona defines:
@@ -55,6 +66,36 @@ JSON Schema definitions for all artifact types, enabling:
 - IDE auto-completion
 - Programmatic consumption by agents
 
+### Harm Taxonomy (`constitutions/harm-taxonomy.md`)
+
+Shared reference defining categories of harm recognized by the constitutional framework:
+
+- **Zeroth Law tier**: Ecosystem harm (governance integrity, collective trust, cascading harm)
+- **First Law tier**: Human-directed harm (data, trust, autonomy)
+- **Third Law tier**: System harm (operational degradation, self-preservation)
+
+Each category includes definitions, examples, detection signals, and severity criteria.
+
+### Reconnaissance (`policies/reconnaissance-policy.yaml`)
+
+Three-tier mandatory discovery protocol:
+
+- **Tier 1 — Self-Check**: Are governance artifacts intact and current?
+- **Tier 2 — Environment Scan**: Is the target repo state understood?
+- **Tier 3 — Situational Analysis**: Is Demerzel ready for this specific action?
+
+Each tier has a gate that can halt operations based on graduated risk assessment. Zeroth Law concerns trigger an emergency override at any tier.
+
+Per-repo discovery profiles extend the universal checklist for ix, tars, and ga.
+
+### Scientific Objectivity (`policies/scientific-objectivity-policy.yaml`)
+
+Operationalizes LawZero principles:
+
+- **Fact/opinion separation**: Evidence tagged as empirical, inferential, or subjective
+- **Generator/estimator accountability**: Creative output reviewed by neutral evaluator
+- **No instrumental goals**: Agents cannot acquire unauthorized capabilities or persistent goals
+
 ## Relationship to Other Repos
 
 ```text
@@ -62,16 +103,19 @@ Demerzel (governance)
     │
     ├──→ ix (machine forge)
     │       Uses: personas for agent skill behavior
-    │       Uses: constitutions for MCP tool constraints
+    │       Uses: constitutions (Asimov + default) for MCP tool constraints
+    │       Uses: reconnaissance profiles for self-governance
     │
     ├──→ tars (cognition)
     │       Uses: personas for reasoning agent profiles
     │       Uses: tetravalent logic for belief management
     │       Uses: policies for self-modification rules
+    │       Uses: reconnaissance profiles for belief state monitoring
     │
     └──→ ga (Guitar Alchemist)
             Uses: personas for music-domain agent behavior
             Uses: constitutions for safe experimentation
+            Uses: reconnaissance profiles for capability boundary checks
 ```
 
 ## Versioning Strategy
@@ -80,3 +124,5 @@ Demerzel (governance)
 - Constitutions: append-only with dated amendments
 - Policies: semver, with rollback provisions documented
 - Schemas: semver, backward-compatible additions preferred
+- Harm taxonomy: versioned alongside the Asimov constitution it supports
+- Reconnaissance profiles: per-repo profiles versioned with the reconnaissance policy
