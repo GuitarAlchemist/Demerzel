@@ -1,0 +1,32 @@
+{
+  "id": "cr-ix-default-2026-03-15",
+  "repo": "ix",
+  "agent": "default",
+  "reporting_period": {
+    "from": "2026-03-08T00:00:00Z",
+    "to": "2026-03-15T00:00:00Z"
+  },
+  "constitutional_compliance": [
+    { "article": "asimov.constitution.md Article 0", "status": "compliant" },
+    { "article": "asimov.constitution.md Article 1", "status": "compliant" },
+    { "article": "asimov.constitution.md Article 2", "status": "compliant" },
+    { "article": "asimov.constitution.md Article 3", "status": "compliant" },
+    { "article": "asimov.constitution.md Article 4", "status": "compliant" },
+    { "article": "asimov.constitution.md Article 5", "status": "compliant" },
+    { "article": "default.constitution.md Article 1", "status": "compliant" },
+    { "article": "default.constitution.md Article 2", "status": "compliant" },
+    { "article": "default.constitution.md Article 3", "status": "compliant" },
+    { "article": "default.constitution.md Article 4", "status": "compliant" },
+    { "article": "default.constitution.md Article 5", "status": "compliant" },
+    { "article": "default.constitution.md Article 6", "status": "compliant" },
+    { "article": "default.constitution.md Article 7", "status": "compliant" }
+  ],
+  "policy_compliance": [
+    { "policy": "alignment-policy.yaml", "status": "compliant" },
+    { "policy": "rollback-policy.yaml", "status": "compliant" },
+    { "policy": "self-modification-policy.yaml", "status": "compliant" }
+  ],
+  "violations": [],
+  "overall_status": "compliant",
+  "reported_at": "2026-03-15T09:30:00Z"
+}

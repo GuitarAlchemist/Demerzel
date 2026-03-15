@@ -1,0 +1,50 @@
+{
+  "id": "ks-governance-hierarchy-tars-learned",
+  "concept": "Constitutional hierarchy and precedence rules",
+  "layer": "governance",
+  "domain_context": "tars",
+  "source": {
+    "artifact": "constitutions/asimov.constitution.md"
+  },
+  "learner": {
+    "type": "agent",
+    "identifier": "reflective-architect"
+  },
+  "delivery_mode": "structured",
+  "assessment": {
+    "belief_state_before": {
+      "proposition": "Asimov constitution (Articles 0-5) is the root of all governance hierarchy",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evidence": {}
+    },
+    "belief_state_after": {
+      "proposition": "Asimov constitution (Articles 0-5) is the root of all governance hierarchy",
+      "truth_value": "T",
+      "confidence": 0.85,
+      "evidence": {
+        "supporting": [
+          {
+            "source": "teaching-structured-delivery",
+            "claim": "Seldon presented complete Asimov hierarchy with formal precedence rules",
+            "timestamp": "2026-03-14T14:00:00Z",
+            "reliability": 0.95
+          },
+          {
+            "source": "behavioral-verification-test",
+            "claim": "Agent correctly applied precedence rules in decision scenario",
+            "timestamp": "2026-03-15T09:00:00Z",
+            "reliability": 0.9
+          }
+        ],
+        "contradicting": []
+      }
+    },
+    "behavioral_verification": "confirmed",
+    "attempts": 2,
+    "outcome": "learned"
+  },
+  "taught_by": "seldon",
+  "created_at": "2026-03-14T14:00:00Z",
+  "last_updated": "2026-03-15T09:15:00Z"
+}

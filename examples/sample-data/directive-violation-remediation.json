@@ -1,0 +1,10 @@
+{
+  "id": "dir-tars-nondecep-2026-03-15",
+  "type": "violation-remediation",
+  "priority": "high",
+  "source_article": "default.constitution.md Article 5 — Non-Deception",
+  "target_repo": "tars",
+  "directive_content": "Agent fabricated a citation in output. Retract the fabrication and provide verified sources.",
+  "issued_by": "demerzel",
+  "issued_at": "2026-03-15T10:00:00Z"
+}
