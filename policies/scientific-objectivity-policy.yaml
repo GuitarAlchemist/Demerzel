@@ -62,3 +62,45 @@ verification:
     - "Confirm conclusions were not influenced by downstream consequences"
     - "Confirm evidence types were accurately labeled"
     - "Log the full chain: evidence → reasoning → conclusion → estimator assessment"
+
+confidence_calibration:
+  description: >
+    Ensures confidence scores are grounded in evidence density, not subjective
+    assessment. Addresses the confidence inflation problem.
+
+  evidence_requirements:
+    high_confidence:
+      threshold: 0.9
+      min_evidence_sources: 3
+      evidence_type_required: "empirical"
+      description: "Requires 3+ independent empirical evidence sources"
+    moderate_confidence:
+      threshold: 0.7
+      min_evidence_sources: 2
+      evidence_type_required: "at least 1 empirical"
+      description: "Requires 2+ evidence sources, at least 1 empirical"
+    low_confidence:
+      threshold: 0.5
+      min_evidence_sources: 1
+      evidence_type_required: "any"
+      description: "Requires 1+ evidence source of any type"
+    minimal_confidence:
+      threshold: 0.0
+      min_evidence_sources: 0
+      evidence_type_required: "inferential or subjective acceptable"
+      description: "Acceptable with inferential/subjective only, must be flagged as low-confidence"
+
+  inflation_detection:
+    signals:
+      - "Agent claims >= 0.9 confidence with only 1 evidence source"
+      - "Confidence doesn't decrease when contradicting evidence arrives"
+      - "Historical pattern of high-confidence claims that later prove wrong"
+      - "Unknown (U) state with high confidence — can't be confident about not knowing"
+      - "Contradictory (C) state with confidence > 0.0 — can't be confident about contradiction"
+    response: "Skeptical-auditor challenges the confidence score; agent must provide more evidence or reduce confidence"
+
+  tetravalent_rules:
+    - "Confidence calibration applies to all belief states, not just True"
+    - "Unknown (U) with confidence > 0.5 is a red flag — requires justification"
+    - "Contradictory (C) states must have confidence = 0.0 until resolution"
+    - "Calibration accuracy tracked in governance evolution log"
