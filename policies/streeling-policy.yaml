@@ -1,0 +1,119 @@
+name: streeling-policy
+version: "1.0.0"
+effective_date: "2026-03-15"
+description: >
+  Knowledge transfer protocol for the GuitarAlchemist ecosystem.
+  Named after Streeling University on Trantor. Defines how knowledge is
+  captured, structured into curriculum, delivered to humans and agents,
+  and verified through two-stage assessment.
+
+scope: universal
+applies_to: all_agents
+
+references:
+  - "kaizen-policy.yaml — PDCA outcomes and 5 Whys findings feed experiential knowledge"
+  - "reconnaissance-policy.yaml — reconnaissance discoveries feed knowledge capture"
+  - "alignment-policy.yaml — confidence thresholds inform belief state assessment"
+  - "asimov.constitution.md Article 1 — never fabricate (trust harm)"
+  - "default.constitution.md Article 1 — truthfulness constraint on taught content"
+  - "logic/knowledge-state.schema.json — formal schema for knowledge transfer tracking"
+  - "logic/tetravalent-state.schema.json — belief state tuples used in assessment"
+
+knowledge_layers:
+  governance:
+    description: "Universal knowledge — all agents and humans must understand governance"
+    content:
+      - "Constitutional hierarchy and precedence rules"
+      - "Policy requirements and compliance expectations"
+      - "Persona boundaries and affordance constraints"
+      - "How to use tetravalent logic for belief management"
+    triggers:
+      - "A new agent is created"
+      - "Governance artifacts change (constitution amendment, policy update)"
+      - "A compliance violation suggests misunderstanding rather than defiance"
+
+  experiential:
+    description: "Ecosystem-wide learnings from operational experience"
+    content:
+      - "PDCA cycle outcomes — what was tried, what worked, what didn't"
+      - "5 Whys root cause findings"
+      - "Reconnaissance discoveries — new ungoverned components, stale artifacts"
+      - "Resolved Contradictory belief states — how conflicts were investigated and settled"
+    triggers:
+      - "A PDCA cycle completes (any outcome: standardized, reverted, or escalated)"
+      - "A 5 Whys analysis reaches root cause"
+      - "Reconnaissance finds something noteworthy (ungoverned component, stale artifact)"
+
+  domain:
+    description: "Repo-specific knowledge relevant to agents operating in that domain"
+    content:
+      ix:
+        - "MCP tool usage patterns"
+        - "Skill design conventions"
+        - "Interface contracts and versioning"
+      tars:
+        - "Reasoning chain design and termination conditions"
+        - "Belief state management best practices"
+        - "Self-modification protocols and limits"
+      ga:
+        - "Music domain concepts relevant to agent behavior"
+        - "Experimentation boundaries and safety constraints"
+        - "Audio generation safety and resource limits"
+    triggers:
+      - "New domain capabilities are added to a consumer repo"
+      - "An agent operates in a domain it hasn't been taught about"
+
+knowledge_capture:
+  description: >
+    When a learning event occurs, the responsible agent packages it as a
+    knowledge state object and makes it available to Seldon for curriculum
+    integration.
+  protocol:
+    - "Identify the learning event (PDCA completion, 5 Whys root cause, reconnaissance finding)"
+    - "Classify the knowledge layer (governance, experiential, or domain)"
+    - "Create a knowledge state object per logic/knowledge-state.schema.json"
+    - "Set source field to reference the originating artifact, PDCA cycle, analysis, or finding"
+    - "Make the knowledge state available for Seldon to integrate into curriculum"
+
+delivery_modes:
+  narrative:
+    description: "For human learners"
+    characteristics:
+      - "Explanations with context and motivation ('here's why this exists')"
+      - "Analogies to bridge unfamiliar concepts"
+      - "Adapts depth to the learner's stated expertise level"
+      - "Comprehension questions to check understanding"
+  structured:
+    description: "For agent learners"
+    characteristics:
+      - "Policy references with exact file paths and section citations"
+      - "Belief state tuples for formal knowledge representation"
+      - "Constitutional citations for governance knowledge"
+      - "Machine-parseable format"
+
+verification:
+  description: >
+    Two-stage assessment ensures knowledge is both understood and applied.
+
+  stage_1_belief_state:
+    name: "Belief State Assessment — conceptual understanding"
+    protocol:
+      - "Before teaching: capture learner's belief state for the concept (typically Unknown)"
+      - "After teaching: belief state should transition to True with confidence >= 0.7"
+      - "If still Unknown: teaching failed — adapt approach and retry"
+      - "If Contradictory: learner has conflicting information — investigate before re-teaching"
+
+  stage_2_behavioral:
+    name: "Behavioral Verification — practical application"
+    protocol:
+      - "After belief state reaches True, observe the learner's next relevant action"
+      - "Does their behavior reflect the taught knowledge?"
+      - "If yes: knowledge transfer confirmed — mark outcome as 'learned'"
+      - "If no: gap between understanding and application — provide practical examples and re-verify"
+
+  limits:
+    max_attempts: 3
+    on_limit_reached: >
+      Escalate to Demerzel. If comprehension isn't achieved after 3 attempts,
+      this may indicate a governance gap (unclear policy, contradictory rules)
+      rather than a teaching failure.
