@@ -65,6 +65,7 @@
     "outcome": {
       "type": "string",
       "enum": ["in_progress", "standardized", "reverted", "escalated"],
+      "default": "in_progress",
       "description": "Final outcome of the cycle"
     },
     "five_whys": {
