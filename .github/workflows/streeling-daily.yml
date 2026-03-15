@@ -1,10 +1,10 @@
-name: Streeling Daily Harvest & Report
+name: Streeling Weekly Harvest & Report
 
 on:
   schedule:
-    # Run daily at 13:17 UTC (8:17 AM EST)
-    - cron: '17 13 * * *'
-  workflow_dispatch: # Allow manual trigger
+    # Run every Friday at 13:17 UTC (8:17 AM EST)
+    - cron: '17 13 * * 5'
+  workflow_dispatch: # Allow manual trigger anytime
 
 permissions:
   contents: read
