@@ -57,6 +57,7 @@ Operational rules for specific scenarios:
 - **Scientific objectivity policy**: LawZero principles — fact/opinion separation, generator/estimator accountability
 - **Streeling policy**: Knowledge transfer protocol — three-layer curriculum (governance/experiential/domain), adaptive delivery, two-stage verification
 - **Governance audit policy**: Three-level validation checklist — schema validation, cross-reference integrity, full governance audit
+- **Autonomous loop policy**: Governed Ralph Loops with graduated oversight, loop-specific review criteria, agentic patterns catalog
 
 ### Logic (`logic/`)
 
@@ -67,6 +68,7 @@ Multi-valued reasoning frameworks:
 - Provides a formal framework for handling uncertainty and contradiction
 - **Kaizen PDCA state**: Extends tetravalent logic for Plan-Do-Check-Act improvement cycles
 - **Knowledge state**: Tracks knowledge transfer events with tetravalent belief state assessment for the Streeling framework
+- **Loop state**: Tracks autonomous Ralph Loop orchestration with convergence, regression, and drift detection
 
 ### Schemas (`schemas/`)
 
