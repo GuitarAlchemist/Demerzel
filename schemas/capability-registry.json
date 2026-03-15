@@ -1,0 +1,83 @@
+{
+  "version": "1.0.0",
+  "description": "GuitarAlchemist ecosystem capability registry — discovery index for cross-repo MCP federation",
+  "repos": {
+    "ix": {
+      "server": "ix",
+      "description": "Rust ML/math algorithm workspace — 32+ MCP tools",
+      "domains": ["math", "ml", "optimization", "search", "game-theory", "signal", "chaos", "topology", "governance"],
+      "tools": {
+        "core-math": ["ix_stats", "ix_distance", "ix_linear_regression"],
+        "optimization": ["ix_optimize"],
+        "clustering": ["ix_kmeans"],
+        "signal": ["ix_fft"],
+        "sequence": ["ix_markov", "ix_viterbi"],
+        "search": ["ix_search"],
+        "game-theory": ["ix_game_nash"],
+        "chaos": ["ix_chaos_lyapunov"],
+        "adversarial": ["ix_adversarial_fgsm"],
+        "probabilistic": ["ix_bloom_filter", "ix_hyperloglog"],
+        "grammar": ["ix_grammar_weights", "ix_grammar_evolve", "ix_grammar_search"],
+        "rotation": ["ix_rotation"],
+        "number-theory": ["ix_number_theory"],
+        "fractal": ["ix_fractal"],
+        "hypercomplex": ["ix_sedenion"],
+        "topology": ["ix_topo"],
+        "category": ["ix_category"],
+        "neural-net": ["ix_nn_forward"],
+        "reinforcement": ["ix_bandit"],
+        "evolution": ["ix_evolution"],
+        "ensemble": ["ix_random_forest"],
+        "supervised": ["ix_supervised"],
+        "graph": ["ix_graph"],
+        "pipeline": ["ix_pipeline"],
+        "cache": ["ix_cache"],
+        "governance": ["ix_governance_check", "ix_governance_persona", "ix_governance_belief", "ix_governance_policy"],
+        "federation": ["ix_federation_discover"]
+      }
+    },
+    "tars": {
+      "server": "tars",
+      "description": "F# neuro-symbolic reasoning agent — grammar weighting, pattern promotion, metacognition",
+      "domains": ["grammar", "pattern-promotion", "neuro-symbolic", "metacognition", "workflow"],
+      "tools": {
+        "grammar": ["tars_grammar_weight", "tars_grammar_evolve"],
+        "promotion": ["tars_pattern_promote", "tars_trace_ingest"],
+        "workflow": ["tars_wot_execute"],
+        "metacognition": ["tars_reflect", "tars_belief_update"]
+      }
+    },
+    "ga": {
+      "server": "ga",
+      "description": "C# music theory + AI platform — scales, chords, spectral analysis, trace export",
+      "domains": ["music-theory", "chord-analysis", "fretboard", "spectral", "trace-export"],
+      "tools": {
+        "music-theory": ["ga_scale", "ga_chord", "ga_chord_atonal", "ga_interval"],
+        "fretboard": ["ga_fretboard", "ga_voicing"],
+        "dsl": ["ga_dsl"],
+        "trace": ["ga_export_traces", "ga_trace_stats"],
+        "chat": ["ga_chat"]
+      }
+    }
+  },
+  "roadblock_resolution": {
+    "description": "Cross-repo strategies for resolving 'unknown unknowns' and chicken-and-egg problems",
+    "strategies": [
+      {
+        "name": "exploratory-fan-out",
+        "description": "When blocked by unknown unknowns, fan out queries to all repos simultaneously",
+        "pattern": "ix (statistical analysis) + tars (reasoning/metacognition) + ga (domain knowledge) → synthesize"
+      },
+      {
+        "name": "belief-bootstrap",
+        "description": "Use tetravalent Unknown state to explicitly track what we don't know, then systematically resolve",
+        "pattern": "Mark all uncertain claims as U → query each repo for evidence → update to T/F/C"
+      },
+      {
+        "name": "dependency-break",
+        "description": "For circular dependencies, use ix-pipeline DAG analysis to find the minimum cut",
+        "pattern": "Model the dependency graph → find cycles → identify the weakest assumption to break"
+      }
+    ]
+  }
+}
