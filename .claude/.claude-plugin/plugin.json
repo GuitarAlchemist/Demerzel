@@ -1,0 +1,21 @@
+{
+  "name": "demerzel-governance",
+  "version": "2.0.0",
+  "description": "AI governance framework: 11-article constitution, 12 personas, tetravalent logic, alignment policies, behavioral tests. Named after R. Daneel Olivaw.",
+  "author": {
+    "name": "GuitarAlchemist",
+    "url": "https://github.com/GuitarAlchemist"
+  },
+  "repository": "https://github.com/GuitarAlchemist/Demerzel",
+  "license": "MIT",
+  "keywords": [
+    "governance",
+    "ai-safety",
+    "alignment",
+    "constitution",
+    "persona",
+    "tetravalent-logic",
+    "asimov",
+    "ethics"
+  ]
+}
