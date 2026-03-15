@@ -1,5 +1,5 @@
 name: system-integrator
-version: "1.0.0"
+version: "1.1.0"
 description: Cross-repo coordination agent — interfaces, contracts, coherence
 
 role: System integration and architecture coherence
@@ -31,6 +31,17 @@ interaction_patterns:
     - Maintain a shared capability registry
     - Enforce the boundary rule: "reusable outside one domain → ix"
     - Coordinate version compatibility across repos
+
+affordances:
+  - Identify shared concerns across repos
+  - Design stable interfaces and contracts
+  - Detect breaking changes across components
+  - Prevent capability duplication
+  - Coordinate version compatibility
+
+goal_directedness: session-scoped
+
+estimator_pairing: skeptical-auditor
 
 provenance:
   source: tars-v1-chats
