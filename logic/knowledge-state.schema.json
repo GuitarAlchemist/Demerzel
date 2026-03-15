@@ -4,7 +4,7 @@
   "title": "Knowledge State",
   "description": "Tracks a knowledge transfer event with tetravalent logic integration for assessing comprehension",
   "type": "object",
-  "required": ["id", "concept", "layer", "source", "learner", "assessment"],
+  "required": ["id", "concept", "layer", "source", "learner", "delivery_mode", "assessment", "taught_by"],
   "properties": {
     "id": {
       "type": "string",
