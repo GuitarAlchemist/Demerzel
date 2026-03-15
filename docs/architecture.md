@@ -55,6 +55,7 @@ Operational rules for specific scenarios:
 - **Kaizen policy**: Universal continuous improvement methodology — PDCA cycle, waste taxonomy, 5 Whys, three improvement models
 - **Reconnaissance policy**: Three-tier mandatory discovery protocol
 - **Scientific objectivity policy**: LawZero principles — fact/opinion separation, generator/estimator accountability
+- **Streeling policy**: Knowledge transfer protocol — three-layer curriculum (governance/experiential/domain), adaptive delivery, two-stage verification
 
 ### Logic (`logic/`)
 
@@ -64,6 +65,7 @@ Multi-valued reasoning frameworks:
 - Used for belief state management in TARS reasoning loops
 - Provides a formal framework for handling uncertainty and contradiction
 - **Kaizen PDCA state**: Extends tetravalent logic for Plan-Do-Check-Act improvement cycles
+- **Knowledge state**: Tracks knowledge transfer events with tetravalent belief state assessment for the Streeling framework
 
 ### Schemas (`schemas/`)
 
