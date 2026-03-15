@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/kaizen-pdca-state",
+  "title": "Kaizen PDCA Cycle State",
+  "description": "Tracks the state of a Plan-Do-Check-Act improvement cycle with tetravalent logic integration",
+  "type": "object",
+  "required": ["id", "proposition", "model", "phase", "belief_state", "iterations"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^pdca-[a-z0-9-]+$",
+      "description": "Unique identifier for this PDCA cycle (e.g., pdca-reduce-log-verbosity)"
+    },
+    "proposition": {
+      "type": "string",
+      "description": "What improvement is being tested (e.g., 'Reducing log verbosity will improve response time by 10%')"
+    },
+    "model": {
+      "type": "string",
+      "enum": ["reactive", "proactive", "innovative"],
+      "description": "Which Kaizen model this improvement falls under"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["plan", "do", "check", "act"],
+      "description": "Current phase of the PDCA cycle"
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string",
+          "description": "What is being measured"
+        },
+        "value": {
+          "type": "number",
+          "description": "Baseline measurement value"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement"
+        },
+        "measured_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["metric", "value"],
+      "description": "Measurement before the change"
+    },
+    "success_criteria": {
+      "type": "string",
+      "description": "What constitutes improvement (e.g., 'response time decreases by at least 10%')"
+    },
+    "belief_state": {
+      "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+      "description": "Tetravalent belief state for the improvement proposition — reuses the existing tetravalent-state.schema.json structure"
+    },
+    "iterations": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Count of PDCA iterations completed (max 3 before human review)"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["in_progress", "standardized", "reverted", "escalated"],
+      "description": "Final outcome of the cycle"
+    },
+    "five_whys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["level", "question", "answer", "belief_state"],
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Which 'Why' level (1-5)"
+          },
+          "question": {
+            "type": "string",
+            "description": "The 'Why' question asked at this level"
+          },
+          "answer": {
+            "type": "string",
+            "description": "The causal explanation at this level"
+          },
+          "belief_state": {
+            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+            "description": "Tetravalent belief state for this causal claim"
+          }
+        }
+      },
+      "maxItems": 5,
+      "description": "Optional root cause analysis levels — each level is a belief state"
+    },
+    "waste_category": {
+      "type": "string",
+      "enum": [
+        "redundant_governance",
+        "over_engineering",
+        "stale_artifacts",
+        "unnecessary_escalation",
+        "context_loss",
+        "ceremony_without_value"
+      ],
+      "description": "Optional — which waste category this cycle addresses"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evaluated_by": {
+      "type": "string",
+      "description": "Agent or persona managing this cycle"
+    }
+  }
+}
