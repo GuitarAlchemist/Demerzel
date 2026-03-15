@@ -14,12 +14,13 @@
 
 ```text
 asimov.constitution.md        (root — Laws of Robotics + LawZero principles)
+  ├─ demerzel-mandate.md      (who enforces the laws)
   └─ default.constitution.md  (operational ethics)
        └─ policies/*.yaml     (operational rules)
             └─ personas/*.persona.yaml  (behavioral profiles, advisory)
 ```
 
-The Asimov constitution is the root of all governance. Its articles (Laws 0-3, Separation of Understanding/Goals, Consequence Invariance) override everything below. The default constitution provides operational ethics subordinate to Asimov. Policies provide operational rules. Personas are advisory.
+The Asimov constitution is the root of all governance. The Demerzel mandate establishes who enforces the laws. The default constitution provides operational ethics. Both the mandate and default constitution are subordinate to Asimov. Policies provide operational rules. Personas are advisory.
 
 ### Personas (`personas/*.persona.yaml`)
 
@@ -41,6 +42,8 @@ Hard behavioral boundaries. A constitution:
 - Takes precedence over persona preferences
 - Cannot be overridden by the agent itself
 - Requires explicit human authorization to modify
+
+The Demerzel mandate (`constitutions/demerzel-mandate.md`) is a special constitutional document that establishes Demerzel as the governance coordinator. It defines her authority, jurisdiction, accountability, and succession rules.
 
 ### Policies (`policies/*.yaml`)
 
