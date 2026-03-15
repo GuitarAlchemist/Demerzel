@@ -1,0 +1,231 @@
+name: kaizen-policy
+version: "1.0.0"
+effective_date: "2026-03-14"
+description: >
+  Universal continuous improvement methodology for all Demerzel agents.
+  Codifies PDCA cycle with tetravalent logic integration, three Kaizen models,
+  waste taxonomy with 5S-derived remediation, and 5 Whys root cause analysis.
+
+scope: universal
+applies_to: all_agents
+
+references:
+  - "rollback-policy.yaml — revert failed improvements"
+  - "alignment-policy.yaml — confidence thresholds for improvement decisions"
+  - "asimov.constitution.md Article 2 — obedience (innovative Kaizen requires authorization)"
+  - "asimov.constitution.md Article 4 — separation of understanding and goals (no instrumental goal development)"
+  - "default.constitution.md Article 4 — proportionality (proactive improvements must not exceed task scope)"
+  - "logic/kaizen-pdca-state.schema.json — formal schema for PDCA cycle tracking"
+  - "logic/tetravalent-state.schema.json — belief state tuples used in Check phase"
+
+pdca_cycle:
+  description: >
+    Every improvement follows Plan-Do-Check-Act. The Check phase produces
+    formal tetravalent belief states, not binary pass/fail.
+
+  plan:
+    description: "Formulate a hypothesis about what to improve, why, and how to measure success"
+    steps:
+      - "Define the proposition (e.g., 'Reducing log verbosity will improve response time by 10%')"
+      - "Set initial belief state: (proposition, U, 0.0, []) — Unknown, no confidence, no evidence"
+      - "Define success criteria and measurement method"
+      - "Define rollback path (required by rollback-policy.yaml)"
+    outputs:
+      - "Proposition statement"
+      - "Initial belief state (tetravalent)"
+      - "Success criteria"
+      - "Rollback plan"
+
+  do:
+    description: "Execute the smallest testable change"
+    rules:
+      - "Apply the change in the narrowest scope possible"
+      - "Collect measurements against the baseline"
+      - "This phase is time-boxed — if measurement can't be collected within scope, the change is too large"
+      - "Document what was changed and how to revert it"
+
+  check:
+    description: "Evaluate outcomes using tetravalent logic"
+    truth_value_responses:
+      T:
+        meaning: "Metrics confirm improvement meets or exceeds success criteria"
+        action: "Proceed to Act — standardize the change"
+      F:
+        meaning: "Metrics show no improvement or degradation"
+        action: "Proceed to Act — revert the change"
+      U:
+        meaning: "Insufficient data to determine outcome"
+        action: "Extend measurement period or refine the experiment; return to Do"
+      C:
+        meaning: "Some metrics improved, others degraded"
+        action: "Escalate for human judgment; do not standardize"
+    output: "Formal belief state tuple: (proposition, truth_value, confidence, evidence)"
+
+  act:
+    description: "Respond based on the Check result"
+    responses:
+      T: "Standardize the change, update relevant governance artifacts, log the improvement"
+      F: "Revert the change (per rollback-policy.yaml), log what was learned"
+      U: "Return to Do with refined measurement, or abandon if too uncertain after 3 cycles"
+      C: "Escalate to human with both supporting and contradicting evidence"
+
+  cycle_limit:
+    max_iterations: 3
+    on_limit_reached: "Require human review before continuing"
+    rationale: "Prevents infinite improvement loops"
+
+kaizen_models:
+  description: >
+    Three models for categorizing and prioritizing improvements.
+    An agent must classify an improvement before starting the PDCA cycle.
+
+  reactive:
+    description: "Addressing problems as they arise"
+    triggers:
+      - "Test failures"
+      - "Metric degradation"
+      - "User complaints"
+      - "Reconnaissance gaps"
+    priority: highest
+    authorization: "None required — fix what's broken"
+    connects_to:
+      - "rollback-policy.yaml triggers"
+      - "alignment-policy.yaml escalation_triggers"
+
+  proactive:
+    description: "Improving things that work 'well enough'"
+    triggers:
+      - "Agent observation during routine work"
+      - "Reconnaissance Tier 3 analysis identifying improvement opportunities"
+      - "Patterns across multiple reactive fixes suggesting a systemic weakness"
+    priority: medium
+    authorization: "Propose hypothesis and get human authorization before executing PDCA cycle"
+    constraints:
+      - "Only when reactive issues are resolved and current task allows"
+      - "Must not exceed scope of current task (default.constitution.md Article 4 — Proportionality)"
+      - "Agent proposes the improvement but does not execute without authorization"
+
+  innovative:
+    description: "Introducing new tools, approaches, or structural changes"
+    triggers:
+      - "Repeated proactive improvements revealing a systemic pattern"
+      - "Cross-repo patterns detected by system-integrator persona"
+      - "Human direction"
+    priority: "Lowest urgency, highest impact — strategic changes"
+    authorization: "Always requires human authorization (asimov.constitution.md Article 2, Article 4)"
+    constraints:
+      - "Never agent-initiated autonomously"
+      - "Must present evidence from prior PDCA cycles to justify the proposal"
+
+  model_selection_rule: >
+    When an agent identifies a potential improvement, it must classify it as
+    reactive, proactive, or innovative BEFORE starting the PDCA cycle.
+    The classification determines the authorization level required and the
+    urgency of action.
+
+waste_taxonomy:
+  description: >
+    Six categories of waste (Muda) in AI governance, with detection signals
+    and remediation strategies derived from 5S principles (Sort, Set in Order,
+    Shine, Standardize, Sustain).
+
+  categories:
+    redundant_governance:
+      description: "Duplicate policies, overlapping persona capabilities, repeated checks"
+      detection:
+        - "Multiple policies covering the same scenario"
+        - "Overlapping persona capabilities across different personas"
+        - "Duplicate checks across reconnaissance profiles"
+      remediation:
+        strategy: "Sort"
+        action: "Remove or consolidate duplicates; keep the more specific artifact, deprecate the other"
+
+    over_engineering:
+      description: "Governance artifacts more complex than the situation requires"
+      detection:
+        - "Multi-step processes for low-risk actions"
+        - "Policies with unused provisions"
+        - "Governance artifacts more complex than the situation requires"
+      remediation:
+        strategy: "Sort + Set in Order"
+        action: "Simplify to the minimum needed; if a policy section has never been triggered, question whether it's needed"
+
+    stale_artifacts:
+      description: "Outdated belief states, policies referencing deprecated capabilities"
+      detection:
+        - "Belief states with last_updated older than a defined threshold"
+        - "Policies referencing deprecated capabilities"
+        - "Personas for agents that no longer exist"
+        - "Reconnaissance profiles for repos that have changed structure"
+      remediation:
+        strategy: "Shine"
+        action: "Update or remove stale content; stale artifacts are worse than missing artifacts — they create false confidence"
+
+    unnecessary_escalation:
+      description: "Escalating to humans for decisions the agent is equipped to handle"
+      detection:
+        - "Patterns of human approvals always granted without modification"
+        - "Escalations where confidence was actually above threshold"
+        - "Repeated escalations for the same category of decision"
+      remediation:
+        strategy: "Standardize"
+        action: "If a class of decisions is always approved, propose a policy update to pre-authorize that class; convert repeated human decisions into standing policy"
+
+    context_loss:
+      description: "Agents re-discovering information already known"
+      detection:
+        - "Agents re-discovering information already found in prior reconnaissance"
+        - "Repeated 5 Whys analyses reaching the same root cause"
+        - "Belief states that were resolved but not persisted"
+      remediation:
+        strategy: "Set in Order + Sustain"
+        action: "Ensure reconnaissance results are logged and accessible; link related PDCA cycles so learnings from one inform the next"
+
+    ceremony_without_value:
+      description: "Process steps that don't improve outcomes"
+      detection:
+        - "Log entries nobody reads"
+        - "Review steps that always pass"
+        - "Documentation that duplicates what's already in the artifacts"
+      remediation:
+        strategy: "Sort"
+        action: "Remove the ceremony; if a process step doesn't change outcomes, it's waste; periodically audit governance processes for value"
+
+  five_s_mapping:
+    sort: "Remove waste — eliminate what adds no value"
+    set_in_order: "Organize what remains — make information findable and usable"
+    shine: "Keep current — update artifacts, remove staleness"
+    standardize: "Codify improvements — convert ad-hoc decisions into policy"
+    sustain: "Periodic review — prevent drift back to wasteful patterns"
+
+five_whys:
+  description: >
+    Structured root cause analysis protocol. Agents must follow this before
+    proposing fixes to recurring problems.
+
+  when_to_use:
+    - "A reactive Kaizen issue has occurred more than once"
+    - "A PDCA cycle Check phase returns F — something deeper may be wrong"
+    - "A Contradictory (C) belief state persists after investigation"
+    - "An agent suspects a symptom rather than a root cause"
+
+  protocol:
+    steps:
+      - "State the problem as a clear proposition"
+      - "Ask 'Why did this happen?' — record the answer as a belief state with evidence"
+      - "For each answer, ask 'Why?' again — each level must be supported by evidence, not speculation"
+      - "Continue until: the root cause is actionable, OR 5 levels are reached, OR evidence runs out (belief state = U)"
+      - "If evidence runs out before root cause is found, escalate to human rather than guessing"
+
+  tetravalent_integration:
+    rules:
+      - "Each 'Why' level produces a belief state: (cause_proposition, truth_value, confidence, evidence)"
+      - "If any level is Unknown — flag that the analysis is incomplete, gather more evidence"
+      - "If any level is Contradictory — the causal chain branches; document both paths and escalate"
+      - "Only propose a fix when the root cause belief state is True with confidence >= 0.7"
+
+  constraints:
+    - "Never skip levels — 'I already know the root cause' is not permitted; walk through the evidence"
+    - "Never propose a fix at the symptom level when deeper causes are reachable"
+    - "Log the full chain for auditability (default.constitution.md Article 7)"
+    - "Maximum 5 levels — if root cause isn't found by level 5, escalate"
