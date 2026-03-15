@@ -15,7 +15,7 @@ references:
   - "logic/knowledge-state.schema.json — knowledge transfer states"
   - "schemas/persona.schema.json — agent persona definitions"
   - "schemas/contracts/ — all contract schemas"
-  - "reconaissance-policy.yaml — Tier 1 self-check procedures"
+  - "reconnaissance-policy.yaml — Tier 1 self-check procedures"
 
 level_1_schema_validation:
   description: >
