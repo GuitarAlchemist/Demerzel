@@ -69,6 +69,12 @@
     "reported_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "channel": {
+      "type": "string",
+      "enum": ["crisp", "fuzzy"],
+      "default": "crisp",
+      "description": "Message channel type: crisp (machine-actionable, schema-validated) or fuzzy (explanatory, for human understanding)"
     }
   }
 }
