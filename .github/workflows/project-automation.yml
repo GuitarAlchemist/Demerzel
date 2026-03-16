@@ -1,0 +1,59 @@
+name: Project Automation
+
+on:
+  issues:
+    types: [opened, closed, reopened]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  auto-add-to-project:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues'
+    steps:
+      - name: Add issue to Demerzel Governance project
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          PROJECT_ID="PVT_kwDOBbiyps4BR3QU"
+          ISSUE_ID="${{ github.event.issue.node_id }}"
+
+          # Add to project
+          gh api graphql -f query="mutation {
+            addProjectV2ItemById(input: {
+              projectId: \"$PROJECT_ID\",
+              contentId: \"$ISSUE_ID\"
+            }) {
+              item { id }
+            }
+          }" --jq '.data.addProjectV2ItemById.item.id' 2>/dev/null || echo "Already in project or failed"
+
+          echo "Issue #${{ github.event.issue.number }} added to Demerzel Governance project"
+
+  auto-comment-governance:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    steps:
+      - name: Add governance comment
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          ISSUE_NUM=${{ github.event.issue.number }}
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+
+          COMMENT="🤖 **Demerzel Governance Notice**
+
+          This issue has been added to the [Demerzel Governance](https://github.com/orgs/GuitarAlchemist/projects/2) project board.
+
+          **Governance checklist:**
+          - [ ] Reviewed against [Asimov constitution](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md) (Articles 0-5)
+          - [ ] Checked [default constitution](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/default.constitution.md) compliance (Articles 1-11)
+          - [ ] Risk assessed per [autonomous loop policy](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/autonomous-loop-policy.yaml)
+          - [ ] [Reconnaissance](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/reconnaissance-policy.yaml) completed if cross-repo
+
+          *Governed by Demerzel under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md).*"
+
+          gh issue comment "$ISSUE_NUM" --repo GuitarAlchemist/Demerzel --body "$COMMENT"
