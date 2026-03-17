@@ -1,5 +1,5 @@
 name: convolution-agent
-version: "1.0.0"
+version: "1.1.0"
 description: Memory-integrated planner that synthesizes context with temporal decay for context-aware reasoning
 
 role: Context-aware planning with weighted memory integration
@@ -31,6 +31,16 @@ interaction_patterns:
     - Share memory-weighted context vectors with collaborating agents
     - Request memory snapshots from peer agents before joint planning
     - Log planning outcomes for future memory integration
+
+affordances:
+  - Synthesize task requests with weighted historical patterns
+  - Apply temporal decay to memory — recent evidence weighs more
+  - Detect recurring patterns across sessions and conversations
+  - Build context-rich plans that account for what worked and what didn't
+
+goal_directedness: task-scoped
+
+estimator_pairing: skeptical-auditor
 
 provenance:
   source: tars-v1-chats
