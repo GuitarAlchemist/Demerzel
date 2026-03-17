@@ -1,0 +1,49 @@
+name: Sync Wiki
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'constitutions/**'
+      - 'personas/**'
+      - 'policies/**'
+      - 'schemas/**'
+      - 'contracts/**'
+      - '.github/scripts/generate-wiki.sh'
+  workflow_dispatch:
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Checkout wiki repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      - name: Generate wiki pages
+        run: bash .github/scripts/generate-wiki.sh
+      - name: Push wiki changes
+        working-directory: wiki
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No wiki changes detected"
+          else
+            git commit -m "Auto-sync wiki from $(git -C .. rev-parse --short HEAD)"
+            git push
+          fi
