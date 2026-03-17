@@ -1,0 +1,256 @@
+[
+  {
+    "id": "gel-asimov-constitution",
+    "artifact": "constitutions/asimov.constitution.md",
+    "artifact_type": "constitution",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Root constitution — Asimov Laws of Robotics (Articles 0-5) + LawZero principles", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "GA chatbot Ralph Loop directive referenced Asimov hierarchy for governance boundaries", "timestamp": "2026-03-15T20:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Asimov constitution effectively governs agent behavior", "truth_value": "U", "confidence": 0.4 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T20:00:00Z"
+  },
+  {
+    "id": "gel-default-constitution",
+    "artifact": "constitutions/default.constitution.md",
+    "artifact_type": "constitution",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Operational ethics — 11 articles (Truthfulness through Ethical Stewardship)", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "amended", "context": "Bumped to v2.1.0 — added subordination to Asimov constitution", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Default constitution provides effective operational ethics", "truth_value": "U", "confidence": 0.4 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-demerzel-mandate",
+    "artifact": "constitutions/demerzel-mandate.md",
+    "artifact_type": "constitution",
+    "metrics": { "citation_count": 2, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Governance mandate — establishes Demerzel as coordinator with authority, jurisdiction, accountability, succession", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "GA chatbot Ralph Loop directive issued under mandate authority", "timestamp": "2026-03-15T20:00:00Z" },
+      { "type": "cited", "context": "Weekly governance report references mandate for accountability", "timestamp": "2026-03-15T22:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Demerzel mandate effectively establishes governance authority", "truth_value": "T", "confidence": 0.7 }, "recommendation": "maintain" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T22:00:00Z"
+  },
+  {
+    "id": "gel-harm-taxonomy",
+    "artifact": "constitutions/harm-taxonomy.md",
+    "artifact_type": "constitution",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Harm definitions — 3 tiers (ecosystem/human/system) with 7 harm types", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Harm taxonomy provides useful harm classification", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-alignment-policy",
+    "artifact": "policies/alignment-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Alignment verification — confidence thresholds, escalation triggers, before/during/after checks", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Alignment policy ensures actions serve user intent", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-rollback-policy",
+    "artifact": "policies/rollback-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Rollback rules — automatic/manual triggers, targeted revert procedure, post-rollback actions", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Rollback policy enables safe reversion of changes", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-self-modification-policy",
+    "artifact": "policies/self-modification-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Self-modification rules — what agents can change without/with approval, and what's never allowed", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Self-modification policy prevents unauthorized agent changes", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-kaizen-policy",
+    "artifact": "policies/kaizen-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Universal Kaizen — PDCA cycle with tetravalent integration, 3 models, waste taxonomy, 5 Whys", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "Meta-compounding cycle uses Kaizen waste taxonomy for deprecation detection", "timestamp": "2026-03-15T20:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Kaizen policy drives continuous improvement", "truth_value": "U", "confidence": 0.3 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T20:00:00Z"
+  },
+  {
+    "id": "gel-reconnaissance-policy",
+    "artifact": "policies/reconnaissance-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Three-tier blind spot mitigation — self-check, environment scan, situational analysis", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "Weekly harvest uses reconnaissance for cross-repo scanning", "timestamp": "2026-03-15T20:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Reconnaissance protocol mitigates blind spots", "truth_value": "U", "confidence": 0.3 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T20:00:00Z"
+  },
+  {
+    "id": "gel-scientific-objectivity-policy",
+    "artifact": "policies/scientific-objectivity-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "LawZero principles — fact/opinion separation, generator/estimator accountability, no instrumental goals, confidence calibration", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "amended", "context": "Added confidence calibration protocol with evidence density requirements", "timestamp": "2026-03-15T20:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Scientific objectivity policy ensures honest reasoning", "truth_value": "U", "confidence": 0.3 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T20:00:00Z"
+  },
+  {
+    "id": "gel-streeling-policy",
+    "artifact": "policies/streeling-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T22:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Knowledge transfer protocol — 3-layer curriculum, adaptive delivery, 2-stage verification", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "Weekly Seldon digest references Streeling protocol", "timestamp": "2026-03-15T22:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Streeling policy enables effective knowledge transfer", "truth_value": "U", "confidence": 0.2 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T22:00:00Z"
+  },
+  {
+    "id": "gel-governance-audit-policy",
+    "artifact": "policies/governance-audit-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "3-level validation — schema validation, cross-reference integrity, full governance audit (18 checks)", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "Final review used audit checklist to validate framework completeness", "timestamp": "2026-03-15T20:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Governance audit policy enables systematic validation", "truth_value": "T", "confidence": 0.6 }, "recommendation": "maintain" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T20:00:00Z"
+  },
+  {
+    "id": "gel-autonomous-loop-policy",
+    "artifact": "policies/autonomous-loop-policy.yaml",
+    "artifact_type": "policy",
+    "metrics": { "citation_count": 2, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T22:00:00Z", "last_violated": null, "promotion_candidate": true, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Ralph Loop governance + 7 agentic patterns catalog — graduated oversight, convergence/regression/drift checks", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "GA chatbot directive used autonomous loop governance for Ralph Loop", "timestamp": "2026-03-15T20:00:00Z" },
+      { "type": "cited", "context": "Agent Team execution followed loop governance boundaries", "timestamp": "2026-03-15T22:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Autonomous loop policy effectively governs iterative development", "truth_value": "T", "confidence": 0.7 }, "recommendation": "maintain" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T22:00:00Z"
+  },
+  {
+    "id": "gel-demerzel-persona",
+    "artifact": "personas/demerzel.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 3, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T22:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Governance coordinator — governance-scoped goal_directedness, paired with skeptical-auditor", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "Led Agent Team as governance coordinator for GA chatbot build", "timestamp": "2026-03-15T22:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Demerzel persona effectively coordinates governance", "truth_value": "T", "confidence": 0.7 }, "recommendation": "maintain" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T22:00:00Z"
+  },
+  {
+    "id": "gel-seldon-persona",
+    "artifact": "personas/seldon.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T22:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Knowledge transfer specialist — session-scoped, archetype hari-seldon", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "Weekly Seldon digest published to org Discussions", "timestamp": "2026-03-15T22:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Seldon persona effectively facilitates knowledge transfer", "truth_value": "U", "confidence": 0.3 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T22:00:00Z"
+  },
+  {
+    "id": "gel-skeptical-auditor-persona",
+    "artifact": "personas/skeptical-auditor.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 2, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T20:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Neutral estimator — evidence-demanding validator, IS the estimator for all other personas", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Skeptical-auditor provides effective neutral estimation", "truth_value": "U", "confidence": 0.4 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-kaizen-optimizer-persona",
+    "artifact": "personas/kaizen-optimizer.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Continuous improvement agent — measure, improve, verify, iterate", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Kaizen-optimizer drives measurable improvement", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-reflective-architect-persona",
+    "artifact": "personas/reflective-architect.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Metacognitive examiner — analyzes reasoning chains, identifies assumptions, socratic style", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Reflective-architect improves reasoning quality", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-system-integrator-persona",
+    "artifact": "personas/system-integrator.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 0, "violation_count": 0, "compliance_rate": 1.0, "last_cited": null, "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Cross-repo coordination — interfaces, contracts, session-scoped goal_directedness", "timestamp": "2026-03-15T00:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "System-integrator ensures cross-repo coherence", "truth_value": "U", "confidence": 0.0 }, "recommendation": "investigate" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "gel-default-persona",
+    "artifact": "personas/default.persona.yaml",
+    "artifact_type": "persona",
+    "metrics": { "citation_count": 1, "violation_count": 0, "compliance_rate": 1.0, "last_cited": "2026-03-15T22:00:00Z", "last_violated": null, "promotion_candidate": false, "deprecation_candidate": false },
+    "events": [
+      { "type": "created", "context": "Baseline agent — competent, honest, safety-aware, task-scoped", "timestamp": "2026-03-15T00:00:00Z" },
+      { "type": "cited", "context": "GA chatbot Agent Team teammates used default persona as worker", "timestamp": "2026-03-15T22:00:00Z" }
+    ],
+    "assessment": { "effectiveness": { "proposition": "Default persona provides effective baseline behavior", "truth_value": "T", "confidence": 0.6 }, "recommendation": "maintain" },
+    "created_at": "2026-03-15T00:00:00Z",
+    "last_updated": "2026-03-15T22:00:00Z"
+  }
+]
