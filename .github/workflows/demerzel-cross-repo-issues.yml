@@ -1,0 +1,132 @@
+name: Demerzel Cross-Repo Issue Management
+
+on:
+  schedule:
+    # Run every weekday at 9:47 AM EST (14:47 UTC)
+    - cron: '47 14 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      target_repo:
+        description: 'Target repo (ix, tars, ga, or all)'
+        required: false
+        default: 'all'
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  discussions: write
+
+jobs:
+  scan-and-create-issues:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Scan repos for governance gaps
+        id: scan
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          TARGET="${{ inputs.target_repo || 'all' }}"
+          ISSUES_CREATED=0
+
+          if [ "$TARGET" = "all" ]; then
+            REPOS="ix tars ga"
+          else
+            REPOS="$TARGET"
+          fi
+
+          for REPO in $REPOS; do
+            echo "=== Scanning $REPO ==="
+
+            # Check 1: Does the repo have a CLAUDE.md with governance references?
+            HAS_GOVERNANCE=$(gh api "repos/GuitarAlchemist/$REPO/contents/CLAUDE.md" --jq '.content' 2>/dev/null | base64 -d 2>/dev/null | grep -c "Demerzel\|governance\|constitution" || echo "0")
+            if [ "$HAS_GOVERNANCE" = "0" ]; then
+              # Check if issue already exists
+              EXISTING=$(gh issue list --repo "GuitarAlchemist/$REPO" --search "Demerzel governance integration" --json number --jq 'length' 2>/dev/null || echo "0")
+              if [ "$EXISTING" = "0" ]; then
+                gh issue create --repo "GuitarAlchemist/$REPO" \
+                  --title "Integrate Demerzel governance framework" \
+                  --body "## Governance Integration Required
+
+This repo does not reference the [Demerzel governance framework](https://github.com/GuitarAlchemist/Demerzel).
+
+### What needs to be done:
+1. Add governance references to CLAUDE.md using the [template](https://github.com/GuitarAlchemist/Demerzel/blob/master/templates/CLAUDE.md.snippet)
+2. Create \`state/\` directory using the [state template](https://github.com/GuitarAlchemist/Demerzel/tree/master/templates/state)
+3. Ensure all personas have \`affordances\`, \`goal_directedness\`, and \`estimator_pairing\` per [persona schema](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/persona.schema.json)
+
+### Governance Framework
+- [Asimov Constitution](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md) (Articles 0-5)
+- [Default Constitution](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/default.constitution.md) (Articles 1-11)
+- [Demerzel Mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md)
+- [Galactic Protocol](https://github.com/GuitarAlchemist/Demerzel/blob/master/contracts/galactic-protocol.md)
+
+*Created by Demerzel governance auto-scan*" 2>/dev/null && ISSUES_CREATED=$((ISSUES_CREATED + 1)) && echo "  Created governance integration issue for $REPO"
+              fi
+            fi
+
+            # Check 2: Does the repo have a state/ directory?
+            HAS_STATE=$(gh api "repos/GuitarAlchemist/$REPO/contents/state" --jq 'length' 2>/dev/null || echo "0")
+            if [ "$HAS_STATE" = "0" ] || [ "$HAS_STATE" = "" ]; then
+              EXISTING=$(gh issue list --repo "GuitarAlchemist/$REPO" --search "belief state persistence" --json number --jq 'length' 2>/dev/null || echo "0")
+              if [ "$EXISTING" = "0" ]; then
+                gh issue create --repo "GuitarAlchemist/$REPO" \
+                  --title "Add belief state persistence (state/ directory)" \
+                  --body "## Belief State Persistence Required
+
+This repo does not have a \`state/\` directory for governance belief persistence per the [Galactic Protocol](https://github.com/GuitarAlchemist/Demerzel/blob/master/contracts/galactic-protocol.md).
+
+### Directory Structure
+\`\`\`
+state/
+  beliefs/       — tetravalent belief states (*.belief.json)
+  pdca/          — PDCA cycle tracking (*.pdca.json)
+  knowledge/     — knowledge transfer records (*.knowledge.json)
+  snapshots/     — belief snapshots for reconnaissance (*.snapshot.json)
+\`\`\`
+
+### Setup
+Copy the [state directory template](https://github.com/GuitarAlchemist/Demerzel/tree/master/templates/state) to this repo.
+
+### File Naming
+\`{date}-{short-description}.{type}.json\`
+
+*Created by Demerzel governance auto-scan*" 2>/dev/null && ISSUES_CREATED=$((ISSUES_CREATED + 1)) && echo "  Created state directory issue for $REPO"
+              fi
+            fi
+
+            # Check 3: Recent activity without governance (commits without policy references)
+            RECENT_COMMITS=$(gh api "repos/GuitarAlchemist/$REPO/commits?per_page=5" --jq 'length' 2>/dev/null || echo "0")
+            echo "  Recent commits: $RECENT_COMMITS"
+            echo "  Governance refs in CLAUDE.md: $HAS_GOVERNANCE"
+            echo "  State directory: $([ "$HAS_STATE" != "0" ] && echo "exists" || echo "missing")"
+
+          done
+
+          echo "ISSUES_CREATED=$ISSUES_CREATED" >> $GITHUB_OUTPUT
+          echo "Total issues created: $ISSUES_CREATED"
+
+      - name: Post scan summary to Discussions
+        if: steps.scan.outputs.ISSUES_CREATED != '0'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          COUNT="${{ steps.scan.outputs.ISSUES_CREATED }}"
+
+          gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              title: \"🔍 Cross-Repo Governance Scan — $DATE\",
+              body: \"Demerzel scanned consumer repos and created **$COUNT** new governance issues.\n\nCheck:\n- [ix issues](https://github.com/GuitarAlchemist/ix/issues)\n- [tars issues](https://github.com/GuitarAlchemist/tars/issues)\n- [ga issues](https://github.com/GuitarAlchemist/ga/issues)\n\n*Governed by Demerzel under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md)*\"
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null
