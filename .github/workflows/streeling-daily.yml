@@ -1,9 +1,11 @@
-name: Streeling Weekly Harvest & Report
+name: Streeling Harvest & Meta-Compounding
 
 on:
   schedule:
-    # Run every Friday at 13:17 UTC (8:17 AM EST)
+    # Full harvest + report: Fridays 8:17 AM EST
     - cron: '17 13 * * 5'
+    # Lightweight compounding scan: daily 8:17 AM EST (Mon-Thu)
+    - cron: '17 13 * * 1-4'
   workflow_dispatch: # Allow manual trigger anytime
 
 permissions:
@@ -126,6 +128,17 @@ jobs:
           echo "Report generated:"
           cat harvest-report.md
 
+      - name: Check if Friday (full report day)
+        id: check_day
+        run: |
+          DOW=$(date -u +%u)
+          if [ "$DOW" = "5" ]; then
+            echo "IS_FRIDAY=true" >> $GITHUB_OUTPUT
+          else
+            echo "IS_FRIDAY=false" >> $GITHUB_OUTPUT
+          fi
+          echo "Day of week: $DOW (5=Friday)"
+
       - name: Post to Demerzel Discussions
         if: steps.harvest.outputs.HARVEST_COMPLETE == 'true'
         env:
@@ -146,8 +159,9 @@ jobs:
           }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post to Demerzel Discussions")
           echo "Demerzel Discussion: $URL"
 
-      - name: Generate Seldon academic digest
+      - name: Generate Seldon academic digest (Fridays only)
         id: seldon
+        if: steps.check_day.outputs.IS_FRIDAY == 'true'
         run: |
           DATE=$(date -u +%Y-%m-%d)
 
@@ -207,8 +221,8 @@ jobs:
 
           echo "SELDON_COMPLETE=true" >> $GITHUB_OUTPUT
 
-      - name: Post Seldon digest to org Discussions
-        if: steps.seldon.outputs.SELDON_COMPLETE == 'true'
+      - name: Post Seldon digest to org Discussions (Fridays only)
+        if: steps.seldon.outputs.SELDON_COMPLETE == 'true' && steps.check_day.outputs.IS_FRIDAY == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
