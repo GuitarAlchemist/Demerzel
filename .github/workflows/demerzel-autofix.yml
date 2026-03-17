@@ -56,11 +56,9 @@ jobs:
           ### Issue Assessment
           EOF
 
-          # Process issues without subshell to preserve GITHUB_OUTPUT
-          ISSUE_LIST=$(echo "$ISSUES" | jq -r '.[] | "\(.number)|\(.title)"')
-          for ITEM in $ISSUE_LIST; do
-            NUM=$(echo "$ITEM" | cut -d'|' -f1)
-            TITLE=$(echo "$ITEM" | cut -d'|' -f2-)
+          # Process issues line-by-line to preserve titles with spaces
+          while IFS='|' read -r NUM TITLE; do
+            [ -z "$NUM" ] && continue
             echo "" >> remediation-report.md
             echo "#### #$NUM: $TITLE" >> remediation-report.md
 
@@ -110,7 +108,7 @@ jobs:
                 echo "- **Auto-fixable:** Unknown — requires manual assessment" >> remediation-report.md
                 ;;
             esac
-          done < <(echo "$ISSUE_LIST")
+          done < <(echo "$ISSUES" | jq -r '.[] | "\(.number)|\(.title)"')
 
           echo "" >> remediation-report.md
           echo "---" >> remediation-report.md
