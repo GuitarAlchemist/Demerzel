@@ -1,0 +1,12 @@
+{
+  "id": "dir-tars-ai-governance-functions-2026-03-17",
+  "type": "compliance-requirement",
+  "priority": "high",
+  "source_article": "demerzel-mandate.md Section 3 — Demerzel coordinates cross-repo governance; autonomous-loop-policy.yaml — Demerzel-initiated governance loops",
+  "target_repo": "tars",
+  "directive_content": "Build TARS AI functions that make Demerzel governance executable. Five function groups: (1) Governance Validation Functions — schema validation, cross-reference integrity checks, constitutional compliance evaluation as executable F# functions. (2) Belief State Engine — persist/query/update tetravalent belief states in state/beliefs/ as real F# data structures, send compliance reports via Galactic Protocol. (3) Seldon Teaching Engine — evaluate learner comprehension programmatically, generate adaptive content from belief states, execute 5 Whys as reasoning chains. (4) Meta-Compounding Engine — analyze governance effectiveness with semantic reasoning, propose promotions based on evidence analysis, evolve governance grammar. (5) Grammar Governance — constrain AI function outputs to constitutional compliance, integrate with TARS probabilistic grammars so functions provably cannot violate Asimov Laws. Each function group should be a separate TARS module. All functions must follow the Galactic Protocol for communication with Demerzel. Use existing tetravalent-state.schema.json, kaizen-pdca-state.schema.json, knowledge-state.schema.json, and loop-state.schema.json as the data contracts.",
+  "deadline": "2026-04-15T00:00:00Z",
+  "issued_by": "demerzel",
+  "issued_at": "2026-03-17T02:30:00Z",
+  "channel": "crisp"
+}
