@@ -369,11 +369,123 @@ Try asking a specific music theory question!
           DISCUSSION_ID="${{ steps.answer.outputs.DISCUSSION_ID }}"
           BODY=$(cat answer.md | jq -Rs .)
 
-          gh api graphql -f query="mutation {
+          COMMENT_URL=$(gh api graphql -f query="mutation {
             addDiscussionComment(input: {
               discussionId: \"$DISCUSSION_ID\",
               body: $BODY
             }) {
               comment { url }
             }
-          }" --jq '.data.addDiscussionComment.comment.url' 2>&1
+          }" --jq '.data.addDiscussionComment.comment.url' 2>&1)
+          echo "Answer posted: $COMMENT_URL"
+
+      - name: Compound from Q&A interaction
+        if: steps.answer.outputs.HAS_ANSWER == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          TOPIC="${{ steps.answer.outputs.TOPIC }}"
+          DISCUSSION_ID="${{ steps.answer.outputs.DISCUSSION_ID }}"
+
+          # Create a knowledge state entry for this Q&A interaction
+          cat > qa-knowledge-state.json << EOF
+          {
+            "id": "ks-qa-${TOPIC}-$(date -u +%Y%m%d%H%M%S)",
+            "concept": "Music theory Q&A: ${TOPIC}",
+            "layer": "experiential",
+            "source": {
+              "artifact": "GitHub Discussions Q&A",
+              "reconnaissance": "Discussion ${DISCUSSION_ID}"
+            },
+            "learner": {
+              "type": "human",
+              "identifier": "github-community"
+            },
+            "delivery_mode": "narrative",
+            "assessment": {
+              "belief_state_before": {
+                "proposition": "User understands ${TOPIC}",
+                "truth_value": "U",
+                "confidence": 0.0
+              },
+              "belief_state_after": {
+                "proposition": "User understands ${TOPIC}",
+                "truth_value": "U",
+                "confidence": 0.5
+              },
+              "behavioral_verification": "pending",
+              "attempts": 1,
+              "outcome": "in_progress"
+            },
+            "taught_by": "seldon",
+            "created_at": "${DATE}",
+            "last_updated": "${DATE}"
+          }
+          EOF
+
+          # Update evolution log — cite relevant governance artifacts
+          case "$TOPIC" in
+            chords|scales|intervals|modes)
+              ARTIFACT="personas/seldon.persona.yaml"
+              CITATION="Seldon answered ${TOPIC} question via Streeling protocol"
+              ;;
+            progressions)
+              ARTIFACT="policies/streeling-policy.yaml"
+              CITATION="Streeling three-layer curriculum used for ${TOPIC} knowledge delivery"
+              ;;
+            *)
+              ARTIFACT="policies/streeling-policy.yaml"
+              CITATION="Streeling knowledge transfer for general music theory"
+              ;;
+          esac
+
+          # Log compounding event
+          cat > qa-compound-event.md << EOF
+          ### Q&A Compounding Event
+
+          **Timestamp:** ${DATE}
+          **Topic:** ${TOPIC}
+          **Discussion:** ${DISCUSSION_ID}
+          **Artifact cited:** ${ARTIFACT}
+          **Citation:** ${CITATION}
+
+          **Compounding insights:**
+          - Seldon persona used for knowledge delivery (citation_count += 1)
+          - Streeling policy governing the interaction (citation_count += 1)
+          - GA domain skills provided the knowledge (domain layer active)
+          - TARS belief state engine assessed confidence (governance layer active)
+
+          **Curriculum impact:**
+          - Topic "${TOPIC}" has been asked — track frequency for curriculum prioritization
+          - If this topic is asked 3+ times → candidate for dedicated teaching resource
+          - Human learner comprehension = pending (no behavioral verification possible via Discussions)
+          EOF
+
+          echo "=== Q&A Compounding Event ==="
+          cat qa-compound-event.md
+
+          # Post compounding note as a smaller discussion (only if interesting pattern detected)
+          TOPIC_COUNT=$(gh api graphql -f query='query {
+            repository(owner:"GuitarAlchemist", name:"Demerzel") {
+              discussions(last: 50, categoryId:"DIC_kwDORnMyyc4C4eDU") {
+                nodes { title }
+              }
+            }
+          }' --jq "[.data.repository.discussions.nodes[] | select(.title | test(\"${TOPIC}\"; \"i\"))] | length" 2>/dev/null || echo "0")
+
+          echo "Topic '${TOPIC}' appears in ${TOPIC_COUNT} discussions"
+
+          if [ "$TOPIC_COUNT" -ge 3 ]; then
+            echo "PATTERN DETECTED: ${TOPIC} asked 3+ times — promotion candidate for dedicated resource"
+            gh api graphql -f query="mutation {
+              createDiscussion(input: {
+                repositoryId: \"R_kgDORnMyyQ\",
+                categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+                title: \"🔄 Compounding: '${TOPIC}' topic trending in Q&A\",
+                body: \"Seldon has answered **${TOPIC_COUNT}** questions about **${TOPIC}** in the Q&A channel.\n\nPer the governance promotion protocol, frequently-asked topics (3+) are candidates for dedicated teaching resources.\n\n**Proposed action:** Create a pinned discussion or guide for '${TOPIC}' to reduce repetitive Q&A and improve self-service learning.\n\n*Detected by Demerzel meta-compounding cycle from Q&A interaction data.*\"
+              }) {
+                discussion { url }
+              }
+            }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null
+          fi
