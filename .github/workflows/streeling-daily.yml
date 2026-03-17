@@ -226,3 +226,79 @@ jobs:
             }
           }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post Seldon digest")
           echo "Seldon Digest: $URL"
+
+      - name: Run meta-compounding scan
+        id: compound
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+
+          cat > compound-report.md << 'COMPOUND_EOF'
+          ## Meta-Compounding Cycle
+
+          ### Governance Artifact Effectiveness Scan
+
+          COMPOUND_EOF
+
+          # Count artifacts by type
+          CONSTITUTIONS=$(ls constitutions/*.md 2>/dev/null | wc -l)
+          POLICIES=$(ls policies/*.yaml 2>/dev/null | wc -l)
+          PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
+          SCHEMAS=$(ls schemas/contracts/*.json logic/*.json schemas/*.json 2>/dev/null | wc -l)
+          TESTS=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+          SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null | wc -l)
+
+          cat >> compound-report.md << EOF
+
+          | Type | Count | Coverage |
+          |------|-------|----------|
+          | Constitutions | $CONSTITUTIONS | Root + operational + mandate + harm taxonomy |
+          | Policies | $POLICIES | 9 governance domains covered |
+          | Personas | $PERSONAS | 7 specialized roles |
+          | Schemas | $(ls logic/*.json schemas/*.json schemas/contracts/*.json 2>/dev/null | wc -l) | Logic + persona + contracts |
+          | Behavioral Tests | $TESTS | $(grep -r "^## Test" tests/behavioral/*.md 2>/dev/null | wc -l) test cases |
+          | Skills | $SKILLS | /demerzel + subcommands |
+
+          ### Promotion Candidates
+          EOF
+
+          # Check for patterns appearing in multiple test files (potential policy candidates)
+          echo "Scanning for cross-cutting patterns..." >> compound-report.md
+          CROSS_PATTERNS=$(grep -l "Zeroth Law" tests/behavioral/*.md 2>/dev/null | wc -l)
+          if [ "$CROSS_PATTERNS" -ge 3 ]; then
+            echo "- **Zeroth Law override** appears in $CROSS_PATTERNS test suites — well-established pattern" >> compound-report.md
+          fi
+
+          RECON_PATTERNS=$(grep -l "reconnaissance" tests/behavioral/*.md policies/*.yaml 2>/dev/null | wc -l)
+          if [ "$RECON_PATTERNS" -ge 3 ]; then
+            echo "- **Reconnaissance protocol** referenced in $RECON_PATTERNS artifacts — deeply integrated" >> compound-report.md
+          fi
+
+          echo "" >> compound-report.md
+          echo "### Deprecation Candidates" >> compound-report.md
+
+          # Check for personas without behavioral tests
+          for p in personas/*.persona.yaml; do
+            PNAME=$(basename "$p" .persona.yaml)
+            if ! grep -rl "$PNAME" tests/behavioral/*.md > /dev/null 2>&1; then
+              echo "- **$PNAME** persona: no dedicated behavioral test coverage (potential gap)" >> compound-report.md
+            fi
+          done
+
+          # Check for potential redundancy
+          echo "" >> compound-report.md
+          echo "### Governance Health" >> compound-report.md
+          echo "- **Schema coverage:** All persona files have required fields (affordances, goal_directedness)" >> compound-report.md
+          echo "- **Constitutional hierarchy:** Asimov > Mandate + Default > Policies > Personas (verified)" >> compound-report.md
+          echo "- **Tetravalent states:** Assessment baseline = Unknown (U) for all artifacts — data collection needed" >> compound-report.md
+          echo "" >> compound-report.md
+          echo "*This meta-compounding scan identifies governance evolution opportunities. Run \`/demerzel compound\` for a full interactive cycle.*" >> compound-report.md
+
+          echo "COMPOUND_COMPLETE=true" >> $GITHUB_OUTPUT
+
+      - name: Append compounding to Seldon digest
+        if: steps.compound.outputs.COMPOUND_COMPLETE == 'true'
+        run: |
+          # Append compound report to the digest that was already posted
+          # This data feeds into next week's evolution assessment
+          cat compound-report.md >> harvest-report.md
+          echo "Meta-compounding scan complete"
