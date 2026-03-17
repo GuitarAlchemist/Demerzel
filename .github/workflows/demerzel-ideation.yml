@@ -1,0 +1,187 @@
+name: Demerzel & Seldon Ideation
+
+on:
+  schedule:
+    # Generate ideas every Wednesday at 8:47 AM EST (13:47 UTC)
+    - cron: '47 13 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  discussions: write
+  issues: write
+
+jobs:
+  generate-ideas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Analyze ecosystem and generate ideas
+        id: ideate
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          IDEAS=""
+          IDEA_COUNT=0
+
+          # === SOURCE 1: Governance Evolution Gaps ===
+          # Check evolution seed for artifacts with zero citations
+          UNCITED=$(jq '[.[] | select(.metrics.citation_count == 0)] | length' examples/sample-data/governance-evolution-seed.json 2>/dev/null || echo "0")
+          if [ "$UNCITED" -gt 3 ]; then
+            IDEA_COUNT=$((IDEA_COUNT + 1))
+            IDEAS="${IDEAS}
+          ### 💡 Idea ${IDEA_COUNT}: Activate ${UNCITED} uncited governance artifacts
+
+          **Source:** Governance evolution log analysis
+          **Problem:** ${UNCITED} governance artifacts have never been cited in any decision. They may be valuable but untested, or they may be ceremony without value.
+          **Proposal:** Run a \"governance activation sprint\" — for each uncited artifact, find a real scenario where it should apply and test it. Log results to build evidence.
+          **Repos affected:** Demerzel, potentially ix/tars/ga
+          **Kaizen model:** Proactive — improving something that exists but isn't used
+          **Priority:** Medium
+
+          "
+          fi
+
+          # === SOURCE 2: Q&A Pattern Analysis ===
+          QA_COUNT=$(gh api graphql -f query='query {
+            repository(owner:"GuitarAlchemist", name:"Demerzel") {
+              discussions(last:50, categoryId:"DIC_kwDORnMyyc4C4eDU") { totalCount }
+            }
+          }' --jq '.data.repository.discussions.totalCount' 2>/dev/null || echo "0")
+
+          if [ "$QA_COUNT" -gt 0 ]; then
+            # Get topic distribution
+            TOPICS=$(gh api graphql -f query='query {
+              repository(owner:"GuitarAlchemist", name:"Demerzel") {
+                discussions(last:50, categoryId:"DIC_kwDORnMyyc4C4eDU") {
+                  nodes { title }
+                }
+              }
+            }' --jq '.data.repository.discussions.nodes[].title' 2>/dev/null)
+
+            CHORD_Q=$(echo "$TOPICS" | grep -ci "chord" || echo "0")
+            SCALE_Q=$(echo "$TOPICS" | grep -ci "scale\|mode" || echo "0")
+            PROG_Q=$(echo "$TOPICS" | grep -ci "progression" || echo "0")
+
+            if [ "$QA_COUNT" -gt 2 ]; then
+              IDEA_COUNT=$((IDEA_COUNT + 1))
+              IDEAS="${IDEAS}
+          ### 💡 Idea ${IDEA_COUNT}: Create a Music Theory FAQ from Q&A data
+
+          **Source:** ${QA_COUNT} questions in Q&A Discussions
+          **Topic distribution:** chords(${CHORD_Q}), scales/modes(${SCALE_Q}), progressions(${PROG_Q})
+          **Proposal:** Compile the most asked topics into a pinned FAQ discussion or a dedicated guide page. Reduces repetitive questions and improves self-service learning.
+          **Repos affected:** Demerzel (FAQ), GA (integrate into chatbot)
+          **Kaizen model:** Reactive — addressing a pattern that emerged from usage
+          **Priority:** Low
+
+          "
+            fi
+          fi
+
+          # === SOURCE 3: Cross-Repo Integration Gaps ===
+          for REPO in ix tars ga; do
+            HAS_STATE=$(gh api "repos/GuitarAlchemist/$REPO/contents/state" --jq 'length' 2>/dev/null || echo "0")
+            if [ "$HAS_STATE" = "0" ] || [ "$HAS_STATE" = "" ]; then
+              IDEA_COUNT=$((IDEA_COUNT + 1))
+              IDEAS="${IDEAS}
+          ### 💡 Idea ${IDEA_COUNT}: Bootstrap ${REPO} governance integration
+
+          **Source:** Cross-repo reconnaissance scan
+          **Problem:** ${REPO} has no \`state/\` directory — belief persistence and Galactic Protocol communication not possible.
+          **Proposal:** Run a governed Ralph Loop to: (1) add CLAUDE.md governance snippet, (2) create state/ directory, (3) register personas with affordances. Use \`/demerzel directive\` to initiate.
+          **Repos affected:** ${REPO}, Demerzel
+          **Kaizen model:** Proactive — extending governance to ungoverned territory
+          **Priority:** High
+
+          "
+            fi
+          done
+
+          # === SOURCE 4: Skill Coverage Analysis ===
+          SKILL_COUNT=$(ls -d .claude/skills/*/ 2>/dev/null | wc -l)
+          PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
+          TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+
+          if [ "$PERSONA_COUNT" -gt "$TEST_COUNT" ]; then
+            MISSING=$((PERSONA_COUNT - TEST_COUNT))
+            IDEA_COUNT=$((IDEA_COUNT + 1))
+            IDEAS="${IDEAS}
+          ### 💡 Idea ${IDEA_COUNT}: Close behavioral test gap (${MISSING} personas untested)
+
+          **Source:** Governance audit Level 2 (cross-reference integrity)
+          **Problem:** ${PERSONA_COUNT} personas exist but only ${TEST_COUNT} have dedicated behavioral tests.
+          **Proposal:** Create behavioral test cases for each untested persona. Use \`/demerzel audit\` to identify which ones, then generate tests following existing patterns.
+          **Repos affected:** Demerzel
+          **Kaizen model:** Reactive — fixing a known compliance gap
+          **Priority:** Medium
+
+          "
+          fi
+
+          # === SOURCE 5: Technology Opportunities ===
+          IDEA_COUNT=$((IDEA_COUNT + 1))
+          IDEAS="${IDEAS}
+          ### 💡 Idea ${IDEA_COUNT}: Evolve GA chatbot with real-time domain computation
+
+          **Source:** Seldon teaching effectiveness analysis
+          **Problem:** Current GA chatbot answers are static (hardcoded in workflow YAML). The real GA domain engine has 50+ MCP tools and pure domain computation skills that produce dynamic, personalized answers.
+          **Proposal:** Connect the Discussions chatbot to GA's actual MCP server for live domain computation. Users get real-time answers calculated from GA's music theory engine instead of static lookup tables.
+          **Repos affected:** GA (MCP server), Demerzel (chatbot workflow)
+          **Kaizen model:** Innovative — structural change to how knowledge is delivered
+          **Priority:** High
+
+          "
+
+          # === Build final report ===
+          if [ "$IDEA_COUNT" -gt 0 ]; then
+            REPORT="## 🧠 Demerzel & Seldon Ideation — ${DATE}
+
+          **Ideas generated:** ${IDEA_COUNT}
+          **Sources analyzed:** governance evolution, Q&A patterns, cross-repo gaps, skill coverage, technology opportunities
+
+          ---
+          ${IDEAS}
+          ---
+
+          ### How ideas become work
+
+          1. **Community votes** — upvote ideas that matter to you
+          2. **Demerzel evaluates** — ideas with 3+ upvotes are assessed for governance alignment
+          3. **Roadmap addition** — approved ideas become GitHub Issues on the [project board](https://github.com/orgs/GuitarAlchemist/projects/2)
+          4. **Execution** — via governed Ralph Loops or Agent Teams
+
+          *Generated by Demerzel (governance analysis) and Seldon (knowledge patterns) under the [meta-compounding protocol](https://github.com/GuitarAlchemist/Demerzel/blob/master/docs/superpowers/specs/2026-03-15-governance-meta-compounding-design.md).*"
+
+            echo "$REPORT" > ideation-report.md
+            echo "IDEA_COUNT=$IDEA_COUNT" >> $GITHUB_OUTPUT
+            echo "Generated $IDEA_COUNT ideas"
+          else
+            echo "No ideas generated this cycle"
+            echo "IDEA_COUNT=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post ideas to Discussions
+        if: steps.ideate.outputs.IDEA_COUNT != '0'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          BODY=$(cat ideation-report.md | jq -Rs .)
+
+          URL=$(gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDV\",
+              title: \"🧠 Demerzel Ideation — ${DATE}\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post ideas")
+          echo "Ideas Discussion: $URL"
