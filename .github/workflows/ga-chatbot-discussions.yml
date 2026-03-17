@@ -3,12 +3,10 @@ name: GA Chatbot — Music Theory Q&A
 on:
   discussion:
     types: [created]
+  schedule:
+    # Poll every 15 minutes for unanswered questions
+    - cron: '*/15 * * * *'
   workflow_dispatch:
-    inputs:
-      discussion_id:
-        description: 'Discussion node ID to answer'
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -29,22 +27,39 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.discussion_id }}" ]; then
-            DISCUSSION_ID="${{ inputs.discussion_id }}"
-            TITLE="Manual trigger"
-            BODY="Manual trigger"
-          else
+          if [ "${{ github.event_name }}" = "discussion" ]; then
+            # Triggered by discussion event
             DISCUSSION_ID="${{ github.event.discussion.node_id }}"
             TITLE="${{ github.event.discussion.title }}"
             BODY="${{ github.event.discussion.body }}"
-            AUTHOR="${{ github.event.discussion.user.login }}"
+          elif [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Poll mode — find unanswered discussions
+            echo "Polling for unanswered discussions..."
+            UNANSWERED=$(gh api graphql -f query='query {
+              repository(owner:"GuitarAlchemist", name:"Demerzel") {
+                discussions(last: 10, categoryId: "DIC_kwDORnMyyc4C4eDU") {
+                  nodes { id title body comments { totalCount } }
+                }
+              }
+            }' --jq '[.data.repository.discussions.nodes[] | select(.comments.totalCount == 0) | select(.title | test("^(🤖|📚|🔄|🔧)") | not)] | first // empty' 2>/dev/null)
 
-            # Skip bot-created discussions (prevent infinite loops)
-            if echo "$TITLE" | grep -qiE "^(🤖|📚|🔄|🔧)"; then
-              echo "Skipping bot-created discussion: $TITLE"
+            if [ -z "$UNANSWERED" ] || [ "$UNANSWERED" = "null" ]; then
+              echo "No unanswered questions found"
               echo "HAS_ANSWER=false" >> $GITHUB_OUTPUT
               exit 0
             fi
+
+            DISCUSSION_ID=$(echo "$UNANSWERED" | jq -r '.id')
+            TITLE=$(echo "$UNANSWERED" | jq -r '.title')
+            BODY=$(echo "$UNANSWERED" | jq -r '.body')
+            echo "Found unanswered: $TITLE"
+          fi
+
+          # Skip bot-created discussions
+          if echo "$TITLE" | grep -qiE "^(🤖|📚|🔄|🔧|Meta-Compounding|Seldon|Demerzel|Auto-Remediation|Cross-Repo)"; then
+            echo "Skipping bot discussion: $TITLE"
+            echo "HAS_ANSWER=false" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
           # Combine title and body for analysis
