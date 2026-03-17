@@ -1,0 +1,266 @@
+name: GA Chatbot — Music Theory Q&A
+
+on:
+  discussion:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      discussion_id:
+        description: 'Discussion node ID to answer'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  answer-music-question:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Only respond to discussions in Q&A or General categories
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.discussion.category.slug == 'q-a' ||
+       github.event.discussion.category.slug == 'general')
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Process music theory question
+        id: answer
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.discussion_id }}" ]; then
+            DISCUSSION_ID="${{ inputs.discussion_id }}"
+            TITLE="Manual trigger"
+            BODY="Manual trigger"
+          else
+            DISCUSSION_ID="${{ github.event.discussion.node_id }}"
+            TITLE="${{ github.event.discussion.title }}"
+            BODY="${{ github.event.discussion.body }}"
+          fi
+
+          # Combine title and body for analysis
+          QUESTION=$(echo "$TITLE $BODY" | tr '[:upper:]' '[:lower:]')
+
+          # Music theory knowledge base (pure domain computation, zero LLM)
+          ANSWER=""
+          TOPIC=""
+
+          # === SCALES ===
+          if echo "$QUESTION" | grep -qiE "(scale|major scale|minor scale|notes in|what notes)"; then
+            TOPIC="scales"
+            ANSWER="## 🎵 Scale Reference
+
+**Major Scales (W-W-H-W-W-W-H):**
+| Key | Notes |
+|-----|-------|
+| C Major | C D E F G A B |
+| G Major | G A B C D E F# |
+| D Major | D E F# G A B C# |
+| A Major | A B C# D E F# G# |
+| E Major | E F# G# A B C# D# |
+| F Major | F G A Bb C D E |
+| Bb Major | Bb C D Eb F G A |
+| Eb Major | Eb F G Ab Bb C D |
+
+**Natural Minor Scales (W-H-W-W-H-W-W):**
+| Key | Notes |
+|-----|-------|
+| A Minor | A B C D E F G |
+| E Minor | E F# G A B C D |
+| D Minor | D E F G A Bb C |
+| B Minor | B C# D E F# G A |
+| G Minor | G A Bb C D Eb F |
+| C Minor | C D Eb F G Ab Bb |
+
+**Scale Formula:** Major = W-W-H-W-W-W-H | Natural Minor = W-H-W-W-H-W-W | Harmonic Minor = W-H-W-W-H-WH-H
+
+> 💡 **Tip:** Every major scale has a relative minor starting on the 6th degree (e.g., C major → A minor)."
+          fi
+
+          # === CHORDS ===
+          if echo "$QUESTION" | grep -qiE "(chord|triad|seventh|dominant|diminished|augmented|sus|what is a .* chord)"; then
+            TOPIC="chords"
+            ANSWER="## 🎸 Chord Reference
+
+**Triad Types:**
+| Type | Formula | Example (C) | Sound |
+|------|---------|-------------|-------|
+| Major | 1-3-5 | C-E-G | Happy, bright |
+| Minor | 1-b3-5 | C-Eb-G | Sad, dark |
+| Diminished | 1-b3-b5 | C-Eb-Gb | Tense, unstable |
+| Augmented | 1-3-#5 | C-E-G# | Mysterious, unresolved |
+| Sus2 | 1-2-5 | C-D-G | Open, ambiguous |
+| Sus4 | 1-4-5 | C-F-G | Suspended, wanting resolution |
+
+**Seventh Chords:**
+| Type | Formula | Example (C) | Usage |
+|------|---------|-------------|-------|
+| Major 7 | 1-3-5-7 | C-E-G-B | Jazz, dreamy |
+| Dominant 7 | 1-3-5-b7 | C-E-G-Bb | Blues, tension→resolution |
+| Minor 7 | 1-b3-5-b7 | C-Eb-G-Bb | Jazz, smooth |
+| Half-dim 7 | 1-b3-b5-b7 | C-Eb-Gb-Bb | Jazz ii in minor |
+| Dim 7 | 1-b3-b5-bb7 | C-Eb-Gb-A | Passing chord, tension |
+
+> 💡 **Tip:** Dominant 7th chords (like G7) naturally resolve to the chord a 5th below (C)."
+          fi
+
+          # === INTERVALS ===
+          if echo "$QUESTION" | grep -qiE "(interval|semitone|half step|whole step|third|fourth|fifth|octave|what is a .* interval)"; then
+            TOPIC="intervals"
+            ANSWER="## 📏 Interval Reference
+
+| Interval | Semitones | Example (from C) | Sound |
+|----------|-----------|-------------------|-------|
+| Unison (P1) | 0 | C→C | Same note |
+| Minor 2nd (m2) | 1 | C→Db | Dissonant, tense |
+| Major 2nd (M2) | 2 | C→D | Whole step |
+| Minor 3rd (m3) | 3 | C→Eb | Sad, minor quality |
+| Major 3rd (M3) | 4 | C→E | Happy, major quality |
+| Perfect 4th (P4) | 5 | C→F | Open, hymn-like |
+| Tritone (TT) | 6 | C→F# | The \"devil's interval\" |
+| Perfect 5th (P5) | 7 | C→G | Strong, powerful |
+| Minor 6th (m6) | 8 | C→Ab | Bittersweet |
+| Major 6th (M6) | 9 | C→A | Warm, nostalgic |
+| Minor 7th (m7) | 10 | C→Bb | Blues, dominant |
+| Major 7th (M7) | 11 | C→B | Bright tension |
+| Octave (P8) | 12 | C→C | Same note, higher |
+
+> 💡 **Tip:** To identify intervals, count the semitones (half steps) between two notes."
+          fi
+
+          # === MODES ===
+          if echo "$QUESTION" | grep -qiE "(mode|dorian|phrygian|lydian|mixolydian|aeolian|locrian|ionian|modal)"; then
+            TOPIC="modes"
+            ANSWER="## 🎭 Modal Reference
+
+The 7 modes of the major scale (all using C major notes):
+
+| Mode | Starting Note | Pattern | Character |
+|------|--------------|---------|-----------|
+| **Ionian** | C | W-W-H-W-W-W-H | Happy, standard major |
+| **Dorian** | D | W-H-W-W-W-H-W | Minor with bright 6th — jazz, funk |
+| **Phrygian** | E | H-W-W-W-H-W-W | Dark, Spanish/flamenco feel |
+| **Lydian** | F | W-W-W-H-W-W-H | Dreamy, floating (#4) |
+| **Mixolydian** | G | W-W-H-W-W-H-W | Bluesy major (b7) — rock, blues |
+| **Aeolian** | A | W-H-W-W-H-W-W | Natural minor — sad, serious |
+| **Locrian** | B | H-W-W-H-W-W-W | Unstable, rarely used (b2, b5) |
+
+> 💡 **Think of modes as:** starting the major scale from a different note. D Dorian = C major starting on D.
+
+**Common uses:**
+- **Dorian:** Miles Davis \"So What\", Santana
+- **Mixolydian:** Classic rock, \"Sweet Home Alabama\"
+- **Phrygian:** Metal riffs, flamenco guitar
+- **Lydian:** Film scores, dreamy progressions"
+          fi
+
+          # === CHORD PROGRESSIONS ===
+          if echo "$QUESTION" | grep -qiE "(progression|I-IV-V|ii-V-I|chord progression|common progression|song chord)"; then
+            TOPIC="progressions"
+            ANSWER="## 🎼 Common Chord Progressions
+
+**Pop/Rock:**
+| Progression | In C Major | Songs |
+|-------------|-----------|-------|
+| I-V-vi-IV | C-G-Am-F | \"Let It Be\", \"No Woman No Cry\" |
+| I-IV-V-I | C-F-G-C | \"Twist and Shout\", \"La Bamba\" |
+| vi-IV-I-V | Am-F-C-G | \"Save Tonight\", \"Numb\" |
+| I-vi-IV-V | C-Am-F-G | \"Stand By Me\", 50s doo-wop |
+
+**Jazz:**
+| Progression | In C Major | Usage |
+|-------------|-----------|-------|
+| ii-V-I | Dm7-G7-Cmaj7 | The most important jazz progression |
+| I-vi-ii-V | Cmaj7-Am7-Dm7-G7 | \"Rhythm changes\", standards |
+| iii-vi-ii-V | Em7-Am7-Dm7-G7 | Extended turnaround |
+
+**Blues:**
+| Progression | In C | Usage |
+|-------------|------|-------|
+| I7-IV7-V7 | C7-F7-G7 | 12-bar blues foundation |
+
+> 💡 **Roman numerals:** Uppercase = major, lowercase = minor. Numbers refer to scale degrees."
+          fi
+
+          # === CIRCLE OF FIFTHS ===
+          if echo "$QUESTION" | grep -qiE "(circle of fifth|key signature|sharp|flat|how many sharps|how many flats)"; then
+            TOPIC="circle-of-fifths"
+            ANSWER="## ⭕ Circle of Fifths
+
+**Sharp keys (clockwise):**
+| Key | Sharps | Notes |
+|-----|--------|-------|
+| C | 0 | — |
+| G | 1 | F# |
+| D | 2 | F# C# |
+| A | 3 | F# C# G# |
+| E | 4 | F# C# G# D# |
+| B | 5 | F# C# G# D# A# |
+
+**Flat keys (counter-clockwise):**
+| Key | Flats | Notes |
+|-----|-------|-------|
+| F | 1 | Bb |
+| Bb | 2 | Bb Eb |
+| Eb | 3 | Bb Eb Ab |
+| Ab | 4 | Bb Eb Ab Db |
+| Db | 5 | Bb Eb Ab Db Gb |
+
+> 💡 **Memory trick:** Sharps order = Father Charles Goes Down And Ends Battle. Flats = reverse (BEADGCF)."
+          fi
+
+          # === DEFAULT (no match) ===
+          if [ -z "$ANSWER" ]; then
+            TOPIC="general"
+            ANSWER="## 🎵 Guitar Alchemist — Music Theory Assistant
+
+Thanks for your question! I can help with:
+
+- **Scales** — \"What notes are in G major?\" or \"Explain minor scales\"
+- **Chords** — \"What is a dominant 7th chord?\" or \"Chord types\"
+- **Intervals** — \"What is a perfect fifth?\" or \"Interval chart\"
+- **Modes** — \"Explain Dorian mode\" or \"What are the 7 modes?\"
+- **Progressions** — \"Common chord progressions\" or \"What is a ii-V-I?\"
+- **Circle of Fifths** — \"How many sharps in D major?\"
+
+Try asking a specific music theory question!
+
+---
+*Powered by [Guitar Alchemist](https://github.com/GuitarAlchemist/ga) | Governed by [Demerzel](https://github.com/GuitarAlchemist/Demerzel)*"
+          fi
+
+          # Add footer to answer
+          ANSWER="$ANSWER
+
+---
+*🤖 Answered by **Seldon** (Guitar Alchemist Knowledge Transfer Specialist)*
+*Governed by [Demerzel](https://github.com/GuitarAlchemist/Demerzel) under the [Streeling Knowledge Transfer Protocol](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/streeling-policy.yaml)*
+*Topic: $TOPIC | [Ask another question](https://github.com/orgs/GuitarAlchemist/discussions/new?category=q-a)*"
+
+          # Save for posting
+          echo "$ANSWER" > answer.md
+          echo "TOPIC=$TOPIC" >> $GITHUB_OUTPUT
+          echo "HAS_ANSWER=true" >> $GITHUB_OUTPUT
+          echo "DISCUSSION_ID=$DISCUSSION_ID" >> $GITHUB_OUTPUT
+
+      - name: Post answer to discussion
+        if: steps.answer.outputs.HAS_ANSWER == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DISCUSSION_ID="${{ steps.answer.outputs.DISCUSSION_ID }}"
+          BODY=$(cat answer.md | jq -Rs .)
+
+          gh api graphql -f query="mutation {
+            addDiscussionComment(input: {
+              discussionId: \"$DISCUSSION_ID\",
+              body: $BODY
+            }) {
+              comment { url }
+            }
+          }" --jq '.data.addDiscussionComment.comment.url' 2>&1
