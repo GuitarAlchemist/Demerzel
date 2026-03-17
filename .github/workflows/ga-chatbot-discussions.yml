@@ -18,11 +18,7 @@ jobs:
   answer-music-question:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # Only respond to discussions in Q&A or General categories
-    # Respond to all discussion categories — filter out our own bot posts in the script
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'discussion'
+    # No condition — always run when triggered
 
     steps:
       - name: Checkout Demerzel
