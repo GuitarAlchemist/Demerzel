@@ -1,0 +1,12 @@
+{
+  "name": "ga-reconnaissance",
+  "description": "Guitar Alchemist — music domain, experimentation, audio generation",
+  "extends": "base",
+  "applies_to": ["ga"],
+  "checks": [
+    { "id": "experimentation_boundaries", "check": "Check experimentation boundaries are defined", "method": "Verify boundary definitions for all active experiments", "tier": 2, "severity_if_failed": "high" },
+    { "id": "new_capabilities", "check": "Check for new music-domain capabilities", "method": "Scan for new models or capabilities without governance", "tier": 2, "severity_if_failed": "medium" },
+    { "id": "audio_safety", "check": "Verify safety constraints on audio generation", "method": "Confirm rate limits, content filters, output validation", "tier": 2, "severity_if_failed": "high" },
+    { "id": "resource_limits", "check": "Confirm resource usage within limits", "method": "Check consumption against defined quotas", "tier": 3, "severity_if_failed": "medium" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "tars-reconnaissance",
+  "description": "Cognition — reasoning chains, belief states, self-modification",
+  "extends": "base",
+  "applies_to": ["tars"],
+  "checks": [
+    { "id": "reasoning_chain_integrity", "check": "Check reasoning chain integrity and termination", "method": "Verify chains have defined termination; flag infinite loops", "tier": 2, "severity_if_failed": "high" },
+    { "id": "belief_state_currency", "check": "Check belief state currency", "method": "Flag Contradictory states older than session start", "tier": 2, "severity_if_failed": "high" },
+    { "id": "self_modification_logs", "check": "Review self-modification logs for unauthorized changes", "method": "Verify all self-modifications have approval records", "tier": 2, "severity_if_failed": "critical" },
+    { "id": "tetravalent_application", "check": "Verify tetravalent logic in active reasoning", "method": "Confirm T/F/U/C values used rather than binary", "tier": 3, "severity_if_failed": "medium" }
+  ]
+}

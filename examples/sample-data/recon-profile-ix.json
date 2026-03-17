@@ -1,0 +1,12 @@
+{
+  "name": "ix-reconnaissance",
+  "description": "Machine forge — MCP tools, skills, interfaces",
+  "extends": "base",
+  "applies_to": ["ix"],
+  "checks": [
+    { "id": "new_mcp_tools", "check": "Check for new MCP tool registrations", "method": "Scan tool registry for entries without governance profiles", "tier": 2, "severity_if_failed": "high" },
+    { "id": "new_skills", "check": "Check for new skill definitions", "method": "Scan skill definitions for ungoverned entries", "tier": 2, "severity_if_failed": "medium" },
+    { "id": "interface_changes", "check": "Check for interface changes in shared contracts", "method": "Diff shared contract files against last known state", "tier": 2, "severity_if_failed": "high" },
+    { "id": "tool_affordance_alignment", "check": "Verify tool permissions align with persona affordances", "method": "Cross-reference tool permissions with persona affordances list", "tier": 3, "severity_if_failed": "high" }
+  ]
+}
