@@ -1,0 +1,10 @@
+{
+  "id": "dir-integration-ix-2026-03-17",
+  "type": "compliance-requirement",
+  "priority": "high",
+  "source_article": "demerzel-mandate.md",
+  "target_repo": "ix",
+  "directive_content": "Adopt full Demerzel governance integration: (1) Append templates/CLAUDE.md.snippet to CLAUDE.md with section markers, (2) Create full state/ directory structure, (3) Update governance/demerzel submodule to latest master.",
+  "issued_by": "demerzel",
+  "issued_at": "2026-03-17T00:00:00Z"
+}
