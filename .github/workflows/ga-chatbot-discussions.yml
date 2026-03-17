@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     # Only respond to discussions in Q&A or General categories
+    # Respond to all discussion categories — filter out our own bot posts in the script
     if: >
       github.event_name == 'workflow_dispatch' ||
-      (github.event.discussion.category.slug == 'q-a' ||
-       github.event.discussion.category.slug == 'general')
+      github.event_name == 'discussion'
 
     steps:
       - name: Checkout Demerzel
@@ -41,6 +41,14 @@ jobs:
             DISCUSSION_ID="${{ github.event.discussion.node_id }}"
             TITLE="${{ github.event.discussion.title }}"
             BODY="${{ github.event.discussion.body }}"
+            AUTHOR="${{ github.event.discussion.user.login }}"
+
+            # Skip bot-created discussions (prevent infinite loops)
+            if echo "$TITLE" | grep -qiE "^(🤖|📚|🔄|🔧)"; then
+              echo "Skipping bot-created discussion: $TITLE"
+              echo "HAS_ANSWER=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
           fi
 
           # Combine title and body for analysis
