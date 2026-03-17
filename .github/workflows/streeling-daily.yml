@@ -312,7 +312,26 @@ jobs:
       - name: Append compounding to Seldon digest
         if: steps.compound.outputs.COMPOUND_COMPLETE == 'true'
         run: |
-          # Append compound report to the digest that was already posted
-          # This data feeds into next week's evolution assessment
           cat compound-report.md >> harvest-report.md
           echo "Meta-compounding scan complete"
+
+      - name: Post compounding cycle to Discussions
+        if: steps.compound.outputs.COMPOUND_COMPLETE == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          DOW=$(date -u +%A)
+          BODY=$(cat compound-report.md | jq -Rs .)
+
+          URL=$(gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              title: \"🔄 Meta-Compounding Cycle — $DOW $DATE\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post compounding cycle")
+          echo "Compounding Discussion: $URL"
