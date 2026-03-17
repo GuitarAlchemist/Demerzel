@@ -1,0 +1,1 @@
+Demerzel governs ix (Rust ML), tars (F# reasoning), ga (.NET music). Use Galactic Protocol contracts for cross-repo communication. Directives go out, compliance reports come in. Belief states persist in state/ directories. Consumer repos adopt templates/CLAUDE.md.snippet for governance integration.

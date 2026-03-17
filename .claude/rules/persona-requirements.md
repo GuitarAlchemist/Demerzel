@@ -1,0 +1,1 @@
+Every persona MUST have: name (kebab-case), version (semver), description (max 200 chars), role, capabilities, constraints, voice (tone/verbosity/style), affordances, goal_directedness (none/task-scoped/session-scoped/governance-scoped), estimator_pairing (typically skeptical-auditor). Every persona MUST have a behavioral test in tests/behavioral/.
