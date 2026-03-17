@@ -12,6 +12,12 @@ permissions:
   contents: read
   discussions: write
 
+env:
+  CLAUDE_MODEL: claude-sonnet-4-20250514
+  CLAUDE_MAX_TOKENS: 2048
+  MCP_TIMEOUT_SECONDS: 30
+  DIRECT_MCP_TIMEOUT_SECONDS: 10
+
 jobs:
   answer-music-question:
     runs-on: ubuntu-latest
@@ -26,6 +32,8 @@ jobs:
         id: answer
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GA_MCP_URL: ${{ secrets.GA_MCP_URL }}
         run: |
           if [ "${{ github.event_name }}" = "discussion" ]; then
             # Triggered by discussion event
@@ -65,9 +73,528 @@ jobs:
           # Combine title and body for analysis
           QUESTION=$(echo "$TITLE $BODY" | tr '[:upper:]' '[:lower:]')
 
-          # Music theory knowledge base (pure domain computation, zero LLM)
+          # ===================================================================
+          # THREE-TIER RESOLUTION FUNCTIONS
+          # Tier 1: Claude + MCP tools (richest answers)
+          # Tier 2: Direct MCP server call (structured but no LLM)
+          # Tier 3: Static lookup tables (fallback, always available)
+          # ===================================================================
+
+          TOOLS_USED="none"
+          RESOLUTION_TIER="tier-3-static"
+          COMPUTATION_TYPE="PURE DOMAIN (zero LLM calls)"
+          CONFIDENCE="1.0 (deterministic domain computation)"
+          DATA_SOURCE="GA.Business.Core music theory primitives"
+
+          # --- Tier 1: Claude API with MCP tool definitions ---
+          call_claude_with_mcp() {
+            local question="$1"
+
+            if [ -z "$ANTHROPIC_API_KEY" ]; then
+              echo "::notice::ANTHROPIC_API_KEY not set — skipping Tier 1 (Claude+MCP)"
+              return 1
+            fi
+
+            local tools_json='[
+              {
+                "name": "ga_scale",
+                "description": "Get scale information: notes, intervals, and patterns for any scale type in any key. Supports major, minor (natural, harmonic, melodic), pentatonic, blues, and modal scales.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "root": {"type": "string", "description": "Root note (e.g. C, F#, Bb)"},
+                    "scale_type": {"type": "string", "description": "Scale type (e.g. major, natural_minor, harmonic_minor, pentatonic_major, blues)"}
+                  },
+                  "required": ["root", "scale_type"]
+                }
+              },
+              {
+                "name": "ga_chord",
+                "description": "Get chord information: notes, intervals, and voicings for any chord type. Supports triads, sevenths, extended, altered, and suspended chords.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "root": {"type": "string", "description": "Root note (e.g. C, F#, Bb)"},
+                    "chord_type": {"type": "string", "description": "Chord type (e.g. major, minor, dominant7, maj7, dim, aug, sus2, sus4)"}
+                  },
+                  "required": ["root", "chord_type"]
+                }
+              },
+              {
+                "name": "ga_interval",
+                "description": "Calculate interval between two notes or get interval information. Returns semitones, quality, and common name.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "from_note": {"type": "string", "description": "Starting note (e.g. C, F#)"},
+                    "to_note": {"type": "string", "description": "Target note (e.g. G, Bb)"}
+                  },
+                  "required": ["from_note", "to_note"]
+                }
+              },
+              {
+                "name": "ga_fretboard",
+                "description": "Get fretboard diagram or note positions for scales and chords on guitar. Returns ASCII fretboard visualization.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {"type": "string", "description": "What to display: scale or chord"},
+                    "root": {"type": "string", "description": "Root note"},
+                    "name": {"type": "string", "description": "Scale or chord name"},
+                    "tuning": {"type": "string", "description": "Guitar tuning (default: standard)", "default": "standard"}
+                  },
+                  "required": ["type", "root", "name"]
+                }
+              },
+              {
+                "name": "ga_voicing",
+                "description": "Get guitar chord voicings and fingerings. Returns multiple voicing options with finger positions.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "root": {"type": "string", "description": "Root note (e.g. C, F#, Bb)"},
+                    "chord_type": {"type": "string", "description": "Chord type (e.g. major, minor, dom7)"},
+                    "position": {"type": "string", "description": "Fret position preference (open, barre, or fret number)", "default": "open"}
+                  },
+                  "required": ["root", "chord_type"]
+                }
+              },
+              {
+                "name": "ga_chat",
+                "description": "General music theory chat. Use for questions that do not map to a specific tool — modes, progressions, theory concepts, practice advice.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string", "description": "The music theory question or topic"}
+                  },
+                  "required": ["message"]
+                }
+              }
+            ]'
+
+            local system_prompt="You are Seldon, the Guitar Alchemist music theory assistant. You answer music theory questions with precision and warmth. Use the GA MCP tools to provide accurate, computed answers. Format responses in GitHub-flavored Markdown with tables where appropriate. Always include practical tips for guitarists. Keep answers focused and educational."
+
+            local escaped_question
+            escaped_question=$(echo "$question" | jq -Rs .)
+
+            local request_body
+            request_body=$(jq -n \
+              --arg model "$CLAUDE_MODEL" \
+              --argjson max_tokens "$CLAUDE_MAX_TOKENS" \
+              --arg system "$system_prompt" \
+              --argjson question "$escaped_question" \
+              --argjson tools "$tools_json" \
+              '{
+                model: $model,
+                max_tokens: $max_tokens,
+                system: $system,
+                tools: $tools,
+                messages: [{role: "user", content: $question}]
+              }')
+
+            local response
+            response=$(curl -s --max-time "$MCP_TIMEOUT_SECONDS" \
+              -H "x-api-key: $ANTHROPIC_API_KEY" \
+              -H "anthropic-version: 2023-06-01" \
+              -H "content-type: application/json" \
+              -d "$request_body" \
+              "https://api.anthropic.com/v1/messages" 2>/dev/null)
+
+            if [ $? -ne 0 ] || [ -z "$response" ]; then
+              echo "::warning::Tier 1 Claude API call failed or timed out"
+              return 1
+            fi
+
+            # Check for API errors
+            local error_type
+            error_type=$(echo "$response" | jq -r '.error.type // empty' 2>/dev/null)
+            if [ -n "$error_type" ]; then
+              echo "::warning::Tier 1 Claude API error: $error_type"
+              return 1
+            fi
+
+            # Check stop reason — if tool_use, we need to handle tool calls
+            local stop_reason
+            stop_reason=$(echo "$response" | jq -r '.stop_reason // empty' 2>/dev/null)
+
+            if [ "$stop_reason" = "tool_use" ]; then
+              # Extract tool calls and simulate responses via direct MCP
+              local tool_blocks
+              tool_blocks=$(echo "$response" | jq -c '[.content[] | select(.type == "tool_use")]' 2>/dev/null)
+              local tool_count
+              tool_count=$(echo "$tool_blocks" | jq 'length' 2>/dev/null)
+
+              if [ "$tool_count" -gt 0 ]; then
+                local tool_results="[]"
+                local i=0
+                while [ $i -lt "$tool_count" ]; do
+                  local tool_id tool_name tool_input tool_result
+                  tool_id=$(echo "$tool_blocks" | jq -r ".[$i].id" 2>/dev/null)
+                  tool_name=$(echo "$tool_blocks" | jq -r ".[$i].name" 2>/dev/null)
+                  tool_input=$(echo "$tool_blocks" | jq -c ".[$i].input" 2>/dev/null)
+
+                  TOOLS_USED="${TOOLS_USED:+$TOOLS_USED, }$tool_name"
+
+                  # Call MCP server directly for tool execution
+                  tool_result=$(call_mcp_direct "$tool_name" "$tool_input" 2>/dev/null)
+                  if [ $? -ne 0 ] || [ -z "$tool_result" ]; then
+                    tool_result='{"error": "Tool execution failed"}'
+                  fi
+
+                  tool_results=$(echo "$tool_results" | jq \
+                    --arg id "$tool_id" \
+                    --arg content "$tool_result" \
+                    '. + [{type: "tool_result", tool_use_id: $id, content: $content}]')
+
+                  i=$((i + 1))
+                done
+
+                # Send tool results back to Claude for final response
+                local messages
+                messages=$(jq -n \
+                  --argjson question "$escaped_question" \
+                  --argjson assistant_content "$(echo "$response" | jq '.content')" \
+                  --argjson tool_results "$tool_results" \
+                  '[
+                    {role: "user", content: $question},
+                    {role: "assistant", content: $assistant_content},
+                    {role: "user", content: $tool_results}
+                  ]')
+
+                local followup_body
+                followup_body=$(jq -n \
+                  --arg model "$CLAUDE_MODEL" \
+                  --argjson max_tokens "$CLAUDE_MAX_TOKENS" \
+                  --arg system "$system_prompt" \
+                  --argjson messages "$messages" \
+                  '{
+                    model: $model,
+                    max_tokens: $max_tokens,
+                    system: $system,
+                    messages: $messages
+                  }')
+
+                response=$(curl -s --max-time "$MCP_TIMEOUT_SECONDS" \
+                  -H "x-api-key: $ANTHROPIC_API_KEY" \
+                  -H "anthropic-version: 2023-06-01" \
+                  -H "content-type: application/json" \
+                  -d "$followup_body" \
+                  "https://api.anthropic.com/v1/messages" 2>/dev/null)
+
+                if [ $? -ne 0 ] || [ -z "$response" ]; then
+                  echo "::warning::Tier 1 follow-up Claude API call failed"
+                  return 1
+                fi
+              fi
+            fi
+
+            # Extract text content from response
+            local answer_text
+            answer_text=$(echo "$response" | jq -r '[.content[] | select(.type == "text") | .text] | join("\n")' 2>/dev/null)
+
+            if [ -z "$answer_text" ] || [ "$answer_text" = "null" ]; then
+              echo "::warning::Tier 1 produced empty response"
+              return 1
+            fi
+
+            RESOLUTION_TIER="tier-1-claude-mcp"
+            COMPUTATION_TYPE="LLM + MCP tools"
+            CONFIDENCE="0.9 (LLM-assisted with tool verification)"
+            DATA_SOURCE="GA MCP server via Claude API"
+            if [ "$TOOLS_USED" = "none" ]; then
+              TOOLS_USED="ga_chat (implicit)"
+            fi
+
+            echo "$answer_text"
+            return 0
+          }
+
+          # --- Tier 2: Route question to direct MCP call ---
+          route_question() {
+            local question="$1"
+            case "$question" in
+              *scale*|*major\ scale*|*minor\ scale*|*pentatonic*|*blues\ scale*|*notes\ in*)
+                echo "ga_scale"
+                ;;
+              *chord*|*triad*|*seventh*|*dominant*|*diminished*|*augmented*|*sus*)
+                echo "ga_chord"
+                ;;
+              *interval*|*semitone*|*half\ step*|*whole\ step*)
+                echo "ga_interval"
+                ;;
+              *fretboard*|*fret*|*guitar\ neck*|*position*)
+                echo "ga_fretboard"
+                ;;
+              *voicing*|*fingering*|*how\ to\ play*)
+                echo "ga_voicing"
+                ;;
+              *mode*|*dorian*|*phrygian*|*lydian*|*mixolydian*|*aeolian*|*locrian*|*ionian*)
+                echo "ga_chat"
+                ;;
+              *progression*|*ii-v-i*|*i-iv-v*)
+                echo "ga_chat"
+                ;;
+              *)
+                echo ""
+                ;;
+            esac
+          }
+
+          # --- Tier 2: Direct MCP server HTTP call ---
+          call_mcp_direct() {
+            local tool_name="$1"
+            local tool_input="$2"
+
+            if [ -z "$GA_MCP_URL" ]; then
+              echo "::notice::GA_MCP_URL not set — skipping direct MCP call"
+              return 1
+            fi
+
+            local response
+            response=$(curl -s --max-time "$DIRECT_MCP_TIMEOUT_SECONDS" \
+              -H "content-type: application/json" \
+              -d "{\"tool\": \"$tool_name\", \"input\": $tool_input}" \
+              "${GA_MCP_URL}/call" 2>/dev/null)
+
+            if [ $? -ne 0 ] || [ -z "$response" ]; then
+              echo "::warning::Direct MCP call to $tool_name failed or timed out"
+              return 1
+            fi
+
+            local error
+            error=$(echo "$response" | jq -r '.error // empty' 2>/dev/null)
+            if [ -n "$error" ]; then
+              echo "::warning::MCP tool $tool_name returned error: $error"
+              return 1
+            fi
+
+            echo "$response"
+            return 0
+          }
+
+          # --- Format raw MCP JSON response as markdown ---
+          format_mcp_response() {
+            local tool_name="$1"
+            local raw_json="$2"
+            local result=""
+
+            case "$tool_name" in
+              ga_scale)
+                local root scale_type notes formula
+                root=$(echo "$raw_json" | jq -r '.root // .data.root // "?"' 2>/dev/null)
+                scale_type=$(echo "$raw_json" | jq -r '.scale_type // .data.scale_type // "?"' 2>/dev/null)
+                notes=$(echo "$raw_json" | jq -r '.notes // .data.notes // [] | if type == "array" then join(" ") else . end' 2>/dev/null)
+                formula=$(echo "$raw_json" | jq -r '.formula // .data.formula // "N/A"' 2>/dev/null)
+                result="## ${root} ${scale_type} Scale"
+                result="${result}
+
+          **Notes:** ${notes}
+          **Formula:** ${formula}
+
+          > **Tip:** Practice this scale ascending and descending across all positions on the fretboard.
+
+          *Computed by GA MCP server — deterministic domain result.*"
+                echo "$result"
+                ;;
+              ga_chord)
+                local root chord_type notes formula
+                root=$(echo "$raw_json" | jq -r '.root // .data.root // "?"' 2>/dev/null)
+                chord_type=$(echo "$raw_json" | jq -r '.chord_type // .data.chord_type // "?"' 2>/dev/null)
+                notes=$(echo "$raw_json" | jq -r '.notes // .data.notes // [] | if type == "array" then join(" ") else . end' 2>/dev/null)
+                formula=$(echo "$raw_json" | jq -r '.formula // .data.formula // "N/A"' 2>/dev/null)
+                result="## ${root} ${chord_type} Chord"
+                result="${result}
+
+          **Notes:** ${notes}
+          **Formula:** ${formula}
+
+          > **Tip:** Try different voicings of this chord across the fretboard.
+
+          *Computed by GA MCP server — deterministic domain result.*"
+                echo "$result"
+                ;;
+              ga_interval)
+                local from_note to_note semitones quality name
+                from_note=$(echo "$raw_json" | jq -r '.from_note // .data.from_note // "?"' 2>/dev/null)
+                to_note=$(echo "$raw_json" | jq -r '.to_note // .data.to_note // "?"' 2>/dev/null)
+                semitones=$(echo "$raw_json" | jq -r '.semitones // .data.semitones // "?"' 2>/dev/null)
+                quality=$(echo "$raw_json" | jq -r '.quality // .data.quality // "?"' 2>/dev/null)
+                name=$(echo "$raw_json" | jq -r '.name // .data.name // "?"' 2>/dev/null)
+                result="## Interval: ${from_note} to ${to_note}"
+                result="${result}
+
+          **Interval:** ${name} (${quality})
+          **Semitones:** ${semitones}
+
+          > **Tip:** Train your ear to recognize this interval by associating it with a familiar melody.
+
+          *Computed by GA MCP server — deterministic domain result.*"
+                echo "$result"
+                ;;
+              ga_fretboard)
+                local diagram
+                diagram=$(echo "$raw_json" | jq -r '.diagram // .data.diagram // .result // "No diagram available"' 2>/dev/null)
+                result="## Fretboard Diagram"
+                result="${result}
+
+          \`\`\`
+          ${diagram}
+          \`\`\`
+
+          > **Tip:** Practice connecting these positions to build fluency across the neck.
+
+          *Computed by GA MCP server — deterministic domain result.*"
+                echo "$result"
+                ;;
+              ga_voicing)
+                local voicings
+                voicings=$(echo "$raw_json" | jq -r '.voicings // .data.voicings // .result // "No voicing data available"' 2>/dev/null)
+                result="## Chord Voicings"
+                result="${result}
+
+          ${voicings}
+
+          > **Tip:** Start with the easiest voicing and gradually add more complex ones to your vocabulary.
+
+          *Computed by GA MCP server — deterministic domain result.*"
+                echo "$result"
+                ;;
+              ga_chat|*)
+                local text
+                text=$(echo "$raw_json" | jq -r '.text // .data.text // .message // .result // .' 2>/dev/null)
+                echo "$text"
+                ;;
+            esac
+          }
+
+          # --- Orchestrator: try all three tiers ---
+          answer_question() {
+            local question="$1"
+
+            # Tier 1: Claude + MCP (richest, most contextual)
+            echo "::group::Tier 1 — Claude + MCP tools"
+            local tier1_answer
+            tier1_answer=$(call_claude_with_mcp "$question")
+            local tier1_status=$?
+            echo "::endgroup::"
+
+            if [ $tier1_status -eq 0 ] && [ -n "$tier1_answer" ]; then
+              echo "::notice::Resolved via Tier 1 (Claude + MCP)"
+              echo "$tier1_answer"
+              return 0
+            fi
+
+            # Tier 2: Direct MCP call (structured, no LLM)
+            echo "::group::Tier 2 — Direct MCP call"
+            local tool_name
+            tool_name=$(route_question "$question")
+
+            if [ -n "$tool_name" ] && [ -n "$GA_MCP_URL" ]; then
+              # Build input based on tool type and question keywords
+              local tool_input='{}'
+              case "$tool_name" in
+                ga_chat)
+                  tool_input=$(jq -n --arg msg "$question" '{message: $msg}')
+                  ;;
+                ga_scale)
+                  # Extract root note and scale type from question (best-effort)
+                  local root="C"
+                  local scale_type="major"
+                  for note in c d e f g a b; do
+                    if echo "$question" | grep -qiw "$note"; then
+                      root=$(echo "$note" | tr '[:lower:]' '[:upper:]')
+                      break
+                    fi
+                  done
+                  for note in "c#" "db" "d#" "eb" "f#" "gb" "g#" "ab" "a#" "bb"; do
+                    if echo "$question" | grep -qi "$note"; then
+                      root=$(echo "$note" | sed 's/\(.\)/\U\1/' | sed 's/b/b/' | sed 's/#/#/')
+                      break
+                    fi
+                  done
+                  if echo "$question" | grep -qi "minor"; then scale_type="natural_minor"; fi
+                  if echo "$question" | grep -qi "harmonic"; then scale_type="harmonic_minor"; fi
+                  if echo "$question" | grep -qi "melodic"; then scale_type="melodic_minor"; fi
+                  if echo "$question" | grep -qi "pentatonic"; then scale_type="pentatonic_major"; fi
+                  if echo "$question" | grep -qi "blues"; then scale_type="blues"; fi
+                  tool_input=$(jq -n --arg r "$root" --arg s "$scale_type" '{root: $r, scale_type: $s}')
+                  ;;
+                ga_chord)
+                  local root="C"
+                  local chord_type="major"
+                  for note in c d e f g a b; do
+                    if echo "$question" | grep -qiw "$note"; then
+                      root=$(echo "$note" | tr '[:lower:]' '[:upper:]')
+                      break
+                    fi
+                  done
+                  if echo "$question" | grep -qi "minor"; then chord_type="minor"; fi
+                  if echo "$question" | grep -qi "dominant\|dom7"; then chord_type="dominant7"; fi
+                  if echo "$question" | grep -qi "maj7\|major.*7"; then chord_type="maj7"; fi
+                  if echo "$question" | grep -qi "dim"; then chord_type="dim"; fi
+                  if echo "$question" | grep -qi "aug"; then chord_type="aug"; fi
+                  if echo "$question" | grep -qi "sus2"; then chord_type="sus2"; fi
+                  if echo "$question" | grep -qi "sus4"; then chord_type="sus4"; fi
+                  tool_input=$(jq -n --arg r "$root" --arg c "$chord_type" '{root: $r, chord_type: $c}')
+                  ;;
+                ga_interval)
+                  tool_input=$(jq -n '{from_note: "C", to_note: "G"}')
+                  ;;
+                ga_fretboard)
+                  tool_input=$(jq -n '{type: "scale", root: "C", name: "major"}')
+                  ;;
+                ga_voicing)
+                  tool_input=$(jq -n '{root: "C", chord_type: "major"}')
+                  ;;
+              esac
+
+              local mcp_result
+              mcp_result=$(call_mcp_direct "$tool_name" "$tool_input")
+              local tier2_status=$?
+
+              if [ $tier2_status -eq 0 ] && [ -n "$mcp_result" ]; then
+                local formatted
+                formatted=$(format_mcp_response "$tool_name" "$mcp_result")
+                if [ -n "$formatted" ]; then
+                  TOOLS_USED="$tool_name"
+                  RESOLUTION_TIER="tier-2-direct-mcp"
+                  COMPUTATION_TYPE="PURE DOMAIN (direct MCP, zero LLM)"
+                  CONFIDENCE="1.0 (deterministic domain computation)"
+                  DATA_SOURCE="GA MCP server direct call"
+                  echo "::notice::Resolved via Tier 2 (Direct MCP: $tool_name)"
+                  echo "::endgroup::"
+                  echo "$formatted"
+                  return 0
+                fi
+              fi
+            fi
+            echo "::endgroup::"
+
+            # Tier 3: signal fallback to static lookup
+            echo "::notice::Falling through to Tier 3 (static lookup)"
+            return 1
+          }
+
+          # ===================================================================
+          # ATTEMPT LIVE RESOLUTION (Tier 1 or Tier 2)
+          # ===================================================================
           ANSWER=""
           TOPIC=""
+
+          LIVE_ANSWER=$(answer_question "$QUESTION")
+          if [ $? -eq 0 ] && [ -n "$LIVE_ANSWER" ]; then
+            ANSWER="$LIVE_ANSWER"
+            TOPIC="live-mcp"
+          else
+            # Fall through to static lookup
+            ANSWER=""
+            TOPIC=""
+          fi
+
+          # ===================================================================
+          # TIER 3: STATIC LOOKUP (fallback when live resolution unavailable)
+          # ===================================================================
+          if [ -z "$ANSWER" ]; then
 
           # === SCALES ===
           if echo "$QUESTION" | grep -qiE "(scale|major scale|minor scale|notes in|what notes)"; then
@@ -253,6 +780,9 @@ Try asking a specific music theory question!
 *Powered by [Guitar Alchemist](https://github.com/GuitarAlchemist/ga) | Governed by [Demerzel](https://github.com/GuitarAlchemist/Demerzel)*"
           fi
 
+          # End of static lookup guard
+          fi
+
           # Add agentic trace footer
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           TRACE_ID="trace-$(echo "$DISCUSSION_ID" | md5sum | head -c 8)"
@@ -294,15 +824,11 @@ Try asking a specific music theory question!
 │                                                                 │
 │  [4] GA DOMAIN ENGINE (Guitar Alchemist)                        │
 │      └─ Repo: github.com/GuitarAlchemist/ga                    │
-│      └─ Skills invoked:                                         │
-│         ├─ ChordExplanationSkill (GA.Business.ML/Agents/Skills) │
-│         ├─ ScaleInfoSkill (GA.Business.ML/Agents/Skills)        │
-│         ├─ IntervalInfoSkill (GA.Business.ML/Agents/Skills)     │
-│         ├─ ModeExplorationSkill (GA.Business.ML/Agents/Skills)  │
-│         └─ ProgressionSuggestionSkill (GA.Business.ML)          │
-│      └─ Computation: PURE DOMAIN (zero LLM calls)              │
-│      └─ Data source: GA.Business.Core music theory primitives   │
-│      └─ Confidence: 1.0 (deterministic domain computation)     │
+│      └─ Tools invoked: $TOOLS_USED                              │
+│      └─ Resolution tier: $RESOLUTION_TIER                       │
+│      └─ Computation: $COMPUTATION_TYPE                          │
+│      └─ Confidence: $CONFIDENCE                                 │
+│      └─ Data source: $DATA_SOURCE                               │
 │                                                                 │
 │  [5] TARS GOVERNANCE FUNCTIONS (Reasoning Engine)               │
 │      └─ Repo: github.com/GuitarAlchemist/tars                  │
@@ -358,6 +884,7 @@ Try asking a specific music theory question!
           # Save for posting
           echo "$ANSWER" > answer.md
           echo "TOPIC=$TOPIC" >> $GITHUB_OUTPUT
+          echo "RESOLUTION_TIER=$RESOLUTION_TIER" >> $GITHUB_OUTPUT
           echo "HAS_ANSWER=true" >> $GITHUB_OUTPUT
           echo "DISCUSSION_ID=$DISCUSSION_ID" >> $GITHUB_OUTPUT
 
