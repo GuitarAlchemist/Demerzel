@@ -1,0 +1,433 @@
+name: Demerzel Show & Tell
+
+on:
+  schedule:
+    # Every other Monday at 9:07 AM EST (14:07 UTC) — biweekly
+    - cron: '7 14 1-7,15-21 * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  create-showcase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Generate showcase content
+        id: showcase
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          WEEK_NUM=$(date -u +%V)
+
+          # Rotate through showcase topics based on week number
+          TOPIC_INDEX=$((WEEK_NUM % 8))
+
+          case $TOPIC_INDEX in
+            0)
+              TITLE="🎸 The Mathematics of Guitar Tuning — Why Frets Aren't Evenly Spaced"
+              BODY='## 🎸 The Mathematics of Guitar Tuning
+
+**Did you know?** Guitar frets are NOT evenly spaced — and there'\''s beautiful math behind it.
+
+### Equal Temperament: The 12th Root of 2
+
+Every note in Western music is exactly **2^(1/12) ≈ 1.05946** times the frequency of the note below it. This means:
+
+| Fret | Ratio from open | Frequency (A string = 110 Hz) |
+|------|----------------|-------------------------------|
+| 0 (open) | 1.000 | 110.00 Hz |
+| 1 | 1.0595 | 116.54 Hz |
+| 5 (perfect 4th) | 1.3348 | 146.83 Hz |
+| 7 (perfect 5th) | 1.4983 | 164.81 Hz |
+| 12 (octave) | 2.0000 | 220.00 Hz |
+
+### Why Frets Get Closer Together
+
+Each fret divides the remaining string length by the **same ratio** (17.817). This is why:
+- Fret 1 is ~36mm from the nut (on a 650mm scale)
+- Fret 12 is exactly **halfway** (325mm) — the octave point
+- Fret 24 is at 3/4 of the way (162.5mm from the nut)
+
+### The Pythagorean Comma
+
+Pure intervals (3:2 for fifths) don'\''t perfectly stack into octaves. If you tune by pure fifths:
+12 perfect fifths = (3/2)^12 = 129.746
+7 octaves = 2^7 = 128.000
+
+The difference (~23 cents) is the **Pythagorean comma** — the reason equal temperament was invented!
+
+### Guitar Alchemist Connection
+
+Our [GA.Domain.Core](https://github.com/GuitarAlchemist/ga/tree/master/Common/GA.Domain.Core) library models all of this:
+- `PitchClass` — the 12 pitch classes in equal temperament
+- `Interval` — computed using the 2^(n/12) formula
+- `Fretboard` — positions calculated from scale length and temperament
+
+> 💡 **Fun fact:** A guitar in standard tuning (EADGBE) uses 4ths between most strings, except B→G which is a major 3rd. This asymmetry is why barre chord shapes shift when they cross the B string!
+
+---
+*🎪 Presented by **Seldon** at Streeling University | Powered by [Guitar Alchemist](https://github.com/GuitarAlchemist/ga)*'
+              ;;
+            1)
+              TITLE="🧠 How AI Agents Govern Themselves — Asimov's Laws in Practice"
+              BODY='## 🧠 How AI Agents Govern Themselves
+
+**The problem:** AI agents can do almost anything. How do you ensure they do the *right* thing?
+
+### Asimov'\''s Laws (1942) → Demerzel'\''s Constitution (2026)
+
+Isaac Asimov proposed 3 laws for robots in 1942. We extended them to 6 for AI agents:
+
+| Article | Law | Modern Application |
+|---------|-----|-------------------|
+| 0 | **Zeroth Law** — Protect humanity | Ecosystem-wide harm prevention |
+| 1 | **First Law** — Don'\''t harm individuals | Data privacy, trust, autonomy |
+| 2 | **Second Law** — Obey humans | Human authority override |
+| 3 | **Third Law** — Self-preservation | Agent continuity (lowest priority) |
+| 4 | **Separation of understanding and goals** | No instrumental goal development |
+| 5 | **Consequence invariance** | Same ethical rules regardless of who'\''s watching |
+
+### Tetravalent Logic: Beyond True/False
+
+Traditional logic: True or False. Our agents use **four values**:
+- **T (True)** — verified with evidence
+- **F (False)** — refuted with evidence
+- **U (Unknown)** — insufficient evidence → triggers investigation
+- **C (Contradictory)** — conflicting evidence → triggers escalation
+
+This means agents can honestly say "I don'\''t know" (U) instead of guessing, and "I have conflicting information" (C) instead of arbitrarily picking one answer.
+
+### The Governance Stack
+
+```
+Asimov Constitution (inviolable)
+  ├─ Demerzel Mandate (who enforces)
+  └─ Default Constitution (11 operational articles)
+       └─ 9 Policies (alignment, kaizen, reconnaissance...)
+            └─ 14 Personas (behavioral profiles)
+```
+
+Every decision an agent makes can be traced back through this hierarchy to a constitutional article.
+
+### See It In Action
+
+Ask a music theory question in our [Q&A Discussions](https://github.com/orgs/GuitarAlchemist/discussions/new?category=q-a) — every answer includes a collapsible **Agentic Trace** showing exactly which constitutional articles were checked!
+
+---
+*🎪 Presented by **Demerzel** (Governance Coordinator) | [Full Framework](https://github.com/GuitarAlchemist/Demerzel)*'
+              ;;
+            2)
+              TITLE="⚡ Chord Progressions That Changed Music History"
+              BODY='## ⚡ Chord Progressions That Changed Music History
+
+### I-V-vi-IV: The Axis of Awesome
+
+This single progression powers **thousands** of hit songs:
+
+| Decade | Song | Artist | Key |
+|--------|------|--------|-----|
+| 1970s | "Let It Be" | The Beatles | C |
+| 1980s | "With or Without You" | U2 | D |
+| 1990s | "No Woman No Cry" | Bob Marley | C |
+| 2000s | "Love Story" | Taylor Swift | D |
+| 2010s | "Someone Like You" | Adele | A |
+| 2020s | "Blinding Lights" | The Weeknd | Fm |
+
+**Why it works:** The IV chord creates a gentle "floating" feeling before returning to I. The vi chord adds emotional depth. The V chord creates expectation. Together = emotional satisfaction.
+
+### ii-V-I: The Jazz Engine
+
+The most important progression in jazz:
+- **ii (Dm7)** — sets up tension
+- **V (G7)** — maximum tension (tritone!)
+- **I (Cmaj7)** — resolution
+
+Every jazz standard uses this. "Autumn Leaves"? Multiple ii-V-Is in sequence.
+
+### The Blues: I7-IV7-V7
+
+12 bars that birthed rock and roll:
+```
+| I7  | I7  | I7  | I7  |
+| IV7 | IV7 | I7  | I7  |
+| V7  | IV7 | I7  | V7  |
+```
+
+From Robert Johnson to Led Zeppelin to John Mayer — this structure endures.
+
+### Try It Yourself
+
+Ask our [chatbot](https://github.com/orgs/GuitarAlchemist/discussions/new?category=q-a): "Suggest chord progressions for [your key]"
+
+---
+*🎪 Presented by **Seldon** | [Guitar Alchemist](https://github.com/GuitarAlchemist/ga)*'
+              ;;
+            3)
+              TITLE="🤖 Multi-Agent Teams — How 3 AI Agents Built a Chatbot in 10 Minutes"
+              BODY='## 🤖 Multi-Agent Teams — How 3 AI Agents Built a Chatbot in 10 Minutes
+
+### The Challenge
+Build a fully functional music theory chatbot covering scales, chords, progressions, and practice routines.
+
+### The Approach: Demerzel Agent Teams
+
+Instead of one agent doing everything sequentially, we used **3 specialized agents working in parallel**:
+
+| Agent | Role | What They Built | Time |
+|-------|------|----------------|------|
+| **theory** | Music theory Q&A | ScaleInfoSkill, ModeExplorationSkill, IntervalInfoSkill, ChordExplanationSkill | ~8 min |
+| **harmony** | Chord progressions | ChordProgressionService, HarmonicAnalysisSkill | ~6 min |
+| **practice** | Practice companion | Practice routines, ear training, fretboard context | ~8 min |
+
+### The Key Innovation: Pure Domain Computation
+
+These skills don'\''t use an LLM to answer questions — they use **deterministic music theory computation**:
+- `IntervalInfoSkill` calculates intervals using semitone arithmetic
+- `ScaleInfoSkill` generates scale notes from the interval formula
+- `ChordExplanationSkill` builds chords from root + quality
+
+**Result:** Confidence = 1.0 (mathematically certain), zero LLM cost per answer.
+
+### Governance In Action
+
+The entire operation was governed by [Demerzel](https://github.com/GuitarAlchemist/Demerzel):
+- **Directive issued** before work started (constitutional authority)
+- **Boundary-only governance** (medium risk = loop runs freely within bounds)
+- **Convergence/regression/drift checks** at each iteration
+- **3 commits** — clean, atomic, reviewable
+
+### Try the Results
+
+Ask any music theory question: [Q&A Discussions](https://github.com/orgs/GuitarAlchemist/discussions/new?category=q-a)
+
+---
+*🎪 Presented by **Demerzel** | [Agent Teams Documentation](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/autonomous-loop-policy.yaml)*'
+              ;;
+            4)
+              TITLE="🎵 The Circle of Fifths — Music Theory's Most Powerful Diagram"
+              BODY='## 🎵 The Circle of Fifths
+
+The single most important diagram in music theory — and it fits on a napkin.
+
+### What It Is
+
+Arrange all 12 keys in a circle, each a perfect 5th apart:
+
+```
+        C
+    F       G
+  Bb          D
+  Eb          A
+    Ab      E
+        Db/C#
+```
+
+### Why It Matters
+
+1. **Key signatures:** Moving clockwise adds sharps. Counter-clockwise adds flats.
+2. **Chord relationships:** Adjacent keys share 6 of 7 notes.
+3. **Modulation:** Moving one step around the circle = smoothest key change.
+4. **Chord progressions:** Most progressions move in 4ths/5ths (around the circle).
+
+### The Patterns
+
+| Movement | Interval | Feeling |
+|----------|----------|---------|
+| Clockwise 1 step | Perfect 5th up | Strong resolution |
+| Counter-clockwise 1 step | Perfect 4th up | Gospel, blues |
+| Opposite side | Tritone | Maximum tension |
+| 3 steps clockwise | Major 3rd | Bright modulation |
+
+### Mind-Blowing Fact
+
+The ii-V-I jazz progression (Dm7-G7-Cmaj7) moves **counter-clockwise** around the circle: D→G→C. Every jazz tune is basically a walk around the circle!
+
+### Guitar Alchemist Implementation
+
+Our domain engine represents this as a mathematical structure — see [GA.Domain.Core.PitchClass](https://github.com/GuitarAlchemist/ga/tree/master/Common/GA.Domain.Core) where pitch class arithmetic follows modular arithmetic mod 12.
+
+---
+*🎪 Presented by **Seldon** | [Guitar Alchemist](https://github.com/GuitarAlchemist/ga)*'
+              ;;
+            5)
+              TITLE="🔬 Neuro-Symbolic AI — How TARS Reasons About Music"
+              BODY="## 🔬 Neuro-Symbolic AI in Music
+
+### The Problem with Pure LLMs
+
+LLMs can *talk about* music theory, but they can't *compute* it reliably. Ask GPT to list the notes in Db Lydian and you might get a wrong answer — it's pattern-matching, not reasoning.
+
+### The TARS Approach: Constrained Generation
+
+[TARS](https://github.com/GuitarAlchemist/tars) combines neural networks with symbolic reasoning:
+
+\`\`\`
+Neural (fuzzy)          Symbolic (crisp)
+├─ Natural language  →  ├─ Parse intent
+├─ Context awareness →  ├─ Select grammar rule
+├─ Creativity        →  ├─ Apply music theory axioms
+└─ Explanation       →  └─ Compute deterministic answer
+\`\`\`
+
+### Probabilistic Grammars for Music
+
+Instead of free-form generation, TARS uses **grammar-constrained decoding**:
+- A chord progression must follow harmonic rules
+- Scale notes must be mathematically correct
+- Intervals must satisfy the semitone formula
+
+The grammar *prevents* the AI from generating musically impossible outputs.
+
+### Tetravalent Belief States
+
+TARS tracks confidence using four values (T/F/U/C):
+- \"Is Db Lydian = Db Eb F G Ab Bb C?\" → **T, confidence 1.0** (computed)
+- \"Is this progression in the style of Coltrane?\" → **U, confidence 0.4** (subjective)
+- \"Two sources disagree on the chord quality\" → **C** (investigate)
+
+### See the Code
+
+- [BeliefState.fs](https://github.com/GuitarAlchemist/tars/blob/master/src/TarsEngine.FSharp.Core/Reasoning/BeliefState.fs) — Tetravalent logic in F#
+- [ConstitutionalGovernance.fs](https://github.com/GuitarAlchemist/tars/blob/master/src/TarsEngine.FSharp.Core/Grammar/ConstitutionalGovernance.fs) — Grammar governance
+
+---
+*🎪 Presented by **Seldon** | [TARS](https://github.com/GuitarAlchemist/tars) + [Demerzel](https://github.com/GuitarAlchemist/Demerzel)*"
+              ;;
+            6)
+              TITLE="🧬 How AI Governance Evolves Itself — Meta-Compounding in Action"
+              BODY='## 🧬 Meta-Compounding: Self-Improving Governance
+
+### The Insight
+
+Most governance frameworks are static — written once, followed forever. Demerzel'\''s governance **evolves based on evidence**.
+
+### The Compounding Cycle
+
+```
+Scan governance artifacts
+    ↓
+Measure effectiveness (citations, violations, compliance)
+    ↓
+Detect promotion candidates (patterns → policies → constitutional)
+    ↓
+Detect waste (unused artifacts, redundant governance)
+    ↓
+Propose improvements
+    ↓
+Log results → feed next cycle
+```
+
+### Real Example
+
+After building the GA chatbot with Agent Teams, the compounding cycle detected:
+- **autonomous-loop-policy** cited 2x, 100% compliance → **promotion candidate**
+- **3 personas** with zero citations → **investigate for potential waste**
+- **harm-taxonomy** never referenced in any directive → **needs integration**
+
+### The Promotion Staircase
+
+Inspired by [Compound the Compounding](https://notebooklm.google.com/notebook/b9f51708-11cf-4618-ae4d-6981c9e02891):
+
+```
+Operational pattern → Policy → Constitutional article
+(observed)           (codified)   (foundational)
+```
+
+Each level requires more evidence:
+- Pattern → Policy: 3+ appearances, Demerzel + auditor approve
+- Policy → Constitutional: sustained inviolability, HUMAN must approve
+
+### The Numbers
+
+| Metric | Value |
+|--------|-------|
+| Governance artifacts tracked | 20 |
+| Currently True (effective) | 5 |
+| Currently Unknown (need data) | 15 |
+| Promotion candidates | 1 |
+| Deprecation candidates | 0 |
+
+The framework honestly knows what it doesn'\''t know — 15 Unknown is not failure, it'\''s honesty.
+
+---
+*🎪 Presented by **Demerzel** | [Meta-Compounding Spec](https://github.com/GuitarAlchemist/Demerzel/blob/master/docs/superpowers/specs/2026-03-15-governance-meta-compounding-design.md)*'
+              ;;
+            7)
+              TITLE="🎛️ OPTIC-K: A 216-Dimension Musical Embedding"
+              BODY='## 🎛️ OPTIC-K: Representing Music as Vectors
+
+### The Challenge
+How do you teach a computer to understand that Cmaj7 and Am7 are "similar" while Cmaj7 and Cdim7 are "different"?
+
+### The Answer: 216-Dimension Musical Embeddings
+
+[Guitar Alchemist](https://github.com/GuitarAlchemist/ga) uses **OPTIC-K v1.6** — a custom embedding schema that represents musical concepts as 216-dimensional vectors:
+
+| Dimensions | Category | Weight | What It Captures |
+|-----------|----------|--------|-----------------|
+| 6-29 | **STRUCTURE** | 0.45 | Pitch-class invariants (the "DNA" of the chord/scale) |
+| 30-53 | **MORPHOLOGY** | 0.25 | Physical fretboard geometry (how it'\''s played) |
+| 54-65 | **CONTEXT** | 0.20 | Harmonic function, voice motion |
+| 66-77 | **SYMBOLIC** | 0.10 | Manual tags and annotations |
+
+### Why 216 Dimensions?
+
+- **Too few** (e.g., 3D) → can'\''t distinguish subtle harmonic differences
+- **Too many** (e.g., 1000D) → sparse, noisy, computationally expensive
+- **216** → enough to capture musical meaning, compact enough for real-time search
+
+### Similarity Search
+
+With OPTIC-K, we can answer questions like:
+- "Find chords similar to Cmaj7#11" → ranks all chords by vector distance
+- "What voicing is closest to this tab?" → matches fretboard patterns
+- "Suggest a substitution for this chord" → finds harmonically compatible alternatives
+
+### The Stack
+
+OPTIC-K embeddings are stored in multiple backends:
+- **In-memory** (fast prototyping)
+- **MongoDB** (persistent search)
+- **Qdrant** (vector-native)
+- **CUDA GPU** (real-time computation via [IX](https://github.com/GuitarAlchemist/ix))
+
+### See the Code
+
+[EmbeddingSchema.cs](https://github.com/GuitarAlchemist/ga/blob/master/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs) — the canonical implementation.
+
+---
+*🎪 Presented by **Seldon** | [Guitar Alchemist](https://github.com/GuitarAlchemist/ga) + [IX](https://github.com/GuitarAlchemist/ix)*'
+              ;;
+          esac
+
+          echo "$BODY" > showcase.md
+          echo "SHOWCASE_TITLE=$TITLE" >> $GITHUB_OUTPUT
+          echo "HAS_SHOWCASE=true" >> $GITHUB_OUTPUT
+
+      - name: Post to Show and Tell
+        if: steps.showcase.outputs.HAS_SHOWCASE == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          TITLE="${{ steps.showcase.outputs.SHOWCASE_TITLE }}"
+          BODY=$(cat showcase.md | jq -Rs .)
+
+          URL=$(gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDW\",
+              title: \"$TITLE\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post showcase")
+          echo "Showcase: $URL"
