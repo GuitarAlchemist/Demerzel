@@ -1,0 +1,25 @@
+{
+  "proposition": "The ix repo has adopted Demerzel governance integration with state/beliefs directory",
+  "truth_value": "U",
+  "confidence": 0.4,
+  "evidence": {
+    "supporting": [
+      {
+        "source": "github-api-scan",
+        "claim": "ix repo has state/beliefs/ directory on main branch with .gitkeep",
+        "timestamp": "2026-03-17T20:00:00Z",
+        "reliability": 0.9
+      }
+    ],
+    "contradicting": [
+      {
+        "source": "reconnaissance-tier2-environment-scan",
+        "claim": "Integration directive created (directive-integration-ix.json) but not yet distributed or executed in ix repo",
+        "timestamp": "2026-03-17T20:00:00Z",
+        "reliability": 0.9
+      }
+    ]
+  },
+  "last_updated": "2026-03-17T20:00:00Z",
+  "evaluated_by": "demerzel"
+}

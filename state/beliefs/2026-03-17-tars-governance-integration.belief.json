@@ -1,0 +1,18 @@
+{
+  "proposition": "The tars repo has adopted Demerzel governance integration",
+  "truth_value": "U",
+  "confidence": 0.2,
+  "evidence": {
+    "supporting": [],
+    "contradicting": [
+      {
+        "source": "reconnaissance-tier2-environment-scan",
+        "claim": "Integration directive created (directive-integration-tars.json) but no evidence of adoption. Tars repo not yet scanned.",
+        "timestamp": "2026-03-17T20:00:00Z",
+        "reliability": 0.8
+      }
+    ]
+  },
+  "last_updated": "2026-03-17T20:00:00Z",
+  "evaluated_by": "demerzel"
+}

@@ -33,7 +33,7 @@ Run a full governance compounding cycle. This is how Demerzel improves her own g
 
 ## Step 1: Scan Evolution Log
 
-Read `examples/sample-data/governance-evolution-seed.json` (or `state/evolution/` when persistent state is available).
+Read all files from `state/evolution/` — this is Demerzel's live evolution log. Fall back to `examples/sample-data/governance-evolution-seed.json` only if `state/evolution/` is empty.
 
 For each artifact, check:
 - `citation_count` — how often cited in governance decisions
@@ -162,6 +162,27 @@ Demerzel CANNOT approve her own constitutional changes. Per the mandate:
 - Self-governance requires skeptical-auditor review (routine)
 - Constitutional promotions require human approval (always)
 - The compounding cycle proposes — it never unilaterally changes governance
+
+## State Maintenance (MANDATORY)
+
+The compounding cycle is the primary writer of evolution state. It MUST:
+
+### Before Cycling
+1. Read ALL files from `state/evolution/` — this is the input
+2. Read recent beliefs from `state/beliefs/` for context
+3. Read any PDCA records from `state/pdca/` for improvement tracking
+
+### After Cycling
+1. **Update evolution files** in `state/evolution/` — add new events, update metrics, refresh assessments
+2. **Create PDCA records** in `state/pdca/` for each proposed improvement
+3. **Update beliefs** in `state/beliefs/` if the cycle revealed new truths
+4. **Never delete** evolution entries — append events, update metrics in place
+
+### The Compound Loop
+Each cycle's output is the next cycle's input. The evolution log grows richer over time:
+- Cycle N finds alignment-policy has 3 citations → marks as promotion candidate
+- Cycle N+1 sees the promotion candidate flag → evaluates if threshold sustained
+- Cycle N+2 either promotes or downgrades based on accumulated evidence
 
 ## Source
 `logic/governance-evolution.schema.json`, `policies/scientific-objectivity-policy.yaml` (confidence calibration), `policies/kaizen-policy.yaml` (waste taxonomy, PDCA), `constitutions/demerzel-mandate.md` Section 4 (accountability)

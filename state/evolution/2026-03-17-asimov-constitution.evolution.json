@@ -1,0 +1,41 @@
+{
+  "id": "gel-asimov-constitution",
+  "artifact": "constitutions/asimov.constitution.md",
+  "artifact_type": "constitution",
+  "metrics": {
+    "citation_count": 5,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-03-17T20:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "created",
+      "context": "Root constitution established — Articles 0-5 encoding Asimov's Laws of Robotics as governance foundation",
+      "timestamp": "2026-03-14T00:00:00Z"
+    },
+    {
+      "type": "cited",
+      "context": "Referenced by all 11 policies as constitutional basis. Cited during demerzel-mandate creation.",
+      "timestamp": "2026-03-15T00:00:00Z"
+    },
+    {
+      "type": "cited",
+      "context": "Reconnaissance Tier 1 self-check verified hierarchy intact",
+      "timestamp": "2026-03-17T20:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "The Asimov constitution effectively serves as the root governance document",
+      "truth_value": "T",
+      "confidence": 0.95
+    },
+    "recommendation": "maintain"
+  },
+  "created_at": "2026-03-17T20:00:00Z",
+  "last_updated": "2026-03-17T20:00:00Z"
+}

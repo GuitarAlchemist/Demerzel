@@ -1,0 +1,41 @@
+{
+  "id": "gel-default-constitution",
+  "artifact": "constitutions/default.constitution.md",
+  "artifact_type": "constitution",
+  "metrics": {
+    "citation_count": 11,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-03-17T20:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "created",
+      "context": "Operational constitution established — Articles 1-11 defining ethical principles for agent behavior",
+      "timestamp": "2026-03-14T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Version 2.1.0 — added subordination clarification to preamble",
+      "timestamp": "2026-03-15T00:00:00Z"
+    },
+    {
+      "type": "cited",
+      "context": "All 11 policies reference default constitution articles. Most-cited governance artifact.",
+      "timestamp": "2026-03-17T20:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "The default constitution effectively guides operational governance decisions",
+      "truth_value": "T",
+      "confidence": 0.9
+    },
+    "recommendation": "maintain"
+  },
+  "created_at": "2026-03-17T20:00:00Z",
+  "last_updated": "2026-03-17T20:00:00Z"
+}

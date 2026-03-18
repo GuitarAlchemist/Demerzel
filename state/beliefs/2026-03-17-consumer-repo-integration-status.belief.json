@@ -1,0 +1,18 @@
+{
+  "proposition": "Consumer repo integration directives have been distributed and acknowledged by ix, tars, and ga",
+  "truth_value": "F",
+  "confidence": 0.9,
+  "evidence": {
+    "supporting": [],
+    "contradicting": [
+      {
+        "source": "reconnaissance-tier2-environment-scan",
+        "claim": "Directives exist as sample data (directive-integration-ix.json, directive-integration-ga.json, directive-integration-tars.json) but have not been transmitted to consumer repos via Galactic Protocol",
+        "timestamp": "2026-03-17T20:00:00Z",
+        "reliability": 0.95
+      }
+    ]
+  },
+  "last_updated": "2026-03-17T20:00:00Z",
+  "evaluated_by": "demerzel"
+}

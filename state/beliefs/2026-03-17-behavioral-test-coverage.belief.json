@@ -1,0 +1,18 @@
+{
+  "proposition": "All Demerzel personas have corresponding behavioral tests as required by persona-requirements rule",
+  "truth_value": "F",
+  "confidence": 0.95,
+  "evidence": {
+    "supporting": [],
+    "contradicting": [
+      {
+        "source": "reconnaissance-tier2-environment-scan",
+        "claim": "8 of 14 personas lack dedicated behavioral tests: default, skeptical-auditor, seldon, communal-steward, convolution-agent, critical-theorist, rational-administrator, recovery-agent, validator-reflector, virtuous-leader",
+        "timestamp": "2026-03-17T20:00:00Z",
+        "reliability": 0.99
+      }
+    ]
+  },
+  "last_updated": "2026-03-17T20:00:00Z",
+  "evaluated_by": "demerzel"
+}

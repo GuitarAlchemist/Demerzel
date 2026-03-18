@@ -43,5 +43,25 @@ Verify the governance framework is internally consistent.
 ## How to Run
 Read `policies/governance-audit-policy.yaml` for the full checklist with methods and severity levels. Execute each check and report results.
 
+## State Maintenance (MANDATORY)
+
+Audits MUST read and write Demerzel's persistent state:
+
+### Before Auditing
+1. Read existing beliefs from `state/beliefs/` for baseline
+2. Read evolution logs from `state/evolution/` for artifact history
+
+### After Auditing
+1. **Update beliefs** in `state/beliefs/` for audit findings:
+   - Schema validation passed → belief about framework integrity (T/F)
+   - Cross-reference gaps found → belief about specific gap (F with evidence)
+   - Audit clean → update confidence upward on integrity beliefs
+2. **Update evolution logs** in `state/evolution/` — add audit events to assessed artifacts
+3. **Write audit snapshot** to `state/snapshots/{date}-audit-level{N}.snapshot.json`
+
+### Schema Compliance
+- Beliefs: `logic/tetravalent-state.schema.json`
+- Evolution: `logic/governance-evolution.schema.json`
+
 ## Source
 `policies/governance-audit-policy.yaml`
