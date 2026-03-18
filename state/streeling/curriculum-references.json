@@ -1,0 +1,86 @@
+{
+  "source": "Jean-Pierre Petit — Savoir sans Frontières (Knowledge Without Borders)",
+  "license": "Free for non-commercial educational use — duplication permitted, no profit, no political/sectarian/confessional connotations",
+  "archive": "https://archive.org/details/TheseAnglaise",
+  "website": "https://www.savoir-sans-frontieres.com/JPP/telechargeables/free_downloads.htm",
+  "acknowledgement": "Scientific comics by Jean-Pierre Petit, astrophysicist, distributed freely by the Association Savoir sans Frontières",
+  "references": [
+    {
+      "title": "Topo the World",
+      "topic": "Topology — surfaces, homeomorphisms, Boy's surface",
+      "departments": ["mathematics"],
+      "level": "high-school to undergraduate",
+      "curriculum_fit": "Foundations of topological thinking for TDA and Poincaré embeddings"
+    },
+    {
+      "title": "Here's Looking at Euclid",
+      "topic": "Geometry — Euclidean constructions, geometric reasoning",
+      "departments": ["mathematics", "physics"],
+      "level": "middle-school to high-school",
+      "curriculum_fit": "Geometric foundations for fretboard geometry and spatial reasoning"
+    },
+    {
+      "title": "Bourbakof",
+      "topic": "Abstract algebra — group theory, mathematical structures",
+      "departments": ["mathematics", "music"],
+      "level": "undergraduate",
+      "curriculum_fit": "Group theory for pitch class groups, symmetry in music theory"
+    },
+    {
+      "title": "Logotron",
+      "topic": "Mathematical logic — formal systems, proof theory",
+      "departments": ["mathematics", "philosophy", "computer-science"],
+      "level": "undergraduate",
+      "curriculum_fit": "Foundations for tetravalent logic, formal verification, grammar theory"
+    },
+    {
+      "title": "Computer Magic",
+      "topic": "Computing — information theory, digital logic, algorithms",
+      "departments": ["computer-science"],
+      "level": "high-school",
+      "curriculum_fit": "Fundamentals for understanding constrained generation and digital signal processing"
+    },
+    {
+      "title": "Run Robot Run",
+      "topic": "Robotics — automation, control systems, agent behavior",
+      "departments": ["computer-science", "cognitive-science"],
+      "level": "high-school",
+      "curriculum_fit": "Agent behavior foundations, governance as control theory analogy"
+    },
+    {
+      "title": "Everything is Relative",
+      "topic": "Special and general relativity — spacetime, reference frames",
+      "departments": ["physics", "mathematics"],
+      "level": "high-school to undergraduate",
+      "curriculum_fit": "Reference frame thinking applicable to multi-perspective governance"
+    },
+    {
+      "title": "The Silence Barrier",
+      "topic": "Wave mechanics — sound, barriers, propagation",
+      "departments": ["physics", "music"],
+      "level": "high-school",
+      "curriculum_fit": "Acoustics foundations for understanding string vibration and harmonics"
+    },
+    {
+      "title": "The Black Hole",
+      "topic": "Astrophysics — gravitational collapse, spacetime curvature",
+      "departments": ["physics", "mathematics"],
+      "level": "undergraduate",
+      "curriculum_fit": "Extreme physics as thinking tool for boundary conditions and singularities"
+    },
+    {
+      "title": "The Economicon",
+      "topic": "Economics — market dynamics, resource allocation",
+      "departments": ["product-management"],
+      "level": "high-school",
+      "curriculum_fit": "Resource allocation thinking for budget management and prioritization"
+    },
+    {
+      "title": "Big Bang",
+      "topic": "Cosmology — origin of the universe, early physics",
+      "departments": ["physics", "futurology"],
+      "level": "high-school",
+      "curriculum_fit": "Large-scale systems thinking, initial conditions and emergence"
+    }
+  ]
+}
