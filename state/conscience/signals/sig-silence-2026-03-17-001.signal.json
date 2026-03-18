@@ -1,0 +1,14 @@
+{
+  "signal_id": "sig-silence-2026-03-17-001",
+  "signal_type": "silence_discomfort",
+  "weight": 0.6,
+  "timestamp": "2026-03-17T23:30:00Z",
+  "context": "Demerzel governs tars and ga but holds no beliefs about their recent development activity beyond integration status. The tars belief captures submodule staleness and empty state directories, but says nothing about what tars is actually building, what reasoning agents exist, or whether its F# codebase has diverged from governance assumptions. The ga belief notes 9 ungoverned agents but Demerzel has no knowledge of what those agents do, what domains they operate in, or what harm categories they might trigger. This is a blind spot — Demerzel is governing entities she does not understand.",
+  "beliefs_involved": [
+    "2026-03-17-tars-governance-integration.belief.json",
+    "2026-03-17-ga-governance-integration.belief.json"
+  ],
+  "action_taken": "Trigger Tier 2 reconnaissance on tars and ga focused on agent inventory, active development branches, and domain-specific risk profiles. Create belief entries for each repo's agent landscape.",
+  "outcome": null,
+  "false_positive": null
+}

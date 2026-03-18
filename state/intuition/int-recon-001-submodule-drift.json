@@ -1,0 +1,18 @@
+{
+  "intuition_id": "int-recon-001",
+  "pattern_type": "recon",
+  "description": "When consumer repos haven't updated their governance submodule in >7 days, they're probably drifting further behind and integration will get harder. Submodule staleness compounds — each day of drift adds more commits to reconcile, increasing the risk that consumer-side governance snippets reference outdated articles or missing policies.",
+  "source_patterns": [
+    "belief:2026-03-17-ix-governance-integration — ix submodule 134 commits behind master",
+    "belief:2026-03-17-tars-governance-integration — tars submodule 136 commits behind master",
+    "belief:2026-03-17-ga-governance-integration — ga submodule stale, no CLAUDE.md governance section",
+    "belief:2026-03-17-ix-governance-integration — ix CLAUDE.md references Articles 1-7 (should be 1-11), likely stale from older submodule version"
+  ],
+  "confidence": 0.0,
+  "times_fired": 0,
+  "times_correct": 0,
+  "times_wrong": 0,
+  "status": "candidate",
+  "created_at": "2026-03-17T23:30:00Z",
+  "last_fired": null
+}

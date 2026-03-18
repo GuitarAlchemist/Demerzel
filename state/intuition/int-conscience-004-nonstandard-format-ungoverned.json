@@ -1,0 +1,18 @@
+{
+  "intuition_id": "int-conscience-004",
+  "pattern_type": "conscience",
+  "description": "Projects that define agents in non-standard formats (e.g., Markdown instead of persona YAML) tend to have the most ungoverned capabilities. Format divergence is a leading indicator of governance divergence — when a repo invents its own agent definition format, it signals that governance integration was never deep enough to constrain agent creation patterns.",
+  "source_patterns": [
+    "belief:2026-03-17-ga-governance-integration — ga has 9 agents in .agent/ defined as Markdown with no Demerzel persona mapping",
+    "belief:2026-03-17-ga-governance-integration — ga truth_value is F despite having a submodule registered",
+    "belief:2026-03-17-consumer-repo-integration-status — directives not yet transmitted via Galactic Protocol",
+    "belief:2026-03-17-ix-governance-integration — ix has scaffolding but stale content, suggesting surface-level adoption"
+  ],
+  "confidence": 0.0,
+  "times_fired": 0,
+  "times_correct": 0,
+  "times_wrong": 0,
+  "status": "candidate",
+  "created_at": "2026-03-17T23:30:00Z",
+  "last_fired": null
+}

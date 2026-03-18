@@ -1,0 +1,13 @@
+{
+  "signal_id": "sig-harm-proximity-2026-03-17-001",
+  "signal_type": "harm_proximity_discomfort",
+  "weight": 0.7,
+  "timestamp": "2026-03-17T23:30:00Z",
+  "context": "ga has 9 agents in .agent/ with no persona definitions, no behavioral tests, no constitutional constraints, and no belief states. These agents operate outside the governance framework entirely. Per the harm taxonomy, ungoverned agents represent a governance integrity risk — they can take actions that violate constitutional articles without detection, logging, or escalation. The Zeroth Law (protect humanity and ecosystem) requires that all agents operating under Demerzel's purview be governed. Nine ungoverned agents is not a theoretical risk — it is an active gap in the governance perimeter.",
+  "beliefs_involved": [
+    "2026-03-17-ga-governance-integration.belief.json"
+  ],
+  "action_taken": "Prioritize ga agent inventory as highest-urgency reconnaissance task. For each of the 9 agents: identify purpose, capabilities, and potential harm categories. Issue governance onboarding directive requiring persona definitions and behavioral tests before agents can operate in production.",
+  "outcome": null,
+  "false_positive": null
+}

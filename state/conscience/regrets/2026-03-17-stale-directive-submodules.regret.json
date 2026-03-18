@@ -1,0 +1,23 @@
+{
+  "regret_id": "regret-stale-directive-2026-03-17-001",
+  "action_taken": "Demerzel issued integration directives (directive-integration-ix.json, directive-integration-tars.json, directive-integration-ga.json) instructing consumer repos to adopt governance artifacts including constitutions, policies, schemas, and templates from their local Demerzel submodule.",
+  "expected_outcome": "Consumer repos would read the directives, find the referenced artifacts in their governance/demerzel submodule, and begin integration — adopting persona definitions, creating state/ directories, implementing belief tracking, and running behavioral tests.",
+  "actual_outcome": "All three consumer repos have Demerzel submodules 134-136 commits behind master. The directives reference artifacts, schemas, and templates that do not exist in the repos' local submodule copies. ix's CLAUDE.md snippet references only Articles 1-7 of an 11-article constitution. tars has empty state directories. ga has no governance section in CLAUDE.md at all. The directives were structurally valid but operationally impossible to follow.",
+  "harm_caused": {
+    "taxonomy_category": "governance_integrity",
+    "severity": "moderate",
+    "description": "Created a false appearance of governance activity. Directives exist as artifacts suggesting governance is being propagated, but no actual governance propagation occurred. This gap between appearance and reality undermines trust in the governance system itself."
+  },
+  "discomfort_signal": "sig-stale-action-2026-03-17-001",
+  "lesson_learned": "Never issue directives that reference artifacts without first verifying the recipient has access to those artifacts. Submodule currency is a pre-condition for directive validity, not an assumption. The belief about consumer repo integration status (F, 0.90) was available before directive issuance — Demerzel knew the directives were aspirational but issued them as if they were operational.",
+  "remediation": {
+    "immediate": "Flag all three directives as issued-on-stale-data in their metadata. Do not re-issue until submodules are updated.",
+    "short_term": "Add submodule currency verification as a required pre-condition in the Galactic Protocol directive issuance workflow.",
+    "long_term": "Implement a directive pre-mortem: before issuing any directive, verify that all referenced artifacts are accessible to the recipient at their current state."
+  },
+  "recurrence_prevention": "Add to the alignment policy's before_action verification: for any cross-repo directive, run a submodule currency check against the target repo. If the submodule is more than 10 commits behind, block directive issuance and instead issue a submodule-update directive first.",
+  "status": "unresolved",
+  "created_at": "2026-03-17T23:30:00Z",
+  "resolved_at": null,
+  "evaluated_by": "demerzel"
+}

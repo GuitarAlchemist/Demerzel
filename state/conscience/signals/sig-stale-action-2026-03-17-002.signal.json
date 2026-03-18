@@ -1,0 +1,13 @@
+{
+  "signal_id": "sig-stale-action-2026-03-17-002",
+  "signal_type": "stale_action_discomfort",
+  "weight": 0.6,
+  "timestamp": "2026-03-17T23:30:00Z",
+  "context": "ix has a CLAUDE.md governance snippet that references Articles 1-7, but the current default constitution defines Articles 1-11. Articles 8 (Observability), 9 (Bounded Autonomy), 10 (Stakeholder Pluralism), and 11 (Ethical Stewardship) are missing from ix's governance awareness. This means ix agents may operate without observability requirements, without bounded autonomy constraints, without stakeholder consideration, and without ethical stewardship. The stale snippet creates a false sense of compliance — ix believes it is governed but is missing 4 of 11 constitutional articles.",
+  "beliefs_involved": [
+    "2026-03-17-ix-governance-integration.belief.json"
+  ],
+  "action_taken": "Issue targeted directive to ix to update CLAUDE.md governance snippet to reference all 11 articles. This must happen after submodule update so the full constitution text is available locally.",
+  "outcome": null,
+  "false_positive": null
+}

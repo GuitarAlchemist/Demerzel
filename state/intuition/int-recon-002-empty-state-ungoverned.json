@@ -1,0 +1,18 @@
+{
+  "intuition_id": "int-recon-002",
+  "pattern_type": "recon",
+  "description": "Repos with state/ directories containing only .gitkeep files aren't actually using governance state. The presence of scaffolded directories creates a false sense of integration — the structure exists but no beliefs, PDCA cycles, or evolution logs are being recorded. This is governance theater, not governance adoption.",
+  "source_patterns": [
+    "belief:2026-03-17-ix-governance-integration — state/beliefs/ is empty, no PDCA records, no knowledge transfers",
+    "belief:2026-03-17-tars-governance-integration — state/ directories all empty except one compliance snapshot",
+    "belief:2026-03-17-ga-governance-integration — no state/ directory at all, no belief states",
+    "belief:2026-03-17-consumer-repo-integration-status — directives exist as sample data but have not been transmitted"
+  ],
+  "confidence": 0.0,
+  "times_fired": 0,
+  "times_correct": 0,
+  "times_wrong": 0,
+  "status": "candidate",
+  "created_at": "2026-03-17T23:30:00Z",
+  "last_fired": null
+}

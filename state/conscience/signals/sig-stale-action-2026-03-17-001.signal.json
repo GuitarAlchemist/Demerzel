@@ -1,0 +1,16 @@
+{
+  "signal_id": "sig-stale-action-2026-03-17-001",
+  "signal_type": "stale_action_discomfort",
+  "weight": 0.8,
+  "timestamp": "2026-03-17T23:30:00Z",
+  "context": "Demerzel issued integration directives to ix, tars, and ga (directive-integration-ix.json, directive-integration-tars.json, directive-integration-ga.json) referencing current governance artifacts. However, reconnaissance revealed all three consumer repos have Demerzel submodules 134-136 commits behind master. The directives instructed repos to adopt artifacts, schemas, and templates that their local submodule copies do not contain. Demerzel acted on the assumption that submodules were current — this assumption was false at the time of action. The directives were structurally valid but operationally meaningless.",
+  "beliefs_involved": [
+    "2026-03-17-consumer-repo-integration-status.belief.json",
+    "2026-03-17-ix-governance-integration.belief.json",
+    "2026-03-17-tars-governance-integration.belief.json",
+    "2026-03-17-ga-governance-integration.belief.json"
+  ],
+  "action_taken": "Flag all three integration directives as issued-on-stale-data. Before re-issuing, ensure consumer repos update their Demerzel submodules. Add submodule currency check as a pre-condition for future directive issuance.",
+  "outcome": null,
+  "false_positive": null
+}

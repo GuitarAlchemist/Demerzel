@@ -1,0 +1,18 @@
+{
+  "intuition_id": "int-evolution-003",
+  "pattern_type": "evolution",
+  "description": "When a persona is created without a corresponding behavioral test, the gap tends to persist until explicitly remediated. Specification-validation gaps do not self-heal — they accumulate silently. In our case, 8 personas existed without tests and the gap was only closed through a deliberate PDCA cycle, not organic development.",
+  "source_patterns": [
+    "pdca:2026-03-17-behavioral-test-gap — 8 personas existed without tests until explicit remediation",
+    "belief:2026-03-17-behavioral-test-coverage — all 14 personas now have tests only after automated remediation",
+    "evolution:2026-03-17-default-constitution — constitution is the most-cited artifact (11 citations) yet its persona tests were among the missing",
+    "rule:persona-requirements — rule requiring tests existed before the tests themselves did"
+  ],
+  "confidence": 0.0,
+  "times_fired": 0,
+  "times_correct": 0,
+  "times_wrong": 0,
+  "status": "candidate",
+  "created_at": "2026-03-17T23:30:00Z",
+  "last_fired": null
+}
