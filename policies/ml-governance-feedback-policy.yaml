@@ -1,0 +1,180 @@
+name: ml-governance-feedback-policy
+version: "1.0.0"
+effective_date: "2026-03-17"
+description: How ix ML pipelines improve Demerzel's governance through data-driven feedback loops
+
+constitutional_basis:
+  - Article 7 (Auditability) — ML recommendations must be traceable
+  - Article 8 (Observability) — governance metrics feed ML pipelines
+  - Article 9 (Bounded Autonomy) — ML cannot exceed Demerzel's authority bounds
+  - Article 11 (Ethical Stewardship) — ML-driven changes serve ecosystem health
+
+principles:
+  - Demerzel produces governance data; ix ML consumes it and returns calibration recommendations
+  - ML recommendations are advisory — Demerzel applies them within her existing guardrails
+  - The feedback loop must be observable, auditable, and reversible
+  - No ML model can override constitutional constraints regardless of confidence
+  - Human oversight of the feedback loop is required at least quarterly
+
+# What Demerzel exports to ix ML pipelines
+data_exports:
+  belief_states:
+    source: state/beliefs/*.belief.json
+    schema: logic/tetravalent-state.schema.json
+    fields: [proposition, truth_value, confidence, evidence, last_updated]
+    frequency: on_change
+    purpose: Confidence calibration and accuracy tracking
+
+  evolution_logs:
+    source: state/evolution/*.evolution.json
+    schema: logic/governance-evolution.schema.json
+    fields: [artifact, metrics, events, assessment]
+    frequency: on_change
+    purpose: Artifact effectiveness analysis and trend detection
+
+  pdca_records:
+    source: state/pdca/*.pdca.json
+    schema: logic/kaizen-pdca-state.schema.json
+    fields: [cycle_phase, hypothesis, plan, do, check, act]
+    frequency: on_completion
+    purpose: Remediation strategy optimization
+
+  compliance_reports:
+    source: state/oversight/*.json
+    schema: schemas/contracts/compliance-report.schema.json
+    fields: [repo, status, violations, recommendations]
+    frequency: on_change
+    purpose: Cross-repo compliance pattern detection
+
+# What ix ML pipelines return to Demerzel
+ml_pipelines:
+  confidence_calibrator:
+    description: Compares Demerzel's confidence assignments to actual outcomes over time
+    input: belief_states (historical truth_value changes vs. original confidence)
+    output:
+      type: calibration_report
+      fields:
+        - overconfidence_rate: "Proportion of high-confidence beliefs that were later revised"
+        - underconfidence_rate: "Proportion of low-confidence beliefs that turned out correct"
+        - recommended_threshold_adjustments: "Suggested changes to alignment policy thresholds"
+        - worst_calibrated_domains: "Topics where confidence is most miscalibrated"
+    action: Demerzel reviews and may adjust confidence_thresholds in alignment-policy
+    frequency: weekly
+    guardrail: Threshold adjustments cannot exceed +/- 0.1 per cycle
+
+  staleness_predictor:
+    description: Predicts which beliefs will become stale before the 7-day threshold
+    input: belief_states (last_updated timestamps, evidence freshness, topic volatility)
+    output:
+      type: staleness_forecast
+      fields:
+        - at_risk_beliefs: "Beliefs predicted to become stale within 3 days"
+        - recommended_recon_targets: "Repos or domains to scan proactively"
+        - staleness_velocity: "Rate of belief decay per domain"
+    action: Demerzel schedules proactive reconnaissance for at-risk areas
+    frequency: daily
+    guardrail: Cannot trigger more than 3 proactive recons per day
+
+  violation_pattern_detector:
+    description: Clusters compliance failures to distinguish systemic issues from one-offs
+    input: compliance_reports (historical violations across all repos)
+    output:
+      type: pattern_analysis
+      fields:
+        - systemic_patterns: "Recurring violation types with root cause hypotheses"
+        - one_off_incidents: "Isolated violations unlikely to recur"
+        - emerging_risks: "New violation types appearing with increasing frequency"
+    action: Systemic patterns trigger policy review; emerging risks trigger proactive governance
+    frequency: weekly
+    guardrail: Cannot auto-create policies — only recommends
+
+  remediation_optimizer:
+    description: Learns which auto-fix strategies succeed and which need human intervention
+    input: pdca_records (remediation actions, outcomes, cycle completion rates)
+    output:
+      type: strategy_report
+      fields:
+        - success_rates_by_strategy: "Which remediation approaches work best for each gap type"
+        - recommended_escalation_changes: "Gap types that should be upgraded/downgraded in risk level"
+        - automation_candidates: "Currently-manual remediations that could be automated"
+    action: Demerzel adjusts auto-remediation policy risk classifications
+    frequency: monthly
+    guardrail: Cannot downgrade high-risk gaps without human approval
+
+  governance_anomaly_detector:
+    description: Flags unusual changes in governance state
+    input: all_exports (belief changes, evolution events, compliance shifts)
+    output:
+      type: anomaly_alert
+      fields:
+        - anomalies: "Unexpected state changes with severity and context"
+        - false_positive_rate: "Self-assessed accuracy of anomaly detection"
+    action: High-severity anomalies trigger immediate Demerzel recon; low-severity logged for review
+    frequency: real_time
+    guardrail: Cannot trigger autonomous action for anomalies with confidence < 0.7
+
+# The feedback loop
+feedback_loop:
+  description: |
+    Demerzel governs ix → ix produces ML insights → Demerzel improves her governance → better data for ix.
+    This is a compounding cycle: each iteration should produce more accurate governance.
+
+  cycle:
+    1_export: Demerzel pushes governance data to ix via Galactic Protocol knowledge packages
+    2_analyze: ix ML pipelines process the data and produce recommendations
+    3_review: Demerzel evaluates recommendations against constitutional constraints
+    4_apply: Approved recommendations are applied (threshold adjustments, proactive recons, risk reclassifications)
+    5_measure: Next cycle measures the impact of applied changes
+    6_compound: Evolution log tracks whether ML-driven changes improved governance
+
+  invariants:
+    - Constitutional articles are NEVER modified by ML feedback
+    - Human must approve any policy changes recommended by ML
+    - All ML recommendations are logged in state/oversight/ with full provenance
+    - The feedback loop itself is subject to Demerzel's meta-compounding audit
+    - Demerzel can pause or terminate the feedback loop at any time
+
+# Bootstrapping (how to start before enough data exists)
+bootstrapping:
+  phase_1_data_collection:
+    duration: "First 30 days"
+    description: "Demerzel operates normally; all governance data is exported to ix but no ML recommendations are applied"
+    minimum_data: "50+ belief states, 10+ PDCA cycles, 3+ compliance reports"
+
+  phase_2_shadow_mode:
+    duration: "Days 31-60"
+    description: "ML pipelines produce recommendations but Demerzel only logs them — does not act. Humans review recommendation quality."
+    success_criteria: "ML recommendations align with human judgment > 80% of the time"
+
+  phase_3_supervised_application:
+    duration: "Days 61-90"
+    description: "Low-risk ML recommendations (confidence calibration, staleness prediction) applied with human notification"
+    success_criteria: "Applied recommendations improve governance metrics"
+
+  phase_4_autonomous_operation:
+    duration: "Day 91+"
+    description: "ML feedback loop runs autonomously within guardrails. Human review quarterly."
+    success_criteria: "Sustained improvement in confidence calibration accuracy and remediation success rates"
+
+# Galactic Protocol contract for ML feedback
+contract:
+  directive_type: ml_feedback
+  from: ix
+  to: demerzel
+  schema: schemas/contracts/ml-feedback-recommendation.schema.json
+  required_fields:
+    - pipeline_id
+    - recommendation_type
+    - recommendation
+    - confidence
+    - evidence
+    - constitutional_check  # ML must self-check against constitution before recommending
+
+rationale: |
+  Demerzel's governance judgment improves with experience, but without quantitative
+  feedback she cannot know if her confidence thresholds are well-calibrated, if her
+  remediation strategies are effective, or if she's missing emerging risks. ix ML
+  pipelines provide the quantitative layer that completes the governance feedback loop.
+  This is analogous to how Hari Seldon's psychohistory used mathematical models to
+  guide the Foundation — except the models improve from real governance outcomes rather
+  than predicting them.

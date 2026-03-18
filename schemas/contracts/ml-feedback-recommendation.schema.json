@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/ml-feedback-recommendation",
+  "title": "ML Feedback Recommendation",
+  "description": "A recommendation from an ix ML pipeline to Demerzel for governance improvement",
+  "type": "object",
+  "required": ["pipeline_id", "recommendation_type", "recommendation", "confidence", "evidence", "constitutional_check", "timestamp"],
+  "properties": {
+    "pipeline_id": {
+      "type": "string",
+      "enum": ["confidence_calibrator", "staleness_predictor", "violation_pattern_detector", "remediation_optimizer", "governance_anomaly_detector"],
+      "description": "Which ML pipeline produced this recommendation"
+    },
+    "recommendation_type": {
+      "type": "string",
+      "enum": ["threshold_adjustment", "proactive_recon", "risk_reclassification", "anomaly_alert", "strategy_change", "pattern_report"],
+      "description": "Category of recommendation"
+    },
+    "recommendation": {
+      "type": "object",
+      "required": ["action", "rationale", "expected_impact"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "What Demerzel should do"
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Why this recommendation was generated, with data references"
+        },
+        "expected_impact": {
+          "type": "string",
+          "description": "Predicted effect of applying this recommendation"
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Recommendation-specific parameters (e.g., new threshold values, target repos)"
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "ML pipeline's confidence in this recommendation"
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["data_points", "model_version", "training_window"],
+      "properties": {
+        "data_points": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of data points supporting this recommendation"
+        },
+        "model_version": {
+          "type": "string",
+          "description": "Version of the ML model that produced this recommendation"
+        },
+        "training_window": {
+          "type": "string",
+          "description": "Time range of data used for this recommendation (e.g., '2026-02-17 to 2026-03-17')"
+        },
+        "key_features": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Most influential features in the recommendation"
+        }
+      }
+    },
+    "constitutional_check": {
+      "type": "object",
+      "required": ["passed", "articles_checked"],
+      "properties": {
+        "passed": {
+          "type": "boolean",
+          "description": "Whether the recommendation passed constitutional self-check"
+        },
+        "articles_checked": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Constitutional articles verified (e.g., ['Article 3 - Reversibility', 'Article 9 - Bounded Autonomy'])"
+        },
+        "concerns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Any constitutional concerns identified (empty if none)"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this recommendation was generated"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this recommendation becomes stale and should be regenerated"
+    }
+  }
+}
