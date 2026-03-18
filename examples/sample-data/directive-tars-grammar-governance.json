@@ -1,0 +1,62 @@
+{
+  "directive_id": "dir-tars-grammar-gov-2026-03-17",
+  "from": "demerzel",
+  "to": "tars",
+  "priority": "high",
+  "issued_at": "2026-03-17T23:00:00Z",
+  "expires_at": "2026-04-17T23:00:00Z",
+  "type": "capability_request",
+  "subject": "Provide grammar-constrained generation for Demerzel/Seldon governance outputs",
+  "requirements": [
+    {
+      "id": "grammar-gov-1",
+      "description": "Expose probabilistic grammar service via MCP for governance artifact generation",
+      "detail": "Demerzel and Seldon need tars' EBNF grammar engine to constrain LLM outputs when generating governance artifacts. This ensures directives, compliance reports, knowledge packages, and belief states conform to Galactic Protocol schemas without post-hoc validation.",
+      "acceptance_criteria": [
+        "MCP tool: tars_grammar_constrain — accepts a schema reference + prompt, returns grammar-constrained output",
+        "MCP tool: tars_grammar_validate — validates existing text against a grammar specification",
+        "Supported schemas: directive, compliance-report, belief-snapshot, knowledge-package, learning-outcome, ml-feedback-recommendation"
+      ]
+    },
+    {
+      "id": "grammar-gov-2",
+      "description": "Grammar definitions for all Galactic Protocol message types",
+      "detail": "Create EBNF grammar files that match each contract schema in governance/demerzel/schemas/contracts/. These grammars constrain LLM generation to produce valid JSON conforming to the schemas.",
+      "acceptance_criteria": [
+        "EBNF grammar for directive.schema.json",
+        "EBNF grammar for compliance-report.schema.json",
+        "EBNF grammar for belief-snapshot.schema.json",
+        "EBNF grammar for knowledge-package.schema.json",
+        "EBNF grammar for learning-outcome.schema.json",
+        "EBNF grammar for ml-feedback-recommendation.schema.json"
+      ]
+    },
+    {
+      "id": "grammar-gov-3",
+      "description": "Grammar-constrained conscience report generation",
+      "detail": "Seldon uses tars grammars to generate structured teaching materials and assessment questions. Demerzel uses them to generate conscience reports that follow the weekly report template exactly.",
+      "acceptance_criteria": [
+        "Grammar for weekly conscience report format",
+        "Grammar for knowledge transfer curriculum structure",
+        "Grammar for assessment question format with answer rubric"
+      ]
+    },
+    {
+      "id": "grammar-gov-4",
+      "description": "Probabilistic weighting for governance grammar productions",
+      "detail": "Grammar productions should have probability weights reflecting governance priorities. Constitutional references should be weighted higher than operational details. Harm-related language should trigger careful production selection.",
+      "acceptance_criteria": [
+        "Production weights configurable via YAML",
+        "Default weights aligned with constitutional hierarchy (Asimov > Default > Policy > Persona)",
+        "Weight profiles per governance context (directive vs. teaching vs. assessment)"
+      ]
+    }
+  ],
+  "constitutional_basis": [
+    "Article 1 (Truthfulness) — grammar constraints prevent fabricated schema fields",
+    "Article 7 (Auditability) — constrained outputs are inherently auditable",
+    "Article 8 (Observability) — grammar validation makes output structure observable"
+  ],
+  "compliance_deadline": "2026-04-07T00:00:00Z",
+  "compliance_report_schema": "schemas/contracts/compliance-report.schema.json"
+}
