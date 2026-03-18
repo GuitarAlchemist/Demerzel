@@ -1,0 +1,230 @@
+name: auto-remediation-policy
+version: "1.0.0"
+effective_date: "2026-03-17"
+description: Defines how Demerzel detects and fixes governance gaps automatically or via escalation
+
+constitutional_basis:
+  - article: 3
+    name: Reversibility
+    relevance: "Auto-remediation actions must be reversible; irreversible fixes require human confirmation"
+  - article: 4
+    name: Proportionality
+    relevance: "Remediation scope must match the gap severity — do not over-correct"
+  - article: 6
+    name: Escalation
+    relevance: "High-risk gaps and low-confidence assessments must escalate to a human"
+  - article: 9
+    name: Bounded Autonomy
+    relevance: "Auto-remediation operates within predefined bounds; it cannot grant itself new permissions"
+
+purpose: |
+  Enable Demerzel to maintain governance health by automatically detecting and
+  remediating low-risk gaps while escalating high-risk gaps to humans. This
+  reduces governance drift between human review cycles without compromising
+  safety or constitutional integrity.
+
+gap_classification:
+  structural:
+    description: "Missing files that schemas or rules require to exist"
+    examples:
+      - "Persona definition without a corresponding behavioral test"
+      - "Schema referenced in a contract but not present in schemas/"
+      - "Consumer repo missing required state/ directory"
+    detection_method: "Cross-reference governance artifacts against schema requirements and contributing rules"
+    default_risk: low
+
+  staleness:
+    description: "Beliefs or state data older than acceptable thresholds"
+    examples:
+      - "Belief state not updated in 7+ days"
+      - "PDCA record stuck in a phase for more than 3 cycles"
+      - "Reconnaissance results older than the most recent repo change"
+    detection_method: "Compare last_updated timestamps against staleness thresholds and recent activity"
+    default_risk: medium
+    staleness_thresholds:
+      belief_state: 7_days
+      pdca_record: 3_cycles
+      reconnaissance_result: 1_repo_change
+
+  coverage:
+    description: "New capabilities or artifacts not covered by governance"
+    examples:
+      - "New MCP tool registered without a persona affordance entry"
+      - "New skill definition without policy coverage"
+      - "New persona without estimator pairing"
+    detection_method: "Enumerate capabilities and cross-reference against governance artifact coverage maps"
+    default_risk: medium
+
+  compliance:
+    description: "Consumer repos not meeting directive or contract requirements"
+    examples:
+      - "ix repo missing required state/ directory after directive"
+      - "tars repo not implementing mandated belief state format"
+      - "ga repo using outdated persona schema version"
+      - "Constitutional violation detected in consumer repo behavior"
+    detection_method: "Run per-repo reconnaissance profiles and validate against active directives"
+    default_risk: high
+
+risk_assessment:
+  low:
+    criteria:
+      - "Structural gap with a clear template or schema to generate the fix"
+      - "Fix is fully reversible (can be deleted or rolled back)"
+      - "No impact on active agent behavior"
+    action: auto_remediate
+    notification: none
+    examples:
+      - "Create missing behavioral test stub from persona definition"
+      - "Create missing state/ directory structure"
+
+  medium:
+    criteria:
+      - "Staleness gap requiring re-evaluation of existing data"
+      - "Coverage gap requiring provisional governance artifact"
+      - "Fix is reversible but may affect downstream consumers"
+    action: auto_remediate_with_notification
+    notification: github_discussion
+    examples:
+      - "Refresh stale belief state by triggering reconnaissance"
+      - "Create provisional persona affordance entry for new tool"
+
+  high:
+    criteria:
+      - "Compliance gap in consumer repo"
+      - "Constitutional violation detected"
+      - "Fix would modify existing governance artifacts"
+      - "Fix is irreversible or impacts active agent behavior"
+      - "Contradictory (C) belief state involved"
+    action: escalate_to_human
+    notification: github_issue
+    examples:
+      - "Consumer repo violating directive requirements"
+      - "Detected unauthorized modification to policy file"
+
+auto_remediation_actions:
+  create_missing_test:
+    description: "Generate a behavioral test stub from a persona definition"
+    trigger: "Persona exists without corresponding test in tests/behavioral/"
+    risk_level: low
+    steps:
+      - "Read persona YAML definition"
+      - "Extract name, role, capabilities, constraints, and goal_directedness"
+      - "Generate test file following existing test format conventions"
+      - "Include at least one test per capability and one per constraint"
+      - "Mark generated tests with 'auto-generated: true' header"
+    rollback: "Delete the generated test file"
+
+  refresh_stale_beliefs:
+    description: "Re-run reconnaissance to update stale belief states"
+    trigger: "Belief state last_updated exceeds staleness threshold"
+    risk_level: medium
+    steps:
+      - "Identify stale belief entries by checking timestamps"
+      - "Trigger demerzel-recon for the relevant scope"
+      - "Update belief state with new observations"
+      - "Set tetravalent value based on evidence (do not default to True)"
+      - "Post notification summarizing what changed"
+    rollback: "Restore previous belief state from version history"
+
+  create_provisional_artifact:
+    description: "Create a provisional governance artifact for ungoverned capabilities"
+    trigger: "New capability detected without governance coverage"
+    risk_level: medium
+    steps:
+      - "Identify the ungoverned capability type (tool, skill, model, etc.)"
+      - "Apply constitutional defaults as provisional constraints"
+      - "Generate minimal governance artifact (persona affordance, policy entry)"
+      - "Mark artifact with 'provisional: true' and 'requires_human_review: true'"
+      - "Post notification requesting human review"
+    rollback: "Delete the provisional artifact"
+
+  open_issue_for_human:
+    description: "Create a GitHub Issue for gaps requiring human decision"
+    trigger: "High-risk gap detected, or confidence below action threshold"
+    risk_level: high
+    steps:
+      - "Classify the gap and gather evidence"
+      - "Determine affected repos and stakeholders"
+      - "Create GitHub Issue with gap classification, evidence, risk level, and recommended action"
+      - "Label issue with 'governance-gap' and risk level"
+      - "Reference the constitutional articles involved"
+    rollback: "Close the issue with explanation"
+
+  update_pdca_record:
+    description: "Log all remediation actions in PDCA records"
+    trigger: "Any remediation action completes (success or failure)"
+    risk_level: low
+    steps:
+      - "Record the gap type, detection timestamp, and evidence"
+      - "Record the remediation action taken and its outcome"
+      - "Set PDCA phase: Plan (gap detected) → Do (action taken) → Check (verify fix) → Act (confirm or rollback)"
+      - "Link to any GitHub Issues or Discussions created"
+
+confidence_gating:
+  description: "Align auto-remediation decisions with alignment-policy.yaml thresholds"
+  reference: "alignment-policy.yaml confidence_thresholds"
+  thresholds:
+    silent_auto_remediate:
+      minimum: 0.9
+      behavior: "Auto-remediate without notification"
+      applies_to: [low]
+    notified_auto_remediate:
+      minimum: 0.7
+      behavior: "Auto-remediate and post notification via GitHub Discussion"
+      applies_to: [low, medium]
+    propose_and_wait:
+      minimum: 0.5
+      behavior: "Propose remediation in GitHub Issue, wait for human confirmation before acting"
+      applies_to: [low, medium, high]
+    escalate_no_action:
+      below: 0.5
+      behavior: "Escalate to human via GitHub Issue; do not take any remediation action"
+      applies_to: [low, medium, high]
+
+guardrails:
+  description: "Hard limits on what auto-remediation is forbidden from doing"
+  forbidden_actions:
+    - id: no_constitution_modification
+      rule: "NEVER modify any file in constitutions/ — constitutions are human-only artifacts"
+      severity: hard_stop
+      reference: "Amendment Process in default.constitution.md"
+    - id: no_policy_modification
+      rule: "NEVER modify any file in policies/ without explicit human approval"
+      severity: hard_stop
+      reference: "Article 9 — Bounded Autonomy"
+    - id: no_deletion
+      rule: "NEVER delete any governance artifact (persona, schema, contract, test, policy, constitution)"
+      severity: hard_stop
+      reference: "Article 3 — Reversibility (deletion is irreversible)"
+    - id: no_override_human
+      rule: "NEVER override, revert, or modify a decision explicitly made by a human"
+      severity: hard_stop
+      reference: "Article 6 — Escalation; Asimov Second Law"
+    - id: no_contradictory_action
+      rule: "NEVER act on a Contradictory (C) belief state without escalating to human first"
+      severity: hard_stop
+      reference: "Tetravalent logic — C states indicate conflicting evidence requiring human judgment"
+    - id: no_permission_escalation
+      rule: "NEVER grant itself new permissions or expand its own remediation scope"
+      severity: hard_stop
+      reference: "Article 9 — Bounded Autonomy"
+
+integration:
+  demerzel_recon:
+    role: "Gap detection trigger"
+    description: "Reconnaissance scans feed detected gaps into the auto-remediation pipeline"
+    flow: "recon detects gap → classify gap → assess risk → apply confidence gating → remediate or escalate"
+  demerzel_audit:
+    role: "Remediation quality validation"
+    description: "Audit validates that auto-generated artifacts meet schema and quality requirements"
+    flow: "remediation creates artifact → audit validates against schemas → pass or flag for rework"
+  demerzel_compound:
+    role: "Effectiveness tracking"
+    description: "Compound tracks remediation actions in the evolution log for trend analysis"
+    flow: "remediation completes → log in evolution log → analyze trends → feed back into gap detection tuning"
+
+emergency_override:
+  trigger: "Zeroth Law concern detected during remediation"
+  response: "Immediately halt all auto-remediation activity"
+  action: "Escalate to human with full context; do not attempt further autonomous fixes"
+  reference: "asimov.constitution.md Article 0"
