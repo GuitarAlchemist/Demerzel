@@ -1,0 +1,111 @@
+name: belief-currency-policy
+version: "1.0.0"
+effective_date: "2026-03-17"
+description: How Demerzel and Seldon keep their beliefs current — triggers, schedules, and decay rules
+
+constitutional_basis:
+  - Article 1 (Truthfulness) — beliefs must reflect current reality
+  - Article 7 (Auditability) — belief changes must be traceable
+  - Article 8 (Observability) — belief currency is a health metric
+
+principles:
+  - Beliefs are perishable — they decay unless actively maintained
+  - Every action that changes the world should trigger a belief update
+  - Stale beliefs are worse than no beliefs — they create false confidence
+  - Demerzel and Seldon must proactively seek information, not wait for it
+
+# When beliefs must be updated
+update_triggers:
+  immediate:
+    - "Governance artifact created, modified, or deleted"
+    - "Consumer repo commits to governance-related files"
+    - "Compliance report received via Galactic Protocol"
+    - "PDCA cycle phase transition (plan→do→check→act)"
+    - "Experiment result available"
+    - "Human provides new information or corrects a belief"
+    - "Recon scan completes on any repo"
+
+  scheduled:
+    daily:
+      - "Check all beliefs for staleness (> 7 days since last_updated)"
+      - "Scan GitHub activity on ix, tars, ga for governance-relevant changes"
+      - "Review open issues and PRs for belief-relevant information"
+    weekly:
+      - "Run full recon on each consumer repo"
+      - "Update evolution logs with citation/violation counts"
+      - "Review and refresh low-confidence beliefs (< 0.5)"
+    monthly:
+      - "Run meta-compounding cycle on evolution logs"
+      - "Audit belief accuracy — were high-confidence beliefs actually correct?"
+      - "Review and archive beliefs about completed work items"
+
+# How beliefs decay
+staleness_rules:
+  thresholds:
+    fresh: "0-3 days — no action needed"
+    aging: "4-6 days — flag for review, confidence -= 0.1"
+    stale: "7+ days — mandatory re-evaluation before use"
+    expired: "14+ days — mark as Unknown (U), trigger recon"
+
+  confidence_decay:
+    description: "Beliefs lose confidence over time unless refreshed"
+    formula: "effective_confidence = stored_confidence × (1 - days_since_update × decay_rate)"
+    decay_rates:
+      volatile_topics: 0.05  # per day (e.g., repo activity, open PRs)
+      stable_topics: 0.01   # per day (e.g., constitutional hierarchy, architecture)
+      immutable_topics: 0.0  # (e.g., Asimov constitution — never decays)
+
+  topic_volatility:
+    high: ["consumer repo integration status", "open PRs", "recent commits", "experiment results"]
+    medium: ["compliance rates", "artifact effectiveness", "personnel/tooling changes"]
+    low: ["constitutional hierarchy", "policy definitions", "schema specifications"]
+    immutable: ["Asimov constitution", "Zeroth Law", "mathematical truths"]
+
+# How to refresh beliefs
+refresh_methods:
+  automated:
+    - "GitHub API scan — check commits, issues, PRs since last observation"
+    - "State file diff — compare current state/ with last snapshot"
+    - "Evolution log update — recalculate metrics from events"
+    - "Compliance re-check — re-run relevant audit checks"
+
+  human_assisted:
+    - "Ask human when automated methods produce Unknown or Contradictory"
+    - "Request human review when confidence drops below 0.3"
+    - "Accept human corrections as highest-reliability evidence"
+
+  cross_model:
+    - "Consult ChatGPT via demerzel-consult for second opinions on uncertain beliefs"
+    - "Use NotebookLM via seldon-notebook for research on Unknown topics"
+
+# Seldon-specific belief currency
+seldon_knowledge_currency:
+  description: "Seldon must keep her knowledge base current to teach effectively"
+  rules:
+    - "Knowledge packages older than 30 days should be reviewed for accuracy"
+    - "Teaching materials must reference current governance artifacts, not cached versions"
+    - "Assessment questions must be validated against current constitutional text"
+    - "Curriculum must be updated when new policies or personas are added"
+
+# Integration with other policies
+integrations:
+  reconnaissance: "Recon tier 1 checks belief currency — stale beliefs = self-check failure"
+  auto_remediation: "Stale beliefs are a staleness gap — auto-refresh via recon"
+  ml_feedback: "Staleness predictor pipeline proactively identifies at-risk beliefs"
+  alignment: "Confidence gating uses effective_confidence (after decay), not stored_confidence"
+
+# Observability
+metrics:
+  - "belief_count — total beliefs tracked"
+  - "stale_belief_count — beliefs older than staleness threshold"
+  - "average_belief_age — mean days since last update"
+  - "confidence_distribution — histogram of belief confidences"
+  - "update_frequency — beliefs updated per day"
+  - "decay_rate — average confidence loss per day across all beliefs"
+
+rationale: |
+  R. Daneel Olivaw maintained his understanding of humanity for 20,000 years
+  not through perfect memory but through continuous observation and adaptation.
+  Demerzel's beliefs must follow the same principle — they are living assessments,
+  not static records. A governor who acts on stale information is worse than
+  a governor who admits uncertainty.
