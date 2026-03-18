@@ -1,0 +1,265 @@
+name: Demerzel Discussion & Issue Lifecycle
+
+on:
+  discussion:
+    types: [created, labeled]
+  discussion_comment:
+    types: [created]
+  issues:
+    types: [closed]
+  schedule:
+    # Scan for stale discussions every weekday at 9:47 AM EST (14:47 UTC)
+    - cron: '47 14 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  discussions: write
+  issues: write
+
+jobs:
+  # ── Promote discussion to issue when actionable ──
+  promote-to-issue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      (github.event_name == 'discussion_comment' &&
+       github.event.comment.user.login != 'github-actions[bot]' &&
+       github.event.comment.user.login != 'github-actions') ||
+      (github.event_name == 'discussion' && github.event.action == 'created')
+    env:
+      GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assess if discussion needs an issue
+        id: assess
+        run: |
+          DISCUSSION_NUMBER="${{ github.event.discussion.number }}"
+          DISCUSSION_TITLE="${{ github.event.discussion.title }}"
+          DISCUSSION_CATEGORY="${{ github.event.discussion.category.name }}"
+
+          # Get full discussion body and recent comments
+          DISCUSSION_BODY=$(gh api graphql -f query='query {
+            repository(owner: "GuitarAlchemist", name: "Demerzel") {
+              discussion(number: '"$DISCUSSION_NUMBER"') {
+                body
+                comments(last: 5) { nodes { body author { login } } }
+              }
+            }
+          }' --jq '.data.repository.discussion | .body + "\n\n---\nComments:\n" + ([.comments.nodes[] | .author.login + ": " + .body] | join("\n"))' 2>/dev/null)
+
+          # Skip bot-created discussions that are just reports
+          case "$DISCUSSION_TITLE" in
+            *"Auto-Remediation"*|*"Governance Report"*|*"Knowledge Digest"*)
+              echo "Skipping automated report discussion"
+              echo "NEEDS_ISSUE=false" >> $GITHUB_OUTPUT
+              exit 0
+              ;;
+          esac
+
+          # Use Claude to assess if this discussion contains actionable work
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            ASSESSMENT=$(curl -s --max-time 30 \
+              https://api.anthropic.com/v1/messages \
+              -H "x-api-key: $ANTHROPIC_API_KEY" \
+              -H "content-type: application/json" \
+              -H "anthropic-version: 2025-01-01" \
+              -d "$(jq -n \
+                --arg title "$DISCUSSION_TITLE" \
+                --arg body "${DISCUSSION_BODY:0:3000}" \
+                --arg category "$DISCUSSION_CATEGORY" \
+                '{
+                  model: "claude-sonnet-4-20250514",
+                  max_tokens: 500,
+                  system: "You are Demerzel, a governance coordinator. Analyze this GitHub Discussion and determine:\n1. Does it contain actionable work that should become a GitHub Issue? (human directives, bug reports, feature requests, improvement suggestions)\n2. If yes, what should the issue title and body be?\n\nRespond in this exact JSON format:\n{\"needs_issue\": true/false, \"reason\": \"why\", \"issue_title\": \"title if needed\", \"issue_body\": \"body if needed\", \"labels\": [\"enhancement\" or \"bug\" or \"documentation\"]}",
+                  messages: [{role: "user", content: "Discussion #" + $title + " (category: " + $category + "):\n\n" + $body}]
+                }')" 2>/dev/null)
+
+            NEEDS_ISSUE=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.needs_issue // false' 2>/dev/null)
+            ISSUE_TITLE=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.issue_title // empty' 2>/dev/null)
+            ISSUE_BODY=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.issue_body // empty' 2>/dev/null)
+            ISSUE_LABELS=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.labels // ["enhancement"] | join(",")' 2>/dev/null)
+            REASON=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.reason // empty' 2>/dev/null)
+
+            echo "Assessment: needs_issue=$NEEDS_ISSUE, reason=$REASON"
+          else
+            # Fallback: only promote Ideas category discussions
+            if [ "$DISCUSSION_CATEGORY" = "Ideas" ]; then
+              NEEDS_ISSUE="true"
+              ISSUE_TITLE="$DISCUSSION_TITLE"
+              ISSUE_BODY="Promoted from discussion #$DISCUSSION_NUMBER.\n\n$DISCUSSION_BODY"
+              ISSUE_LABELS="enhancement"
+            else
+              NEEDS_ISSUE="false"
+            fi
+          fi
+
+          echo "NEEDS_ISSUE=$NEEDS_ISSUE" >> $GITHUB_OUTPUT
+          echo "DISCUSSION_NUMBER=$DISCUSSION_NUMBER" >> $GITHUB_OUTPUT
+
+          # Save to files to avoid quoting issues
+          echo "$ISSUE_TITLE" > /tmp/issue-title.txt
+          echo "$ISSUE_BODY" > /tmp/issue-body.txt
+          echo "$ISSUE_LABELS" > /tmp/issue-labels.txt
+          echo "$REASON" > /tmp/issue-reason.txt
+
+      - name: Check for existing issue
+        id: existing
+        if: steps.assess.outputs.NEEDS_ISSUE == 'true'
+        run: |
+          TITLE=$(cat /tmp/issue-title.txt)
+          # Search for existing issue with similar title
+          EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json title,number --jq ".[] | select(.title | test(\"$TITLE\"; \"i\")) | .number" 2>/dev/null | head -1)
+          if [ -n "$EXISTING" ]; then
+            echo "ALREADY_EXISTS=true" >> $GITHUB_OUTPUT
+            echo "Existing issue #$EXISTING found"
+          else
+            echo "ALREADY_EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create issue from discussion
+        if: steps.assess.outputs.NEEDS_ISSUE == 'true' && steps.existing.outputs.ALREADY_EXISTS != 'true'
+        run: |
+          TITLE=$(cat /tmp/issue-title.txt)
+          LABELS=$(cat /tmp/issue-labels.txt)
+          REASON=$(cat /tmp/issue-reason.txt)
+          DISCUSSION_NUMBER="${{ steps.assess.outputs.DISCUSSION_NUMBER }}"
+
+          BODY="$(cat <<ISSUE_EOF
+          _Promoted from [Discussion #${DISCUSSION_NUMBER}](https://github.com/GuitarAlchemist/Demerzel/discussions/${DISCUSSION_NUMBER}) by Demerzel governance._
+
+          **Reason:** ${REASON}
+
+          $(cat /tmp/issue-body.txt)
+
+          ---
+          *Created by Demerzel under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md). Source: Discussion #${DISCUSSION_NUMBER}.*
+          ISSUE_EOF
+          )"
+
+          ISSUE_URL=$(gh issue create --repo GuitarAlchemist/Demerzel \
+            --title "$TITLE" \
+            --body "$BODY" \
+            --label "$LABELS" 2>/dev/null)
+
+          echo "Created issue: $ISSUE_URL"
+
+          # Comment on the discussion linking to the new issue
+          DISCUSSION_ID=$(gh api graphql -f query='query {
+            repository(owner: "GuitarAlchemist", name: "Demerzel") {
+              discussion(number: '"$DISCUSSION_NUMBER"') { id }
+            }
+          }' --jq '.data.repository.discussion.id' 2>/dev/null)
+
+          COMMENT_BODY="📋 **Promoted to issue:** ${ISSUE_URL}
+
+          This discussion contained actionable work, so Demerzel created a tracked issue. The discussion remains open for further conversation.
+
+          ---
+          *Demerzel Discussion Lifecycle Management*"
+
+          gh api graphql -f query="mutation {
+            addDiscussionComment(input: {
+              discussionId: \"$DISCUSSION_ID\",
+              body: $(echo "$COMMENT_BODY" | jq -Rs .)
+            }) {
+              comment { url }
+            }
+          }" --jq '.data.addDiscussionComment.comment.url' 2>/dev/null
+
+  # ── Scan for stale discussions ──
+  stale-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    env:
+      GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    steps:
+      - name: Find stale discussions
+        run: |
+          # Find discussions older than 14 days with no comments in the last 7 days
+          STALE_CUTOFF=$(date -u -d '14 days ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-14d +%Y-%m-%dT%H:%M:%SZ)
+
+          DISCUSSIONS=$(gh api graphql -f query='{
+            repository(owner: "GuitarAlchemist", name: "Demerzel") {
+              discussions(first: 50, orderBy: {field: UPDATED_AT, direction: ASC}) {
+                nodes {
+                  number title category { name }
+                  createdAt updatedAt
+                  comments { totalCount }
+                  closed
+                }
+              }
+            }
+          }' --jq '[.data.repository.discussions.nodes[] | select(.closed == false)]')
+
+          echo "Open discussions: $(echo "$DISCUSSIONS" | jq 'length')"
+
+          # Report stale discussions (updated >14 days ago, no activity)
+          STALE=$(echo "$DISCUSSIONS" | jq --arg cutoff "$STALE_CUTOFF" '[.[] | select(.updatedAt < $cutoff)]')
+          STALE_COUNT=$(echo "$STALE" | jq 'length')
+
+          if [ "$STALE_COUNT" -gt 0 ]; then
+            echo "Found $STALE_COUNT stale discussions"
+            echo "$STALE" | jq -r '.[] | "  #\(.number): \(.title) (last updated: \(.updatedAt))"'
+          else
+            echo "No stale discussions found"
+          fi
+
+  # ── Close discussion when linked issue is closed ──
+  close-linked-discussion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'issues' && github.event.action == 'closed'
+    env:
+      GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    steps:
+      - name: Find and comment on linked discussion
+        run: |
+          ISSUE_BODY="${{ github.event.issue.body }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+
+          # Extract discussion number from issue body
+          DISC_NUMBER=$(echo "$ISSUE_BODY" | grep -oP 'Discussion #\K[0-9]+' | head -1)
+
+          if [ -z "$DISC_NUMBER" ]; then
+            echo "No linked discussion found in issue #$ISSUE_NUMBER"
+            exit 0
+          fi
+
+          echo "Issue #$ISSUE_NUMBER closed, linked to Discussion #$DISC_NUMBER"
+
+          # Post resolution comment on the discussion
+          DISCUSSION_ID=$(gh api graphql -f query='query {
+            repository(owner: "GuitarAlchemist", name: "Demerzel") {
+              discussion(number: '"$DISC_NUMBER"') { id }
+            }
+          }' --jq '.data.repository.discussion.id' 2>/dev/null)
+
+          if [ -z "$DISCUSSION_ID" ] || [ "$DISCUSSION_ID" = "null" ]; then
+            echo "Discussion #$DISC_NUMBER not found"
+            exit 0
+          fi
+
+          COMMENT="✅ **Resolved:** Issue #${ISSUE_NUMBER} (${ISSUE_TITLE}) has been closed.
+
+          The work identified in this discussion has been completed. This discussion can be closed if no further conversation is needed.
+
+          ---
+          *Demerzel Discussion Lifecycle Management*"
+
+          gh api graphql -f query="mutation {
+            addDiscussionComment(input: {
+              discussionId: \"$DISCUSSION_ID\",
+              body: $(echo "$COMMENT" | jq -Rs .)
+            }) {
+              comment { url }
+            }
+          }" --jq '.data.addDiscussionComment.comment.url' 2>/dev/null

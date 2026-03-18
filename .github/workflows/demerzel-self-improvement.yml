@@ -1,0 +1,259 @@
+name: Demerzel Self-Improvement Scanner
+
+on:
+  schedule:
+    # Run weekly on Sundays at 10:17 AM EST (15:17 UTC)
+    - cron: '17 15 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  discussions: write
+
+jobs:
+  detect-gaps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Inventory governance artifacts
+        id: inventory
+        run: |
+          # Personas
+          PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null)
+          PERSONA_COUNT=$(echo "$PERSONAS" | wc -l)
+          PERSONA_NAMES=$(echo "$PERSONAS" | xargs -I{} basename {} .persona.yaml | tr '\n' ',')
+
+          # Policies
+          POLICIES=$(ls policies/*.yaml 2>/dev/null)
+          POLICY_COUNT=$(echo "$POLICIES" | wc -l)
+          POLICY_NAMES=$(echo "$POLICIES" | xargs -I{} basename {} .yaml | tr '\n' ',')
+
+          # Behavioral tests
+          TESTS=$(ls tests/behavioral/*.md 2>/dev/null)
+          TEST_COUNT=$(echo "$TESTS" | wc -l)
+          TEST_NAMES=$(echo "$TESTS" | xargs -I{} basename {} .md | tr '\n' ',')
+
+          # Skills
+          SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null)
+          SKILL_COUNT=$(echo "$SKILLS" | wc -l)
+          SKILL_NAMES=$(echo "$SKILLS" | xargs -I{} basename {} | tr '\n' ',')
+
+          # Schemas
+          SCHEMA_COUNT=$(ls schemas/*.json schemas/contracts/*.json 2>/dev/null | wc -l)
+
+          # Constitutions
+          CONST_COUNT=$(ls constitutions/*.md 2>/dev/null | wc -l)
+
+          # Workflows
+          WORKFLOW_COUNT=$(ls .github/workflows/*.yml 2>/dev/null | wc -l)
+          WORKFLOW_NAMES=$(ls .github/workflows/*.yml 2>/dev/null | xargs -I{} basename {} .yml | tr '\n' ',')
+
+          # Open issues
+          OPEN_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title --jq '.[] | "#\(.number): \(.title)"' 2>/dev/null)
+          OPEN_ISSUE_COUNT=$(echo "$OPEN_ISSUES" | grep -c '#' || echo "0")
+
+          # Consumer repos
+          for REPO in ix tars ga; do
+            HAS_GOVERNANCE=$(gh api "repos/GuitarAlchemist/$REPO/contents/governance/demerzel" --jq 'length' 2>/dev/null || echo "0")
+            HAS_STATE=$(gh api "repos/GuitarAlchemist/$REPO/contents/state" --jq 'length' 2>/dev/null || echo "0")
+            eval "${REPO}_GOVERNANCE=$HAS_GOVERNANCE"
+            eval "${REPO}_STATE=$HAS_STATE"
+          done
+
+          # Save inventory
+          cat > /tmp/inventory.json <<INVEOF
+          {
+            "persona_count": $PERSONA_COUNT,
+            "persona_names": "$PERSONA_NAMES",
+            "policy_count": $POLICY_COUNT,
+            "policy_names": "$POLICY_NAMES",
+            "test_count": $TEST_COUNT,
+            "test_names": "$TEST_NAMES",
+            "skill_count": $SKILL_COUNT,
+            "skill_names": "$SKILL_NAMES",
+            "schema_count": $SCHEMA_COUNT,
+            "constitution_count": $CONST_COUNT,
+            "workflow_count": $WORKFLOW_COUNT,
+            "workflow_names": "$WORKFLOW_NAMES",
+            "open_issue_count": $OPEN_ISSUE_COUNT
+          }
+          INVEOF
+
+          echo "INVENTORY_READY=true" >> $GITHUB_OUTPUT
+
+      - name: Detect structural gaps
+        id: gaps
+        run: |
+          GAPS=""
+          GAP_COUNT=0
+
+          # Gap 1: Personas without behavioral tests
+          for p in personas/*.persona.yaml; do
+            PNAME=$(basename "$p" .persona.yaml)
+            if ! grep -rql "$PNAME" tests/behavioral/*.md 2>/dev/null; then
+              GAPS="${GAPS}\n- **Missing test:** Persona \`$PNAME\` has no behavioral test coverage"
+              GAP_COUNT=$((GAP_COUNT + 1))
+            fi
+          done
+
+          # Gap 2: Policies not referenced in any constitution or persona
+          for pol in policies/*.yaml; do
+            POLNAME=$(basename "$pol" .yaml)
+            REFS=$(grep -rl "$POLNAME" constitutions/ personas/ contracts/ 2>/dev/null | wc -l)
+            if [ "$REFS" -eq 0 ]; then
+              GAPS="${GAPS}\n- **Orphan policy:** \`$POLNAME\` is not referenced by any constitution, persona, or contract"
+              GAP_COUNT=$((GAP_COUNT + 1))
+            fi
+          done
+
+          # Gap 3: Schemas without examples
+          for schema in schemas/contracts/*.json; do
+            SNAME=$(basename "$schema" .json)
+            EXAMPLES=$(grep -rl "$SNAME" examples/ 2>/dev/null | wc -l)
+            if [ "$EXAMPLES" -eq 0 ]; then
+              GAPS="${GAPS}\n- **Missing example:** Schema \`$SNAME\` has no example data file"
+              GAP_COUNT=$((GAP_COUNT + 1))
+            fi
+          done
+
+          # Gap 4: Consumer repos missing state directories
+          for REPO in ix tars ga; do
+            HAS_STATE=$(gh api "repos/GuitarAlchemist/$REPO/contents/state" --jq 'length' 2>/dev/null || echo "0")
+            if [ "$HAS_STATE" = "0" ]; then
+              GAPS="${GAPS}\n- **Missing state dir:** Consumer repo \`$REPO\` has no state/ directory"
+              GAP_COUNT=$((GAP_COUNT + 1))
+            fi
+          done
+
+          # Gap 5: Workflows without error handling
+          for wf in .github/workflows/*.yml; do
+            WFNAME=$(basename "$wf")
+            HAS_TIMEOUT=$(grep -c 'timeout-minutes' "$wf" || true)
+            if [ "$HAS_TIMEOUT" -eq 0 ]; then
+              GAPS="${GAPS}\n- **No timeout:** Workflow \`$WFNAME\` has no timeout-minutes configured"
+              GAP_COUNT=$((GAP_COUNT + 1))
+            fi
+          done
+
+          # Gap 6: Check for untested governance capabilities
+          PERSONA_CAPS=$(grep -h 'capabilities:' -A 50 personas/*.persona.yaml 2>/dev/null | grep '^ *- ' | sort -u | wc -l)
+          TESTED_CAPS=$(grep -h '## Test' tests/behavioral/*.md 2>/dev/null | wc -l)
+          if [ "$TESTED_CAPS" -lt "$((PERSONA_CAPS / 2))" ]; then
+            GAPS="${GAPS}\n- **Low test coverage:** Only $TESTED_CAPS test cases for $PERSONA_CAPS declared capabilities"
+            GAP_COUNT=$((GAP_COUNT + 1))
+          fi
+
+          echo "Found $GAP_COUNT gaps"
+          echo -e "$GAPS" > /tmp/gaps.txt
+          echo "GAP_COUNT=$GAP_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Use Claude to prioritize and suggest fixes
+        id: analyze
+        if: steps.gaps.outputs.GAP_COUNT > 0
+        run: |
+          GAPS=$(cat /tmp/gaps.txt)
+          INVENTORY=$(cat /tmp/inventory.json)
+
+          if [ -n "$ANTHROPIC_API_KEY" ]; then
+            ANALYSIS=$(curl -s --max-time 30 \
+              https://api.anthropic.com/v1/messages \
+              -H "x-api-key: $ANTHROPIC_API_KEY" \
+              -H "content-type: application/json" \
+              -H "anthropic-version: 2025-01-01" \
+              -d "$(jq -n \
+                --arg gaps "$GAPS" \
+                --arg inventory "$INVENTORY" \
+                '{
+                  model: "claude-sonnet-4-20250514",
+                  max_tokens: 1000,
+                  system: "You are Demerzel, governance coordinator. Given detected gaps in the governance framework, prioritize them by impact and suggest concrete fixes. For each gap, classify as: CRITICAL (blocks governance), HIGH (reduces effectiveness), MEDIUM (quality gap), LOW (nice-to-have). Suggest which gaps should become GitHub Issues. Be concise — bullet points, not paragraphs.",
+                  messages: [{role: "user", content: "Inventory:\n" + $inventory + "\n\nDetected gaps:\n" + $gaps + "\n\nPrioritize these gaps and suggest which should become issues."}]
+                }')" 2>/dev/null)
+
+            echo "$ANALYSIS" | jq -r '.content[0].text' 2>/dev/null > /tmp/analysis.txt
+          else
+            echo "$GAPS" > /tmp/analysis.txt
+          fi
+
+          echo "ANALYSIS_READY=true" >> $GITHUB_OUTPUT
+
+      - name: Create issues for critical/high gaps
+        if: steps.analyze.outputs.ANALYSIS_READY == 'true'
+        run: |
+          GAPS=$(cat /tmp/gaps.txt)
+          ANALYSIS=$(cat /tmp/analysis.txt)
+          DATE=$(date -u +%Y-%m-%d)
+
+          # Create a single tracking issue for all gaps
+          EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --label "self-improvement" --json number --jq 'length' 2>/dev/null || echo "0")
+
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Self-improvement issue already open, skipping creation"
+            exit 0
+          fi
+
+          BODY="$(cat <<GAPEOF
+          ## Demerzel Self-Improvement Scan — ${DATE}
+
+          Automated gap detection found the following areas for improvement:
+
+          ### Detected Gaps
+          ${GAPS}
+
+          ### Analysis & Prioritization
+          ${ANALYSIS}
+
+          ---
+          *Generated by Demerzel Self-Improvement Scanner. Run \`/demerzel compound\` for interactive analysis.*
+          GAPEOF
+          )"
+
+          gh issue create --repo GuitarAlchemist/Demerzel \
+            --title "Self-improvement: Governance gaps detected ($DATE)" \
+            --body "$BODY" \
+            --label "self-improvement,enhancement" 2>/dev/null || echo "Failed to create issue"
+
+      - name: Post scan to Discussions
+        if: steps.gaps.outputs.GAP_COUNT > 0
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          GAPS=$(cat /tmp/gaps.txt)
+          ANALYSIS=$(cat /tmp/analysis.txt 2>/dev/null || echo "No AI analysis available")
+          GAP_COUNT="${{ steps.gaps.outputs.GAP_COUNT }}"
+
+          BODY=$(cat <<DISCEOF | jq -Rs .
+          ## 🔍 Self-Improvement Scan — ${DATE}
+
+          **Gaps detected:** ${GAP_COUNT}
+
+          ### Findings
+          ${GAPS}
+
+          ### Prioritization
+          ${ANALYSIS}
+
+          ---
+          *Demerzel Self-Improvement Scanner — detecting and addressing governance gaps automatically.*
+          DISCEOF
+          )
+
+          gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              title: \"🔍 Self-Improvement Scan — $DATE\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post"
