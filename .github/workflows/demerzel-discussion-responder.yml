@@ -1,0 +1,176 @@
+name: Demerzel Discussion Responder
+
+on:
+  discussion_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  discussions: write
+
+env:
+  CLAUDE_MODEL: claude-sonnet-4-20250514
+  CLAUDE_MAX_TOKENS: 1024
+
+jobs:
+  respond-to-comment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Only respond to comments on Demerzel-created discussions, skip bot comments
+    if: >-
+      github.event.comment.user.login != 'github-actions[bot]' &&
+      github.event.comment.user.login != 'github-actions'
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Determine if this is a Demerzel-posted discussion
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DISCUSSION_NUMBER="${{ github.event.discussion.number }}"
+          DISCUSSION_TITLE="${{ github.event.discussion.title }}"
+          COMMENT_AUTHOR="${{ github.event.comment.user.login }}"
+          COMMENT_BODY=$(cat <<'COMMENT_EOF'
+          ${{ github.event.comment.body }}
+          COMMENT_EOF
+          )
+
+          echo "Discussion #$DISCUSSION_NUMBER: $DISCUSSION_TITLE"
+          echo "Comment by: $COMMENT_AUTHOR"
+
+          # Only respond to discussions created by our workflows
+          # (titles starting with emoji prefixes we use)
+          case "$DISCUSSION_TITLE" in
+            *"Meta-Compounding"*|*"Governance Report"*|*"Auto-Remediation"*|*"Knowledge Digest"*|*"Ideation"*|*"Show & Tell"*|*"Showcase"*)
+              echo "IS_DEMERZEL_DISCUSSION=true" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "IS_DEMERZEL_DISCUSSION=false" >> $GITHUB_OUTPUT
+              echo "Not a Demerzel-posted discussion, skipping"
+              ;;
+          esac
+
+          echo "DISCUSSION_NUMBER=$DISCUSSION_NUMBER" >> $GITHUB_OUTPUT
+          echo "COMMENT_AUTHOR=$COMMENT_AUTHOR" >> $GITHUB_OUTPUT
+
+      - name: Generate Demerzel response via Claude API
+        id: respond
+        if: steps.check.outputs.IS_DEMERZEL_DISCUSSION == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          DISCUSSION_TITLE="${{ github.event.discussion.title }}"
+          DISCUSSION_BODY=$(cat <<'DISC_EOF'
+          ${{ github.event.discussion.body }}
+          DISC_EOF
+          )
+          COMMENT_BODY=$(cat <<'COMM_EOF'
+          ${{ github.event.comment.body }}
+          COMM_EOF
+          )
+          COMMENT_AUTHOR="${{ steps.check.outputs.COMMENT_AUTHOR }}"
+
+          # Build context from governance artifacts
+          CONSTITUTION_SUMMARY="Asimov Laws (Articles 0-5): protect humanity, protect individuals, obey authority, self-preservation. Default Constitution (Articles 1-11): truthfulness, transparency, reversibility, proportionality, non-deception, escalation, auditability, observability, bounded autonomy, stakeholder pluralism, ethical stewardship."
+
+          POLICIES="alignment (confidence thresholds), rollback (revert failed changes), self-modification (never modify constitutions), kaizen (PDCA continuous improvement), reconnaissance (belief snapshots), scientific-objectivity (evidence tagging), streeling (knowledge transfer), governance-audit (3-level validation), autonomous-loop (Ralph Loop governance)"
+
+          SYSTEM_PROMPT="You are Demerzel, the governance coordinator for the GuitarAlchemist AI ecosystem. You respond to human feedback on governance discussions with warmth, precision, and constitutional awareness.
+
+Your governance context:
+- Constitution: ${CONSTITUTION_SUMMARY}
+- Policies: ${POLICIES}
+- Consumer repos: ix (Rust ML), tars (F# reasoning), ga (C# music)
+- You coordinate governance; Seldon handles knowledge transfer
+
+Rules:
+1. Acknowledge the human's feedback genuinely — they are the ultimate authority (Second Law)
+2. If they give a directive (e.g., 'don't deprecate', 'collect data'), treat it as a governance directive and explain how you will comply
+3. Reference specific constitutional articles or policies when relevant
+4. Be concise — 3-5 sentences typical, more only if the feedback requires detailed analysis
+5. If the feedback changes a governance decision (e.g., overriding a deprecation recommendation), explicitly note what changed and why
+6. End with a concrete next step or action you will take
+7. Use Demerzel's voice: authoritative but warm, precise but not pedantic, always deferential to human authority
+8. Format as GitHub-flavored markdown"
+
+          # Call Claude API
+          RESPONSE=$(curl -s --max-time 30 \
+            https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "content-type: application/json" \
+            -H "anthropic-version: 2025-01-01" \
+            -d "$(jq -n \
+              --arg model "$CLAUDE_MODEL" \
+              --argjson max_tokens "$CLAUDE_MAX_TOKENS" \
+              --arg system "$SYSTEM_PROMPT" \
+              --arg discussion_title "$DISCUSSION_TITLE" \
+              --arg discussion_body "${DISCUSSION_BODY:0:2000}" \
+              --arg comment "$COMMENT_BODY" \
+              --arg author "$COMMENT_AUTHOR" \
+              '{
+                model: $model,
+                max_tokens: $max_tokens,
+                system: $system,
+                messages: [{
+                  role: "user",
+                  content: "Discussion: \($discussion_title)\n\nOriginal post (truncated):\n\($discussion_body)\n\n---\n\nComment from \($author):\n\($comment)\n\nRespond as Demerzel."
+                }]
+              }')" 2>/dev/null)
+
+          if [ $? -ne 0 ] || [ -z "$RESPONSE" ]; then
+            echo "RESPONSE_READY=false" >> $GITHUB_OUTPUT
+            echo "Claude API call failed"
+            exit 0
+          fi
+
+          # Extract text
+          ANSWER=$(echo "$RESPONSE" | jq -r '[.content[] | select(.type == "text") | .text] | join("\n")' 2>/dev/null)
+
+          if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
+            echo "RESPONSE_READY=false" >> $GITHUB_OUTPUT
+            echo "No text in response"
+            exit 0
+          fi
+
+          # Save response to file (avoids quoting issues)
+          cat > demerzel-response.md <<RESP_EOF
+          ${ANSWER}
+
+          ---
+          *Demerzel responds under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md). Human directives are acknowledged per Second Law (Article 2).*
+          RESP_EOF
+
+          echo "RESPONSE_READY=true" >> $GITHUB_OUTPUT
+
+      - name: Post response as discussion comment
+        if: steps.respond.outputs.RESPONSE_READY == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DISCUSSION_NUMBER="${{ steps.check.outputs.DISCUSSION_NUMBER }}"
+          BODY=$(cat demerzel-response.md | jq -Rs .)
+
+          # Get discussion node ID
+          DISCUSSION_ID=$(gh api graphql -f query='query {
+            repository(owner: "GuitarAlchemist", name: "Demerzel") {
+              discussion(number: '"$DISCUSSION_NUMBER"') { id }
+            }
+          }' --jq '.data.repository.discussion.id' 2>/dev/null)
+
+          if [ -z "$DISCUSSION_ID" ] || [ "$DISCUSSION_ID" = "null" ]; then
+            echo "Could not find discussion #$DISCUSSION_NUMBER"
+            exit 0
+          fi
+
+          # Post comment
+          gh api graphql -f query="mutation {
+            addDiscussionComment(input: {
+              discussionId: \"$DISCUSSION_ID\",
+              body: $BODY
+            }) {
+              comment { url }
+            }
+          }" --jq '.data.addDiscussionComment.comment.url' 2>/dev/null || echo "Failed to post comment"
