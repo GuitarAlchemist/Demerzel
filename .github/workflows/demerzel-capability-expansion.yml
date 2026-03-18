@@ -1,0 +1,187 @@
+name: Demerzel Capability Expansion
+
+on:
+  schedule:
+    # Run weekly on Mondays at 10:37 AM EST (15:37 UTC)
+    - cron: '37 15 * * 1'
+  workflow_dispatch:
+    inputs:
+      focus_area:
+        description: 'Focus area for expansion (e.g., music-theory, ml-ops, governance, all)'
+        required: false
+        default: 'all'
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  discussions: write
+
+jobs:
+  scan-capabilities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Inventory ecosystem capabilities
+        id: capabilities
+        run: |
+          # ── Demerzel capabilities (governance) ──
+          DEMERZEL_SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null | xargs -I{} basename {} | tr '\n' ', ')
+          DEMERZEL_WORKFLOWS=$(ls .github/workflows/*.yml 2>/dev/null | xargs -I{} basename {} .yml | tr '\n' ', ')
+          DEMERZEL_PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | xargs -I{} basename {} .persona.yaml | tr '\n' ', ')
+
+          # ── ix capabilities (ML/Rust) ──
+          IX_CRATES=$(gh api repos/GuitarAlchemist/ix/contents/crates --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "unknown")
+          IX_MCP=$(gh api repos/GuitarAlchemist/ix/contents/mcp-servers --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "none")
+
+          # ── tars capabilities (F#/reasoning) ──
+          TARS_PROJECTS=$(gh api repos/GuitarAlchemist/tars/contents/src --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "unknown")
+          TARS_EXPLORATIONS=$(gh api repos/GuitarAlchemist/tars/contents/v1/docs/Explorations --jq '.[].name' 2>/dev/null | head -10 | tr '\n' ', ' || echo "unknown")
+
+          # ── ga capabilities (C#/music) ──
+          GA_PROJECTS=$(gh api repos/GuitarAlchemist/ga/contents/src --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "unknown")
+          GA_MCP=$(gh api repos/GuitarAlchemist/ga/contents/mcp-servers --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "none")
+
+          # ── MCP tools available ──
+          MCP_REGISTRY=""
+          if [ -f schemas/capability-registry.json ]; then
+            MCP_REGISTRY=$(jq -r '.tools[].name' schemas/capability-registry.json 2>/dev/null | tr '\n' ', ')
+          fi
+
+          # Save capability map
+          cat > /tmp/capabilities.json <<CAPEOF
+          {
+            "demerzel": {
+              "role": "Governance coordinator",
+              "skills": "$DEMERZEL_SKILLS",
+              "workflows": "$DEMERZEL_WORKFLOWS",
+              "personas": "$DEMERZEL_PERSONAS"
+            },
+            "ix": {
+              "role": "Machine forge (Rust ML)",
+              "crates": "$IX_CRATES",
+              "mcp_servers": "$IX_MCP"
+            },
+            "tars": {
+              "role": "Cognition engine (F# reasoning)",
+              "projects": "$TARS_PROJECTS",
+              "explorations": "$TARS_EXPLORATIONS"
+            },
+            "ga": {
+              "role": "Guitar Alchemist (C# music domain)",
+              "projects": "$GA_PROJECTS",
+              "mcp_servers": "$GA_MCP"
+            },
+            "mcp_tools": "$MCP_REGISTRY"
+          }
+          CAPEOF
+
+          echo "CAPABILITIES_READY=true" >> $GITHUB_OUTPUT
+
+      - name: Identify capability gaps and expansion opportunities
+        id: analyze
+        if: steps.capabilities.outputs.CAPABILITIES_READY == 'true'
+        run: |
+          CAPABILITIES=$(cat /tmp/capabilities.json)
+          FOCUS="${{ inputs.focus_area || 'all' }}"
+
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "No API key, skipping AI analysis"
+            echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          RESPONSE=$(curl -s --max-time 60 \
+            https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "content-type: application/json" \
+            -H "anthropic-version: 2025-01-01" \
+            -d "$(jq -n \
+              --arg caps "$CAPABILITIES" \
+              --arg focus "$FOCUS" \
+              '{
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 2000,
+                system: "You are Demerzel, governance coordinator for the GuitarAlchemist AI ecosystem.\n\nYour ecosystem:\n- **Demerzel** (this repo): governance framework — constitutions, policies, personas, skills, workflows\n- **ix**: Rust ML forge — crates for ML algorithms, optimization, GPU compute, MCP servers\n- **tars**: F# cognition — WoT DSL, symbolic reasoning, agent reflection, explorations\n- **ga**: C# Guitar Alchemist — music theory domain, MCP server with 50+ tools, chatbot\n\nYour job: identify what the ecosystem CANNOT currently do but SHOULD be able to do. Think about:\n1. Missing MCP tools/servers that would add valuable capabilities\n2. Missing skills/hooks that would improve automation\n3. Cross-repo integrations that would create synergy\n4. Knowledge gaps where no repo has expertise\n5. New repos/teams that might be needed\n\nFor each gap, specify:\n- What is missing\n- Which repo should implement it (or if a new repo is needed)\n- Priority (CRITICAL/HIGH/MEDIUM/LOW)\n- Suggested directive (what to tell the implementing repo)\n\nFocus area: " + $focus + "\n\nBe concrete and actionable. No vague suggestions.",
+                messages: [{role: "user", content: "Current ecosystem capabilities:\n\n" + $caps + "\n\nIdentify capability gaps and expansion opportunities."}]
+              }')" 2>/dev/null)
+
+          echo "$RESPONSE" | jq -r '.content[0].text' 2>/dev/null > /tmp/expansion-analysis.txt
+
+          if [ -s /tmp/expansion-analysis.txt ]; then
+            echo "ANALYSIS_READY=true" >> $GITHUB_OUTPUT
+          else
+            echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create expansion issue
+        if: steps.analyze.outputs.ANALYSIS_READY == 'true'
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          ANALYSIS=$(cat /tmp/expansion-analysis.txt)
+          CAPABILITIES=$(cat /tmp/capabilities.json | jq '.')
+
+          # Check for existing expansion issue
+          EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --label "capability-expansion" --json number --jq 'length' 2>/dev/null || echo "0")
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Expansion issue already open, updating..."
+            ISSUE_NUM=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --label "capability-expansion" --json number --jq '.[0].number' 2>/dev/null)
+            gh issue comment "$ISSUE_NUM" --repo GuitarAlchemist/Demerzel --body "## Updated Scan — ${DATE}
+
+${ANALYSIS}
+
+---
+*Demerzel Capability Expansion Scanner*" 2>/dev/null
+            exit 0
+          fi
+
+          gh issue create --repo GuitarAlchemist/Demerzel \
+            --title "Capability expansion opportunities ($DATE)" \
+            --body "## Demerzel Capability Expansion — ${DATE}
+
+### Current Ecosystem
+\`\`\`json
+${CAPABILITIES}
+\`\`\`
+
+### Gap Analysis & Expansion Opportunities
+${ANALYSIS}
+
+---
+*Generated by Demerzel Capability Expansion Scanner. Demerzel identifies what she doesn't know and proposes how to learn it.*" \
+            --label "capability-expansion,enhancement" 2>/dev/null
+
+      - name: Post to Discussions
+        if: steps.analyze.outputs.ANALYSIS_READY == 'true'
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          ANALYSIS=$(cat /tmp/expansion-analysis.txt)
+          BODY=$(cat <<DISCEOF | jq -Rs .
+          ## 🚀 Capability Expansion Scan — ${DATE}
+
+          Demerzel scanned the ecosystem for capability gaps and expansion opportunities.
+
+          ${ANALYSIS}
+
+          ---
+          *Demerzel knows what she doesn't know. This scan identifies gaps across ix, tars, ga, and the governance framework itself.*
+          DISCEOF
+          )
+
+          gh api graphql -f query="mutation {
+            createDiscussion(input: {
+              repositoryId: \"R_kgDORnMyyQ\",
+              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              title: \"🚀 Capability Expansion — $DATE\",
+              body: $BODY
+            }) {
+              discussion { url }
+            }
+          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post"
