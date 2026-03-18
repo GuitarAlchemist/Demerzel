@@ -1,6 +1,6 @@
 {
   "id": "pdca-behavioral-test-gap",
-  "cycle_phase": "plan",
+  "cycle_phase": "act",
   "hypothesis": "Creating behavioral tests for all 8 ungoverned personas will close the specification-validation gap and ensure all personas can be verified against their intended behavior",
   "plan": {
     "description": "Create behavioral test suites for: default, skeptical-auditor, seldon, communal-steward, convolution-agent, critical-theorist, rational-administrator, recovery-agent, validator-reflector, virtuous-leader",
@@ -8,10 +8,21 @@
     "risks": ["Test cases may be too generic without real-world usage data", "Some personas overlap in function making distinct tests challenging"],
     "target_date": "2026-03-24"
   },
-  "do": null,
-  "check": null,
-  "act": null,
+  "do": {
+    "action_taken": "Created 10 behavioral test files (default, skeptical-auditor, seldon, communal-steward, convolution-agent, critical-theorist, rational-administrator, recovery-agent, validator-reflector, virtuous-leader) with 4+ test cases each",
+    "completed_at": "2026-03-17T21:00:00Z"
+  },
+  "check": {
+    "success_criteria_met": true,
+    "evidence": "All 14 personas now have dedicated test files. Each has 4+ test cases with setup, input, expected behavior, violation conditions, and constitutional basis.",
+    "checked_at": "2026-03-17T21:00:00Z"
+  },
+  "act": {
+    "decision": "standardize",
+    "rationale": "Gap closed. Behavioral test coverage is now 100% for all personas. Future persona additions must include tests per persona-requirements rule.",
+    "acted_at": "2026-03-17T21:00:00Z"
+  },
   "created_at": "2026-03-17T20:00:00Z",
-  "last_updated": "2026-03-17T20:00:00Z",
+  "last_updated": "2026-03-17T21:00:00Z",
   "evaluated_by": "demerzel"
 }
