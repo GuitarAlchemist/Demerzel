@@ -1,18 +1,25 @@
 {
   "proposition": "The ga repo has adopted Demerzel governance integration",
-  "truth_value": "U",
-  "confidence": 0.2,
+  "truth_value": "F",
+  "confidence": 0.85,
   "evidence": {
-    "supporting": [],
+    "supporting": [
+      {
+        "source": "recon-tier2-ga",
+        "claim": "ga has governance/demerzel submodule registered in .gitmodules",
+        "timestamp": "2026-03-17T22:00:00Z",
+        "reliability": 0.9
+      }
+    ],
     "contradicting": [
       {
-        "source": "reconnaissance-tier2-environment-scan",
-        "claim": "Integration directive created (directive-integration-ga.json) but no evidence of adoption. GA repo not yet scanned.",
-        "timestamp": "2026-03-17T20:00:00Z",
-        "reliability": 0.8
+        "source": "recon-tier2-ga",
+        "claim": "No CLAUDE.md governance section. No state/ directory. Submodule stale. 9 ungoverned agents in .agent/ with no persona definitions or behavioral tests. No belief states.",
+        "timestamp": "2026-03-17T22:00:00Z",
+        "reliability": 0.95
       }
     ]
   },
-  "last_updated": "2026-03-17T20:00:00Z",
+  "last_updated": "2026-03-17T22:00:00Z",
   "evaluated_by": "demerzel"
 }

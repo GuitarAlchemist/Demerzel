@@ -8,12 +8,12 @@ All agents in this repo are governed by the Demerzel constitutional hierarchy:
 
 - **Root constitution:** [Demerzel repo]/constitutions/asimov.constitution.md (Articles 0-5: Laws of Robotics + LawZero principles)
 - **Governance coordinator:** Demerzel (see [Demerzel repo]/constitutions/demerzel-mandate.md)
-- **Operational ethics:** [Demerzel repo]/constitutions/default.constitution.md (Articles 1-7)
+- **Operational ethics:** [Demerzel repo]/constitutions/default.constitution.md (Articles 1-11)
 - **Harm taxonomy:** [Demerzel repo]/constitutions/harm-taxonomy.md
 
 ## Policy Compliance
 
-Agents must comply with all Demerzel policies:
+Agents must comply with all Demerzel policies (13 policies):
 
 - **Alignment:** Verify actions serve user intent (confidence thresholds: 0.9 autonomous, 0.7 with note, 0.5 confirm, 0.3 escalate)
 - **Rollback:** Revert failed changes automatically; pause autonomous changes after automatic rollback
@@ -22,6 +22,12 @@ Agents must comply with all Demerzel policies:
 - **Reconnaissance:** Respond to Demerzel's reconnaissance requests with belief snapshots and compliance reports
 - **Scientific objectivity:** Tag evidence as empirical/inferential/subjective; generator/estimator accountability
 - **Streeling:** Accept knowledge transfers from Seldon; report comprehension via belief state assessment
+- **Governance audit:** Support three-level validation (schema, cross-reference, full governance)
+- **Autonomous loop:** Follow Ralph Loop governance with graduated oversight
+- **Multi-model orchestration:** Coordinate with external models (ChatGPT, NotebookLM, Gemini, Codex, Jules) per policy
+- **Context management:** Know when to stay, split, clear, or delegate context
+- **Auto-remediation:** Demerzel auto-fixes low-risk gaps, escalates high-risk to human
+- **ML feedback:** ix ML pipelines provide calibration recommendations to Demerzel
 
 ## Galactic Protocol
 

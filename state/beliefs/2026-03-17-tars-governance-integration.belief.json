@@ -1,18 +1,25 @@
 {
   "proposition": "The tars repo has adopted Demerzel governance integration",
   "truth_value": "U",
-  "confidence": 0.2,
+  "confidence": 0.5,
   "evidence": {
-    "supporting": [],
+    "supporting": [
+      {
+        "source": "recon-tier2-tars",
+        "claim": "tars has governance/demerzel submodule, state/ directory scaffolded, CLAUDE.md governance snippet with markers, one compliance snapshot",
+        "timestamp": "2026-03-17T22:00:00Z",
+        "reliability": 0.95
+      }
+    ],
     "contradicting": [
       {
-        "source": "reconnaissance-tier2-environment-scan",
-        "claim": "Integration directive created (directive-integration-tars.json) but no evidence of adoption. Tars repo not yet scanned.",
-        "timestamp": "2026-03-17T20:00:00Z",
-        "reliability": 0.8
+        "source": "recon-tier2-tars",
+        "claim": "Submodule is 136 commits behind master. state/ directories all empty except one snapshot. Root has hundreds of legacy files obscuring governance.",
+        "timestamp": "2026-03-17T22:00:00Z",
+        "reliability": 0.95
       }
     ]
   },
-  "last_updated": "2026-03-17T20:00:00Z",
+  "last_updated": "2026-03-17T22:00:00Z",
   "evaluated_by": "demerzel"
 }
