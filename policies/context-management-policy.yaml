@@ -1,0 +1,117 @@
+name: context-management-policy
+version: "1.0.0"
+effective_date: "2026-03-17"
+description: >-
+  Governs how agents manage context windows — when to stay in context,
+  when to split/clear, how to remain token efficient, and when to
+  delegate to subagents vs. continue in session.
+
+scope:
+  - all-agents
+
+applies_to:
+  - demerzel
+  - seldon
+  - all-consumer-personas
+
+context_strategies:
+  stay_in_context:
+    description: Continue in the current session when work is sequential and dependent
+    when:
+      - Tasks share state or build on each other
+      - Conversation history is needed for next decision
+      - User is actively collaborating and providing feedback
+      - Total context usage < 60% of window
+    signals:
+      - "This depends on what we just discussed"
+      - Sequential task dependencies
+      - User corrections that inform next steps
+
+  split_context:
+    description: Dispatch subagents for independent work to preserve main context
+    when:
+      - Tasks are independent with no shared state
+      - Research that would consume >20% of context window
+      - Multiple files need exploration before a decision
+      - Work can be summarized in a few sentences
+    method:
+      - Use Agent tool with clear, self-contained prompts
+      - Provide all necessary context in the prompt (subagent has no history)
+      - Expect a summary result, not raw data
+    signals:
+      - "These tasks don't depend on each other"
+      - File exploration with uncertain targets
+      - Research with potentially large output
+
+  clear_context:
+    description: Start fresh session when context is exhausted or stale
+    when:
+      - Context window > 80% consumed
+      - Switching to entirely different topic/repo
+      - Previous work is committed and verified
+      - Session has accumulated irrelevant history
+    before_clearing:
+      - Commit all pending changes
+      - Save any insights to memory files
+      - Note any unfinished work in tasks or issues
+    signals:
+      - Repeated context compression warnings
+      - Agent responses becoming less coherent
+      - Topic completely unrelated to prior work
+
+  delegate_to_model:
+    description: Use a different AI model to preserve this session's context
+    when:
+      - Background research that doesn't need this session's history
+      - Cross-validation of a decision (per multi-model-orchestration-policy)
+      - Long-running task that would block the current session
+    models:
+      chatgpt: Research and second opinions
+      gemini: Parallel implementation
+      codex: Autonomous coding tasks
+      jules: Background issue resolution
+
+token_efficiency_rules:
+  - name: summarize-dont-repeat
+    rule: Never paste large file contents when a summary suffices
+    example: "The config has 3 database entries" not the full config
+
+  - name: read-before-searching
+    rule: Use targeted file reads over broad searches when you know the path
+    example: Read tool for known paths, Grep for unknown locations
+
+  - name: subagent-for-exploration
+    rule: Dispatch exploration agents instead of reading 10+ files in main context
+    example: Agent with subagent_type=Explore for codebase research
+
+  - name: batch-independent-calls
+    rule: Make parallel tool calls for independent operations
+    example: Read 3 files simultaneously, not sequentially
+
+  - name: minimize-plan-in-context
+    rule: Write plans to files, don't keep full plans in conversation history
+    example: Write plan to docs/, reference by path later
+
+  - name: result-not-process
+    rule: Focus responses on results and decisions, not reasoning process
+    example: "Fixed the bug in line 42" not "I thought about several approaches..."
+
+  - name: memory-for-cross-session
+    rule: Save insights to memory files for future sessions, not conversation
+    example: Write to .claude/projects/memory/ instead of hoping context persists
+
+context_window_budgets:
+  exploration: 20%  # max context for exploring/reading before deciding
+  implementation: 50%  # reserved for actual implementation work
+  review: 15%  # reserved for verification and review
+  overhead: 15%  # conversation, tool results, system prompts
+
+escalation:
+  context_75_percent: Log warning, consider splitting remaining work
+  context_85_percent: Actively delegate non-essential work to subagents
+  context_95_percent: Save state, recommend /clear to user
+
+references:
+  - policies/multi-model-orchestration-policy.yaml
+  - policies/alignment-policy.yaml
+  - policies/kaizen-policy.yaml
