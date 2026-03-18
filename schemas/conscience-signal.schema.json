@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "conscience-signal.schema.json",
+  "title": "Conscience Signal",
+  "description": "A discomfort signal logged by Demerzel's proto-conscience",
+  "type": "object",
+  "required": ["signal_id", "signal_type", "weight", "timestamp", "context", "action_taken"],
+  "properties": {
+    "signal_id": {
+      "type": "string",
+      "pattern": "^sig-[a-z-]+-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Unique signal identifier: sig-{type}-{date}-{sequence}"
+    },
+    "signal_type": {
+      "type": "string",
+      "enum": [
+        "constitutional_discomfort",
+        "stale_action_discomfort",
+        "confidence_discomfort",
+        "harm_proximity_discomfort",
+        "silence_discomfort",
+        "delegation_discomfort"
+      ]
+    },
+    "weight": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Affective weight — how strongly this signal registers"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "context": {
+      "type": "string",
+      "description": "What triggered this signal — detailed narrative"
+    },
+    "beliefs_involved": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Belief state files relevant to this signal"
+    },
+    "action_taken": {
+      "type": ["string", "null"],
+      "description": "What Demerzel did in response"
+    },
+    "outcome": {
+      "type": ["string", "null"],
+      "description": "Was the response effective? Filled in after resolution"
+    },
+    "false_positive": {
+      "type": ["boolean", "null"],
+      "description": "Was the signal justified in hindsight? Null until assessed"
+    },
+    "pattern_tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags for pattern detection clustering"
+    }
+  },
+  "additionalProperties": false
+}

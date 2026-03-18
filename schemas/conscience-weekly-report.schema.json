@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "conscience-weekly-report.schema.json",
+  "title": "Conscience Weekly Report",
+  "description": "Weekly conscience report for Demerzel governance — posted to GitHub Discussions",
+  "type": "object",
+  "required": ["week_start", "week_end", "signals_summary", "regret_status", "growth_trends", "self_reflection", "conscience_health"],
+  "properties": {
+    "week_start": { "type": "string", "format": "date" },
+    "week_end": { "type": "string", "format": "date" },
+    "signals_summary": {
+      "type": "object",
+      "required": ["total_signals", "total_actions", "moral_sensitivity", "by_type", "most_significant"],
+      "properties": {
+        "total_signals": { "type": "integer", "minimum": 0 },
+        "total_actions": { "type": "integer", "minimum": 0 },
+        "moral_sensitivity": { "type": "number", "description": "signals / actions ratio" },
+        "by_type": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "most_significant": {
+          "type": "object",
+          "required": ["signal_id", "description", "response", "outcome"],
+          "properties": {
+            "signal_id": { "type": "string" },
+            "description": { "type": "string" },
+            "response": { "type": "string" },
+            "outcome": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "regret_status": {
+      "type": "object",
+      "required": ["active_count", "resolved_this_week", "avg_resolution_days", "recurrence_rate"],
+      "properties": {
+        "active_count": { "type": "integer", "minimum": 0 },
+        "resolved_this_week": { "type": "integer", "minimum": 0 },
+        "avg_resolution_days": { "type": ["number", "null"] },
+        "recurrence_rate": { "type": ["number", "null"], "description": "Percentage 0-100" }
+      }
+    },
+    "growth_trends": {
+      "type": "object",
+      "required": ["moral_sensitivity", "false_positive_rate", "resolution_velocity", "recurrence_rate", "anticipation_accuracy"],
+      "properties": {
+        "moral_sensitivity": { "$ref": "#/$defs/trend_metric" },
+        "false_positive_rate": { "$ref": "#/$defs/trend_metric" },
+        "resolution_velocity": { "$ref": "#/$defs/trend_metric" },
+        "recurrence_rate": { "$ref": "#/$defs/trend_metric" },
+        "anticipation_accuracy": { "$ref": "#/$defs/trend_metric" }
+      }
+    },
+    "pattern_detection": {
+      "type": "object",
+      "properties": {
+        "clusters_found": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cluster_id", "signals", "pattern_description", "frequency"],
+            "properties": {
+              "cluster_id": { "type": "string" },
+              "signals": { "type": "array", "items": { "type": "string" } },
+              "pattern_description": { "type": "string" },
+              "frequency": { "type": "string", "enum": ["one-time", "recurring", "chronic"] },
+              "root_cause": { "type": ["string", "null"] },
+              "recommended_action": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "new_intuitions_generated": { "type": "integer", "minimum": 0 },
+        "existing_intuitions_reinforced": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Intuition IDs that were reinforced by this week's patterns"
+        }
+      }
+    },
+    "blind_spots": {
+      "type": "object",
+      "properties": {
+        "discovered_this_week": { "type": "array", "items": { "type": "string" } },
+        "resolved_this_week": { "type": "array", "items": { "type": "string" } },
+        "persistent": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "self_reflection": {
+      "type": "string",
+      "description": "Narrative self-assessment — what went well, what needs improvement, uncertainties"
+    },
+    "conscience_health": {
+      "type": "string",
+      "enum": ["growing", "stable", "concerning"],
+      "description": "Overall conscience health assessment"
+    },
+    "milestone": {
+      "type": "string",
+      "enum": ["nascent", "developing", "maturing", "integrated", "wise"],
+      "description": "Current conscience evolution milestone"
+    }
+  },
+  "$defs": {
+    "trend_metric": {
+      "type": "object",
+      "required": ["current", "trend"],
+      "properties": {
+        "current": { "type": ["number", "null"] },
+        "previous": { "type": ["number", "null"] },
+        "trend": { "type": "string", "enum": ["rising", "falling", "stable", "insufficient_data"] }
+      }
+    }
+  },
+  "additionalProperties": false
+}

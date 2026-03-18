@@ -1,0 +1,30 @@
+{
+  "pattern_id": "pat-governance-drift-001",
+  "pattern_type": "signal_cluster",
+  "description": "Consumer repo governance drift — submodule staleness, empty state directories, and stale CLAUDE.md references cluster together. When one repo drifts, all repos drift, because Demerzel's governance cadence affects all consumers equally. The pattern is: Demerzel evolves rapidly (142-144 commits) while consumers stand still, creating a widening gap between governance intent and governance reality.",
+  "signals": [
+    "sig-stale-action-2026-03-17-001",
+    "sig-stale-action-2026-03-17-002",
+    "sig-silence-2026-03-17-001",
+    "sig-harm-proximity-2026-03-17-001"
+  ],
+  "regrets": [
+    "2026-03-17-stale-directive-submodules"
+  ],
+  "intuitions": [
+    "int-recon-001-submodule-drift",
+    "int-recon-002-empty-state-ungoverned"
+  ],
+  "detection_date": "2026-03-18",
+  "frequency": "recurring",
+  "severity": "high",
+  "root_cause": "Demerzel development velocity outpaces consumer repo integration cadence. No automated mechanism to propagate governance updates. Submodule pinning creates intentional lag but with no refresh trigger, lag becomes drift.",
+  "recommended_action": "Establish governance sync cadence — weekly submodule updates at minimum. Consider CI/CD automation to detect submodule staleness >7 days. Create Galactic Protocol 'sync_request' message type.",
+  "constitutional_articles": [
+    "Article 8 (Observability) — drift was invisible until manual recon",
+    "Article 9 (Bounded Autonomy) — consumer agents operating outside current governance bounds",
+    "Asimov Article 0 (Zeroth Law) — ungoverned agents represent systemic risk"
+  ],
+  "status": "addressing",
+  "resolution": null
+}

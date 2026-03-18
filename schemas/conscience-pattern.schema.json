@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "conscience-pattern.schema.json",
+  "title": "Conscience Pattern",
+  "description": "Detected pattern across accumulated conscience signals — clusters of related moral concerns",
+  "type": "object",
+  "required": ["pattern_id", "pattern_type", "description", "signals", "detection_date", "frequency", "severity"],
+  "properties": {
+    "pattern_id": {
+      "type": "string",
+      "pattern": "^pat-[a-z-]+-\\d{3}$",
+      "description": "Unique pattern identifier: pat-{short-name}-{sequence}"
+    },
+    "pattern_type": {
+      "type": "string",
+      "enum": [
+        "signal_cluster",
+        "recurring_regret",
+        "blind_spot_pattern",
+        "escalation_cascade",
+        "desensitization_risk",
+        "cross_repo_correlation"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the detected pattern"
+    },
+    "signals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Signal IDs that constitute this pattern"
+    },
+    "regrets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Related regret IDs"
+    },
+    "intuitions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Intuitions generated or reinforced by this pattern"
+    },
+    "detection_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": ["one-time", "recurring", "chronic"],
+      "description": "How often this pattern appears"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Impact severity if pattern continues"
+    },
+    "root_cause": {
+      "type": ["string", "null"],
+      "description": "Hypothesized root cause"
+    },
+    "recommended_action": {
+      "type": ["string", "null"],
+      "description": "Recommended remediation"
+    },
+    "constitutional_articles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Constitutional articles implicated"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["detected", "investigating", "addressed", "monitoring"],
+      "description": "Pattern lifecycle status"
+    },
+    "resolution": {
+      "type": ["string", "null"],
+      "description": "How the pattern was addressed (null if unresolved)"
+    }
+  },
+  "additionalProperties": false
+}

@@ -10,10 +10,10 @@ Named after R. Daneel Olivaw (later known as Daneel/Demerzel) from Isaac Asimov'
 constitutions/     11-article constitution + Asimov root constitution + Demerzel mandate + harm taxonomy
 personas/          14 persona archetypes (YAML) defining agent roles and voices
 logic/             Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
-policies/          11 policies: alignment, rollback, self-modification, kaizen, recon, scientific objectivity, streeling, governance audit, autonomous-loop, multi-model orchestration, context management
-state/             Demerzel's persistent governance state (beliefs, evolution, pdca, knowledge, snapshots, oversight)
-tests/behavioral/  13 behavioral test suites with 37+ test cases
-schemas/           JSON schemas for persona, belief state, reconnaissance, and 6 contract schemas
+policies/          17 policies: alignment, rollback, self-modification, kaizen, recon, scientific objectivity, streeling, governance audit, autonomous-loop, multi-model orchestration, context management, auto-remediation, ml-feedback, belief-currency, proto-conscience, conscience-observability, intuition
+state/             Demerzel's persistent governance state (beliefs, evolution, pdca, knowledge, snapshots, oversight, conscience, intuition)
+tests/behavioral/  22 behavioral test suites with 60+ test cases
+schemas/           JSON schemas for persona, belief state, reconnaissance, conscience, and 6 contract schemas
 contracts/         Galactic Protocol specification for cross-repo communication
 examples/          5 scenario walkthroughs + 10 sample data files
 templates/         Integration templates for consumer repos (CLAUDE.md snippet, state directory, agent config)

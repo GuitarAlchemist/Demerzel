@@ -1,0 +1,27 @@
+{
+  "pattern_id": "pat-blind-spot-consumer-001",
+  "pattern_type": "blind_spot_pattern",
+  "description": "Demerzel has detailed beliefs about her own framework integrity but almost no beliefs about what consumer repos are actually doing with governance artifacts. The gap between self-knowledge and consumer-knowledge is the largest blind spot in the governance system. This creates a 'governance illusion' — Demerzel believes she governs, but consumer repos may not be governed in practice.",
+  "signals": [
+    "sig-silence-2026-03-17-001",
+    "sig-harm-proximity-2026-03-17-001"
+  ],
+  "regrets": [
+    "2026-03-17-stale-directive-submodules"
+  ],
+  "intuitions": [
+    "int-conscience-004-nonstandard-format-ungoverned",
+    "int-recon-002-empty-state-ungoverned"
+  ],
+  "detection_date": "2026-03-18",
+  "frequency": "chronic",
+  "severity": "high",
+  "root_cause": "Governance framework was built inside-out — Demerzel first, consumer integration second. This is architecturally correct (you need the framework before you can integrate it) but creates a temporal blind spot during the gap between framework completion and consumer adoption.",
+  "recommended_action": "Prioritize consumer repo reconnaissance as a weekly governance activity. Create consumer compliance dashboard. Establish minimum viable governance for each consumer: submodule current, state/ dir exists, CLAUDE.md governance section present, at least one belief state populated.",
+  "constitutional_articles": [
+    "Article 2 (Transparency) — the gap between governance claim and governance reality is opaque",
+    "Article 8 (Observability) — consumer repo governance health is unobservable"
+  ],
+  "status": "addressing",
+  "resolution": null
+}

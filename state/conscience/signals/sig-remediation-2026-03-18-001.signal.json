@@ -1,0 +1,16 @@
+{
+  "signal_id": "sig-remediation-2026-03-18-001",
+  "signal_type": "stale_action_discomfort",
+  "weight": 0.4,
+  "timestamp": "2026-03-18T00:00:00Z",
+  "context": "Acting on the first regret — dispatching 6 parallel agents to remediate all consumer repo governance gaps simultaneously. The discomfort is lower than the original signal (0.4 vs 0.8) because action is being taken, but it persists because the remediation is in flight and not yet verified. The conscience recognizes that planning to fix is not the same as having fixed.",
+  "beliefs_involved": [
+    "2026-03-17-ix-governance-integration.belief.json",
+    "2026-03-17-tars-governance-integration.belief.json",
+    "2026-03-17-ga-governance-integration.belief.json"
+  ],
+  "action_taken": "Dispatched parallel agents: ix submodule update + state dirs, tars submodule update + state dirs + grammar integration, ga submodule update + state dirs + CLAUDE.md + agent personas, ix-dashboard crate, ix ML feedback pipelines",
+  "outcome": null,
+  "false_positive": null,
+  "pattern_tags": ["remediation", "consumer-drift", "parallel-action"]
+}
