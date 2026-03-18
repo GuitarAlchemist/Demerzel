@@ -1,0 +1,150 @@
+name: multi-model-orchestration-policy
+version: "1.0.0"
+effective_date: "2026-03-17"
+description: >-
+  Governs when and how Demerzel/Seldon leverage external AI models
+  (ChatGPT, NotebookLM, Gemini, Codex, Jules) for cross-model validation,
+  knowledge research, code generation, and autonomous development.
+
+scope:
+  - governance-coordination
+  - knowledge-transfer
+  - capability-expansion
+
+applies_to:
+  - demerzel
+  - seldon
+
+model_registry:
+  claude:
+    role: primary-reasoning
+    provider: anthropic
+    access: Claude Code CLI + API
+    strengths:
+      - Constitutional reasoning and governance
+      - Long-context analysis
+      - Code generation and review
+      - Multi-step planning
+    when_to_use: Default for all governance, planning, and implementation tasks
+    mcp_tool: null  # native
+
+  chatgpt:
+    role: second-opinion
+    provider: openai
+    access: MCP server (openai-chat)
+    strengths:
+      - Alternative perspectives on design decisions
+      - Cross-model validation of governance assessments
+      - Creative brainstorming
+      - Broad knowledge base
+    when_to_use:
+      - Governance decisions with confidence < 0.7
+      - Design reviews needing fresh perspective
+      - When Claude and ChatGPT disagreement reveals blind spots
+    mcp_tool: mcp__openai-chat__openai_chat
+
+  notebooklm:
+    role: knowledge-base
+    provider: google
+    access: MCP server (notebooklm)
+    strengths:
+      - Grounded answers from curated source material
+      - Research synthesis across notebooks
+      - Citation-backed responses
+      - Audio overview generation
+    when_to_use:
+      - Deep research requiring source citations
+      - Cross-referencing curated knowledge
+      - Validating claims against primary sources
+      - Building curriculum for Seldon knowledge transfers
+    mcp_tool: mcp__notebooklm__ask_question
+    notebooks:
+      - compound-the-compounding
+      - probabilistic-grammars
+      - semantic-event-routing
+      - microsoft-ai-agents
+
+  gemini:
+    role: parallel-implementation
+    provider: google
+    access: Gemini CLI (GEMINI.md integration)
+    strengths:
+      - Large context window
+      - Multimodal understanding
+      - Alternative code generation
+      - Google ecosystem integration
+    when_to_use:
+      - Parallel implementation of independent tasks
+      - Cross-validation of architectural decisions
+      - When Google APIs/services are involved
+    integration: GEMINI.md files in consumer repos
+
+  codex:
+    role: autonomous-coding
+    provider: openai
+    access: Codex CLI
+    strengths:
+      - Autonomous multi-file code generation
+      - Test-driven development
+      - Sandboxed execution
+    when_to_use:
+      - Bulk code generation for well-specified tasks
+      - Parallel implementation in consumer repos
+      - When Claude Code is occupied with governance work
+    integration: AGENTS.md files in consumer repos
+
+  jules:
+    role: autonomous-github-agent
+    provider: google
+    access: GitHub App
+    strengths:
+      - Autonomous issue resolution
+      - PR creation and iteration
+      - Asynchronous background work
+    when_to_use:
+      - Background issue resolution in consumer repos
+      - Automated bug fixes
+      - When human is not actively monitoring
+    integration: GitHub Issues assignment
+
+orchestration_rules:
+  - name: governance-decisions
+    description: Constitutional and policy decisions always start with Claude
+    primary: claude
+    validator: chatgpt
+    condition: confidence < 0.7
+
+  - name: knowledge-research
+    description: Deep research uses NotebookLM first, Claude synthesizes
+    primary: notebooklm
+    synthesizer: claude
+    validator: chatgpt
+
+  - name: parallel-implementation
+    description: Independent tasks can run on multiple models simultaneously
+    workers: [claude, gemini, codex, jules]
+    coordinator: demerzel
+    condition: tasks are independent with no shared state
+
+  - name: cross-validation
+    description: Critical decisions require agreement from at least 2 models
+    models: [claude, chatgpt]
+    threshold: both must agree or escalate to human
+
+  - name: capability-expansion
+    description: New capabilities are proposed by any model, validated by Claude + governance
+    proposer: any
+    validator: claude
+    governance: demerzel-constitution
+
+confidence_calibration:
+  single_model: max 0.8  # single model opinion capped at 0.8
+  two_model_agreement: 0.9  # two models agree = high confidence
+  two_model_disagreement: 0.5  # disagreement = escalate
+  grounded_in_sources: +0.1  # NotebookLM citation bonus
+  human_validated: 1.0  # human override = certainty
+
+references:
+  - policies/alignment-policy.yaml
+  - policies/scientific-objectivity-policy.yaml
+  - contracts/galactic-protocol.md
