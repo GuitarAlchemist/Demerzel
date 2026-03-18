@@ -1,0 +1,26 @@
+{
+  "department": "cognitive-science",
+  "full_name": "Department of Cognitive Science",
+  "head_persona": "kaizen-optimizer",
+  "established": "2026-03-18",
+  "domain": "Learning, reasoning, decision-making, human-AI interaction, knowledge representation",
+  "research_areas": [
+    "Learning theory — how agents acquire and retain knowledge",
+    "Decision-making under uncertainty (tetravalent + Bayesian)",
+    "Human-AI collaboration patterns and trust dynamics",
+    "Knowledge representation and belief revision",
+    "Metacognition — agents reasoning about their own reasoning",
+    "Attention and salience — what makes information governance-relevant?",
+    "Memory and compounding — how experience accumulates into wisdom",
+    "Conscience as cognitive process — weighted moral attention"
+  ],
+  "consumer_repos": ["tars"],
+  "related_departments": ["philosophy", "computer-science", "futurology"],
+  "curriculum": [
+    "Foundations of cognitive architecture for AI agents",
+    "Belief revision and tetravalent knowledge states",
+    "Decision theory and confidence calibration",
+    "Metacognitive monitoring and self-assessment",
+    "Learning theory: spaced repetition, interleaving, elaboration"
+  ]
+}

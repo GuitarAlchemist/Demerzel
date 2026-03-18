@@ -1,0 +1,26 @@
+{
+  "department": "mathematics",
+  "full_name": "Department of Mathematics",
+  "head_persona": "convolution-agent",
+  "established": "2026-03-18",
+  "domain": "Pure and applied mathematics, mathematical structures, computational mathematics",
+  "research_areas": [
+    "Group theory and symmetry (pitch class groups, rhythm groups)",
+    "Topology and continuous transformations",
+    "Category theory and compositional semantics",
+    "Number theory (tuning ratios, just intonation)",
+    "Signal processing and Fourier analysis",
+    "Graph theory and network analysis",
+    "Sedenion and hypercomplex algebras",
+    "Optimization and search algorithms"
+  ],
+  "consumer_repos": ["ix"],
+  "related_departments": ["physics", "computer-science", "music"],
+  "curriculum": [
+    "Foundations of abstract algebra for music (groups, rings)",
+    "Pitch class set theory as modular arithmetic",
+    "Topological data analysis and Poincaré embeddings",
+    "Category theory fundamentals and functors",
+    "Fourier analysis and spectral representations"
+  ]
+}

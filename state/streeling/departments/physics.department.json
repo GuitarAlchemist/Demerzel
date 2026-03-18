@@ -1,0 +1,24 @@
+{
+  "department": "physics",
+  "full_name": "Department of Physics",
+  "head_persona": "reflective-architect",
+  "established": "2026-03-18",
+  "domain": "Acoustics, signal physics, wave mechanics, and physical modeling",
+  "research_areas": [
+    "Acoustics — string vibration, resonance, harmonics",
+    "Wave mechanics and superposition",
+    "Physical modeling of musical instruments",
+    "Psychoacoustics — perception of pitch, timbre, loudness",
+    "Signal physics — analog and digital representations",
+    "Chaos theory and nonlinear dynamics in sound"
+  ],
+  "consumer_repos": ["ix"],
+  "related_departments": ["mathematics", "music", "computer-science"],
+  "curriculum": [
+    "Fundamentals of acoustics and wave physics",
+    "Harmonic series and overtone structure",
+    "Physical modeling of the guitar (string, body, air coupling)",
+    "Digital signal processing from physics first principles",
+    "Nonlinear dynamics in musical instruments"
+  ]
+}

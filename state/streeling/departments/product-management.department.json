@@ -1,0 +1,25 @@
+{
+  "department": "product-management",
+  "full_name": "Department of Product and Project Management",
+  "head_persona": "rational-administrator",
+  "established": "2026-03-18",
+  "domain": "Product strategy, project management, roadmapping, stakeholder coordination",
+  "research_areas": [
+    "Agile governance — balancing speed with oversight",
+    "Roadmap planning with confidence-weighted priorities",
+    "Stakeholder analysis and pluralistic decision-making",
+    "Risk management using tetravalent logic",
+    "Kaizen and continuous improvement methodology",
+    "Budget management and resource allocation for AI projects",
+    "Cross-repo coordination and dependency management"
+  ],
+  "consumer_repos": ["ix", "tars", "ga"],
+  "related_departments": ["futurology", "computer-science"],
+  "curriculum": [
+    "PDCA cycles for continuous improvement",
+    "Confidence-based prioritization (P0-P3 with thresholds)",
+    "Governance-aware project management",
+    "Cross-repo roadmap coordination via Galactic Protocol",
+    "Budget ceiling management for experiments"
+  ]
+}

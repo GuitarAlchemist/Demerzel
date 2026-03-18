@@ -1,0 +1,24 @@
+{
+  "department": "musicology",
+  "full_name": "Department of Musicology",
+  "head_persona": "critic-agent",
+  "established": "2026-03-18",
+  "domain": "Historical, cultural, and analytical study of music",
+  "research_areas": [
+    "History of Western harmony and its evolution",
+    "Comparative analysis of musical traditions",
+    "Genre classification and stylistic analysis",
+    "Psychoacoustics and music perception",
+    "Music and mathematics — historical connections",
+    "Ethnomusicology and non-Western tuning systems"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["music", "guitar-studies", "philosophy", "cognitive-science"],
+  "curriculum": [
+    "Survey of Western music history (medieval through contemporary)",
+    "Analytical listening and critical evaluation",
+    "Style identification and genre taxonomy",
+    "Cross-cultural perspectives on harmony and rhythm",
+    "Music criticism methodology"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Streeling University",
+  "founded": "2026-03-18",
+  "chancellor": "seldon",
+  "mandate": "Organize and advance knowledge across all domains relevant to the GuitarAlchemist ecosystem. Each department pursues research, teaches its discipline, and contributes findings to the governance knowledge base.",
+  "constitutional_basis": [
+    "Asimov Article 0 (Zeroth Law) — knowledge advancement serves humanity",
+    "Article 2 (Transparency) — research must be open and explainable",
+    "Article 11 (Ethical Stewardship) — pursue knowledge with humility",
+    "Streeling Policy — knowledge transfer and curriculum design"
+  ],
+  "departments": [
+    "music",
+    "guitar-studies",
+    "musicology",
+    "mathematics",
+    "physics",
+    "computer-science",
+    "product-management",
+    "futurology",
+    "philosophy",
+    "cognitive-science"
+  ],
+  "principles": [
+    "Interdisciplinary research is encouraged — departments collaborate, not compete",
+    "All findings must be expressible as tetravalent beliefs (T/F/U/C) with evidence",
+    "Speculative research is welcome but must be tagged as such (confidence thresholds apply)",
+    "Departments may propose new governance artifacts based on their research",
+    "Seldon appoints department heads; Demerzel approves constitutional implications"
+  ]
+}

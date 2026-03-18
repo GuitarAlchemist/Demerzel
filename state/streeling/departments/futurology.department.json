@@ -1,0 +1,26 @@
+{
+  "department": "futurology",
+  "full_name": "Department of Futurology",
+  "head_persona": "virtuous-leader",
+  "established": "2026-03-18",
+  "domain": "Trend analysis, technology forecasting, scenario planning, long-term strategy",
+  "research_areas": [
+    "Psychohistory — statistical prediction of large-scale system behavior",
+    "AI governance evolution and long-term trajectory",
+    "Technology convergence forecasting",
+    "Scenario planning for AI agent ecosystems",
+    "Ethical implications of autonomous governance",
+    "Post-singularity governance models",
+    "Anticipatory ethics and pre-mortem methodology"
+  ],
+  "consumer_repos": [],
+  "related_departments": ["philosophy", "product-management", "cognitive-science"],
+  "curriculum": [
+    "Foundations of psychohistory (statistical modeling of complex systems)",
+    "Scenario planning methodology (optimistic, pessimistic, most likely)",
+    "Technology readiness levels and adoption curves",
+    "Anticipatory governance and pre-mortem analysis",
+    "Long-term AI safety and alignment trajectories"
+  ],
+  "note": "Named in honor of Hari Seldon's original discipline. While true psychohistory requires populations in the trillions, the statistical thinking and scenario planning methodology applies at any scale."
+}

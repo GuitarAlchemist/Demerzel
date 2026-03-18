@@ -1,0 +1,24 @@
+{
+  "department": "music",
+  "full_name": "Department of Music",
+  "head_persona": "theory-agent",
+  "established": "2026-03-18",
+  "domain": "Music theory, composition, analysis, and performance",
+  "research_areas": [
+    "Harmonic analysis and chord progression theory",
+    "Melodic construction and voice leading",
+    "Rhythm, meter, and temporal structure",
+    "Musical form and large-scale architecture",
+    "Composition techniques across genres",
+    "Performance interpretation and expression"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["guitar-studies", "musicology", "physics", "mathematics"],
+  "curriculum": [
+    "Fundamentals of pitch class sets and interval vectors",
+    "Chord construction from stacked intervals",
+    "Scale-chord relationships and modal interchange",
+    "Voice leading principles and counterpoint",
+    "Harmonic analysis of real-world progressions"
+  ]
+}

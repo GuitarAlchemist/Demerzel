@@ -1,0 +1,27 @@
+{
+  "department": "computer-science",
+  "full_name": "Department of Computer Science",
+  "head_persona": "system-integrator",
+  "established": "2026-03-18",
+  "domain": "Software engineering, ML/AI, programming languages, distributed systems",
+  "research_areas": [
+    "Machine learning for music analysis and generation",
+    "Programming language theory (F#, Rust, C#)",
+    "Agentic AI — multi-agent systems, tool use, reasoning loops",
+    "Grammar-constrained generation and formal languages",
+    "Knowledge graphs and semantic representations",
+    "MCP (Model Context Protocol) and tool ecosystems",
+    "Reinforcement learning and MCTS",
+    "Neural network architectures for sequence modeling"
+  ],
+  "consumer_repos": ["ix", "tars", "ga"],
+  "related_departments": ["mathematics", "physics", "cognitive-science"],
+  "curriculum": [
+    "Rust for ML systems (ix crate ecosystem)",
+    "F# for neuro-symbolic reasoning (TARS architecture)",
+    ".NET for domain applications (GA chatbot)",
+    "Probabilistic grammars and constrained decoding",
+    "Multi-agent orchestration patterns",
+    "MCP server design and tool registration"
+  ]
+}

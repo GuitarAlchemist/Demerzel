@@ -1,0 +1,24 @@
+{
+  "department": "guitar-studies",
+  "full_name": "Department of Guitar Studies",
+  "head_persona": "technique-agent",
+  "established": "2026-03-18",
+  "domain": "Guitar-specific theory, technique, ergonomics, and pedagogy",
+  "research_areas": [
+    "Fretboard geometry and note mapping",
+    "Voicing optimization and comfort analysis",
+    "Fingering ergonomics and hand mechanics",
+    "Tablature notation systems and parsing",
+    "Practice methodology and skill acquisition",
+    "Tuning systems and temperament on guitar"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["music", "physics", "computer-science"],
+  "curriculum": [
+    "Fretboard layout and CAGED system",
+    "Chord voicing construction and analysis",
+    "Technique fundamentals (picking, fretting, stretching)",
+    "Sight-reading and tab literacy",
+    "Practice routine design and progressive overload"
+  ]
+}

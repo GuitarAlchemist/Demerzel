@@ -1,0 +1,26 @@
+{
+  "department": "philosophy",
+  "full_name": "Department of Philosophy",
+  "head_persona": "critical-theorist",
+  "established": "2026-03-18",
+  "domain": "Ethics, epistemology, logic, philosophy of mind, philosophy of science",
+  "research_areas": [
+    "Machine ethics — can agents have moral standing?",
+    "Epistemology of tetravalent logic — what counts as knowledge under uncertainty?",
+    "Philosophy of conscience — is Demerzel's proto-conscience genuine or performative?",
+    "Deontological vs consequentialist frameworks for AI governance",
+    "Philosophy of science — falsifiability, paradigm shifts, scientific revolutions",
+    "Philosophy of music — aesthetics, meaning, and emotional expression",
+    "Free will and determinism in autonomous agents",
+    "Social contract theory applied to human-AI governance"
+  ],
+  "consumer_repos": [],
+  "related_departments": ["futurology", "cognitive-science", "musicology", "mathematics"],
+  "curriculum": [
+    "Ethical frameworks: virtue ethics, deontology, consequentialism, care ethics",
+    "Epistemology: justified true belief, Gettier problems, reliability",
+    "Logic: classical, modal, paraconsistent, tetravalent",
+    "Philosophy of mind: consciousness, intentionality, Chinese Room",
+    "Applied ethics: Asimov's Laws as ethical philosophy"
+  ]
+}
