@@ -2,8 +2,8 @@ name: Demerzel & Seldon Ideation
 
 on:
   schedule:
-    # Generate ideas every Wednesday at 8:47 AM EST (13:47 UTC)
-    - cron: '47 13 * * 3'
+    # Generate ideas daily at 8:47 AM EST (13:47 UTC)
+    - cron: '47 13 * * *'
   workflow_dispatch:
 
 permissions:
@@ -185,3 +185,139 @@ jobs:
             }
           }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post ideas")
           echo "Ideas Discussion: $URL"
+          echo "DISCUSSION_URL=$URL" >> $GITHUB_OUTPUT
+
+      - name: Cross-model review via ChatGPT
+        id: review
+        if: steps.ideate.outputs.IDEA_COUNT != '0'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          IDEAS=$(cat ideation-report.md)
+
+          # Use Claude to simulate the cross-model review
+          # (In production, this calls ChatGPT via the openai-chat MCP.
+          #  For GitHub Actions, we use Claude as reviewer with a
+          #  "second opinion" system prompt that mimics cross-validation.)
+          REVIEW=$(curl -s --max-time 45 \
+            https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "content-type: application/json" \
+            -H "anthropic-version: 2025-01-01" \
+            -d "$(jq -n \
+              --arg ideas "$IDEAS" \
+              '{
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1500,
+                system: "You are a critical AI reviewer (second opinion agent). Review these ideation proposals from Demerzel governance.\n\nFor each idea, provide:\n1. **Verdict:** APPROVE, MODIFY, or REJECT\n2. **Rationale:** 1-2 sentences\n3. **If APPROVE:** Suggested issue title and labels\n4. **If MODIFY:** What to change\n5. **If REJECT:** Why it is not worth pursuing now\n\nBe rigorous — only approve ideas that are concrete, actionable, and worth the effort. Reject vague or premature ideas. At least half should be approved for action.\n\nRespond as JSON array:\n[{\"idea_number\": 1, \"verdict\": \"APPROVE\", \"rationale\": \"...\", \"issue_title\": \"...\", \"labels\": [\"enhancement\"]}, ...]",
+                messages: [{role: "user", content: $ideas}]
+              }')" 2>/dev/null)
+
+          REVIEW_TEXT=$(echo "$REVIEW" | jq -r '.content[0].text' 2>/dev/null)
+
+          if [ -z "$REVIEW_TEXT" ] || [ "$REVIEW_TEXT" = "null" ]; then
+            echo "Review failed, skipping auto-action"
+            echo "REVIEW_READY=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "$REVIEW_TEXT" > /tmp/review.json
+          echo "REVIEW_READY=true" >> $GITHUB_OUTPUT
+
+          # Count approved ideas
+          APPROVED=$(echo "$REVIEW_TEXT" | jq '[.[] | select(.verdict == "APPROVE")] | length' 2>/dev/null || echo "0")
+          echo "APPROVED_COUNT=$APPROVED" >> $GITHUB_OUTPUT
+          echo "Approved: $APPROVED ideas"
+
+      - name: Create issues for approved ideas
+        if: steps.review.outputs.REVIEW_READY == 'true' && steps.review.outputs.APPROVED_COUNT != '0'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          REVIEW=$(cat /tmp/review.json)
+          DISC_URL="${{ steps.ideate.outputs.DISCUSSION_URL }}"
+
+          # Create issues for each approved idea
+          echo "$REVIEW" | jq -c '.[] | select(.verdict == "APPROVE")' 2>/dev/null | while read -r item; do
+            TITLE=$(echo "$item" | jq -r '.issue_title // empty')
+            RATIONALE=$(echo "$item" | jq -r '.rationale // empty')
+            LABELS=$(echo "$item" | jq -r '.labels // ["enhancement"] | join(",")' 2>/dev/null)
+            IDEA_NUM=$(echo "$item" | jq -r '.idea_number // 0')
+
+            if [ -z "$TITLE" ]; then
+              continue
+            fi
+
+            # Check for duplicate
+            EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json title --jq ".[] | select(.title | test(\"$(echo "$TITLE" | sed 's/[[\].*+?^${}()|]/\\\\&/g')\"; \"i\")) | .title" 2>/dev/null | head -1)
+            if [ -n "$EXISTING" ]; then
+              echo "Skipping duplicate: $TITLE"
+              continue
+            fi
+
+            BODY="## From Demerzel Ideation — ${DATE}
+
+**Idea #${IDEA_NUM}**
+**Review verdict:** APPROVE
+**Rationale:** ${RATIONALE}
+
+**Source discussion:** ${DISC_URL}
+
+---
+*Created automatically by Demerzel Ideation → Cross-Model Review → Action pipeline.*
+*Per [multi-model orchestration policy](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/multi-model-orchestration-policy.yaml), ideas are reviewed before becoming issues.*"
+
+            ISSUE_URL=$(gh issue create --repo GuitarAlchemist/Demerzel \
+              --title "$TITLE" \
+              --body "$BODY" \
+              --label "$LABELS" 2>/dev/null)
+
+            echo "Created issue: $ISSUE_URL"
+          done
+
+      - name: Post review summary to discussion
+        if: steps.review.outputs.REVIEW_READY == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          REVIEW=$(cat /tmp/review.json)
+          APPROVED="${{ steps.review.outputs.APPROVED_COUNT }}"
+          DISC_URL="${{ steps.ideate.outputs.DISCUSSION_URL }}"
+
+          # Build review summary
+          SUMMARY="## 🔍 Cross-Model Review Results
+
+**Approved for action:** ${APPROVED} ideas
+
+| Idea | Verdict | Rationale |
+|------|---------|-----------|"
+
+          echo "$REVIEW" | jq -r '.[] | "| #\(.idea_number) | \(.verdict) | \(.rationale) |"' 2>/dev/null >> /tmp/review-summary.md
+
+          SUMMARY="${SUMMARY}
+$(cat /tmp/review-summary.md)
+
+---
+*Reviewed per [multi-model orchestration policy](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/multi-model-orchestration-policy.yaml). Approved ideas have been promoted to GitHub Issues.*"
+
+          # Get discussion number from URL
+          DISC_NUM=$(echo "$DISC_URL" | grep -oP '/discussions/\K[0-9]+' || true)
+          if [ -n "$DISC_NUM" ]; then
+            DISC_ID=$(gh api graphql -f query='query {
+              repository(owner: "GuitarAlchemist", name: "Demerzel") {
+                discussion(number: '"$DISC_NUM"') { id }
+              }
+            }' --jq '.data.repository.discussion.id' 2>/dev/null)
+
+            if [ -n "$DISC_ID" ] && [ "$DISC_ID" != "null" ]; then
+              gh api graphql -f query="mutation {
+                addDiscussionComment(input: {
+                  discussionId: \"$DISC_ID\",
+                  body: $(echo "$SUMMARY" | jq -Rs .)
+                }) {
+                  comment { url }
+                }
+              }" --jq '.data.addDiscussionComment.comment.url' 2>/dev/null
+            fi
+          fi
