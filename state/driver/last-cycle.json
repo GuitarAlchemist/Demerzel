@@ -1,0 +1,9 @@
+{
+  "cycle_id": null,
+  "completed_at": null,
+  "duration_seconds": null,
+  "tasks_completed": 0,
+  "tasks_failed": 0,
+  "tasks_reverted": 0,
+  "manifest_path": null
+}

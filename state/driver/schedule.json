@@ -1,0 +1,13 @@
+{
+  "cadence_hours": 4,
+  "active_hours": { "start": 8, "end": 22 },
+  "weekly_deep_cycle_day": "sunday",
+  "next_wake": null,
+  "max_tasks_per_cycle": 10,
+  "max_parallel_agents": 4,
+  "cycle_timeout_minutes": 120,
+  "hard_kill_timeout_minutes": 135,
+  "max_consecutive_cycles_without_human": 5,
+  "api_budget_per_cycle_usd": 10,
+  "max_council_convocations_per_cycle": 3
+}
