@@ -358,8 +358,9 @@ Independent tasks run in parallel (worktree agents). Dependent tasks are gated:
 6. Write `state/conscience/signals/` if triggered
 7. Write `state/council/` if Tier 3 invoked
 8. Delete processed triggers from `state/triggers/processing/`
-9. Release lock (delete `state/driver/lock.json`)
-10. Archive manifests older than 30 cycles
+9. **Append cycle summary to `LOG.md`** (repo root) — date, health scores, tasks completed/failed, insights
+10. Release lock (delete `state/driver/lock.json`)
+11. Archive manifests older than 30 cycles
 
 ## Constitutional Constraints
 
