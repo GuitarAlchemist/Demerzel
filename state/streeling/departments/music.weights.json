@@ -1,0 +1,27 @@
+{
+  "department": "music",
+  "grammar_version": "1.0.0",
+  "hypothesis_weights": {
+    "inductive": 0.35,
+    "deductive": 0.15,
+    "abductive": 0.20,
+    "analogical": 0.20,
+    "combinatorial": 0.10
+  },
+  "test_weights": {
+    "empirical": 0.15,
+    "formal_proof": 0.05,
+    "simulation": 0.10,
+    "thought_experiment": 0.20,
+    "cross_validation": 0.30,
+    "adversarial": 0.20
+  },
+  "metadata": {
+    "last_updated": "2026-03-18",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0
+  }
+}

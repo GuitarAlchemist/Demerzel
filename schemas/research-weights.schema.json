@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "research-weights.schema.json",
+  "title": "Research Weight Profile",
+  "description": "Per-department probability weights for the scientific method grammar productions",
+  "type": "object",
+  "required": ["department", "grammar_version", "hypothesis_weights", "test_weights", "metadata"],
+  "properties": {
+    "department": {
+      "type": "string",
+      "description": "Streeling University department name (kebab-case)"
+    },
+    "grammar_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Version of scientific-method.ebnf these weights target"
+    },
+    "hypothesis_weights": {
+      "type": "object",
+      "description": "Probability weights for hypothesis production alternatives (should sum to ~1.0)",
+      "required": ["inductive", "deductive", "abductive", "analogical", "combinatorial"],
+      "properties": {
+        "inductive": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "deductive": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "abductive": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "analogical": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "combinatorial": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+      },
+      "additionalProperties": false
+    },
+    "test_weights": {
+      "type": "object",
+      "description": "Probability weights for test production alternatives (should sum to ~1.0)",
+      "required": ["empirical", "formal_proof", "simulation", "thought_experiment", "cross_validation", "adversarial"],
+      "properties": {
+        "empirical": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "formal_proof": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "simulation": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "thought_experiment": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "cross_validation": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "adversarial": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Tracking metadata for weight evolution",
+      "required": ["last_updated", "cycle_count", "total_T", "total_F", "total_U", "total_C"],
+      "properties": {
+        "last_updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of last weight update"
+        },
+        "cycle_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total research cycles completed"
+        },
+        "total_T": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total confirmed (True) outcomes"
+        },
+        "total_F": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total refuted (False) outcomes"
+        },
+        "total_U": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total insufficient (Unknown) outcomes"
+        },
+        "total_C": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total contradictory (Contradictory) outcomes"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

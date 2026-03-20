@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "research-cycle.schema.json",
+  "title": "Research Cycle Log",
+  "description": "Log entry for a single research cycle executed by the Streeling autoresearch loop",
+  "type": "object",
+  "required": [
+    "cycle_id",
+    "department",
+    "question",
+    "production_path",
+    "hypothesis",
+    "test_method",
+    "evidence",
+    "conclusion",
+    "belief_value",
+    "belief_confidence",
+    "duration_seconds",
+    "timestamp"
+  ],
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "description": "Unique cycle identifier: {department}-{date}-{sequence}"
+    },
+    "department": {
+      "type": "string",
+      "description": "Streeling University department that ran this cycle"
+    },
+    "question": {
+      "type": "string",
+      "description": "Research question investigated in this cycle"
+    },
+    "production_path": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Sequence of grammar productions sampled for this cycle"
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "Hypothesis generated during the hypothesize step"
+    },
+    "test_method": {
+      "type": "string",
+      "enum": [
+        "empirical",
+        "formal_proof",
+        "simulation",
+        "thought_experiment",
+        "cross_validation",
+        "adversarial"
+      ],
+      "description": "Test method sampled from grammar"
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Evidence gathered during the test step"
+    },
+    "conclusion": {
+      "type": "string",
+      "enum": [
+        "confirm",
+        "refute",
+        "insufficient",
+        "contradictory",
+        "revise",
+        "discover_question"
+      ],
+      "description": "Conclusion reached by the cycle"
+    },
+    "belief_value": {
+      "type": "string",
+      "enum": ["T", "F", "U", "C"],
+      "description": "Tetravalent belief value produced"
+    },
+    "belief_confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence in the belief produced"
+    },
+    "duration_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Wall-clock time for this cycle in seconds"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this cycle completed"
+    }
+  },
+  "additionalProperties": false
+}

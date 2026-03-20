@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "research-anomaly.schema.json",
+  "title": "Research Anomaly",
+  "description": "Anomaly entry logged when a research cycle produces F, U, or C outcomes",
+  "type": "object",
+  "required": [
+    "anomaly_id",
+    "cycle_id",
+    "department",
+    "production_path",
+    "hypothesis",
+    "failure_mode",
+    "domain_context",
+    "severity",
+    "paradigm_state",
+    "timestamp"
+  ],
+  "properties": {
+    "anomaly_id": {
+      "type": "string",
+      "description": "Unique anomaly identifier"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Research cycle that produced this anomaly"
+    },
+    "department": {
+      "type": "string",
+      "description": "Streeling University department"
+    },
+    "production_path": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Grammar production path that led to the anomaly"
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "Hypothesis that was tested"
+    },
+    "failure_mode": {
+      "type": "string",
+      "description": "How the hypothesis failed — narrative explanation"
+    },
+    "domain_context": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Domain tags for clustering (e.g., jazz-harmony, modal-theory)"
+    },
+    "severity": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Severity of the anomaly (0.0 = trivial, 1.0 = paradigm-breaking)"
+    },
+    "cluster_id": {
+      "type": ["string", "null"],
+      "description": "Cluster assignment from ix anomaly clustering (null until Tier 2 analysis)"
+    },
+    "paradigm_state": {
+      "type": "string",
+      "enum": ["normal", "watch", "tension", "crisis"],
+      "description": "Current paradigm state assessment for this anomaly's domain"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this anomaly was logged"
+    }
+  },
+  "additionalProperties": false
+}

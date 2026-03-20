@@ -1,0 +1,27 @@
+{
+  "department": "mathematics",
+  "grammar_version": "1.0.0",
+  "hypothesis_weights": {
+    "inductive": 0.10,
+    "deductive": 0.45,
+    "abductive": 0.05,
+    "analogical": 0.15,
+    "combinatorial": 0.25
+  },
+  "test_weights": {
+    "empirical": 0.05,
+    "formal_proof": 0.50,
+    "simulation": 0.10,
+    "thought_experiment": 0.15,
+    "cross_validation": 0.10,
+    "adversarial": 0.10
+  },
+  "metadata": {
+    "last_updated": "2026-03-18",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0
+  }
+}
