@@ -1,0 +1,38 @@
+{
+  "proposition": "Consumer repo integration is complete — all 3 repos have current submodules, state directories, governance CLAUDE.md sections, and persona definitions",
+  "truth_value": "T",
+  "confidence": 0.85,
+  "evidence": {
+    "supporting": [
+      {
+        "source": "2026-03-18-session-work",
+        "claim": "ix submodule updated (142 commits), state/ created, CLAUDE.md governance section present, ix-governance crate with 83 tests",
+        "timestamp": "2026-03-18T00:00:00Z",
+        "reliability": 0.95
+      },
+      {
+        "source": "2026-03-18-session-work",
+        "claim": "tars submodule updated (144 commits), state/ created, grammar-constrained governance generation (4 EBNF + F# module), research cycle modules",
+        "timestamp": "2026-03-18T00:00:00Z",
+        "reliability": 0.95
+      },
+      {
+        "source": "2026-03-18-session-work",
+        "claim": "ga submodule updated (144 commits), state/ created, CLAUDE.md updated (18 policies), 7 agent personas defined, build fixed",
+        "timestamp": "2026-03-18T00:00:00Z",
+        "reliability": 0.90
+      }
+    ],
+    "contradicting": [
+      {
+        "source": "ga-pr-status",
+        "claim": "ga governance scaffolding is on docs/ix-ml-pipeline branch (PR #13), not yet merged to main",
+        "timestamp": "2026-03-18T00:00:00Z",
+        "reliability": 0.80
+      }
+    ]
+  },
+  "previous_value": "F",
+  "last_updated": "2026-03-18T00:00:00Z",
+  "evaluated_by": "demerzel"
+}
