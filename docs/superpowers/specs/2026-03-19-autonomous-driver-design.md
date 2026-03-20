@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-19
 **Status:** Approved
-**Version:** 2.0.0
+**Version:** 2.1.0
 
 ## Summary
 
@@ -51,13 +51,18 @@ Each autonomous cycle follows this flow:
 WAKE → RECON → PLAN → EXECUTE → VERIFY → COMPOUND → PERSIST → SLEEP
 ```
 
-1. **WAKE** — Triggered by schedule, event (trigger file in `state/triggers/`), or self-initiated follow-up. First checks `state/driver/lock.json` — if a cycle is already running (lock exists and is < 6 hours old), skip this WAKE. Otherwise, acquires lock and loads state from `state/` directory to rebuild context.
+1. **WAKE** — Triggered by schedule, event (trigger file in `state/triggers/`), or self-initiated follow-up. First checks `state/driver/lock.json`:
+   - If lock exists and `heartbeat` timestamp is < 15 minutes old → cycle is alive, skip this WAKE
+   - If lock exists and heartbeat is 15min-2h old → cycle may be stalled, log warning, skip this WAKE
+   - If lock exists and heartbeat is > 2h old → cycle is dead (crashed without cleanup), break lock, log incident
+   - If no lock → acquire lock (write PID, start timestamp, heartbeat), load state from `state/` directory to rebuild context
+   - During execution, the driver updates the `heartbeat` field in `lock.json` every 5 minutes
 
 2. **RECON** — Four-stage discovery pipeline (researchpooler pattern) across all repos:
    - **Gather** — scrape commits, PRs, issues, CI status, dependabot alerts via GitHub API [no model]
    - **Enrich** — compute mechanical metrics (health scores, staleness, coverage), fill knowledge gaps [local model]
    - **Analyze** — identify governance drift, anomalies, opportunities, cross-repo dependencies [local model + Claude for complex patterns]
-   - **Surface** — produce structured **situation report** with ranked priorities
+   - **Surface** — produce structured **situation report** with ranked priorities [Tier 0 for template filling; Tier 2 for priority synthesis if complex patterns detected]
    - Additionally validates per `reconnaissance-policy.yaml`: constitutional integrity (Tier 1), repo state (Tier 2), knowledge assessment (Tier 3).
 
 3. **PLAN** — Adaptive strategy engine (not static prioritization). Reads situation report + roadmap + open issues + **manifest history** (what worked/failed in previous cycles). Produces a **work manifest** — a list of tasks with:
@@ -69,6 +74,8 @@ WAKE → RECON → PLAN → EXECUTE → VERIFY → COMPOUND → PERSIST → SLEE
    - Inference tier assignment (heavy/light/none)
 
    The PLAN phase learns from accumulated manifests: task types that consistently fail get deprioritized or approached differently. Repos that respond well to certain patterns get more of them. This is the "emergent strategy" principle from autoresearch — the driver doesn't follow a rigid playbook, it adapts based on observed results.
+
+   **Strategy adaptation safeguards:** `state/driver/strategy.json` tracks success rates per task type and repo. Adaptation does not activate until a minimum of 10 manifests have been recorded (cold-start protection). If strategy.json is corrupted or produces obviously biased results (e.g., all task types deprioritized), the driver falls back to static prioritization (urgency + importance) and logs a recalibration event. Strategy can be manually reset via `/demerzel drive strategy reset`.
 
 4. **EXECUTE** — Dispatches parallel worktree agents per repo for independent tasks. Blocks downstream work on upstream dependencies. Each agent operates under autonomous-loop policy constraints (iteration limits, stall/regression/drift checks).
 
@@ -115,7 +122,7 @@ Trigger file format:
 }
 ```
 
-The driver consumes and deletes trigger files on WAKE.
+The driver consumes trigger files atomically on WAKE: triggers are moved to `state/triggers/processing/` before reading, then deleted after processing. This prevents race conditions with concurrent GitHub Actions writing new triggers.
 
 **Trigger hygiene:**
 - Maximum queue depth: 50 triggers. If exceeded, lowest-priority triggers are pruned first.
@@ -130,20 +137,25 @@ During any cycle, if Demerzel identifies follow-up work, she writes a trigger fi
 | Risk | Examples | Delivery | Governance Mode |
 |------|----------|----------|-----------------|
 | **Low** | Belief updates, wiki sync, submodule bumps, formatting, doc fixes | Direct push to main | Boundary-only |
-| **Medium** | Dependency updates, dependabot merges, test additions, lint fixes, CI config | PR — self-created, self-merged after checks pass | Boundary-only (per autonomous-loop policy) |
-| **High** | New code, bug fixes, refactoring, new MCP tools | PR — full rationale, waits for CI, self-merges if all green | Per-iteration + conscience check |
+| **Medium** | Patch/minor dependency updates, dependabot patch merges, test additions, lint fixes, CI config | PR — self-created, self-merged after checks pass | Boundary-only (per autonomous-loop policy) |
+| **High** | New code, bug fixes, refactoring, new MCP tools, major dependency version bumps | PR — full rationale, waits for CI, self-merges if council approves | Per-iteration + conscience check + LLM Council |
 | **Critical** | Policy changes, constitutional changes, security fixes, cross-repo breaking changes, new personas | PR — created but **not** self-merged, human notified | Full governance gate, human approval |
 
 #### Self-Merge Authority
 
 Demerzel may self-merge PRs for Low, Medium, and High risk tasks when ALL of the following conditions are met:
 1. All CI checks pass
-2. Confidence >= 0.7 on the change
-3. No conscience discomfort signal >= 0.8 (per proto-conscience-policy threshold)
+2. Confidence >= 0.7 on the change (for High-risk: this is the **post-council** confidence score, incorporating two-model calibration per multi-model-orchestration-policy — single model capped at 0.8, two-model agreement can reach 0.9)
+3. No individual conscience discomfort signal >= 0.8 (per proto-conscience-policy signal weights — this applies to any single signal, not an aggregate)
 4. The change traces to an explicit authorization artifact (roadmap item, issue, or governance policy)
-5. For High risk: a conscience check has been performed before and after execution
+5. For High risk: a conscience check has been performed before and after execution, AND an LLM Council has approved
 
-Self-merge is an extension of the autonomous-loop policy's authority for governance-initiated loops, broadened to cover domain work that has been pre-authorized via the Article 4 authorization model above. This authority is granted by this design spec and should be codified as a policy amendment.
+**Policy amendment required (blocking prerequisite):** The autonomous-loop-policy currently restricts Demerzel-initiated execution to governance tasks only. Before the driver can self-merge domain work PRs, the policy must be amended to:
+- Authorize domain work execution when pre-authorized via the Article 4 authorization model (roadmap items, human-created issues, or self-created issues with documented rationale)
+- Grant self-merge authority for Low, Medium, and High risk tasks under the 5 conditions above
+- Maintain the restriction that Critical risk PRs require human approval
+
+This amendment is the first item in the implementation plan.
 
 Critical risk PRs are NEVER self-merged.
 
@@ -248,6 +260,7 @@ Each Claude Code session starts fresh. The driver reads state on WAKE:
 /demerzel drive triggers           — list pending trigger files
 /demerzel drive history [n]        — show last n cycle manifests
 /demerzel drive schedule [cadence] — configure wake cadence
+/demerzel drive strategy reset     — reset adaptive strategy to static prioritization
 ```
 
 ### Resource Bounds
@@ -255,7 +268,7 @@ Each Claude Code session starts fresh. The driver reads state on WAKE:
 Each cycle operates within defined budgets (Default Constitution Article 4 — Proportionality):
 - **Max tasks per cycle**: 10 (prevents runaway scope)
 - **Max parallel agents**: 4 (one per repo)
-- **Cycle timeout**: 2 hours (if exceeded, persist state and SLEEP; in-flight agents are allowed to finish their current atomic task before cleanup)
+- **Cycle timeout**: 2 hours soft, 2h15m hard. At 2h, no new tasks are dispatched; in-flight agents are allowed to finish their current atomic task. At 2h15m, any remaining agents are terminated, their worktrees are rolled back, and tasks are marked `timeout` in the manifest. PERSIST and SLEEP proceed normally.
 - **Max consecutive cycles without human interaction**: 5 (after 5, pause and create a summary issue for human review)
 - **API budget per cycle**: ~$10 target (Tier 2 calls capped; Tier 0/1 are free)
 - **Max council convocations per cycle**: 3 (each costs ~$0.50-1.00)
@@ -311,9 +324,14 @@ Tier 3: Multi-Model Council (Claude + ChatGPT, LLM Council pattern)
 
 **Cost impact:** At 4-hour cadence (~6 cycles/day), routing routine classification to local inference reduces API costs by an estimated 60-70%. Tier 0 and Tier 1 handle WAKE and most of RECON; Tier 2 handles PLAN, EXECUTE, and COMPOUND; Tier 3 is reserved for high-stakes decisions.
 
-**Local model bootstrap:** Initially, use a pre-trained small model (e.g., 15M-42M parameter model via llama2.c) for classification tasks. Once 50+ cycle manifests accumulate, train a domain-specific governance classifier via nanochat on Demerzel's own data (commit diffs, issue descriptions, trigger files → risk classification, task type, affected policies). Training cost: ~$50-100 one-time, then free inference.
+**Local model bootstrap:** Tier 1 is a deferred optimization. Initially, all Tier 1 tasks gracefully fall back to Tier 2 (Claude API). The local model is introduced when cost data from early cycles justifies it. Bootstrap path:
+1. **Phase A (launch):** Tier 1 tasks fall back to Tier 2. Measure API costs per cycle.
+2. **Phase B (local model):** When cost data shows Tier 1 savings would justify setup, install a pre-trained 15M-42M parameter model via llama2.c (requires C compiler, ~50MB model weights stored in `state/driver/models/`).
+3. **Phase C (custom model):** Once 50+ cycle manifests accumulate, train a domain-specific governance classifier via nanochat on Demerzel's own data. Training cost: ~$50-100 one-time, then free inference.
 
-**Tier routing is automatic:** The driver assigns inference tiers during PLAN based on task complexity. Simple heuristics determine routing: known task types with high historical success rates → Tier 1; novel or complex tasks → Tier 2; high-risk self-merge decisions → Tier 3.
+If the local model is unavailable (not installed, binary missing, model corrupted), Tier 1 tasks silently fall back to Tier 2. The driver never fails due to missing local inference.
+
+**Tier routing is automatic:** The driver assigns inference tiers during PLAN based on task complexity. Simple heuristics determine routing: known task types with high historical success rates → Tier 1 (or Tier 2 fallback); novel or complex tasks → Tier 2; high-risk self-merge decisions → Tier 3.
 
 ### Mechanical Health Metrics
 
@@ -340,7 +358,10 @@ All metrics are computable at Tier 0 (no model needed) using GitHub API + file s
 
 For high-stakes decisions, the driver convenes a mini-council (inspired by Karpathy's LLM Council):
 
-**When:** Before self-merging High-risk PRs, or when confidence is borderline (0.5-0.7) on any task.
+**When** (explicit, non-overlapping trigger conditions):
+- **(a)** Risk is High AND self-merge is planned — always convene council
+- **(b)** Confidence is in [0.5, 0.7) on any task regardless of risk level — convene council to calibrate
+- These conditions are OR'd: either triggers a council. A task may satisfy both (High-risk at 0.6 confidence).
 
 **Process:**
 1. **Independent review** — Claude and ChatGPT each receive the change diff + context. Model identities are anonymized in the review prompt to prevent bias.
@@ -353,6 +374,8 @@ For high-stakes decisions, the driver convenes a mini-council (inspired by Karpa
 
 **Cost:** ~$0.50-1.00 per council convocation. Used sparingly — only for High-risk self-merges and borderline confidence decisions.
 
+**ChatGPT fallback:** If the ChatGPT MCP tool (`mcp__openai-chat__openai_chat`) is unavailable, the council degrades to single-model review. Per multi-model-orchestration-policy, single-model confidence is capped at 0.8. This means High-risk PRs cannot reach the 0.7 post-council threshold with full two-model calibration — effectively preventing self-merge and routing to human review. This is the safe default.
+
 ### Autoresearch Discipline
 
 The following rules from the autoresearch pattern are embedded in the driver's execution model:
@@ -364,7 +387,7 @@ The following rules from the autoresearch pattern are embedded in the driver's e
 5. **Automatic rollback** — failed changes revert instantly via `git revert`
 6. **Simplicity wins** — equal results + less code = keep the simpler version
 7. **Git is memory** — manifests committed to git; agents read `git log` + `git diff` before each iteration to avoid repeating failed approaches
-8. **When stuck, think harder** — two consecutive failures → re-read context, try a different approach before giving up
+8. **When stuck, think harder** — within a single task, two consecutive failed approaches → re-read context, try a radically different approach. At the task level (escalation rules), two consecutive fully-failed tasks → halt that task, create issue, move on to the next task in the manifest. The distinction: rule 8 governs retries within a task; escalation governs giving up on a task entirely.
 
 **Results logging:** Each task in the manifest tracks autoresearch-style metrics:
 ```
@@ -402,6 +425,8 @@ For EXECUTE, the driver uses Claude Code's agent capabilities:
 | Conscience discomfort spikes | Hard pause, write conscience signal, notify human |
 | Rate limit / API failure | Persist state, schedule retry on next WAKE |
 | All tasks in cycle fail | Write post-mortem, skip COMPOUND, alert human |
+| Network failure mid-cycle | Persist all local state, mark in-flight cross-repo tasks as `partial`, create issue documenting inconsistent state across repos. Next cycle's RECON detects and reconciles. |
+| Cycle timeout (2h soft) | Stop dispatching new tasks, allow in-flight agents 15m grace period, then hard kill. Timed-out tasks marked `timeout` in manifest. |
 
 ## Scope Boundaries
 
@@ -431,7 +456,6 @@ For EXECUTE, the driver uses Claude Code's agent capabilities:
 1. `schemas/trigger.schema.json` — trigger file format
 2. `schemas/work-manifest.schema.json` — cycle work manifest (includes autoresearch results logging)
 3. `schemas/situation-report.schema.json` — recon output (4-stage pipeline + health scores)
-4. `schemas/driver-state.schema.json` — driver meta-state (last-cycle, schedule, health-scores)
-5. `schemas/loop-state.schema.json` — active loop state (referenced by autonomous-loop policy but missing)
+4. `schemas/driver-state.schema.json` — driver meta-state (last-cycle, schedule, health-scores, strategy, lock)
+5. `schemas/loop-state.schema.json` — active loop state (pre-existing gap from autonomous-loop policy)
 6. `schemas/council-verdict.schema.json` — LLM Council review + verdict format
-7. `schemas/health-metrics.schema.json` — per-repo mechanical health scores
