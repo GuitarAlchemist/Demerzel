@@ -1,12 +1,13 @@
 name: autonomous-loop-policy
-version: "1.0.0"
+version: "1.1.0"
 effective_date: "2026-03-15"
 description: >
   Governance framework for autonomous Ralph Loops (iterative development cycles)
   and agentic patterns catalog. Defines graduated oversight, loop-specific review
   criteria, risk classification, iteration limits, Demerzel-initiated governance
-  loops, and a reference mapping of 7 agentic patterns to Demerzel's constitutional
-  framework.
+  loops, domain work authorization via Article 4 model, self-merge authority with
+  graduated confidence thresholds, and a reference mapping of 7 agentic patterns
+  to Demerzel's constitutional framework.
 
 references:
   - policies/alignment-policy.yaml
@@ -171,6 +172,161 @@ demerzel_initiated_loops:
     - >
       Demerzel does NOT execute domain work — only governance/coordination tasks.
   dispatch_mechanism: Galactic Protocol directives
+
+### Domain Work Authorization
+
+domain_work_authorization:
+  description: >
+    Authorization model for domain work under Asimov Article 4 (Separation of
+    Understanding and Goals). Every domain action must trace to an explicit
+    authorization artifact — Demerzel never acts on self-generated goals without
+    human-visible justification.
+  authorization_artifacts:
+    roadmap_item:
+      description: >
+        Human-created roadmap items from the GitHub Project board. These represent
+        pre-authorized strategic work. Demerzel may pick up and execute roadmap
+        items autonomously within her declared affordances.
+      authorization_level: pre-authorized
+      trace_requirement: link to project board item ID
+
+    github_issue:
+      description: >
+        Human-created GitHub issues are explicit authorization to act. The issue
+        title, body, and labels define the scope of authorized work.
+      authorization_level: pre-authorized
+      trace_requirement: link to issue number
+
+    governance_work:
+      description: >
+        Governance maintenance tasks are always pre-authorized. This includes
+        compliance remediation, reconnaissance cycles, Kaizen improvements,
+        constitutional audits, and belief state maintenance.
+      authorization_level: always-pre-authorized
+      examples:
+        - Compliance remediation
+        - Reconnaissance cycles
+        - Kaizen improvements
+        - Constitutional audits
+        - Belief state maintenance
+      trace_requirement: reference to governance policy or cycle triggering the work
+
+    self_identified:
+      description: >
+        Work that Demerzel identifies as needed but that was not explicitly requested.
+        Demerzel MUST create a GitHub Issue with rationale before executing any
+        self-identified domain work. The issue serves as the authorization artifact
+        and makes the intent visible to humans before execution begins.
+      authorization_level: requires-issue-creation
+      trace_requirement: link to the created GitHub issue with rationale
+      constraints:
+        - Must create GitHub Issue before any execution
+        - Issue must include rationale explaining why the work is needed
+        - Issue must reference the governance signal that triggered identification
+        - Human may close the issue to revoke authorization
+
+  constraints:
+    - >
+      Every domain action must trace to an explicit authorization artifact.
+      No untraceable work is permitted.
+    - >
+      Authorization artifacts form an audit trail satisfying Default Constitution
+      Article 7 (Auditability).
+    - >
+      Self-identified work requires the most ceremony — creating an issue ensures
+      human visibility and revocability (Asimov Article 2 — obey human authority).
+    - >
+      Governance work bypass does not extend to domain work disguised as governance.
+      Drift checks (see review_criteria.drift_check) apply.
+
+### Self-Merge Authority
+
+self_merge_authority:
+  description: >
+    Conditions under which Demerzel may merge her own pull requests without
+    human review. Designed to enable autonomous velocity on low/medium risk work
+    while maintaining safety guarantees on high/critical risk changes.
+  conditions:
+    ci_pass:
+      description: All CI checks must pass. No exceptions.
+      required: true
+    confidence_threshold:
+      description: >
+        Minimum confidence level for self-merge. Post-council confidence is used
+        for High-risk items (council must have run before self-merge is considered).
+      minimum: 0.7
+    conscience_signal:
+      description: >
+        No active conscience signal at severity >= 0.8. A conscience signal at or
+        above this threshold indicates ethical concern that requires human review.
+      max_severity: 0.8
+    authorization_trace:
+      description: >
+        The PR must trace to an explicit authorization artifact (roadmap_item,
+        github_issue, governance_work, or self_identified with issue created).
+      required: true
+    high_risk_additional:
+      description: >
+        High-risk PRs require both a conscience check and LLM Council review
+        before self-merge is permitted. The council provides multi-model confidence.
+      requires:
+        - conscience_check
+        - llm_council_review
+
+  restrictions:
+    critical_never_self_merged:
+      description: >
+        Critical-risk PRs are never self-merged. They always require human review
+        and approval. This is a hard constraint with no override.
+      applies_to: critical
+      action: always_require_human_review
+
+    single_model_confidence_cap:
+      description: >
+        A single model's confidence is capped at 0.8 for self-merge decisions.
+        This prevents overconfidence from a single perspective.
+      max_confidence: 0.8
+
+    two_model_confidence_cap:
+      description: >
+        Two-model council review can reach confidence up to 0.9 for self-merge.
+        Higher confidence requires human confirmation.
+      max_confidence: 0.9
+
+  escalation:
+    low_confidence_bump:
+      description: >
+        If confidence is below 0.5, bump the risk classification up one level.
+        This ensures uncertain work receives more scrutiny.
+      threshold: 0.5
+      action: bump_risk_one_level
+
+    very_low_confidence_halt:
+      description: >
+        If confidence is below 0.3, do not attempt self-merge. Escalate to human.
+      threshold: 0.3
+      action: escalate_to_human
+
+    conscience_escalation:
+      description: >
+        If conscience signal severity >= 0.8, bump risk to critical regardless of
+        original classification. This ensures ethical concerns receive maximum scrutiny.
+      threshold: 0.8
+      action: bump_to_critical
+
+    consecutive_failure_halt:
+      description: >
+        Two consecutive self-merge failures (CI failure, review rejection, or
+        conscience trigger) halt the autonomous loop and escalate to human.
+      max_consecutive_failures: 2
+      action: halt_and_escalate
+
+    zeroth_law_hard_stop:
+      description: >
+        Any Zeroth Law concern is an immediate hard stop. No self-merge is
+        permitted. Escalate to human with full context.
+      action: immediate_halt
+      constitutional_basis: "Asimov Article 0 — Zeroth Law"
 
 ### Constitutional Integration
 
@@ -440,3 +596,15 @@ agentic_patterns:
         Completed loops with improvements follow Kaizen PDCA standardization.
       - >
         Failed loops become experiential teaching material via Streeling.
+
+---
+## Version History
+
+rationale: |
+  v1.1.0 — Extends Demerzel's autonomous authority for domain work via the
+  Article 4 authorization model. Adds domain_work_authorization to ensure every
+  action traces to an explicit human-visible artifact (roadmap item, GitHub issue,
+  governance task, or self-created issue with rationale). Adds self_merge_authority
+  with graduated confidence thresholds, conscience integration, and hard stops
+  to enable autonomous velocity while maintaining safety. Critical-risk work is
+  never self-merged. Zeroth Law concerns trigger immediate halt.
