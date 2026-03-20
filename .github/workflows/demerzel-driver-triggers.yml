@@ -44,7 +44,7 @@ jobs:
         if: steps.trigger.outputs.type != ''
         run: |
           mkdir -p state/triggers
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
           TRIGGER_FILE="state/triggers/${TIMESTAMP}-${{ steps.trigger.outputs.type }}.trigger.json"
           cat > "$TRIGGER_FILE" <<EOF
           {
@@ -57,7 +57,7 @@ jobs:
             "sender": "${{ github.actor }}",
             "run_id": "${{ github.run_id }}"
           },
-          "timestamp": "${TIMESTAMP}"
+          "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           }
           EOF
 
