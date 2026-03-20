@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "work-manifest.schema.json",
+  "title": "Driver Work Manifest",
+  "description": "A complete record of one autonomous driver cycle — plan, execution, and outcomes",
+  "type": "object",
+  "required": ["cycle_id", "date", "situation_summary", "tasks", "resource_usage"],
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "pattern": "^cycle-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Unique cycle identifier: cycle-{date}-{sequence}"
+    },
+    "trigger": {
+      "type": "string",
+      "enum": ["scheduled", "event", "self_initiated"],
+      "description": "What caused this cycle to begin"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the cycle"
+    },
+    "situation_summary": {
+      "type": "object",
+      "properties": {
+        "ecosystem_health": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "description": "Per-repo health scores (0-1)"
+        },
+        "urgent_items": {
+          "type": "integer",
+          "description": "Number of urgent items requiring attention"
+        },
+        "governance_signals": {
+          "type": "integer",
+          "description": "Number of active governance signals"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "description", "repo", "risk", "delivery", "inference_tier", "status"],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^T\\d{3}$",
+            "description": "Task identifier within the cycle"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this task accomplishes"
+          },
+          "repo": {
+            "type": "string",
+            "enum": ["demerzel", "ix", "tars", "ga"],
+            "description": "Target repository"
+          },
+          "risk": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Risk level of this task"
+          },
+          "delivery": {
+            "type": "string",
+            "enum": ["direct_push", "pr_self_merge", "pr_human_review"],
+            "description": "How the change will be delivered"
+          },
+          "inference_tier": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "Model tier: 0=cached/free, 1=Haiku, 2=Sonnet, 3=Opus"
+          },
+          "blocked_by": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Task IDs that must complete before this one"
+          },
+          "authorization_artifact": {
+            "type": "string",
+            "description": "Reference to the policy or constitution authorizing this task"
+          },
+          "rollback_plan": {
+            "type": "string",
+            "description": "How to revert this task if it fails"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "dispatched",
+              "running",
+              "completed",
+              "failed",
+              "reverted",
+              "blocked_by_failure",
+              "timeout",
+              "partial"
+            ],
+            "description": "Current execution status"
+          },
+          "commit": {
+            "type": ["string", "null"],
+            "description": "Commit SHA if the task produced a commit"
+          },
+          "pr_url": {
+            "type": ["string", "null"],
+            "description": "Pull request URL if the task created a PR"
+          },
+          "metric_before": {
+            "type": ["number", "null"],
+            "description": "Metric value before task execution"
+          },
+          "metric_after": {
+            "type": ["number", "null"],
+            "description": "Metric value after task execution"
+          },
+          "delta": {
+            "type": ["number", "null"],
+            "description": "Change in metric (metric_after - metric_before)"
+          },
+          "council_verdict_ref": {
+            "type": ["string", "null"],
+            "description": "Reference to council verdict if one was requested"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "compounding_insights": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lessons learned during this cycle for future improvement"
+    },
+    "resource_usage": {
+      "type": "object",
+      "required": ["duration_seconds", "api_calls_tier2", "council_convocations", "tasks_completed", "tasks_failed", "tasks_reverted"],
+      "properties": {
+        "duration_seconds": {
+          "type": "integer",
+          "description": "Total wall-clock time for the cycle"
+        },
+        "api_calls_tier2": {
+          "type": "integer",
+          "description": "Number of tier-2+ API calls consumed"
+        },
+        "council_convocations": {
+          "type": "integer",
+          "description": "Number of LLM council sessions convened"
+        },
+        "tasks_completed": {
+          "type": "integer",
+          "description": "Tasks that finished successfully"
+        },
+        "tasks_failed": {
+          "type": "integer",
+          "description": "Tasks that failed"
+        },
+        "tasks_reverted": {
+          "type": "integer",
+          "description": "Tasks that were rolled back"
+        }
+      },
+      "additionalProperties": false
+    },
+    "follow_up_triggers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Triggers to fire in the next cycle based on this cycle's outcomes"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "driver-state.schema.json",
+  "title": "Driver State",
+  "description": "Persistent state for the autonomous driver — lock, schedule, health, and strategy",
+  "type": "object",
+  "properties": {
+    "lock": {
+      "type": "object",
+      "required": ["started_at", "heartbeat"],
+      "properties": {
+        "pid": {
+          "type": "string",
+          "description": "Process identifier of the running driver"
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the current cycle started"
+        },
+        "heartbeat": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last heartbeat timestamp — used for stale lock detection"
+        }
+      },
+      "additionalProperties": false
+    },
+    "last_cycle": {
+      "type": "object",
+      "properties": {
+        "cycle_id": {
+          "type": "string",
+          "description": "Identifier of the most recent cycle"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the last cycle finished"
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "description": "How long the last cycle took"
+        },
+        "tasks_completed": {
+          "type": "integer",
+          "description": "Tasks completed in the last cycle"
+        },
+        "tasks_failed": {
+          "type": "integer",
+          "description": "Tasks that failed in the last cycle"
+        },
+        "tasks_reverted": {
+          "type": "integer",
+          "description": "Tasks that were reverted in the last cycle"
+        },
+        "manifest_path": {
+          "type": "string",
+          "description": "Path to the work manifest file for the last cycle"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "cadence_hours": {
+          "type": "number",
+          "default": 4,
+          "description": "Hours between scheduled cycles"
+        },
+        "active_hours": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 23,
+              "description": "Hour (0-23) when the driver may begin cycles"
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 23,
+              "description": "Hour (0-23) after which no new cycles start"
+            }
+          },
+          "additionalProperties": false
+        },
+        "weekly_deep_cycle_day": {
+          "type": "string",
+          "default": "sunday",
+          "description": "Day of week for deep governance cycles"
+        },
+        "next_wake": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When the next cycle should start"
+        },
+        "max_tasks_per_cycle": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum tasks in a single cycle"
+        },
+        "max_parallel_agents": {
+          "type": "integer",
+          "default": 4,
+          "description": "Maximum concurrent agent invocations"
+        },
+        "cycle_timeout_minutes": {
+          "type": "integer",
+          "default": 120,
+          "description": "Soft timeout for a cycle"
+        },
+        "hard_kill_timeout_minutes": {
+          "type": "integer",
+          "default": 135,
+          "description": "Hard timeout — cycle is killed after this"
+        },
+        "max_consecutive_cycles_without_human": {
+          "type": "integer",
+          "default": 5,
+          "description": "Maximum cycles before requiring human check-in"
+        },
+        "api_budget_per_cycle_usd": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum API spend per cycle in USD"
+        },
+        "max_council_convocations_per_cycle": {
+          "type": "integer",
+          "default": 3,
+          "description": "Maximum LLM council sessions per cycle"
+        }
+      },
+      "additionalProperties": false
+    },
+    "health_scores": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "composite_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Aggregate health score for this repo"
+          },
+          "last_computed": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this score was last calculated"
+          },
+          "trend": {
+            "type": "string",
+            "enum": ["improving", "stable", "declining"],
+            "description": "Direction of health change"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Per-repo health score summaries"
+    },
+    "strategy": {
+      "type": "object",
+      "properties": {
+        "manifests_analyzed": {
+          "type": "integer",
+          "default": 0,
+          "description": "Number of past manifests analyzed for strategy adaptation"
+        },
+        "adaptation_active": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the driver is actively adapting its strategy"
+        },
+        "task_type_success_rates": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "description": "Historical success rate per task type"
+        },
+        "repo_patterns": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          },
+          "description": "Learned patterns per repository"
+        }
+      },
+      "additionalProperties": false
+    },
+    "consecutive_cycles_without_human": {
+      "type": "integer",
+      "default": 0,
+      "description": "Counter for cycles since last human interaction"
+    }
+  },
+  "additionalProperties": false
+}

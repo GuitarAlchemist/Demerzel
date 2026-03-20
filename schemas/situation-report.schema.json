@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "situation-report.schema.json",
+  "title": "Situation Report",
+  "description": "A point-in-time assessment of ecosystem health, open work, and recommended priorities",
+  "type": "object",
+  "required": ["date", "ecosystem_health", "open_work", "governance_signals", "changes_since_last_cycle", "recommended_priorities"],
+  "$defs": {
+    "repo_health": {
+      "type": "object",
+      "properties": {
+        "ci_health": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "CI pipeline pass rate"
+        },
+        "test_health": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Test suite health and coverage"
+        },
+        "governance_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "How well governance artifacts cover the repo"
+        },
+        "belief_freshness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "How current the belief states are"
+        },
+        "issue_velocity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Rate of issue resolution vs. creation"
+        },
+        "dependency_health": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Currency and safety of dependencies"
+        },
+        "submodule_currency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "How up-to-date submodule references are"
+        },
+        "conscience_clarity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Clarity and resolution of conscience signals"
+        },
+        "composite_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Weighted aggregate of all health metrics"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of this situation report"
+    },
+    "ecosystem_health": {
+      "type": "object",
+      "properties": {
+        "demerzel": { "$ref": "#/$defs/repo_health" },
+        "ix": { "$ref": "#/$defs/repo_health" },
+        "tars": { "$ref": "#/$defs/repo_health" },
+        "ga": { "$ref": "#/$defs/repo_health" }
+      },
+      "additionalProperties": false,
+      "description": "Per-repo health assessment"
+    },
+    "open_work": {
+      "type": "object",
+      "properties": {
+        "roadmap_items": {
+          "type": "integer",
+          "description": "Total open roadmap items across all repos"
+        },
+        "open_issues": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" },
+          "description": "Open issue count per repo"
+        },
+        "dependabot_prs": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" },
+          "description": "Open Dependabot PRs per repo"
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance_signals": {
+      "type": "object",
+      "properties": {
+        "active_conscience_signals": {
+          "type": "integer",
+          "description": "Number of unresolved conscience signals"
+        },
+        "confidence_outliers": {
+          "type": "integer",
+          "description": "Number of beliefs with confidence below threshold"
+        },
+        "policy_coverage_gaps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Areas where policy coverage is missing"
+        }
+      },
+      "additionalProperties": false
+    },
+    "changes_since_last_cycle": {
+      "type": "object",
+      "properties": {
+        "commits_per_repo": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" },
+          "description": "Number of commits per repo since last cycle"
+        },
+        "issues_opened": {
+          "type": "integer",
+          "description": "New issues opened since last cycle"
+        },
+        "issues_closed": {
+          "type": "integer",
+          "description": "Issues closed since last cycle"
+        },
+        "prs_merged": {
+          "type": "integer",
+          "description": "Pull requests merged since last cycle"
+        }
+      },
+      "additionalProperties": false
+    },
+    "recommended_priorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["description", "repo", "urgency", "importance", "source"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "What needs to be done"
+          },
+          "repo": {
+            "type": "string",
+            "enum": ["demerzel", "ix", "tars", "ga"],
+            "description": "Target repository"
+          },
+          "urgency": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "How time-sensitive this is (0-1)"
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "How impactful this is (0-1)"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "ci_failure",
+              "staleness",
+              "roadmap",
+              "issue",
+              "governance_signal",
+              "self_identified"
+            ],
+            "description": "How this priority was identified"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

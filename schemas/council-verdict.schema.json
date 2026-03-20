@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "council-verdict.schema.json",
+  "title": "LLM Council Verdict",
+  "description": "A structured verdict from the LLM council reviewing a high-risk or borderline-confidence change",
+  "type": "object",
+  "required": ["verdict_id", "timestamp", "trigger_condition", "reviews", "chairman_synthesis", "verdict"],
+  "properties": {
+    "verdict_id": {
+      "type": "string",
+      "pattern": "^council-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Unique verdict identifier: council-{date}-{sequence}"
+    },
+    "task_id": {
+      "type": "string",
+      "description": "The task that triggered this council review"
+    },
+    "trigger_condition": {
+      "type": "string",
+      "enum": ["high_risk_self_merge", "borderline_confidence"],
+      "description": "Why the council was convened"
+    },
+    "change_summary": {
+      "type": "string",
+      "description": "Brief description of the change under review"
+    },
+    "reviews": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["reviewer", "correctness_score", "risk_assessment", "constitutional_alignment", "rationale"],
+        "properties": {
+          "reviewer": {
+            "type": "string",
+            "enum": ["reviewer_a", "reviewer_b"],
+            "description": "Which reviewer provided this assessment"
+          },
+          "correctness_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence that the change is correct (0-1)"
+          },
+          "risk_assessment": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Reviewer's independent risk assessment"
+          },
+          "constitutional_alignment": {
+            "type": "string",
+            "enum": ["pass", "fail"],
+            "description": "Whether the change aligns with the constitution"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Reviewer's reasoning"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "chairman_synthesis": {
+      "type": "string",
+      "description": "The chairman's synthesis of all reviews into a final recommendation"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["APPROVE", "REQUEST_CHANGES", "REJECT"],
+      "description": "Final council decision"
+    },
+    "post_council_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence level after council deliberation"
+    }
+  },
+  "additionalProperties": false
+}

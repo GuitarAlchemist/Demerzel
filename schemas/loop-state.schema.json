@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "loop-state.schema.json",
+  "title": "Loop State",
+  "description": "Tracks an autonomous loop's iterations, stall detection, and governance decisions",
+  "type": "object",
+  "required": ["loop_id", "goal", "repo", "risk", "governance_mode", "status", "iterations"],
+  "properties": {
+    "loop_id": {
+      "type": "string",
+      "pattern": "^loop-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Unique loop identifier: loop-{date}-{sequence}"
+    },
+    "goal": {
+      "type": "string",
+      "description": "What this loop is trying to achieve"
+    },
+    "repo": {
+      "type": "string",
+      "enum": ["demerzel", "ix", "tars", "ga"],
+      "description": "Repository this loop operates on"
+    },
+    "risk": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Risk level of the loop's operations"
+    },
+    "governance_mode": {
+      "type": "string",
+      "enum": ["boundary-only", "per-iteration"],
+      "description": "How governance checks are applied"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["running", "halted", "completed", "stalled"],
+      "description": "Current loop status"
+    },
+    "iterations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["iteration", "timestamp", "action", "outcome"],
+        "properties": {
+          "iteration": {
+            "type": "integer",
+            "description": "Iteration number (1-based)"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When this iteration executed"
+          },
+          "action": {
+            "type": "string",
+            "description": "What action was taken"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": ["progress", "no_progress", "regression"],
+            "description": "Result of the iteration"
+          },
+          "governance_decision": {
+            "type": ["string", "null"],
+            "enum": ["approved", "halted", null],
+            "description": "Governance verdict for this iteration, if checked"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "stall_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Consecutive iterations with no progress"
+    },
+    "halt_reason": {
+      "type": ["string", "null"],
+      "description": "Why the loop was halted, if applicable"
+    },
+    "authorization_artifact": {
+      "type": "string",
+      "description": "Policy or constitution reference authorizing this loop"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the loop began"
+    },
+    "max_iterations": {
+      "type": "integer",
+      "default": 10,
+      "description": "Maximum iterations before forced halt"
+    }
+  },
+  "additionalProperties": false
+}
