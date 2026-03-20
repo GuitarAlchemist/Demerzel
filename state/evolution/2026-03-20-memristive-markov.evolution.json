@@ -1,0 +1,20 @@
+{
+  "artifact": "memristive-markov crate (ix)",
+  "type": "runtime_code",
+  "created": "2026-03-20",
+  "citation_count": 0,
+  "violation_count": 0,
+  "compliance_rate": 1.0,
+  "last_cited": null,
+  "effectiveness": "U",
+  "effectiveness_confidence": 0.5,
+  "recommendation": "investigate",
+  "promotion_candidate": false,
+  "events": [
+    {
+      "type": "created",
+      "date": "2026-03-20",
+      "description": "Non-linear Markov chains with memristive conductance. 8 components, 34 tests passing, feature-gated GPU/reservoir/FFI. SP1 of 3 (SP2: ix-music, SP3: ga integration). Inspired by Karpathy autoresearch + Tymoczko OPTIC."
+    }
+  ]
+}

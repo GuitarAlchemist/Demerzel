@@ -1,0 +1,25 @@
+{
+  "artifact": "demerzel-drive skill + autonomous-loop-policy v1.1.0",
+  "type": "skill + policy_amendment",
+  "created": "2026-03-20",
+  "citation_count": 1,
+  "violation_count": 0,
+  "compliance_rate": 1.0,
+  "last_cited": "2026-03-20T05:20:00Z",
+  "effectiveness": "U",
+  "effectiveness_confidence": 0.6,
+  "recommendation": "investigate",
+  "promotion_candidate": false,
+  "events": [
+    {
+      "type": "created",
+      "date": "2026-03-20",
+      "description": "Autonomous driver skill and supporting infrastructure created (spec v2.1, 6 schemas, 17 behavioral tests, trigger workflow)"
+    },
+    {
+      "type": "compounding_cycle",
+      "date": "2026-03-20",
+      "description": "Cycle 001 completed: 4/4 tasks (100%), 0 failures. Submodule staleness resolved across ix, tars, ga. Health scores improved. Effectiveness: U (n=1, need 3+ cycles)."
+    }
+  ]
+}
