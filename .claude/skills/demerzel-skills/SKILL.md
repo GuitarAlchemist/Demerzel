@@ -24,6 +24,7 @@ List all available governance commands.
 | `/demerzel harvest` | Streeling knowledge harvest — scan repos for learnings |
 | `/demerzel report` | Post governance report + Seldon digest to Discussions |
 | `/demerzel compound` | Meta-compounding cycle — self-improvement based on evidence |
+| `/demerzel drive` | Autonomous driver — full cycle or individual phases across all repos |
 | `/demerzel skills` | This command — list all available skills |
 
 ## Seldon Commands (Knowledge Transfer Specialist)
@@ -48,9 +49,9 @@ List all available governance commands.
 
 ## Quick Reference
 
-**Total: 24 governance commands**
+**Total: 25 governance commands**
 
-- **15 Demerzel** commands (governance coordination)
+- **16 Demerzel** commands (governance coordination)
 - **4 Seldon** commands (knowledge transfer)
 - **5 Other** commands (constitution, alignment, testing, personas, logic)
 

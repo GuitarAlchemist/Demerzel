@@ -1,6 +1,6 @@
 ---
 name: demerzel
-description: Demerzel governance coordinator — dispatcher for all governance subcommands (audit, recon, directive, promote, evolve, teach, loop, patterns, confidence)
+description: Demerzel governance coordinator — dispatcher for all governance subcommands (audit, recon, directive, promote, evolve, teach, loop, patterns, confidence, drive)
 ---
 
 # Demerzel Governance Coordinator
@@ -20,6 +20,7 @@ Demerzel is the governance coordinator for the GuitarAlchemist ecosystem. Use th
 | `/demerzel loop` | `demerzel-loop` | Start/monitor a governed Ralph Loop |
 | `/demerzel patterns` | `demerzel-patterns` | Consult the agentic patterns catalog |
 | `/demerzel confidence` | `demerzel-confidence` | Calibrate a confidence score |
+| `/demerzel drive` | `demerzel-drive` | Autonomous driver — full cycle or individual phases across all repos |
 
 ## Quick Reference
 
