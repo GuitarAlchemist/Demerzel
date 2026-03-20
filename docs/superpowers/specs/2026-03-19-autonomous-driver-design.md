@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-19
 **Status:** Approved
-**Version:** 1.0.0
+**Version:** 2.0.0
 
 ## Summary
 
@@ -15,6 +15,10 @@ Demerzel becomes a fully autonomous product driver across all 4 repos (Demerzel,
 - **Risk-tiered delivery**: direct push for low-risk, PRs for medium+, human approval for critical only
 - **Parallel cross-repo coordination**: independent tasks run concurrently, dependency-ordered tasks are sequenced
 - **No new infrastructure**: runs through Claude Code sessions, GitHub Actions, and the file system
+- **Three-tier inference**: heavy reasoning (Claude API), light reasoning (local model), pure computation (no model) — cost-optimized routing
+- **Autoresearch discipline**: mechanical metrics, atomic commit-before-verify, automatic rollback, git as memory
+- **Multi-model validation**: LLM Council pattern for high-risk decisions (anonymous peer review + chairman consensus)
+- **Adaptive strategy**: PLAN learns from manifest history, not just prescribed prioritization
 
 ## Article 4 Authorization Model
 
@@ -26,6 +30,16 @@ Asimov Article 4 prohibits Demerzel from developing instrumental goals beyond th
 - **Self-identified domain work** — when Demerzel identifies domain opportunities not covered by an existing issue or roadmap item (e.g., "this code could use a new MCP tool"), she MUST first create a GitHub Issue describing the work and rationale. This issue becomes the authorization artifact. She may then self-assign and execute it. This preserves auditability (Article 7) and ensures every domain action traces to an explicit authorization.
 
 This means Demerzel never acts on implicit goals — every action traces to either a human-created artifact (roadmap/issue) or a self-created issue that documents her reasoning before execution.
+
+## Inspirations
+
+This design incorporates patterns from Andrej Karpathy's autoresearch ecosystem:
+- **autoresearch** — constraint + mechanical metric + autonomous iteration = compounding gains
+- **LLM Council** — anonymous multi-model deliberation with chairman consensus
+- **llama2.c** — local inference in pure C for lightweight classification (~110 tok/s on CPU for 15M models)
+- **nanochat** — train domain-specific small models cheaply ($50-100)
+- **researchpooler** — 4-stage discovery pipeline (gather → enrich → analyze → surface)
+- **SkyPilot scaling** — parallel factorial execution, zero idle time, emergent strategy from results
 
 ## Architecture
 
@@ -39,22 +53,33 @@ WAKE → RECON → PLAN → EXECUTE → VERIFY → COMPOUND → PERSIST → SLEE
 
 1. **WAKE** — Triggered by schedule, event (trigger file in `state/triggers/`), or self-initiated follow-up. First checks `state/driver/lock.json` — if a cycle is already running (lock exists and is < 6 hours old), skip this WAKE. Otherwise, acquires lock and loads state from `state/` directory to rebuild context.
 
-2. **RECON** — Three-tier reconnaissance across all repos per `reconnaissance-policy.yaml`:
-   - Tier 1: Constitutional integrity, policy coverage, persona validity, belief currency
-   - Tier 2: Repo state, change detection, ungoverned components, failing CI, open issues
-   - Tier 3: Knowledge requirements, assumption audit, blind spots, confidence assessment
-   - Produces a **situation report**.
+2. **RECON** — Four-stage discovery pipeline (researchpooler pattern) across all repos:
+   - **Gather** — scrape commits, PRs, issues, CI status, dependabot alerts via GitHub API [no model]
+   - **Enrich** — compute mechanical metrics (health scores, staleness, coverage), fill knowledge gaps [local model]
+   - **Analyze** — identify governance drift, anomalies, opportunities, cross-repo dependencies [local model + Claude for complex patterns]
+   - **Surface** — produce structured **situation report** with ranked priorities
+   - Additionally validates per `reconnaissance-policy.yaml`: constitutional integrity (Tier 1), repo state (Tier 2), knowledge assessment (Tier 3).
 
-3. **PLAN** — Reads situation report + roadmap + open issues. Prioritizes work using confidence thresholds and constitutional alignment. Produces a **work manifest** — a list of tasks with:
+3. **PLAN** — Adaptive strategy engine (not static prioritization). Reads situation report + roadmap + open issues + **manifest history** (what worked/failed in previous cycles). Produces a **work manifest** — a list of tasks with:
    - Repo assignment
    - Risk classification (low/medium/high/critical)
    - Dependency ordering (DAG)
    - Delivery method (direct push vs PR)
    - Rollback plan
+   - Inference tier assignment (heavy/light/none)
+
+   The PLAN phase learns from accumulated manifests: task types that consistently fail get deprioritized or approached differently. Repos that respond well to certain patterns get more of them. This is the "emergent strategy" principle from autoresearch — the driver doesn't follow a rigid playbook, it adapts based on observed results.
 
 4. **EXECUTE** — Dispatches parallel worktree agents per repo for independent tasks. Blocks downstream work on upstream dependencies. Each agent operates under autonomous-loop policy constraints (iteration limits, stall/regression/drift checks).
 
-5. **VERIFY** — Runs tests, checks CI, validates governance artifacts, confirms no constitutional violations. Failed verification triggers rollback.
+5. **VERIFY** — Autoresearch-style mechanical verification. Every change is committed BEFORE verification (atomic commit-before-verify). Verification is metrics-driven, never subjective:
+   - Run tests → pass/fail count delta
+   - Check CI → green/red
+   - Validate governance artifacts → schema compliance score
+   - Constitutional guard check → must always pass (separate from task metrics)
+   - If metric improved AND guard passes → **keep**
+   - If metric worsened OR guard fails → `git revert` immediately
+   - For High-risk changes: **LLM Council validation** — Claude + ChatGPT independently review the change (anonymized), then Claude synthesizes a consensus verdict before self-merge
 
 6. **COMPOUND** — Meta-compounding cycle: update evolution log, promote/demote artifacts per the Galactic Protocol's Governance Promotion staircase (pattern → policy → constitutional article), package learnings via Seldon, identify follow-up work.
 
@@ -180,11 +205,16 @@ Example cycle:
 state/
   ├── triggers/         (NEW — pending trigger files, consumed on WAKE)
   ├── loops/            (NEW — active loop state per autonomous-loop policy)
-  ├── manifests/        (NEW — work manifests per cycle, audit trail)
+  ├── manifests/        (NEW — work manifests per cycle, with autoresearch results logging)
+  │   └── archive/      (NEW — compressed summaries of manifests older than 30 cycles)
+  ├── council/          (NEW — LLM Council verdicts for audit trail)
   └── driver/           (NEW — driver meta-state)
        ├── last-cycle.json      (timestamp, duration, tasks completed/failed)
        ├── roadmap-cache.json   (parsed roadmap priorities)
-       └── schedule.json        (next wake times, cadence config)
+       ├── schedule.json        (next wake times, cadence config)
+       ├── health-scores.json   (per-repo mechanical health scores, updated each cycle)
+       ├── lock.json            (cycle lock, prevents concurrent execution)
+       └── strategy.json        (adaptive strategy state — task type success rates, repo patterns)
 ```
 
 #### Cycle Audit Trail
@@ -225,8 +255,10 @@ Each Claude Code session starts fresh. The driver reads state on WAKE:
 Each cycle operates within defined budgets (Default Constitution Article 4 — Proportionality):
 - **Max tasks per cycle**: 10 (prevents runaway scope)
 - **Max parallel agents**: 4 (one per repo)
-- **Cycle timeout**: 2 hours (if exceeded, persist state and SLEEP)
+- **Cycle timeout**: 2 hours (if exceeded, persist state and SLEEP; in-flight agents are allowed to finish their current atomic task before cleanup)
 - **Max consecutive cycles without human interaction**: 5 (after 5, pause and create a summary issue for human review)
+- **API budget per cycle**: ~$10 target (Tier 2 calls capped; Tier 0/1 are free)
+- **Max council convocations per cycle**: 3 (each costs ~$0.50-1.00)
 
 These bounds are configurable via `state/driver/schedule.json` and can be adjusted as trust in the system grows.
 
@@ -242,6 +274,107 @@ The RECON phase produces a situation report with these sections:
 ### Roadmap Source
 
 The roadmap is sourced from **GitHub Project board #2** (GuitarAlchemist org). The PLAN phase reads project items via `gh project` API, filtering by status (Todo, In Progress) and priority fields. Items are cached in `state/driver/roadmap-cache.json` and refreshed each cycle. Human-created roadmap items are the primary source of domain work authorization per the Article 4 model.
+
+### Inference Tier System
+
+Not every decision needs a Claude API call. The driver routes reasoning to the cheapest sufficient tier:
+
+```
+Tier 0: No Model (pure computation)
+  ├── CI status checks (GitHub API)
+  ├── Belief age calculation (timestamp arithmetic)
+  ├── Schema validation (JSON Schema)
+  ├── File change detection (git diff)
+  ├── Metric computation (test counts, coverage %)
+  └── Trigger deduplication and hygiene
+
+Tier 1: Local Model (llama2.c or equivalent, ~110 tok/s on CPU)
+  ├── Trigger classification — "is this worth a full cycle?"
+  ├── Risk scoring — diff size/type → low/medium/high/critical
+  ├── Commit message analysis — classify commit types for recon
+  ├── Staleness scoring — belief relevance assessment
+  ├── Simple code analysis — pattern matching, lint-level checks
+  └── Governance metric enrichment — coverage gaps, policy drift
+
+Tier 2: Heavy Model (Claude API)
+  ├── PLAN — work manifest generation, strategy adaptation
+  ├── EXECUTE — code generation, bug fixes, features, refactoring
+  ├── COMPOUND — meta-analysis, strategy evolution, promotion decisions
+  ├── Complex RECON analysis — cross-repo dependency detection, blind spots
+  └── High-risk VERIFY — council deliberation, rationale generation
+
+Tier 3: Multi-Model Council (Claude + ChatGPT, LLM Council pattern)
+  ├── High-risk PR validation before self-merge
+  ├── Critical governance decisions (policy promotions, constitutional interpretations)
+  └── Disagreement resolution when confidence is borderline (0.5-0.7)
+```
+
+**Cost impact:** At 4-hour cadence (~6 cycles/day), routing routine classification to local inference reduces API costs by an estimated 60-70%. Tier 0 and Tier 1 handle WAKE and most of RECON; Tier 2 handles PLAN, EXECUTE, and COMPOUND; Tier 3 is reserved for high-stakes decisions.
+
+**Local model bootstrap:** Initially, use a pre-trained small model (e.g., 15M-42M parameter model via llama2.c) for classification tasks. Once 50+ cycle manifests accumulate, train a domain-specific governance classifier via nanochat on Demerzel's own data (commit diffs, issue descriptions, trigger files → risk classification, task type, affected policies). Training cost: ~$50-100 one-time, then free inference.
+
+**Tier routing is automatic:** The driver assigns inference tiers during PLAN based on task complexity. Simple heuristics determine routing: known task types with high historical success rates → Tier 1; novel or complex tasks → Tier 2; high-risk self-merge decisions → Tier 3.
+
+### Mechanical Health Metrics
+
+Every repo gets a computed health score (0-1) using purely mechanical metrics — no subjective assessment (autoresearch principle). These scores drive PLAN prioritization:
+
+| Metric | Computation | Weight |
+|--------|-------------|--------|
+| **ci_health** | (passing workflows / total workflows) over last 7 days | 0.20 |
+| **test_health** | (passing tests / total tests) in latest run | 0.15 |
+| **governance_coverage** | (governed components / total components) | 0.15 |
+| **belief_freshness** | 1 - (avg belief age in days / staleness threshold) | 0.15 |
+| **issue_velocity** | (closed issues / opened issues) over last 30 days | 0.10 |
+| **dependency_health** | 1 - (critical+high dependabot alerts / total deps) | 0.10 |
+| **submodule_currency** | 1 - (commits behind / 10, capped at 1) | 0.10 |
+| **conscience_clarity** | 1 - (active discomfort signals / max signals) | 0.05 |
+
+**Composite score:** weighted sum, stored per-repo in `state/driver/health-scores.json`. Tracked over time for trend detection.
+
+**Metric-driven prioritization:** Repos with lower health scores get more attention. Tasks that improve the lowest-scoring metric get priority (autoresearch: optimize the metric that matters most).
+
+All metrics are computable at Tier 0 (no model needed) using GitHub API + file system data.
+
+### LLM Council Protocol
+
+For high-stakes decisions, the driver convenes a mini-council (inspired by Karpathy's LLM Council):
+
+**When:** Before self-merging High-risk PRs, or when confidence is borderline (0.5-0.7) on any task.
+
+**Process:**
+1. **Independent review** — Claude and ChatGPT each receive the change diff + context. Model identities are anonymized in the review prompt to prevent bias.
+2. **Scoring** — Each model scores the change on: correctness (0-1), risk assessment (low/med/high/critical), constitutional alignment (pass/fail), and provides a brief rationale.
+3. **Chairman synthesis** — Claude (as chairman) reads both reviews and produces a consensus verdict: APPROVE, REQUEST_CHANGES, or REJECT.
+4. **Decision:**
+   - Both approve → self-merge proceeds
+   - Disagreement → bump to critical, human review
+   - Both reject → revert, create issue
+
+**Cost:** ~$0.50-1.00 per council convocation. Used sparingly — only for High-risk self-merges and borderline confidence decisions.
+
+### Autoresearch Discipline
+
+The following rules from the autoresearch pattern are embedded in the driver's execution model:
+
+1. **Loop until done** — cycles repeat on cadence; self-initiated triggers continue work across cycles
+2. **Read before write** — RECON always precedes PLAN; agents read context before modifying code
+3. **One change per iteration** — each agent task is atomic; one focused change, one commit
+4. **Mechanical verification only** — metrics-driven VERIFY, no subjective "looks good"
+5. **Automatic rollback** — failed changes revert instantly via `git revert`
+6. **Simplicity wins** — equal results + less code = keep the simpler version
+7. **Git is memory** — manifests committed to git; agents read `git log` + `git diff` before each iteration to avoid repeating failed approaches
+8. **When stuck, think harder** — two consecutive failures → re-read context, try a different approach before giving up
+
+**Results logging:** Each task in the manifest tracks autoresearch-style metrics:
+```
+task_id | commit | metric_before | metric_after | delta | status | description
+T001    | a1b2c3 | 0.72          | 0.85         | +0.13 | keep   | fix CI workflow syntax
+T002    | -      | 0.85          | 0.81         | -0.04 | revert | refactor test helpers
+T003    | d4e5f6 | 0.81          | 0.88         | +0.07 | keep   | add missing persona test
+```
+
+This structured logging enables the adaptive PLAN phase to learn from history.
 
 ### Governance Guardrails
 - Loads constitution + all policies before any action
@@ -275,22 +408,30 @@ For EXECUTE, the driver uses Claude Code's agent capabilities:
 **In scope:**
 - One new skill (`demerzel-drive`) with supporting schemas
 - New state directories (`triggers/`, `loops/`, `manifests/`, `driver/`)
-- Trigger file schema
-- Work manifest schema
+- Trigger file schema, work manifest schema, situation report schema
 - GitHub Actions modifications to write trigger files
-- Situation report schema
+- Inference tier routing logic (Tier 0/1/2/3 assignment)
+- Mechanical health metrics computation
+- LLM Council protocol for High-risk validation
+- Autoresearch-style results logging in manifests
+- Adaptive PLAN strategy based on manifest history
+- Policy amendment for self-merge authority
+- Local model integration point (llama2.c or equivalent)
 
 **Out of scope:**
 - No new infrastructure (servers, databases, message queues)
 - No MCP tool creation (separate work per MCP glue spec)
-- No multi-model orchestration (future enhancement per existing policy)
-- No changes to constitution (policy amendment for self-merge authority is in scope)
+- No changes to constitution
 - No real-time daemon (wake/work/sleep model)
+- Training a custom governance classifier (deferred until 50+ manifests accumulated)
+- Full multi-model swarm orchestration (council is limited to Claude + ChatGPT for validation)
 
 ## Schemas Required
 
 1. `schemas/trigger.schema.json` — trigger file format
-2. `schemas/work-manifest.schema.json` — cycle work manifest
-3. `schemas/situation-report.schema.json` — recon output
-4. `schemas/driver-state.schema.json` — driver meta-state (last-cycle, schedule)
+2. `schemas/work-manifest.schema.json` — cycle work manifest (includes autoresearch results logging)
+3. `schemas/situation-report.schema.json` — recon output (4-stage pipeline + health scores)
+4. `schemas/driver-state.schema.json` — driver meta-state (last-cycle, schedule, health-scores)
 5. `schemas/loop-state.schema.json` — active loop state (referenced by autonomous-loop policy but missing)
+6. `schemas/council-verdict.schema.json` — LLM Council review + verdict format
+7. `schemas/health-metrics.schema.json` — per-repo mechanical health scores
