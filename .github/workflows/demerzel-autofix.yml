@@ -27,149 +27,199 @@ jobs:
     steps:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Scan open issues
-        id: scan
+      - name: Gather context
+        id: context
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
+          echo "DATE=$DATE" >> $GITHUB_OUTPUT
 
+          # Fetch open issues
           if [ -n "${{ inputs.issue_number }}" ]; then
-            # Manual trigger for specific issue
             ISSUES=$(gh issue view ${{ inputs.issue_number }} --repo GuitarAlchemist/Demerzel --json number,title,body,labels --jq '[.]')
           else
-            # Scan all open issues
-            ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title,body,labels --jq '.')
+            ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title,body,labels --limit 30 --jq '.')
           fi
+          echo "$ISSUES" > /tmp/issues.json
 
           COUNT=$(echo "$ISSUES" | jq 'length')
-          echo "Found $COUNT open issues"
           echo "ISSUE_COUNT=$COUNT" >> $GITHUB_OUTPUT
 
-          # Generate remediation report
-          cat > remediation-report.md << EOF
-          ## 🤖 Demerzel Auto-Remediation Scan — $DATE
+          # Inventory governance artifacts for context
+          PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
+          POLICY_COUNT=$(ls policies/*.yaml 2>/dev/null | wc -l)
+          TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+          SCHEMA_COUNT=$(find schemas/ -name "*.json" 2>/dev/null | wc -l)
+          BELIEF_COUNT=$(ls state/beliefs/*.json 2>/dev/null | wc -l)
+          SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
+          PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
+          DEPT_COUNT=$(ls state/streeling/departments/*.json 2>/dev/null | wc -l)
 
-          **Open issues found:** $COUNT
+          # Recent git activity
+          RECENT_COMMITS=$(git log --oneline -10 --format="%h %s")
+
+          # Build context document
+          cat > /tmp/context.md << CTXEOF
+          # Demerzel Governance State — $DATE
+
+          ## Artifact Inventory
+          - Personas: $PERSONA_COUNT
+          - Policies: $POLICY_COUNT
+          - Behavioral tests: $TEST_COUNT
+          - Schemas: $SCHEMA_COUNT
+          - Belief states: $BELIEF_COUNT
+          - Conscience signals: $SIGNAL_COUNT
+          - Conscience patterns: $PATTERN_COUNT
+          - Streeling departments: $DEPT_COUNT
+
+          ## Recent Commits
+          $RECENT_COMMITS
+
+          ## Consumer Repos
+          - ix (Rust): ML pipelines, governance dashboard, Karnaugh maps
+          - tars (F#): Grammar×ML bridge, governance generation, 150+ MCP tools
+          - ga (.NET): Chatbot with 7 governed agent personas
+
+          ## Key Capabilities
+          - Demerzel can create/edit governance artifacts (personas, policies, schemas, tests)
+          - Demerzel can update wiki pages
+          - Demerzel can update submodules in consumer repos
+          - Demerzel can create behavioral tests for personas
+          - Demerzel can issue directives via Galactic Protocol
+          - Demerzel can detect governance gaps via reconnaissance
+          CTXEOF
+
+      - name: AI-powered issue triage
+        id: triage
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ISSUES=$(cat /tmp/issues.json)
+          CONTEXT=$(cat /tmp/context.md)
+
+          # Call Claude API for intelligent triage
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d "$(jq -n \
+              --arg ctx "$CONTEXT" \
+              --arg issues "$ISSUES" \
+              '{
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 4000,
+                messages: [{
+                  role: "user",
+                  content: ("You are Demerzel, an AI governance coordinator. Triage these open GitHub issues.\n\nGovernance context:\n" + $ctx + "\n\nOpen issues (JSON):\n" + $issues + "\n\nFor each issue, respond in this exact JSON format (array of objects):\n```json\n[\n  {\n    \"number\": 42,\n    \"title\": \"issue title\",\n    \"classification\": \"governance-gap | feature | bug | documentation | maintenance | research\",\n    \"priority\": \"P0 | P1 | P2 | P3\",\n    \"auto_fixable\": true or false,\n    \"fix_description\": \"what would fix this issue\",\n    \"evidence_of_completion\": [\"file or condition that proves completion\"],\n    \"is_complete\": true or false,\n    \"completion_evidence\": \"why you think it is complete, or null\",\n    \"blocked_by\": \"what blocks this, or null\",\n    \"recommended_action\": \"close | fix-now | needs-human | defer\"\n  }\n]\n```\n\nBe precise. Check if issues are already resolved by recent commits. Only mark as complete if you have concrete evidence.")
+                }]
+              }')" 2>/dev/null)
+
+          # Extract the JSON array from the response
+          TRIAGE=$(echo "$RESPONSE" | jq -r '.content[0].text' | sed -n '/```json/,/```/p' | sed '1d;$d')
+
+          if [ -z "$TRIAGE" ] || [ "$TRIAGE" = "null" ]; then
+            echo "AI triage failed, falling back to basic scan"
+            echo "AI_TRIAGE=false" >> $GITHUB_OUTPUT
+            echo "[]" > /tmp/triage.json
+          else
+            echo "$TRIAGE" > /tmp/triage.json
+            echo "AI_TRIAGE=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate remediation report
+        id: report
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE="${{ steps.context.outputs.DATE }}"
+          COUNT="${{ steps.context.outputs.ISSUE_COUNT }}"
+          AI_TRIAGE="${{ steps.triage.outputs.AI_TRIAGE }}"
+
+          cat > remediation-report.md << 'HEADER'
+          ## 🤖 Demerzel Auto-Remediation Scan — DATE_PLACEHOLDER
+
+          **Open issues found:** COUNT_PLACEHOLDER
+          **Triage method:** METHOD_PLACEHOLDER
 
           ### Issue Assessment
-          EOF
+          HEADER
 
-          # Process issues line-by-line to preserve titles with spaces
-          while IFS='|' read -r NUM TITLE; do
-            [ -z "$NUM" ] && continue
-            echo "" >> remediation-report.md
-            echo "#### #$NUM: $TITLE" >> remediation-report.md
+          sed -i "s/DATE_PLACEHOLDER/$DATE/" remediation-report.md
+          sed -i "s/COUNT_PLACEHOLDER/$COUNT/" remediation-report.md
 
-            # Classify issue by checking if it matches governance artifacts
-            case "$TITLE" in
-              *"Consumer Repo Integration"*)
-                echo "- **Type:** Integration task" >> remediation-report.md
-                echo "- **Auto-fixable:** Partial — can generate CLAUDE.md snippets and state directories" >> remediation-report.md
-                echo "- **Action:** Check if templates/CLAUDE.md.snippet exists and is current" >> remediation-report.md
-                if [ -f "templates/CLAUDE.md.snippet" ]; then
-                  echo "- **Status:** Templates exist and ready for adoption" >> remediation-report.md
-                else
-                  echo "- **Status:** Templates missing — needs creation" >> remediation-report.md
-                fi
-                ;;
-              *"Meta-Compounding"*)
-                echo "- **Type:** Framework improvement" >> remediation-report.md
-                echo "- **Auto-fixable:** Yes — can run /demerzel compound and apply proposals" >> remediation-report.md
-                # Check what's been implemented
-                EVOLUTION=$(ls logic/governance-evolution.schema.json 2>/dev/null && echo "yes" || echo "no")
-                CALIBRATION=$(grep -l "confidence_calibration" policies/scientific-objectivity-policy.yaml 2>/dev/null && echo "yes" || echo "no")
-                CHANNEL=$(grep -l "channel" schemas/contracts/directive.schema.json 2>/dev/null && echo "yes" || echo "no")
-                echo "- **Progress:** Evolution schema=$EVOLUTION, Calibration=$CALIBRATION, Channels=$CHANNEL" >> remediation-report.md
-                if [ "$EVOLUTION" = "yes" ] && [ "$CALIBRATION" = "yes" ] && [ "$CHANNEL" = "yes" ]; then
-                  echo "- **Status:** Core implementation complete — can close issue" >> remediation-report.md
-                  echo "CLOSE_$NUM=true" >> $GITHUB_OUTPUT
-                fi
-                ;;
-              *"Governance Validation"*)
-                echo "- **Type:** Automation task" >> remediation-report.md
-                echo "- **Auto-fixable:** Partial — governance-audit-policy exists, automation via weekly workflow" >> remediation-report.md
-                AUDIT=$(ls policies/governance-audit-policy.yaml 2>/dev/null && echo "yes" || echo "no")
-                WORKFLOW=$(ls .github/workflows/streeling-daily.yml 2>/dev/null && echo "yes" || echo "no")
-                echo "- **Progress:** Audit policy=$AUDIT, Weekly workflow=$WORKFLOW" >> remediation-report.md
-                if [ "$AUDIT" = "yes" ] && [ "$WORKFLOW" = "yes" ]; then
-                  echo "- **Status:** Audit policy + weekly automation in place — can close issue" >> remediation-report.md
-                  echo "CLOSE_$NUM=true" >> $GITHUB_OUTPUT
-                fi
-                ;;
-              *"NotebookLM"*)
-                echo "- **Type:** Knowledge expansion" >> remediation-report.md
-                echo "- **Auto-fixable:** No — requires human to create and share notebooks" >> remediation-report.md
-                echo "- **Status:** 4 notebooks currently indexed. Expansion requires human action." >> remediation-report.md
-                ;;
-              *)
-                echo "- **Type:** Unclassified" >> remediation-report.md
-                echo "- **Auto-fixable:** Unknown — requires manual assessment" >> remediation-report.md
-                ;;
-            esac
-          done < <(echo "$ISSUES" | jq -r '.[] | "\(.number)|\(.title)"')
+          if [ "$AI_TRIAGE" = "true" ]; then
+            sed -i "s/METHOD_PLACEHOLDER/AI-powered (Claude)/" remediation-report.md
+
+            # Process AI triage results
+            jq -r '.[] | "#### #\(.number): \(.title)\n- **Classification:** \(.classification)\n- **Priority:** \(.priority)\n- **Auto-fixable:** \(.auto_fixable)\n- **Fix:** \(.fix_description)\n- **Status:** \(if .is_complete then "✅ COMPLETE — \(.completion_evidence)" else "🔄 Open" end)\n- **Blocked by:** \(.blocked_by // "Nothing")\n- **Action:** \(.recommended_action)\n"' /tmp/triage.json >> remediation-report.md
+
+            # Identify issues to close
+            CLOSEABLE=$(jq -r '.[] | select(.is_complete == true and .recommended_action == "close") | .number' /tmp/triage.json)
+            echo "CLOSEABLE=$CLOSEABLE" >> $GITHUB_OUTPUT
+
+            # Identify auto-fixable issues
+            FIXABLE=$(jq -r '.[] | select(.auto_fixable == true and .is_complete == false and .recommended_action == "fix-now") | .number' /tmp/triage.json)
+            echo "FIXABLE=$FIXABLE" >> $GITHUB_OUTPUT
+          else
+            sed -i "s/METHOD_PLACEHOLDER/Basic (case matching)/" remediation-report.md
+            echo "No AI triage available. Issues require manual assessment." >> remediation-report.md
+            echo "CLOSEABLE=" >> $GITHUB_OUTPUT
+            echo "FIXABLE=" >> $GITHUB_OUTPUT
+          fi
 
           echo "" >> remediation-report.md
           echo "---" >> remediation-report.md
-          echo "*Scanned by Demerzel under governance mandate. Auto-remediation follows the autonomous-loop-policy (boundary-only mode for low-risk fixes).*" >> remediation-report.md
+          echo "*Scanned by Demerzel under governance mandate. AI-powered triage via Claude. Auto-remediation follows the autonomous-loop-policy.*" >> remediation-report.md
 
           echo "SCAN_COMPLETE=true" >> $GITHUB_OUTPUT
           cat remediation-report.md
 
       - name: Auto-close completed issues
-        if: steps.scan.outputs.SCAN_COMPLETE == 'true'
+        if: steps.report.outputs.CLOSEABLE != ''
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          # Close issue #13 if meta-compounding is complete
-          if [ "${{ steps.scan.outputs.CLOSE_13 }}" = "true" ]; then
-            gh issue comment 13 --repo GuitarAlchemist/Demerzel --body "🤖 **Demerzel Auto-Remediation**
+          for NUM in ${{ steps.report.outputs.CLOSEABLE }}; do
+            EVIDENCE=$(jq -r ".[] | select(.number == $NUM) | .completion_evidence" /tmp/triage.json)
+            gh issue comment "$NUM" --repo GuitarAlchemist/Demerzel --body "🤖 **Demerzel Auto-Remediation**
 
           This issue has been automatically assessed and found **complete**.
 
-          **Evidence:**
-          - Governance evolution schema: ✅ \`logic/governance-evolution.schema.json\`
-          - Confidence calibration: ✅ Added to \`policies/scientific-objectivity-policy.yaml\`
-          - Crisp/fuzzy channels: ✅ Added to all 6 contract schemas
-          - Affordance matching: ✅ Added to \`contracts/galactic-protocol.md\`
-          - Promotion protocol: ✅ Added to \`contracts/galactic-protocol.md\`
-          - Meta-compounding skill: ✅ \`/demerzel compound\`
-          - Evolution seed data: ✅ 20 artifacts tracked
-          - Behavioral tests: ✅ 8 test cases
+          **Evidence:** $EVIDENCE
 
-          Closing as complete per governance audit."
-            gh issue close 13 --repo GuitarAlchemist/Demerzel
-            echo "Closed #13 (Meta-Compounding Implementation)"
-          fi
+          Closing as complete per AI-powered governance audit."
+            gh issue close "$NUM" --repo GuitarAlchemist/Demerzel
+            echo "Closed #$NUM"
+          done
 
-          # Close issue #14 if governance validation is automated
-          if [ "${{ steps.scan.outputs.CLOSE_14 }}" = "true" ]; then
-            gh issue comment 14 --repo GuitarAlchemist/Demerzel --body "🤖 **Demerzel Auto-Remediation**
-
-          This issue has been automatically assessed and found **complete**.
-
-          **Evidence:**
-          - Governance audit policy: ✅ \`policies/governance-audit-policy.yaml\` (18 checks, 3 levels)
-          - Weekly automated scan: ✅ \`.github/workflows/streeling-daily.yml\`
-          - Meta-compounding cycle: ✅ Runs daily Mon-Fri
-          - Project automation: ✅ \`.github/workflows/project-automation.yml\`
-          - /demerzel audit skill: ✅ Available for on-demand audits
-
-          Closing as complete per governance audit."
-            gh issue close 14 --repo GuitarAlchemist/Demerzel
-            echo "Closed #14 (Governance Validation Automation)"
-          fi
-
-      - name: Post remediation report to issue comments
-        if: steps.scan.outputs.SCAN_COMPLETE == 'true'
+      - name: Comment on auto-fixable issues
+        if: steps.report.outputs.FIXABLE != ''
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          DATE=$(date -u +%Y-%m-%d)
+          for NUM in ${{ steps.report.outputs.FIXABLE }}; do
+            FIX=$(jq -r ".[] | select(.number == $NUM) | .fix_description" /tmp/triage.json)
+            gh issue comment "$NUM" --repo GuitarAlchemist/Demerzel --body "🤖 **Demerzel Auto-Remediation — Fix Available**
+
+          This issue has been assessed as **auto-fixable**.
+
+          **Proposed fix:** $FIX
+
+          To apply this fix, run: \`/demerzel fix #$NUM\` in a Claude Code session."
+          done
+
+      - name: Post remediation report
+        if: steps.report.outputs.SCAN_COMPLETE == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DATE="${{ steps.context.outputs.DATE }}"
           BODY=$(cat remediation-report.md | jq -Rs .)
 
-          # Post scan results to Demerzel Discussions
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
               repositoryId: \"R_kgDORnMyyQ\",
