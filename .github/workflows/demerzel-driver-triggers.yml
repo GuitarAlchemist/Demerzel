@@ -1,0 +1,72 @@
+name: Demerzel Driver Triggers
+
+on:
+  push:
+    branches: [master, main]
+  issues:
+    types: [opened, reopened]
+  workflow_run:
+    workflows: ["CI", "Streeling Daily", "Demerzel Self-Improvement", "Demerzel Autofix"]
+    types: [completed]
+  discussion:
+    types: [created]
+
+jobs:
+  write-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine trigger type
+        id: trigger
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "type=push" >> $GITHUB_OUTPUT
+            echo "priority=medium" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "issues" ]; then
+            echo "type=issue_${{ github.event.action }}" >> $GITHUB_OUTPUT
+            echo "priority=medium" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
+            if [ "${{ github.event.workflow_run.conclusion }}" = "failure" ]; then
+              echo "type=ci_failure" >> $GITHUB_OUTPUT
+              echo "priority=high" >> $GITHUB_OUTPUT
+            else
+              exit 0
+            fi
+          elif [ "${{ github.event_name }}" = "discussion" ]; then
+            echo "type=discussion_created" >> $GITHUB_OUTPUT
+            echo "priority=low" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Write trigger file
+        if: steps.trigger.outputs.type != ''
+        run: |
+          mkdir -p state/triggers
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          TRIGGER_FILE="state/triggers/${TIMESTAMP}-${{ steps.trigger.outputs.type }}.trigger.json"
+          cat > "$TRIGGER_FILE" <<EOF
+          {
+          "type": "${{ steps.trigger.outputs.type }}",
+          "repo": "${{ github.event.repository.name }}",
+          "ref": "${{ github.ref }}",
+          "priority": "${{ steps.trigger.outputs.priority }}",
+          "details": {
+            "event": "${{ github.event_name }}",
+            "sender": "${{ github.actor }}",
+            "run_id": "${{ github.run_id }}"
+          },
+          "timestamp": "${TIMESTAMP}"
+          }
+          EOF
+
+      - name: Commit trigger file
+        if: steps.trigger.outputs.type != ''
+        run: |
+          git config user.name "Demerzel"
+          git config user.email "demerzel@guitaralchemist.com"
+          git add state/triggers/
+          git diff --cached --quiet || git commit -m "trigger: ${{ steps.trigger.outputs.type }} from ${{ github.event.repository.name }}"
+          git pull --rebase || true
+          git push
