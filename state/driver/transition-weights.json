@@ -1,0 +1,83 @@
+{
+  "description": "Governance state machine transition weights — seed data for memristive-markov engine",
+  "version": "1.0.0",
+  "note": "Initial weights are uniform. Learned from governance history over time via conductance updates.",
+  "machines": {
+    "driver_cycle": {
+      "states": ["wake", "recon", "plan", "execute", "verify", "compound", "persist", "sleep"],
+      "transitions": {
+        "wake->recon": 1.0,
+        "recon->plan": 1.0,
+        "plan->execute": 0.8,
+        "plan->sleep": 0.2,
+        "execute->verify": 1.0,
+        "verify->compound": 0.7,
+        "verify->execute": 0.2,
+        "verify->sleep": 0.1,
+        "compound->persist": 1.0,
+        "persist->sleep": 1.0,
+        "sleep->wake": 1.0
+      }
+    },
+    "belief_tetravalent": {
+      "states": ["T", "F", "U", "C"],
+      "transitions": {
+        "U->T": 0.4,
+        "U->F": 0.3,
+        "U->C": 0.1,
+        "T->C": 0.05,
+        "F->C": 0.05,
+        "C->T": 0.4,
+        "C->F": 0.4,
+        "T->U": 0.1,
+        "F->U": 0.1,
+        "U->U": 0.2
+      },
+      "forbidden": ["T->F", "F->T"]
+    },
+    "pdca": {
+      "states": ["plan", "do", "check", "act_standardize", "act_revert", "act_iterate"],
+      "transitions": {
+        "plan->do": 1.0,
+        "do->check": 1.0,
+        "check->act_standardize": 0.5,
+        "check->act_revert": 0.2,
+        "check->act_iterate": 0.3,
+        "act_iterate->plan": 1.0
+      }
+    },
+    "risk_escalation": {
+      "states": ["low", "medium", "high", "critical"],
+      "transitions": {
+        "low->medium": 0.15,
+        "medium->high": 0.1,
+        "high->critical": 0.1,
+        "low->critical": 0.01,
+        "medium->critical": 0.02,
+        "low->low": 0.84,
+        "medium->medium": 0.88,
+        "high->high": 0.9,
+        "critical->critical": 1.0
+      },
+      "note": "Risk never decreases within a cycle. Self-loops represent 'no escalation'."
+    },
+    "conductance": {
+      "states": ["dormant", "weak", "moderate", "strong", "saturated"],
+      "transitions": {
+        "dormant->weak": 0.3,
+        "weak->moderate": 0.25,
+        "moderate->strong": 0.2,
+        "strong->saturated": 0.1,
+        "saturated->strong": 0.15,
+        "strong->moderate": 0.1,
+        "moderate->weak": 0.1,
+        "weak->dormant": 0.05,
+        "dormant->dormant": 0.7,
+        "weak->weak": 0.55,
+        "moderate->moderate": 0.55,
+        "strong->strong": 0.55,
+        "saturated->saturated": 0.85
+      }
+    }
+  }
+}

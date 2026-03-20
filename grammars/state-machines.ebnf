@@ -1,0 +1,131 @@
+(* Governance State Machine Grammar — Demerzel *)
+(* Formal definitions of all governance state transitions *)
+(* Consumed by: memristive-markov (ix), TARS grammar generation *)
+(* Each transition has an implicit weight learned from governance history *)
+
+(* ============================================================ *)
+(* 1. Driver Cycle — the autonomous driver state machine        *)
+(* ============================================================ *)
+
+driver_state ::= wake | recon | plan | execute | verify | compound | persist | sleep
+
+driver_transition ::= wake "->" recon
+                    | recon "->" plan
+                    | plan "->" execute
+                    | execute "->" verify
+                    | verify "->" compound         (* metric improved AND guard passed *)
+                    | verify "->" execute           (* revert + retry within iteration limit *)
+                    | compound "->" persist
+                    | persist "->" sleep
+                    | sleep "->" wake               (* next cycle trigger *)
+                    | verify "->" sleep             (* all tasks failed → skip compound *)
+                    | execute "->" sleep            (* zeroth law hard stop *)
+                    | plan "->" sleep               (* no actionable tasks *)
+
+(* ============================================================ *)
+(* 2. Belief State — tetravalent transitions                    *)
+(* ============================================================ *)
+
+belief_value ::= "T" | "F" | "U" | "C"
+
+(* Valid transitions with governance triggers *)
+belief_transition ::= "U" "->" "T"                 (* evidence confirms *)
+                    | "U" "->" "F"                  (* evidence refutes *)
+                    | "U" "->" "C"                  (* conflicting evidence found *)
+                    | "T" "->" "C"                  (* new contradicting evidence *)
+                    | "F" "->" "C"                  (* new contradicting evidence *)
+                    | "C" "->" "T"                  (* conflict resolved, confirmed *)
+                    | "C" "->" "F"                  (* conflict resolved, refuted *)
+                    | "T" "->" "U"                  (* evidence expired / stale *)
+                    | "F" "->" "U"                  (* evidence expired / stale *)
+
+(* Invalid transitions — these should never occur *)
+(* "T" -> "F" without passing through "C" or "U" *)
+(* "F" -> "T" without passing through "C" or "U" *)
+
+(* ============================================================ *)
+(* 3. PDCA Cycle — Plan-Do-Check-Act                            *)
+(* ============================================================ *)
+
+pdca_phase ::= plan | do_phase | check | act
+
+act_outcome ::= standardize | revert | iterate
+
+pdca_transition ::= plan "->" do_phase
+                  | do_phase "->" check
+                  | check "->" act
+                  | act "->" standardize            (* success → close *)
+                  | act "->" revert                 (* failure → rollback *)
+                  | act "->" iterate                (* needs more work → back to plan *)
+                  | iterate "->" plan               (* re-enter cycle *)
+
+(* ============================================================ *)
+(* 4. Governance Promotion Staircase                            *)
+(* ============================================================ *)
+
+artifact_level ::= pattern | policy | constitutional
+
+promotion_transition ::= pattern "->" policy        (* 3+ PDCA appearances + positive impact *)
+                       | policy "->" constitutional  (* sustained inviolability + human approval *)
+
+demotion_transition ::= policy "->" pattern          (* low citation, redundancy detected *)
+                      | constitutional "->" policy   (* NEVER — constitutions are append-only *)
+
+deprecation ::= pattern "->" deprecated
+              | policy "->" deprecated               (* zero citations 90+ days *)
+
+(* ============================================================ *)
+(* 5. Risk Classification — escalation state machine            *)
+(* ============================================================ *)
+
+risk_level ::= low | medium | high | critical
+
+(* Escalation — risk only goes UP, never down within a cycle *)
+risk_escalation ::= low "->" medium                  (* confidence < 0.5 *)
+                  | medium "->" high                  (* confidence < 0.5 *)
+                  | high "->" critical                (* conscience discomfort >= 0.8 *)
+                  | low "->" critical                 (* zeroth law concern *)
+                  | medium "->" critical              (* zeroth law concern *)
+                  | high "->" critical                (* zeroth law concern *)
+
+(* ============================================================ *)
+(* 6. Conscience Signal Lifecycle                               *)
+(* ============================================================ *)
+
+signal_state ::= detected | active | investigated | resolved | false_positive
+
+signal_transition ::= detected "->" active           (* signal registered *)
+                    | active "->" investigated        (* investigation started *)
+                    | investigated "->" resolved      (* action taken, outcome verified *)
+                    | investigated "->" false_positive (* signal was not justified *)
+                    | active "->" resolved            (* immediate resolution *)
+                    | resolved "->" active            (* recurrence detected *)
+
+(* ============================================================ *)
+(* 7. Conductance Memory — memristive state machine             *)
+(* ============================================================ *)
+
+conductance_state ::= dormant | weak | moderate | strong | saturated
+
+conductance_transition ::= dormant "->" weak          (* first observation *)
+                         | weak "->" moderate          (* repeated use, Hebbian strengthening *)
+                         | moderate "->" strong        (* sustained use *)
+                         | strong "->" saturated       (* approaching g=1.0 *)
+                         | saturated "->" strong       (* decay begins *)
+                         | strong "->" moderate        (* continued decay *)
+                         | moderate "->" weak          (* continued decay *)
+                         | weak "->" dormant           (* g approaches g_min *)
+
+(* ============================================================ *)
+(* 8. Loop Governance — Ralph Loop state machine                *)
+(* ============================================================ *)
+
+loop_state ::= proposed | running | stalled | halted | completed
+
+loop_transition ::= proposed "->" running             (* risk classified, governance mode set *)
+                  | running "->" running               (* iteration completed, progress made *)
+                  | running "->" stalled               (* 3 iterations without progress *)
+                  | stalled "->" halted                (* escalated to human *)
+                  | running "->" halted                (* regression detected OR zeroth law *)
+                  | running "->" completed             (* goal achieved *)
+                  | halted "->" proposed               (* human restarts with new parameters *)
