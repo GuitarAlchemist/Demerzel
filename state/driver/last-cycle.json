@@ -1,9 +1,9 @@
 {
-  "cycle_id": null,
-  "completed_at": null,
-  "duration_seconds": null,
-  "tasks_completed": 0,
+  "cycle_id": "cycle-2026-03-20-001",
+  "completed_at": "2026-03-20T05:20:00Z",
+  "duration_seconds": 300,
+  "tasks_completed": 4,
   "tasks_failed": 0,
   "tasks_reverted": 0,
-  "manifest_path": null
+  "manifest_path": "state/manifests/2026-03-20-cycle-001.manifest.json"
 }
