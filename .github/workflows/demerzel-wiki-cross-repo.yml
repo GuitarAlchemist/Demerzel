@@ -1,9 +1,15 @@
 name: Demerzel Cross-Repo Wiki Sync
 
 on:
-  schedule:
-    # Run weekly on Wednesdays at 10:27 AM EST (15:27 UTC)
-    - cron: '27 15 * * 3'
+  # Immediate: sync wikis when governance content changes
+  push:
+    branches: [master]
+    paths:
+      - 'constitutions/**'
+      - 'policies/**'
+      - 'personas/**'
+      - 'state/**'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       target_repo:

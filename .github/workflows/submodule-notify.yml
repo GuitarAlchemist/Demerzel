@@ -1,0 +1,87 @@
+name: Submodule Staleness Notification
+
+on:
+  # Immediate: notify consumer repos when Demerzel gets new commits
+  push:
+    branches: [master]
+    paths-ignore:
+      - '.github/**'
+      - 'docs/superpowers/**'
+      - 'state/conscience/digests/**'
+
+permissions:
+  issues: write
+
+jobs:
+  notify-consumers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check consumer repo submodule currency
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          DEMERZEL_HEAD=$(git rev-parse --short HEAD)
+          COMMIT_MSG=$(git log -1 --format="%s")
+          DATE=$(date -u +%Y-%m-%d)
+
+          echo "Demerzel HEAD: $DEMERZEL_HEAD ($COMMIT_MSG)"
+
+          for REPO in ix tars ga; do
+            # Get the submodule commit in the consumer repo
+            SUB_SHA=$(gh api "repos/GuitarAlchemist/$REPO/contents/governance/demerzel" \
+              --jq '.sha' 2>/dev/null || echo "none")
+
+            if [ "$SUB_SHA" = "none" ]; then
+              echo "$REPO: no submodule found, skipping"
+              continue
+            fi
+
+            SUB_SHORT=$(echo "$SUB_SHA" | head -c 7)
+
+            # Count commits behind
+            BEHIND=$(git rev-list --count "$SUB_SHA..HEAD" 2>/dev/null || echo "?")
+
+            echo "$REPO: submodule at $SUB_SHORT, $BEHIND commits behind"
+
+            # Only notify if significantly behind (>5 commits)
+            if [ "$BEHIND" -gt 5 ] 2>/dev/null; then
+              # Check if there's already an open issue about this
+              EXISTING=$(gh issue list --repo "GuitarAlchemist/$REPO" \
+                --search "Demerzel submodule" --state open \
+                --json number --jq 'length' 2>/dev/null || echo "0")
+
+              if [ "$EXISTING" = "0" ]; then
+                gh issue create --repo "GuitarAlchemist/$REPO" \
+                  --title "Demerzel submodule is $BEHIND commits behind" \
+                  --body "$(cat << ISSUEEOF
+          ## Demerzel Governance Submodule Update Needed
+
+          Your \`governance/demerzel\` submodule is **$BEHIND commits behind** Demerzel master.
+
+          - **Your submodule:** \`$SUB_SHORT\`
+          - **Demerzel HEAD:** \`$DEMERZEL_HEAD\` ($COMMIT_MSG)
+
+          ### Recent Demerzel changes include:
+          $(git log --oneline "$SUB_SHA..HEAD" | head -10)
+
+          ### To update:
+          \`\`\`bash
+          cd governance/demerzel && git pull origin master && cd ../.. && git add governance/demerzel && git commit -m "chore: Update Demerzel submodule"
+          \`\`\`
+
+          ---
+          *Automated by Demerzel submodule staleness detection.*
+          ISSUEEOF
+          )" 2>/dev/null && echo "Created issue for $REPO" || echo "Failed to create issue for $REPO"
+              else
+                echo "$REPO: staleness issue already exists, skipping"
+              fi
+            fi
+          done

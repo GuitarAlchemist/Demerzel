@@ -1,17 +1,21 @@
 name: Demerzel Auto-Remediation
 
 on:
-  schedule:
-    # Run every weekday at 9:17 AM EST (14:17 UTC)
-    - cron: '17 14 * * 1-5'
+  # Immediate: triage new/reopened issues as they arrive
   issues:
     types: [opened, reopened]
+  # Manual: scan all open issues on demand
   workflow_dispatch:
     inputs:
       issue_number:
         description: 'Specific issue number to fix (leave empty for all open issues)'
         required: false
         type: string
+      scan_all:
+        description: 'Scan all open issues (overrides issue_number)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -38,10 +42,18 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           echo "DATE=$DATE" >> $GITHUB_OUTPUT
 
-          # Fetch open issues
-          if [ -n "${{ inputs.issue_number }}" ]; then
+          # Fetch issues based on trigger type
+          if [ "${{ inputs.scan_all }}" = "true" ]; then
+            # Manual: scan all open issues
+            ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title,body,labels --limit 30 --jq '.')
+          elif [ -n "${{ inputs.issue_number }}" ]; then
+            # Manual: specific issue
             ISSUES=$(gh issue view ${{ inputs.issue_number }} --repo GuitarAlchemist/Demerzel --json number,title,body,labels --jq '[.]')
+          elif [ "${{ github.event_name }}" = "issues" ]; then
+            # Hook: triage the newly opened/reopened issue only
+            ISSUES=$(gh issue view ${{ github.event.issue.number }} --repo GuitarAlchemist/Demerzel --json number,title,body,labels --jq '[.]')
           else
+            # Fallback: scan all
             ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title,body,labels --limit 30 --jq '.')
           fi
           echo "$ISSUES" > /tmp/issues.json

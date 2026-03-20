@@ -1,9 +1,16 @@
 name: Demerzel Cross-Repo Issue Management
 
 on:
-  schedule:
-    # Run every weekday at 9:47 AM EST (14:47 UTC)
-    - cron: '47 14 * * 1-5'
+  # Immediate: detect cross-repo impact when governance artifacts change
+  push:
+    branches: [master]
+    paths:
+      - 'constitutions/**'
+      - 'policies/**'
+      - 'personas/**'
+      - 'schemas/**'
+      - 'contracts/**'
+      - 'templates/**'
   workflow_dispatch:
     inputs:
       target_repo:
