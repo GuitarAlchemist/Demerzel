@@ -1,9 +1,18 @@
 name: Demerzel & Seldon Ideation
 
 on:
+  # Trigger on significant changes — fresh ideas when work happens
+  push:
+    branches: [master]
+    paths:
+      - 'policies/**'
+      - 'personas/**'
+      - 'constitutions/**'
+      - 'state/**'
+      - 'schemas/**'
+  # Also run 3x/week for periodic reflection
   schedule:
-    # Generate ideas daily at 8:47 AM EST (13:47 UTC)
-    - cron: '47 13 * * *'
+    - cron: '47 13 * * 1,3,5'  # Mon/Wed/Fri 8:47 AM EST
   workflow_dispatch:
 
 permissions:
@@ -19,159 +28,152 @@ jobs:
     steps:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
 
-      - name: Analyze ecosystem and generate ideas
-        id: ideate
+      - name: Gather ecosystem context
+        id: context
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
-          IDEAS=""
-          IDEA_COUNT=0
+          echo "DATE=$DATE" >> $GITHUB_OUTPUT
 
-          # === SOURCE 1: Governance Evolution Gaps ===
-          # Check evolution seed for artifacts with zero citations
-          UNCITED=$(jq '[.[] | select(.metrics.citation_count == 0)] | length' examples/sample-data/governance-evolution-seed.json 2>/dev/null || echo "0")
-          if [ "$UNCITED" -gt 3 ]; then
-            IDEA_COUNT=$((IDEA_COUNT + 1))
-            IDEAS="${IDEAS}
-          ### 💡 Idea ${IDEA_COUNT}: Activate ${UNCITED} uncited governance artifacts
-
-          **Source:** Governance evolution log analysis
-          **Problem:** ${UNCITED} governance artifacts have never been cited in any decision. They may be valuable but untested, or they may be ceremony without value.
-          **Proposal:** Run a \"governance activation sprint\" — for each uncited artifact, find a real scenario where it should apply and test it. Log results to build evidence.
-          **Repos affected:** Demerzel, potentially ix/tars/ga
-          **Kaizen model:** Proactive — improving something that exists but isn't used
-          **Priority:** Medium
-
-          "
-          fi
-
-          # === SOURCE 2: Q&A Pattern Analysis ===
-          QA_COUNT=$(gh api graphql -f query='query {
-            repository(owner:"GuitarAlchemist", name:"Demerzel") {
-              discussions(last:50, categoryId:"DIC_kwDORnMyyc4C4eDU") { totalCount }
-            }
-          }' --jq '.data.repository.discussions.totalCount' 2>/dev/null || echo "0")
-
-          if [ "$QA_COUNT" -gt 0 ]; then
-            # Get topic distribution
-            TOPICS=$(gh api graphql -f query='query {
-              repository(owner:"GuitarAlchemist", name:"Demerzel") {
-                discussions(last:50, categoryId:"DIC_kwDORnMyyc4C4eDU") {
-                  nodes { title }
-                }
-              }
-            }' --jq '.data.repository.discussions.nodes[].title' 2>/dev/null)
-
-            CHORD_Q=$(echo "$TOPICS" | grep -ci "chord" || echo "0")
-            SCALE_Q=$(echo "$TOPICS" | grep -ci "scale\|mode" || echo "0")
-            PROG_Q=$(echo "$TOPICS" | grep -ci "progression" || echo "0")
-
-            if [ "$QA_COUNT" -gt 2 ]; then
-              IDEA_COUNT=$((IDEA_COUNT + 1))
-              IDEAS="${IDEAS}
-          ### 💡 Idea ${IDEA_COUNT}: Create a Music Theory FAQ from Q&A data
-
-          **Source:** ${QA_COUNT} questions in Q&A Discussions
-          **Topic distribution:** chords(${CHORD_Q}), scales/modes(${SCALE_Q}), progressions(${PROG_Q})
-          **Proposal:** Compile the most asked topics into a pinned FAQ discussion or a dedicated guide page. Reduces repetitive questions and improves self-service learning.
-          **Repos affected:** Demerzel (FAQ), GA (integrate into chatbot)
-          **Kaizen model:** Reactive — addressing a pattern that emerged from usage
-          **Priority:** Low
-
-          "
-            fi
-          fi
-
-          # === SOURCE 3: Cross-Repo Integration Gaps ===
-          for REPO in ix tars ga; do
-            HAS_STATE=$(gh api "repos/GuitarAlchemist/$REPO/contents/state" --jq 'length' 2>/dev/null || echo "0")
-            if [ "$HAS_STATE" = "0" ] || [ "$HAS_STATE" = "" ]; then
-              IDEA_COUNT=$((IDEA_COUNT + 1))
-              IDEAS="${IDEAS}
-          ### 💡 Idea ${IDEA_COUNT}: Bootstrap ${REPO} governance integration
-
-          **Source:** Cross-repo reconnaissance scan
-          **Problem:** ${REPO} has no \`state/\` directory — belief persistence and Galactic Protocol communication not possible.
-          **Proposal:** Run a governed Ralph Loop to: (1) add CLAUDE.md governance snippet, (2) create state/ directory, (3) register personas with affordances. Use \`/demerzel directive\` to initiate.
-          **Repos affected:** ${REPO}, Demerzel
-          **Kaizen model:** Proactive — extending governance to ungoverned territory
-          **Priority:** High
-
-          "
-            fi
-          done
-
-          # === SOURCE 4: Skill Coverage Analysis ===
-          SKILL_COUNT=$(ls -d .claude/skills/*/ 2>/dev/null | wc -l)
+          # Artifact inventory
           PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
+          POLICY_COUNT=$(ls policies/*.yaml 2>/dev/null | wc -l)
           TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+          DEPT_COUNT=$(ls state/streeling/departments/*.json 2>/dev/null | wc -l)
+          SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
+          PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
+          BELIEF_COUNT=$(ls state/beliefs/*.json 2>/dev/null | wc -l)
 
-          if [ "$PERSONA_COUNT" -gt "$TEST_COUNT" ]; then
-            MISSING=$((PERSONA_COUNT - TEST_COUNT))
-            IDEA_COUNT=$((IDEA_COUNT + 1))
-            IDEAS="${IDEAS}
-          ### 💡 Idea ${IDEA_COUNT}: Close behavioral test gap (${MISSING} personas untested)
+          # Recent commits (what just happened)
+          RECENT=$(git log --oneline -10)
 
-          **Source:** Governance audit Level 2 (cross-reference integrity)
-          **Problem:** ${PERSONA_COUNT} personas exist but only ${TEST_COUNT} have dedicated behavioral tests.
-          **Proposal:** Create behavioral test cases for each untested persona. Use \`/demerzel audit\` to identify which ones, then generate tests following existing patterns.
-          **Repos affected:** Demerzel
-          **Kaizen model:** Reactive — fixing a known compliance gap
-          **Priority:** Medium
+          # Recent changes (what files changed)
+          CHANGED=$(git diff --name-only HEAD~5..HEAD 2>/dev/null | head -30)
 
-          "
+          # Open issues across all repos
+          DEMERZEL_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title --jq '.[].title' | head -15)
+          IX_ISSUES=$(gh issue list --repo GuitarAlchemist/ix --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
+          TARS_ISSUES=$(gh issue list --repo GuitarAlchemist/tars --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
+          GA_ISSUES=$(gh issue list --repo GuitarAlchemist/ga --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
+
+          # Open PRs
+          GA_PRS=$(gh pr list --repo GuitarAlchemist/ga --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
+
+          # Conscience state
+          CONSCIENCE=""
+          if [ -f "state/conscience/weekly/2026-03-17-weekly.report.json" ]; then
+            CONSCIENCE=$(jq -r '.self_reflection' state/conscience/weekly/*.report.json 2>/dev/null | head -5)
           fi
 
-          # === SOURCE 5: Technology Opportunities ===
-          IDEA_COUNT=$((IDEA_COUNT + 1))
-          IDEAS="${IDEAS}
-          ### 💡 Idea ${IDEA_COUNT}: Evolve GA chatbot with real-time domain computation
+          # Build context
+          cat > /tmp/ideation-context.md << CTXEOF
+          # Ecosystem State — $DATE
 
-          **Source:** Seldon teaching effectiveness analysis
-          **Problem:** Current GA chatbot answers are static (hardcoded in workflow YAML). The real GA domain engine has 50+ MCP tools and pure domain computation skills that produce dynamic, personalized answers.
-          **Proposal:** Connect the Discussions chatbot to GA's actual MCP server for live domain computation. Users get real-time answers calculated from GA's music theory engine instead of static lookup tables.
-          **Repos affected:** GA (MCP server), Demerzel (chatbot workflow)
-          **Kaizen model:** Innovative — structural change to how knowledge is delivered
-          **Priority:** High
+          ## Artifacts
+          Personas: $PERSONA_COUNT | Policies: $POLICY_COUNT | Tests: $TEST_COUNT
+          Departments: $DEPT_COUNT | Beliefs: $BELIEF_COUNT
+          Conscience signals: $SIGNAL_COUNT | Patterns: $PATTERN_COUNT
 
-          "
+          ## Recent commits
+          $RECENT
 
-          # === Build final report ===
-          if [ "$IDEA_COUNT" -gt 0 ]; then
-            REPORT="## 🧠 Demerzel & Seldon Ideation — ${DATE}
+          ## Recently changed files
+          $CHANGED
 
-          **Ideas generated:** ${IDEA_COUNT}
-          **Sources analyzed:** governance evolution, Q&A patterns, cross-repo gaps, skill coverage, technology opportunities
+          ## Open issues
+          ### Demerzel
+          $DEMERZEL_ISSUES
+
+          ### ix
+          $IX_ISSUES
+
+          ### tars
+          $TARS_ISSUES
+
+          ### ga
+          $GA_ISSUES
+
+          ## Open PRs (ga)
+          $GA_PRS
+
+          ## Conscience reflection
+          $CONSCIENCE
+
+          ## Key capabilities
+          - ix: Rust ML pipelines, Karnaugh maps, governance dashboard, 40+ MCP tools
+          - tars: F# Grammar×ML bridge, grammar distillation, governance generation, 150+ MCP tools, AI Functions
+          - ga: .NET chatbot with 7 governed agents, MCP server
+          - Demerzel: 18 policies, conscience system, Streeling University (10 depts), governance experimentation
+          CTXEOF
+
+      - name: AI-powered ideation
+        id: ideate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          CONTEXT=$(cat /tmp/ideation-context.md)
+
+          RESPONSE=$(curl -s --max-time 60 \
+            https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "content-type: application/json" \
+            -H "anthropic-version: 2023-06-01" \
+            -d "$(jq -n \
+              --arg ctx "$CONTEXT" \
+              '{
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 3000,
+                system: "You are Demerzel and Seldon, governance coordinator and chancellor of Streeling University for the GuitarAlchemist AI ecosystem.\n\nGenerate 3-5 FRESH ideas based on the current ecosystem state. Ideas must be:\n1. Concrete and actionable (not vague aspirations)\n2. Grounded in what just changed (recent commits, open issues, conscience signals)\n3. Novel — do NOT repeat ideas that are already open issues\n4. Spanning different domains: governance, music theory, ML/AI, cross-repo integration, research\n\nFor each idea, output:\n- Title (concise, issue-ready)\n- Source (what triggered this idea — a commit, a gap, a pattern)\n- Problem (what is wrong or missing)\n- Proposal (specific action)\n- Priority (P0-P3)\n- Repos affected\n- Streeling department (which department should own this research)\n\nFormat as markdown with ### headers per idea. Be creative but practical.",
+                messages: [{role: "user", content: ("Generate fresh ideation based on current ecosystem state:\n\n" + $ctx)}]
+              }')" 2>/dev/null)
+
+          IDEAS=$(echo "$RESPONSE" | jq -r '.content[0].text' 2>/dev/null)
+
+          if [ -z "$IDEAS" ] || [ "$IDEAS" = "null" ]; then
+            echo "AI ideation failed"
+            echo "IDEA_COUNT=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Count ideas (### headers)
+          IDEA_COUNT=$(echo "$IDEAS" | grep -c "^### " || echo "0")
+          echo "IDEA_COUNT=$IDEA_COUNT" >> $GITHUB_OUTPUT
+
+          # Build report
+          DATE="${{ steps.context.outputs.DATE }}"
+          cat > ideation-report.md << REPORTEOF
+          ## 🧠 Demerzel & Seldon Ideation — $DATE
+
+          **Ideas generated:** $IDEA_COUNT
+          **Trigger:** $(if [ "${{ github.event_name }}" = "push" ]; then echo "Push to master (reactive)"; elif [ "${{ github.event_name }}" = "schedule" ]; then echo "Scheduled (periodic reflection)"; else echo "Manual dispatch"; fi)
+          **Method:** AI-powered (Claude analysis of ecosystem state)
 
           ---
-          ${IDEAS}
+
+          $IDEAS
+
           ---
 
           ### How ideas become work
 
-          1. **Community votes** — upvote ideas that matter to you
-          2. **Demerzel evaluates** — ideas with 3+ upvotes are assessed for governance alignment
-          3. **Roadmap addition** — approved ideas become GitHub Issues on the [project board](https://github.com/orgs/GuitarAlchemist/projects/2)
+          1. **AI review** — ideas are cross-validated by a second Claude instance
+          2. **Approved ideas** → auto-created as GitHub Issues
+          3. **Issues** → triaged to [project board](https://github.com/orgs/GuitarAlchemist/projects/2)
           4. **Execution** — via governed Ralph Loops or Agent Teams
 
-          *Generated by Demerzel (governance analysis) and Seldon (knowledge patterns) under the [meta-compounding protocol](https://github.com/GuitarAlchemist/Demerzel/blob/master/docs/superpowers/specs/2026-03-15-governance-meta-compounding-design.md).*"
-
-            echo "$REPORT" > ideation-report.md
-            echo "IDEA_COUNT=$IDEA_COUNT" >> $GITHUB_OUTPUT
-            echo "Generated $IDEA_COUNT ideas"
-          else
-            echo "No ideas generated this cycle"
-            echo "IDEA_COUNT=0" >> $GITHUB_OUTPUT
-          fi
+          *Generated by Demerzel (governance) and Seldon (knowledge) under the meta-compounding protocol.*
+          REPORTEOF
 
       - name: Post ideas to Discussions
         if: steps.ideate.outputs.IDEA_COUNT != '0'
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          DATE=$(date -u +%Y-%m-%d)
+          DATE="${{ steps.context.outputs.DATE }}"
           BODY=$(cat ideation-report.md | jq -Rs .)
 
           URL=$(gh api graphql -f query="mutation {
@@ -187,137 +189,77 @@ jobs:
           echo "Ideas Discussion: $URL"
           echo "DISCUSSION_URL=$URL" >> $GITHUB_OUTPUT
 
-      - name: Cross-model review via ChatGPT
+      - name: AI review of ideas
         id: review
         if: steps.ideate.outputs.IDEA_COUNT != '0'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           IDEAS=$(cat ideation-report.md)
 
-          # Use Claude to simulate the cross-model review
-          # (In production, this calls ChatGPT via the openai-chat MCP.
-          #  For GitHub Actions, we use Claude as reviewer with a
-          #  "second opinion" system prompt that mimics cross-validation.)
+          # Get existing open issue titles to prevent duplicates
+          EXISTING_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json title --jq '.[].title' | jq -Rs .)
+
           REVIEW=$(curl -s --max-time 45 \
             https://api.anthropic.com/v1/messages \
             -H "x-api-key: $ANTHROPIC_API_KEY" \
             -H "content-type: application/json" \
-            -H "anthropic-version: 2025-01-01" \
+            -H "anthropic-version: 2023-06-01" \
             -d "$(jq -n \
               --arg ideas "$IDEAS" \
+              --arg existing "$EXISTING_ISSUES" \
               '{
                 model: "claude-sonnet-4-20250514",
                 max_tokens: 1500,
-                system: "You are a critical AI reviewer (second opinion agent). Review these ideation proposals from Demerzel governance.\n\nFor each idea, provide:\n1. **Verdict:** APPROVE, MODIFY, or REJECT\n2. **Rationale:** 1-2 sentences\n3. **If APPROVE:** Suggested issue title and labels\n4. **If MODIFY:** What to change\n5. **If REJECT:** Why it is not worth pursuing now\n\nBe rigorous — only approve ideas that are concrete, actionable, and worth the effort. Reject vague or premature ideas. At least half should be approved for action.\n\nRespond as JSON array:\n[{\"idea_number\": 1, \"verdict\": \"APPROVE\", \"rationale\": \"...\", \"issue_title\": \"...\", \"labels\": [\"enhancement\"]}, ...]",
+                system: ("You are a critical reviewer. Review these ideas. REJECT any that duplicate existing issues.\n\nExisting open issues:\n" + $existing + "\n\nFor each idea respond as JSON array:\n[{\"idea_number\": 1, \"verdict\": \"APPROVE|MODIFY|REJECT\", \"rationale\": \"...\", \"issue_title\": \"...\", \"labels\": [\"enhancement\"]}]\n\nBe rigorous. Reject duplicates and vague ideas."),
                 messages: [{role: "user", content: $ideas}]
               }')" 2>/dev/null)
 
           REVIEW_TEXT=$(echo "$REVIEW" | jq -r '.content[0].text' 2>/dev/null)
 
           if [ -z "$REVIEW_TEXT" ] || [ "$REVIEW_TEXT" = "null" ]; then
-            echo "Review failed, skipping auto-action"
             echo "REVIEW_READY=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          echo "$REVIEW_TEXT" > /tmp/review.json
-          echo "REVIEW_READY=true" >> $GITHUB_OUTPUT
+          # Extract JSON from response
+          REVIEW_JSON=$(echo "$REVIEW_TEXT" | sed -n '/\[/,/\]/p' | head -50)
+          echo "$REVIEW_JSON" > /tmp/review.json
 
-          # Count approved ideas
-          APPROVED=$(echo "$REVIEW_TEXT" | jq '[.[] | select(.verdict == "APPROVE")] | length' 2>/dev/null || echo "0")
+          APPROVED=$(echo "$REVIEW_JSON" | jq '[.[] | select(.verdict == "APPROVE")] | length' 2>/dev/null || echo "0")
           echo "APPROVED_COUNT=$APPROVED" >> $GITHUB_OUTPUT
-          echo "Approved: $APPROVED ideas"
+          echo "REVIEW_READY=true" >> $GITHUB_OUTPUT
 
       - name: Create issues for approved ideas
         if: steps.review.outputs.REVIEW_READY == 'true' && steps.review.outputs.APPROVED_COUNT != '0'
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          DATE=$(date -u +%Y-%m-%d)
-          REVIEW=$(cat /tmp/review.json)
+          DATE="${{ steps.context.outputs.DATE }}"
           DISC_URL="${{ steps.ideate.outputs.DISCUSSION_URL }}"
 
-          # Create issues for each approved idea
-          echo "$REVIEW" | jq -c '.[] | select(.verdict == "APPROVE")' 2>/dev/null | while read -r item; do
+          jq -c '.[] | select(.verdict == "APPROVE")' /tmp/review.json 2>/dev/null | while read -r item; do
             TITLE=$(echo "$item" | jq -r '.issue_title // empty')
             RATIONALE=$(echo "$item" | jq -r '.rationale // empty')
-            LABELS=$(echo "$item" | jq -r '.labels // ["enhancement"] | join(",")' 2>/dev/null)
             IDEA_NUM=$(echo "$item" | jq -r '.idea_number // 0')
 
-            if [ -z "$TITLE" ]; then
-              continue
-            fi
+            [ -z "$TITLE" ] && continue
 
-            # Check for duplicate
-            EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json title --jq ".[] | select(.title | test(\"$(echo "$TITLE" | sed 's/[[\].*+?^${}()|]/\\\\&/g')\"; \"i\")) | .title" 2>/dev/null | head -1)
-            if [ -n "$EXISTING" ]; then
-              echo "Skipping duplicate: $TITLE"
-              continue
-            fi
+            # Final duplicate check
+            EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --search "$TITLE" --json number --jq 'length' 2>/dev/null || echo "0")
+            [ "$EXISTING" -gt 0 ] && continue
 
-            BODY="## From Demerzel Ideation — ${DATE}
-
-**Idea #${IDEA_NUM}**
-**Review verdict:** APPROVE
-**Rationale:** ${RATIONALE}
-
-**Source discussion:** ${DISC_URL}
-
----
-*Created automatically by Demerzel Ideation → Cross-Model Review → Action pipeline.*
-*Per [multi-model orchestration policy](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/multi-model-orchestration-policy.yaml), ideas are reviewed before becoming issues.*"
-
-            ISSUE_URL=$(gh issue create --repo GuitarAlchemist/Demerzel \
+            gh issue create --repo GuitarAlchemist/Demerzel \
               --title "$TITLE" \
-              --body "$BODY" \
-              --label "$LABELS" 2>/dev/null)
+              --body "## From Demerzel Ideation — ${DATE}
 
-            echo "Created issue: $ISSUE_URL"
+          **Idea #${IDEA_NUM}** | **Review:** APPROVE
+          **Rationale:** ${RATIONALE}
+          **Source:** ${DISC_URL}
+
+          ---
+          *Auto-created by Demerzel Ideation pipeline.*" \
+              --label "enhancement" 2>/dev/null
+
           done
-
-      - name: Post review summary to discussion
-        if: steps.review.outputs.REVIEW_READY == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          REVIEW=$(cat /tmp/review.json)
-          APPROVED="${{ steps.review.outputs.APPROVED_COUNT }}"
-          DISC_URL="${{ steps.ideate.outputs.DISCUSSION_URL }}"
-
-          # Build review summary
-          SUMMARY="## 🔍 Cross-Model Review Results
-
-**Approved for action:** ${APPROVED} ideas
-
-| Idea | Verdict | Rationale |
-|------|---------|-----------|"
-
-          echo "$REVIEW" | jq -r '.[] | "| #\(.idea_number) | \(.verdict) | \(.rationale) |"' 2>/dev/null >> /tmp/review-summary.md
-
-          SUMMARY="${SUMMARY}
-$(cat /tmp/review-summary.md)
-
----
-*Reviewed per [multi-model orchestration policy](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/multi-model-orchestration-policy.yaml). Approved ideas have been promoted to GitHub Issues.*"
-
-          # Get discussion number from URL
-          DISC_NUM=$(echo "$DISC_URL" | grep -oP '/discussions/\K[0-9]+' || true)
-          if [ -n "$DISC_NUM" ]; then
-            DISC_ID=$(gh api graphql -f query='query {
-              repository(owner: "GuitarAlchemist", name: "Demerzel") {
-                discussion(number: '"$DISC_NUM"') { id }
-              }
-            }' --jq '.data.repository.discussion.id' 2>/dev/null)
-
-            if [ -n "$DISC_ID" ] && [ "$DISC_ID" != "null" ]; then
-              gh api graphql -f query="mutation {
-                addDiscussionComment(input: {
-                  discussionId: \"$DISC_ID\",
-                  body: $(echo "$SUMMARY" | jq -Rs .)
-                }) {
-                  comment { url }
-                }
-              }" --jq '.data.addDiscussionComment.comment.url' 2>/dev/null
-            fi
-          fi
