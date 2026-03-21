@@ -424,6 +424,76 @@ pipeline meta_compound(completed_pipeline: string) {
 
 **Recursion bound:** `compound_depth` increments at each meta-compound invocation. When `compound_depth >= 2`, the compound phase becomes a no-op (logged, not errored). This prevents infinite "compounding the compounding of the compounding."
 
+### Governance Reflection Pipeline (`pipelines/governance-reflection.mog`)
+
+A structured reflection cycle that runs after each driver cycle (or weekly). Not a Scrum retrospective — a governance-native reflection through the fractal compounding lens.
+
+```
+pipeline governance_reflection(cycle_id: string) {
+  context.reflection_type = "post-cycle"
+  context.beliefs.governance_improving = { "T": 0.0, "F": 0.0, "U": 1.0, "C": 0.0 }
+}
+
+  cycle_data = claude_mem.search("cycle " + cycle_id)
+
+  parallel {
+    ergol = compute_ergol(cycle_data),
+    lolli = compute_lolli(cycle_data),
+    surprises = find_belief_transitions(cycle_data),
+    bottlenecks = detect_bottlenecks(cycle_data)
+  }
+
+  dimension = sympy.solve("log(ergol.value) / log(ergol.scale)")
+  momentum = sympy.diff("beliefs_T_gained - beliefs_T_lost", "cycle")
+
+  if ?"LOLLI growing faster than ERGOL" {
+    inflation_alert = conscience.premortem({
+      "action": "governance may be inflating — artifacts growing without value",
+      "irreversibility": "low",
+      "blast_radius": "ecosystem"
+    })
+  }
+
+  if ?"bottlenecks detected" {
+    parallel {
+      improvement = seldon.research("how to resolve: " + bottlenecks.top),
+      issue = gh.issue("create", "demerzel", bottleneck_issue(bottlenecks.top))
+    }
+  }
+
+  reflection = synthesize_reflection({
+    "what_created_value": ergol,
+    "what_was_waste": lolli,
+    "what_surprised_us": surprises,
+    "compounding_dimension": dimension,
+    "learning_momentum": momentum,
+    "bottlenecks": bottlenecks,
+    "question": "What should we do differently next cycle?"
+  })
+
+  second_opinion = openai.consult("Review this governance reflection: " + reflection)
+
+  discord.post("general", reflection_digest(reflection, second_opinion))
+
+  compound {
+    harvest(context)
+    promote_if(reflection.recurring_insight)
+    teach(context.learnings -> seldon)
+  }
+```
+
+**Reflection structure (not Scrum retro — governance native):**
+
+| Section | What it measures | Source |
+|---------|-----------------|--------|
+| **ERGOL** (real value created) | Beliefs U→T, health score deltas, issues closed with evidence | Fractal compounding model |
+| **LOLLI** (artifact inflation) | New files without citations, policies without consumers | Economicon principle |
+| **Surprises** | Unexpected belief transitions (U→C, T→F) | Tetravalent logic |
+| **Compounding dimension** | D_c for this cycle — superlinear or bloating? | Fractal analysis |
+| **Learning momentum** | p_L trend — accelerating or decaying? | Noether conservation |
+| **Bottlenecks** | Slowest pipeline steps, most-failed gates, tools with errors | Pipeline context metrics |
+| **Next cycle focus** | Synthesized recommendation + ChatGPT second opinion | Multi-model consultation |
+
 ---
 
 ## Compound Phase Behavior
@@ -536,6 +606,7 @@ pipeline fractal_analysis(cycles: list) {
 | 7 | Seldon research pipeline | MOG | `pipelines/seldon-research.mog` | New |
 | 8 | Meta-compounding pipeline | MOG | `pipelines/meta-compound.mog` | New |
 | 9 | Fractal analysis pipeline | MOG | `pipelines/fractal-analysis.mog` | New |
+| 9b | Governance reflection pipeline | MOG | `pipelines/governance-reflection.mog` | New |
 | 10 | Fractal compounding spec | Logic doc | `logic/fractal-compounding.md` | New |
 | 11 | Fractal compounding tests | Behavioral | `tests/behavioral/fractal-compounding-cases.md` | New |
 | 12 | MOG behavioral tests | Markdown | `tests/behavioral/mcp-orchestration-cases.md` | New |
