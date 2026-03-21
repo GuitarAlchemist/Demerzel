@@ -166,6 +166,8 @@ type_hint ::= "string" | "list" | "repo" | "belief" | "any"
 
 ## Tool Catalog
 
+> **Note:** The partial tool listing below is a design-time reference. The full 151-tool tars MCP inventory is maintained at `state/tool-catalogs/tars-mcp-tools.json`, which replaces this partial list as the authoritative catalog. See `docs/grammar-pipeline.md` for how tool invocations flow through the grammar pipeline.
+
 ### Read-Only Tools (Low Risk — No Gate)
 
 | Node | MCP Source | Description |
