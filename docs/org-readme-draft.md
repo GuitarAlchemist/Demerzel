@@ -101,9 +101,30 @@ Beliefs are T/F/U/C with fuzzy membership `{T:0.7, F:0.0, U:0.2, C:0.1}`. Unknow
 
 Courses in 6 languages: EN, ES, PT, FR, IT, DE
 
-### 6. BS Detection
+### 6. BS Detection ([`gov-bs-generators.ebnf`](https://github.com/GuitarAlchemist/Demerzel/blob/master/grammars/gov-bs-generators.ebnf))
 
-Grammar that generates AND detects empty rhetoric across 10 domains. Quantified BS scoring maps to tetravalent logic.
+Grammar that generates AND detects empty rhetoric across 10 domains. If the grammar can produce it, the grammar can flag it.
+
+**Examples of generated BS vs clear speech:**
+
+| Domain | BS | Clear |
+|--------|-----|-------|
+| Consulting | "Our analysis suggests significant opportunity exists, which implies a phased approach is warranted" | "We found 3 bugs. Fix them. It'll take 2 weeks." |
+| AI/Tech | "Our proprietary AI platform enables unprecedented insights at scale" | "We use GPT-4o to summarize tickets. 89% accuracy. $0.02/call." |
+| Startup | "We're the Uber for enterprise knowledge management" | "12 users. $800 MRR. 15% monthly growth." |
+| HR | "We're building a culture of radical candor and psychological safety" | "Pay: $120-150K. Remote. 20 days PTO tracked." |
+| Academic | "We propose a novel framework for problematizing the discourse" | "We tested X. Found Y. Means Z. Data at [URL]." |
+| Motivational | "You just need to manifest your authentic self" | "Practice scales 20 min/day for 30 days." |
+| Political | "The American people deserve better" | "I'll cut tax X by Y% on Jan 1. Funded by cutting Z." |
+| Governance | "This requires a multi-stakeholder governance review" | "This is risky because [harm]. Rule says [X]. Do [Y]." |
+
+**The 4-test BS detector:**
+1. **Specificity:** Could this apply to anything? → BS
+2. **Falsifiability:** Can you disprove it? → No = BS
+3. **Density:** Remove adjectives. Anything left? → No = BS
+4. **Commitment:** Who does what by when? → Missing = BS
+
+Score: 0-1 fail = T (real) | 2 = U (unclear) | 3-4 = C (contradictory)
 
 ### 7. Grammar Library (18 grammars)
 
