@@ -1,0 +1,180 @@
+(* Blind Spot Detection Grammar — Demerzel Governance *)
+(* Cross-departmental: governance, cognitive-science, psychohistory *)
+(* Purpose: Systematically discover what Demerzel does NOT see *)
+(* The most important grammar: it finds what other grammars miss *)
+(* Consumed by: driver RECON, conscience system, /demerzel audit *)
+(* See: policies/staleness-detection-policy.yaml *)
+
+(* ============================================================ *)
+(* 1. Blind Spot Categories — what kinds of things we miss       *)
+(* ============================================================ *)
+
+blind_spot ::= staleness_blind_spot
+             | coverage_blind_spot
+             | structural_blind_spot
+             | cognitive_blind_spot
+             | integration_blind_spot
+             | meta_blind_spot
+
+(* ============================================================ *)
+(* 2. Staleness — things that exist but are not maintained        *)
+(* ============================================================ *)
+
+staleness_blind_spot ::= scan_state_artifacts check_modification_dates classify_staleness
+
+scan_state_artifacts ::= beliefs | conscience_signals | conscience_digests
+                       | evolution_log | intuition_signals | pdca_cycles
+                       | health_scores | department_weights | grammar_weights
+
+classify_staleness ::= fresh          (* within max_staleness_days *)
+                     | aging          (* 50-100% of max_staleness *)
+                     | stale          (* 100-200% of max_staleness *)
+                     | critical_stale (* > 200% of max_staleness *)
+                     | abandoned      (* > 365 days — archive or delete *)
+
+(* Meta-staleness: a staleness signal that is itself stale *)
+meta_staleness ::= "stale signal about staleness" "->" auto_escalate
+
+(* ============================================================ *)
+(* 3. Coverage — things that should exist but do not              *)
+(* ============================================================ *)
+
+coverage_blind_spot ::= scan_expected check_actual identify_gaps
+
+scan_expected ::= departments_need_courses
+               | departments_need_grammars
+               | personas_need_tests
+               | courses_need_translations
+               | policies_need_citations
+               | grammars_need_research_cycles
+               | directives_need_compliance
+
+departments_need_courses ::= "for each dept in university.json"
+                            "check courses/{dept}/ exists and has files"
+
+departments_need_grammars ::= "for each dept in university.json"
+                             "check grammars/ has a matching .ebnf"
+
+personas_need_tests ::= "for each persona in personas/"
+                       "check tests/behavioral/ has matching test file"
+
+courses_need_translations ::= "for each course in courses/{dept}/en/"
+                             "check courses/{dept}/{es,pt,fr,it,de}/ has translation"
+
+policies_need_citations ::= "for each policy in policies/"
+                           "check evolution log for citations in last 30 days"
+
+grammars_need_research_cycles ::= "for each grammar in grammars/"
+                                 "check weights metadata.cycle_count > 0"
+
+directives_need_compliance ::= "for each directive in contracts/directives/"
+                              "check for compliance report from target repo"
+
+(* ============================================================ *)
+(* 4. Structural — organizational problems                       *)
+(* ============================================================ *)
+
+structural_blind_spot ::= missing_index
+                        | inconsistent_naming
+                        | orphaned_artifact
+                        | circular_dependency
+                        | missing_schema
+
+missing_index ::= "directory exists with files but no README or index"
+inconsistent_naming ::= "file naming doesn't follow convention"
+orphaned_artifact ::= "artifact exists but nothing references it"
+circular_dependency ::= "A depends on B depends on A"
+missing_schema ::= "JSON file exists without a validating schema"
+
+(* ============================================================ *)
+(* 5. Cognitive — biases in governance reasoning                  *)
+(* ============================================================ *)
+
+(* Imported from cognitive-science.ebnf — governance-specific *)
+cognitive_blind_spot ::= confirmation_bias_in_governance
+                       | survivorship_bias_in_evolution
+                       | automation_bias_in_driver
+                       | sunk_cost_in_policies
+
+confirmation_bias_in_governance ::= "only citing evidence that supports existing policies"
+                                  | "ignoring contradictory signals (C beliefs)"
+
+survivorship_bias_in_evolution ::= "only tracking successful artifacts"
+                                 | "not analyzing why deprecated artifacts failed"
+
+automation_bias_in_driver ::= "trusting driver cycle output without verification"
+                            | "not questioning auto-generated reports"
+
+sunk_cost_in_policies ::= "keeping policies because we invested in them"
+                        | "not deprecating unused governance artifacts"
+
+(* ============================================================ *)
+(* 6. Integration — cross-repo and cross-system gaps              *)
+(* ============================================================ *)
+
+integration_blind_spot ::= repo_not_governed
+                         | directive_not_acknowledged
+                         | mcp_tool_not_cataloged
+                         | cross_grammar_gap
+
+repo_not_governed ::= "repo exists in org but has no governance/ directory"
+directive_not_acknowledged ::= "directive sent but no compliance report received"
+mcp_tool_not_cataloged ::= "MCP tool exists in repo but not in tool catalog"
+cross_grammar_gap ::= "two departments share concepts but grammars don't cross-reference"
+
+(* ============================================================ *)
+(* 7. Meta Blind Spots — blind spots about blind spots            *)
+(* ============================================================ *)
+
+meta_blind_spot ::= "blind spot detection itself has not run recently"
+                  | "staleness policy exists but is not integrated into driver"
+                  | "blind spot grammar exists but has no behavioral tests"
+                  | "detection runs but findings are not acted upon"
+
+(* The deepest blind spot: *)
+(* If this grammar is never used by a research cycle, *)
+(* that IS the blind spot it was designed to detect *)
+
+(* ============================================================ *)
+(* 8. Detection Pipeline — how to find blind spots                *)
+(* ============================================================ *)
+
+detection_pipeline ::= scan classify prioritize schedule verify
+
+scan ::= staleness_scan | coverage_scan | structural_scan
+       | cognitive_audit | integration_check | meta_check
+
+classify ::= "Map each finding to tetravalent logic"
+           | "T = known blind spot with evidence"
+           | "F = previously suspected but disproven"
+           | "U = possible blind spot, needs investigation"
+           | "C = contradictory — both covered and uncovered"
+
+prioritize ::= "Score by: impact (1-5) x likelihood (1-5) x reversibility (1-5)"
+             | "critical = score > 60"
+             | "high = score 30-60"
+             | "medium = score 15-30"
+             | "low = score < 15"
+
+schedule ::= "critical -> immediate (driver T0 task)"
+           | "high -> next cycle"
+           | "medium -> backlog with deadline"
+           | "low -> log for awareness"
+
+verify ::= "After fix: re-run detection to confirm blind spot resolved"
+         | "If still detected: escalate — fix was insufficient"
+
+(* ============================================================ *)
+(* 9. Integration with Driver Cycle                               *)
+(* ============================================================ *)
+
+(* RECON phase: run staleness_scan + coverage_scan *)
+(* PLAN phase: stale items become tasks *)
+(* VERIFY phase: check if blind spots were addressed *)
+(* COMPOUND phase: update blind spot patterns, evolve this grammar *)
+
+(* This grammar evolves via: *)
+(* 1. New blind spot categories discovered during audits *)
+(* 2. Patterns from resolved blind spots (what keeps recurring?) *)
+(* 3. Cross-department analysis (which depts have most blind spots?) *)
+(* 4. Meta-analysis (is blind spot detection itself working?) *)

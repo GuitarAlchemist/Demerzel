@@ -1,0 +1,183 @@
+name: staleness-detection-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: Detect stale, unprocessed, or non-iterated state artifacts and prioritize their refresh. Demerzel should never have blind spots about her own staleness.
+
+constitutional_basis:
+  - Article 7 (Auditability) — stale state reduces auditability
+  - Article 8 (Observability) — stale metrics mislead
+  - Article 9 (Bounded Autonomy) — operating on stale beliefs exceeds safe bounds
+
+principles:
+  - "A belief that is never updated is not a belief — it is an assumption"
+  - "Stale state is worse than no state — it creates false confidence"
+  - "The irony of a stale staleness signal is a governance failure"
+  - "Detection without action is just observation — schedule the fix"
+
+artifact_categories:
+  - category: beliefs
+    path: "state/beliefs/*.belief.json"
+    max_staleness_days: 7
+    refresh_action: "Re-evaluate belief via /seldon research or /demerzel recon"
+    priority: high
+    rationale: "Beliefs drive decisions. Stale beliefs drive wrong decisions."
+
+  - category: conscience_signals
+    path: "state/conscience/signals/*.signal.json"
+    max_staleness_days: 3
+    refresh_action: "Process signal — resolve, escalate, or archive"
+    priority: critical
+    rationale: "Unprocessed conscience signals are ethics violations waiting to happen."
+
+  - category: conscience_digests
+    path: "state/conscience/digests/*.digest.json"
+    max_staleness_days: 1
+    refresh_action: "Generate new daily digest via /demerzel report"
+    priority: high
+    rationale: "Daily digest should be... daily."
+
+  - category: conscience_weekly
+    path: "state/conscience/weekly/*.report.json"
+    max_staleness_days: 7
+    refresh_action: "Generate weekly report"
+    priority: medium
+
+  - category: conscience_patterns
+    path: "state/conscience/patterns/*.pattern.json"
+    max_staleness_days: 14
+    refresh_action: "Re-evaluate pattern — still active? resolved?"
+    priority: medium
+
+  - category: conscience_regrets
+    path: "state/conscience/regrets/*.regret.json"
+    max_staleness_days: 7
+    refresh_action: "Has the regret been addressed? Archive or escalate."
+    priority: medium
+
+  - category: evolution_log
+    path: "state/evolution/*.evolution.json"
+    max_staleness_days: 14
+    refresh_action: "Re-assess artifact effectiveness via /demerzel evolve"
+    priority: medium
+
+  - category: intuition_signals
+    path: "state/intuition/*.json"
+    max_staleness_days: 7
+    refresh_action: "Validate intuition — confirmed? disproven? still unknown?"
+    priority: medium
+
+  - category: pdca_cycles
+    path: "state/pdca/*.pdca.json"
+    max_staleness_days: 14
+    refresh_action: "Advance PDCA cycle — stuck in Plan? stuck in Check?"
+    priority: high
+    rationale: "A PDCA cycle that stops cycling is just a plan that was never tested."
+
+  - category: department_weights
+    path: "state/streeling/departments/*.weights.json"
+    max_staleness_days: 30
+    refresh_action: "Run /seldon research-cycle for the department"
+    priority: low
+
+  - category: health_scores
+    path: "state/driver/health-scores.json"
+    max_staleness_days: 3
+    refresh_action: "Run /demerzel drive recon"
+    priority: high
+
+  - category: grammar_weights
+    path: "state/streeling/departments/*.weights.json"
+    max_staleness_days: 30
+    refresh_action: "Run research cycles to update grammar weights"
+    priority: low
+    rationale: "Per grammar-evolution-policy: >30 days = stale grammar"
+
+detection_process:
+  trigger: "Every driver RECON phase + daily harvest + on-demand via /demerzel audit"
+
+  steps:
+    - name: scan
+      action: "Walk all state/ directories, check file modification times"
+      output: "List of {file, category, days_stale, max_allowed, priority}"
+
+    - name: classify
+      action: "Group stale artifacts by priority (critical > high > medium > low)"
+      rules:
+        - "critical: staleness > 2x max_allowed OR conscience signals"
+        - "high: staleness > max_allowed AND (beliefs OR digests OR health)"
+        - "medium: staleness > max_allowed AND (evolution OR patterns OR pdca)"
+        - "low: staleness > max_allowed AND (weights OR other)"
+
+    - name: schedule
+      action: "Create refresh tasks in the driver cycle's PLAN phase"
+      rules:
+        - "critical stale items become T0 tasks (execute immediately)"
+        - "high stale items become next-cycle tasks"
+        - "medium stale items become backlog with deadline"
+        - "low stale items are logged but not auto-scheduled"
+
+    - name: report
+      action: "Include staleness summary in governance report"
+      format: |
+        Staleness Report:
+        - Critical: {n} items (oldest: {days} days)
+        - High: {n} items
+        - Medium: {n} items
+        - Low: {n} items
+        - Freshest: {category} ({days} days)
+        - Stalest: {category} ({days} days)
+
+  anti_patterns:
+    - name: "Stale staleness signal"
+      description: "A signal about staleness that is itself stale"
+      detection: "sig-stale-action-*.signal.json older than 3 days"
+      action: "Auto-escalate — this is a meta-governance failure"
+
+    - name: "Belief that drives action but has no refresh"
+      description: "A belief cited in recent decisions but not re-evaluated"
+      detection: "Belief cited in last 7 days but not updated in last 14"
+      action: "Flag as high priority — decisions may be based on outdated evidence"
+
+    - name: "PDCA stuck in Plan"
+      description: "A PDCA cycle that never progressed past Plan"
+      detection: "pdca.json with phase=Plan and last_updated > 14 days"
+      action: "Either advance to Do or archive as abandoned"
+
+    - name: "Course with no translations"
+      description: "A course exists in English but has no translations"
+      detection: "courses/{dept}/en/ has files but courses/{dept}/{lang}/ is empty"
+      action: "Schedule translation via /seldon course-pipeline"
+
+    - name: "Department with no courses"
+      description: "Department has grammar and weights but no courses produced"
+      detection: "departments/{dept}.department.json exists but courses/{dept}/ is empty"
+      action: "Schedule /seldon research-cycle + /seldon course-pipeline"
+
+    - name: "Grammar with no research cycles"
+      description: "Grammar exists but has never been used by a research cycle"
+      detection: "grammars/{name}.ebnf exists but weights metadata.cycle_count = 0"
+      action: "Schedule /seldon research-cycle for the department"
+
+integration:
+  driver_recon: "Staleness scan runs in every RECON phase — stale items become tasks"
+  demerzel_audit: "Level 2 audit includes staleness report"
+  demerzel_report: "Daily report includes staleness summary"
+  demerzel_compound: "Compound phase checks if stale items were addressed"
+  conscience: "Unprocessed conscience signals trigger escalation after 3 days"
+
+observability:
+  metrics:
+    - name: freshness_score
+      formula: "1 - (stale_artifact_count / total_artifact_count)"
+      target: "> 0.8"
+      alert: "< 0.5 — governance is running on stale information"
+
+    - name: mean_staleness_days
+      formula: "average(days_since_last_update) across all state artifacts"
+      target: "< 7 days"
+      alert: "> 14 days — system is not self-maintaining"
+
+    - name: critical_stale_count
+      formula: "count of artifacts exceeding 2x max_staleness"
+      target: 0
+      alert: "> 0 — immediate action required"
