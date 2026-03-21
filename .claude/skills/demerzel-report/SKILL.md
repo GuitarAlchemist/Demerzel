@@ -1,11 +1,11 @@
 ---
 name: demerzel-report
-description: Post daily governance reports and knowledge digests to GitHub Discussions across all repos
+description: Post daily governance reports and knowledge digests to GitHub Discussions and Discord across all repos
 ---
 
 # Demerzel Daily Report
 
-Post governance reports (Demerzel) and knowledge digests (Seldon) to GitHub Discussions.
+Post governance reports (Demerzel) and knowledge digests (Seldon) to GitHub Discussions and Discord.
 
 ## Usage
 `/demerzel report` — post today's report to all repos
@@ -87,6 +87,45 @@ claude --print "Run /demerzel report" --cwd /path/to/Demerzel
 - References governance evolution log for trends
 - References active loop states for progress updates
 - Seldon's digest references knowledge-state files for teaching status
+
+## Discord Posting
+
+In addition to GitHub Discussions, post a rich embed summary to Discord.
+
+**Channel:** `#general` on Stephane Pareilleux's server
+- Guild ID: `1484806750682218700`
+- Channel ID: `1484806751554506854`
+
+### How to Post to Discord
+
+1. Read the bot token from `~/.claude/channels/discord/.env` (DISCORD_BOT_TOKEN)
+2. Write the embed JSON to a temp file (avoids shell escaping issues)
+3. POST to `https://discord.com/api/v10/channels/1484806751554506854/messages`
+4. Clean up the temp file
+
+```bash
+TOKEN=$(grep DISCORD_BOT_TOKEN ~/.claude/channels/discord/.env | cut -d= -f2)
+curl -s -X POST "https://discord.com/api/v10/channels/1484806751554506854/messages" \
+  -H "Authorization: Bot $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d @tmp-discord-msg.json
+rm tmp-discord-msg.json
+```
+
+### Embed Templates
+
+**Cycle Report:** Title with cycle number, color `5025616` (teal), fields for tasks/duration/health scores/highlights/next steps.
+
+**Seldon/Streeling Report:** Three embeds — Department Overview (color `7506394` purple), Research Programs (color `15844367` gold), Curriculum (color `3066993` green). Use inline fields for department grid.
+
+**Governance Alert:** Color `15158332` (red) for urgent, `16776960` (yellow) for warnings. Include constitutional article reference and recommended action.
+
+### When to Post
+
+- After every driver cycle completes (cycle report)
+- After `/demerzel harvest` (knowledge digest)
+- On governance alerts (constitutional concerns, paradigm shifts)
+- On Seldon teaching events (knowledge transfer summaries)
 
 ## Source
 `constitutions/demerzel-mandate.md` Section 4 (Accountability), `policies/streeling-policy.yaml`
