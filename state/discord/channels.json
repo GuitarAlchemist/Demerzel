@@ -1,0 +1,39 @@
+{
+  "guild_id": "1484806750682218700",
+  "guild_name": "GuitarAlchemist",
+  "bot_user_id": "1484805519997927485",
+  "bot_username": "Demerzel",
+  "channels": {
+    "general": {
+      "id": "1484806751554506854",
+      "purpose": "General discussion, community welcome",
+      "posts": ["welcome", "announcements"]
+    },
+    "governance": {
+      "id": null,
+      "purpose": "Governance reports, directive compliance, conscience signals, audit results",
+      "posts": ["demerzel-report", "demerzel-audit", "conscience-signals", "directive-compliance"],
+      "create": true
+    },
+    "academy": {
+      "id": null,
+      "purpose": "Streeling University course announcements, research cycle results, curriculum updates",
+      "posts": ["course-published", "research-cycle-complete", "curriculum-update"],
+      "create": true
+    },
+    "research": {
+      "id": null,
+      "purpose": "Ideation discussions, Seldon research outputs, cross-model validation results",
+      "posts": ["ideation", "seldon-research", "knowledge-digest"],
+      "create": true
+    },
+    "dev-ops": {
+      "id": null,
+      "purpose": "CI status, health scores, driver cycle summaries, cross-repo sync",
+      "posts": ["driver-cycle", "health-scores", "ci-status", "submodule-updates"],
+      "create": true
+    }
+  },
+  "channel_creation_script": "Use Discord REST API: POST /guilds/{guild_id}/channels with bot token. See setup instructions below.",
+  "setup_instructions": "Run: node scripts/create-channels.js (in demerzel-bot repo) or use Discord server settings UI to create channels manually, then update IDs here."
+}
