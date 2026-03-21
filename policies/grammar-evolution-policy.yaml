@@ -1,0 +1,182 @@
+name: grammar-evolution-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: Grammars are living governance artifacts — produced by research, evolved by distillation, pruned when stale. Not one-time static files.
+
+constitutional_basis:
+  - Asimov Article 0 (Zeroth Law) — knowledge structures must improve to serve humanity better
+  - Article 7 (Auditability) — grammar evolution must be traced and logged
+  - Article 8 (Observability) — grammar weights and effectiveness must be measurable
+  - Article 9 (Bounded Autonomy) — grammar changes require governance gates
+
+principles:
+  - "A grammar that never changes is either perfect or dead — assume dead"
+  - "Distillation is how experience becomes structure"
+  - "External grammars are raw material; internal grammars are refined knowledge"
+  - "Weights are beliefs — they evolve via Bayesian updates, not manual edits"
+
+lifecycle:
+  stages:
+    - name: seed
+      description: "Initial grammar created from domain expertise or external reference"
+      trigger: "New department, new domain, external grammar discovered"
+      artifacts: "{name}.ebnf with uniform weights"
+      governance_gate: none
+
+    - name: active
+      description: "Grammar in use by research cycles, weights being learned"
+      trigger: "First research cycle uses grammar"
+      artifacts: "{name}.ebnf + {dept}.weights.json updated per cycle"
+      governance_gate: "Weights update automatically via Bayesian inference"
+
+    - name: distilling
+      description: "tars GrammarDistillation extracts patterns from execution traces"
+      trigger: "5+ research cycles completed with this grammar"
+      artifacts: "Distilled productions added, structural/typed/behavioral facets"
+      governance_gate: "when T(0.7) — new productions need evidence"
+
+    - name: mature
+      description: "Grammar has stabilized — weights converged, productions validated"
+      trigger: "Weight variance < 0.05 across last 10 cycles"
+      artifacts: "Grammar frozen for promotion consideration"
+      governance_gate: "Review for promotion to policy or constitutional reference"
+
+    - name: deprecated
+      description: "Grammar no longer produces useful research questions"
+      trigger: "3+ consecutive cycles produce only U or C conclusions"
+      artifacts: "Moved to grammars/archive/ with deprecation note"
+      governance_gate: "Human approval required — may indicate domain shift, not grammar failure"
+
+production:
+  who_creates_grammars:
+    - name: "Seldon research-cycle"
+      how: "When a research cycle discovers a pattern not expressible in current grammar, it proposes a new production rule"
+      example: "Music research discovers a chord voicing pattern → new voice_leading production"
+
+    - name: "tars GrammarDistillation"
+      how: "Extracts typed productions from successful execution traces — structural, typed, behavioral facets"
+      example: "10 successful WoT plans share a pattern → distilled into reusable production"
+
+    - name: "Demerzel meta-compound"
+      how: "Cross-grammar analysis identifies missing connections between departments"
+      example: "Physics acoustics grammar and music theory grammar share harmonic series → cross-reference production"
+
+    - name: "External distillation"
+      how: "External grammars (MusicXML, Lean4, Faust) are consumed, parsed, and distilled into Demerzel format"
+      example: "MusicXML chord type enumeration → distilled into music-theory.ebnf chord_construction"
+
+    - name: "Human expertise"
+      how: "Domain experts propose grammar extensions via GitHub Issues"
+      example: "Musicologist proposes Schenkerian analysis productions for musicology grammar"
+
+evolution_mechanisms:
+  bayesian_weight_update:
+    description: "After each research cycle, update production weights based on outcome"
+    formula: "P(rule | outcome) ∝ P(outcome | rule) × P(rule)"
+    success_boost: 0.05
+    failure_penalty: 0.03
+    normalization: "Weights sum to 1.0 within each production group"
+    tool: "tars grammar_update MCP tool"
+
+  production_addition:
+    description: "New productions added when existing grammar cannot express a finding"
+    trigger: "Research cycle logs 'grammar_gap' in cycle metadata"
+    process:
+      - "Propose new production with evidence from the research finding"
+      - "Validate against existing productions (no overlap, no contradiction)"
+      - "Add with initial weight = 1/N (uniform among siblings)"
+      - "Log in evolution entry"
+    governance_gate: "when T(0.7) && C(<0.1) — must have evidence, no contradictions"
+
+  production_removal:
+    description: "Productions removed when consistently unproductive"
+    trigger: "Production weight < 0.01 for 20+ cycles"
+    process:
+      - "Flag production as candidate for removal"
+      - "Check if removal would leave a gap in the grammar's expressiveness"
+      - "If no gap: remove and log"
+      - "If gap: investigate why the production is unused — may need reframing, not removal"
+    governance_gate: "Human approval for removal of productions cited by other grammars"
+
+  grammar_splitting:
+    description: "A grammar that grows too large should be split into sub-grammars"
+    trigger: "Grammar exceeds 200 productions or serves 3+ distinct research areas"
+    process:
+      - "Identify natural clusters via production co-occurrence"
+      - "Split into focused sub-grammars with clear import/export boundaries"
+      - "Update department weights to reference new grammars"
+
+  grammar_merging:
+    description: "Two grammars that consistently co-occur should be merged or cross-referenced"
+    trigger: "Research cycles in department A consistently use productions from department B's grammar"
+    process:
+      - "Create shared productions in a common grammar"
+      - "Or add cross-grammar import references"
+
+distillation_pipeline:
+  description: "How tars execution traces become grammar productions"
+  stages:
+    - name: "Trace collection"
+      detail: "tars logs execution traces with production paths, tool invocations, outcomes"
+
+    - name: "Pattern extraction"
+      detail: "GrammarDistillation extracts structural (DAG shape), typed (I/O signatures), behavioral (postconditions) facets"
+
+    - name: "Fingerprinting"
+      detail: "SHA256 hash per distilled pattern for identity and deduplication"
+
+    - name: "Promotion assessment"
+      detail: "Patterns with success_rate > 0.7 and trace_count > 5 are candidates"
+
+    - name: "Grammar integration"
+      detail: "Promoted patterns become new EBNF productions in the appropriate grammar"
+
+    - name: "Evolution logging"
+      detail: "New production logged in state/evolution/ with citation to source traces"
+
+external_grammar_consumption:
+  description: "How external grammars become internal knowledge"
+  process:
+    - "Identify relevant external grammar (see docs/external-grammar-references.md)"
+    - "Parse external format into intermediate representation"
+    - "Extract productions relevant to department domain"
+    - "Map to tetravalent logic (external claims start as U until validated)"
+    - "Add to department grammar with 'external_source' metadata"
+    - "Run research cycles to validate — U→T if confirmed, U→F if contradicted"
+  sources_to_monitor:
+    - "W3C music standards (MusicXML, MEI)"
+    - "Proof assistant updates (Lean4, Coq, Agda)"
+    - "Audio DSL releases (Faust, SuperCollider)"
+    - "API specification standards (OpenAPI, GraphQL)"
+
+observability:
+  metrics:
+    - name: grammar_coverage
+      formula: "departments_with_active_grammars / total_departments"
+      target: 1.0
+      current: 1.0
+
+    - name: production_utilization
+      formula: "productions_used_in_last_30_days / total_productions"
+      target: "> 0.5"
+      alert: "< 0.3 indicates grammar bloat"
+
+    - name: weight_convergence
+      formula: "mean(weight_variance_per_grammar)"
+      target: "< 0.1 for mature grammars"
+
+    - name: distillation_rate
+      formula: "new_productions_from_distillation / total_new_productions"
+      target: "> 0.3 — most new productions should come from evidence, not manual creation"
+
+    - name: grammar_freshness
+      formula: "days_since_last_weight_update per grammar"
+      alert: "> 30 days indicates stale grammar"
+
+integration:
+  research_cycle_skill: "research-cycle skill MUST check for grammar gaps and propose new productions"
+  course_pipeline_skill: "course-pipeline uses grammar to structure course content"
+  demerzel_compound: "meta-compound phase scans for cross-grammar opportunities"
+  demerzel_evolve: "evolution insights include grammar effectiveness metrics"
+  tars_grammar_tools: "grammar_weights and grammar_update MCP tools are the runtime interface"
+  seldon_harvest: "daily harvest checks for external grammar updates"

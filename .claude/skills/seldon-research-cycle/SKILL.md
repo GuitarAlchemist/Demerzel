@@ -171,8 +171,39 @@ If the department is listed in the multilingual policy (`policies/multilingual-p
 - Spanish: `courses/{dept}/es/{module_id}.es.md`
 - Portuguese: `courses/{dept}/pt/{module_id}.pt.md`
 - French: `courses/{dept}/fr/{module_id}.fr.md`
+- Italian: `courses/{dept}/it/{module_id}.it.md`
+- German: `courses/{dept}/de/{module_id}.de.md`
 
 Apply cultural adaptation per the multilingual policy (local music examples, regional terminology).
+
+### Step 6b: EVOLVE GRAMMAR (if applicable)
+
+Research may reveal that the department's grammar is incomplete — a finding that cannot be expressed using existing productions. When this happens:
+
+**Detect grammar gaps:**
+- The research question required a concept not in any production
+- The conclusion maps to a reasoning path not expressible in the grammar
+- A new domain concept was discovered that the grammar cannot generate
+
+**Propose new productions:**
+```ebnf
+(* Proposed by research cycle {cycle_id} *)
+(* Evidence: {brief description of finding} *)
+(* Confidence: {belief_confidence} *)
+new_production ::= term_a | term_b | term_c
+```
+
+**Grammar evolution rules (per grammar-evolution-policy.yaml):**
+- New productions start with uniform weight (1/N among siblings)
+- Gate: `when T(0.7) && C(<0.1)` — must have evidence, no contradictions
+- Log in evolution entry with citation to the research cycle
+- tars `grammar_update` MCP tool handles the Bayesian weight update
+
+**When to produce grammars vs courses:**
+- Finding confirms existing knowledge → **produce course** (teach what we know)
+- Finding reveals new structure → **evolve grammar** (formalize what we learned)
+- Finding does both → produce course AND evolve grammar
+- Finding contradicts grammar → flag for **grammar review** (paradigm tension)
 
 ## Step 7: LOG Cycle
 
@@ -217,10 +248,25 @@ Compare confirmed findings against existing curriculum:
 - If finding reveals a topic not in curriculum → add as curriculum gap
 - If 3+ gaps accumulate → recommend curriculum expansion
 
+### Evolve Grammar
+Per `grammar-evolution-policy.yaml`:
+- If grammar gap detected in Step 6b → add proposed production to `grammars/{dept-grammar}.ebnf`
+- Update weight file with new production's initial weight
+- Log grammar evolution in `state/evolution/` with research cycle citation
+- If tars `grammar_update` tool is available, invoke it for Bayesian weight update
+- Track `grammar_productions_added` metric for observability
+
+### Check Grammar Health
+- If grammar freshness > 30 days → flag as stale
+- If production utilization < 0.3 → flag potential grammar bloat
+- If distillation_rate < 0.3 → too many manual productions, need more evidence-based evolution
+
 ### Trigger Follow-Ups
 - `discover_question` → create a new trigger in `state/triggers/` for the spawned question
 - `paradigm_shift` → create a governance issue via `/demerzel promote`
 - `anomaly_detected` → log conscience signal in `state/conscience/signals/`
+- `grammar_gap` → propose grammar evolution (Step 6b output)
+- `external_grammar_found` → add to `docs/external-grammar-references.md` for future distillation
 
 ### Report
 Print a summary:
@@ -230,6 +276,7 @@ Department: {department}
 Question: {question}
 Conclusion: {conclusion} ({belief_value}, confidence: {confidence})
 Course produced: {yes/no — module_id if yes}
+Grammar evolved: {yes/no — production added if yes}
 Weight updates: {hypothesis_method} +0.05, {test_method} +0.05
 Next: {follow-up action if any}
 ```
@@ -244,6 +291,7 @@ Departments: 13
 Cycles run: 13
 Beliefs produced: T:{n} F:{n} U:{n} C:{n}
 Courses produced: {n}
+Grammars evolved: {n} productions added across {m} grammars
 Follow-ups triggered: {n}
 ```
 
@@ -252,4 +300,6 @@ Follow-ups triggered: {n}
 - This skill operates under Article 2 (Transparency) — all reasoning is logged
 - Article 9 (Bounded Autonomy) — course production is bounded by department curriculum
 - Streeling Policy — knowledge transfer and curriculum design
+- Grammar Evolution Policy — grammars are living artifacts, evolved by research and distillation
 - Confidence thresholds apply: findings below 0.5 confidence are flagged, not auto-published
+- Grammar changes require `when T(0.7) && C(<0.1)` gate — evidence required, no contradictions
