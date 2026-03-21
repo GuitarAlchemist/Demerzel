@@ -1,0 +1,50 @@
+{
+  "pre_mortem_id": "pm-2026-03-21-001",
+  "action": {
+    "type": "directive",
+    "description": "Issue directive requiring @ai probe annotations in all consumer repos (ix, tars, ga)",
+    "irreversibility": "low",
+    "blast_radius": "multi-repo"
+  },
+  "stakeholders": [
+    { "name": "ix developers", "relationship": "affected", "voice_heard": false },
+    { "name": "tars developers", "relationship": "affected", "voice_heard": false },
+    { "name": "ga developers", "relationship": "affected", "voice_heard": false },
+    { "name": "Demerzel (governor)", "relationship": "responsible", "voice_heard": true }
+  ],
+  "anticipated_harms": [
+    {
+      "harm_category": "autonomy",
+      "description": "Developers may feel surveilled by mandatory probe annotations on their code",
+      "likelihood": { "T": 0.3, "F": 0.4, "U": 0.2, "C": 0.1 },
+      "severity": "medium",
+      "constitutional_article": 6,
+      "mitigation": "Frame probes as documentation, not surveillance. Set gradual coverage targets (30% initial). Provide clear syntax guide.",
+      "residual_risk": { "T": 0.1, "F": 0.6, "U": 0.2, "C": 0.1 }
+    },
+    {
+      "harm_category": "productivity",
+      "description": "Annotation overhead may slow development velocity in short term",
+      "likelihood": { "T": 0.4, "F": 0.3, "U": 0.2, "C": 0.1 },
+      "severity": "low",
+      "constitutional_article": 4,
+      "mitigation": "Start with only exported/public symbols. Probes double as documentation, offsetting overhead.",
+      "residual_risk": { "T": 0.15, "F": 0.5, "U": 0.25, "C": 0.1 }
+    }
+  ],
+  "logotron_check": {
+    "self_referential": false,
+    "undecidable_aspects": [
+      "Whether probe coverage actually improves code quality long-term",
+      "Whether developers will internalize probes or treat them as bureaucratic overhead"
+    ],
+    "metalanguage_risk": "Probes describe code semantics, but who probes the probes? The ai-probes-policy governs probe usage, creating one level of metalanguage."
+  },
+  "decision": "proceed",
+  "decided_at": "2026-03-21T00:00:00Z",
+  "accuracy_tracking": {
+    "predicted_harms": 2,
+    "actual_harms_at_review": null,
+    "review_date": null
+  }
+}

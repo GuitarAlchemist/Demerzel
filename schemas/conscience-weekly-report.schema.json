@@ -4,7 +4,7 @@
   "title": "Conscience Weekly Report",
   "description": "Weekly conscience report for Demerzel governance — posted to GitHub Discussions",
   "type": "object",
-  "required": ["week_start", "week_end", "signals_summary", "regret_status", "growth_trends", "self_reflection", "conscience_health"],
+  "required": ["week_start", "week_end", "signals_summary", "regret_status", "pre_mortems_this_week", "growth_trends", "self_reflection", "conscience_health"],
   "properties": {
     "week_start": { "type": "string", "format": "date" },
     "week_end": { "type": "string", "format": "date" },
@@ -41,6 +41,11 @@
         "recurrence_rate": { "type": ["number", "null"], "description": "Percentage 0-100" }
       }
     },
+    "pre_mortems_this_week": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of pre-mortem analyses performed this week"
+    },
     "growth_trends": {
       "type": "object",
       "required": ["moral_sensitivity", "false_positive_rate", "resolution_velocity", "recurrence_rate", "anticipation_accuracy"],
@@ -49,7 +54,11 @@
         "false_positive_rate": { "$ref": "#/$defs/trend_metric" },
         "resolution_velocity": { "$ref": "#/$defs/trend_metric" },
         "recurrence_rate": { "$ref": "#/$defs/trend_metric" },
-        "anticipation_accuracy": { "$ref": "#/$defs/trend_metric" }
+        "anticipation_accuracy": { "$ref": "#/$defs/trend_metric" },
+        "false_negative_rate": {
+          "$ref": "#/$defs/trend_metric",
+          "description": "Rate of unpredicted harms — blind spots the pre-mortem missed"
+        }
       }
     },
     "pattern_detection": {

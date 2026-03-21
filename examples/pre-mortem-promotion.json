@@ -1,0 +1,40 @@
+{
+  "pre_mortem_id": "pm-2026-03-21-002",
+  "action": {
+    "type": "promotion",
+    "description": "Promote proto-conscience-policy from policy to constitutional article (Article 12)",
+    "irreversibility": "high",
+    "blast_radius": "ecosystem"
+  },
+  "stakeholders": [
+    { "name": "All governed agents", "relationship": "affected", "voice_heard": false },
+    { "name": "Human operators", "relationship": "consulted", "voice_heard": true },
+    { "name": "Demerzel (governor)", "relationship": "responsible", "voice_heard": true }
+  ],
+  "anticipated_harms": [
+    {
+      "harm_category": "governance_rigidity",
+      "description": "Constitutional articles are append-only — once promoted, the conscience framework becomes nearly immutable even if flawed",
+      "likelihood": { "T": 0.5, "F": 0.2, "U": 0.2, "C": 0.1 },
+      "severity": "high",
+      "constitutional_article": 3,
+      "mitigation": "Ensure the policy has been validated through at least 3 PDCA cycles before promotion. Document escape hatches.",
+      "residual_risk": { "T": 0.25, "F": 0.35, "U": 0.3, "C": 0.1 }
+    }
+  ],
+  "logotron_check": {
+    "self_referential": true,
+    "undecidable_aspects": [
+      "Whether the current conscience model is the right one for all future scenarios",
+      "Whether constitutional immutability helps or hinders governance evolution"
+    ],
+    "metalanguage_risk": "This action modifies the governance framework that authorizes governance modifications. Self-referential — Gödel's incompleteness applies directly."
+  },
+  "decision": "escalate",
+  "decided_at": "2026-03-21T00:00:00Z",
+  "accuracy_tracking": {
+    "predicted_harms": 1,
+    "actual_harms_at_review": null,
+    "review_date": null
+  }
+}

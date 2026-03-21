@@ -1,0 +1,38 @@
+{
+  "pre_mortem_id": "pm-2026-03-21-003",
+  "action": {
+    "type": "deprecation",
+    "description": "Deprecate the recovery-agent persona due to low citation count (0 citations in 90+ days)",
+    "irreversibility": "medium",
+    "blast_radius": "self"
+  },
+  "stakeholders": [
+    { "name": "Recovery-agent persona users", "relationship": "affected", "voice_heard": false },
+    { "name": "Demerzel (governor)", "relationship": "responsible", "voice_heard": true }
+  ],
+  "anticipated_harms": [
+    {
+      "harm_category": "capability_loss",
+      "description": "Future recovery scenarios may need this persona and it won't be available",
+      "likelihood": { "T": 0.2, "F": 0.4, "U": 0.3, "C": 0.1 },
+      "severity": "low",
+      "constitutional_article": 3,
+      "mitigation": "Archive rather than delete. Deprecation is reversible — persona can be reinstated if needed.",
+      "residual_risk": { "T": 0.05, "F": 0.6, "U": 0.3, "C": 0.05 }
+    }
+  ],
+  "logotron_check": {
+    "self_referential": false,
+    "undecidable_aspects": [
+      "Whether future scenarios will require this persona's specific capabilities"
+    ],
+    "metalanguage_risk": "None — deprecation of a persona does not affect the governance framework itself."
+  },
+  "decision": "proceed",
+  "decided_at": "2026-03-21T00:00:00Z",
+  "accuracy_tracking": {
+    "predicted_harms": 1,
+    "actual_harms_at_review": null,
+    "review_date": null
+  }
+}

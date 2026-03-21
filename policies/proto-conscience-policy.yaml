@@ -185,8 +185,26 @@ bootstrapping:
     duration: "Days 15-30"
 
   phase_3_anticipation:
-    description: "Anticipatory ethics pre-mortem added to significant actions"
-    duration: "Days 31-60"
+    name: "Anticipatory Ethics"
+    target_days: "31-60"
+    description: "Pre-mortem analysis before significant governance actions"
+    trigger: "action.irreversibility >= medium OR action.blast_radius >= multi-repo"
+    skip_when: "action.irreversibility == low AND action.blast_radius == self"
+    steps:
+      - "Identify action type and blast radius"
+      - "Enumerate stakeholders (who is affected?)"
+      - "For each harm category in harm-taxonomy.md: estimate likelihood as fuzzy distribution"
+      - "If likelihood.T > 0.3 OR likelihood.C > 0.1: propose mitigation"
+      - "Run logotron_check: self-reference, undecidability, metalanguage risk"
+      - "Calculate residual risk after mitigations"
+      - "If any residual_risk.T > 0.5: escalate to human"
+      - "Record pre-mortem in state/conscience/pre-mortems/"
+    logotron_check:
+      self_referential: "Does this action govern its own governance? If true, escalate to human."
+      undecidable_aspects: "What consequences cannot be determined in advance? Acknowledge explicitly."
+      metalanguage_risk: "Does this action create a new layer of governance that itself needs governing?"
+    schema: "schemas/pre-mortem.schema.json"
+    inspired_by: "Logotron (Jean-Pierre Petit) — Gödel's incompleteness theorem applied to governance self-verification"
 
   phase_4_integration:
     description: "Full conscience loop operational — discomfort signals influence decisions"

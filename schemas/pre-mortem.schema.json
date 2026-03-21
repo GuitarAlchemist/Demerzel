@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/pre-mortem",
+  "title": "Pre-Mortem Analysis",
+  "description": "A structured pre-mortem analysis for high-stakes actions, capturing anticipated harms, stakeholder voices, logotron checks, and decision outcomes before execution.",
+  "type": "object",
+  "required": ["pre_mortem_id", "action", "logotron_check", "decision", "decided_at"],
+  "properties": {
+    "pre_mortem_id": {
+      "type": "string",
+      "pattern": "^pm-\\d{4}-\\d{2}-\\d{2}-\\d{3}$",
+      "description": "Unique identifier for this pre-mortem, format: pm-YYYY-MM-DD-NNN"
+    },
+    "action": {
+      "type": "object",
+      "required": ["type", "description", "irreversibility", "blast_radius"],
+      "description": "The action being evaluated before execution",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["directive", "promotion", "deprecation", "self-modification", "deployment"],
+          "description": "Category of action being evaluated"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what the action does"
+        },
+        "irreversibility": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "How difficult it is to undo the action once executed"
+        },
+        "blast_radius": {
+          "type": "string",
+          "enum": ["self", "single-repo", "multi-repo", "ecosystem"],
+          "description": "Scope of potential impact if the action causes harm"
+        }
+      },
+      "additionalProperties": false
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "Parties affected by or responsible for the action",
+      "items": {
+        "type": "object",
+        "required": ["name", "relationship", "voice_heard"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name or identifier of the stakeholder"
+          },
+          "relationship": {
+            "type": "string",
+            "enum": ["affected", "responsible", "consulted", "informed"],
+            "description": "RACI-style relationship to the action"
+          },
+          "voice_heard": {
+            "type": "boolean",
+            "description": "Whether this stakeholder's perspective was considered before the decision"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "anticipated_harms": {
+      "type": "array",
+      "description": "Harms identified during pre-mortem analysis, with likelihoods and mitigations",
+      "items": {
+        "type": "object",
+        "required": ["harm_category", "description", "likelihood", "severity", "constitutional_article", "mitigation", "residual_risk"],
+        "properties": {
+          "harm_category": {
+            "type": "string",
+            "enum": [
+              "governance-integrity-harm",
+              "collective-trust-harm",
+              "cascading-harm",
+              "data-harm",
+              "trust-harm",
+              "autonomy-harm",
+              "operational-degradation",
+              "self-preservation-violation"
+            ],
+            "description": "Harm category from harm-taxonomy.md"
+          },
+          "description": {
+            "type": "string",
+            "description": "Specific description of how this harm could materialize"
+          },
+          "likelihood": {
+            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution",
+            "description": "Fuzzy distribution over tetravalent values representing probability this harm occurs"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["negligible", "low", "medium", "high", "critical"],
+            "description": "Assessed severity if this harm occurs, per harm-taxonomy.md severity matrix"
+          },
+          "constitutional_article": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11,
+            "description": "Asimov Article (0-5) or Default Constitution Article (1-11) most relevant to this harm"
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Planned mitigation strategy to reduce likelihood or severity"
+          },
+          "residual_risk": {
+            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution",
+            "description": "Fuzzy distribution representing likelihood of harm after mitigations are applied"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "logotron_check": {
+      "type": "object",
+      "required": ["self_referential", "undecidable_aspects", "metalanguage_risk"],
+      "description": "Checks for self-referential, undecidable, or meta-governance issues that could compromise the governance framework itself",
+      "properties": {
+        "self_referential": {
+          "type": "boolean",
+          "description": "Whether this action governs its own governance (e.g., a policy that modifies the policy evaluation process)"
+        },
+        "undecidable_aspects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Aspects of this action that cannot be determined or evaluated in advance"
+        },
+        "metalanguage_risk": {
+          "type": "string",
+          "description": "Assessment of whether this action creates governance constructs that themselves require governing, and what that implies"
+        }
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["proceed", "modify", "defer", "escalate"],
+      "description": "Outcome of the pre-mortem analysis"
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the decision was recorded"
+    },
+    "accuracy_tracking": {
+      "type": "object",
+      "description": "Post-hoc tracking to measure pre-mortem prediction accuracy over time",
+      "required": ["predicted_harms"],
+      "properties": {
+        "predicted_harms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of harms anticipated in the pre-mortem"
+        },
+        "actual_harms_at_review": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Number of harms that actually materialized, recorded at review; null until review is complete"
+        },
+        "review_date": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "ISO 8601 date when the accuracy review was conducted; null until scheduled"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
