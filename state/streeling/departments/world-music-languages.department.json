@@ -3,7 +3,7 @@
   "full_name": "Department of World Music & Languages",
   "head_persona": "communal-steward",
   "established": "2026-03-21",
-  "domain": "Multilingual guitar education, world music traditions, and cross-cultural musical pedagogy in 10 languages",
+  "domain": "Multilingual guitar education, world music traditions, and cross-cultural musical pedagogy in 12 languages",
   "research_areas": [
     "Multilingual guitar pedagogy — localized curriculum for 10 languages",
     "Musical terminology mapping across languages and traditions",
@@ -72,6 +72,28 @@
       "curriculum_notes": "Gypsy jazz is a cornerstone French guitar tradition with unique techniques"
     },
     {
+      "code": "it",
+      "name": "Italian",
+      "native_name": "Italiano",
+      "priority": 6,
+      "status": "active",
+      "music_traditions": ["Classical guitar (Segovia lineage)", "Opera", "Canzone napoletana", "Cantautori", "Italian progressive rock"],
+      "guitar_styles": ["Classical (Italian school — Giuliani, Carulli, Sor's Italian period)", "Canzone accompaniment", "Progressive rock"],
+      "notable_terminology": "Accordo (chord), scala (scale), arpeggio (broken chord), tempo, forte, piano — Italian IS music terminology",
+      "curriculum_notes": "Italian is the language of music itself — tempo, forte, piano, allegro, etc. are all Italian. Classical guitar pedagogy was born here (Carulli, Giuliani, Sor). The connection between Italian and music is foundational."
+    },
+    {
+      "code": "de",
+      "name": "German",
+      "native_name": "Deutsch",
+      "priority": 7,
+      "status": "active",
+      "music_traditions": ["Lute tradition (Renaissance/Baroque)", "Lieder", "Classical (Bach, Beethoven)", "Krautrock", "Neue Deutsche Welle", "German metal"],
+      "guitar_styles": ["Classical lute repertoire on guitar", "Lieder accompaniment", "Fingerstyle (German school)", "Metal rhythm guitar"],
+      "notable_terminology": "Akkord (chord), Tonleiter (scale — literally 'tone ladder'), Dur (major), Moll (minor), Kreuz (sharp), B (B-flat — German naming differs!)",
+      "curriculum_notes": "German note naming system (H = B natural, B = B-flat) differs from English — critical to teach. Bach's lute suites are cornerstone guitar repertoire. German music theory tradition (Riemann, Schenker) is deeply influential."
+    },
+    {
       "code": "ar",
       "name": "Arabic",
       "native_name": "العربية",
@@ -133,6 +155,8 @@
     "Flamenco Foundations (Spanish): Compás, rasgueado, picado, palos",
     "Bossa Nova & Brazilian Guitar (Portuguese): Batidas, harmony, João Gilberto style",
     "Gypsy Jazz Essentials (French): La pompe, Django voicings, diminished runs",
+    "Italian Classical Guitar: Giuliani studies, Carulli method, opera transcriptions, Italian terminology mastery",
+    "German Lute & Guitar: Bach lute suites, German note naming (H/B system), Lieder accompaniment, Riemann analysis",
     "Maqam Guitar (Arabic): Quarter-tone bending, taqsim improvisation, Arabic scales",
     "Raga Guitar (Hindi): Alap-style improvisation, Indian scales on fretboard, slide technique",
     "Russian 7-String Guitar: Open-G tuning, romance repertoire, bard accompaniment",
