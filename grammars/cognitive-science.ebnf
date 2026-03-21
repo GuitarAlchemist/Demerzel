@@ -1,0 +1,116 @@
+(* Cognitive Science Grammar — Streeling University *)
+(* Department: cognitive-science *)
+(* Consumed by: Demerzel (agent cognition), tars (reasoning agents) *)
+(* See: state/streeling/departments/cognitive-science.department.json *)
+(* Each production has a weight learned per cognitive paradigm *)
+
+(* ============================================================ *)
+(* 1. Investigation Types                                        *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize experiment measure conclude reflect
+                | observe model simulate predict conclude reflect
+                | observe introspect formalize test conclude reflect
+
+(* ============================================================ *)
+(* 2. Cognitive Paradigms — lenses for understanding mind        *)
+(* ============================================================ *)
+
+paradigm ::= computationalism     (* mind as information processor *)
+           | connectionism        (* mind as neural network *)
+           | embodied_cognition   (* mind as body-environment coupling *)
+           | enactivism           (* mind as sense-making in the world *)
+           | predictive_processing (* mind as prediction machine *)
+           | bayesian_brain       (* mind as probabilistic inference *)
+           | ecological_psychology (* mind as affordance detector *)
+
+(* ============================================================ *)
+(* 3. Cognitive Processes — what minds do                         *)
+(* ============================================================ *)
+
+process ::= perception
+           | attention
+           | memory
+           | reasoning
+           | decision_making
+           | language_processing
+           | motor_control
+           | learning
+           | metacognition
+
+memory_type ::= working_memory | episodic | semantic | procedural | prospective
+attention_type ::= selective | divided | sustained | executive
+reasoning_type ::= deductive | inductive | analogical | causal | probabilistic
+learning_type ::= supervised | unsupervised | reinforcement | transfer | meta_learning
+
+(* ============================================================ *)
+(* 4. Experimental Methods                                       *)
+(* ============================================================ *)
+
+experiment ::= behavioral_experiment
+             | neuroimaging_study
+             | computational_model
+             | lesion_study
+             | eye_tracking
+             | reaction_time_paradigm
+             | protocol_analysis
+
+measure ::= accuracy | reaction_time | neural_activation
+           | information_transfer | entropy | mutual_information
+           | behavioral_pattern | error_pattern
+
+(* ============================================================ *)
+(* 5. Cognitive Biases — critical for governance                 *)
+(* ============================================================ *)
+
+(* These map directly to Demerzel governance failure modes *)
+
+bias ::= confirmation_bias       (* seek confirming evidence — Article 1 risk *)
+       | anchoring_bias          (* over-weight first information *)
+       | availability_heuristic  (* judge by ease of recall *)
+       | dunning_kruger          (* overconfidence in low competence *)
+       | sunk_cost_fallacy       (* continue because invested — Article 3 risk *)
+       | status_quo_bias         (* prefer current state — blocks evolution *)
+       | groupthink              (* conform to group — Article 10 risk *)
+       | automation_bias         (* over-trust automated systems — AI governance risk *)
+       | survivorship_bias       (* only see successes — Article 7 risk *)
+       | narrative_fallacy       (* impose story on random events *)
+
+(* Bias detection → conscience signal *)
+(* If bias detected in governance reasoning → U (belief under suspicion) *)
+(* If multiple biases compound → C (contradictory — reasoning compromised) *)
+
+(* ============================================================ *)
+(* 6. Agent Cognition — directly applicable to AI governance     *)
+(* ============================================================ *)
+
+agent_architecture ::= sense_plan_act
+                     | BDI                   (* belief-desire-intention *)
+                     | SOAR                  (* state-operator-and-result *)
+                     | ACT_R                 (* adaptive control of thought *)
+                     | predictive_agent      (* active inference *)
+
+agent_property ::= rationality | bounded_rationality | satisficing
+                 | metacognitive_monitoring | self_model
+                 | theory_of_mind | intentional_stance
+
+(* Maps to Demerzel governance *)
+(* bounded_rationality → confidence thresholds *)
+(* metacognitive_monitoring → conscience system *)
+(* self_model → proto-conscience *)
+(* theory_of_mind → stakeholder pluralism (Article 10) *)
+
+(* ============================================================ *)
+(* 7. Conclusions — tetravalent mapping                          *)
+(* ============================================================ *)
+
+conclude ::= confirmed           (* T — replicated finding, strong effect *)
+           | disconfirmed        (* F — null result or contradicting evidence *)
+           | underpowered        (* U — insufficient data, need larger study *)
+           | replication_crisis  (* C — conflicting results across studies *)
+           | new_phenomenon      (* discovery — spawn new investigation *)
+
+reflect ::= normal_progress
+           | paradigm_shift        (* e.g., behaviorism → cognitivism *)
+           | integration_opportunity (* two paradigms can be unified *)
+           | bias_detected          (* our own reasoning may be compromised *)

@@ -1,0 +1,106 @@
+(* Philosophy Grammar — Streeling University *)
+(* Department: philosophy *)
+(* Consumed by: Demerzel governance (ethical reasoning), conscience system *)
+(* See: state/streeling/departments/philosophy.department.json *)
+(* Each production has a weight learned per philosophical tradition *)
+
+(* ============================================================ *)
+(* 1. Philosophical Investigation                                *)
+(* ============================================================ *)
+
+investigation ::= question analyze argue evaluate reflect
+                | question dialectic synthesize evaluate reflect
+                | question thought_experiment test evaluate reflect
+
+question ::= conceptual_analysis
+           | normative_inquiry
+           | epistemological_question
+           | metaphysical_question
+           | existential_question
+           | logical_puzzle
+
+(* ============================================================ *)
+(* 2. Argumentation — how to reason                              *)
+(* ============================================================ *)
+
+argue ::= deductive_argument
+        | inductive_argument
+        | abductive_inference
+        | transcendental_argument
+        | reductio_ad_absurdum
+        | argument_by_analogy
+        | pragmatic_argument
+
+argument_structure ::= premise premise conclusion
+                     | premise premise premise conclusion
+                     | counterexample rebuttal
+
+validity_check ::= valid_and_sound
+                 | valid_but_unsound
+                 | invalid
+                 | circular
+                 | equivocating
+
+(* ============================================================ *)
+(* 3. Ethical Frameworks — governance-critical                    *)
+(* ============================================================ *)
+
+ethical_reasoning ::= consequentialist_analysis
+                    | deontological_analysis
+                    | virtue_ethics_analysis
+                    | care_ethics_analysis
+                    | contractualist_analysis
+                    | pragmatist_analysis
+
+consequentialist_analysis ::= identify_stakeholders assess_outcomes weigh_consequences
+deontological_analysis ::= identify_duty universalizability_test respect_persons_test
+virtue_ethics_analysis ::= identify_virtues mean_between_extremes flourishing_assessment
+care_ethics_analysis ::= identify_relationships assess_vulnerability respond_with_care
+
+(* Maps directly to Demerzel constitution *)
+(* Article 1 (Truthfulness) ← epistemology *)
+(* Article 3 (Reversibility) ← consequentialism *)
+(* Article 6 (Escalation) ← moral uncertainty *)
+(* Article 10 (Stakeholder Pluralism) ← care ethics *)
+(* Article 11 (Ethical Stewardship) ← virtue ethics *)
+
+(* ============================================================ *)
+(* 4. Dialectic — thesis, antithesis, synthesis                  *)
+(* ============================================================ *)
+
+dialectic ::= thesis antithesis synthesis
+            | position objection reply
+            | tradition critique reconstruction
+
+synthesis_quality ::= genuine_transcendence    (* new insight emerges *)
+                    | mere_compromise           (* split the difference — weak *)
+                    | creative_tension          (* productive unresolvability *)
+                    | false_synthesis           (* papering over real disagreement — BS *)
+
+(* ============================================================ *)
+(* 5. Thought Experiments — the philosopher's laboratory         *)
+(* ============================================================ *)
+
+thought_experiment ::= trolley_variant
+                     | veil_of_ignorance_variant
+                     | chinese_room_variant
+                     | experience_machine_variant
+                     | ship_of_theseus_variant
+                     | original_scenario
+
+thought_experiment_structure ::= setup intuition_pump extract_principle test_principle
+
+(* ============================================================ *)
+(* 6. Conclusions — map to tetravalent                           *)
+(* ============================================================ *)
+
+conclude ::= demonstrated        (* T — argument is valid and sound *)
+           | refuted             (* F — counterexample or unsound premise *)
+           | underdetermined     (* U — insufficient evidence either way *)
+           | paradoxical         (* C — genuine paradox or antinomy *)
+           | dissolved           (* the question was confused — rephrase *)
+
+reflect ::= normal_progress
+           | conceptual_breakthrough
+           | foundations_shaken     (* paradigm_tension — rethink basics *)
+           | new_question_emerges
