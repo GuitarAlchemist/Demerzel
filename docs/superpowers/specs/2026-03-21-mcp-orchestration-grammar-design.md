@@ -124,7 +124,7 @@ promotion_criteria ::= expression                      (* e.g., pattern.citation
 mcp_tool ::= namespace "." method
 
 namespace ::= "context7" | "notebooklm" | "openai" | "claude_mem"
-            | "windows" | "discord" | "gh"
+            | "windows" | "discord" | "gh" | "sympy"
             | "demerzel" | "seldon" | "conscience"
 
 (* Tool method names are validated against policies/mcp-tool-catalog.yaml *)
@@ -172,6 +172,11 @@ type_hint ::= "string" | "list" | "repo" | "belief" | "any"
 |------|-----------|-------------|
 | `context7.query(library, topic)` | context7 | Fetch library documentation |
 | `context7.resolve(library)` | context7 | Resolve library ID |
+| `sympy.solve(equation)` | sympy-mcp | Symbolic equation solving |
+| `sympy.diff(expression, var)` | sympy-mcp | Symbolic differentiation |
+| `sympy.integrate(expression, var)` | sympy-mcp | Symbolic integration |
+| `sympy.simplify(expression)` | sympy-mcp | Algebraic simplification |
+| `sympy.fit_powerlaw(data)` | sympy-mcp | Power law distribution fitting (fractal analysis) |
 | `notebooklm.ask(question, notebook?)` | notebooklm | Research with source citations |
 | `notebooklm.list()` | notebooklm | List available notebooks |
 | `claude_mem.search(query)` | claude-mem | Recall from persistent memory |
@@ -465,6 +470,59 @@ nocompound(reason: "trivial lookup, no learnings to harvest")
 
 ---
 
+## Fractal Compounding
+
+Meta-compounding exhibits fractal structure — the compound operation is self-similar at every scale. See `logic/fractal-compounding.md` for the full formal spec.
+
+**Key concepts integrated into MOG:**
+
+- **Self-similarity**: The compound phase has identical shape at step, pipeline, cycle, session, and evolution levels
+- **Compounding dimension (D_c)**: Measures value density growth. Target: 1.2-1.6 (superlinear but bounded)
+- **Power law detection**: SymPy MCP fits citation distributions to detect healthy vs fragile concentration
+- **ERGOL vs LOLLI**: Distinguish real governance improvements from artifact inflation at every scale
+- **Conservation of learning momentum**: Scale invariance (Noether/Bourbakof) conserves p_L across cycles
+
+### Fractal Analysis Pipeline (`pipelines/fractal-analysis.mog`)
+
+```
+pipeline fractal_analysis(cycles: list) {
+  context.analysis_type = "fractal"
+  context.beliefs.compounding_healthy = { "T": 0.0, "F": 0.0, "U": 1.0, "C": 0.0 }
+}
+
+  citations = claude_mem.search("evolution citations")
+
+  parallel {
+    dimension = sympy.solve("log(value_ratio) / log(scale_ratio)"),
+    powerlaw = sympy.fit_powerlaw(citations),
+    momentum = sympy.diff("beliefs_T_gained - beliefs_T_lost", "cycle")
+  }
+
+  if ?"compounding dimension below 1.0" {
+    conscience.premortem({
+      "action": "governance may be bloating without real value",
+      "irreversibility": "low",
+      "blast_radius": "ecosystem"
+    })
+  }
+
+  if ?"power law too extreme (top 5% = 90%+ citations)" {
+    discord.post("general", fragility_alert(powerlaw))
+  }
+
+  ergol_ratio = compute_ergol_lolli(context)
+
+  discord.post("general", fractal_report(dimension, powerlaw, momentum, ergol_ratio))
+
+  compound {
+    harvest(context)
+    promote_if(dimension.value >= 1.2)
+    teach(context.learnings -> seldon)
+  }
+```
+
+---
+
 ## Artifacts Summary
 
 | # | Artifact | Type | Path | Status |
@@ -477,8 +535,11 @@ nocompound(reason: "trivial lookup, no learnings to harvest")
 | 6 | Driver cycle pipeline | MOG | `pipelines/driver-cycle.mog` | New |
 | 7 | Seldon research pipeline | MOG | `pipelines/seldon-research.mog` | New |
 | 8 | Meta-compounding pipeline | MOG | `pipelines/meta-compound.mog` | New |
-| 9 | Behavioral tests | Markdown | `tests/behavioral/mcp-orchestration-cases.md` | New |
-| 10 | Pipeline state directory | Directory | `state/pipelines/` | New |
+| 9 | Fractal analysis pipeline | MOG | `pipelines/fractal-analysis.mog` | New |
+| 10 | Fractal compounding spec | Logic doc | `logic/fractal-compounding.md` | New |
+| 11 | Fractal compounding tests | Behavioral | `tests/behavioral/fractal-compounding-cases.md` | New |
+| 12 | MOG behavioral tests | Markdown | `tests/behavioral/mcp-orchestration-cases.md` | New |
+| 13 | Pipeline state directory | Directory | `state/pipelines/` | New |
 
 ---
 
