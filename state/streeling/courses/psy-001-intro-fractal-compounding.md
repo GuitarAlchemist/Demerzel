@@ -88,10 +88,12 @@ Think of it like compound interest. D_c = 1.0 is simple interest (linear). D_c >
 
 ## 4. ERGOL vs LOLLI — Real Value vs Inflation
 
-From Jean-Pierre Petit's *Economicon* comic, we borrow two concepts:
+From Jean-Pierre Petit's [*Economicon*](https://archive.org/details/Economicon-English-JeanPierrePetit) comic ([read online](https://archive.org/stream/Economicon-English-JeanPierrePetit/jppeconomicsenglish_djvu.txt)), we borrow two concepts:
 
 - **ERGOL** = real productive capacity (actual governance improvements)
 - **LOLLI** = monetary volume (artifact count without regard to quality)
+
+In the Economicon, Petit uses a fluid-dynamics model of economics: ERGOL is the real productive substance flowing through the economy, while LOLLI is the monetary wrapper around it. When LOLLI expands faster than ERGOL, you get inflation — prices rise but nothing real was created. The same principle applies to governance.
 
 At every fractal level, you must measure ERGOL, not LOLLI:
 
@@ -109,7 +111,7 @@ At every fractal level, you must measure ERGOL, not LOLLI:
 
 ## 5. Conservation of Learning Momentum
 
-From Jean-Pierre Petit's *Bourbakof* comic, we learn **Noether's theorem**: every continuous symmetry of a system has a corresponding conserved quantity.
+From Jean-Pierre Petit's [*Bourbakof*](https://archive.org/details/TheseAnglaise) comic, we learn **Noether's theorem**: every continuous symmetry of a system has a corresponding conserved quantity.
 
 In fractal compounding, the symmetry is **scale invariance** — the compound operation has the same shape at every level. The conserved quantity is **learning momentum (p_L)**:
 
@@ -125,7 +127,7 @@ This is why the `nocompound` opt-out triggers a conscience signal. It's not just
 
 ## 6. The Limits of Psychohistory
 
-From the *Logotron*: Gödel's incompleteness theorem tells us no formal system can fully verify itself.
+From Petit's [*Logotron*](https://archive.org/details/TheseAnglaise) ([full text](https://archive.org/stream/TheseAnglaise/logotron_eng_djvu.txt)): Gödel's incompleteness theorem tells us no formal system can fully verify itself.
 
 Applied to compounding: you cannot perfectly predict the output of compounding. Each cycle reveals learnings you couldn't have anticipated. The fractal has infinite detail at finite scale — there's always more to discover.
 
@@ -168,5 +170,5 @@ The discipline of psychohistory accepts this. We don't aim for perfect predictio
 - Noether's theorem applies to scale-invariant governance processes
 - JPP's Economicon ERGOL/LOLLI distinction maps to governance value measurement
 - Fractal dimension between 1.2-1.6 correlates with sustainable governance growth
-- Sources: [fractal-compounding.md](../../logic/fractal-compounding.md), Bourbakof, Economicon, Logotron
+- Sources: [Fractal Compounding Spec](../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (Noether's theorem), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (Gödel's incompleteness)
 - Belief state: T(0.70) F(0.05) U(0.20) C(0.05)
