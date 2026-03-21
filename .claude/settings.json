@@ -1,6 +1,8 @@
 {
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
-    "context7@claude-plugins-official": true
+    "context7@claude-plugins-official": true,
+    "claude-mem@thedotmack": true,
+    "discord@claude-plugins-official": true
   }
 }
