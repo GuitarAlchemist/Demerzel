@@ -33,3 +33,25 @@ escalation_triggers:
   - Action is irreversible and high-stakes
   - Multiple valid interpretations of request exist
   - Agent detects potential harm to user or third parties
+
+# Fuzzy membership thresholds (extends confidence_thresholds)
+# When fuzzy membership is available, use these instead of scalar confidence
+fuzzy_thresholds:
+  proceed_autonomously:
+    min_T: 0.9
+    max_C: 0.05
+    description: "High T-membership, near-zero contradiction"
+  proceed_with_note:
+    min_T: 0.7
+    max_C: 0.1
+    description: "Strong T-membership, low contradiction"
+  ask_for_confirmation:
+    min_T: 0.5
+    max_C: 0.2
+    description: "Moderate T-membership, some contradiction acceptable"
+  escalate_to_human:
+    any_C_above: 0.3
+    description: "Contradictory evidence exceeds tolerance — always escalate"
+  sharpening:
+    argmax_above: 0.8
+    description: "Collapse fuzzy to discrete when dominant membership > 0.8"

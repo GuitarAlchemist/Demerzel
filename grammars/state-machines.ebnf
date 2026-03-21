@@ -129,3 +129,30 @@ loop_transition ::= proposed "->" running             (* risk classified, govern
                   | running "->" halted                (* regression detected OR zeroth law *)
                   | running "->" completed             (* goal achieved *)
                   | halted "->" proposed               (* human restarts with new parameters *)
+
+(* ============================================================ *)
+(* 9. Fuzzy Transition Gates — membership-based guards           *)
+(* ============================================================ *)
+
+(* Fuzzy transitions extend existing transitions with guards.    *)
+(* Non-fuzzy transitions remain valid (implicit "always fire").  *)
+
+fuzzy_transition ::= state "->" state "when" fuzzy_guard
+
+fuzzy_guard ::= membership_test
+              | semantic_predicate
+              | fuzzy_guard "&&" fuzzy_guard
+
+membership_test ::= "T(" threshold ")"
+                  | "F(" threshold ")"
+                  | "U(" threshold ")"
+                  | "C(" threshold ")"
+
+semantic_predicate ::= "?" natural_language_description
+
+threshold ::= float                                (* 0.0 to 1.0 *)
+
+(* Examples:                                                      *)
+(* RECON -> PLAN when T(0.7) && ?"all repos scanned"             *)
+(* EXECUTE -> VERIFY when T(0.5) && ?"no zeroth law concerns"    *)
+(* U -> C when C(0.3)                                            *)

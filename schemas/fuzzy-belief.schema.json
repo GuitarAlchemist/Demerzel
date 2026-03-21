@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-belief",
+  "title": "Fuzzy Belief State",
+  "description": "Extends tetravalent belief state with optional fuzzy membership distribution. When membership is present, truth_value must equal the argmax key (tiebreak: C > U > T > F). Confidence becomes meta-confidence in the distribution itself.",
+  "allOf": [
+    { "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state" }
+  ],
+  "properties": {
+    "membership": {
+      "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution",
+      "description": "Optional fuzzy partition over T/F/U/C. When present, confidence is meta-confidence (trust in the distribution), and truth_value must match argmax."
+    }
+  }
+}

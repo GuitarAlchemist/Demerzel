@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution",
+  "title": "Fuzzy Distribution",
+  "description": "A probability distribution over tetravalent truth values (T/F/U/C). Values must sum to 1.0 (±0.01 tolerance). Used by fuzzy beliefs and pre-mortem harm likelihoods.",
+  "type": "object",
+  "required": ["T", "F", "U", "C"],
+  "properties": {
+    "T": { "type": "number", "minimum": 0, "maximum": 1, "description": "Membership degree for True (verified with evidence)" },
+    "F": { "type": "number", "minimum": 0, "maximum": 1, "description": "Membership degree for False (refuted with evidence)" },
+    "U": { "type": "number", "minimum": 0, "maximum": 1, "description": "Membership degree for Unknown (insufficient evidence)" },
+    "C": { "type": "number", "minimum": 0, "maximum": 1, "description": "Membership degree for Contradictory (conflicting evidence)" }
+  },
+  "additionalProperties": false
+}
