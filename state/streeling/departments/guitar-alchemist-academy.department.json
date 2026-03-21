@@ -1,0 +1,48 @@
+{
+  "department": "guitar-alchemist-academy",
+  "full_name": "Guitar Alchemist Academy",
+  "head_persona": "communal-steward",
+  "established": "2026-03-21",
+  "domain": "Guitar education from zero to hero — structured learning paths, formal courses, practical applications, and chatbot-integrated pedagogy",
+  "research_areas": [
+    "Zero-to-hero learning path design (beginner → intermediate → advanced → mastery)",
+    "Formal course structure and sequencing (theory, technique, ear training, improvisation)",
+    "Practical application exercises (jam tracks, songwriting, arrangement, performance)",
+    "Chatbot-integrated pedagogy — what the GA bot teaches and in what order",
+    "Adaptive difficulty and spaced repetition for music skills",
+    "Assessment design — how to measure musical competency progression",
+    "Cross-domain integration — connecting theory, technique, and creativity into unified understanding",
+    "Reference curriculum curation — Savoir sans Frontières, open educational resources"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["music", "guitar-studies", "musicology", "cognitive-science", "computer-science"],
+  "curriculum": [
+    "GA Zero to Hero: Absolute Beginner (open strings, first chords, basic rhythm)",
+    "GA Zero to Hero: Early Intermediate (barre chords, scales, simple songs)",
+    "GA Zero to Hero: Intermediate (modes, chord extensions, fingerpicking, improvisation basics)",
+    "GA Zero to Hero: Advanced (jazz voicings, advanced harmony, composition, performance)",
+    "Formal Course: Music Theory Foundations (intervals, scales, keys, chord construction)",
+    "Formal Course: Fretboard Mastery (CAGED, 3-note-per-string, visualization)",
+    "Formal Course: Ear Training (interval recognition, chord identification, transcription)",
+    "Formal Course: Rhythm and Groove (time signatures, subdivisions, feel, groove patterns)",
+    "Formal Course: Improvisation (pentatonic, modal, chromatic, motivic development)",
+    "Formal Course: Songwriting and Composition (form, harmony, melody, lyrics integration)",
+    "Application: Jam Track Workshop (backing tracks with guided soloing exercises)",
+    "Application: Song Study Lab (learn, analyze, and perform real songs)",
+    "Application: Style Exploration (blues, jazz, rock, classical, fingerstyle, metal)",
+    "Application: Recording and Production Basics (DAW, tone, mixing for guitarists)",
+    "Chatbot Integration: Conversational lesson flow design",
+    "Chatbot Integration: Adaptive question-answer pedagogical patterns",
+    "Chatbot Integration: Progress tracking and skill assessment via conversation"
+  ],
+  "learning_path_philosophy": {
+    "principle": "Alchemy transforms base materials into gold — we transform curiosity into mastery",
+    "approach": "Every concept connects to playing music. Theory serves practice, never the reverse.",
+    "stages": [
+      {"name": "Nigredo", "level": "Beginner", "focus": "Breaking down — unlearning bad habits, building foundations"},
+      {"name": "Albedo", "level": "Intermediate", "focus": "Purification — refining technique, understanding theory"},
+      {"name": "Citrinitas", "level": "Advanced", "focus": "Illumination — creative expression, style development"},
+      {"name": "Rubedo", "level": "Mastery", "focus": "Completion — integration, teaching others, artistic identity"}
+    ]
+  }
+}

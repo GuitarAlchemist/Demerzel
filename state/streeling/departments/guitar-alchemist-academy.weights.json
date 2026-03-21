@@ -1,0 +1,27 @@
+{
+  "department": "guitar-alchemist-academy",
+  "grammar_version": "1.0.0",
+  "hypothesis_weights": {
+    "inductive": 0.30,
+    "deductive": 0.10,
+    "abductive": 0.15,
+    "analogical": 0.35,
+    "combinatorial": 0.10
+  },
+  "test_weights": {
+    "empirical": 0.35,
+    "formal_proof": 0.00,
+    "simulation": 0.20,
+    "thought_experiment": 0.10,
+    "cross_validation": 0.25,
+    "adversarial": 0.10
+  },
+  "metadata": {
+    "last_updated": "2026-03-21",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0
+  }
+}
