@@ -1,0 +1,61 @@
+(* Music Theory Investigation Grammar — Streeling University *)
+(* Department: World Music / Music Theory *)
+(* Weights are learned per department from research cycle outcomes *)
+(* Consumed by: TARS WeightedGrammar, ga theory agents *)
+(* See: docs/superpowers/specs/2026-03-18-probabilistic-research-grammars-design.md *)
+
+analysis ::= harmonic_analysis
+           | melodic_analysis
+           | rhythmic_analysis
+           | form_analysis
+
+(* Chord construction — root + quality + optional extensions/inversions/voicings *)
+chord_construction ::= root quality
+                     | root quality extensions
+                     | root quality inversions
+                     | root quality extensions voicings
+
+quality ::= major | minor | diminished | augmented
+           | dominant_7 | major_7 | minor_7 | half_diminished
+           | diminished_7 | augmented_7 | sus2 | sus4
+
+extensions ::= ninth | eleventh | thirteenth | add_tone | altered
+
+inversions ::= root_position | first_inversion | second_inversion | third_inversion
+
+voicings ::= close_voicing | open_voicing | drop_2 | drop_3 | shell | cluster
+
+(* Scale exploration — modal and synthetic scales *)
+scale_exploration ::= mode | pentatonic_variant | blues_scale
+                    | harmonic_minor | melodic_minor
+                    | whole_tone | diminished_scale | chromatic
+
+mode ::= ionian | dorian | phrygian | lydian | mixolydian | aeolian | locrian
+
+pentatonic_variant ::= major_pentatonic | minor_pentatonic | hirajoshi | kumoi | in_sen
+
+(* Interval reasoning — quality + size *)
+interval_reasoning ::= interval_quality interval_size
+
+interval_quality ::= perfect | major_interval | minor_interval | augmented_interval | diminished_interval
+
+interval_size ::= unison | second | third | fourth | fifth | sixth | seventh | octave | compound
+
+(* Progression patterns — diatonic through chromatic techniques *)
+progression_pattern ::= diatonic_progression
+                      | chromatic_progression
+                      | modal_interchange
+                      | secondary_dominant
+                      | tritone_substitution
+                      | deceptive_resolution
+
+(* Voice leading — motion types and resolution *)
+voice_leading ::= parallel_motion | contrary_motion | oblique_motion | similar_motion
+
+(* Conclusions map to tetravalent logic *)
+(* confirm_theory → T, refute_theory → F, ambiguous → U, conflicting_analyses → C *)
+conclude ::= confirm_theory
+           | refute_theory
+           | ambiguous
+           | conflicting_analyses
+           | revise_analysis

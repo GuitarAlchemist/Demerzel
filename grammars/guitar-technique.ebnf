@@ -1,0 +1,52 @@
+(* Guitar Technique Grammar — Streeling University *)
+(* Department: Guitar Alchemist / Applied Technique *)
+(* Weights are learned per department from practice cycle outcomes *)
+(* Consumed by: TARS WeightedGrammar, ga technique agents *)
+(* See: docs/superpowers/specs/2026-03-18-probabilistic-research-grammars-design.md *)
+
+technique ::= fingerpicking | strumming | hybrid_picking | sweep_picking
+            | tapping | legato | bending | vibrato | slide | harmonics
+
+(* Harmonic subtypes *)
+harmonics ::= natural_harmonic | artificial_harmonic | pinch_harmonic | tap_harmonic
+
+(* Position systems — CAGED and beyond *)
+position ::= open_position | barre_chord | caged_shape | moveable_pattern
+
+caged_shape ::= c_shape | a_shape | g_shape | e_shape | d_shape
+
+(* Fretboard navigation — locating notes and patterns *)
+fretboard_navigation ::= string_set fret_range
+                        | position_shift direction
+                        | octave_pattern
+                        | interval_shape
+
+string_set ::= string_1 | string_2 | string_3 | string_4 | string_5 | string_6
+             | treble_strings | bass_strings | adjacent_pair
+
+fret_range ::= open_frets | lower_register | mid_register | upper_register
+
+direction ::= ascending | descending | lateral
+
+(* Practice routine — structured session phases *)
+practice_routine ::= warmup phase_sequence cooldown
+
+phase_sequence ::= scales_drill
+                 | chord_changes
+                 | rhythm_training
+                 | ear_training
+                 | repertoire
+                 | improvisation
+                 | phase_sequence phase_sequence
+
+(* Skill assessment maps to tetravalent logic *)
+(* mastered → T, deficient → F, untested → U, inconsistent → C *)
+assess ::= mastered
+          | deficient
+          | untested
+          | inconsistent
+          | progressing
+
+(* Meta: technique combinations for compound movements *)
+compound_technique ::= technique "+" technique
+                     | technique "+" technique "+" technique

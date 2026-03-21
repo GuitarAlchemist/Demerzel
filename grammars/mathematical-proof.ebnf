@@ -1,0 +1,54 @@
+(* Mathematical Proof Grammar — Streeling University *)
+(* Department: Mathematics / Formal Reasoning *)
+(* Weights are learned per department from proof verification outcomes *)
+(* Consumed by: TARS WeightedGrammar, tars reasoning agents *)
+(* See: docs/superpowers/specs/2026-03-18-probabilistic-research-grammars-design.md *)
+
+proof ::= conjecture proof_strategy reasoning_chain verification conclude
+        | conjecture proof_strategy verification conclude
+
+(* Proof strategies — how to attack the problem *)
+proof_strategy ::= direct
+                 | contradiction
+                 | contrapositive
+                 | induction
+                 | construction
+                 | exhaustion
+                 | probabilistic
+                 | combinatorial
+
+(* Induction subtypes *)
+induction ::= weak_induction | strong_induction | structural_induction | transfinite_induction
+
+(* Reasoning chain — logical building blocks *)
+reasoning_chain ::= axiom
+                  | definition
+                  | lemma
+                  | theorem
+                  | corollary
+                  | reasoning_chain reasoning_chain
+
+(* Mathematical domains — which field the proof lives in *)
+mathematical_domain ::= number_theory | algebra | geometry | topology
+                      | combinatorics | set_theory | category_theory
+                      | analysis | probability | logic
+
+(* Verification — how to check the proof *)
+verification ::= formal_check
+               | counterexample_search
+               | boundary_analysis
+               | edge_case
+               | peer_review
+               | machine_verification
+
+(* Conclusions map to tetravalent logic *)
+(* proven → T, disproven → F, undecidable → U, contradictory_results → C *)
+conclude ::= proven
+           | disproven
+           | undecidable
+           | contradictory_results
+           | conditional
+           | conjecture_refined
+
+(* Proof quality assessment *)
+quality ::= elegant | constructive | non_constructive | brute_force | incomplete

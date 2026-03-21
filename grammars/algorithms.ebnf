@@ -1,0 +1,55 @@
+(* Algorithms & Design Grammar — Streeling University *)
+(* Department: Computer Science / Algorithm Design *)
+(* Weights are learned per department from implementation and benchmark outcomes *)
+(* Consumed by: TARS WeightedGrammar, ix Rust implementations *)
+(* See: docs/superpowers/specs/2026-03-18-probabilistic-research-grammars-design.md *)
+
+investigation ::= problem paradigm data_structure complexity_analysis conclude
+                | problem design_pattern complexity_analysis conclude
+
+(* Algorithmic paradigms — fundamental approaches *)
+paradigm ::= divide_and_conquer
+           | dynamic_programming
+           | greedy
+           | backtracking
+           | branch_and_bound
+           | randomized
+           | streaming
+           | approximation
+
+(* Data structures — containers and their invariants *)
+data_structure ::= array | linked_list | tree | graph
+                 | hash_table | heap | trie | bloom_filter
+                 | skip_list | union_find
+
+tree ::= binary_search_tree | avl_tree | red_black_tree | b_tree | segment_tree
+
+graph ::= directed | undirected | weighted | dag | bipartite
+
+(* Complexity analysis — resource bounds *)
+complexity_analysis ::= time_complexity space_complexity
+                      | time_complexity space_complexity amortized
+                      | average_case worst_case
+
+time_complexity ::= constant | logarithmic | linear | linearithmic
+                  | quadratic | polynomial | exponential | factorial
+
+space_complexity ::= in_place | linear_space | polynomial_space
+
+(* Design patterns — structural solutions *)
+design_pattern ::= creational | structural | behavioral | concurrency | functional
+
+creational ::= factory | builder | singleton | prototype
+structural ::= adapter | decorator | facade | proxy | composite
+behavioral ::= observer | strategy | visitor | iterator | command
+concurrency ::= actor | pipeline | fork_join | work_stealing
+functional ::= monad | functor | applicative | lens | free_monad
+
+(* Conclusions map to tetravalent logic *)
+(* optimal → T, suboptimal → F, unknown_bound → U, contradictory_benchmarks → C *)
+conclude ::= optimal
+           | suboptimal
+           | unknown_bound
+           | contradictory_benchmarks
+           | pareto_tradeoff
+           | needs_profiling
