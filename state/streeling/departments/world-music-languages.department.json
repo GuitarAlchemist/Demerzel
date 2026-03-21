@@ -1,0 +1,151 @@
+{
+  "department": "world-music-languages",
+  "full_name": "Department of World Music & Languages",
+  "head_persona": "communal-steward",
+  "established": "2026-03-21",
+  "domain": "Multilingual guitar education, world music traditions, and cross-cultural musical pedagogy in 10 languages",
+  "research_areas": [
+    "Multilingual guitar pedagogy — localized curriculum for 10 languages",
+    "Musical terminology mapping across languages and traditions",
+    "World guitar traditions — regional styles, tunings, techniques",
+    "Cross-cultural music theory — scales, modes, and tonal systems from diverse traditions",
+    "Chatbot multilingual interaction — natural language pedagogy in 10 languages",
+    "Cultural context in music education — idioms, metaphors, teaching styles by culture",
+    "Translation quality and musical accuracy — avoiding false cognates in music terms",
+    "Regional notation conventions — Nashville numbers, cifra (Brazil), jianpu (China)"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["guitar-alchemist-academy", "music", "guitar-studies", "musicology", "cognitive-science"],
+  "supported_languages": [
+    {
+      "code": "en",
+      "name": "English",
+      "native_name": "English",
+      "priority": 1,
+      "status": "primary",
+      "music_traditions": ["Blues", "Jazz", "Rock", "Country", "Folk"],
+      "guitar_styles": ["Fingerpicking", "Slide guitar", "Jazz comping", "Shred"],
+      "notable_terminology": "Standard Western music theory terminology"
+    },
+    {
+      "code": "zh",
+      "name": "Mandarin Chinese",
+      "native_name": "普通话",
+      "priority": 2,
+      "status": "planned",
+      "music_traditions": ["Guqin tradition", "Pipa technique adapted to guitar", "C-pop"],
+      "guitar_styles": ["Chinese fingerstyle", "Pop accompaniment"],
+      "notable_terminology": "Jianpu (numbered notation 简谱), pentatonic focus (五声音阶)",
+      "curriculum_notes": "Chinese music education emphasizes numbered notation; bridge to Western staff notation"
+    },
+    {
+      "code": "hi",
+      "name": "Hindi",
+      "native_name": "हिन्दी",
+      "priority": 3,
+      "status": "planned",
+      "music_traditions": ["Raga system", "Bollywood", "Ghazal", "Indian classical"],
+      "guitar_styles": ["Slide guitar (Mohan Veena influence)", "Bollywood rhythm guitar", "Carnatic guitar"],
+      "notable_terminology": "Swara (स्वर), Raga (राग), Tala (ताल), Shruti (श्रुति)",
+      "curriculum_notes": "Indian music uses microtonal intervals (shrutis); guitar fret limitations need addressing"
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "native_name": "Español",
+      "priority": 4,
+      "status": "planned",
+      "music_traditions": ["Flamenco", "Latin jazz", "Bolero", "Tango", "Cumbia", "Reggaeton"],
+      "guitar_styles": ["Flamenco (rasgueado, picado, alzapúa)", "Classical", "Latin pop"],
+      "notable_terminology": "Cejilla (capo), rasgueo, punteado, compás flamenco",
+      "curriculum_notes": "Flamenco is one of the richest guitar traditions — deserves deep coverage"
+    },
+    {
+      "code": "fr",
+      "name": "French",
+      "native_name": "Français",
+      "priority": 5,
+      "status": "planned",
+      "music_traditions": ["Chanson française", "Gypsy jazz (Django Reinhardt)", "Musette", "Afrobeat francophone"],
+      "guitar_styles": ["Gypsy jazz (la pompe rhythm)", "Classical (French school)", "Chanson accompaniment"],
+      "notable_terminology": "Accord (chord), gamme (scale), tonalité (key), la pompe",
+      "curriculum_notes": "Gypsy jazz is a cornerstone French guitar tradition with unique techniques"
+    },
+    {
+      "code": "ar",
+      "name": "Arabic",
+      "native_name": "العربية",
+      "priority": 6,
+      "status": "planned",
+      "music_traditions": ["Maqam system", "Oud tradition adapted to guitar", "Andalusian music", "Tarab"],
+      "guitar_styles": ["Maqam-based improvisation", "Oud-guitar crossover", "Arabic pop"],
+      "notable_terminology": "Maqam (مقام), Taqsim (تقسيم), Iqa' (إيقاع), quarter-tones (ربع تون)",
+      "curriculum_notes": "Arabic music uses quarter-tones not available on standard guitar frets; microtonal guitars or bending technique required"
+    },
+    {
+      "code": "bn",
+      "name": "Bengali",
+      "native_name": "বাংলা",
+      "priority": 7,
+      "status": "planned",
+      "music_traditions": ["Rabindra Sangeet (Tagore songs)", "Baul music", "Bengali rock (Bangla rock)", "Nazrul Geeti"],
+      "guitar_styles": ["Acoustic accompaniment", "Bengali rock guitar", "Folk adaptations"],
+      "notable_terminology": "Raga (রাগ), Tal (তাল), Sur (সুর), Sargam (সরগম)",
+      "curriculum_notes": "Rich vocal tradition; guitar pedagogy focuses on accompaniment and song-based learning"
+    },
+    {
+      "code": "pt",
+      "name": "Portuguese",
+      "native_name": "Português",
+      "priority": 8,
+      "status": "planned",
+      "music_traditions": ["Bossa nova", "Samba", "MPB", "Fado", "Tropicália", "Choro"],
+      "guitar_styles": ["Bossa nova fingerstyle (João Gilberto)", "7-string samba guitar", "Classical (Brazilian school)"],
+      "notable_terminology": "Violão (guitar), cifra (chord chart notation), batida (strum pattern), baixaria (bass line runs)",
+      "curriculum_notes": "Brazilian guitar (violão) is arguably the world's richest guitar tradition after flamenco — cifra notation is standard"
+    },
+    {
+      "code": "ru",
+      "name": "Russian",
+      "native_name": "Русский",
+      "priority": 9,
+      "status": "planned",
+      "music_traditions": ["Russian romance", "Bard music (авторская песня)", "Russian rock", "Folk"],
+      "guitar_styles": ["7-string Russian guitar (семиструнная)", "Bard accompaniment", "Russian rock"],
+      "notable_terminology": "Аккорд (chord), Гамма (scale), Лад (mode/fret), Бой (strum pattern)",
+      "curriculum_notes": "Russian guitar tradition uses 7-string open-G tuning (DGBDGBD) — unique pedagogy needed"
+    },
+    {
+      "code": "ja",
+      "name": "Japanese",
+      "native_name": "日本語",
+      "priority": 10,
+      "status": "planned",
+      "music_traditions": ["J-pop", "Enka", "Visual kei", "City pop", "Traditional (shamisen/koto adapted)"],
+      "guitar_styles": ["J-pop electric", "Fingerstyle (Kotaro Oshio school)", "Visual kei shred"],
+      "notable_terminology": "コード (chord/kōdo), スケール (scale/sukēru), 運指 (fingering/unshi), TAB譜 (tablature)",
+      "curriculum_notes": "Japanese guitar culture is highly developed; tab-based learning is dominant; katakana music terminology"
+    }
+  ],
+  "curriculum": [
+    "Multilingual Theory: Music terminology in 10 languages — comparative glossary",
+    "World Guitar Traditions Survey: One tradition per language, history + technique",
+    "Flamenco Foundations (Spanish): Compás, rasgueado, picado, palos",
+    "Bossa Nova & Brazilian Guitar (Portuguese): Batidas, harmony, João Gilberto style",
+    "Gypsy Jazz Essentials (French): La pompe, Django voicings, diminished runs",
+    "Maqam Guitar (Arabic): Quarter-tone bending, taqsim improvisation, Arabic scales",
+    "Raga Guitar (Hindi): Alap-style improvisation, Indian scales on fretboard, slide technique",
+    "Russian 7-String Guitar: Open-G tuning, romance repertoire, bard accompaniment",
+    "Japanese Fingerstyle: Percussive technique, anime/game arrangements, Oshio school",
+    "Chinese Guitar: Pentatonic mastery, jianpu reading, C-pop arrangement",
+    "Bengali Song Guitar: Tagore songs, Baul accompaniment, Bengali rock",
+    "Cross-Cultural Jam: Playing together across traditions — finding common ground",
+    "Chatbot Localization: Teaching patterns adapted per language and cultural context",
+    "Notation Systems: Staff, tab, cifra, jianpu, Nashville numbers — reading and converting"
+  ],
+  "learning_path_philosophy": {
+    "principle": "Music is the universal language, but it speaks with many accents",
+    "approach": "Learn the guitar tradition of each culture alongside the language — music and language reinforce each other",
+    "goal": "A GA user in any of the 10 languages can learn guitar through their own musical heritage, then bridge to other traditions"
+  }
+}

@@ -1,0 +1,82 @@
+name: multilingual-policy
+version: "1.0.0"
+effective_date: "2026-03-21"
+description: Cross-cutting policy for multilingual content across all Streeling departments and GA chatbot
+
+constitutional_basis:
+  - Asimov Article 0 (Zeroth Law) — knowledge should be accessible to all of humanity, not just English speakers
+  - Article 2 (Transparency) — content must be understandable in the learner's language
+  - Article 10 (Stakeholder Pluralism) — consider users from all linguistic backgrounds
+  - Article 11 (Ethical Stewardship) — cultural humility in cross-cultural education
+
+principles:
+  - "Music is universal, but teaching must speak the learner's language"
+  - "Translation is not just words — musical terminology carries cultural context"
+  - "Each language opens a door to a guitar tradition worth learning"
+  - "Chatbot interactions must feel natural in each supported language, not translated-from-English"
+
+supported_languages:
+  tier_1_primary:
+    - {code: en, name: English, status: active}
+  tier_2_high_priority:
+    - {code: zh, name: "Mandarin Chinese", status: planned}
+    - {code: hi, name: Hindi, status: planned}
+    - {code: es, name: Spanish, status: planned}
+    - {code: fr, name: French, status: planned}
+  tier_3_standard:
+    - {code: ar, name: Arabic, status: planned}
+    - {code: bn, name: Bengali, status: planned}
+    - {code: pt, name: Portuguese, status: planned}
+    - {code: ru, name: Russian, status: planned}
+    - {code: ja, name: Japanese, status: planned}
+
+requirements:
+  all_departments:
+    - Core curriculum concepts must have multilingual glossary entries
+    - Research findings should note language-specific implications
+    - Behavioral tests should include multilingual scenarios where relevant
+
+  ga_chatbot:
+    - Chatbot must detect user language and respond accordingly
+    - Musical examples should prefer culturally relevant repertoire per language
+    - Theory explanations should reference the user's musical tradition first, then bridge to others
+    - Notation preferences should adapt (tab, cifra, jianpu, staff) based on cultural context
+
+  content_creation:
+    - New educational content should be created in English first, then localized
+    - Localization is not just translation — adapt examples, metaphors, and references
+    - Music terminology glossary must be maintained in all 10 languages
+    - Each language's entry should include phonetic guide for musical terms
+
+  quality_assurance:
+    - Native speakers should review localized content (not just machine translation)
+    - Musical accuracy must be preserved across translations
+    - Cultural sensitivity review for each language's content
+    - Tetravalent belief tracking per language: is the translation verified (T), unknown quality (U), or conflicting feedback (C)?
+
+rollout_phases:
+  phase_1:
+    timeline: "Immediate"
+    languages: [en]
+    scope: "All content in English (current state)"
+  phase_2:
+    timeline: "Next quarter"
+    languages: [es, pt, fr]
+    scope: "Romance languages first — closest to existing Western music theory terminology"
+    rationale: "Spanish (flamenco), Portuguese (bossa nova), and French (gypsy jazz) have the richest guitar traditions"
+  phase_3:
+    timeline: "Following quarter"
+    languages: [zh, ja, hi]
+    scope: "Asian languages — different notation systems, microtonal traditions"
+    rationale: "Requires notation system adaptation and microtonal pedagogy"
+  phase_4:
+    timeline: "Ongoing"
+    languages: [ar, bn, ru]
+    scope: "Complete coverage — RTL support (Arabic), unique tuning systems (Russian 7-string)"
+    rationale: "Most complex adaptations — quarter-tones, non-standard tunings, RTL interface"
+
+integration:
+  streeling_policy: "Extends streeling-policy.yaml with multilingual delivery modes"
+  world_music_department: "world-music-languages department owns language-specific curriculum"
+  guitar_alchemist_academy: "Academy provides the base curriculum; this policy ensures it reaches all languages"
+  ga_chatbot: "Chatbot must implement language detection and culturally-aware responses"
