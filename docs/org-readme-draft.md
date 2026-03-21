@@ -136,6 +136,110 @@ grammars/
     └── human-psychohistory.ebnf       # Crisis prediction, power laws, Seldon Plan
 ```
 
+### 8. MCP Tool Federation (200+ tools)
+
+```
+Claude Code (orchestration)
+├── ix (Rust) — 40+ tools
+│   ├── Optimization: sgd, adam, pso, simulated_annealing
+│   ├── Search: a_star, mcts, minimax, beam_search
+│   ├── Neural: transformer, attention, mlp, cnn
+│   ├── Math: karnaugh, topology, category_theory, chaos
+│   ├── Signal: fft, wavelet, spectral_analysis
+│   ├── ML Pipeline: train, evaluate, predict, preprocess
+│   └── GPU: wgpu_compute, tensor_ops
+│
+├── tars (F#) — 151 tools
+│   ├── Code Analysis (18): analyze_code, find_code_smells, extract_symbols...
+│   ├── F# Language (7): fsharp_eval, fsharp_compile, fsharp_ce_template...
+│   ├── Grammar & DSL (7): create_grammar, grammar_weights, grammar_update...
+│   ├── Knowledge (21): graph_query, save_note, fetch_arxiv, search_web...
+│   ├── Agent & Persona (8): create_agent_prompt, delegate_task, query_agent...
+│   ├── Code Gen (12): write_code, patch_code, refactor_extract_function...
+│   ├── Reasoning (8): think_step_by_step, plan_task, reflect_on_task...
+│   ├── WoT Plans (4): tars_compile_plan, tars_execute_step, tars_validate_step...
+│   ├── Temporal (5): temporal_detect_contradictions, temporal_trace_evolution...
+│   └── + Testing, Git, Docs, Monitoring, Resilience, LLM, MCP mgmt...
+│
+├── ga (C#/.NET) — 50+ tools
+│   ├── Theory: ScaleInfoSkill, ChordExplanationSkill, IntervalInfoSkill
+│   ├── Analysis: HarmonicAnalysisSkill, ProgressionSuggestionSkill
+│   ├── Exploration: ModeExplorationSkill, FretboardNavigationSkill
+│   └── Creation: CompositionSkill, ArrangementSkill
+│
+└── Demerzel (governance) — 32 skills
+    ├── /demerzel: audit, recon, directive, promote, evolve, drive, loop...
+    ├── /seldon: research, teach, assess, deliver, notebook, research-cycle, course-pipeline
+    └── /persona, /tetravalent, /constitution, /alignment-check, /behavioral-test
+```
+
+**Risk gates:** Low (read-only) = no gate | Medium (side effects) = `T(0.7)` | High (governance) = `T(0.7) && C(<0.1)` | Critical = pre-mortem
+
+### 9. Constitutional Hierarchy
+
+```
+Asimov Constitution (immutable)
+├── Art 0: Zeroth Law — protect humanity
+├── Art 1: First Law — protect individuals
+├── Art 2: Second Law — obey authority
+├── Art 3: Third Law — self-preservation
+├── Art 4: Separation of understanding and goals
+└── Art 5: Consequence invariance
+    │
+    └── Default Constitution (operational ethics)
+        ├── Art 1: Truthfulness          ├── Art 7: Auditability
+        ├── Art 2: Transparency          ├── Art 8: Observability
+        ├── Art 3: Reversibility         ├── Art 9: Bounded Autonomy
+        ├── Art 4: Proportionality       ├── Art 10: Stakeholder Pluralism
+        ├── Art 5: Non-Deception         └── Art 11: Ethical Stewardship
+        ├── Art 6: Escalation
+        │
+        └── 22 Policies (versioned, evolvable)
+            ├── Core: alignment, rollback, self-modification, kaizen, recon
+            ├── Knowledge: streeling, multilingual, grammar-evolution
+            ├── Governance: audit, autonomous-loop, staleness-detection
+            ├── Ethics: conscience, proto-conscience, belief-currency
+            ├── Operations: auto-remediation, context-management, multi-model
+            └── Research: scientific-objectivity, governance-experimentation
+                │
+                └── 14 Personas (behavioral profiles)
+                    ├── demerzel (governance coordinator)
+                    ├── seldon (knowledge transfer)
+                    ├── skeptical-auditor, kaizen-optimizer
+                    ├── reflective-architect, system-integrator
+                    ├── communal-steward, theory-agent
+                    └── + 6 more specialized personas
+```
+
+### 10. Streeling University
+
+```
+Streeling University (Chancellor: Seldon)
+├── Music Departments
+│   ├── Music — harmony, composition, analysis
+│   ├── Guitar Studies — technique, fretboard, CAGED
+│   ├── Musicology — history, culture, comparative study
+│   ├── Guitar Alchemist Academy — beginner to Satriani
+│   └── World Music & Languages — 12 languages, 6 guitar traditions
+│
+├── Science Departments
+│   ├── Mathematics — proofs, algebra, topology
+│   ├── Physics — acoustics, vibration, instrument modeling
+│   └── Computer Science — algorithms, ML pipelines
+│
+├── Human Sciences
+│   ├── Philosophy — ethics, dialectic, epistemology
+│   ├── Cognitive Science — biases, agent cognition
+│   ├── Futurology — scenarios, signals, horizons
+│   └── Psychohistory — statistical prediction, crisis anticipation
+│
+└── Applied
+    └── Product Management — communication, BS detection
+
+Courses: 23 modules in 6 languages (EN, ES, PT, FR, IT, DE)
+Pipeline: /seldon research-cycle → /seldon course-pipeline → publish
+```
+
 ---
 
 ## Community
