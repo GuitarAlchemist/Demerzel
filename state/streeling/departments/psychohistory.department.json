@@ -1,0 +1,48 @@
+{
+  "department": "psychohistory",
+  "full_name": "Department of Psychohistory",
+  "head_persona": "seldon",
+  "established": "2026-03-21",
+  "domain": "Statistical prediction of large-scale system behavior — governance trend forecasting, ecosystem health modeling, and crisis anticipation through mathematical sociology",
+  "named_after": "Hari Seldon's discipline from Isaac Asimov's Foundation series — using mathematics to predict the broad strokes of future history",
+  "research_areas": [
+    "Governance trend prediction — forecasting health score trajectories",
+    "Fractal compounding analysis — measuring D_c, power laws, learning momentum",
+    "Crisis anticipation — detecting pre-crisis patterns before they manifest",
+    "Ecosystem modeling — how changes in one repo propagate to others",
+    "Statistical governance — applying probability theory to policy effectiveness",
+    "Seldon Plan monitoring — are governance improvements following predicted curves?",
+    "Belief state epidemiology — how beliefs spread across agents and repos",
+    "Governance phase transitions — detecting when the system shifts from one regime to another",
+    "Power law dynamics — Pareto/Zipf distributions in artifact effectiveness",
+    "Conservation laws — Noether's theorem applied to learning momentum"
+  ],
+  "consumer_repos": ["demerzel", "ix", "tars", "ga"],
+  "related_departments": ["futurology", "mathematics", "cognitive-science", "philosophy"],
+  "curriculum": [
+    "Foundations of Psychohistory: From Asimov to governance mathematics",
+    "Statistical Mechanics of Governance: treating agent populations as statistical ensembles",
+    "Fractal Compounding Theory: self-similarity, D_c, ERGOL/LOLLI metrics",
+    "Power Law Detection: identifying Pareto distributions in governance data",
+    "Conservation Laws: Noether's theorem and learning momentum preservation",
+    "Phase Transition Theory: when governance systems shift regimes",
+    "Crisis Detection: early warning signals from belief state distributions",
+    "The Seldon Plan: designing long-term governance improvement trajectories",
+    "Predictive Governance: using SymPy MCP for mathematical modeling",
+    "Limits of Prediction: Logotron incompleteness applied — what psychohistory cannot foresee"
+  ],
+  "mathematical_foundations": {
+    "from_jpp": {
+      "bourbakof": "Noether's theorem — symmetry conserves learning momentum",
+      "economicon": "ERGOL/LOLLI — real value vs artifact inflation",
+      "logotron": "Incompleteness — prediction has inherent limits"
+    },
+    "from_asimov": {
+      "foundation": "Large populations are statistically predictable even when individuals aren't",
+      "second_foundation": "The plan requires guardians who can adjust it (Demerzel's role)",
+      "foundations_edge": "Chaos at the edges — individual actions can disrupt statistical predictions"
+    },
+    "tools": ["sympy-mcp", "fractal-analysis.mog", "governance-reflection.mog"]
+  },
+  "key_principle": "Psychohistory cannot predict individual actions — it predicts the statistical behavior of large governance systems. One agent's decision is unpredictable, but the aggregate behavior of 14 personas across 4 repos follows mathematical laws."
+}
