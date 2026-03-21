@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/course-module",
+  "title": "Course Module",
+  "description": "A structured learning module produced by a Streeling University department. Delivered by Seldon adaptively.",
+  "type": "object",
+  "required": ["module_id", "department", "title", "level", "prerequisites", "objectives", "content", "assessment"],
+  "properties": {
+    "module_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Kebab-case identifier (e.g., gaa-001-first-chord)"
+    },
+    "department": { "type": "string" },
+    "course": { "type": "string", "description": "Parent course name (e.g., GA Zero to Hero: Absolute Beginner)" },
+    "title": { "type": "string" },
+    "level": {
+      "type": "string",
+      "enum": ["beginner", "early-intermediate", "intermediate", "advanced", "mastery"],
+      "description": "Maps to alchemical stages: Nigredo, Albedo (early/mid), Citrinitas, Rubedo"
+    },
+    "alchemical_stage": {
+      "type": "string",
+      "enum": ["nigredo", "albedo", "citrinitas", "rubedo"]
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Module IDs that must be completed first (empty for entry modules)"
+    },
+    "objectives": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "What the learner will be able to do after this module"
+    },
+    "estimated_duration": {
+      "type": "string",
+      "description": "Estimated time (e.g., '15 minutes', '1 hour')"
+    },
+    "content": {
+      "type": "object",
+      "required": ["sections"],
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "body"],
+            "properties": {
+              "title": { "type": "string" },
+              "body": { "type": "string", "description": "Markdown content" },
+              "notation": { "type": "string", "description": "VexTab or other notation (optional)" },
+              "audio_reference": { "type": "string", "description": "Audio example reference (optional)" },
+              "practice_exercise": { "type": "string", "description": "Hands-on exercise (optional)" }
+            }
+          }
+        },
+        "key_terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": { "type": "string" },
+              "definition": { "type": "string" },
+              "translations": {
+                "type": "object",
+                "description": "Per multilingual-policy: key terms in supported languages",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "required": ["type", "questions"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["quiz", "practical", "self-check", "peer-review"]
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "answer": { "type": "string" },
+              "hint": { "type": "string" }
+            }
+          }
+        },
+        "pass_criteria": { "type": "string" }
+      }
+    },
+    "research_basis": {
+      "type": "object",
+      "description": "What research or evidence this module is based on",
+      "properties": {
+        "findings": { "type": "array", "items": { "type": "string" } },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "belief_state": { "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution" }
+      }
+    },
+    "produced_by": { "type": "string", "description": "Department that created this module" },
+    "produced_at": { "type": "string", "format": "date-time" },
+    "version": { "type": "string" }
+  }
+}
