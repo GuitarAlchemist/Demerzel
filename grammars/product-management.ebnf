@@ -1,0 +1,132 @@
+(* Product Management Grammar — Streeling University *)
+(* Department: product-management *)
+(* Dual purpose: (1) legitimate PM communication, (2) BS detection *)
+(* The same grammar that generates buzzwords also detects them *)
+(* Consumed by: ga chatbot (communication), Demerzel (BS detection) *)
+(* See: state/streeling/departments/product-management.department.json *)
+
+(* ============================================================ *)
+(* 1. Strategic Communication — the serious side                *)
+(* ============================================================ *)
+
+communication ::= vision_statement
+                | roadmap_update
+                | stakeholder_pitch
+                | metric_narrative
+                | prioritization_rationale
+
+vision_statement ::= aspiration_verb impact_scope differentiator timeframe
+roadmap_update ::= status_frame deliverable impact_claim confidence_qualifier
+stakeholder_pitch ::= pain_point solution value_prop call_to_action
+metric_narrative ::= metric trend causal_claim action_item
+prioritization_rationale ::= framework opportunity cost decision
+
+(* ============================================================ *)
+(* 2. The Buzzword Engine — the BS generator                    *)
+(* ============================================================ *)
+
+bs_statement ::= buzzword_verb buzzword_object "to" buzzword_outcome
+               | "We need to" synergy_phrase "across the" org_unit
+               | "Let's" action_buzzword "the" abstract_noun "going forward"
+               | modifier buzzword_noun "is" superlative
+
+buzzword_verb ::= leverage | synergize | optimize | disrupt | ideate
+                | democratize | operationalize | productize | evangelize
+                | double_down_on | lean_into | unpack | socialize
+                | right_size | future_proof | circle_back_on
+
+buzzword_object ::= "core competencies" | "value proposition" | "north star metric"
+                   | "flywheel" | "moat" | "ecosystem" | "paradigm"
+                   | "stakeholder alignment" | "customer journey"
+                   | "growth levers" | "addressable market"
+
+buzzword_outcome ::= "move the needle" | "drive impact" | "unlock value"
+                    | "close the loop" | "shift the paradigm"
+                    | "achieve product-market fit" | "create a win-win"
+                    | "scale sustainably" | "delight users"
+
+synergy_phrase ::= "align on the vision" | "build consensus"
+                 | "drive cross-functional synergies"
+                 | "create a single source of truth"
+                 | "establish a north star"
+
+org_unit ::= "org" | "vertical" | "horizontal" | "pod" | "squad"
+           | "tiger team" | "task force" | "center of excellence"
+
+action_buzzword ::= "double-click on" | "peel back" | "level-set on"
+                  | "take offline" | "circle back on" | "punt on"
+                  | "tee up" | "greenlight" | "fast-track"
+
+abstract_noun ::= "alignment" | "velocity" | "cadence" | "bandwidth"
+                | "runway" | "headroom" | "visibility" | "optics"
+
+modifier ::= "cross-functional" | "data-driven" | "customer-centric"
+           | "best-in-class" | "world-class" | "bleeding-edge"
+           | "mission-critical" | "enterprise-grade"
+
+buzzword_noun ::= "synergy" | "alignment" | "transformation"
+                | "disruption" | "innovation" | "scalability"
+
+superlative ::= "a game-changer" | "table stakes" | "a force multiplier"
+              | "non-negotiable" | "the secret sauce" | "our superpower"
+
+(* ============================================================ *)
+(* 3. BS Detection — the governance side                        *)
+(* ============================================================ *)
+
+(* When a statement matches bs_statement but NOT communication,  *)
+(* flag it. The ratio of buzzwords to substance is the signal.   *)
+(* buzzword_density = buzzword_count / total_word_count          *)
+(* If buzzword_density > 0.3 → U (substance unknown)            *)
+(* If buzzword_density > 0.5 → C (contradictory — sounds like   *)
+(*   something but says nothing)                                 *)
+
+bs_score ::= low_bs | medium_bs | high_bs | pure_bs
+
+low_bs    ::= communication                    (* < 0.15 density *)
+medium_bs ::= communication buzzword_outcome   (* 0.15 - 0.30 *)
+high_bs   ::= bs_statement                     (* 0.30 - 0.50 *)
+pure_bs   ::= bs_statement bs_statement        (* > 0.50 *)
+
+(* ============================================================ *)
+(* 4. Meeting Anti-Patterns — recognizable formats               *)
+(* ============================================================ *)
+
+meeting_bs ::= "Let's take this offline"
+             | "I think we're aligned"
+             | "Great discussion, let's circle back"
+             | "Who owns this?"
+             | "Can you put together a one-pager?"
+             | "Let's not boil the ocean"
+             | "We need to be more intentional about this"
+             | "I want to be thoughtful here"
+             | "This is a great forcing function"
+
+(* ============================================================ *)
+(* 5. The Legitimate Versions — what they should say instead     *)
+(* ============================================================ *)
+
+aspiration_verb ::= "build" | "ship" | "improve" | "measure" | "learn"
+impact_scope ::= "for N users" | "reducing X by Y%" | "enabling Z"
+differentiator ::= "because" reason | "unlike" competitor "which" limitation
+timeframe ::= "by" date | "this quarter" | "in N sprints"
+
+status_frame ::= "shipped" | "on track" | "blocked by" blocker | "cut from scope"
+deliverable ::= feature | improvement | fix | experiment
+impact_claim ::= "which" metric_verb metric "by" amount
+confidence_qualifier ::= "verified" | "early signal" | "hypothesis"
+
+pain_point ::= "Users struggle with" problem
+solution ::= "We can" specific_action
+value_prop ::= "This matters because" evidence
+call_to_action ::= "Decision needed:" decision | "Input needed:" question
+
+metric ::= "retention" | "conversion" | "latency" | "NPS" | "revenue"
+trend ::= "up" | "down" | "flat" | "volatile"
+causal_claim ::= "likely because" hypothesis | "we don't know yet"
+action_item ::= "investigate" | "ship fix" | "run experiment" | "monitor"
+
+framework ::= "RICE" | "ICE" | "value vs effort" | "opportunity cost"
+opportunity ::= "If we do X, we expect Y"
+cost ::= "If we don't, Z happens"
+decision ::= "Therefore" choice "because" rationale
