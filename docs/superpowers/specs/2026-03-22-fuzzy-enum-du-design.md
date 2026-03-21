@@ -30,8 +30,8 @@ A probability distribution over enum variants. Memberships sum to 1.0 (tolerance
 
 ```json
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
-  "$id": "fuzzy-enum.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-enum",
   "title": "Fuzzy Enum",
   "description": "A probability distribution over enum variants. Memberships sum to 1.0.",
   "type": "object",
@@ -92,8 +92,8 @@ Like FuzzyEnum but each variant carries an optional typed payload.
 
 ```json
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
-  "$id": "fuzzy-du.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-du",
   "title": "Fuzzy Discriminated Union",
   "description": "A fuzzy enum where each variant carries an optional typed payload.",
   "type": "object",
@@ -150,7 +150,9 @@ module FuzzyOps =
     /// Renormalize so memberships sum to 1.0
     let renormalize (fe: FuzzyEnum<'T>) : FuzzyEnum<'T> =
         let total = fe.Memberships |> Map.toList |> List.sumBy snd
-        if total = 0.0 then fe
+        if total = 0.0 then
+            // All-zero is invalid per fuzzy-membership.md — fall back to uniform
+            FuzzyEnum.Uniform(fe.Memberships |> Map.keys |> Seq.toList)
         else { Memberships = fe.Memberships |> Map.map (fun _ v -> v / total) }
 
     /// Fuzzy AND: min per variant, renormalize
@@ -167,10 +169,21 @@ module FuzzyOps =
             k, max (a.Get k) (b.Get k)) |> Map.ofList }
         |> renormalize
 
-    /// Fuzzy NOT: invert memberships, renormalize
+    /// Fuzzy NOT: generic inversion. For non-tetravalent enums, inverts and renormalizes.
+    /// IMPORTANT: FuzzyEnum<TruthValue> uses specialized NOT that swaps T<->F, preserves U/C
+    /// (per existing logic/fuzzy-membership.md). Override via NotStrategy parameter.
     let NOT (a: FuzzyEnum<'T>) : FuzzyEnum<'T> =
         { Memberships = a.Memberships |> Map.map (fun _ v -> 1.0 - v) }
         |> renormalize
+
+    /// Tetravalent-specific NOT: swap T<->F, preserve U and C (backward compatible)
+    let NOT_tetravalent (a: FuzzyEnum<TruthValue>) : FuzzyEnum<TruthValue> =
+        { Memberships = Map [
+            T, a.Get F;
+            F, a.Get T;
+            U, a.Get U;
+            C, a.Get C
+          ] }
 
     /// Sharpen: if argmax exceeds threshold, collapse to discrete
     let sharpen (threshold: float) (fe: FuzzyEnum<'T>) =
@@ -219,7 +232,11 @@ module Propagation =
         match strategy with
         | Multiplicative -> a * b
         | Zadeh -> min a b
-        | Bayesian -> (a * b) / ((a * b) + ((1.0 - a) * (1.0 - b)))  // Bayesian update
+        | Bayesian ->
+            let num = a * b
+            let den = num + ((1.0 - a) * (1.0 - b))
+            if den = 0.0 then 0.5  // guard: a=1,b=0 or a=0,b=1 → inconclusive
+            else num / den
         | Custom f -> f a b
 ```
 
@@ -573,7 +590,7 @@ let bsDecode (input: {| text: string; domain: string option; threshold: float op
 
 - **Fuzzy set theory (Zadeh 1965):** FuzzyEnum is a finite fuzzy set. Our AND/OR/NOT follow standard fuzzy operations.
 - **Probability theory:** FuzzyEnum with sum_to_one constraint is a probability distribution. Bayesian propagation treats it as such.
-- **Category theory:** FuzzyEnum forms a monad (the CE proves this). Bind = Kleisli composition over fuzzy distributions. Return = Dirac delta (pure/sharp value).
+- **Category theory:** FuzzyEnum is monad-like. Bind = Kleisli composition over fuzzy distributions. Return = Dirac delta (pure/sharp value). Note: the 0.001 epsilon filter in Bind and renormalization in merge mean strict monad laws hold only approximately. This is intentional — practical fuzzy computation requires epsilon-trimming to avoid exponential branch explosion. Left/right identity hold within epsilon; associativity holds within renormalization tolerance.
 - **K-theory (Grothendieck):** Governance configurations as bundles. FuzzyEnum over governance variants classifies configurations up to equivalence. Future work.
 - **Topos theory:** Tetravalent {T,F,U,C} is a subobject classifier in a Grothendieck topos. FuzzyEnum generalizes this to continuous subobject classification.
 
@@ -591,6 +608,9 @@ let bsDecode (input: {| text: string; domain: string option; threshold: float op
 - Article 1 (Truthfulness) — fuzzy membership is more truthful than forced discrete classification
 - Article 2 (Transparency) — membership degrees and traces expose reasoning
 - Article 6 (Escalation) — C > 0.3 triggers escalation (preserved from tetravalent)
-- Article 8 (Observability) — FuzzyResult.Trace provides full provenance
+- Article 3 (Reversibility) — fuzzy-to-discrete sharpening is irreversible collapse; use only when necessary
+- Article 7 (Auditability) — FuzzyResult.Trace provides full provenance chain
+- Article 8 (Observability) — membership degrees and traces expose reasoning
+- Article 9 (Bounded Autonomy) — runtime discovery (Layer 3) proposes but does not auto-merge schema changes
 - Grammar evolution policy — fuzzy enum definitions evolve via distillation
-- Confidence thresholds — sharpening at argmax > 0.8 maps to existing threshold system
+- Confidence thresholds — default sharpening at argmax > 0.8. Maps to governance tiers: >= 0.9 proceed, >= 0.7 note, >= 0.5 confirm, >= 0.3 escalate, < 0.3 do not act
