@@ -1151,22 +1151,70 @@
           "departments": ["computer-science", "product-management"]
         }
       ]
+    },
+    "belief-state": {
+      "description": "Belief state management using tetravalent logic (T/F/U/C). Medium risk due to epistemic state mutation.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "belief_assert",
+          "description": "Assert a belief with tetravalent truth value and confidence",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "computer-science"]
+        },
+        {
+          "name": "belief_query",
+          "description": "Query current belief state for a proposition",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "computer-science"]
+        },
+        {
+          "name": "belief_revise",
+          "description": "Revise a belief based on new evidence using AGM revision",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "mathematics"]
+        },
+        {
+          "name": "belief_justify",
+          "description": "Provide justification chain for a held belief",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory"]
+        },
+        {
+          "name": "belief_contradictions",
+          "description": "Detect contradictions in the current belief set",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "mathematics"]
+        },
+        {
+          "name": "belief_entropy",
+          "description": "Calculate epistemic entropy of the current belief state",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "philosophy", "cognitive-science", "psychohistory"]
+        }
+      ]
     }
   },
   "summary": {
     "tools_by_risk": {
-      "low": 79,
-      "medium": 46,
+      "low": 83,
+      "medium": 48,
       "high": 22,
       "critical": 4
     },
     "tools_by_department": {
-      "computer-science": 126,
-      "mathematics": 45,
+      "computer-science": 130,
+      "psychohistory": 46,
+      "mathematics": 49,
+      "philosophy": 34,
+      "cognitive-science": 33,
       "product-management": 40,
-      "psychohistory": 40,
-      "philosophy": 28,
-      "cognitive-science": 27,
       "musicology": 20,
       "physics": 19,
       "music": 16,
@@ -1181,8 +1229,8 @@
       "All 13 departments have >= 5 applicable tools — no coverage gaps",
       "Critical-risk tools (create_dynamic_tool, promote_tool) require pre-mortem gate — governance review before execution",
       "Grammar tools are universally applicable across all departments due to DSL-driven pedagogy",
-      "151 unique tools across 21 categories; risk distribution favors low-risk (read-only) tools",
-      "Departments with broadest coverage: computer-science (126), mathematics (45), product-management (40), psychohistory (40)"
+      "151 unique tools across 22 categories; risk distribution favors low-risk (read-only) tools",
+      "Departments with broadest coverage: computer-science (130), mathematics (49), psychohistory (46), product-management (40)"
     ]
   }
 }
