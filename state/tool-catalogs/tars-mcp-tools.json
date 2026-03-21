@@ -1,0 +1,1188 @@
+{
+  "source": "tars",
+  "version": "2.0",
+  "tool_count": 151,
+  "last_updated": "2026-03-22",
+  "categories": {
+    "code-analysis": {
+      "description": "Static analysis, complexity metrics, code search, and F# structural checks. All read-only operations with no side effects.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "analyze_code",
+          "description": "Analyze source code for patterns, quality, and structure",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "analyze_file_complexity",
+          "description": "Compute cyclomatic and cognitive complexity metrics for a file",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "codebase_stats",
+          "description": "Gather aggregate statistics about a codebase (lines, files, languages)",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "compare_files",
+          "description": "Diff two files and report structural or textual differences",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "count_lines",
+          "description": "Count lines of code, comments, and blanks in a file or directory",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "explore_project",
+          "description": "Discover project structure, entry points, and dependencies",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "extract_symbols",
+          "description": "Extract function, type, and module symbols from source code",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "find_code_smells",
+          "description": "Detect code smells such as long methods, god classes, and feature envy",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "find_duplicates",
+          "description": "Identify duplicate or near-duplicate code blocks",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "find_similar_code",
+          "description": "Find code segments structurally similar to a given snippet",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "find_todos",
+          "description": "Search for TODO, FIXME, HACK, and other marker comments",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "search_code",
+          "description": "Search code by pattern, regex, or semantic query",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "search_codebase",
+          "description": "Full-text search across an entire codebase with filtering",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "fsharp_analyze_structure",
+          "description": "Analyze F# module structure, type hierarchy, and dependency graph",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "fsharp_check_file_order",
+          "description": "Validate F# file ordering constraints in project files",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "fsharp_check_syntax",
+          "description": "Check F# source for syntax errors without compiling",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "analyze_dependencies",
+          "description": "Analyze project dependency graph and detect circular references",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "analyze_type_usage",
+          "description": "Analyze how types are used across a codebase to find patterns",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        }
+      ]
+    },
+    "fsharp-language": {
+      "description": "F# compilation, evaluation, computation expression templates, and error diagnostics. Medium risk due to code execution side effects.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "fsharp_compile",
+          "description": "Compile F# source to assembly, reporting errors and warnings",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "fsharp_eval",
+          "description": "Evaluate F# expressions in an interactive session",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics", "physics"]
+        },
+        {
+          "name": "fsharp_ce_template",
+          "description": "Generate F# computation expression builder templates",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "fsharp_explain_error",
+          "description": "Explain an F# compiler error with context and suggested fixes",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "fsharp_suggest_fix",
+          "description": "Suggest code fixes for F# compiler errors or warnings",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "fsharp_format",
+          "description": "Format F# source code according to style conventions",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "fsharp_type_info",
+          "description": "Retrieve type information for F# expressions and bindings",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        }
+      ]
+    },
+    "grammar-dsl": {
+      "description": "Grammar creation, weighting, updates, and metascript parsing for DSL-driven workflows. Medium risk due to state mutation.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "create_grammar",
+          "description": "Create a new probabilistic grammar from a specification",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "grammar_weights",
+          "description": "Get or set production rule weights in a grammar",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "grammar_update",
+          "description": "Update grammar rules or structure in place",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "parse_metascript",
+          "description": "Parse a TARS metascript into an executable plan AST",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics", "psychohistory"]
+        },
+        {
+          "name": "create_metascript",
+          "description": "Author a new TARS metascript from a high-level specification",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics", "psychohistory"]
+        },
+        {
+          "name": "grammar_validate",
+          "description": "Validate a grammar for consistency, completeness, and reachability",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "computer-science", "guitar-alchemist-academy", "world-music-languages"]
+        },
+        {
+          "name": "grammar_sample",
+          "description": "Sample productions from a grammar with weighted randomness",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "computer-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        }
+      ]
+    },
+    "knowledge-research": {
+      "description": "Fetch and search external knowledge sources. Read-only with no local side effects.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "fetch_arxiv",
+          "description": "Fetch paper metadata and abstracts from arXiv by query or ID",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "physics", "computer-science", "psychohistory", "cognitive-science", "musicology"]
+        },
+        {
+          "name": "fetch_github_readme",
+          "description": "Fetch the README content from a GitHub repository",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "fetch_json_api",
+          "description": "Fetch and parse JSON from a REST API endpoint",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "fetch_webpage",
+          "description": "Fetch and extract readable content from a web page",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "fetch_wikipedia",
+          "description": "Fetch Wikipedia article content by title or search query",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "futurology", "philosophy", "cognitive-science", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "search_semantic_scholar",
+          "description": "Search Semantic Scholar for academic papers with citation data",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "search_web",
+          "description": "Perform a web search and return ranked results",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "lookup_docs",
+          "description": "Look up documentation for a library, API, or language feature",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "get_codebase_context",
+          "description": "Retrieve contextual information about a codebase for grounding",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "fetch_doi",
+          "description": "Fetch paper metadata from a DOI identifier",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "physics", "computer-science", "musicology", "psychohistory"]
+        },
+        {
+          "name": "fetch_rss",
+          "description": "Fetch and parse an RSS or Atom feed for latest entries",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "futurology", "psychohistory"]
+        }
+      ]
+    },
+    "knowledge-graph": {
+      "description": "Build and query knowledge graphs. Medium risk due to persistent state mutation.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "graph_add_node",
+          "description": "Add a typed node to the knowledge graph",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "futurology", "philosophy", "cognitive-science", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "graph_add_edge",
+          "description": "Add a typed relationship edge between two graph nodes",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "futurology", "philosophy", "cognitive-science", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "graph_export_json",
+          "description": "Export the knowledge graph or a subgraph as JSON",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "graph_find_contradictions",
+          "description": "Detect contradictory assertions in the knowledge graph",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "mathematics"]
+        },
+        {
+          "name": "graph_get_neighborhood",
+          "description": "Retrieve the local neighborhood of a node within N hops",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "philosophy", "cognitive-science", "psychohistory"]
+        },
+        {
+          "name": "graph_query",
+          "description": "Query the knowledge graph with pattern matching or traversal",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "futurology", "philosophy", "cognitive-science", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "graph_remove_node",
+          "description": "Remove a node and its edges from the knowledge graph",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "psychohistory"]
+        },
+        {
+          "name": "graph_merge_nodes",
+          "description": "Merge two equivalent nodes, combining their edges",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "philosophy", "psychohistory"]
+        },
+        {
+          "name": "save_note",
+          "description": "Save a structured note to persistent memory",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "tars_memory_op",
+          "description": "Perform CRUD operations on TARS persistent memory store",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "psychohistory"]
+        }
+      ]
+    },
+    "agent-persona": {
+      "description": "Agent lifecycle management — status checks, prompt creation, skill registration, task delegation. Medium risk due to agent spawning.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "agent_status",
+          "description": "Query the status and health of a running agent",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "create_agent_prompt",
+          "description": "Generate a system prompt for an agent from persona and context",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "cognitive-science", "philosophy"]
+        },
+        {
+          "name": "create_skill",
+          "description": "Register a new skill in the TARS skill registry",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "delegate_task",
+          "description": "Delegate a task to a subordinate agent with context",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "query_agent",
+          "description": "Send a query to an agent and receive a structured response",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "search_skills_registry",
+          "description": "Search the skill registry by name, capability, or tag",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "agent_spawn",
+          "description": "Spawn a new agent instance with a given persona and task",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "agent_terminate",
+          "description": "Terminate a running agent instance gracefully",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management"]
+        }
+      ]
+    },
+    "code-generation-refactoring": {
+      "description": "Write, patch, refactor, and build code. High risk due to filesystem mutations and potential for introducing defects.",
+      "risk_level": "high",
+      "tools": [
+        {
+          "name": "write_code",
+          "description": "Generate source code from a specification or description",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "patch_code",
+          "description": "Apply a targeted patch to existing source code",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "refactor_add_documentation",
+          "description": "Add XML doc comments and inline documentation to code",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "refactor_extract_function",
+          "description": "Extract a code block into a named function",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "refactor_inline_value",
+          "description": "Inline a variable or constant at all usage sites",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "refactor_remove_dead_code",
+          "description": "Identify and remove unreachable or unused code",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "refactor_rename_symbol",
+          "description": "Rename a symbol across all references in the codebase",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "build_project",
+          "description": "Build a project using its configured build system",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "create_block",
+          "description": "Create a reusable code block template",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "create_dynamic_tool",
+          "description": "Create a new MCP tool at runtime from a specification — self-extension capability",
+          "risk_level": "critical",
+          "mog_gate": "pre-mortem",
+          "departments": ["computer-science", "psychohistory"]
+        },
+        {
+          "name": "scaffold_project",
+          "description": "Generate project scaffolding from a template",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "refactor_extract_module",
+          "description": "Extract related functions and types into a new module",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        }
+      ]
+    },
+    "testing": {
+      "description": "Test generation, execution, and tool validation. Medium risk due to test execution side effects.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "generate_test",
+          "description": "Generate unit or property-based tests for a function or module",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "run_tests",
+          "description": "Execute test suites and report pass/fail results",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "test_tool",
+          "description": "Run validation tests against a specific MCP tool",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "validate_tool",
+          "description": "Validate a tool's schema, inputs, and outputs against its contract",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "generate_property_test",
+          "description": "Generate property-based (FsCheck/QuickCheck) tests from type signatures",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "test_coverage",
+          "description": "Analyze test coverage and report uncovered code paths",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        }
+      ]
+    },
+    "git-version-control": {
+      "description": "Git operations and GitHub integration. High risk due to irreversible commit history mutations.",
+      "risk_level": "high",
+      "tools": [
+        {
+          "name": "git_commit",
+          "description": "Stage and commit changes with a structured commit message",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "github_repo",
+          "description": "Query GitHub repository metadata, issues, and pull requests",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "update_readme",
+          "description": "Update a repository README with generated content",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "git_diff",
+          "description": "Show staged or unstaged changes as a unified diff",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "git_log",
+          "description": "Show commit history with filtering and formatting options",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "git_branch",
+          "description": "Create, list, or switch branches",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        }
+      ]
+    },
+    "document-prompt": {
+      "description": "Document generation, prompt engineering, and schema.org markup. Low risk — produces output without modifying existing state.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "generate_docs",
+          "description": "Generate documentation from source code or specifications",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "guitar-alchemist-academy"]
+        },
+        {
+          "name": "write_document",
+          "description": "Write a structured document from a template and content",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "list_document_templates",
+          "description": "List available document templates by category",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "improve_prompt",
+          "description": "Analyze and improve a prompt for clarity and effectiveness",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "cognitive-science", "philosophy", "guitar-alchemist-academy"]
+        },
+        {
+          "name": "schema_org",
+          "description": "Generate schema.org structured data markup",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "music"]
+        },
+        {
+          "name": "summarize_document",
+          "description": "Generate a structured summary of a long document",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        }
+      ]
+    },
+    "reasoning-planning": {
+      "description": "Structured reasoning, reflection, planning, and debugging aids. Medium risk due to influence on downstream decision-making.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "think_step_by_step",
+          "description": "Decompose a problem into explicit reasoning steps",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "reflect_on_task",
+          "description": "Generate a structured reflection on task progress and quality",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["music", "guitar-studies", "musicology", "mathematics", "physics", "computer-science", "product-management", "futurology", "philosophy", "cognitive-science", "guitar-alchemist-academy", "world-music-languages", "psychohistory"]
+        },
+        {
+          "name": "plan_task",
+          "description": "Create an execution plan for a multi-step task",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "request_review",
+          "description": "Request a structured review of work from another agent or human",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "debug_hint",
+          "description": "Generate debugging hints for a described problem",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "trace_error",
+          "description": "Trace an error through the call stack and suggest root cause",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "evaluate_options",
+          "description": "Evaluate multiple options against weighted criteria",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["product-management", "philosophy", "cognitive-science", "psychohistory"]
+        },
+        {
+          "name": "pre_mortem",
+          "description": "Conduct a pre-mortem analysis identifying likely failure modes",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "psychohistory", "philosophy"]
+        }
+      ]
+    },
+    "workflow-automation": {
+      "description": "Shell execution, file downloads, HTTP requests, and environment access. High risk due to arbitrary system access.",
+      "risk_level": "high",
+      "tools": [
+        {
+          "name": "run_shell",
+          "description": "Execute an arbitrary shell command and capture output",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "download_file",
+          "description": "Download a file from a URL to a local path",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "http_get",
+          "description": "Perform an HTTP GET request and return the response",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "get_env",
+          "description": "Read environment variables from the host system",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "measure_time",
+          "description": "Measure wall-clock execution time of an operation",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "mathematics"]
+        },
+        {
+          "name": "http_post",
+          "description": "Perform an HTTP POST request with a body payload",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management"]
+        },
+        {
+          "name": "watch_directory",
+          "description": "Watch a directory for file changes and report events",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        }
+      ]
+    },
+    "temporal-logic": {
+      "description": "Temporal reasoning — contradiction detection, history tracking, and evolution tracing across time. Read-only analysis.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "temporal_detect_contradictions",
+          "description": "Detect temporal contradictions in a sequence of assertions",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "mathematics", "physics"]
+        },
+        {
+          "name": "temporal_get_history",
+          "description": "Retrieve the temporal history of an entity or assertion",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "futurology", "mathematics"]
+        },
+        {
+          "name": "temporal_trace_evolution",
+          "description": "Trace how a concept or belief evolved over time",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "psychohistory", "futurology", "musicology"]
+        },
+        {
+          "name": "temporal_project_trend",
+          "description": "Project a trend forward based on historical data points",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "physics", "futurology", "psychohistory"]
+        },
+        {
+          "name": "temporal_snapshot",
+          "description": "Capture a point-in-time snapshot of an entity's state",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "psychohistory", "futurology"]
+        }
+      ]
+    },
+    "resilience": {
+      "description": "Circuit breakers, retry policies, and caching for fault-tolerant operations. Medium risk due to state management.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "circuit_breaker",
+          "description": "Apply circuit breaker pattern to an operation with failure thresholds",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "retry_with_backoff",
+          "description": "Retry a failed operation with exponential backoff",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "cache_set",
+          "description": "Store a value in the cache with optional TTL",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "cache_get",
+          "description": "Retrieve a value from the cache by key",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "cache_invalidate",
+          "description": "Invalidate a cache entry or pattern of entries",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        }
+      ]
+    },
+    "monitoring": {
+      "description": "Metrics recording and action logging for observability. Low risk — append-only telemetry.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "record_metric",
+          "description": "Record a named metric value with timestamp and labels",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "log_action",
+          "description": "Log a structured action event for audit trail",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "get_metrics",
+          "description": "Query recorded metrics with time range and label filters",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "health_check",
+          "description": "Run health checks on system components and report status",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        }
+      ]
+    },
+    "mcp-management": {
+      "description": "Discover, configure, and install MCP servers. Medium risk due to server configuration changes.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "list_mcp_servers",
+          "description": "List all configured MCP servers and their connection status",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "configure_mcp_server",
+          "description": "Update configuration for an MCP server connection",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "install_mcp_server",
+          "description": "Install and register a new MCP server",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science"]
+        },
+        {
+          "name": "search_mcp_servers",
+          "description": "Search for available MCP servers by capability or name",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science"]
+        }
+      ]
+    },
+    "llm-management": {
+      "description": "Pull and switch between LLM models. Medium risk due to resource and behavior implications.",
+      "risk_level": "medium",
+      "tools": [
+        {
+          "name": "pull_model",
+          "description": "Download an LLM model to local storage",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "cognitive-science"]
+        },
+        {
+          "name": "switch_model",
+          "description": "Switch the active LLM model for inference",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "cognitive-science"]
+        },
+        {
+          "name": "list_models",
+          "description": "List available LLM models with size and capability metadata",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "cognitive-science"]
+        }
+      ]
+    },
+    "self-extension": {
+      "description": "Runtime self-modification through dynamic tool creation. Critical risk — enables unbounded capability expansion.",
+      "risk_level": "critical",
+      "tools": [
+        {
+          "name": "create_dynamic_tool",
+          "description": "Create a new MCP tool at runtime from a specification — self-extension capability. Also listed under code-generation-refactoring.",
+          "risk_level": "critical",
+          "mog_gate": "pre-mortem",
+          "departments": ["computer-science", "psychohistory"]
+        },
+        {
+          "name": "promote_tool",
+          "description": "Promote a dynamic tool to permanent status after governance review",
+          "risk_level": "critical",
+          "mog_gate": "pre-mortem",
+          "departments": ["computer-science", "psychohistory"]
+        }
+      ]
+    },
+    "wot-plan-execution": {
+      "description": "Web-of-Thought plan compilation, step execution, validation, and completion. High risk due to multi-step autonomous execution.",
+      "risk_level": "high",
+      "tools": [
+        {
+          "name": "tars_compile_plan",
+          "description": "Compile a high-level plan into executable WoT steps",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "tars_execute_step",
+          "description": "Execute a single step in a compiled WoT plan",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "tars_validate_step",
+          "description": "Validate the output of a WoT plan step against expectations",
+          "risk_level": "medium",
+          "mog_gate": "when T(0.7)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        },
+        {
+          "name": "tars_complete_plan",
+          "description": "Finalize and close a WoT plan execution with summary",
+          "risk_level": "high",
+          "mog_gate": "when T(0.7) && C(<0.1)",
+          "departments": ["computer-science", "product-management", "psychohistory"]
+        }
+      ]
+    },
+    "symbolic": {
+      "description": "Symbolic reflection and reasoning tools for introspection and meta-cognitive operations. Low risk — observational only.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "symbolic_reflect",
+          "description": "Perform symbolic reflection on a concept or decision",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "mathematics", "psychohistory"]
+        },
+        {
+          "name": "symbolic_decompose",
+          "description": "Decompose a complex concept into symbolic primitives",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "mathematics", "psychohistory", "musicology"]
+        },
+        {
+          "name": "symbolic_compose",
+          "description": "Compose symbolic primitives into higher-order concepts",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "mathematics", "psychohistory", "musicology"]
+        },
+        {
+          "name": "symbolic_evaluate",
+          "description": "Evaluate a symbolic expression in a given context",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["philosophy", "cognitive-science", "mathematics", "physics", "psychohistory"]
+        },
+        {
+          "name": "symbolic_transform",
+          "description": "Apply a transformation rule to a symbolic expression",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "physics", "computer-science", "musicology"]
+        },
+        {
+          "name": "symbolic_unify",
+          "description": "Attempt to unify two symbolic expressions with substitution",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "philosophy", "cognitive-science", "psychohistory"]
+        },
+        {
+          "name": "symbolic_pattern_match",
+          "description": "Match a symbolic expression against a pattern template",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "computer-science", "musicology", "psychohistory"]
+        },
+        {
+          "name": "symbolic_rewrite",
+          "description": "Apply rewrite rules to normalize or simplify expressions",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "physics", "computer-science"]
+        },
+        {
+          "name": "symbolic_type_check",
+          "description": "Type-check a symbolic expression against a type system",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "computer-science", "philosophy"]
+        },
+        {
+          "name": "symbolic_prove",
+          "description": "Attempt to prove a symbolic proposition using available axioms",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "philosophy", "physics", "psychohistory"]
+        },
+        {
+          "name": "symbolic_abstract",
+          "description": "Abstract concrete values into symbolic variables",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "philosophy", "cognitive-science"]
+        },
+        {
+          "name": "symbolic_instantiate",
+          "description": "Instantiate symbolic variables with concrete values",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["mathematics", "physics", "computer-science"]
+        }
+      ]
+    },
+    "augment": {
+      "description": "Augmented codebase search with semantic understanding. Low risk — read-only search enhancement.",
+      "risk_level": "low",
+      "tools": [
+        {
+          "name": "augment_codebase_search",
+          "description": "Semantic search across a codebase using natural language queries",
+          "risk_level": "low",
+          "mog_gate": "none",
+          "departments": ["computer-science", "product-management"]
+        }
+      ]
+    }
+  },
+  "summary": {
+    "tools_by_risk": {
+      "low": 79,
+      "medium": 46,
+      "high": 22,
+      "critical": 4
+    },
+    "tools_by_department": {
+      "computer-science": 126,
+      "mathematics": 45,
+      "product-management": 40,
+      "psychohistory": 40,
+      "philosophy": 28,
+      "cognitive-science": 27,
+      "musicology": 20,
+      "physics": 19,
+      "music": 16,
+      "guitar-studies": 15,
+      "futurology": 16,
+      "world-music-languages": 13,
+      "guitar-alchemist-academy": 13
+    },
+    "uncovered_departments": [],
+    "notes": [
+      "create_dynamic_tool appears in both code-generation-refactoring and self-extension categories — counted once for totals",
+      "All 13 departments have >= 5 applicable tools — no coverage gaps",
+      "Critical-risk tools (create_dynamic_tool, promote_tool) require pre-mortem gate — governance review before execution",
+      "Grammar tools are universally applicable across all departments due to DSL-driven pedagogy",
+      "151 unique tools across 21 categories; risk distribution favors low-risk (read-only) tools",
+      "Departments with broadest coverage: computer-science (126), mathematics (45), product-management (40), psychohistory (40)"
+    ]
+  }
+}
