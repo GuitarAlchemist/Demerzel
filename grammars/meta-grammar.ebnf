@@ -1,0 +1,170 @@
+(* Meta-Grammar — Grammar of Grammars — tars + Demerzel *)
+(* This grammar describes how to create, evolve, and compose grammars *)
+(* The most recursive artifact in the ecosystem: it governs itself *)
+(* Consumed by: tars GrammarDistillation, GrammarGovernor, Demerzel evolution *)
+(* See: policies/grammar-evolution-policy.yaml *)
+
+(* ============================================================ *)
+(* 1. Grammar Lifecycle — what happens to a grammar              *)
+(* ============================================================ *)
+
+grammar_lifecycle ::= create evolve_loop retire
+                    | create evolve_loop promote retire
+                    | import distill evolve_loop retire
+
+create ::= from_domain_expertise
+          | from_external_source
+          | from_distillation
+          | from_grammar_composition
+          | from_research_cycle
+
+evolve_loop ::= weight_update
+              | weight_update production_change evolve_loop
+              | weight_update split_or_merge evolve_loop
+
+retire ::= deprecate_with_archive
+          | absorb_into_successor
+          | freeze_as_reference
+
+(* ============================================================ *)
+(* 2. Production Operations — what you do to productions         *)
+(* ============================================================ *)
+
+production_change ::= add_production
+                    | remove_production
+                    | refine_production
+                    | split_production
+                    | merge_productions
+                    | reweight_production
+
+add_production ::= "propose" evidence_source "=>" new_rule validation_gate
+remove_production ::= "flag" low_utilization_rule "=>" deprecation_check removal_gate
+refine_production ::= "specialize" general_rule "=>" specific_variants
+split_production ::= "decompose" complex_rule "=>" simpler_rules
+merge_productions ::= "combine" overlapping_rules "=>" unified_rule
+
+evidence_source ::= research_cycle_finding
+                  | execution_trace_pattern
+                  | external_grammar_import
+                  | human_proposal
+                  | cross_grammar_analogy
+
+validation_gate ::= "when T(0.7) && C(<0.1)"    (* standard evidence gate *)
+                  | "when T(0.5)"                (* lower bar for exploration *)
+                  | "pre-mortem"                 (* for structural changes *)
+
+(* ============================================================ *)
+(* 3. Weight Evolution — Bayesian learning                       *)
+(* ============================================================ *)
+
+weight_update ::= bayesian_update outcome
+               | reinforcement_update reward
+               | decay_update staleness
+
+bayesian_update ::= "P(rule|outcome) = P(outcome|rule) * P(rule) / P(outcome)"
+outcome ::= success | failure | partial | timeout | contradiction
+reward ::= positive_signal | negative_signal | neutral
+
+(* Weight health checks *)
+weight_health ::= well_distributed      (* entropy > 0.5 — healthy diversity *)
+                | concentrated           (* one production dominates — possible overfit *)
+                | uniform                (* no learning yet — needs more cycles *)
+                | degenerate             (* weight < 0.01 somewhere — prune candidate *)
+
+(* ============================================================ *)
+(* 4. Grammar Composition — combining grammars                   *)
+(* ============================================================ *)
+
+composition ::= import_productions source_grammar target_grammar mapping
+              | cross_reference grammar_a grammar_b shared_concept
+              | inherit parent_grammar child_grammar overrides
+              | intersect grammar_a grammar_b common_productions
+
+import_productions ::= "from" grammar_name "take" production_list "as" renamed_list
+cross_reference ::= "grammar_a." production "references" "grammar_b." production
+inherit ::= "grammar_child extends grammar_parent" "overriding" production_list
+
+(* ============================================================ *)
+(* 5. Distillation — from traces to productions                  *)
+(* ============================================================ *)
+
+distillation ::= collect_traces extract_patterns filter_promote integrate
+
+collect_traces ::= "gather execution traces from" trace_source "with" min_count
+
+extract_patterns ::= structural_extraction
+                   | typed_extraction
+                   | behavioral_extraction
+
+structural_extraction ::= "identify DAG shape patterns (node kinds + edges)"
+typed_extraction ::= "extract input/output type signatures per node"
+behavioral_extraction ::= "capture post-conditions and tool constraints"
+
+filter_promote ::= "require success_rate > 0.7 AND trace_count > 5"
+                 | "require compression_ratio > 1.5"     (* pattern is more compact than raw traces *)
+
+integrate ::= "fingerprint (SHA256) for dedup"
+            "=>" "add to" target_grammar "with initial weight 1/N"
+            "=>" "log in evolution entry"
+
+trace_source ::= tars_wot_executions
+               | ix_ml_pipeline_runs
+               | demerzel_driver_cycles
+               | seldon_research_cycles
+               | mog_pipeline_executions
+
+(* ============================================================ *)
+(* 6. Grammar Quality Metrics                                    *)
+(* ============================================================ *)
+
+grammar_quality ::= expressiveness coverage efficiency health
+
+expressiveness ::= "Can the grammar produce questions/plans for the full domain?"
+                 | measured_by production_count production_depth
+
+coverage ::= "What fraction of actual execution traces match a grammar path?"
+           | measured_by trace_match_rate
+
+efficiency ::= "How compact is the grammar relative to the traces it captures?"
+             | measured_by compression_ratio
+
+health ::= freshness utilization convergence distillation_rate
+
+freshness ::= "days since last weight update (alert if > 30)"
+utilization ::= "productions used / total productions (alert if < 0.3)"
+convergence ::= "weight variance across recent cycles (mature if < 0.05)"
+distillation_rate ::= "new productions from distillation / total new (target > 0.3)"
+
+(* ============================================================ *)
+(* 7. Meta-Meta Level — this grammar governing itself             *)
+(* ============================================================ *)
+
+(* This grammar is subject to its own rules: *)
+(* - It has weights (which meta-operations are most useful?) *)
+(* - It evolves (new composition patterns, new distillation methods) *)
+(* - It can be distilled (if we track how we build grammars, patterns emerge) *)
+(* - It maps to tetravalent: *)
+(*   T = grammar operation validated by evidence *)
+(*   F = grammar operation shown to be counterproductive *)
+(*   U = grammar operation untested *)
+(*   C = grammar operation produces contradictory results *)
+
+(* Fixed point: when this grammar's evolution stabilizes, *)
+(* we have found the invariant structure of grammar evolution itself *)
+(* (cf. Noether's theorem — what is conserved under grammar transformations?) *)
+
+(* ============================================================ *)
+(* 8. tars Integration Points                                    *)
+(* ============================================================ *)
+
+tars_module ::= "Tars.Evolution.WeightedGrammar"      (* Bayesian weights *)
+              | "Tars.Evolution.GrammarDistillation"   (* 3-facet extraction *)
+              | "Tars.Evolution.GrammarGovernor"       (* policy enforcement *)
+              | "Tars.Evolution.GrammarMlBridge"       (* ML feedback *)
+              | "Tars.Core.GrammarDistill"             (* low-level primitives *)
+              | "Tars.DSL.Wot.WotParser"               (* EBNF parsing *)
+              | "Tars.LSP.WotLanguageServer"           (* IDE integration *)
+
+mcp_tool ::= "grammar_weights"   (* view current weights *)
+           | "grammar_update"    (* Bayesian update from outcome *)
+           | "create_grammar"    (* propose new grammar *)

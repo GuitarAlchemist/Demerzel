@@ -1,0 +1,175 @@
+(* ML Pipeline Grammar — Streeling University / ix Forge *)
+(* Departments: computer-science, mathematics, psychohistory *)
+(* Consumed by: ix-ml-builder skill, tars grammar distillation *)
+(* Living grammar: evolves via research cycles + distillation *)
+(* See: policies/grammar-evolution-policy.yaml *)
+
+(* ============================================================ *)
+(* 1. Pipeline Architecture — what to build                      *)
+(* ============================================================ *)
+
+pipeline ::= data_source preprocessing model evaluation deployment
+           | data_source preprocessing model evaluation              (* no deploy — research mode *)
+           | data_source model evaluation                            (* skip preprocessing — clean data *)
+           | ensemble_pipeline                                       (* multiple models combined *)
+
+ensemble_pipeline ::= pipeline "+" pipeline "=>" combiner
+
+(* ============================================================ *)
+(* 2. Data Sources — where to get data                           *)
+(* ============================================================ *)
+
+data_source ::= csv_file | json_file | parquet_file | database_query
+              | api_endpoint | streaming_source | synthetic_generator
+              | governance_state      (* Demerzel state/ files *)
+              | git_history           (* commit logs, file changes *)
+              | mcp_tool_output       (* output from MCP tools *)
+
+data_shape ::= tabular | time_series | graph | text | image | audio | multimodal
+
+(* ============================================================ *)
+(* 3. Preprocessing — how to prepare                             *)
+(* ============================================================ *)
+
+preprocessing ::= cleaning transformation feature_engineering splitting
+                | cleaning feature_engineering splitting
+                | transformation splitting
+
+cleaning ::= missing_value_handler outlier_detector deduplication
+            | missing_value_handler deduplication
+            | outlier_detector
+
+missing_value_handler ::= drop | mean_impute | median_impute | knn_impute | model_impute
+outlier_detector ::= zscore | iqr | isolation_forest | dbscan
+
+transformation ::= normalization | standardization | log_transform
+                 | pca_reduction | encoding | embedding
+
+encoding ::= one_hot | label | ordinal | target | binary | frequency
+embedding ::= word2vec | tfidf | sentence_transformer | domain_specific
+
+feature_engineering ::= feature_selection | feature_creation | feature_interaction
+                      | polynomial_features | time_features | lag_features
+
+splitting ::= train_test_split | train_val_test_split | kfold_cv
+            | stratified_split | time_series_split | group_split
+
+(* ============================================================ *)
+(* 4. Models — what to train                                     *)
+(* ============================================================ *)
+
+model ::= supervised_model | unsupervised_model | reinforcement_model
+         | probabilistic_model | neural_model
+
+supervised_model ::= classification_model | regression_model
+
+classification_model ::= logistic_regression | decision_tree | random_forest
+                       | gradient_boosting | svm | knn | naive_bayes
+                       | neural_classifier
+
+regression_model ::= linear_regression | ridge | lasso | elastic_net
+                   | decision_tree_regressor | random_forest_regressor
+                   | gradient_boosting_regressor | neural_regressor
+
+unsupervised_model ::= clustering_model | dimensionality_model | anomaly_model
+
+clustering_model ::= kmeans | dbscan_cluster | hierarchical | gaussian_mixture | spectral
+dimensionality_model ::= pca | tsne | umap | autoencoder
+anomaly_model ::= isolation_forest_detector | one_class_svm | autoencoder_detector
+
+probabilistic_model ::= bayesian_linear | gaussian_process | hidden_markov
+                      | variational_inference | mcmc_sampler
+
+neural_model ::= mlp | cnn | rnn | lstm | transformer | graph_neural_network
+               | diffusion_model | variational_autoencoder
+
+reinforcement_model ::= q_learning | policy_gradient | actor_critic | mcts_agent
+
+(* ============================================================ *)
+(* 5. Evaluation — how to measure                                *)
+(* ============================================================ *)
+
+evaluation ::= metric_computation validation_strategy interpretation
+
+metric_computation ::= classification_metrics | regression_metrics
+                     | clustering_metrics | ranking_metrics | custom_metric
+
+classification_metrics ::= accuracy | precision | recall | f1_score
+                         | auc_roc | confusion_matrix | log_loss
+
+regression_metrics ::= mse | rmse | mae | r_squared | mape | explained_variance
+
+clustering_metrics ::= silhouette_score | calinski_harabasz | davies_bouldin
+                     | adjusted_rand_index | normalized_mutual_info
+
+validation_strategy ::= holdout | cross_validation | bootstrap
+                      | time_series_validation | nested_cv
+
+interpretation ::= feature_importance | shap_values | partial_dependence
+                 | lime_explanation | attention_weights | residual_analysis
+
+(* ============================================================ *)
+(* 6. Deployment — where to ship                                 *)
+(* ============================================================ *)
+
+deployment ::= model_serialization serving_strategy monitoring
+
+model_serialization ::= onnx | pickle | safetensors | rust_native | torchscript
+
+serving_strategy ::= batch_inference | real_time_api | edge_deployment
+                   | mcp_tool_integration   (* expose as MCP tool *)
+                   | embedded_in_pipeline   (* inline in larger system *)
+
+monitoring ::= drift_detection | performance_tracking | data_quality_check
+             | alert_on_degradation | automatic_retrain_trigger
+
+(* ============================================================ *)
+(* 7. Governance Integration — Demerzel-specific                 *)
+(* ============================================================ *)
+
+(* ML pipelines are governed artifacts *)
+governance_gate ::= data_provenance_check      (* where did training data come from? *)
+                  | bias_assessment             (* fairness across stakeholders — Article 10 *)
+                  | reversibility_check         (* can we roll back? — Article 3 *)
+                  | confidence_calibration      (* are probabilities well-calibrated? *)
+                  | explanation_requirement      (* can we explain predictions? — Article 2 *)
+
+(* Pipeline conclusions map to tetravalent logic *)
+(* If eval metrics meet threshold → T (model validated) *)
+(* If eval metrics fail → F (model rejected) *)
+(* If eval is inconclusive → U (need more data or different approach) *)
+(* If eval shows contradictory results → C (model unstable, investigate) *)
+
+conclude ::= validated | rejected | inconclusive | unstable | overfitting_detected
+
+(* ============================================================ *)
+(* 8. ix-Specific Pipeline Patterns                              *)
+(* ============================================================ *)
+
+(* These productions are distilled from ix Rust ML implementations *)
+(* They will evolve as more ix pipelines are built *)
+
+ix_pattern ::= karnaugh_optimization   (* Boolean function simplification *)
+             | memristive_markov        (* conductance-weighted Markov chains *)
+             | grammar_weight_learning  (* Bayesian grammar weight updates *)
+             | governance_health_scorer (* cross-repo health metric computation *)
+             | citation_power_law       (* power law detection in governance artifacts *)
+             | compounding_dimension    (* fractal dimension D_c estimation *)
+
+(* Combiner strategies for ensembles *)
+combiner ::= voting | averaging | stacking | blending | boosting_cascade
+
+(* ============================================================ *)
+(* 9. Evolution Hooks                                            *)
+(* ============================================================ *)
+
+(* This grammar evolves via: *)
+(* 1. Research cycles in computer-science department *)
+(* 2. Distillation from ix execution traces *)
+(* 3. External grammar consumption (scikit-learn API, PyTorch, etc.) *)
+(* 4. New ix pipeline patterns added as ix_pattern productions *)
+
+(* Grammar health metrics: *)
+(* production_utilization: which models/preprocessors are actually used? *)
+(* weight_convergence: have preferences stabilized? *)
+(* ix_pattern_count: are we capturing new patterns from ix? *)
