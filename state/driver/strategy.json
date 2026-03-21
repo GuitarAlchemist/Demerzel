@@ -1,7 +1,18 @@
 {
-  "manifests_analyzed": 0,
+  "manifests_analyzed": 2,
   "adaptation_active": false,
-  "task_type_success_rates": {},
-  "repo_patterns": {},
+  "task_type_success_rates": {
+    "submodule_bump": { "attempts": 6, "successes": 6, "rate": 1.0 },
+    "ci_fix": { "attempts": 2, "successes": 2, "rate": 1.0 },
+    "dependency_update": { "attempts": 1, "successes": 1, "rate": 1.0 },
+    "pr_merge": { "attempts": 1, "successes": 1, "rate": 1.0 },
+    "gitignore_cleanup": { "attempts": 1, "successes": 1, "rate": 1.0 },
+    "state_commit": { "attempts": 2, "successes": 2, "rate": 1.0 }
+  },
+  "repo_patterns": {
+    "ix": { "avg_task_duration_s": 600, "common_failures": ["clippy_lint"] },
+    "tars": { "avg_task_duration_s": 900, "common_failures": ["dotnet_test_hang"] },
+    "ga": { "avg_task_duration_s": 300, "common_failures": ["merge_conflict"] }
+  },
   "last_reset": null
 }

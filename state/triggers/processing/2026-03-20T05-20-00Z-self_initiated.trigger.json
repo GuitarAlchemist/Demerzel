@@ -1,7 +1,0 @@
-{
-  "type": "self_initiated",
-  "repo": "tars",
-  "priority": "high",
-  "rationale": "26 dependabot alerts (1 critical, 18 high) need triage and remediation",
-  "timestamp": "2026-03-20T05:20:00Z"
-}

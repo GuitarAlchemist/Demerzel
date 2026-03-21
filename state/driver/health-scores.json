@@ -1,6 +1,6 @@
 {
-  "demerzel": { "composite_score": 0.68, "last_computed": "2026-03-20T05:15:00Z", "trend": "stable" },
-  "ix": { "composite_score": 0.76, "last_computed": "2026-03-20T05:15:00Z", "trend": "improving" },
-  "tars": { "composite_score": 0.65, "last_computed": "2026-03-20T05:15:00Z", "trend": "improving" },
-  "ga": { "composite_score": 0.64, "last_computed": "2026-03-20T05:15:00Z", "trend": "improving" }
+  "demerzel": { "composite_score": 0.72, "last_computed": "2026-03-21T00:30:00Z", "trend": "improving" },
+  "ix": { "composite_score": 0.82, "last_computed": "2026-03-21T00:30:00Z", "trend": "improving" },
+  "tars": { "composite_score": 0.71, "last_computed": "2026-03-21T00:30:00Z", "trend": "improving" },
+  "ga": { "composite_score": 0.72, "last_computed": "2026-03-21T00:30:00Z", "trend": "improving" }
 }
