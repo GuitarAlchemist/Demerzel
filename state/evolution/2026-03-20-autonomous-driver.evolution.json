@@ -1,25 +1,36 @@
 {
-  "artifact": "demerzel-drive skill + autonomous-loop-policy v1.1.0",
-  "type": "skill + policy_amendment",
-  "created": "2026-03-20",
-  "citation_count": 1,
-  "violation_count": 0,
-  "compliance_rate": 1.0,
-  "last_cited": "2026-03-20T05:20:00Z",
-  "effectiveness": "U",
-  "effectiveness_confidence": 0.6,
-  "recommendation": "investigate",
-  "promotion_candidate": false,
+  "id": "gel-autonomous-driver",
+  "artifact": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+  "artifact_type": "skill",
+  "metrics": {
+    "citation_count": 1,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-03-20T05:20:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
   "events": [
     {
       "type": "created",
-      "date": "2026-03-20",
-      "description": "Autonomous driver skill and supporting infrastructure created (spec v2.1, 6 schemas, 17 behavioral tests, trigger workflow)"
+      "context": "Autonomous driver skill and supporting infrastructure created (spec v2.1, 6 schemas, 17 behavioral tests, trigger workflow)",
+      "timestamp": "2026-03-20T00:00:00Z"
     },
     {
-      "type": "compounding_cycle",
-      "date": "2026-03-20",
-      "description": "Cycle 001 completed: 4/4 tasks (100%), 0 failures. Submodule staleness resolved across ix, tars, ga. Health scores improved. Effectiveness: U (n=1, need 3+ cycles)."
+      "type": "cited",
+      "context": "Cycle 001 completed: 4/4 tasks (100%), 0 failures. Submodule staleness resolved across ix, tars, ga. Health scores improved. Effectiveness: U (n=1, need 3+ cycles).",
+      "timestamp": "2026-03-20T05:20:00Z"
     }
-  ]
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "The autonomous driver skill effectively manages compounding cycles",
+      "truth_value": "U",
+      "confidence": 0.6
+    },
+    "recommendation": "investigate"
+  },
+  "created_at": "2026-03-20T00:00:00Z",
+  "last_updated": "2026-03-20T05:20:00Z"
 }
