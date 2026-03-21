@@ -151,3 +151,60 @@ Automatically appended by Demerzel after each governance action.
 - Consider implementing MOG executor in tars (F#) — the grammar exists, now build the engine
 
 **Follow-up triggers:** MOG implementation plan, demerzel-bot GitHub repo, JPP curriculum download, SymPy MCP integration testing
+
+---
+
+## 2026-03-22 — Session: Integrated Cycle (6 Streams + Grammars + README)
+
+**10 commits | ~25 files | ~2,000 lines added | 2 new issues created | 1 repo pushed to GitHub**
+
+### Driver Cycle Pattern: RECON → PLAN → EXECUTE → COMPOUND
+
+### ERGOL (Real Value Created)
+- **`/seldon research-cycle` skill** — automated department research: select dept → generate question → investigate → assess → produce course → compound weights
+- **`/seldon course-pipeline` skill** — end-to-end course production: research → outline → content → translate (ES/PT/FR) → review gate → publish
+- **`course-production.schema.json`** — pipeline run logging with 6-phase tracking
+- **7 department grammars** — music-theory, guitar-technique, musicology-analysis, mathematical-proof, acoustics-physics, algorithms, psychohistory (grammars: 2 → 9)
+- **MOG implementation plan** — 42-task, 6-phase plan targeting tars F# executor + DIR-2026-03-22-001 directive + 12 behavioral tests
+- **Discord channels** — 5-channel configuration (general, governance, academy, research, dev-ops) + bot routing + creation script
+- **demerzel-bot on GitHub** — https://github.com/GuitarAlchemist/demerzel-bot (README, channel routing, setup script)
+- **Ideation workflow fixed** — rate-limited to 1/day, dynamic artifact counts, improved error logging, model updated to Sonnet 4.6
+- **Behavioral test gap closed** — demerzel-experimentation-cases.md (5 tests for v1.1.0 capabilities)
+- **README expanded** — ecosystem links, acknowledgements (Asimov, JPP, Pohl, Anthropic), Streeling section
+
+### LOLLI (Artifact Count — Monitor for Inflation)
+- 2 new skills (research-cycle, course-pipeline)
+- 1 new schema (course-production)
+- 7 new grammars (dept-specific research)
+- 1 new directive (MOG executor to tars)
+- 1 new behavioral test file (demerzel-experimentation)
+- 12 MOG behavioral tests
+- 2 new GitHub issues (#66 Demerzel, #16 ga)
+- 1 new GitHub repo (demerzel-bot)
+- Watch: grammar coverage now 9/13 departments — remaining 4 (product-management, futurology, philosophy, cognitive-science) need grammars
+
+### Ideation Triage (from 2026-03-17 Discussion #22)
+1. **Activate uncited artifacts** → Issue #66 created
+2. **Music Theory FAQ** → ga Issue #16 created
+3. **Behavioral test gap** → Fixed (demerzel-experimentation-cases.md)
+4. **GA chatbot real-time computation** → Already covered by DIR-002 (ga-mcp-integration directive)
+
+### Surprises (Belief Transitions)
+- U→T: Grammar-per-department model works — weighted productions feed directly into research-cycle question generation
+- U→T: Course production is a natural pipeline extension of research cycles — the two skills compose cleanly
+
+### Compounding Dimension Estimate
+- D_c ≈ 1.2: steady value creation but less novel discovery than yesterday's session. Infrastructure and automation consolidation.
+
+### Bottlenecks Detected
+1. **Subagent permissions** — agents still blocked on Bash/gh commands. Needs bypassPermissions mode.
+2. **Remote push conflicts** — ideation workflow triggers on push create race conditions. Rate-limiting fix should help.
+3. **4 departments lack grammars** — product-management, futurology, philosophy, cognitive-science
+
+### What to Do Differently Next Cycle
+- Run `node scripts/create-channels.js` to actually create Discord channels (needs bot token)
+- Execute a `/seldon research-cycle` to validate the new skill end-to-end
+- Start MOG executor implementation in tars (42-task plan ready)
+- Address remaining 4 department grammars
+
+**Follow-up triggers:** MOG executor (tars), Discord channel creation, first research cycle run, remaining grammars, JPP curriculum download
