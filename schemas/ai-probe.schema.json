@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/ai-probe",
+  "title": "AI Probe",
+  "description": "Semantic code annotation for AI-verifiable governance. Inspired by Gödel numbering — encodes code meaning as machine-readable annotations.",
+  "type": "object",
+  "required": ["probe_type", "value", "location"],
+  "properties": {
+    "probe_type": {
+      "type": "string",
+      "enum": ["probe", "invariant", "depends", "governs", "domain", "tested-by"],
+      "description": "probe=semantic, invariant=verifiable property, depends=semantic dependency, governs=policy link, domain=Streeling classification, tested-by=test link"
+    },
+    "value": {
+      "type": "string",
+      "description": "The probe content — description, expression, path, or policy name depending on probe_type"
+    },
+    "location": {
+      "type": "object",
+      "required": ["repo", "file"],
+      "properties": {
+        "repo": { "type": "string", "description": "Repository name (ix, tars, ga, demerzel)" },
+        "file": { "type": "string", "description": "File path relative to repo root" },
+        "line": { "type": "integer", "minimum": 1, "description": "Line number of the probe annotation" },
+        "symbol": { "type": "string", "description": "The code symbol being annotated (function, struct, class name)" }
+      }
+    },
+    "verification_level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4,
+      "description": "0=Axiomatic (definition), 1=Demonstrable (passing test), 2=Refutable (failing test), 3=Undecidable (semantic only), 4=Contradictory (conflicts with another probe)"
+    },
+    "verified": {
+      "type": "object",
+      "required": ["truth_value", "last_verified"],
+      "properties": {
+        "truth_value": { "type": "string", "enum": ["T", "F", "U", "C"] },
+        "membership": { "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution" },
+        "last_verified": { "type": "string", "format": "date-time" },
+        "verifier": { "type": "string", "description": "Agent or system that performed the verification" }
+      }
+    }
+  }
+}

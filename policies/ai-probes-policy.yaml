@@ -1,0 +1,69 @@
+name: ai-probes-policy
+version: "1.0.0"
+effective_date: "2026-03-21"
+description: Governance policy for @ai probe annotations — semantic code anchors for AI-verifiable contracts
+
+constitutional_basis:
+  - Article 7 (Auditability) — probes create traceable semantic audit trail
+  - Article 8 (Observability) — probes make code meaning observable to governance
+  - Article 9 (Bounded Autonomy) — probes define governance boundaries in code
+
+principles:
+  - "Probes encode meaning for governance verification — Gödel numbers for code"
+  - "100% probe coverage is not the goal (Logotron incompleteness principle)"
+  - "The goal is reducing the radius of the ungoverned, not eliminating it"
+  - "Probes are documentation, not surveillance"
+
+probe_types:
+  probe:
+    syntax: '@ai probe: "description"'
+    value_format: "Quoted string describing what the code means in domain terms"
+  invariant:
+    syntax: "@ai invariant: expression_name"
+    value_format: "Named property (e.g., rows_sum_to_one) — not code, a semantic property name"
+  depends:
+    syntax: "@ai depends: Module::function"
+    value_format: "Semantic dependency in Module::function or Namespace.Class.Method format"
+  governs:
+    syntax: "@ai governs: policy-name"
+    value_format: "Policy filename without extension, must match policies/*.yaml"
+  domain:
+    syntax: "@ai domain: department/subcategory"
+    value_format: "Streeling department name / research area subcategory"
+  tested-by:
+    syntax: "@ai tested-by: path#test-name"
+    value_format: "Relative file path # test function or case name"
+
+coverage_requirements:
+  minimum_coverage: 0.3
+  minimum_description: "30% of exported symbols probed — initial adoption target"
+  target_coverage: 0.6
+  target_description: "60% of exported symbols probed — medium-term goal"
+  tracked_in: "health-scores.json per repo"
+  coverage_metric: "probed_symbols / total_exported_symbols"
+
+verification_rules:
+  - condition: "Invariant probe with passing test"
+    result: "T (confidence 0.95)"
+  - condition: "Invariant probe without test"
+    result: "U (confidence 0.5)"
+  - condition: "Semantic probe (no mechanical verification possible)"
+    result: "U (inherently undecidable)"
+  - condition: "Conflicting probes on same symbol"
+    result: "C (escalate — contradictory annotations)"
+  - condition: "@ai governs: references nonexistent policy"
+    result: "Error — flag in reconnaissance report"
+
+verification_levels:
+  0: { name: "Axiomatic", description: "Probe asserts a definition — verified by existence", tetravalent: "T" }
+  1: { name: "Demonstrable", description: "Invariant has a passing test", tetravalent: "T (high confidence)" }
+  2: { name: "Refutable", description: "Invariant has a failing test", tetravalent: "F" }
+  3: { name: "Undecidable", description: "Semantic probe — cannot be mechanically verified", tetravalent: "U" }
+  4: { name: "Contradictory", description: "Probe conflicts with another probe or test", tetravalent: "C" }
+
+integration:
+  recon_phase: "Driver scans all repos for @ai probes, builds semantic code map"
+  verify_phase: "Check @ai invariant probes mechanically where possible"
+  conscience: "Coverage gaps trigger silence_discomfort signal with context.source: probe-scanner"
+  consumer_repos: ["ix", "tars", "ga"]
+  adoption: "Via Galactic Protocol directive — contracts/directives/adopt-ai-probes.directive.md"
