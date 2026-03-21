@@ -1,0 +1,20 @@
+{
+  "pattern_id": "pattern-001-grammar-driven-research",
+  "category": "operational",
+  "name": "Grammar-Driven Research Produces Courses",
+  "description": "Department grammars feed weighted question generation, which drives research cycles, which produce courses. The pipeline composes cleanly: grammar → question → research → course.",
+  "detection": "Research cycle uses grammar productions AND produces a course with confidence >= 0.7",
+  "action": "Continue and expand. Every department should have this pipeline running.",
+  "evidence": [
+    "2026-03-22: research-cycle skill designed around grammar-weighted question generation",
+    "2026-03-22: course-pipeline skill chains naturally from research output",
+    "2026-03-22: 7 department grammars created specifically to feed research cycles"
+  ],
+  "occurrence_count": 3,
+  "first_seen": "2026-03-22",
+  "last_seen": "2026-03-22",
+  "status": "confirmed",
+  "belief_value": "T",
+  "belief_confidence": 0.80,
+  "promotion_candidate": "If validated by 5+ actual research cycles, promote to policy"
+}

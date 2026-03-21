@@ -1,0 +1,20 @@
+{
+  "pattern_id": "anti-pattern-002-empty-departments",
+  "category": "anti-pattern",
+  "name": "Departments Without Courses",
+  "description": "Streeling departments are created with grammars, weights, and curriculum definitions but never produce actual courses. Infrastructure without output.",
+  "detection": "departments/{dept}.department.json exists AND courses/{dept}/ is empty or missing",
+  "action": "Run /seldon research-cycle + /seldon course-pipeline for each empty department. Prioritize by curriculum gap count.",
+  "evidence": [
+    "2026-03-22: 11 of 13 departments had no courses (only guitar-alchemist-academy and psychohistory)",
+    "2026-03-18: Departments created with full curriculum definitions but no production pipeline",
+    "2026-03-22: Course pipeline skill created, batch course production initiated"
+  ],
+  "occurrence_count": 3,
+  "first_seen": "2026-03-18",
+  "last_seen": "2026-03-22",
+  "status": "confirmed",
+  "belief_value": "T",
+  "belief_confidence": 0.95,
+  "resolution": "seldon-course-pipeline skill created 2026-03-22. 11 courses being produced. Blind spot detection grammar flags this pattern."
+}

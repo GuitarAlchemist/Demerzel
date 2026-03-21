@@ -1,0 +1,21 @@
+{
+  "pattern_id": "anti-pattern-004-subagent-permission-stall",
+  "category": "anti-pattern",
+  "name": "Subagent Permission Stalls",
+  "description": "Background agents complete their file creation work but stall on git commit or gh commands because they lack Bash permissions. Work is done but not committed.",
+  "detection": "Agent output contains 'need Bash permission' or 'could you grant' AND agent created files that aren't committed",
+  "action": "Launch agents with mode: bypassPermissions. If not possible, parent must commit agent work after completion.",
+  "evidence": [
+    "2026-03-22: MOG plan agent created 3 files but couldn't commit",
+    "2026-03-22: Ideation agent fixed workflow + wrote test but couldn't create gh issues",
+    "2026-03-22: Translation agent created 4 files but couldn't commit",
+    "2026-03-21: Multiple agents stalled on git operations during mega session"
+  ],
+  "occurrence_count": 6,
+  "first_seen": "2026-03-21",
+  "last_seen": "2026-03-22",
+  "status": "confirmed",
+  "belief_value": "T",
+  "belief_confidence": 0.95,
+  "resolution": "Use bypassPermissions mode for subagents. Parent always commits after agent completion."
+}

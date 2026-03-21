@@ -1,0 +1,21 @@
+{
+  "pattern_id": "anti-pattern-001-stale-conscience",
+  "category": "anti-pattern",
+  "name": "Stale Conscience Signals",
+  "description": "Conscience signals and digests are created but never processed, updated, or archived. The system detects ethical concerns but does not act on them.",
+  "detection": "state/conscience/signals/*.signal.json older than 3 days AND state/conscience/digests/ has no entry for today",
+  "action": "Process each signal: resolve, escalate, or archive. Generate daily digest. Include in driver RECON phase.",
+  "evidence": [
+    "2026-03-22: 5 signals from 2026-03-17 still unprocessed (3+ days stale)",
+    "2026-03-22: Daily digest last generated 2026-03-17 (5 days gap)",
+    "2026-03-22: Weekly report last generated 2026-03-17",
+    "2026-03-17: sig-stale-action signals created about staleness, themselves now stale (meta-irony)"
+  ],
+  "occurrence_count": 4,
+  "first_seen": "2026-03-17",
+  "last_seen": "2026-03-22",
+  "status": "confirmed",
+  "belief_value": "T",
+  "belief_confidence": 0.95,
+  "resolution": "staleness-detection-policy.yaml created 2026-03-22 with 1-day max for digests, 3-day max for signals"
+}

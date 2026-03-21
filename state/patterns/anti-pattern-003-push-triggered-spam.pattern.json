@@ -1,0 +1,20 @@
+{
+  "pattern_id": "anti-pattern-003-push-triggered-spam",
+  "category": "anti-pattern",
+  "name": "Push-Triggered Workflow Spam",
+  "description": "GitHub Actions workflows trigger on every push to master, causing duplicate runs when a session has many commits. The ideation workflow ran 10 times on 2026-03-21 but only 1 discussion was ever created.",
+  "detection": "Workflow runs > 3 in a single day for the same workflow",
+  "action": "Add rate limiting (max 1 per day) with dedup check against existing discussions/artifacts.",
+  "evidence": [
+    "2026-03-21: demerzel-ideation.yml triggered 10 times via push events",
+    "2026-03-21: Only 1 ideation discussion exists (from 2026-03-17)",
+    "2026-03-22: Rate limiting fix applied to ideation workflow"
+  ],
+  "occurrence_count": 2,
+  "first_seen": "2026-03-21",
+  "last_seen": "2026-03-22",
+  "status": "confirmed",
+  "belief_value": "T",
+  "belief_confidence": 0.90,
+  "resolution": "Ideation workflow updated with daily dedup check 2026-03-22. Other workflows may need same fix."
+}
