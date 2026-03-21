@@ -1,0 +1,159 @@
+name: readme-sync-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: Demerzel maintains all README.md files in sync across repos, verifies all links, and detects drift between documentation and actual state.
+
+constitutional_basis:
+  - Article 1 (Truthfulness) — READMEs must reflect actual state, not aspirational state
+  - Article 2 (Transparency) — documentation is the public face of governance
+  - Article 7 (Auditability) — broken links and stale docs reduce trust
+  - Article 8 (Observability) — README health is a governance metric
+
+principles:
+  - "A README that lies is worse than no README"
+  - "Every artifact directory should have a README explaining its contents"
+  - "Links must be verified — a broken link is a broken promise"
+  - "Cross-repo READMEs must stay consistent — stats in one must match stats in all"
+
+scope:
+  managed_readmes:
+    - path: "GuitarAlchemist/.github/profile/README.md"
+      role: "Org-level overview — learning paths, feature highlights, trees"
+      sync_fields: [grammar_count, policy_count, persona_count, department_count, course_count, language_count, tool_count, test_count]
+
+    - path: "GuitarAlchemist/Demerzel/README.md"
+      role: "Main repo README — structure, quick reference, contributing"
+      sync_fields: [grammar_count, policy_count, persona_count, department_count, constitution_articles]
+
+    - path: "GuitarAlchemist/demerzel-bot/README.md"
+      role: "Bot setup and channel guide"
+      sync_fields: [channel_list, persona_list]
+
+    - path: "GuitarAlchemist/Demerzel/state/streeling/courses/README.md"
+      role: "Course catalog — all departments and courses"
+      sync_fields: [course_list, department_list, language_list]
+
+    - path: "GuitarAlchemist/Demerzel/state/patterns/README.md"
+      role: "Patterns catalog"
+      sync_fields: [pattern_count, anti_pattern_count]
+
+    - path: "GuitarAlchemist/Demerzel/state/README.md"
+      role: "State directory guide"
+      sync_fields: [state_categories]
+
+    - path: "GuitarAlchemist/Demerzel/state/conscience/README.md"
+      role: "Conscience system guide"
+      sync_fields: [signal_count, pattern_count]
+
+  consumer_repo_readmes:
+    - "GuitarAlchemist/ix/README.md"
+    - "GuitarAlchemist/tars/README.md"
+    - "GuitarAlchemist/ga/README.md"
+
+sync_fields_definition:
+  grammar_count:
+    source: "count files in grammars/*.ebnf"
+    current: 18
+  policy_count:
+    source: "count files in policies/*.yaml"
+    current: 22
+  persona_count:
+    source: "count files in personas/*.persona.yaml"
+    current: 14
+  department_count:
+    source: "count files in state/streeling/departments/*.department.json"
+    current: 13
+  course_count:
+    source: "count .md files in state/streeling/courses/**/en/"
+    current: 13
+  language_count:
+    source: "count from policies/multilingual-policy.yaml tier_2"
+    current: 6
+  tool_count:
+    source: "sum from state/tool-catalogs/"
+    current: "200+"
+  test_count:
+    source: "count files in tests/behavioral/*.md"
+    current: 41
+
+verification:
+  link_check:
+    description: "Verify all markdown links in all README files"
+    process:
+      - "Extract all [text](url) and [text]: url links"
+      - "Classify: internal (relative path), GitHub (github.com), external (other)"
+      - "Internal: verify file exists at path"
+      - "GitHub: verify repo/file/branch exists via gh api"
+      - "External: HEAD request to check reachability (optional, may rate-limit)"
+    frequency: "Every driver RECON phase"
+    on_failure:
+      - "Broken internal link → fix immediately (file was renamed or deleted)"
+      - "Broken GitHub link → fix immediately (branch/file changed)"
+      - "Broken external link → flag as U (may be temporary)"
+
+  stats_check:
+    description: "Verify all stats (counts, numbers) match actual state"
+    process:
+      - "For each sync_field, compute actual value from source"
+      - "Compare against value in each README that displays it"
+      - "If mismatch → update README"
+    frequency: "Every driver COMPOUND phase"
+
+  coverage_check:
+    description: "Verify every artifact directory has a README"
+    process:
+      - "Walk all directories in the repo"
+      - "If directory contains 3+ files and no README.md → flag as gap"
+      - "Priority: state/ directories, then schemas/, then docs/"
+    frequency: "Weekly"
+
+sync_process:
+  trigger: "After any commit that changes artifact counts (new grammar, new course, new policy, etc.)"
+  steps:
+    - name: "Detect change"
+      action: "Compare sync_fields against README values"
+    - name: "Update READMEs"
+      action: "Update all managed READMEs with new values"
+    - name: "Verify links"
+      action: "Check all links in updated READMEs"
+    - name: "Commit"
+      action: "Single commit updating all READMEs together"
+      message: "docs: Sync READMEs — {field}: {old} → {new}"
+    - name: "Push"
+      action: "Push to all affected repos"
+
+  cross_repo_sync:
+    description: "Org README and consumer repo READMEs must reflect current ecosystem state"
+    process:
+      - "After Demerzel README is updated, check if org README needs updating"
+      - "After consumer repo changes (new tools, new features), check if Demerzel refs are current"
+      - "Use Galactic Protocol directives for cross-repo README updates"
+
+anti_patterns_detected:
+  - name: "Stale stat"
+    description: "README says '16 grammars' but there are actually 18"
+    detection: "sync_field mismatch"
+    frequency: "Very common — happens after every productive session"
+
+  - name: "Broken rename link"
+    description: "File was renamed (e.g., grammar prefix) but links not updated"
+    detection: "Internal link target does not exist"
+    frequency: "Common after refactoring"
+
+  - name: "Aspirational README"
+    description: "README describes features that don't exist yet"
+    detection: "Claims reference artifacts that cannot be found"
+    frequency: "Occasional — usually in consumer repos"
+
+  - name: "README desert"
+    description: "Directory with many files but no README"
+    detection: "Directory has 3+ files, no README.md"
+    frequency: "Common in state/ subdirectories"
+
+integration:
+  driver_recon: "Link check runs in RECON phase"
+  driver_compound: "Stats sync runs in COMPOUND phase"
+  demerzel_audit: "Level 1 audit includes README coverage check"
+  staleness_detection: "README freshness tracked alongside other state artifacts"
+  blind_spot_detection: "Missing READMEs are coverage blind spots"
+  github_workflow: "Consider a workflow that checks links on push"
