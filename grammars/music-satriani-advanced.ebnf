@@ -1,0 +1,321 @@
+(* Advanced Guitar Grammar — Joe Satriani Methodology *)
+(* Department: guitar-studies, guitar-alchemist-academy *)
+(* Level: Advanced (Citrinitas/Rubedo in alchemical path) *)
+(* Consumed by: ga advanced curriculum, Seldon teaching *)
+(* "The guitar is a small orchestra." — Andrés Segovia *)
+(* "I just pick up my guitar and play." — Joe Satriani *)
+
+(* ============================================================ *)
+(* 1. Satriani Technique Vocabulary                              *)
+(* ============================================================ *)
+
+technique ::= legato_technique | picking_technique | whammy_technique
+            | tapping_technique | harmonic_technique | bending_technique
+            | slide_technique | hybrid_technique | rhythm_technique
+
+legato_technique ::= hammer_on | pull_off | legato_run | cascade_legato
+                   | economy_legato | cross_string_legato
+
+hammer_on ::= "ascending hammer from fretted note"
+            | "hammer from nowhere" (* Satriani signature — no pick attack *)
+            | "rapid hammer trill"
+
+pull_off ::= "descending pull to fretted note"
+           | "pull to open string"
+           | "cascading pull-off sequence"
+
+legato_run ::= three_note_per_string | four_note_per_string
+             | pentatonic_legato | chromatic_legato
+
+picking_technique ::= alternate_picking | economy_picking | sweep_picking
+                    | hybrid_picking | string_skipping | inside_picking
+                    | outside_picking | tremolo_picking | circle_picking
+
+alternate_picking ::= "strict down-up alternation"
+                    | "cross-string alternate picking"
+                    | "Paul Gilbert-style string crossing"
+
+economy_picking ::= "directional picking — follow the pick direction"
+                  | "Frank Gambale sweeping approach"
+
+sweep_picking ::= "arpeggio sweep (3-string)" | "arpeggio sweep (5-string)"
+                | "economy sweep with hammer-on apex"
+                | "Satriani-style partial sweeps"
+
+whammy_technique ::= dive_bomb | flutter | harmonic_squeal
+                   | whammy_vibrato | whammy_bend | whammy_dip
+                   | whammy_gargle | whammy_scream
+
+dive_bomb ::= "full bar depression — pitch to zero"
+flutter ::= "rapid bar shake for vibrato"
+harmonic_squeal ::= "pinch harmonic + bar dip = animal sound"
+whammy_vibrato ::= "subtle bar wobble for vocal quality"
+whammy_dip ::= "quick dip and release — Satriani signature"
+whammy_gargle ::= "bar gargle behind the nut"
+whammy_scream ::= "harmonic + dive + pull-up — motorcycle sound"
+
+tapping_technique ::= one_hand_tap | two_hand_tap | tap_slide
+                    | tap_harmonic | eight_finger_tap
+
+one_hand_tap ::= "Van Halen-style right-hand tap"
+               | "Satriani three-note tap pattern"
+               | "tapped arpeggio with pull-offs"
+
+two_hand_tap ::= "Stanley Jordan-style polyphonic tapping"
+               | "Chapman Stick approach on guitar"
+               | "independent bass + melody lines"
+
+harmonic_technique ::= natural_harmonic | artificial_harmonic | pinch_harmonic
+                     | tap_harmonic_technique | harp_harmonic
+                     | harmonic_melody | cascading_harmonics
+
+natural_harmonic ::= "12th fret" | "7th fret" | "5th fret"
+                   | "3rd fret" | "non-standard nodes"
+
+artificial_harmonic ::= "fretted note + right-hand node touch"
+                      | "Satriani artificial harmonic melodies"
+                      | "artificial harmonic with vibrato bar"
+
+pinch_harmonic ::= "pick edge grazes string — Zakk Wylde squeal"
+                 | "controlled pinch at specific nodes for pitch"
+                 | "pinch harmonic bend — blues scream"
+
+harp_harmonic ::= "right-hand touches node while left-hand frets"
+                | "Lenny Breau / Chet Atkins cascading harmonics"
+                | "harmonic chord voicings"
+
+bending_technique ::= whole_step_bend | half_step_bend | micro_bend
+                    | pre_bend | bend_and_release | unison_bend
+                    | double_stop_bend | overbend | ghost_bend
+                    | oblique_bend | compound_bend
+
+unison_bend ::= "bend one string to match pitch of adjacent string"
+              | "Gilmour-style emotional unison"
+              | "Satriani unison with whammy return"
+
+overbend ::= "bend beyond whole step (minor third, major third)"
+            | "Jeff Beck overbends — voice-like quality"
+
+(* ============================================================ *)
+(* 2. Satriani Scale Vocabulary                                  *)
+(* ============================================================ *)
+
+scale_approach ::= modal_approach | exotic_approach | chromatic_approach
+                 | intervallic_approach | pentatonic_extension
+
+modal_approach ::= lydian | mixolydian | dorian | phrygian | aeolian
+                 | lydian_dominant | altered | superlocrian
+
+lydian ::= "Satriani's primary sound — major scale with #4"
+         | "Flying in a Blue Dream — pure Lydian"
+         | "dreamy, floating, otherworldly quality"
+
+mixolydian ::= "dominant quality — rock/blues foundation"
+             | "Summer Song — Mixolydian over one chord"
+             | "bluesy but major feel"
+
+exotic_approach ::= harmonic_minor | phrygian_dominant | hungarian_minor
+                  | whole_tone | diminished | enigmatic
+                  | double_harmonic_major | persian | byzantine
+
+harmonic_minor ::= "minor with raised 7th — Baroque/metal"
+                 | "augmented second interval = exotic flavor"
+                 | "Satriani: Crystal Planet solo sections"
+
+phrygian_dominant ::= "5th mode of harmonic minor"
+                    | "Spanish/Middle Eastern sound"
+                    | "metal: Marty Friedman, Satriani ethnic passages"
+
+whole_tone ::= "every note a whole step apart — Debussy, Satriani"
+             | "no tonal center — dreamlike, suspended"
+             | "6 notes, symmetric — every inversion is the same"
+
+diminished ::= "half-whole or whole-half — symmetric 8-note scale"
+             | "tension scale over dominant chords"
+             | "Satriani: rapid diminished runs in solos"
+
+pentatonic_extension ::= "minor pentatonic + blue note (b5)"
+                       | "major pentatonic + added 2nd and 6th"
+                       | "Satriani pentatonic superimposition"
+                       | "Hirajoshi (Japanese pentatonic)"
+                       | "Kumoi (Japanese minor pentatonic)"
+                       | "pentatonic + chromatic approaches"
+
+(* ============================================================ *)
+(* 3. Phrasing & Musicality — what separates Satriani            *)
+(* ============================================================ *)
+
+phrasing ::= melodic_phrasing | rhythmic_phrasing | dynamic_phrasing
+           | vocal_phrasing | call_and_response | space_and_silence
+
+melodic_phrasing ::= "sing the line before playing it"
+                   | "melody first, technique serves melody"
+                   | "strong opening note, clear resolution"
+                   | "repeat the hook — let the audience remember"
+                   | "Satch: Always With Me, Always With You — vocal melody on guitar"
+
+rhythmic_phrasing ::= "behind the beat (laid back)"
+                    | "on top of the beat (pushing)"
+                    | "rhythmic displacement — start phrase on different beat"
+                    | "odd groupings over even time (5 over 4, 7 over 4)"
+                    | "Satriani: rhythmic motifs that become riffs"
+
+dynamic_phrasing ::= "whisper to scream — volume swells"
+                   | "crescendo into climax note"
+                   | "sudden drop to pianissimo"
+                   | "pick attack variation within a phrase"
+                   | "Satch: dynamic contrast = emotional impact"
+
+vocal_phrasing ::= "whammy bar = singer's vibrato"
+                 | "slides = vocal portamento"
+                 | "bends = vocal inflection"
+                 | "legato = smooth vowels, picking = consonants"
+                 | "The guitar IS the singer — Satriani's core philosophy"
+
+call_and_response ::= "play a question phrase, answer it"
+                    | "leave space for the imaginary vocalist"
+                    | "dialogue between high and low register"
+                    | "Hendrix tradition → Satriani refinement"
+
+space_and_silence ::= "the notes you don't play are as important"
+                    | "let the note ring — give it room to breathe"
+                    | "Miles Davis: 'Do not fear mistakes. There are none.'"
+                    | "Satriani: rest beats create anticipation"
+
+(* ============================================================ *)
+(* 4. Compositional Approach — writing like Satriani              *)
+(* ============================================================ *)
+
+composition ::= theme_development chord_movement solo_architecture
+              | riff_construction groove_foundation theme_development
+
+theme_development ::= "state the melody simply"
+                    | "restate with variation"
+                    | "develop with new techniques"
+                    | "climax with full technique"
+                    | "return to simple statement"
+
+chord_movement ::= modal_vamp | pedal_tone | chromatic_movement
+                 | power_chord_riff | jazz_voicing_movement
+
+modal_vamp ::= "one or two chords — let the mode be the harmony"
+             | "Satriani: many solos over static harmony"
+             | "Lydian vamp = floating, Mixolydian vamp = groovy"
+
+solo_architecture ::= "build from low register to high"
+                    | "save the highest note for the climax"
+                    | "use technique escalation: clean → distorted → harmonic → whammy"
+                    | "3-act structure: setup → development → resolution"
+                    | "Surfing with the Alien: textbook solo arc"
+
+riff_construction ::= "rhythmic hook first, notes second"
+                    | "palm muting + open string contrast"
+                    | "chromatic approach notes into diatonic resolution"
+                    | "power chord + single note melody interleave"
+
+(* ============================================================ *)
+(* 5. Tone & Gear — the Satriani sound                           *)
+(* ============================================================ *)
+
+tone ::= gain_structure | effects_chain | amp_interaction | pickup_selection
+
+gain_structure ::= "moderate gain — clarity over saturation"
+                 | "Satriani: just enough gain for sustain, not so much you lose dynamics"
+                 | "clean for harmonics, crunch for riffs, lead for solos"
+
+effects_chain ::= wah | delay | chorus | flanger | phaser
+                | pitch_shifter | volume_pedal | compressor | reverb
+
+wah ::= "Satriani: wah as tone shaper, not just funk tool"
+       | "fixed wah position = specific frequency boost"
+       | "slow wah sweep during sustained notes"
+
+delay ::= "short delay (100-200ms) = thickening"
+        | "dotted eighth = Edge/Satriani rhythmic delay"
+        | "long delay (500ms+) = ambient"
+        | "Satch: multiple delay times for spacious sound"
+
+(* ============================================================ *)
+(* 6. Practice Architecture — Satriani's approach                *)
+(* ============================================================ *)
+
+practice ::= warmup technique_drill musical_application creative_exploration
+
+warmup ::= "chromatic exercise at half speed"
+         | "legato pattern across all strings"
+         | "picking accuracy drill — clean string changes"
+         | "bend accuracy — match pitch to reference"
+
+technique_drill ::= "isolate one technique for 15 minutes"
+                  | "metronome: start at 60% target speed"
+                  | "increment 2-4 BPM per successful repetition"
+                  | "record yourself — listen back critically"
+
+musical_application ::= "apply today's technique to a musical phrase"
+                      | "compose a short melody using only today's concept"
+                      | "play over a backing track — make music, not exercises"
+
+creative_exploration ::= "improvise with no plan — follow your ear"
+                       | "combine two unrelated techniques"
+                       | "play a familiar melody in an unfamiliar position"
+                       | "Satriani: 'if it sounds like an exercise, you're doing it wrong'"
+
+(* ============================================================ *)
+(* 7. Satriani Signature Licks — recognizable patterns           *)
+(* ============================================================ *)
+
+signature_lick ::= pitch_axis_melody | legato_cascade | harmonic_melody
+                 | whammy_dive_return | two_hand_tap_sequence
+                 | lydian_arpeggiation | rhythmic_picking_motif
+
+pitch_axis_melody ::= "melody centered on one note while chords change underneath"
+                    | "note stays, context shifts — Satriani's melodic genius"
+                    | "Flying in a Blue Dream: E stays while chords cycle"
+
+legato_cascade ::= "descending legato pattern across strings"
+                 | "Satch Boogie: rapid descending legato run"
+                 | "three-note-per-string with hammer-on transitions"
+
+harmonic_melody ::= "play melody entirely with artificial harmonics"
+                  | "Midnight: famous harmonic melody"
+                  | "combines left-hand fretting with right-hand harmonic touch"
+
+whammy_dive_return ::= "sustain note → dive → return to pitch"
+                     | "Surfing with the Alien: whammy screams between phrases"
+                     | "controlled return = pitch accuracy"
+
+(* ============================================================ *)
+(* 8. Discography Reference — techniques per album                *)
+(* ============================================================ *)
+
+discography_ref ::= not_of_this_earth | surfing_with_the_alien
+                  | flying_in_a_blue_dream | the_extremist
+                  | crystal_planet | is_there_love_in_space
+                  | super_colossal | shockwave_supernova
+
+surfing_with_the_alien ::= "Landmark: legato, whammy, two-hand tapping, pitch axis"
+                         | "Always With Me: vocal melody on guitar masterclass"
+                         | "Satch Boogie: technique showcase as composition"
+
+flying_in_a_blue_dream ::= "Lydian mode as emotional landscape"
+                         | "vocal-quality phrasing throughout"
+                         | "wider palette: clean tones, delay textures"
+
+the_extremist ::= "more compositional, less shred"
+                | "Summer Song: Mixolydian groove perfection"
+                | "Friends: emotional melody, simple technique"
+                | "proof that less technique = more music"
+
+(* ============================================================ *)
+(* 9. Evolution Hooks — this grammar grows with playing           *)
+(* ============================================================ *)
+
+(* New productions added when: *)
+(* 1. Student discovers a technique combination not in grammar *)
+(* 2. New Satriani album releases with novel approaches *)
+(* 3. Cross-pollination from other guitarists (Vai, Petrucci, Govan) *)
+(* 4. Research cycle discovers pedagogical pattern *)
+
+(* Weights evolve based on what students actually practice *)
+(* High-weight productions = most effective learning paths *)
+(* Low-weight = techniques that don't compound well *)

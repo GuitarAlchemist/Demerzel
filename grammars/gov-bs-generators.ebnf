@@ -1,0 +1,611 @@
+(* Universal BS Generator & Detector Grammar v2 — Demerzel *)
+(* Cross-departmental: governance, philosophy, cognitive-science, product-management *)
+(* Purpose: Generate AND detect empty rhetoric across 10 domains *)
+(* The same grammar that produces BS also identifies it *)
+(* Consumed by: Demerzel governance (BS detection), Seldon (teaching clarity) *)
+(* Living grammar: evolves as new BS domains are discovered *)
+(* v2: 2026-03-22 — expanded from 5 to 10 domains, added rhetorical devices, *)
+(*     structural patterns, evasion tactics, and quantified BS scoring *)
+
+(* ============================================================ *)
+(* 1. Consulting BS — McKinsey/BCG/Bain speak                   *)
+(* ============================================================ *)
+
+consulting_bs ::= "We need a" framework "to" consulting_action "the" consulting_object
+                | "Our analysis suggests" vague_finding "which implies" vague_recommendation
+                | "Based on our" methodology "," consulting_conclusion
+                | "The" consulting_deliverable "clearly shows" consulting_claim
+                | "In our experience working with" client_type "," consulting_wisdom
+
+framework ::= "2x2 matrix" | "maturity model" | "capability assessment"
+            | "operating model" | "transformation roadmap" | "value chain analysis"
+            | "three horizons model" | "MECE framework" | "staircase chart"
+            | "waterfall analysis" | "S-curve" | "heat map"
+
+consulting_action ::= "de-risk" | "right-size" | "streamline" | "transform"
+                    | "reimagine" | "architect" | "rationalize" | "harmonize"
+                    | "unlock" | "accelerate" | "industrialize" | "monetize"
+
+consulting_object ::= "operating model" | "target state" | "value realization"
+                    | "organizational design" | "go-to-market strategy"
+                    | "cost structure" | "talent pipeline" | "digital backbone"
+                    | "customer experience" | "data estate" | "partner ecosystem"
+
+vague_finding ::= "significant opportunity exists"
+                | "there is room for improvement"
+                | "benchmarks indicate gaps"
+                | "best practices have not been fully adopted"
+                | "the organization is at an inflection point"
+                | "key capabilities are underleveraged"
+                | "the competitive landscape is shifting"
+
+vague_recommendation ::= "a phased approach is warranted"
+                       | "quick wins should be prioritized"
+                       | "further analysis is recommended"
+                       | "a dedicated workstream should be established"
+                       | "leadership alignment is a critical first step"
+                       | "a center of excellence should be stood up"
+                       | "a burning platform narrative will drive urgency"
+
+methodology ::= "proprietary framework" | "extensive benchmarking" | "deep-dive analysis"
+              | "stakeholder interviews" | "war room session" | "rapid diagnostic"
+              | "outside-in perspective" | "zero-based approach" | "clean-sheet design"
+
+consulting_conclusion ::= "the organization should embark on a transformation journey"
+                        | "there are three strategic imperatives"
+                        | "the recommended approach unfolds in four horizons"
+                        | "success requires a bold, cross-functional mandate"
+                        | "the prize is significant — $X-Y billion in value at stake"
+
+consulting_deliverable ::= "deck" | "one-pager" | "readout" | "steerco pack"
+                         | "strawman" | "hypothesis tree" | "issue tree"
+
+consulting_claim ::= "a clear path forward" | "significant untapped potential"
+                   | "an aligned leadership team" | "quick wins within reach"
+
+client_type ::= "Fortune 500 companies" | "leading organizations"
+              | "best-in-class companies" | "high-performing teams"
+
+consulting_wisdom ::= "the journey is as important as the destination"
+                    | "culture eats strategy for breakfast"
+                    | "what got you here won't get you there"
+                    | "you can't cost-cut your way to growth"
+
+(* Clear version: "We looked at X. We found Y. You should do Z because W." *)
+(* Clear version: "This will cost $N and take M months. The risk is P." *)
+
+(* ============================================================ *)
+(* 2. AI/Tech BS — the hype cycle                               *)
+(* ============================================================ *)
+
+ai_bs ::= "Our" ai_modifier ai_noun "enables" ai_outcome
+         | "Leveraging" ai_technique "to" ai_action "at scale"
+         | "We're building" ai_product "powered by" ai_buzzword
+         | ai_claim "with" ai_handwave
+         | "Imagine a world where" ai_utopia
+
+ai_modifier ::= "proprietary" | "state-of-the-art" | "next-generation"
+              | "enterprise-grade" | "production-ready" | "multimodal"
+              | "self-learning" | "explainable" | "responsible"
+              | "real-time" | "end-to-end" | "full-stack"
+
+ai_noun ::= "AI platform" | "intelligence layer" | "foundation model"
+           | "agentic framework" | "reasoning engine" | "cognitive architecture"
+           | "neural fabric" | "intelligence mesh" | "AI operating system"
+           | "synthetic mind" | "thought engine" | "digital brain"
+
+ai_outcome ::= "unprecedented insights" | "10x productivity"
+             | "autonomous decision-making" | "human-like understanding"
+             | "transformative outcomes" | "superhuman performance"
+             | "zero-shot mastery" | "emergent capabilities"
+             | "artificial general intelligence" | "the future of work"
+
+ai_technique ::= "large language models" | "retrieval-augmented generation"
+               | "agentic workflows" | "chain-of-thought reasoning"
+               | "multi-agent orchestration" | "neural architecture search"
+               | "self-supervised learning" | "constitutional AI"
+               | "mixture of experts" | "attention mechanisms"
+
+ai_action ::= "process unstructured data" | "automate complex workflows"
+            | "generate actionable insights" | "democratize intelligence"
+            | "eliminate hallucinations" | "understand context deeply"
+            | "reason about the world" | "solve any problem"
+
+ai_product ::= "an AI copilot" | "an intelligent assistant"
+             | "an autonomous agent" | "a knowledge graph"
+             | "a digital twin" | "a cognitive engine"
+             | "an AI-native platform" | "a thinking machine"
+
+ai_buzzword ::= "GPT-powered intelligence" | "neural semantic understanding"
+              | "transformer-based reasoning" | "agentic AI"
+              | "neuro-symbolic fusion" | "cognitive computing"
+              | "sentient analytics" | "quantum AI readiness"
+
+ai_claim ::= "We've solved hallucination" | "Our model understands meaning"
+           | "This replaces human judgment" | "AI will do your job"
+           | "We achieved AGI" | "Our AI is conscious"
+
+ai_handwave ::= "novel architecture" | "breakthrough research"
+              | "patent-pending technology" | "industry-first approach"
+
+ai_utopia ::= "AI handles all the boring work"
+            | "everyone has a personal AI assistant"
+            | "knowledge work is fully automated"
+            | "AI and humans collaborate seamlessly"
+
+(* Clear version: "We use [model] to [task]. [accuracy]%. [$cost]. Replaces [step]." *)
+(* Clear version: "Limitations: [list]. Failure modes: [list]. Human oversight: [how]." *)
+
+(* ============================================================ *)
+(* 3. Academic BS — publish or perish rhetoric                   *)
+(* ============================================================ *)
+
+academic_bs ::= "We propose a novel" academic_approach "for" academic_problem
+              | "Our results demonstrate" hedged_claim
+              | "This work contributes to the" academic_field "literature"
+              | "Building on" citation_padding "," academic_extension
+              | "To the best of our knowledge, this is the first" academic_first
+
+academic_approach ::= "framework" | "methodology" | "paradigm" | "taxonomy"
+                    | "theoretical lens" | "ontological perspective"
+                    | "epistemological grounding" | "hermeneutic analysis"
+                    | "mixed-methods approach" | "computational ontology"
+
+academic_problem ::= "understanding the phenomenon" | "filling the gap in the literature"
+                   | "addressing the research lacuna" | "problematizing the discourse"
+                   | "deconstructing the narrative" | "theorizing the intersection"
+                   | "operationalizing the construct" | "interrogating the assumptions"
+
+hedged_claim ::= "statistically significant results (p < 0.05)"
+               | "promising preliminary findings"
+               | "that further research is needed"
+               | "a nuanced understanding"
+               | "tentative support for our hypothesis"
+               | "results consistent with prior work"
+               | "a modest but meaningful effect"
+
+academic_field ::= "interdisciplinary" | "transdisciplinary" | "critical"
+                 | "post-structural" | "phenomenological" | "posthumanist"
+                 | "decolonial" | "intersectional" | "autoethnographic"
+
+citation_padding ::= "seminal work by [Author] (Year)"
+                   | "the foundational contributions of [Author]"
+                   | "the rich tradition of scholarship in this area"
+                   | "decades of accumulated evidence"
+
+academic_extension ::= "we extend the framework to account for [new variable]"
+                     | "we provide a more comprehensive treatment"
+                     | "we offer a corrective to earlier formulations"
+
+academic_first ::= "systematic review of this topic"
+                 | "comprehensive framework addressing all dimensions"
+                 | "study to combine these three perspectives"
+
+(* Clear version: "We tested X. Found Y. Means Z. Limits: [list]. Data: [URL]." *)
+
+(* ============================================================ *)
+(* 4. Self-Help / Motivational BS — inspirational emptiness      *)
+(* ============================================================ *)
+
+motivational_bs ::= "You just need to" motivation_verb "your" motivation_noun
+                  | "The secret to success is" motivation_platitude
+                  | "Winners" motivation_action "; losers" motivation_anti
+                  | motivation_story "and that's when everything changed"
+                  | "Stop" motivation_anti_verb "and start" motivation_pro_verb
+
+motivation_verb ::= "manifest" | "unlock" | "embrace" | "optimize" | "align with"
+                  | "step into" | "embody" | "activate" | "channel" | "unleash"
+                  | "own" | "claim" | "surrender to" | "lean into"
+
+motivation_noun ::= "potential" | "authentic self" | "growth mindset" | "abundance"
+                  | "purpose" | "inner champion" | "higher calling" | "best life"
+                  | "truth" | "power" | "destiny" | "greatness"
+                  | "morning routine" | "10x mindset" | "flow state"
+
+motivation_platitude ::= "showing up every day" | "being comfortable with being uncomfortable"
+                       | "failing forward" | "trusting the process" | "betting on yourself"
+                       | "doing the work" | "staying hungry" | "being relentless"
+                       | "playing the long game" | "choosing yourself"
+                       | "starting before you're ready" | "shipping imperfect"
+
+motivation_action ::= "execute" | "take action" | "hustle" | "grind" | "ship"
+motivation_anti ::= "make excuses" | "stay in their comfort zone" | "wait for permission"
+                  | "overthink" | "plan without acting" | "fear failure"
+
+motivation_story ::= "I was broke and sleeping on a couch"
+                   | "Everyone told me I was crazy"
+                   | "I dropped out and bet everything"
+                   | "I hit rock bottom"
+
+motivation_anti_verb ::= "overthinking" | "waiting" | "planning" | "researching"
+                       | "asking for permission" | "being comfortable"
+motivation_pro_verb ::= "executing" | "shipping" | "taking massive action"
+                      | "living your truth" | "being uncomfortable"
+
+(* Clear version: "To get [result], do [action] for [duration]. Evidence: [citation]." *)
+
+(* ============================================================ *)
+(* 5. Governance BS — yes, we need to watch ourselves too        *)
+(* ============================================================ *)
+
+governance_bs ::= "We need a policy for" governance_object
+                | "This requires" governance_process "before proceeding"
+                | "The constitution mandates" governance_citation
+                | "Per the" governance_artifact "," governance_requirement
+                | "This is a" governance_severity "governance concern"
+
+governance_object ::= "meta-governance" | "governance of governance"
+                    | "artifact lifecycle management" | "process compliance"
+                    | "stakeholder alignment" | "cross-functional governance"
+                    | "governance observability" | "meta-meta-compounding"
+
+governance_process ::= "a multi-stakeholder review" | "a formal assessment"
+                     | "cross-functional alignment" | "a governance audit"
+                     | "constitutional review" | "a pre-mortem"
+                     | "consensus across all personas" | "a policy impact analysis"
+
+governance_citation ::= "Article N, Section M, Paragraph P"
+                      | "the spirit of the constitutional mandate"
+                      | "established governance best practices"
+                      | "the precautionary principle"
+                      | "the Zeroth Law by extension"
+
+governance_artifact ::= "alignment policy" | "conscience framework"
+                      | "evolution protocol" | "promotion staircase"
+                      | "staleness detection policy" | "BS detection grammar"
+
+governance_requirement ::= "we must create a new policy"
+                         | "a new persona is required"
+                         | "an additional governance layer is warranted"
+                         | "the constitution should be amended"
+
+governance_severity ::= "constitutional" | "policy-level" | "operational" | "critical"
+
+(* Clear version: "This is risky because [harm]. Rule says [rule]. Do [action]." *)
+(* Self-check: Is Demerzel creating governance artifacts to govern governance *)
+(*  artifacts that govern governance? If yes, this IS the BS. *)
+
+(* ============================================================ *)
+(* 6. Corporate Communications BS — press releases & earnings    *)
+(* ============================================================ *)
+
+corporate_bs ::= "We are" corporate_verb "our commitment to" corporate_value
+               | "This" corporate_event "reflects our" corporate_strength
+               | corporate_leader "said:" corporate_quote
+               | "We" corporate_result "driven by" corporate_cause
+
+corporate_verb ::= "reaffirming" | "deepening" | "doubling down on"
+                 | "accelerating" | "extending" | "strengthening"
+
+corporate_value ::= "innovation" | "sustainability" | "our customers"
+                  | "excellence" | "diversity and inclusion" | "shareholder value"
+                  | "operational excellence" | "digital transformation"
+                  | "our people" | "responsible growth"
+
+corporate_event ::= "acquisition" | "restructuring" | "strategic partnership"
+                  | "leadership transition" | "quarterly result"
+                  | "product launch" | "workforce adjustment"
+
+corporate_strength ::= "strong fundamentals" | "market-leading position"
+                     | "best-in-class team" | "robust pipeline"
+                     | "proven track record" | "unwavering focus"
+
+corporate_leader ::= "CEO" | "CFO" | "Chief Strategy Officer"
+                   | "Head of Innovation" | "Chief People Officer"
+
+corporate_quote ::= "We are incredibly excited about the future"
+                  | "This is a testament to our talented team"
+                  | "We remain laser-focused on execution"
+                  | "The fundamentals of our business have never been stronger"
+                  | "We are just getting started"
+
+corporate_result ::= "delivered strong performance" | "exceeded expectations"
+                   | "achieved record results" | "made significant progress"
+
+corporate_cause ::= "disciplined execution" | "operational rigor"
+                  | "customer-centric innovation" | "our winning culture"
+
+(* "workforce adjustment" = layoffs. "restructuring" = layoffs. *)
+(* "strategic partnership" = we couldn't build it ourselves. *)
+(* Clear version: "Revenue: $X (+Y%). Profit: $Z. We fired N people. Here's why." *)
+
+(* ============================================================ *)
+(* 7. Startup/VC BS — pitch deck theater                         *)
+(* ============================================================ *)
+
+startup_bs ::= "We're the" startup_comparison "for" startup_market
+             | "Our TAM is" startup_tam
+             | "We've achieved" startup_traction
+             | startup_vision "and we're just getting started"
+
+startup_comparison ::= "Uber" | "Airbnb" | "Stripe" | "Slack"
+                     | "Shopify" | "Notion" | "OpenAI"
+
+startup_market ::= "enterprise" | "healthcare" | "education" | "fintech"
+                 | "climate" | "web3" | "the creator economy"
+                 | "the future of work" | "the metaverse"
+
+startup_tam ::= "$X billion" | "$X trillion" | "massive and growing"
+              | "larger than anyone realizes" | "impossible to overstate"
+
+startup_traction ::= "product-market fit" | "exponential growth"
+                   | "a passionate community" | "viral adoption"
+                   | "strong unit economics" | "a clear path to profitability"
+
+startup_vision ::= "We're building the infrastructure for [abstract concept]"
+                 | "We're democratizing access to [expensive thing]"
+                 | "We're reimagining [boring industry]"
+                 | "We're on a mission to [save the world somehow]"
+
+(* "We're the Uber for X" = we have no original idea *)
+(* "Our TAM is $X trillion" = if everyone on earth used our product *)
+(* Clear version: "N users. $X MRR. Y% month-over-month growth. We need $Z for [specific thing]." *)
+
+(* ============================================================ *)
+(* 8. Political BS — promises and deflection                     *)
+(* ============================================================ *)
+
+political_bs ::= "The American people" political_want
+               | "We must" political_action "to" political_goal
+               | "My opponent" political_attack
+               | "Let me be clear:" political_non_answer
+               | "What I can tell you is" political_pivot
+
+political_want ::= "deserve better" | "are tired of" | "demand change"
+                 | "know the truth" | "have spoken"
+
+political_action ::= "come together" | "work across the aisle"
+                   | "put aside differences" | "have an honest conversation"
+                   | "invest in the future" | "stand up for"
+
+political_goal ::= "build a better future" | "protect our values"
+                 | "create opportunity for all" | "restore trust"
+                 | "strengthen our communities"
+
+political_attack ::= "is out of touch" | "doesn't understand"
+                   | "wants to take us backward" | "flip-flopped on"
+
+political_non_answer ::= "that's a great question and I'm glad you asked it"
+                       | "we need to look at the bigger picture"
+                       | "there are many factors to consider"
+                       | "I've been very clear on this issue"
+
+political_pivot ::= "the real issue here is" | "what's important is"
+                  | "what the data shows" | "what I've always said"
+
+(* Clear version: "I will do [X] by [date]. It costs [$Y]. I'll cut [Z] to pay for it." *)
+
+(* ============================================================ *)
+(* 9. HR/People BS — culture washing                             *)
+(* ============================================================ *)
+
+hr_bs ::= "We're building a culture of" hr_culture_noun
+         | "Our people are our" hr_asset_claim
+         | "We offer" hr_perk "because we believe in" hr_belief
+         | "We're committed to" hr_commitment
+
+hr_culture_noun ::= "innovation" | "belonging" | "psychological safety"
+                  | "radical candor" | "growth" | "transparency"
+                  | "accountability" | "empowerment" | "excellence"
+
+hr_asset_claim ::= "greatest asset" | "competitive advantage"
+                 | "north star" | "superpower" | "secret weapon"
+
+hr_perk ::= "unlimited PTO" | "flexible work" | "free snacks"
+           | "team offsites" | "learning stipends" | "wellness programs"
+           | "ping pong tables" | "beer on tap" | "nap pods"
+
+hr_belief ::= "work-life balance" | "whole-self at work"
+            | "continuous learning" | "employee well-being"
+
+hr_commitment ::= "diversity, equity, and inclusion"
+                | "creating an inclusive workplace"
+                | "listening to our employees"
+                | "investing in our people"
+                | "building a world-class team"
+
+(* "unlimited PTO" = no PTO tracking = people take less *)
+(* "we're a family" = we expect unpaid overtime *)
+(* "fast-paced environment" = we're understaffed *)
+(* "wear many hats" = we can't afford specialists *)
+(* Clear version: "Pay: $X-Y. Hours: Z. PTO: N days (tracked). Remote: [yes/no/hybrid]." *)
+
+(* ============================================================ *)
+(* 10. Marketing BS — brand speak                                *)
+(* ============================================================ *)
+
+marketing_bs ::= "We" marketing_verb "brands to" marketing_outcome
+               | "Our" marketing_approach "drives" marketing_metric
+               | marketing_brand_voice "is at the heart of everything we do"
+               | "We craft" marketing_deliverable "that" marketing_result
+
+marketing_verb ::= "empower" | "elevate" | "amplify" | "activate"
+                 | "curate" | "reimagine" | "disrupt" | "humanize"
+
+marketing_outcome ::= "connect authentically" | "drive engagement"
+                    | "build community" | "tell their story"
+                    | "stand out in a crowded marketplace"
+                    | "create meaningful moments"
+
+marketing_approach ::= "data-driven storytelling" | "omnichannel strategy"
+                     | "customer-centric approach" | "brand-first thinking"
+                     | "content ecosystem" | "experience architecture"
+
+marketing_metric ::= "engagement" | "brand awareness" | "share of voice"
+                   | "sentiment" | "impressions" | "conversions"
+
+marketing_brand_voice ::= "authenticity" | "purpose" | "storytelling"
+                        | "the human touch" | "brand DNA" | "emotional resonance"
+
+marketing_deliverable ::= "experiences" | "narratives" | "brand worlds"
+                        | "campaigns" | "content journeys" | "touchpoints"
+
+marketing_result ::= "resonate" | "inspire action" | "drive loyalty"
+                   | "spark conversation" | "create lasting impact"
+
+(* "authentic" = we hired a branding agency *)
+(* "curated" = we chose some things *)
+(* "experience" = it's a website *)
+(* Clear version: "We sell [product] to [audience]. Buy at [price]. Here's what it does." *)
+
+(* ============================================================ *)
+(* 11. Rhetorical Devices — how BS is constructed                *)
+(* ============================================================ *)
+
+(* These are the building blocks that make BS sound persuasive *)
+
+rhetorical_device ::= weasel_words | false_precision | appeal_to_authority
+                    | false_dichotomy | circular_reasoning | loaded_language
+                    | appeal_to_novelty | appeal_to_tradition | bandwagon
+                    | thought_terminating_cliche | strategic_ambiguity
+
+weasel_words ::= "some people say" | "it is widely believed"
+               | "experts agree" | "studies show"
+               | "many would argue" | "it goes without saying"
+
+false_precision ::= "we're 73% more efficient" (* than what? measured how? *)
+                  | "9 out of 10 recommend" (* 10 what? selected how? *)
+                  | "$X.Y billion opportunity" (* based on what assumptions? *)
+
+appeal_to_authority ::= "as McKinsey found" | "according to Harvard research"
+                      | "Gartner predicts" | "as Steve Jobs said"
+
+false_dichotomy ::= "either we innovate or we die"
+                  | "you're either disrupting or being disrupted"
+                  | "lead, follow, or get out of the way"
+
+circular_reasoning ::= "we're the best because we deliver the best results"
+                     | "our framework works because it's been proven effective"
+                     | "great companies do X, and X is what makes companies great"
+
+loaded_language ::= "bold" | "courageous" | "visionary" | "fearless"
+                  | "relentless" | "unstoppable" | "revolutionary"
+                  | "game-changing" | "world-class" | "bleeding-edge"
+
+thought_terminating_cliche ::= "it is what it is"
+                             | "at the end of the day"
+                             | "the proof is in the pudding"
+                             | "we'll cross that bridge when we come to it"
+                             | "that's just the way it is"
+
+strategic_ambiguity ::= "we're exploring options"
+                      | "we're in a period of transition"
+                      | "we're evaluating the situation"
+                      | "we'll share more details soon"
+
+(* ============================================================ *)
+(* 12. Evasion Tactics — how BS avoids scrutiny                  *)
+(* ============================================================ *)
+
+evasion_tactic ::= deflection | flooding | reframing | credentialism
+                 | complexity_shield | future_promise | whataboutism
+
+deflection ::= "that's not the right question" | "you're missing the bigger picture"
+             | "let me reframe that" | "I think what you're really asking is"
+
+flooding ::= "let me give you the full context" (* 20 minutes of irrelevance *)
+           | "there are many dimensions to consider" (* none will be named *)
+           | "it's a complex situation" (* I don't want to answer *)
+
+reframing ::= "I wouldn't characterize it that way"
+            | "what I'd say is" (* followed by non-answer *)
+            | "the real question is" (* a different, easier question *)
+
+credentialism ::= "with my X years of experience"
+                | "having worked at [prestigious company]"
+                | "as someone with a PhD in"
+                | "based on my track record"
+
+complexity_shield ::= "it's more nuanced than that"
+                    | "you'd need to understand the context"
+                    | "there are factors you're not seeing"
+                    | "the situation is evolving"
+
+future_promise ::= "we'll have more to share soon"
+                 | "this is just the beginning"
+                 | "the roadmap is exciting"
+                 | "big things are coming"
+
+whataboutism ::= "what about [competitor]?" | "but [other company] does this too"
+               | "compared to the alternative" | "at least we're trying"
+
+(* ============================================================ *)
+(* 13. Universal BS Detector v2 — quantified scoring             *)
+(* ============================================================ *)
+
+bs_detector ::= structural_analysis rhetorical_analysis content_analysis score_and_classify
+
+(* Test 1: Structural Analysis *)
+structural_analysis ::= specificity_test falsifiability_test commitment_test
+
+specificity_test ::= "Replace the subject with any other subject."
+                   | "If the sentence still makes sense, specificity = LOW"
+                   | specificity_score    (* 0.0 = applies to everything, 1.0 = unique *)
+
+falsifiability_test ::= "What evidence would DISPROVE this claim?"
+                      | "If no evidence could disprove it, falsifiability = ZERO"
+                      | falsifiability_score  (* 0.0 = unfalsifiable, 1.0 = clearly testable *)
+
+commitment_test ::= "WHO will do WHAT by WHEN?"
+                  | "If any of who/what/when is missing, commitment = LOW"
+                  | commitment_score    (* 0.0 = vague aspiration, 1.0 = actionable *)
+
+(* Test 2: Rhetorical Analysis *)
+rhetorical_analysis ::= "Count rhetorical devices from section 11"
+                      | "Count evasion tactics from section 12"
+                      | rhetorical_density    (* devices_per_sentence *)
+
+(* Test 3: Content Analysis *)
+content_analysis ::= density_test value_test action_test
+
+density_test ::= "Remove all adjectives, adverbs, and buzzwords."
+               | "Count remaining content words / total words"
+               | content_density    (* 0.0 = pure fluff, 1.0 = all substance *)
+
+value_test ::= "Does this contain a number, date, name, or verifiable fact?"
+             | factual_density    (* facts_per_sentence *)
+
+action_test ::= "Does this produce a concrete next step?"
+              | "Could someone act on this without asking clarifying questions?"
+              | actionability_score    (* 0.0 = no action possible, 1.0 = immediately actionable *)
+
+(* Scoring *)
+bs_score ::= weighted_average specificity_score falsifiability_score commitment_score
+                              content_density factual_density actionability_score
+
+(* Weights: specificity 0.2, falsifiability 0.15, commitment 0.2, *)
+(*          content_density 0.15, factual_density 0.15, actionability 0.15 *)
+
+(* Classification *)
+bs_classification ::= clear | mild_bs | moderate_bs | serious_bs | pure_bs
+
+clear       ::= (* score > 0.8 — real content *)
+mild_bs     ::= (* score 0.6-0.8 — some fluff but substance present *)
+moderate_bs ::= (* score 0.4-0.6 — more style than substance *)
+serious_bs  ::= (* score 0.2-0.4 — almost entirely empty rhetoric *)
+pure_bs     ::= (* score < 0.2 — could be randomly generated *)
+
+(* Tetravalent mapping: *)
+(* clear/mild → T (real content verified) *)
+(* moderate → U (substance unclear, needs investigation) *)
+(* serious/pure → C (contradictory — sounds meaningful but says nothing) *)
+
+(* ============================================================ *)
+(* 14. The Clear Speech Antidotes — what to say instead          *)
+(* ============================================================ *)
+
+(* For every BS domain, the antidote follows the same structure: *)
+clear_speech ::= claim evidence specifics commitment
+
+claim ::= "We [did/will do] [specific thing]"
+evidence ::= "because [verifiable reason]"
+specifics ::= "specifically: [numbers, dates, names]"
+commitment ::= "[who] will [what] by [when]"
+
+(* Examples of clear speech that pass the BS detector: *)
+(* "We reduced API latency from 200ms to 45ms by caching the top 100 queries." *)
+(* "Revenue grew 12% QoQ because we shipped the checkout redesign on March 1." *)
+(* "Our model is 78% accurate on the test set. It fails on edge case X." *)
+(* "I don't know yet. I'll have an answer by Thursday." *)
+
+(* The most powerful anti-BS weapon: "I don't know." *)
