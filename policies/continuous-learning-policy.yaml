@@ -1,0 +1,140 @@
+name: continuous-learning-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: Automatic pattern extraction from sessions via hooks. Observations become instincts, instincts become patterns, patterns become policies. The governance framework learns from itself.
+
+constitutional_basis:
+  - Article 7 (Auditability) — every learning is logged with evidence
+  - Article 8 (Observability) — learning rate and pattern count are governance metrics
+  - Article 9 (Bounded Autonomy) — auto-learned patterns require validation before promotion
+
+principles:
+  - "Every session teaches something — capture it or lose it"
+  - "Observations are cheap, patterns are valuable, policies are expensive"
+  - "Auto-extracted patterns start at U (unknown) and must earn T (true) through evidence"
+  - "Project-scoped learning prevents cross-contamination"
+
+inspiration:
+  source: "Everything Claude Code (ECC) continuous-learning-v2"
+  url: "https://github.com/affaan-m/everything-claude-code"
+  adaptation: "ECC instincts → Demerzel patterns with tetravalent confidence and constitutional governance"
+
+observation_pipeline:
+  description: "How sessions become knowledge"
+
+  capture:
+    mechanism: "Claude Code hooks (PreToolUse/PostToolUse/Stop)"
+    what_to_capture:
+      - "User corrections (explicit feedback → high-confidence patterns)"
+      - "Error → resolution sequences (debugging patterns)"
+      - "Repeated workflows (operational patterns)"
+      - "Tool selection patterns (which tools for which tasks)"
+      - "Governance decisions (escalation triggers, gate outcomes)"
+      - "Grammar production usage (which productions are actually sampled)"
+    storage: "state/learning/observations.jsonl (append-only)"
+    scope: "project-scoped by default (keyed by repo path)"
+
+  extraction:
+    mechanism: "Background analysis (cheap model or post-session review)"
+    what_to_extract:
+      - "Atomic patterns (one trigger → one action)"
+      - "Anti-patterns (what went wrong and was corrected)"
+      - "Tool chains (sequences of tools that work well together)"
+      - "Governance shortcuts (when escalation was unnecessary)"
+      - "Grammar gaps (when no production matched the need)"
+    output: "state/patterns/{type}-NNN-{slug}.pattern.json"
+    initial_belief: "U (unknown — needs validation)"
+    initial_confidence: 0.5
+
+  validation:
+    mechanism: "Pattern seen in 3+ sessions → confidence increases"
+    rules:
+      - "1 occurrence: confidence 0.3 (tentative)"
+      - "3 occurrences: confidence 0.6 (probable)"
+      - "5 occurrences across 2+ repos: confidence 0.8 (confirmed)"
+      - "User explicitly confirms: confidence 0.9"
+      - "User explicitly rejects: belief_value → F, archived"
+
+  promotion:
+    description: "Patterns become governance artifacts via the promotion staircase"
+    levels:
+      - name: "observation"
+        description: "Raw session event"
+        automated: true
+        threshold: "none — all observations are captured"
+
+      - name: "pattern"
+        description: "Extracted behavior with evidence"
+        automated: true
+        threshold: "extraction confidence > 0.3"
+
+      - name: "confirmed_pattern"
+        description: "Pattern validated by recurrence"
+        automated: true
+        threshold: "3+ occurrences, confidence > 0.6"
+
+      - name: "skill_candidate"
+        description: "Pattern complex enough to become a skill"
+        automated: false
+        threshold: "5+ occurrences, confidence > 0.8, human review"
+        action: "Propose via /demerzel promote"
+
+      - name: "policy_candidate"
+        description: "Pattern important enough to become governance policy"
+        automated: false
+        threshold: "10+ occurrences, cross-repo, confidence > 0.9, human review"
+        action: "Propose via /demerzel promote with constitutional justification"
+
+hook_integration:
+  description: "How to wire this into Claude Code settings.json"
+
+  hooks:
+    - event: "PostToolUse"
+      description: "Log tool usage + outcome for pattern extraction"
+      async: true
+      profile: "standard,strict"
+
+    - event: "Stop"
+      description: "End-of-session summary — extract patterns from full session"
+      profile: "standard,strict"
+
+    - event: "PreToolUse"
+      matcher: "Edit|Write"
+      description: "Track file modification patterns"
+      async: true
+      profile: "strict"
+
+  profiles:
+    minimal: "No learning hooks — fastest performance"
+    standard: "PostToolUse + Stop hooks — balanced"
+    strict: "All hooks — maximum learning capture"
+
+  env_var: "DEMERZEL_HOOK_PROFILE"
+  default: "standard"
+
+connection_to_existing_systems:
+  patterns_catalog: "Extracted patterns go to state/patterns/"
+  grammar_evolution: "Grammar gap patterns trigger production proposals"
+  metafix: "Anti-patterns extracted here feed /demerzel metafix"
+  metabuild: "Recurring skill-candidate patterns feed /demerzel metabuild"
+  staleness_detection: "Observation freshness tracked alongside other state"
+  blind_spot_detection: "Unobserved areas (tools never used, departments never researched) are blind spots"
+
+metrics:
+  - name: "observations_per_session"
+    target: "> 5"
+    alert: "0 = hooks not running"
+
+  - name: "patterns_extracted_per_week"
+    target: "> 3"
+    alert: "0 = extraction not running or sessions too short"
+
+  - name: "promotion_rate"
+    formula: "promoted_patterns / total_patterns"
+    target: "> 0.1"
+    alert: "< 0.05 = patterns not useful enough, or promotion too conservative"
+
+  - name: "pattern_accuracy"
+    formula: "confirmed_patterns / (confirmed_patterns + rejected_patterns)"
+    target: "> 0.7"
+    alert: "< 0.5 = extraction quality too low"
