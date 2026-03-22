@@ -1,5 +1,6 @@
-(* ML Pipeline Grammar — Streeling University / ix Forge *)
-(* Departments: computer-science, mathematics, psychohistory *)
+(* IxQL — ML Pipeline & Reactive Data Flow Grammar *)
+(* Streeling University / ix Forge *)
+(* Departments: computer-science, mathematics, psychohistory, cybernetics *)
 (* Consumed by: ix-ml-builder skill, tars grammar distillation *)
 (* Living grammar: evolves via research cycles + distillation *)
 (* See: policies/grammar-evolution-policy.yaml *)
@@ -160,7 +161,65 @@ ix_pattern ::= karnaugh_optimization   (* Boolean function simplification *)
 combiner ::= voting | averaging | stacking | blending | boosting_cascade
 
 (* ============================================================ *)
-(* 9. Evolution Hooks                                            *)
+(* 9. I/O & Reactive Patterns                                    *)
+(* ============================================================ *)
+
+(* Input sources — reactive triggers for pipelines *)
+reactive_source ::= websocket_source | file_watcher | sse_source
+                  | webhook_source | cron_source | stdin_source
+                  | message_queue | database_cdc | grpc_source
+
+websocket_source ::= "websocket" "(" url "," channel? ")"
+file_watcher     ::= "watch" "(" path_pattern ")" debounce?
+sse_source       ::= "sse" "(" url ")"
+webhook_source   ::= "webhook" "(" provider "," event_type ")"
+cron_source      ::= "cron" "(" cron_expression ")"
+stdin_source     ::= "stdin" format?
+message_queue    ::= "subscribe" "(" broker "," topic ")"
+database_cdc     ::= "cdc" "(" connection "," table ")"
+grpc_source      ::= "grpc" "(" service "," method ")"
+
+provider   ::= "github" | "discord" | "gitlab" | "generic"
+event_type ::= string_literal
+format     ::= "json" | "csv" | "text" | "binary"
+
+(* Output sinks — where pipeline results go *)
+output_sink ::= websocket_sink | file_sink | stdout_sink
+              | http_post | mcp_register | discord_sink
+              | github_sink | notification_sink
+
+websocket_sink    ::= "push" "(" url "," channel? ")"
+file_sink         ::= "write" "(" path "," format ")"
+stdout_sink       ::= "stdout" format?
+http_post         ::= "post" "(" url "," content_type ")"
+mcp_register      ::= "mcp_tool" "(" tool_name "," description ")"
+discord_sink      ::= "alert" "(" "discord" "," message_template ")"
+github_sink       ::= "github" "(" action "," target ")"  (* action: issue, comment, pr *)
+notification_sink ::= "notify" "(" channel "," message_template ")"
+
+(* Flow control — reactive pipeline patterns *)
+flow_control ::= fan_out | fan_in | filter_stage | throttle
+               | retry_policy | circuit_breaker | window | debounce
+
+fan_out         ::= "fan_out" "(" pipeline ("," pipeline)+ ")"
+fan_in          ::= "fan_in" "(" source ("," source)+ ")" "=>" pipeline
+filter_stage    ::= "filter" "(" predicate ")"
+throttle        ::= "throttle" "(" rate "," time_unit ")"
+retry_policy    ::= "retry" "(" max_attempts "," backoff_strategy ")"
+circuit_breaker ::= "circuit_breaker" "(" max_failures "," reset_duration ")"
+window          ::= "window" "(" duration "," aggregation ")"
+debounce        ::= "debounce" "(" duration ")"
+
+backoff_strategy ::= "constant" | "linear" | "exponential"
+aggregation      ::= "count" | "sum" | "avg" | "min" | "max" | "collect"
+
+(* Reactive pipeline — extends base pipeline with I/O *)
+reactive_pipeline ::= reactive_source "=>" pipeline "=>" output_sink
+                    | reactive_source "=>" flow_control
+                    | pipeline "=>" output_sink   (* batch with explicit sink *)
+
+(* ============================================================ *)
+(* 10. Evolution Hooks                                           *)
 (* ============================================================ *)
 
 (* This grammar evolves via: *)
