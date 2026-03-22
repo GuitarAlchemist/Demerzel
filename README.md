@@ -22,13 +22,13 @@ Demerzel/
 ├── personas/              # 14 persona archetypes (YAML) defining agent roles and voices
 ├── policies/              # 24 governance policies (alignment, rollback, kaizen, conscience, etc.)
 ├── logic/                 # Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
-├── grammars/              # 18 EBNF grammars for domain-specific languages
-├── schemas/               # 21 JSON schemas for personas, beliefs, contracts, and more
+├── grammars/              # 21 EBNF grammars including IxQL (ML pipelines + MCP orchestration)
+├── schemas/               # 23 JSON schemas for personas, beliefs, contracts, and more
 ├── contracts/             # Galactic Protocol specification for cross-repo communication
 ├── state/                 # Persistent governance state (beliefs, conscience, streeling, driver)
-│   └── streeling/         # Streeling University: 13 departments, 14 courses
-├── tests/behavioral/      # 41 behavioral test suites
-├── .claude/skills/        # 36 Claude Code skills (driver, recon, teach, research, etc.)
+│   └── streeling/         # Streeling University: 16 departments, 14 courses
+├── tests/behavioral/      # 44 behavioral test suites
+├── .claude/skills/        # 37 Claude Code skills (driver, recon, teach, research, etc.)
 ├── templates/             # Integration templates for consumer repos
 ├── examples/              # Scenario walkthroughs and sample data
 ├── sources/               # Extraction material (TARS v1 chats, etc.)
@@ -52,12 +52,12 @@ Demerzel/
 | Constitutions | 3 + harm taxonomy | `constitutions/` |
 | Personas | 14 | `personas/*.persona.yaml` |
 | Policies | 24 | `policies/*.yaml` |
-| Grammars | 19 | `grammars/*.ebnf` |
+| Grammars | 21 | `grammars/*.ebnf` |
 | Schemas | 23 | `schemas/*.json` |
 | Behavioral tests | 44 | `tests/behavioral/*.md` |
 | Skills | 37 | `.claude/skills/*/` |
-| Departments | 14 | `state/streeling/departments/` |
-| Courses | 15 | `state/streeling/courses/**/en/` |
+| Departments | 16 | `state/streeling/departments/` |
+| Courses | 14 | `state/streeling/courses/**/en/` |
 
 ## Usage
 
@@ -78,7 +78,7 @@ When adding governance artifacts:
 
 ## Streeling University
 
-Demerzel hosts [Streeling University](state/streeling/) — a 13-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, philosophy, cognitive science, futurology, music, musicology, guitar studies, product management, Guitar Alchemist Academy, world music and languages, and psychohistory. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
+Demerzel hosts [Streeling University](state/streeling/) — a 16-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
 
 ## IxQL — ML Pipeline Language
 
