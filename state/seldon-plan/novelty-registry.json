@@ -1,5 +1,17 @@
 {
   "version": "1.0.0",
   "description": "Registry of all research questions answered by the Seldon Plan — used for novelty detection to avoid redundant cycles.",
-  "entries": []
+  "entries": [
+    {
+      "question_hash": "3ab757cb6d7f81047a027a72d496f70d9901a8715fdee4551dc3e5a856d8a5a7",
+      "question": "Does Stafford Beer's Viable System Model (VSM) provide a complete structural mapping for AI governance frameworks, and what gaps emerge when applying VSM's five systems to Demerzel's architecture?",
+      "belief_value": "T",
+      "belief_confidence": 0.82,
+      "cycle_id": "cybernetics-2026-03-22-001",
+      "department": "cybernetics",
+      "date": "2026-03-22",
+      "course_produced": true,
+      "course_path": "state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md"
+    }
+  ]
 }

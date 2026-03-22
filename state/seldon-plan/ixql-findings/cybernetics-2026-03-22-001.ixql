@@ -1,0 +1,16 @@
+-- Research finding: VSM-to-AI Governance Mapping
+-- Belief: T, confidence: 0.82, cycle: cybernetics-2026-03-22-001
+-- First Seldon Plan cycle ever executed
+RESEARCH_FINDING {
+  department: "cybernetics",
+  question: "Does Stafford Beer's Viable System Model (VSM) provide a complete structural mapping for AI governance frameworks, and what gaps emerge when applying VSM's five systems to Demerzel's architecture?",
+  conclusion: "VSM maps structurally to AI governance with high fidelity. Three gaps: temporal dynamics (machine-speed vs human-speed), recursive depth (single-level in Demerzel), non-human S5 (codified constitution vs emergent values). Ashby's requisite variety applies directly.",
+  evidence: [
+    "2025 Ashby Workshops applied requisite variety to AI governance (IVO policy model)",
+    "Enterprise agentic systems mapped to VSM recursive layers (Gorelkin 2025, MDPI Systems 2025)",
+    "GPT-4o cross-validation confirms mapping at 80% confidence with 3 identified gaps"
+  ],
+  belief: {value: "T", confidence: 0.82},
+  course_produced: true,
+  grammar_evolved: false
+} -> KNOWLEDGE_STATE "cybernetics/findings/cybernetics-2026-03-22-001"

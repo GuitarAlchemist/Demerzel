@@ -14,7 +14,12 @@
     "autopoiesis",
     "second-order-cybernetics"
   ],
-  "curriculum": [],
+  "curriculum": [
+    "CYB-001: VSM-to-AI Governance Mapping — structural validity, three gaps, requisite variety"
+  ],
+  "course_count": 1,
+  "last_research_cycle": "2026-03-22",
+  "last_cycle_id": "cybernetics-2026-03-22-001",
   "status": "active",
   "created": "2026-03-24",
   "notes": "VSM mapping to Demerzel governance. Stafford Beer's organizational cybernetics."

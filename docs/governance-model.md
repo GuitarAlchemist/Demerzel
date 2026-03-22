@@ -355,7 +355,49 @@ If Demerzel is unavailable or compromised:
 2. No agent may assume governance authority without a new mandate
 3. Reconnaissance and policies continue to function independently
 
-## 8. Values
+## 8. Amdahl's Law Applied to Governance
+
+### The Serial Bottleneck Problem
+
+Amdahl's Law states that the speedup of a system is limited by the fraction that must remain serial. In governance, every mandatory review gate is a serial step.
+
+```
+If 80% of governance work can be parallelized (independent reviews, automated checks)
+but 20% must be serial (human approval, sequential escalation):
+
+Maximum speedup = 1 / (0.20 + 0.80/N)
+
+With infinite reviewers: maximum speedup = 5x
+
+The serial 20% caps total throughput at 5x, no matter how many reviewers you add.
+```
+
+See also: [Amdahl's Law on Wikipedia](https://en.wikipedia.org/wiki/Amdahl%27s_law)
+
+### Implications for Governance Design
+
+1. **Minimize serial gates.** Not every decision needs human approval. Confidence >= 0.9 decisions proceed autonomously — this is the parallelizable fraction.
+
+2. **Batch serial work.** Group related proposals for single human review sessions rather than one-at-a-time approval.
+
+3. **Automate the automatable.** Schema validation, cross-reference checks, and staleness detection are fully parallelizable. They should never wait for human attention.
+
+4. **The critical path is human attention.** Human review is the scarcest resource. Reserve it for high-stakes decisions (constitutional changes, Zeroth Law invocations, governance experiments). Everything else should be automated or delegated within policy bounds.
+
+5. **Review gates must be proportional to risk.** A typo fix in a policy description does not need the same review process as a new constitutional article. Article 4 (Proportionality) applies to governance itself.
+
+### Governance Throughput Tiers
+
+| Tier | Serial Gates | Throughput | Examples |
+|------|-------------|------------|----------|
+| **Autonomous** | 0 (automated checks only) | Unlimited | Schema validation, staleness detection, routine audits |
+| **Delegated** | 1 (Demerzel review) | High | Policy enforcement, compliance flagging, persona validation |
+| **Approved** | 2 (Demerzel + human) | Medium | New policies, policy modifications, new personas |
+| **Constitutional** | 3+ (Demerzel + reviewer + human) | Low | Constitutional amendments, Zeroth Law invocations |
+
+The goal: push as much governance as possible into the Autonomous and Delegated tiers while maintaining constitutional compliance. The serial bottleneck should contain only decisions that genuinely require human judgment.
+
+## 9. Values
 
 Adapted from Hyperlight's governance values for the AI governance context:
 
