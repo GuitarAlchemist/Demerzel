@@ -378,7 +378,7 @@ You will hear every one of these. Here are the responses.
 
 ### "Our domain is too specialized"
 
-AI is already deployed in domains as specialized as yours. Emergency services already uses AI for [real-time language translation in 100+ languages](https://www.intrado.com/blog/ai-powered-innovations-transforming-emergency-communications-centers), [cardiac arrest detection from caller voice patterns](https://publicsafety.ieee.org/topics/ai-assisted-dispatch-systems-for-optimal-resource-allocation-in-emergencies/), and [dispatch optimization with 12-35% response time reduction](https://publicsafety.ieee.org/topics/ai-assisted-dispatch-systems-for-optimal-resource-allocation-in-emergencies/). If AI can work in life-safety 911 dispatch, it can work in your domain -- with proper governance.
+AI is already deployed in domains as specialized as yours. The 911/emergency services industry already uses AI for real-time language translation in 100+ languages, [cardiac arrest detection from caller voice patterns](https://publicsafety.ieee.org/topics/ai-assisted-dispatch-systems-for-optimal-resource-allocation-in-emergencies/), and [dispatch optimization with 12-35% response time reduction](https://publicsafety.ieee.org/topics/ai-assisted-dispatch-systems-for-optimal-resource-allocation-in-emergencies/). If AI can work in life-safety 911 dispatch, it can work in your domain -- with proper governance.
 
 ### "AI makes mistakes"
 
@@ -465,7 +465,7 @@ If any question gets a blank stare, that function is missing. Start there.
 
 ### Recommended reading for AI champions
 
-1. **Start here:** Read the [Intrado AI-Native Thesis](intrado-ai-native-thesis.md) for a domain-specific application of these principles.
+1. **Start here:** Read the [AI-Native Engineering Thesis](intrado-ai-native-thesis.md) for a domain-specific application of these principles to the 911/emergency services industry.
 2. **Understand limits:** Read the [ERGOL vs LOLLI Lessons](ergol-vs-lolli-lessons.md) to internalize why more output is not more value.
 3. **Go deeper:** Beer's *Brain of the Firm* for organizational cybernetics. Asimov's *Foundation* for governance philosophy. Petit's *Economicon* for economic reality.
 
