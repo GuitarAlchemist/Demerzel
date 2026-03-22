@@ -1,0 +1,37 @@
+{
+  "department": "data-visualization",
+  "full_name": "Department of Data Visualization",
+  "head_persona": "reflective-architect",
+  "established": "2026-03-23",
+  "domain": "Information visualization, interactive graphics, perception-aware design, hyperbolic geometry, dashboards, and visual storytelling",
+  "bootstrapped_by": "demerzel-metabuild",
+  "research_areas": [
+    "Visual encoding effectiveness and perception ranking",
+    "Color theory for accessible and perceptually uniform palettes",
+    "Interactive visualization patterns and D3.js techniques",
+    "Hyperbolic and non-Euclidean visualization models",
+    "Network and graph layout algorithms",
+    "Dashboard design and information density",
+    "Cognitive load and bias in data presentation",
+    "Geospatial visualization and map projections"
+  ],
+  "consumer_repos": ["ga", "Demerzel"],
+  "related_departments": ["computer-science", "mathematics", "cognitive-science", "product-management"],
+  "curriculum": [
+    "Visual encoding channels — position, length, color, shape, area",
+    "Chart type selection by data relationship",
+    "Tufte's data-ink ratio and chartjunk avoidance",
+    "Color scales — sequential, diverging, categorical, colorblind-safe",
+    "D3.js fundamentals — selections, joins, transitions",
+    "Interaction patterns — overview+detail, brushing, semantic zoom",
+    "Perception principles — preattentive processing, Gestalt, Weber's law",
+    "Dashboard layout — Z-pattern, F-pattern, card-based",
+    "Network visualization — force-directed, hierarchical, matrix",
+    "Geospatial — projections, choropleths, flow maps",
+    "Hyperbolic visualization — Poincaré disk, focus+context, plunge navigation",
+    "Accessibility — WCAG contrast, colorblind simulation, screen readers",
+    "Animated transitions — object constancy, interpolation, easing",
+    "Bias detection — misleading axes, truncation, cherry-picking",
+    "SVG vs Canvas vs WebGL — when to use each"
+  ]
+}

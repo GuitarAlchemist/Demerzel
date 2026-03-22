@@ -1,0 +1,217 @@
+(* Data Visualization Grammar — Streeling University *)
+(* Department: Data Visualization *)
+(* Head Persona: reflective-architect *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in information visualization *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/data-visualization.department.json *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+(* Bootstrapped by: /demerzel metabuild data-visualization *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. Chart Types & Visual Encodings                             *)
+(* ============================================================ *)
+
+chart_domain ::= chart_type visual_encoding data_relationship
+
+chart_type ::= bar_chart | line_chart | scatter_plot | area_chart | pie_chart
+             | histogram | box_plot | violin_plot | heatmap | treemap
+             | sunburst | icicle | sankey | chord_diagram | parallel_coords
+             | force_directed | arc_diagram | bubble_chart | radar_chart
+             | waffle_chart | unit_chart | slope_chart | lollipop_chart
+
+visual_encoding ::= position | length | angle | area | color_hue
+                  | color_saturation | color_luminance | shape | texture
+                  | orientation | curvature | motion | opacity
+
+data_relationship ::= comparison | composition | distribution | correlation
+                    | temporal_trend | ranking | part_to_whole | flow
+                    | hierarchy | network | spatial | deviation
+
+(* ============================================================ *)
+(* 3. Information Design Principles                              *)
+(* ============================================================ *)
+
+design_domain ::= design_principle design_evaluation design_pattern
+
+design_principle ::= data_ink_ratio | chartjunk_avoidance | small_multiples
+                   | overview_detail | focus_context | visual_hierarchy
+                   | preattentive_processing | gestalt_grouping
+                   | narrative_structure | progressive_disclosure
+                   | accessibility_compliance | responsive_design
+
+design_evaluation ::= effectiveness_ranking | expressiveness_check
+                    | lie_factor_measurement | data_density_analysis
+                    | cognitive_load_assessment | task_alignment_check
+
+design_pattern ::= dashboard_layout | annotation_layer | filtering_faceting
+                 | brushing_linking | semantic_zoom | animated_transition
+                 | tooltip_detail | legend_design | axis_treatment
+
+(* ============================================================ *)
+(* 4. Color Theory for Visualization                             *)
+(* ============================================================ *)
+
+color_domain ::= color_scale color_space perceptual_consideration
+
+color_scale ::= sequential_scale | diverging_scale | categorical_scale
+              | cyclic_scale | bivariate_scale | rainbow_avoidance
+
+color_space ::= rgb | hsl | lab_color | hcl | oklch | oklab
+              | perceptually_uniform | colorblind_safe
+
+perceptual_consideration ::= luminance_contrast | simultaneous_contrast
+                           | color_blindness | cultural_association
+                           | print_vs_screen | dark_mode_adaptation
+
+(* ============================================================ *)
+(* 5. Interactive Visualization                                  *)
+(* ============================================================ *)
+
+interaction_domain ::= interaction_technique interaction_pattern interaction_framework
+
+interaction_technique ::= pan_zoom | brush_select | hover_detail
+                        | click_drill | drag_reorder | filter_widget
+                        | time_scrub | search_highlight | lasso_select
+                        | animated_transition | scroll_driven
+
+interaction_pattern ::= overview_zoom_filter_detail | details_on_demand
+                      | focus_plus_context | coordinated_views
+                      | direct_manipulation | dynamic_query
+
+interaction_framework ::= d3_js | observable | vega_lite | plotly
+                        | echarts | three_js | deck_gl | mapbox
+                        | canvas_api | webgl | svg
+
+(* ============================================================ *)
+(* 6. Perception & Cognition                                     *)
+(* ============================================================ *)
+
+perception_domain ::= visual_perception cognitive_factor bias_awareness
+
+visual_perception ::= preattentive_feature | change_blindness
+                    | inattentional_blindness | weber_law
+                    | stevens_power_law | pop_out_effect
+                    | subitizing | peripheral_vision
+
+cognitive_factor ::= working_memory_limit | cognitive_load
+                   | dual_coding | spatial_reasoning
+                   | pattern_recognition | mental_model
+
+bias_awareness ::= anchoring_bias | framing_effect | confirmation_bias
+                 | survivorship_bias | base_rate_neglect
+                 | misleading_axis | truncated_axis | cherry_picking
+
+(* ============================================================ *)
+(* 7. Network & Graph Visualization                              *)
+(* ============================================================ *)
+
+network_domain ::= layout_algorithm edge_rendering node_encoding
+
+layout_algorithm ::= force_directed_layout | hierarchical_layout
+                   | circular_layout | spectral_layout | arc_layout
+                   | hyperbolic_layout | matrix_layout | bipartite_layout
+
+edge_rendering ::= straight_edges | curved_edges | bundled_edges
+                 | tapered_edges | gradient_edges | animated_flow
+
+node_encoding ::= size_by_degree | color_by_community | shape_by_type
+                | position_by_attribute | label_collision_avoidance
+
+(* ============================================================ *)
+(* 8. Geospatial & Mapping                                       *)
+(* ============================================================ *)
+
+geo_domain ::= map_projection map_layer map_technique
+
+map_projection ::= mercator | equirectangular | orthographic
+                 | stereographic | albers_equal_area | azimuthal
+
+map_layer ::= choropleth | proportional_symbol | dot_density
+            | flow_map | cartogram | heat_map_overlay | tile_layer
+
+map_technique ::= spatial_aggregation | temporal_animation
+                | multi_scale_rendering | topojson_simplification
+
+(* ============================================================ *)
+(* 9. Hyperbolic & Non-Euclidean Visualization                   *)
+(* ============================================================ *)
+
+hyperbolic_domain ::= hyperbolic_model distortion_technique navigation_pattern
+
+hyperbolic_model ::= poincare_disk | poincare_ball | klein_model
+                   | upper_half_plane | hyperboloid_model | gyrovector
+
+distortion_technique ::= fisheye_distortion | hyperbolic_magnification
+                       | focus_plus_context_lens | semantic_zoom_level
+                       | degree_of_interest | detail_in_context
+
+navigation_pattern ::= center_refocus | plunge_navigation | breadcrumb_path
+                     | animated_morphing | level_transition | ring_expansion
+
+(* ============================================================ *)
+(* 10. Dashboard Design                                          *)
+(* ============================================================ *)
+
+dashboard_domain ::= dashboard_type layout_strategy metric_display
+
+dashboard_type ::= strategic_dashboard | operational_dashboard
+                 | analytical_dashboard | tactical_dashboard
+
+layout_strategy ::= grid_layout | z_pattern | f_pattern
+                  | inverted_pyramid | card_based | full_bleed
+
+metric_display ::= kpi_card | sparkline | bullet_chart | gauge
+                 | big_number | trend_indicator | status_light
+                 | progress_bar | comparison_table
+
+(* ============================================================ *)
+(* 11. Hypothesis Methods                                        *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe patterns in existing visualizations *)
+              | deductive       (* derive from perception/cognition principles *)
+              | abductive       (* infer why a visualization works or fails *)
+              | analogical      (* "this layout works like..." *)
+              | combinatorial   (* combine techniques from different domains *)
+
+(* ============================================================ *)
+(* 12. Test Methods                                              *)
+(* ============================================================ *)
+
+test ::= empirical             (* user studies, A/B tests, eye tracking *)
+       | formal_proof          (* information-theoretic analysis *)
+       | simulation            (* generate synthetic data, render, measure *)
+       | thought_experiment    (* "what would happen if..." *)
+       | cross_validation      (* compare across frameworks/approaches *)
+       | adversarial           (* deliberately misleading visualizations *)
+
+(* ============================================================ *)
+(* 13. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 14. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+
+(* ============================================================ *)
+(* 15. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: D3 Gallery, Observable, Vega-Lite examples, Tufte works *)
