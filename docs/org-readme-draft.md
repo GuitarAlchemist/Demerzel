@@ -4,7 +4,7 @@
 
 We build composable systems where AI agents operate under principled governance — combining music theory, ML algorithms, neuro-symbolic reasoning, and constitutional alignment into a federated ecosystem.
 
-**7 repos** | **200+ MCP tools** | **14 personas** | **22 policies** | **18 grammars** | **13 departments** | **6 languages** | **41 behavioral tests**
+**7 repos** | **200+ MCP tools** | **14 personas** | **24 policies** | **19 grammars** | **14 departments** | **6 languages** | **44 behavioral tests**
 
 ---
 

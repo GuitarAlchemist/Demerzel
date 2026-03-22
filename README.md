@@ -52,12 +52,12 @@ Demerzel/
 | Constitutions | 3 + harm taxonomy | `constitutions/` |
 | Personas | 14 | `personas/*.persona.yaml` |
 | Policies | 24 | `policies/*.yaml` |
-| Grammars | 18 | `grammars/*.ebnf` |
-| Schemas | 21 | `schemas/*.json` |
-| Behavioral tests | 41 | `tests/behavioral/*.md` |
-| Skills | 36 | `.claude/skills/*/` |
-| Departments | 13 | `state/streeling/departments/` |
-| Courses | 14 | `state/streeling/courses/**/en/` |
+| Grammars | 19 | `grammars/*.ebnf` |
+| Schemas | 23 | `schemas/*.json` |
+| Behavioral tests | 44 | `tests/behavioral/*.md` |
+| Skills | 37 | `.claude/skills/*/` |
+| Departments | 14 | `state/streeling/departments/` |
+| Courses | 15 | `state/streeling/courses/**/en/` |
 
 ## Usage
 
