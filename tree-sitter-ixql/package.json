@@ -1,0 +1,44 @@
+{
+  "name": "tree-sitter-ixql",
+  "version": "0.1.0",
+  "description": "tree-sitter grammar for IxQL — governed ML pipeline & reactive data flow language",
+  "main": "bindings/node",
+  "keywords": [
+    "parser",
+    "tree-sitter",
+    "ixql",
+    "ml-pipelines",
+    "governance"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GuitarAlchemist/ix"
+  },
+  "files": [
+    "grammar.js",
+    "binding.gyp",
+    "bindings/node",
+    "queries",
+    "src"
+  ],
+  "dependencies": {
+    "nan": "^2.18.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.23.0"
+  },
+  "scripts": {
+    "build": "tree-sitter generate && node-gyp build",
+    "generate": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "lint": "tree-sitter generate --report-states-for-rule source_file"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.ixql",
+      "file-types": ["ixql"],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^ixql$"
+    }
+  ]
+}
