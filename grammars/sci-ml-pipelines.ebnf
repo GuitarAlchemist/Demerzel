@@ -307,21 +307,64 @@ description_decl ::= "description:" string_literal
 trigger_source ::= cron_source | webhook_source | file_watcher
                  | "manual" | "on_invoke"
 
-(* Formal invocation — deterministic, typed *)
-invoke ::= "invoke" handle ("(" arg_list? ")")?
-         | "invoke" handle "=>" binding_step
+(* ---- Routing Spectrum: Formal → Fuzzy ---- *)
+(* Five levels, mapped to alignment confidence thresholds *)
 
-(* Semantic routing — fuzzy, intent-based *)
-route ::= "route" "(" intent_description ")" routing_options?
-routing_options ::= "prefer:" handle | "fallback:" handle
-intent_description ::= string_literal
+(* L0: Exact handle — deterministic, machine-to-machine *)
+invoke_exact ::= "invoke" handle ("(" arg_list? ")")?
+               | "invoke" handle "=>" binding_step
+(* Confidence: 1.0 — always proceed *)
 
-(* Resolution priority:
-   1. Exact handle match (@driver-cycle)
-   2. Display name match ("Driver Cycle")
-   3. Semantic similarity to description (cosine > 0.7)
-   4. Fallback handle if specified
-   5. Error: no matching pipeline *)
+(* L1: Alias — short names mapped to handles *)
+invoke_alias ::= "invoke" "#" identifier ("(" arg_list? ")")?
+(* Confidence: 0.95 — proceed autonomously *)
+(* Alias registry: state/pipeline-aliases.json *)
+(* Example: #audit → @gov-audit-001, #drive → @driver-cycle *)
+
+(* L2: Pattern — glob match on handle namespace *)
+invoke_pattern ::= "invoke" handle_glob ("(" arg_list? ")")?
+handle_glob ::= "@" identifier "*"            (* @gov-* matches all governance pipelines *)
+              | "@" "*" identifier "*"        (* @*audit* matches anything with "audit" *)
+(* Confidence: 0.85 — proceed with note *)
+(* Returns: array of matching pipelines → fan_out or pick best *)
+
+(* L3: Semantic — natural language intent resolution *)
+route_semantic ::= "route" "(" intent_description ")" routing_options?
+intent_description ::= string_literal         (* "check governance health" *)
+routing_options ::= "prefer:" handle          (* hint for disambiguation *)
+                  | "fallback:" handle        (* if no match above threshold *)
+                  | "threshold:" float_literal (* override default 0.7 *)
+(* Confidence: 0.5-0.9 depending on cosine similarity *)
+(* >= 0.7: proceed | < 0.7: confirm with caller | < 0.5: fallback or error *)
+
+(* L4: Ambient — context-inferred, no explicit call *)
+ambient_trigger ::= "ambient" "{" ambient_condition "=>" pipeline_ref "}"
+ambient_condition ::= "when" predicate        (* when drift_detected *)
+                    | "when" metric_check     (* when dc < 1.0 *)
+                    | "when" signal_type      (* when conscience_signal fired *)
+pipeline_ref ::= handle | "#" identifier | route_semantic
+(* Confidence: 0.3-0.7 — always confirm unless pre-approved *)
+(* Example: ambient { when belief.confidence < 0.5 => @weakness-probe } *)
+
+(* Unified invocation — any level *)
+invoke ::= invoke_exact | invoke_alias | invoke_pattern | route_semantic
+
+(* Resolution cascade:
+   1. L0 Exact:    @driver-cycle         → 1.0  → proceed
+   2. L1 Alias:    #driver               → 0.95 → proceed
+   3. L2 Pattern:  @gov-*                → 0.85 → proceed with note
+   4. L3 Semantic: route("run audit")    → 0.5-0.9 → depends on score
+   5. L4 Ambient:  (context triggers)    → 0.3-0.7 → confirm
+   Confidence maps to alignment-policy.yaml thresholds *)
+
+(* Cross-system resolution:
+   @handle resolves differently per consumer:
+   - ix CLI:      → pipeline file (pipelines/{handle}.ixql)
+   - tars CE:     → F# method (IxqlBuilder.{handle}())
+   - Claude Code: → skill (/demerzel {handle})
+   - Assertions:  → test target (assert @handle { ... })
+   - A2A:         → Agent Card capability
+   All share the same registry: state/pipeline-registry.json *)
 
 (* Pipeline registry: state/pipeline-registry.json
    Updated by MetaSync on every pipeline file change *)
