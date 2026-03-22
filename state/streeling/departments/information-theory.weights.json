@@ -1,0 +1,38 @@
+{
+  "department": "information-theory",
+  "grammar_version": "1.0.0",
+  "research_weights": {
+    "shannon-entropy": 0.20,
+    "signal-noise": 0.20,
+    "channel-capacity": 0.15,
+    "mutual-information": 0.12,
+    "compression": 0.12,
+    "rate-distortion": 0.08,
+    "kolmogorov-complexity": 0.08,
+    "minimum-description-length": 0.05
+  },
+  "hypothesis_weights": {
+    "inductive": 0.15,
+    "deductive": 0.35,
+    "abductive": 0.20,
+    "analogical": 0.15,
+    "combinatorial": 0.15
+  },
+  "test_weights": {
+    "empirical": 0.20,
+    "formal_proof": 0.35,
+    "simulation": 0.20,
+    "thought_experiment": 0.10,
+    "cross_validation": 0.10,
+    "adversarial": 0.05
+  },
+  "metadata": {
+    "last_updated": "2026-03-22",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0,
+    "bootstrapped_by": "demerzel-metabuild"
+  }
+}

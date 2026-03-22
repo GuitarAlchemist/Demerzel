@@ -1,0 +1,245 @@
+(* Information Theory Grammar — Streeling University *)
+(* Department: information-theory *)
+(* Head Persona: skeptical-auditor *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in information theory *)
+(* Domain: entropy, channels, compression, complexity, governance information *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/information-theory.department.json *)
+(* Living grammar: evolves via research cycles *)
+(* Bootstrapped by: /demerzel metabuild information-theory *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. Entropy                                                    *)
+(* ============================================================ *)
+
+entropy_domain ::= entropy_type entropy_property entropy_measure
+
+entropy_type ::= shannon_entropy       (* H(X) = -Σ p(x) log₂ p(x) *)
+               | conditional_entropy   (* H(X|Y) — uncertainty remaining given Y *)
+               | joint_entropy         (* H(X,Y) — combined uncertainty *)
+               | cross_entropy         (* H(p,q) — bits needed using q to encode p *)
+               | kl_divergence         (* D_KL(p||q) — information lost using q for p *)
+               | relative_entropy      (* synonym for KL divergence *)
+
+entropy_property ::= non_negativity | chain_rule | subadditivity
+                   | concavity | maximum_at_uniform | data_processing_inequality
+
+entropy_measure ::= bits           (* base 2 logarithm *)
+                  | nats            (* natural logarithm *)
+                  | hartleys        (* base 10 logarithm *)
+
+(* ============================================================ *)
+(* 3. Channels                                                   *)
+(* ============================================================ *)
+
+channel_domain ::= channel_type channel_capacity coding_theorem error_correction
+
+channel_type ::= binary_symmetric_channel | binary_erasure_channel
+               | gaussian_awgn_channel | discrete_memoryless_channel
+               | multiple_access_channel | broadcast_channel
+
+channel_capacity ::= "C" "=" "max" mutual_information_over_input_distribution
+                   | shannon_hartley_theorem   (* C = B log₂(1 + S/N) *)
+                   | capacity_per_bandwidth
+
+coding_theorem ::= noiseless_coding_theorem    (* source coding: H(X) bits per symbol *)
+                 | noisy_channel_theorem       (* reliable comm at rate R < C *)
+                 | joint_source_channel_coding
+
+error_correction ::= block_code | convolutional_code | turbo_code | ldpc_code
+                   | polar_code | reed_solomon | hamming_code | reed_muller
+                   | minimum_distance | hamming_bound | singleton_bound
+
+(* ============================================================ *)
+(* 4. Compression                                               *)
+(* ============================================================ *)
+
+compression_domain ::= compression_type compression_algorithm compression_bound
+
+compression_type ::= lossless_compression | lossy_compression
+                   | near_lossless_compression | universal_compression
+
+compression_algorithm ::= huffman_coding           (* optimal prefix-free code *)
+                         | arithmetic_coding        (* approaches entropy limit *)
+                         | lempel_ziv_77 | lempel_ziv_78  (* LZ family *)
+                         | deflate | zstd | brotli  (* practical implementations *)
+                         | run_length_encoding | burrows_wheeler | prediction_by_partial_matching
+
+compression_bound ::= shannon_entropy_lower_bound
+                    | kraft_inequality              (* prefix codes: Σ 2^(-l_i) ≤ 1 *)
+                    | mcmillan_inequality
+
+(* ============================================================ *)
+(* 5. Signal-to-Noise                                           *)
+(* ============================================================ *)
+
+snr_domain ::= snr_measure snr_analysis noise_model
+
+snr_measure ::= signal_power noise_power snr_ratio
+              | "SNR" "=" "10" "log₁₀" "(" signal_power "/" noise_power ")" "dB"
+              | eb_no_ratio                  (* energy per bit / noise spectral density *)
+              | peak_snr | average_snr
+
+snr_analysis ::= bit_error_rate | symbol_error_rate | word_error_rate
+               | waterfall_curve | capacity_vs_snr | error_floor_detection
+
+noise_model ::= additive_white_gaussian | burst_noise | impulse_noise
+              | fading_channel | interference_model | quantization_noise
+
+(* ============================================================ *)
+(* 6. Kolmogorov Complexity                                      *)
+(* ============================================================ *)
+
+complexity_domain ::= kolmogorov_complexity incompressibility algorithmic_probability
+
+kolmogorov_complexity ::= "K(x)" "=" "min" program_length_producing_x
+                        | conditional_kolmogorov   (* K(x|y) given side information *)
+                        | prefix_complexity         (* K*(x) — self-delimiting programs *)
+
+incompressibility ::= "K(x)" ">=" "|x|" "-" constant   (* incompressible string *)
+                    | random_string_definition
+                    | algorithmic_randomness
+
+algorithmic_probability ::= "m(x)" "=" "Σ" "2^(-|p|)"  (* Solomonoff's universal prior *)
+                          | universal_distribution
+                          | speed_prior
+
+(* ============================================================ *)
+(* 7. Minimum Description Length                                 *)
+(* ============================================================ *)
+
+mdl_domain ::= mdl_principle model_selection_via_mdl code_length_function
+
+mdl_principle ::= two_part_mdl               (* code model + code data given model *)
+                | normalized_maximum_likelihood
+                | stochastic_complexity
+
+model_selection_via_mdl ::= "MDL(M,D)" "=" "L(M)" "+" "L(D|M)"
+                          | mdl_vs_aic | mdl_vs_bic | mdl_vs_bayes_factor
+
+code_length_function ::= prefix_code_length | shannon_code_length
+                       | arithmetic_code_length | ideal_code_length
+
+(* ============================================================ *)
+(* 8. Mutual Information                                         *)
+(* ============================================================ *)
+
+mutual_information_domain ::= mutual_information_measure mi_applications mi_estimation
+
+mutual_information_measure ::= "I(X;Y)" "=" "H(X)" "-" "H(X|Y)"
+                              | "I(X;Y)" "=" "D_KL" "(" joint "||" product_of_marginals ")"
+                              | conditional_mutual_information  (* I(X;Y|Z) *)
+                              | multivariate_mutual_information
+
+mi_applications ::= feature_selection | independence_testing | causal_discovery
+                  | channel_capacity_computation | clustering | representation_learning
+
+mi_estimation ::= knn_estimator | binning_estimator | kernel_estimator
+                | mine_neural_estimator | variational_bound
+
+(* ============================================================ *)
+(* 9. Rate-Distortion Theory                                     *)
+(* ============================================================ *)
+
+rate_distortion_domain ::= rate_distortion_function distortion_measure rd_tradeoff
+
+rate_distortion_function ::= "R(D)" "=" "min" mutual_information_subject_to_distortion
+                           | rd_bound | reverse_channel
+
+distortion_measure ::= hamming_distortion | squared_error_distortion
+                     | absolute_error_distortion | perceptual_distortion
+                     | task_relevant_distortion
+
+rd_tradeoff ::= information_bottleneck_method
+              | perception_distortion_tradeoff
+              | operational_rate_distortion
+
+(* ============================================================ *)
+(* 10. Information in Governance                                  *)
+(* ============================================================ *)
+
+(* Information-theoretic analysis of Demerzel governance artifacts *)
+governance_information ::= policy_entropy
+                          | belief_information_content
+                          | bs_detector_snr
+                          | governance_channel_capacity
+                          | constitution_compression
+
+policy_entropy ::= uniform_policy_entropy    (* H = log₂(n) — maximally informative *)
+                 | degenerate_policy_entropy  (* H ≈ 0 — low entropy = redundant/over-specified *)
+                 | "high_entropy" "=>" "informative_policy_with_options"
+                 | "low_entropy" "=>" "redundant_or_under-specified_policy"
+
+belief_information_content ::= "I(b)" "=" "-" "log₂" "p(b)"   (* surprise of a belief *)
+                              | "high_I" "=>" "novel_unlikely_belief"
+                              | "low_I" "=>" "expected_confirmation"
+                              | mutual_information_between_beliefs
+
+bs_detector_snr ::= "SNR_bs" "=" governance_signal_power "/" noise_level
+                  | "noise" "=" irrelevant_claims | hedging | vague_assertions
+                  | "signal" "=" falsifiable_precise_claims
+                  | snr_threshold_for_actionability   (* SNR < threshold → flag as noise *)
+
+governance_channel_capacity ::= "C_gov" "=" max_rate_of_actionable_directives
+                               | "backlog_as_channel_congestion"
+                               | "policy_bandwidth" "=" directives_per_cycle
+
+constitution_compression ::= "compressed_length(A)" "<" "compressed_length(B)"
+                            "=>" "A_more_elegant_or_fundamental"  (* Occam's razor via MDL *)
+
+(* ============================================================ *)
+(* 11. Hypothesis Methods                                        *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe entropy patterns in data streams *)
+              | deductive       (* derive from information-theoretic first principles *)
+              | abductive       (* infer why a channel is underperforming capacity *)
+              | analogical      (* "this compression scheme behaves like..." *)
+              | combinatorial   (* combine entropy with complexity measures *)
+
+(* ============================================================ *)
+(* 12. Test Methods                                              *)
+(* ============================================================ *)
+
+test ::= empirical             (* measure entropy rates, run compression experiments *)
+       | formal_proof          (* prove coding theorems, derive capacity bounds *)
+       | simulation            (* generate synthetic sources, measure achieved rates *)
+       | thought_experiment    (* "what happens to entropy as n → ∞?" *)
+       | cross_validation      (* compare estimators on held-out data *)
+       | adversarial           (* construct adversarial inputs that fool compressors *)
+
+(* ============================================================ *)
+(* 13. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 14. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+
+(* ============================================================ *)
+(* 15. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: Shannon (1948) A Mathematical Theory of Communication, *)
+(*   Cover & Thomas Elements of Information Theory, *)
+(*   Li & Vitanyi An Introduction to Kolmogorov Complexity and Its Applications, *)
+(*   Rissanen Stochastic Complexity in Statistical Inquiry *)
+(* Governance hooks: policy_entropy and belief_information_content feed into *)
+(*   bs-decoder, proto-conscience, and belief-currency policies *)

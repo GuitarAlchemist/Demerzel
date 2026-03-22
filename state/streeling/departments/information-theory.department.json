@@ -1,0 +1,21 @@
+{
+  "name": "information-theory",
+  "display_name": "Information Theory",
+  "domain": "science",
+  "head_persona": "skeptical-auditor",
+  "grammar": "sci-information-theory.ebnf",
+  "research_areas": [
+    "shannon-entropy",
+    "compression",
+    "channel-capacity",
+    "signal-noise",
+    "kolmogorov-complexity",
+    "minimum-description-length",
+    "mutual-information",
+    "rate-distortion"
+  ],
+  "curriculum": [],
+  "status": "active",
+  "created": "2026-03-22",
+  "notes": "Shannon's mathematical theory of communication. Kolmogorov complexity and MDL for model selection. Governance applications: policy entropy, BS-detector SNR, belief information content."
+}

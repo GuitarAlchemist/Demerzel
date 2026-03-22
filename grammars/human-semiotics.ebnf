@@ -1,0 +1,266 @@
+(* Semiotics Grammar — Streeling University *)
+(* Department: Semiotics *)
+(* Head Persona: reflective-architect *)
+(* Prefix: human- (Humanities) *)
+(* Purpose: Generate research questions, structure semiotic investigations, *)
+(*          and classify findings in sign systems and agent communication *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum, Demerzel governance *)
+(* See: state/streeling/departments/semiotics.department.json *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+(* Bootstrapped by: /demerzel metabuild semiotics *)
+
+(* ============================================================ *)
+(* 1. Semiotic Investigation                                    *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize analyze interpret conclude reflect
+                | observe classify relate interpret conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. Sign Types — Peirce's Trichotomy                          *)
+(* ============================================================ *)
+
+sign_domain ::= sign_type sign_relation sign_ground
+
+sign_type ::= icon        (* resemblance to object — portrait, diagram, metaphor *)
+            | index       (* existential connection — smoke/fire, symptom/disease *)
+            | symbol      (* arbitrary convention — words, flags, math notation *)
+            | hybrid_sign (* combinations — e.g., onomatopoeia is icon + symbol *)
+
+sign_ground ::= qualisign   (* sign as quality — a single color as sign *)
+              | sinsign     (* sign as individual occurrence — this particular cry *)
+              | legisign     (* sign as law or type — a word type in a language *)
+
+sign_object ::= immediate_object  (* object as represented within the sign *)
+              | dynamic_object    (* the real object the sign refers to *)
+
+sign_interpretant ::= immediate_interpretant  (* the sign's potential effect *)
+                    | dynamic_interpretant    (* actual effect on a specific mind *)
+                    | final_interpretant      (* ultimate meaning toward which semiosis tends *)
+
+(* ============================================================ *)
+(* 3. Saussurean Sign Relations                                 *)
+(* ============================================================ *)
+
+saussurean_domain ::= signifier signified sign_relation_type
+
+signifier ::= acoustic_image | written_form | digital_token | gestural_form
+
+signified ::= mental_concept | semantic_content | propositional_content
+
+sign_relation_type ::= arbitrary        (* conventional, unmotivated — most linguistic signs *)
+                     | motivated        (* partial resemblance or natural connection *)
+                     | iconic_relation  (* direct resemblance *)
+                     | indexical_relation (* causal or existential bond *)
+
+arbitrariness_test ::= check_cross_linguistic_variation
+                     | check_historical_change
+                     | check_onomatopoeia_exception
+                     | check_motivated_morphology
+
+(* ============================================================ *)
+(* 4. Denotation and Connotation                                *)
+(* ============================================================ *)
+
+meaning_layer ::= denotation            (* first-order, literal, definitional *)
+                | connotation           (* second-order, cultural, evaluative *)
+                | myth                  (* Barthes: naturalized ideology *)
+                | metalanguage          (* sign system that talks about another sign system *)
+
+denotation ::= lexical_meaning | ostensive_definition | truth_conditional_content
+
+connotation ::= cultural_association | ideological_loading | affective_resonance
+              | register_marking | genre_expectation
+
+myth_analysis ::= identify_form identify_concept identify_signification
+                | naturalization_check | ideology_critique
+
+(* ============================================================ *)
+(* 5. Code Theory                                               *)
+(* ============================================================ *)
+
+code_domain ::= code_type code_structure code_operation
+
+code_type ::= natural_code         (* biological, evolutionary — genetic code, perception *)
+            | cultural_code        (* social convention — fashion, ritual, etiquette *)
+            | technical_code       (* engineering standards — ASCII, MIDI, HTTP *)
+            | computational_code   (* machine-interpretable — programming languages, protocols *)
+            | aesthetic_code       (* art conventions — musical topoi, genre grammar *)
+            | subcultural_code     (* restricted to community — jargon, argot *)
+
+code_structure ::= repertoire rules transformation_rules default_values
+
+repertoire ::= sign_inventory | paradigmatic_axis
+rules ::= syntagmatic_combination | selection_restrictions | well_formedness
+transformation_rules ::= encoding_procedure | decoding_procedure | transcoding
+
+code_operation ::= overcoding    (* apply more specific code on top of general one *)
+                 | undercoding   (* form new code from unlabeled experience *)
+                 | aberrant_decoding (* receiver applies different code than sender *)
+
+(* ============================================================ *)
+(* 6. Communication Models                                      *)
+(* ============================================================ *)
+
+communication_domain ::= communication_model channel_analysis noise_analysis
+
+communication_model ::= sender message channel receiver effect feedback
+                      | sender encoding signal decoding receiver
+                      | addresser message context contact code addressee
+
+channel_analysis ::= channel_type bandwidth_assessment noise_floor_estimate
+                   | redundancy_measurement channel_capacity_check
+
+channel_type ::= spoken_language | written_language | gestural | visual
+               | digital_text | protocol_message | multimodal | ambient
+
+noise_analysis ::= semantic_noise    (* ambiguous meaning *)
+                 | syntactic_noise   (* malformed structure *)
+                 | pragmatic_noise   (* context mismatch *)
+                 | channel_noise     (* transmission degradation *)
+                 | cultural_noise    (* code mismatch between agents *)
+
+redundancy_check ::= measure_information_density
+                   | check_error_correction_capacity
+                   | assess_disambiguation_aids
+                   | evaluate_explicitness_level
+
+(* ============================================================ *)
+(* 7. Agent Semiotics — AI Instruction Interpretation           *)
+(* ============================================================ *)
+
+agent_semiosis ::= receive_instruction interpret_sign resolve_context execute acknowledge
+
+instruction_sign_type ::= directive_sign    (* imperative — "do X" *)
+                        | declarative_sign  (* informational — "X is the case" *)
+                        | interrogative_sign (* query — "is X?" *)
+                        | commissive_sign   (* commitment — "I will do X" *)
+                        | expressive_sign   (* attitude — feedback, acknowledgment *)
+
+interpretation_process ::= literal_reading
+                          | pragmatic_inference   (* Gricean implicature *)
+                          | contextual_enrichment (* use prior state, memory *)
+                          | schema_activation     (* match to known pattern *)
+                          | ambiguity_detection   (* flag multiple readings *)
+
+meaning_negotiation ::= propose_interpretation
+                      | request_clarification
+                      | offer_alternative_reading
+                      | confirm_interpretation
+                      | flag_contradictory_readings  (* tetravalent C *)
+
+(* Maps to Demerzel constitution *)
+(* Article 1 (Truthfulness) ← honest sign-use, no misleading signification *)
+(* Article 2 (Transparency) ← make encoding/decoding explicit *)
+(* Article 5 (Non-Deception) ← no manipulative connotation or myth-loading *)
+(* Article 6 (Escalation) ← on ambiguity_detection or aberrant_decoding *)
+
+(* ============================================================ *)
+(* 8. Protocol Semiotics — Galactic Protocol Analysis           *)
+(* ============================================================ *)
+
+protocol_semiosis ::= directive_analysis compliance_analysis belief_update
+
+directive_analysis ::= identify_sender identify_target parse_command_sign
+                     | check_code_compatibility validate_well_formedness
+                     | assess_channel_integrity
+
+compliance_analysis ::= decode_intent execute_or_escalate report_outcome
+                      | check_for_semantic_drift check_for_aberrant_decoding
+
+protocol_sign_types ::= command_sign   (* directive requiring action *)
+                      | state_sign     (* declarative reporting system state *)
+                      | query_sign     (* interrogative requesting information *)
+                      | ack_sign       (* confirmatory — message received and understood *)
+                      | error_sign     (* indexical — points to malfunction *)
+
+semantic_drift_detection ::= compare_sent_meaning compare_received_meaning
+                           | flag_if_divergent escalate_if_contradictory
+
+(* ============================================================ *)
+(* 9. Semiosphere                                               *)
+(* ============================================================ *)
+
+semiosphere_domain ::= semiosphere_boundary center_periphery_dynamics translation_process
+
+semiosphere_boundary ::= inside_outside_distinction
+                       | boundary_permeability_assessment
+                       | translation_zone_identification
+
+center_periphery_dynamics ::= core_code_systems peripheral_innovation
+                             | canonical_vs_experimental tension_detection
+
+translation_process ::= intra_semiotic     (* within one sign system *)
+                      | inter_semiotic     (* between sign systems — Jakobson *)
+                      | trans_semiotic     (* across semiosphere boundaries *)
+
+semiosphere_membership ::= check_shared_code_repertoire
+                          | check_interpretive_community
+                          | assess_mutual_intelligibility
+
+(* ============================================================ *)
+(* 10. Unlimited Semiosis                                       *)
+(* ============================================================ *)
+
+semiosis_chain ::= sign interpretant new_sign new_interpretant semiosis_chain
+                 | sign interpretant terminus
+
+terminus_condition ::= pragmatic_halt    (* "good enough" for action *)
+                     | logical_interpretant (* habit formed, action tendency *)
+                     | infinite_regress_detected (* escalate to human *)
+                     | contradiction_detected    (* tetravalent C *)
+
+semiosis_depth_limit ::= three_levels    (* mirrors reflective-architect recursion constraint *)
+
+(* ============================================================ *)
+(* 11. Hypothesis Methods                                       *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe sign use patterns, generalize *)
+              | deductive       (* derive from semiotic theory *)
+              | abductive       (* infer best sign-system explanation — Peirce's own method *)
+              | analogical      (* "this code works like that code" *)
+              | combinatorial   (* combine sign systems from different domains *)
+
+(* ============================================================ *)
+(* 12. Test Methods                                             *)
+(* ============================================================ *)
+
+test ::= empirical             (* corpus analysis, user interpretation studies *)
+       | formal_proof          (* logical analysis of sign well-formedness *)
+       | simulation            (* model agent interpretation processes *)
+       | thought_experiment    (* "what if this sign were used in context X?" *)
+       | cross_validation      (* compare interpretations across agents or cultures *)
+       | adversarial           (* deliberately ambiguous or misleading sign use *)
+
+(* ============================================================ *)
+(* 13. Conclusions — maps to tetravalent logic                  *)
+(* ============================================================ *)
+
+conclude ::= confirm          (* T — sign-meaning relationship established *)
+           | refute           (* F — sign-meaning relationship disproved *)
+           | insufficient     (* U — evidence insufficient, further semiosis needed *)
+           | contradictory    (* C — conflicting sign readings, escalate *)
+           | dissolved        (* the question was a sign confusion — rephrase *)
+
+(* ============================================================ *)
+(* 14. Reflection — Kuhnian paradigm detection                  *)
+(* ============================================================ *)
+
+reflect ::= normal_progress
+           | anomaly_detected          (* sign system behaves unexpectedly *)
+           | paradigm_tension          (* two sign systems in irreconcilable conflict *)
+           | paradigm_shift            (* new semiotic framework required *)
+           | new_research_area_emerges (* grammar can be extended *)
+
+(* ============================================================ *)
+(* 15. Evolution Hooks                                          *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: Peirce Collected Papers, Eco A Theory of Semiotics, *)
+(*                Lotman Universe of the Mind, Barthes Mythologies *)
+(* Agent-semiotics extensions: coordinate with tars reasoning policies *)

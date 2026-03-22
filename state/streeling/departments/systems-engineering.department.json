@@ -1,0 +1,21 @@
+{
+  "name": "systems-engineering",
+  "display_name": "Systems Engineering",
+  "domain": "science",
+  "head_persona": "system-integrator",
+  "grammar": "sci-systems-engineering.ebnf",
+  "research_areas": [
+    "integration-patterns",
+    "interface-design",
+    "requirements-traceability",
+    "v-model",
+    "systems-of-systems",
+    "emergent-behavior",
+    "architecture-evaluation",
+    "configuration-management"
+  ],
+  "curriculum": [],
+  "status": "active",
+  "created": "2026-03-22",
+  "notes": "INCOSE systems engineering body of knowledge. V-model verification and validation. Demerzel-specific: Galactic Protocol as interface spec, Hyperlight isolation, cross-repo integration patterns."
+}

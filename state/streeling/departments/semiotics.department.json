@@ -1,0 +1,33 @@
+{
+  "department": "semiotics",
+  "full_name": "Department of Semiotics",
+  "head_persona": "reflective-architect",
+  "established": "2026-03-23",
+  "domain": "humanities",
+  "bootstrapped_by": "demerzel-metabuild",
+  "grammar": "human-semiotics.ebnf",
+  "research_areas": [
+    "Sign systems — how signs constitute meaning in natural and artificial contexts",
+    "Peirce triadic model — icon, index, symbol and the semiotic triangle",
+    "Indexicality — signs that point to their referents through causal or existential connection",
+    "Denotation and connotation — first-order and second-order meaning",
+    "Semiosphere — Lotman's universe of sign systems and cultural boundaries",
+    "Code theory — natural, cultural, technical, and computational codes",
+    "Agent communication — how AI agents interpret instructions and negotiate meaning",
+    "Interpretation theory — Peirce's unlimited semiosis and hermeneutic frameworks"
+  ],
+  "consumer_repos": ["Demerzel", "tars", "ga"],
+  "related_departments": ["philosophy", "cognitive-science", "world-music-languages", "computer-science"],
+  "curriculum": [
+    "Saussurean sign — signifier, signified, arbitrariness, linearity",
+    "Peircean semiotics — icon, index, symbol; semiotic triangle; unlimited semiosis",
+    "Barthes and myth — denotation, connotation, mythologization",
+    "Code theory — Eco's notion of codes, subcodes, and overcoding",
+    "Semiosphere and cultural semiotics — Lotman's boundary dynamics",
+    "Narrative semiotics — Greimas's actantial model and semantic square",
+    "Pragmatics and indexicality — context, deixis, ostension",
+    "Computational semiotics — machine interpretation, protocol semantics, meaning negotiation",
+    "Galactic Protocol semiotic analysis — how governance contracts carry meaning",
+    "Semiotics of music — topoi, gestures, metaphor, and embodied meaning"
+  ]
+}

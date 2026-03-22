@@ -1,0 +1,279 @@
+(* Network Science Grammar — Streeling University *)
+(* Department: network-science *)
+(* Head Persona: reflective-architect *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in network science and graph theory *)
+(* Domain: graph theory, centrality, community detection, resilience, *)
+(*          network models, multiplex networks, network dynamics *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/network-science.department.json *)
+(* Living grammar: evolves via research cycles *)
+(* Bootstrapped by: /demerzel metabuild network-science *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. Graph Types                                                *)
+(* ============================================================ *)
+
+graph ::= graph_type node_set edge_set graph_property*
+
+graph_type ::= undirected_graph | directed_graph | weighted_graph
+             | bipartite_graph | multiplex_graph | temporal_graph
+             | hypergraph | signed_graph | attributed_graph
+
+node_set ::= node+ | "V" "=" "{" node ("," node)* "}"
+edge_set ::= edge+ | "E" "=" "{" edge ("," edge)* "}"
+
+edge ::= undirected_edge | directed_edge | weighted_edge | temporal_edge
+undirected_edge ::= "{" node "," node "}"
+directed_edge   ::= "(" node "->" node ")"
+weighted_edge   ::= "(" node "->" node "," weight ")"
+temporal_edge   ::= "(" node "->" node "," timestamp ")"
+
+graph_property ::= connected | disconnected | strongly_connected
+                 | weakly_connected | planar | sparse | dense
+                 | small_world | scale_free | random | regular
+
+(* ============================================================ *)
+(* 3. Centrality Measures                                        *)
+(* ============================================================ *)
+
+centrality_domain ::= centrality_measure centrality_interpretation normalization
+
+centrality_measure ::= degree_centrality | betweenness_centrality
+                     | closeness_centrality | eigenvector_centrality
+                     | pagerank | katz_centrality | harmonic_centrality
+                     | authority_score | hub_score              (* HITS algorithm *)
+                     | percolation_centrality | cross_clique_centrality
+
+degree_centrality       ::= "deg(" node ")" "/" "(" n "-" "1" ")"
+betweenness_centrality  ::= sum_sigma_paths "/" total_sigma_paths
+closeness_centrality    ::= "(" n "-" "1" ")" "/" sum_shortest_paths
+eigenvector_centrality  ::= "lambda * x = A * x"               (* principal eigenvector *)
+pagerank                ::= "PR(u) = (1-d)/N + d * sum(PR(v)/out_deg(v))"
+
+centrality_interpretation ::= identifies_hub | identifies_broker
+                             | identifies_influencer | identifies_gatekeeper
+                             | identifies_bottleneck | identifies_connector
+
+normalization ::= normalize_by_n | normalize_by_max | z_score | rank_order
+
+(* ============================================================ *)
+(* 4. Community Detection                                        *)
+(* ============================================================ *)
+
+community_domain ::= community_algorithm partition_quality resolution_limit
+
+community_algorithm ::= louvain | leiden | girvan_newman | spectral_clustering
+                      | label_propagation | infomap | walktrap
+                      | clique_percolation | stochastic_block_model
+                      | hierarchical_clustering | overlapping_communities
+
+partition_quality ::= modularity_Q | normalized_cut | conductance
+                    | coverage | performance | surprise | significance
+
+modularity_Q ::= "Q = (1/2m) * sum(A_ij - k_i*k_j/2m) * delta(c_i, c_j)"
+
+resolution_limit ::= standard_resolution | multi_resolution | gamma_parameter
+
+(* Resolution limit: Louvain may merge small communities — use Leiden or tune gamma *)
+
+(* ============================================================ *)
+(* 5. Network Models                                             *)
+(* ============================================================ *)
+
+network_model ::= random_model | small_world_model | scale_free_model
+                | configuration_model | stochastic_block_model_gen
+                | kronecker_graph | random_geometric_graph
+
+random_model     ::= erdos_renyi_G_np | erdos_renyi_G_nm
+erdos_renyi_G_np ::= "G(n,p)" n_nodes p_edge_probability
+erdos_renyi_G_nm ::= "G(n,m)" n_nodes m_edges
+
+small_world_model ::= watts_strogatz k_nearest beta_rewire
+watts_strogatz    ::= "WS(n, k, beta)" n_nodes k_nearest beta_rewire
+(* beta=0: regular lattice; beta=1: random graph; 0<beta<1: small-world *)
+
+scale_free_model   ::= barabasi_albert preferential_attachment
+barabasi_albert    ::= "BA(n, m)" n_nodes m_edges_per_new_node
+(* Produces power-law degree distribution P(k) ~ k^(-gamma), gamma ~ 3 *)
+
+configuration_model ::= degree_sequence rewire_stub_matching
+(* Preserves degree sequence while randomizing topology *)
+
+(* ============================================================ *)
+(* 6. Small-World Properties                                     *)
+(* ============================================================ *)
+
+small_world_domain ::= clustering_coefficient average_path_length small_world_index
+
+clustering_coefficient ::= local_clustering | global_clustering | transitivity
+local_clustering   ::= "C_i = 2*t_i / (k_i*(k_i-1))"     (* triangles around node i *)
+global_clustering  ::= mean_of_local_clustering
+transitivity       ::= "3 * triangles / triads"
+
+average_path_length ::= "L = (1/n(n-1)) * sum d(u,v)"
+small_world_index   ::= "sigma = (C/C_rand) / (L/L_rand)"
+                      | "omega = L_rand/L - C/C_lattice"
+
+(* Small world: high clustering (C >> C_rand), short paths (L ~ L_rand) *)
+(* sigma > 1 indicates small-world topology *)
+
+(* ============================================================ *)
+(* 7. Scale-Free Networks                                        *)
+(* ============================================================ *)
+
+scale_free_domain ::= degree_distribution hub_analysis preferential_attachment_test
+
+degree_distribution ::= power_law_fit | power_law_exponent | degree_distribution_plot
+power_law_fit       ::= "P(k) = C * k^(-gamma)"
+power_law_exponent  ::= maximum_likelihood_estimate | kolmogorov_smirnov_test
+
+hub_analysis ::= identify_hubs | hub_robustness | hub_vulnerability
+(* Hubs make scale-free networks robust to random failure but fragile to targeted attack *)
+
+preferential_attachment_test ::= measure_attachment_kernel | linear_fit | nonlinear_fit
+
+(* ============================================================ *)
+(* 8. Resilience Analysis                                        *)
+(* ============================================================ *)
+
+resilience_domain ::= failure_model attack_strategy percolation_analysis robustness_measure
+
+failure_model ::= random_failure | targeted_attack | cascading_failure
+                | correlated_failure | localized_attack | epidemic_spread
+
+attack_strategy ::= degree_based_attack | betweenness_based_attack
+                  | recalculated_attack | random_removal | adaptive_attack
+
+percolation_analysis ::= bond_percolation | site_percolation
+                       | giant_component_size | percolation_threshold
+                       | critical_fraction_fc
+
+percolation_threshold ::= "f_c = 1 - 1/(kappa - 1)"          (* Molloy-Reed criterion *)
+                        | "kappa = <k^2>/<k>"                  (* degree heterogeneity *)
+
+robustness_measure ::= natural_connectivity | algebraic_connectivity
+                     | network_efficiency | giant_component_fraction
+                     | R_index                                   (* area under GC curve *)
+
+cascading_failure ::= initial_overload propagation_rule failure_cascade stopping_condition
+propagation_rule  ::= threshold_model | load_redistribution | epidemic_si_model
+
+(* ============================================================ *)
+(* 9. Network Dynamics                                           *)
+(* ============================================================ *)
+
+network_dynamics ::= dynamic_process temporal_evolution spreading_process
+
+dynamic_process ::= synchronization | opinion_formation | game_theory_on_network
+                  | random_walk | diffusion | reaction_diffusion
+
+synchronization ::= kuramoto_model | master_stability_function
+kuramoto_model  ::= "d(theta_i)/dt = omega_i + (K/N)*sum(sin(theta_j - theta_i))"
+
+spreading_process ::= si_model | sir_model | sis_model | seir_model
+si_model  ::= susceptible infected_state                       (* no recovery *)
+sir_model ::= susceptible infected_state recovered             (* permanent immunity *)
+sis_model ::= susceptible infected_state susceptible           (* recurrent infection *)
+
+temporal_evolution ::= static_snapshot | temporal_network | evolving_graph
+                     | link_stream | growing_network | shrinking_network
+
+(* ============================================================ *)
+(* 10. Multiplex Networks                                        *)
+(* ============================================================ *)
+
+multiplex_domain ::= layer_definition interlayer_coupling aggregate_analysis
+
+layer_definition ::= layer+ node_alignment
+layer            ::= layer_id graph_type edge_set
+node_alignment   ::= same_nodes_different_edges | supra_adjacency_matrix
+
+interlayer_coupling ::= identity_coupling | weighted_coupling | partial_overlap
+supra_adjacency     ::= "A_supra = [[A_1, I], [I, A_2]]"     (* two-layer example *)
+
+aggregate_analysis ::= layer_aggregation | multiplex_centrality
+                     | interlayer_correlations | structural_reducibility
+multiplex_centrality ::= versatility_measure | multiplex_pagerank | tensor_centrality
+
+(* ============================================================ *)
+(* 11. MCP Federation as Network                                 *)
+(* ============================================================ *)
+
+(* Demerzel-specific: model the MCP repo/tool ecosystem as a network *)
+mcp_network ::= mcp_node_set mcp_edge_set governance_flow
+
+mcp_node_set ::= mcp_repo+ | mcp_tool+
+mcp_repo     ::= "Demerzel" | "ix" | "tars" | "ga" | repo_identifier
+mcp_tool     ::= tool_identifier capability_tag protocol_version
+
+mcp_edge_set   ::= tool_invocation+ | governance_directive+ | compliance_report+
+tool_invocation ::= "(" mcp_repo "-calls->" mcp_tool "," weight ")"
+governance_directive ::= "(" "Demerzel" "-directs->" mcp_repo "," directive_type ")"
+compliance_report    ::= "(" mcp_repo "-reports->" "Demerzel" "," report_type ")"
+
+governance_flow ::= centrality_analysis_on_mcp_network
+                  | community_detection_on_repos
+                  | resilience_check_on_tool_dependencies
+                  | critical_tool_identification
+
+(* High betweenness nodes in MCP network = single points of governance failure *)
+(* Scale-free distribution of tool invocations = expected in real ecosystems *)
+(* Community detection may reveal implicit subsystems within the federation *)
+
+(* ============================================================ *)
+(* 12. Hypothesis Methods                                        *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe patterns in real-world networks *)
+              | deductive       (* derive from graph-theoretic first principles *)
+              | abductive       (* infer why a network exhibits observed topology *)
+              | analogical      (* "this network behaves like a scale-free model..." *)
+              | combinatorial   (* combine centrality + community + resilience *)
+
+(* ============================================================ *)
+(* 13. Test Methods                                              *)
+(* ============================================================ *)
+
+test ::= empirical             (* measure real networks — web, social, biological *)
+       | formal_proof          (* graph-theoretic proofs, spectral bounds *)
+       | simulation            (* generate synthetic networks, run dynamics *)
+       | thought_experiment    (* "what if this hub were removed?" *)
+       | cross_validation      (* compare centrality rankings across algorithms *)
+       | adversarial           (* targeted attacks, adversarial community partitions *)
+
+(* ============================================================ *)
+(* 14. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 15. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+
+(* ============================================================ *)
+(* 16. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: Barabasi "Network Science" (free textbook), *)
+(*   Newman "Networks: An Introduction", Watts & Strogatz (1998), *)
+(*   Barabasi & Albert (1999), Boccaletti et al. multiplex review *)
+(* This grammar evolves via: *)
+(* 1. Research cycles in network-science department *)
+(* 2. MCP federation analysis (Demerzel governance network) *)
+(* 3. Cross-pollination with cybernetics and data-visualization *)

@@ -1,0 +1,38 @@
+{
+  "department": "semiotics",
+  "grammar_version": "1.0.0",
+  "hypothesis_weights": {
+    "inductive": 0.20,
+    "deductive": 0.20,
+    "abductive": 0.25,
+    "analogical": 0.25,
+    "combinatorial": 0.10
+  },
+  "test_weights": {
+    "empirical": 0.15,
+    "formal_proof": 0.10,
+    "simulation": 0.10,
+    "thought_experiment": 0.35,
+    "cross_validation": 0.20,
+    "adversarial": 0.10
+  },
+  "research_area_weights": {
+    "sign-systems": 0.20,
+    "peirce-triadic-model": 0.12,
+    "indexicality": 0.08,
+    "denotation-connotation": 0.08,
+    "semiosphere": 0.10,
+    "code-theory": 0.10,
+    "agent-communication": 0.20,
+    "interpretation-theory": 0.12
+  },
+  "metadata": {
+    "last_updated": "2026-03-23",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0,
+    "bootstrapped_by": "demerzel-metabuild"
+  }
+}

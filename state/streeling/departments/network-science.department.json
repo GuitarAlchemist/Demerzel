@@ -1,0 +1,21 @@
+{
+  "name": "network-science",
+  "display_name": "Network Science",
+  "domain": "science",
+  "head_persona": "reflective-architect",
+  "grammar": "sci-network-science.ebnf",
+  "research_areas": [
+    "graph-theory",
+    "small-world-networks",
+    "scale-free-networks",
+    "community-detection",
+    "centrality-measures",
+    "resilience-analysis",
+    "network-dynamics",
+    "multiplex-networks"
+  ],
+  "curriculum": [],
+  "status": "active",
+  "created": "2026-03-22",
+  "notes": "Graph theory foundations through empirical network phenomena. MCP federation modeled as a network: repos as nodes, tools as edges, governance flows as directed weighted links."
+}

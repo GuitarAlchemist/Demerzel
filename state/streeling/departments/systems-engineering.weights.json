@@ -1,0 +1,38 @@
+{
+  "department": "systems-engineering",
+  "grammar_version": "1.0.0",
+  "research_weights": {
+    "integration-patterns": 0.18,
+    "interface-design": 0.18,
+    "architecture-evaluation": 0.14,
+    "requirements-traceability": 0.12,
+    "v-model": 0.12,
+    "emergent-behavior": 0.10,
+    "systems-of-systems": 0.10,
+    "configuration-management": 0.06
+  },
+  "hypothesis_weights": {
+    "inductive": 0.20,
+    "deductive": 0.25,
+    "abductive": 0.25,
+    "analogical": 0.20,
+    "combinatorial": 0.10
+  },
+  "test_weights": {
+    "empirical": 0.30,
+    "formal_proof": 0.10,
+    "simulation": 0.25,
+    "thought_experiment": 0.10,
+    "cross_validation": 0.20,
+    "adversarial": 0.05
+  },
+  "metadata": {
+    "last_updated": "2026-03-22",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0,
+    "bootstrapped_by": "demerzel-metabuild"
+  }
+}
