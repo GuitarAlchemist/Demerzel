@@ -21,6 +21,7 @@ Demerzel is the governance coordinator for the GuitarAlchemist ecosystem. Use th
 | `/demerzel patterns` | `demerzel-patterns` | Consult the agentic patterns catalog |
 | `/demerzel confidence` | `demerzel-confidence` | Calibrate a confidence score |
 | `/demerzel drive` | `demerzel-drive` | Autonomous driver — full cycle or individual phases across all repos |
+| `/demerzel team` | `demerzel-team` | Spawn, monitor, pause, and dissolve governance agent teams |
 
 ## Quick Reference
 
