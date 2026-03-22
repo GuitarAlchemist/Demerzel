@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   sync-consumer-wikis:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 20
     strategy:
       matrix:

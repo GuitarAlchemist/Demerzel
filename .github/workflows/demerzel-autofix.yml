@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   scan-and-remediate:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 15
 
     steps:

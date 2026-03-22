@@ -20,7 +20,7 @@ permissions:
 jobs:
   # ── Promote discussion to issue when actionable ──
   promote-to-issue:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 10
     if: >-
       (github.event_name == 'discussion_comment' &&
@@ -173,7 +173,7 @@ jobs:
 
   # ── Scan for stale discussions ──
   stale-scan:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 10
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     env:
@@ -213,7 +213,7 @@ jobs:
 
   # ── Close discussion when linked issue is closed ──
   close-linked-discussion:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 5
     if: github.event_name == 'issues' && github.event.action == 'closed'
     env:

@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   detect-gaps:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 15
     env:
       GH_TOKEN: ${{ secrets.PAT_TOKEN }}

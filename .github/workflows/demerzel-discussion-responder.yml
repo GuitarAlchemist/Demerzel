@@ -14,7 +14,7 @@ env:
 
 jobs:
   respond-to-comment:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 10
     # Only respond to comments on Demerzel-created discussions, skip bot comments
     if: >-

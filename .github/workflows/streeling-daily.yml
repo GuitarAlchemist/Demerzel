@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   harvest-and-report:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 30
 
     steps:

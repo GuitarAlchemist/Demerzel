@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   auto-add-to-project:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 10
     if: github.event_name == 'issues'
     steps:
@@ -35,7 +35,7 @@ jobs:
           echo "Issue #${{ github.event.issue.number }} added to Demerzel Governance project"
 
   auto-comment-governance:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 10
     if: github.event.action == 'opened'
     steps:

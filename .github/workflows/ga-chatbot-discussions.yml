@@ -20,7 +20,7 @@ env:
 
 jobs:
   answer-music-question:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, demerzel]
     timeout-minutes: 5
     # No condition — always run when triggered
 
