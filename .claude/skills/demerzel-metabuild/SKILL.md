@@ -190,8 +190,8 @@ COMMIT
 **Produces:**
 
 ```
-1. MOG pipeline:   pipelines/{name}.mog
-                   (if MOG executor exists)
+1. IxQL pipeline:  pipelines/{name}.ixql
+                   (MCP orchestration via IxQL Section 10)
 
 2. Skill:          .claude/skills/{name}/SKILL.md
                    (pipeline as skill)
@@ -218,7 +218,7 @@ ASSIGN risk levels
     ↓ per staleness-detection-policy risk classification
     ↓ low/medium/high/critical per step
 GENERATE pipeline
-    ↓ as MOG if executor available
+    ↓ as IxQL pipeline (.ixql) if ix CLI available
     ↓ as skill SKILL.md always
 CREATE schema for run logging
 VERIFY
