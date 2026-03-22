@@ -1,6 +1,6 @@
 # IxQL Cookbook Pipeline — Behavioral Tests
 
-Tests for the seven cookbook pipelines in `examples/ixql/`.
+Tests for the eight cookbook pipelines in `examples/ixql/`.
 
 ## Structural Validity Tests
 
@@ -203,6 +203,56 @@ Tests for the seven cookbook pipelines in `examples/ixql/`.
 **Given** the meta-pipeline detects an improvement signal
 **When** `tars.propose_self_modification()` is called
 **Then** it references Article 9 (Bounded Autonomy) as its gate
+
+## Amdahl Optimizer Pipeline Tests
+
+### IXQL-COOK-090: Pipeline parsed into dependency graph
+
+**Given** `examples/ixql/amdahl-optimizer.ixql`
+**When** the target pipeline is loaded
+**Then** `tars.extract_dependency_graph(nodes: "stages", edges: "data_dependencies")` produces a directed graph
+
+### IXQL-COOK-091: Stages classified as serial or parallelizable
+
+**Given** the amdahl-optimizer pipeline
+**When** stage classification runs
+**Then** each stage is classified as one of: "parallel", "serial", "serial_gate", "potentially_parallel"
+
+### IXQL-COOK-092: Side-effect stages classified as serial
+
+**Given** a pipeline stage containing `write()` or `ix.io.git()`
+**When** side-effect classification runs
+**Then** the stage is classified as "serial" (writes are not parallelizable)
+
+### IXQL-COOK-093: Amdahl's Law formula correctly applied
+
+**Given** classified stages with serial_cost and total_cost
+**When** `tars.compute_amdahl()` runs
+**Then** serial_fraction = serial_cost / total_cost and theoretical_max = 1 / serial_fraction
+
+### IXQL-COOK-094: Optimization suggestions sorted by improvement
+
+**Given** potentially parallelizable stages identified
+**When** optimization suggestions are generated
+**Then** suggestions are sorted by `estimated_improvement` in descending order
+
+### IXQL-COOK-095: Optimized pipeline must still parse
+
+**Given** an optimized pipeline variant
+**When** `tars.parse_ixql(merged)` is called
+**Then** the optimized pipeline passes syntax validation (T >= 0.8) or is discarded
+
+### IXQL-COOK-096: Original pipeline unchanged by optimizer
+
+**Given** the amdahl-optimizer produces an optimized variant
+**When** the optimized pipeline is written
+**Then** it is written to `{target_path}.optimized.ixql`, leaving the original untouched (Article 3: reversibility)
+
+### IXQL-COOK-097: Minimum improvement threshold enforced
+
+**Given** optimization suggestions
+**When** applying optimizations
+**Then** only suggestions with `estimated_improvement >= 0.05` (5%) are applied
 
 ## Cross-Cutting Tests
 

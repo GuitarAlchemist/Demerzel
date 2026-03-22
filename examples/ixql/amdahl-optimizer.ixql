@@ -1,0 +1,192 @@
+-- Amdahl Optimizer: Analyze pipeline serial fraction, suggest parallelization
+-- Demonstrates: IxQL applying Amdahl's Law to IxQL pipelines themselves
+-- Flow: parse pipeline → identify serial/parallel → compute speedup → suggest → validate
+-- Real artifacts: pipelines/*.ixql, docs/amdahl.md, Amdahl's Law (S = 1 / (s + p/N))
+--
+-- Amdahl's Law: Speedup = 1 / (s + (1-s)/N)
+--   s = serial fraction (0..1), N = number of parallel processors
+--   Key insight: serial fraction is the BOTTLENECK — even infinite N can't help if s is large
+--   Goal: minimize s by converting sequential stages to parallel/fan_out where possible
+
+-- Step 1: Select target pipeline for analysis
+target_path <- ix.io.read("stdin")               -- Path to pipeline to optimize
+  → when !target_path: ix.io.glob("pipelines/*.ixql") → head(1)
+
+target <- ix.io.read(target_path)
+
+-- Step 2: Parse pipeline into dependency graph
+graph <- target
+  → tars.parse_ixql(target)
+  → tars.extract_dependency_graph(
+      nodes: "stages",                            -- Each stage/binding is a node
+      edges: "data_dependencies"                  -- Edges = variable references between stages
+    )
+
+-- Step 3: Classify each stage as serial or parallelizable
+classified <- graph.nodes
+  → fan_out(
+      nodes.map(node =>
+        parallel(
+          -- Check data dependencies: does this stage depend on previous output?
+          tars.analyze_dependencies(
+            node: node,
+            graph: graph,
+            check: "can_execute_independently"
+          ),
+
+          -- Check for side effects: writes, alerts, git operations are serial
+          tars.classify_side_effects(
+            node: node,
+            serial_indicators: ["write(", "ix.io.git(", "alert(", "ix.io.delete("],
+            parallel_safe: ["tars.", "ix.ml.", "filter(", "fan_out("]
+          ),
+
+          -- Check governance gate requirements: some gates must be sequential
+          tars.check_gate_ordering(
+            node: node,
+            gates: ["reversibility_check", "confidence_calibration", "explanation_requirement"],
+            rule: "gates_after_transforms_before_writes"
+          )
+        )
+        → {
+            node: node,
+            classification: when can_execute_independently && no_side_effects: "parallel"
+                            → when has_side_effects: "serial"
+                            → when gate_dependent: "serial_gate"
+                            → when data_dependent && no_side_effects: "potentially_parallel",
+            estimated_cost: tars.estimate_stage_cost(node)    -- Relative time units
+          }
+      )
+    )
+
+-- Step 4: Compute current serial fraction using Amdahl's Law
+amdahl_analysis <- classified
+  → tars.compute_amdahl(
+      stages: classified,
+      metrics: {
+        -- Total pipeline cost
+        total_cost: classified.sum("estimated_cost"),
+
+        -- Serial cost: stages that MUST run sequentially
+        serial_cost: classified
+          → filter(classification in ["serial", "serial_gate"])
+          → sum("estimated_cost"),
+
+        -- Current parallel cost: stages already using fan_out/parallel
+        current_parallel: classified
+          → filter(classification == "parallel")
+          → sum("estimated_cost"),
+
+        -- Potentially parallelizable: sequential stages without true data deps
+        potential_parallel: classified
+          → filter(classification == "potentially_parallel")
+          → sum("estimated_cost")
+      }
+    )
+  → {
+      serial_fraction: metrics.serial_cost / metrics.total_cost,
+      current_speedup: 1.0 / (metrics.serial_cost/metrics.total_cost
+                        + (1 - metrics.serial_cost/metrics.total_cost) / current_parallelism),
+      theoretical_max: 1.0 / (metrics.serial_cost/metrics.total_cost),  -- N → infinity
+      optimizable_fraction: metrics.potential_parallel / metrics.total_cost
+    }
+
+-- Step 5: Generate optimization suggestions
+suggestions <- classified
+  → filter(classification == "potentially_parallel")
+  → fan_out(
+      parallelizable.map(stage =>
+        tars.suggest_optimization(
+          stage: stage,
+          graph: graph,
+          strategies: [
+            -- Strategy 1: Group independent stages into parallel()
+            {
+              name: "parallel_group",
+              condition: "multiple adjacent stages with no cross-dependencies",
+              transform: "wrap in parallel() block"
+            },
+            -- Strategy 2: Convert sequential map to fan_out
+            {
+              name: "fan_out_conversion",
+              condition: "sequential iteration over collection",
+              transform: "replace loop with fan_out(items.map(...))"
+            },
+            -- Strategy 3: Speculative execution with gates
+            {
+              name: "speculative_parallel",
+              condition: "conditional branches where both can execute safely",
+              transform: "run both branches, gate selects result"
+            }
+          ]
+        )
+        → {
+            stage: stage.node.name,
+            strategy: best_strategy,
+            estimated_improvement: tars.estimate_speedup_delta(stage, best_strategy),
+            new_serial_fraction: recalculated_s,
+            new_speedup_at_N4: 1.0 / (recalculated_s + (1 - recalculated_s) / 4)
+          }
+      )
+    )
+  → ix.ml.sort(by: "estimated_improvement", order: "descending")
+
+-- Step 6: Generate optimized pipeline (if improvements found)
+optimized <- when suggestions.count > 0:
+  target
+    → fan_out(
+        suggestions.map(s =>
+          when s.estimated_improvement >= 0.05:    -- Only apply 5%+ improvements
+            tars.apply_optimization(
+              pipeline: target,
+              stage: s.stage,
+              strategy: s.strategy
+            )
+        )
+      )
+    → tars.merge_optimizations(base: target)
+    → tars.parse_ixql(merged)                     -- Verify optimized version still parses
+    → when T >= 0.8:
+        { action: "propose", pipeline: merged, improvements: suggestions }
+    → when F:
+        { action: "discard", reason: "Optimization broke pipeline syntax" }
+
+-- Step 7: Produce Amdahl analysis report
+report <- parallel(amdahl_analysis, classified, suggestions, optimized)
+  → tars.synthesize(template: "amdahl-report")
+
+write("state/oversight/amdahl-reports/{date}-{pipeline_name}.json", {
+    pipeline: target_path,
+    total_stages: classified.count,
+    serial_stages: classified → filter(classification == "serial") → count,
+    parallel_stages: classified → filter(classification == "parallel") → count,
+    potentially_parallel: classified → filter(classification == "potentially_parallel") → count,
+    serial_fraction: amdahl_analysis.serial_fraction,
+    current_speedup_at_N4: amdahl_analysis.current_speedup,
+    theoretical_max_speedup: amdahl_analysis.theoretical_max,
+    suggestions: suggestions.map(s => {
+      stage: s.stage,
+      strategy: s.strategy.name,
+      improvement: s.estimated_improvement
+    }),
+    optimized_serial_fraction: when optimized: optimized.new_serial_fraction,
+    optimized_speedup_at_N4: when optimized: optimized.new_speedup_at_N4
+  })
+
+-- Propose optimized pipeline if significant improvement
+when optimized.action == "propose" && amdahl_analysis.optimizable_fraction >= 0.1:
+  write("{target_path}.optimized.ixql", optimized.pipeline)
+  → alert(discord,
+      "Amdahl Optimizer: {pipeline_name} — serial fraction {amdahl_analysis.serial_fraction:.0%} → "
+      ++ "{optimized.new_serial_fraction:.0%} — "
+      ++ "speedup at N=4: {amdahl_analysis.current_speedup:.1f}x → {optimized.new_speedup_at_N4:.1f}x"
+    )
+  → reversibility_check                          -- Article 3: original pipeline unchanged
+  → explanation_requirement                       -- Article 2: explain each optimization
+
+  → compound:
+      harvest amdahl_analysis.bottleneck_patterns
+      harvest suggestions.strategy_effectiveness
+      promote optimization_strategy if T >= 0.9 && applications >= 3
+      teach amdahl_patterns to seldon
+      log amdahl_optimizer_cycle to "state/evolution/"
