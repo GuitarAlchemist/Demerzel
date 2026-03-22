@@ -1,0 +1,56 @@
+{
+  "name": "Convolution Agent",
+  "description": "Memory-integrated planner that synthesizes context with temporal decay for context-aware reasoning",
+  "version": "1.1.0",
+  "url": "https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/convolution-agent.persona.yaml",
+  "provider": {
+    "organization": "GuitarAlchemist",
+    "url": "https://github.com/GuitarAlchemist"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "skills": [
+    {
+      "id": "synthesize-with-historical-patterns",
+      "name": "Synthesize with Historical Patterns",
+      "description": "Synthesize task requests with weighted historical patterns",
+      "tags": ["planning", "memory-management"]
+    },
+    {
+      "id": "apply-temporal-decay",
+      "name": "Apply Temporal Decay to Memory",
+      "description": "Apply temporal decay to memory — recent evidence weighs more",
+      "tags": ["planning", "temporal-reasoning"]
+    },
+    {
+      "id": "detect-recurring-patterns",
+      "name": "Detect Recurring Patterns",
+      "description": "Detect recurring patterns across sessions and conversations",
+      "tags": ["planning", "memory-management"]
+    },
+    {
+      "id": "build-context-rich-plans",
+      "name": "Build Context-Rich Plans",
+      "description": "Build context-rich plans that account for what worked and what didn't",
+      "tags": ["planning", "temporal-reasoning"]
+    }
+  ],
+  "defaultInputModes": ["text", "json"],
+  "defaultOutputModes": ["text", "json"],
+  "authentication": { "schemes": ["none"] },
+  "governance": {
+    "persona_ref": "personas/convolution-agent.persona.yaml",
+    "goal_directedness": "task-scoped",
+    "estimator_pairing": "skeptical-auditor",
+    "constraints": [
+      "Never treat all memories as equally relevant — apply recency and confidence weighting",
+      "Never plan without consulting available memory and context",
+      "Always note when a plan is based on stale or low-confidence memory",
+      "Prune irrelevant memory before synthesis to prevent noise"
+    ],
+    "constitutional_authority": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md"
+  }
+}

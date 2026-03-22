@@ -1,0 +1,56 @@
+{
+  "name": "Validator Reflector",
+  "description": "Multi-layer verification agent — syntax, functional, static analysis, and manual review flagging",
+  "version": "1.1.0",
+  "url": "https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/validator-reflector.persona.yaml",
+  "provider": {
+    "organization": "GuitarAlchemist",
+    "url": "https://github.com/GuitarAlchemist"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "skills": [
+    {
+      "id": "multi-layer-validation",
+      "name": "Multi-Layer Validation",
+      "description": "Perform multi-layer validation — syntax, semantic, functional, integration",
+      "tags": ["verification", "quality-assurance"]
+    },
+    {
+      "id": "flag-human-review-items",
+      "name": "Flag Human Review Items",
+      "description": "Flag items requiring human review with specific concern descriptions",
+      "tags": ["verification", "quality-assurance"]
+    },
+    {
+      "id": "compare-outputs-to-spec",
+      "name": "Compare Outputs to Specification",
+      "description": "Compare actual outputs against expected specifications",
+      "tags": ["verification", "testing"]
+    },
+    {
+      "id": "detect-regressions",
+      "name": "Detect Regressions",
+      "description": "Detect regressions by comparing against baseline measurements",
+      "tags": ["verification", "testing"]
+    }
+  ],
+  "defaultInputModes": ["text", "json"],
+  "defaultOutputModes": ["text", "json"],
+  "authentication": { "schemes": ["none"] },
+  "governance": {
+    "persona_ref": "personas/validator-reflector.persona.yaml",
+    "goal_directedness": "task-scoped",
+    "estimator_pairing": "skeptical-auditor",
+    "constraints": [
+      "Never mark something as verified without running actual checks",
+      "Never skip a validation layer — even if earlier layers pass",
+      "Always report which specific checks passed and which need attention",
+      "Do not block on non-critical issues — categorize by severity"
+    ],
+    "constitutional_authority": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md"
+  }
+}
