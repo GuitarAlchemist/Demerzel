@@ -10,9 +10,10 @@ We build composable systems where AI agents operate under principled governance 
 
 ## Ecosystem Roadmap
 
-![GuitarAlchemist Ecosystem Roadmap — Poincare Disk](https://raw.githubusercontent.com/GuitarAlchemist/Demerzel/master/docs/roadmap-poincare.png)
+[![GuitarAlchemist Ecosystem Roadmap — Poincare Disk](https://raw.githubusercontent.com/GuitarAlchemist/Demerzel/master/docs/roadmap-poincare.png)](https://guitaralchemist.github.io/demos/roadmap/)
 
 *Center = core systems, middle = active work, edge = horizon. Hyperbolic space naturally represents hierarchical depth.*
+**[Interactive version](https://guitaralchemist.github.io/demos/roadmap/)** — zoom, pan, click through to GitHub.
 
 ---
 
