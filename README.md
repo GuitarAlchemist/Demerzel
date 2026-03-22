@@ -80,6 +80,28 @@ When adding governance artifacts:
 
 Demerzel hosts [Streeling University](state/streeling/) — a 13-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, philosophy, cognitive science, futurology, music, musicology, guitar studies, product management, Guitar Alchemist Academy, world music and languages, and psychohistory. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
 
+## IxQL — ML Pipeline Language
+
+IxQL is a declarative language for composing ML pipelines, defined as an [EBNF grammar](grammars/sci-ml-pipelines.ebnf) and executed by the [ix](https://github.com/GuitarAlchemist/ix) forge. Pipelines are governed artifacts — every step maps to tetravalent conclusions (T/F/U/C) and constitutional checks.
+
+```
+(* Research pipeline: governance health scoring *)
+governance_state → cleaning → gradient_boosting → f1_score → shap_values
+
+(* Ensemble: combine classifiers with stacking *)
+(csv → normalize → random_forest → accuracy)
+  + (csv → embedding → transformer → auc_roc)
+  => stacking
+
+(* ix pattern: memristive Markov chain *)
+streaming_source → lag_features → memristive_markov → time_series_validation → mcp_tool_integration
+
+(* Governed pipeline with constitutional gates *)
+data_source → bias_assessment → model → confidence_calibration → explanation_requirement → deployment
+```
+
+**8 sections** — data sources, preprocessing, models (supervised/unsupervised/neural/probabilistic/reinforcement), evaluation, deployment, governance gates, ix-specific patterns, evolution hooks. See the [full grammar](grammars/sci-ml-pipelines.ebnf).
+
 ## Ecosystem
 
 | Repo | Description |
