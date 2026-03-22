@@ -54,8 +54,8 @@ Demerzel/
 | Policies | 27 | `policies/*.yaml` |
 | Grammars | 26 | `grammars/*.ebnf` |
 | Schemas | 24 | `schemas/*.json` |
-| Behavioral tests | 53 | `tests/behavioral/*.md` |
-| Skills | 39 | `.claude/skills/*/` |
+| Behavioral tests | 55 | `tests/behavioral/*.md` |
+| Skills | 40 | `.claude/skills/*/` |
 | Departments | 21 | `state/streeling/departments/` |
 | Courses | 14 | `state/streeling/courses/**/en/` |
 

@@ -12,7 +12,7 @@ personas/          14 persona archetypes (YAML) defining agent roles and voices
 logic/             Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
 policies/          27 policies: alignment, rollback, self-modification, kaizen, recon, scientific objectivity, streeling, governance audit, autonomous-loop, multi-model orchestration, context management, auto-remediation, ml-feedback, belief-currency, proto-conscience, conscience-observability, intuition, governance-experimentation, ai-probes, multilingual, grammar-evolution, staleness-detection, readme-sync, continuous-learning, completeness-instinct, seldon-plan, weakness-prober
 state/             Demerzel's persistent governance state (beliefs, evolution, pdca, knowledge, snapshots, oversight, conscience, intuition, streeling)
-tests/behavioral/  53 behavioral test suites with 100+ test cases
+tests/behavioral/  55 behavioral test suites with 100+ test cases
 schemas/           24 JSON schemas for persona, belief state, reconnaissance, conscience, contracts, and more
 contracts/         Galactic Protocol specification for cross-repo communication
 examples/          5 scenario walkthroughs + 10 sample data files
