@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-enum",
+  "title": "Fuzzy Enum",
+  "description": "A probability distribution over enum variants. Memberships sum to 1.0.",
+  "type": "object",
+  "required": ["enum_name", "variants", "membership"],
+  "properties": {
+    "enum_name": { "type": "string", "description": "Name of the enum type" },
+    "variants": { "type": "array", "items": { "type": "string" }, "minItems": 2, "description": "All possible variants" },
+    "membership": { "type": "object", "description": "Variant name to membership degree [0.0, 1.0]. Must sum to 1.0 (±0.01).", "additionalProperties": { "type": "number", "minimum": 0.0, "maximum": 1.0 } },
+    "constraint": { "type": "string", "enum": ["sum_to_one", "max_one", "unconstrained"], "default": "sum_to_one", "description": "Normalization constraint on membership values" }
+  }
+}

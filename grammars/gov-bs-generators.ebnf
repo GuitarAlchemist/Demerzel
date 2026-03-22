@@ -609,3 +609,48 @@ commitment ::= "[who] will [what] by [when]"
 (* "I don't know yet. I'll have an answer by Thursday." *)
 
 (* The most powerful anti-BS weapon: "I don't know." *)
+
+(* ============================================================ *)
+(* 15. Fuzzy BS Decoder Pipeline — FuzzyEnum integration        *)
+(* ============================================================ *)
+
+(* The decoder pipeline maps text through 6 tests to a FuzzyEnum<BsLevel>. *)
+(* Each test produces a FuzzyEnum over its own domain, then the scorer *)
+(* combines them with configurable weights via the FuzzyBuilder CE. *)
+
+bs_decode_pipeline ::= input structural_analysis content_analysis rhetorical_analysis scoring output
+
+input ::= raw_text | fetched_url_content
+
+structural_analysis ::= specificity_test falsifiability_test commitment_test
+
+specificity_test ::= "FuzzyEnum<Specificity>" (* {Specific, Generic} *)
+falsifiability_test ::= "FuzzyEnum<Falsifiability>" (* {Testable, Unfalsifiable} *)
+commitment_test ::= "FuzzyEnum<Commitment>" (* {Committed, Vague} *)
+
+content_analysis ::= density_test factual_density actionability_test
+
+density_test ::= "FuzzyEnum<Density>" (* {Substantive, Fluff} *)
+factual_density ::= "float" (* facts per sentence *)
+actionability_test ::= "FuzzyEnum<Actionability>" (* {Actionable, Inactionable} *)
+
+rhetorical_analysis ::= device_scan evasion_scan rhetorical_density
+
+(* device_scan: match against all 10 domain productions above *)
+(* evasion_scan: detect hedging, circular reasoning, false precision *)
+(* rhetorical_density: devices per sentence *)
+
+scoring ::= weighted_combination tetravalent_mapping
+
+weighted_combination ::= "FuzzyEnum<BsLevel>" (* {Clear, Mild, Moderate, Serious, Pure} *)
+(* Weights: specificity 0.20, falsifiability 0.15, commitment 0.20, *)
+(*          density 0.15, factual 0.15, actionability 0.15 *)
+
+tetravalent_mapping ::= "FuzzyEnum<TruthValue>"
+(* Clear/Mild → T (real content), Moderate → U, Serious/Pure → C *)
+
+output ::= bs_score per_test_scores devices_found tetravalent rewrite_suggestion
+
+(* Skill: /demerzel bs-decode [text or URL] *)
+(* Schema: schemas/fuzzy-enum.schema.json *)
+(* Tests: tests/behavioral/bs-decoder-cases.md *)

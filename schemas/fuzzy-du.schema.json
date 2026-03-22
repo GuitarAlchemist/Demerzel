@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-du",
+  "title": "Fuzzy Discriminated Union",
+  "description": "A fuzzy enum where each variant carries an optional typed payload.",
+  "type": "object",
+  "required": ["du_name", "cases"],
+  "properties": {
+    "du_name": { "type": "string" },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "membership"],
+        "properties": {
+          "name": { "type": "string" },
+          "membership": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "payload_schema": { "description": "JSON Schema for this case's payload (optional)" }
+        }
+      }
+    },
+    "constraint": { "type": "string", "enum": ["sum_to_one", "max_one", "unconstrained"], "default": "sum_to_one" }
+  }
+}

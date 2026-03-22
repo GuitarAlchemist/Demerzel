@@ -69,9 +69,87 @@ No normalization needed (swap preserves sum=1.0 invariant)
 
 Natural-language guards in state machine transitions that return fuzzy distributions. Written as `?"predicate description"` in the grammar. Evaluated by the reasoning engine (tars), not mechanically by Demerzel. Bridges formal logic with contextual judgment — the Logotron's "metalanguage" level.
 
+## Generalized Fuzzy Types: FuzzyEnum and FuzzyDU
+
+### FuzzyEnum<'T>
+
+Generalizes the tetravalent fuzzy distribution to any enum type. A `FuzzyEnum<'T>` is a probability distribution over variants of type `'T`. The tetravalent distribution `{T, F, U, C}` is `FuzzyEnum<TruthValue>`.
+
+**Properties:**
+- `Memberships: Map<'T, float>` — variant to membership degree
+- `ArgMax()` — variant with highest membership
+- `IsSharp(threshold)` — true if argmax > threshold
+- `Pure(variant)` — sharp (discrete) value: one variant = 1.0, rest = 0.0
+- `Uniform(variants)` — equal distribution: each variant = 1/N
+
+**Schema:** `schemas/fuzzy-enum.schema.json`
+
+### FuzzyDU<'T, 'Payload>
+
+Like FuzzyEnum but each variant carries an optional typed payload. Used when fuzzy classification needs associated data (e.g., BS detector with per-test evidence).
+
+**Schema:** `schemas/fuzzy-du.schema.json`
+
+### Generalized Operations
+
+AND, OR, NOT, renormalize, and sharpen generalize from tetravalent to any FuzzyEnum:
+
+- **AND:** min per variant, renormalize
+- **OR:** max per variant, renormalize
+- **NOT (generic):** invert (1.0 - v) per variant, renormalize
+- **NOT (tetravalent):** swap T<->F, preserve U/C (backward compatible)
+- **Renormalize:** divide each by sum (idempotent)
+- **Sharpen:** if argmax > threshold, collapse to discrete
+
+### Computation Expression (FuzzyBuilder)
+
+The `fuzzy { }` CE propagates membership through chained operations. Four strategies:
+
+| Strategy | Combiner | Use Case |
+|----------|----------|----------|
+| Multiplicative | `a * b` | Default, good for independent evidence |
+| Zadeh | `min(a, b)` | Classical fuzzy logic, conservative |
+| Bayesian | `a*b / (a*b + (1-a)*(1-b))` | Posterior update, treats as evidence |
+| Custom | user-defined | Domain-specific |
+
+**FuzzyResult<'T>** carries `Outcomes: Map<'T, float>` and `Trace: FuzzyTrace list` for full auditability (Article 7).
+
+### Unified Systems
+
+Seven existing ad-hoc fuzzy systems unify under FuzzyEnum:
+
+| System | Before | After |
+|--------|--------|-------|
+| Beliefs | `TruthValue` | `FuzzyEnum<TruthValue>` |
+| Grammar weights | `Map<string,float>` | `FuzzyEnum<HypothesisMethod>` |
+| Risk gates | hardcoded string | `FuzzyEnum<RiskLevel>` |
+| Persona routing | if/else chain | `FuzzyEnum<Persona>` |
+| BS score | 4-test checklist | `FuzzyEnum<BsLevel>` |
+| Governance decisions | Approve/Reject/Defer | `FuzzyEnum<Decision>` |
+| Task priority | P0/P1/P2/P3 | `FuzzyEnum<Priority>` |
+
+### Backward Compatibility
+
+- Discrete `TruthValue.T` = `FuzzyEnum.Pure(T, [T;F;U;C])` = `{T:1.0, F:0.0, U:0.0, C:0.0}`
+- Existing `BeliefState` gains optional `membership: FuzzyEnum<TruthValue>` field
+- When membership is absent, `truth_value` and `confidence` retain original meaning
+- All JSON schemas use `allOf` to extend, never breaking existing consumers
+
+### Design Spec
+
+Full specification: `docs/superpowers/specs/2026-03-22-fuzzy-enum-du-design.md`
+
 ## Integration
 
 - Schema: `schemas/fuzzy-belief.schema.json` (extends `tetravalent-state.schema.json` via allOf)
+- Schema: `schemas/fuzzy-enum.schema.json` (generalized fuzzy enum)
+- Schema: `schemas/fuzzy-du.schema.json` (fuzzy discriminated union)
+- Schema: `schemas/fuzzy-distribution.schema.json` (tetravalent-specific distribution)
 - Grammar: `grammars/state-machines.ebnf` section 9 (fuzzy transition gates)
+- Grammar: `grammars/gov-bs-generators.ebnf` (BS decoder productions)
 - Policy: `policies/alignment-policy.yaml` (fuzzy thresholds)
 - Tests: `tests/behavioral/fuzzy-logic-cases.md`
+- Tests: `tests/behavioral/fuzzy-du-cases.md`
+- Tests: `tests/behavioral/bs-decoder-cases.md`
+- Skill: `.claude/skills/demerzel-bs-decode/SKILL.md`
+- Directive: `contracts/directives/fuzzy-du-implementation.directive.md` (to tars)
