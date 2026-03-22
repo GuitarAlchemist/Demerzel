@@ -51,11 +51,37 @@ The governance framework must have at least as much regulatory variety as the di
 
 The 2025 Ashby Workshops at Fathom explicitly applied requisite variety to AI governance, producing the Independent Verification Organizations (IVO) policy model — confirming this principle's relevance to modern AI systems.
 
+### 4. Missing Algedonic Channel (Gap D)
+
+VSM theory describes an **algedonic channel** — an emergency signal path that bypasses the normal management hierarchy. When a System 1 unit encounters a crisis (pain signal) or breakthrough (pleasure signal), it can signal directly to System 5 without routing through Systems 2, 3, or 4.
+
+Demerzel currently lacks this bypass. All escalation flows through the driver (System 3). If ix detects a Zeroth Law violation, it must wait for the driver's next PDCA cycle to escalate. A file-based algedonic channel could solve this:
+
+- Operational repos write to `state/algedonic/{repo}-{timestamp}.signal`
+- Signal contains: severity (pain/pleasure), source repo, description, constitutional article triggered
+- System 5 (constitution enforcement) checks for signals before any other processing
+- Pain signals invoking Asimov Article 0 (Zeroth Law) trigger immediate halt
+
+### 5. Variety Assessment by Component
+
+| Component | Variety Role | Assessment |
+|-----------|-------------|------------|
+| 27 policies | Attenuator | Strong — reduces operational variety to manageable scope |
+| 14 personas | Amplifier | Good — multiplies response capability across domains |
+| Tetravalent logic (T/F/U/C) | Attenuator | Good — reduces infinite uncertainty to 4 discrete states |
+| Galactic Protocol | Attenuator | Adequate — constrains cross-repo variety |
+| Seldon Plan | Amplifier | Good — expands knowledge variety proactively |
+| Constitution | Attenuator | Strong — ultimate variety reducer (Zeroth Law) |
+
+Overall: Demerzel has strong variety attenuation but could improve variety amplification. The system is better at constraining than expanding its response repertoire.
+
 ## Implications for Demerzel
 
-1. **Clock-speed governance layers** — Consider explicit separation of fast-loop (per-request) vs. slow-loop (per-cycle) governance, matching VSM's operational vs. strategic timescales.
-2. **Recursive governance template** — The templates/ directory already provides CLAUDE.md snippets for consumer repos; extending this to sub-agent governance would deepen VSM recursion.
-3. **Conscience as synthetic S5** — Demerzel's proto-conscience policy is a novel extension beyond classical VSM, providing value-reflection capability without human judgment. This is worth further research.
+1. **Add algedonic channel** — Highest-priority structural gap. Emergency bypass from S1 to S5 for Zeroth Law violations.
+2. **Clock-speed governance layers** — Explicit separation of fast-loop (per-request) vs. slow-loop (per-cycle) governance, matching VSM's operational vs. strategic timescales.
+3. **Recursive governance template** — The templates/ directory already provides CLAUDE.md snippets for consumer repos; extending this to sub-agent governance would deepen VSM recursion.
+4. **Conscience as synthetic S5** — Demerzel's proto-conscience policy is a novel extension beyond classical VSM, providing value-reflection capability without human judgment. This is worth further research.
+5. **Monitor variety ratio** — Track whether policy count (attenuation) outpaces persona/capability count (amplification).
 
 ## Sources
 
