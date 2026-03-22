@@ -100,7 +100,7 @@ streaming_source → lag_features → memristive_markov → time_series_validati
 data_source → bias_assessment → model → confidence_calibration → explanation_requirement → deployment
 ```
 
-**10 sections** — data sources, preprocessing, models, evaluation, deployment, governance gates, ix-specific patterns, ix patterns, I/O & reactive patterns, evolution hooks. See the [full grammar](grammars/sci-ml-pipelines.ebnf).
+**11 sections** — data sources, preprocessing, models, evaluation, deployment, governance gates, ix-specific patterns, I/O & reactive patterns, MCP orchestration, evolution hooks. See the [full grammar](grammars/sci-ml-pipelines.ebnf) and the [IxQL Guide](docs/ixql-guide.md) for complex use cases.
 
 ## Manifesto for AI-Age Development
 
