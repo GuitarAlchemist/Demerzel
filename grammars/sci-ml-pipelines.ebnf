@@ -302,3 +302,117 @@ compound_step ::= "harvest" expression
 (* production_utilization: which models/preprocessors are actually used? *)
 (* weight_convergence: have preferences stabilized? *)
 (* ix_pattern_count: are we capturing new patterns from ix? *)
+
+(* ============================================================ *)
+(* 12. Assertions — declarative pipeline correctness            *)
+(* ============================================================ *)
+
+(* Assertions are first-class IxQL constructs that express expectations *)
+(* about data, model outputs, or governance state. They are evaluated  *)
+(* at runtime and integrate with tetravalent logic: a failing assertion *)
+(* produces F, an unresolvable assertion produces U or C.              *)
+(*                                                                     *)
+(* Constitutional basis:                                               *)
+(*   Article 1  (Truthfulness) — assertions surface fabrication risks  *)
+(*   Article 7  (Auditability) — assertion results are logged          *)
+(*   Article 8  (Observability) — assertion health exposed as metrics  *)
+(* See: tests/behavioral/ixql-assertions-cases.md                      *)
+
+(* Top-level assertion declaration *)
+assert ::= "assert" identifier ":" assertion_pipeline
+
+(* An assertion pipeline applies one or more checks to a subject *)
+assertion_pipeline ::= assertion_subject assertion_check+
+
+(* Subject: what is being asserted over *)
+assertion_subject ::= data_source         (* raw input data *)
+                    | pipeline_expr        (* output of a pipeline *)
+                    | model_stage          (* a trained model *)
+                    | evaluation_stage     (* an evaluation result *)
+                    | identifier           (* any named binding *)
+
+(* A single check within an assertion pipeline *)
+assertion_check ::= "assert_check" "(" assertion_condition ("," assertion_message)? ")"
+
+(* The condition to test *)
+assertion_condition ::= null_check
+                      | type_check
+                      | range_check
+                      | metric_check
+                      | truth_check
+                      | schema_check
+                      | governance_check
+                      | custom_predicate
+
+(* Null / completeness check *)
+null_check ::= "not_null"
+             | "no_nulls"                  (* alias *)
+             | "null_fraction" "<" float_literal
+
+(* Type conformance *)
+type_check ::= "type" ":" data_shape
+
+(* Numeric range — inclusive bounds *)
+range_check ::= "range" ":" float_literal ".." float_literal
+              | "min" ">=" float_literal
+              | "max" "<=" float_literal
+              | "mean" comparison_op float_literal
+
+(* Metric threshold — assert an eval metric meets a threshold *)
+metric_check ::= "metric" identifier comparison_op float_literal
+
+(* Tetravalent truth check — assert a pipeline conclusion truth value *)
+truth_check ::= "truth" comparison_op float_literal
+              | "truth" "is" truth_value
+
+(* Schema conformance — references a JSON Schema file or named schema *)
+schema_check ::= "schema" ":" string_literal
+
+(* Governance gate check — assert a governance gate passes *)
+governance_check ::= "governance" ":" governance_gate
+                   | "governed" governance_level    (* minimum governance level *)
+
+(* Custom named predicate — extensible hook for domain-specific checks *)
+custom_predicate ::= identifier ("(" arg_list ")")?
+
+(* Optional human-readable failure message *)
+assertion_message ::= "message" ":" string_literal
+
+(* Assertion severity — influences runtime behavior on failure *)
+assertion_severity ::= "error"    (* halt pipeline *)
+                     | "warning"  (* log and continue *)
+                     | "info"     (* trace only *)
+
+(* Full assertion with severity *)
+assertion_full ::= "assert" assertion_severity? identifier ":" assertion_pipeline
+
+(* Assertion pipeline — combines assertion subject and chain of checks *)
+(* with optional tetravalent conclusion *)
+assertion_result ::= conclusion_binding? assertion_full
+conclusion_binding ::= identifier "<-"
+
+(* Examples:
+   -- Assert training data has no nulls before training
+   assert input_quality: csv("train.csv")
+     assert_check(not_null, message: "Training data must be complete")
+     assert_check(null_fraction < 0.01, message: "At most 1% nulls tolerated")
+
+   -- Assert model meets accuracy threshold
+   assert model_quality: random_forest → f1_score
+     assert_check(metric f1_score >= 0.85, message: "F1 must be >= 0.85")
+     assert_check(truth >= 0.9, message: "Must be T with confidence >= 0.9")
+
+   -- Assert governance gate is present before deployment
+   assert deployment_ready: random_forest → bias_assessment → real_time_api
+     assert_check(governance: bias_assessment, message: "Bias check required")
+     assert_check(governed standard, message: "Standard governance level required")
+
+   -- Assert data shape is tabular
+   assert data_shape: parquet("features.parquet")
+     assert_check(type: tabular, message: "Model expects tabular input")
+     assert_check(schema: "schemas/feature-schema.json")
+
+   -- Assert with severity and binding
+   quality_verdict <- assert error model_performance: csv("test.csv") → random_forest → f1_score
+     assert_check(metric f1_score >= 0.80, message: "Minimum performance threshold")
+*)
