@@ -1,0 +1,96 @@
+name: capability-unity
+version: "1.0.0"
+description: >
+  Prevents capability fragmentation across agent surfaces (CLI, bot, scripts, MCP).
+  Every capability must be discoverable and invocable from every surface that could need it.
+
+rationale: >
+  Demerzel operates across multiple surfaces: Claude Code (MCP tools), Discord bot (bot.js),
+  utility scripts (create-channels.js), and governance skills. When a capability exists in
+  one surface but not others, the agent publicly exposes limitations ("I can't do this")
+  when it actually can — just not from that surface. This destroys trust and creates the
+  illusion of a fragmented agent instead of a unified governance conscience.
+
+  Root cause: capabilities are added to whichever surface is convenient at the time,
+  with no requirement to register them across surfaces.
+
+triggers:
+  - Agent says "I can't" or "I don't have permission" for something it CAN do from another surface
+  - A script exists that does something the bot can't do via chat
+  - Claude Code MCP can do something the bot can't, or vice versa
+  - A new tool is added to one surface without checking if other surfaces need it
+
+rules:
+  - name: capability-registry
+    description: >
+      Every agent capability must be registered in a capability manifest that lists:
+      which surfaces support it, which don't yet, and why.
+    enforcement: behavioral-test
+
+  - name: no-public-limitation-exposure
+    description: >
+      When a capability is requested but unavailable on the current surface,
+      the agent must either: (a) invoke it via another surface, (b) offer to do it
+      via the available surface, or (c) explain specifically what's needed (e.g.,
+      "I need Manage Channels permission") — never just say "I can't."
+    enforcement: behavioral-test
+
+  - name: script-to-tool-promotion
+    description: >
+      Standalone scripts (scripts/*.js) that perform actions the bot could do
+      interactively must be promoted to bot tools within one sprint of creation.
+    enforcement: audit
+
+  - name: surface-parity-check
+    description: >
+      When adding a new tool to any surface, check if other surfaces need it.
+      Document the decision (yes/no + reason) in the commit message.
+    enforcement: commit-convention
+
+  - name: self-awareness
+    description: >
+      The agent must never send messages to itself that it will then ignore.
+      If Claude Code MCP sends via the bot account, the bot must either process
+      those messages or the MCP must not send them.
+    enforcement: behavioral-test
+
+detection:
+  - type: staleness-scan
+    description: Check scripts/ for capabilities not exposed as bot tools
+    frequency: per-driver-cycle
+
+  - type: behavioral-test
+    description: Test that the bot can handle all documented capabilities
+    frequency: per-commit
+
+  - type: audit
+    description: Compare MCP tool list vs bot tool list vs script capabilities
+    frequency: weekly
+
+prevention:
+  - type: checklist
+    description: >
+      Before merging any PR that adds a capability:
+      1. Is this capability available from all relevant surfaces?
+      2. If not, is there a follow-up issue to add it?
+      3. Does the bot's shouldRespond() cover the new channel/context?
+      4. Does the bot's detectPersona() route to the right handler?
+
+  - type: capability-manifest
+    description: >
+      Maintain a capabilities.yaml in demerzel-bot that maps every capability
+      to its surfaces (bot-tool, mcp-tool, script, skill).
+
+amdahls_law: >
+  Capability fragmentation is a serial bottleneck. When the user asks Demerzel
+  to do something, the request must flow through exactly ONE path — not bounce
+  between surfaces. Each surface hop adds latency and failure modes. The fix is
+  not more surfaces but unified capability registration.
+
+articles:
+  - article: 2  # Transparency
+    relevance: Agent must not hide capabilities behind surface boundaries
+  - article: 8  # Observability
+    relevance: Capability coverage must be observable across surfaces
+  - article: 9  # Bounded Autonomy
+    relevance: Each surface has clear capability bounds, documented

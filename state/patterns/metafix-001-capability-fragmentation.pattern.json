@@ -1,0 +1,20 @@
+{
+  "pattern_id": "metafix-001-capability-fragmentation",
+  "category": "metafix",
+  "name": "Capability fragmentation across agent surfaces",
+  "levels_completed": [0, 1, 2, 3, 4],
+  "instance_fixed": "Bot said 'I can't create channels' despite having create-channels.js; bot ignored its own MCP-sent messages",
+  "siblings_found": 3,
+  "siblings_detail": [
+    "create-channels.js not wired as bot tool (fixed: added create_channel governance tool)",
+    "message.author.bot blanket rejection blocked self-testing (fixed: [DEMERZEL-TEST] bypass)",
+    "#clarity-lab channel not in shouldRespond() or detectPersona() routing (fixed: added)"
+  ],
+  "detection_added": "capability-unity-policy.yaml detection section: staleness scan for scripts/ not exposed as tools, behavioral tests per commit, weekly surface parity audit",
+  "prevention_added": "capability-unity-policy.yaml prevention section: pre-merge checklist (4 items) and capability manifest requirement",
+  "system_change": "New policy: capability-unity-policy.yaml — prevents the entire class of surface fragmentation. New behavioral tests: capability-unity-cases.md (8 test cases). Governance tools added to bot alongside music tools.",
+  "timestamp": "2026-03-22T21:30:00Z",
+  "root_cause": "Capabilities were added to whichever surface was convenient (script for batch, bot for chat, MCP for Claude Code) with no cross-surface registration requirement",
+  "class_of_problem": "Agent self-awareness gap — multiple surfaces of the same agent don't know about each other's capabilities",
+  "amdahls_law_insight": "Each surface hop is a serial bottleneck. Unified capability registration eliminates the hop."
+}
