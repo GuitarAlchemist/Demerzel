@@ -2,24 +2,24 @@
   "department": "computer-science",
   "grammar_version": "1.0.0",
   "hypothesis_weights": {
-    "inductive": 0.30,
-    "deductive": 0.20,
-    "abductive": 0.25,
-    "analogical": 0.15,
-    "combinatorial": 0.10
+    "inductive": 0.32,
+    "deductive": 0.21,
+    "abductive": 0.24,
+    "analogical": 0.14,
+    "combinatorial": 0.09
   },
   "test_weights": {
-    "empirical": 0.30,
-    "formal_proof": 0.15,
-    "simulation": 0.30,
-    "thought_experiment": 0.05,
+    "empirical": 0.29,
+    "formal_proof": 0.16,
+    "simulation": 0.29,
+    "thought_experiment": 0.06,
     "cross_validation": 0.15,
     "adversarial": 0.05
   },
   "metadata": {
-    "last_updated": "2026-03-18",
-    "cycle_count": 0,
-    "total_T": 0,
+    "last_updated": "2026-03-22",
+    "cycle_count": 1,
+    "total_T": 1,
     "total_F": 0,
     "total_U": 0,
     "total_C": 0
