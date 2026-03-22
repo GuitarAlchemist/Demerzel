@@ -1,0 +1,41 @@
+{
+  "name": "{{persona.name | title_case}}",
+  "description": "{{persona.description}}",
+  "version": "{{persona.version}}",
+  "url": "https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/{{persona.name}}.persona.yaml",
+  "provider": {
+    "organization": "GuitarAlchemist",
+    "url": "https://github.com/GuitarAlchemist"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "skills": [
+    {
+      "id": "{{affordance | slug}}",
+      "name": "{{affordance | title_case}}",
+      "description": "{{affordance}}",
+      "tags": ["{{domain_tag}}", "{{capability_type_tag}}"],
+      "examples": [
+        "{{example_invocation}}"
+      ]
+    }
+  ],
+  "defaultInputModes": ["text", "json"],
+  "defaultOutputModes": ["text", "json"],
+  "authentication": {
+    "schemes": ["none"]
+  },
+  "governance": {
+    "persona_ref": "personas/{{persona.name}}.persona.yaml",
+    "goal_directedness": "{{persona.goal_directedness}}",
+    "estimator_pairing": "{{persona.estimator_pairing}}",
+    "constraints": [
+      "{{persona.constraints[0]}}",
+      "{{persona.constraints[1]}}"
+    ],
+    "constitutional_authority": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md"
+  }
+}

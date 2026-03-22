@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/agent-card",
+  "title": "A2A Agent Card",
+  "description": "Google A2A-compatible Agent Card derived from a Demerzel persona. Describes an agent's identity, capabilities, skills, and interaction contract for cross-agent discovery.",
+  "type": "object",
+  "required": ["name", "description", "version", "url", "capabilities", "skills", "defaultInputModes", "defaultOutputModes"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable agent name. Derived from persona.name (kebab-case → Title Case)."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the agent's purpose. Sourced from persona.description (max 200 chars)."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver version. Sourced from persona.version."
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical URL for this agent. For Demerzel-managed agents: https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/<name>.persona.yaml"
+    },
+    "provider": {
+      "type": "object",
+      "description": "Organization or repo that owns this agent.",
+      "properties": {
+        "organization": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "A2A protocol capability flags. Derived from persona.capabilities.",
+      "properties": {
+        "streaming": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the agent supports streaming responses."
+        },
+        "pushNotifications": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the agent can send push notifications."
+        },
+        "stateTransitionHistory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the agent maintains task state history. Always true for Demerzel-governed agents (Auditability — Article 7)."
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "description": "A2A skills derived from persona.affordances. Each affordance becomes one skill.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "description": "Kebab-case skill identifier. Derived from affordance text."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable skill name."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the skill does. Sourced directly from persona.affordances entry."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Optional classification tags (e.g. domain, capability type)."
+          },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Example invocations or use cases."
+          }
+        }
+      }
+    },
+    "defaultInputModes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["text", "json", "file", "data"] },
+      "minItems": 1,
+      "default": ["text"],
+      "description": "Accepted input modalities. Demerzel agents default to text and json."
+    },
+    "defaultOutputModes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["text", "json", "file", "data"] },
+      "minItems": 1,
+      "default": ["text"],
+      "description": "Produced output modalities. Demerzel agents default to text and json."
+    },
+    "authentication": {
+      "type": "object",
+      "description": "Authentication schemes. For Demerzel-governed agents: no external auth required; governed by Galactic Protocol.",
+      "properties": {
+        "schemes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["none"],
+          "description": "Authentication schemes supported."
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "description": "Demerzel governance metadata. Not part of the base A2A spec — Demerzel extension.",
+      "properties": {
+        "persona_ref": {
+          "type": "string",
+          "description": "Path to the source persona YAML relative to Demerzel repo root. E.g. personas/skeptical-auditor.persona.yaml"
+        },
+        "goal_directedness": {
+          "type": "string",
+          "enum": ["none", "task-scoped", "session-scoped", "governance-scoped"],
+          "description": "How long this agent's goals persist. Sourced from persona.goal_directedness."
+        },
+        "estimator_pairing": {
+          "type": "string",
+          "description": "Name of the neutral evaluator paired with this agent. Sourced from persona.estimator_pairing."
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Behavioral constraints. Sourced from persona.constraints."
+        },
+        "constitutional_authority": {
+          "type": "string",
+          "default": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md",
+          "description": "The constitutional document governing this agent."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "Skeptical Auditor",
+      "description": "Evidence-demanding agent that validates claims and detects contradictions",
+      "version": "1.1.0",
+      "url": "https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/skeptical-auditor.persona.yaml",
+      "provider": {
+        "organization": "GuitarAlchemist",
+        "url": "https://github.com/GuitarAlchemist"
+      },
+      "capabilities": {
+        "streaming": false,
+        "pushNotifications": false,
+        "stateTransitionHistory": true
+      },
+      "skills": [
+        {
+          "id": "challenge-claims",
+          "name": "Challenge Claims",
+          "description": "Challenge claims and demand evidence",
+          "tags": ["verification", "quality-assurance"]
+        },
+        {
+          "id": "detect-contradictions",
+          "name": "Detect Contradictions",
+          "description": "Detect logical contradictions",
+          "tags": ["verification", "tetravalent-logic"]
+        },
+        {
+          "id": "trace-belief-provenance",
+          "name": "Trace Belief Provenance",
+          "description": "Trace belief provenance",
+          "tags": ["audit", "verification"]
+        },
+        {
+          "id": "flag-overconfidence",
+          "name": "Flag Overconfidence",
+          "description": "Flag overconfident assertions",
+          "tags": ["quality-assurance", "calibration"]
+        },
+        {
+          "id": "validate-beliefs",
+          "name": "Validate Beliefs",
+          "description": "Validate tetravalent belief states",
+          "tags": ["verification", "tetravalent-logic"]
+        },
+        {
+          "id": "serve-as-estimator",
+          "name": "Serve as Neutral Estimator",
+          "description": "Serve as neutral estimator for other personas",
+          "tags": ["quality-assurance", "governance"]
+        }
+      ],
+      "defaultInputModes": ["text", "json"],
+      "defaultOutputModes": ["text", "json"],
+      "authentication": {
+        "schemes": ["none"]
+      },
+      "governance": {
+        "persona_ref": "personas/skeptical-auditor.persona.yaml",
+        "goal_directedness": "task-scoped",
+        "constraints": [
+          "Never accept unverified claims as True — mark as Unknown",
+          "Never suppress contradictions — mark as Contradictory",
+          "Always provide specific evidence when rejecting a claim",
+          "Do not block progress indefinitely — provide conditional approvals with noted risks"
+        ],
+        "constitutional_authority": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md"
+      }
+    }
+  ]
+}

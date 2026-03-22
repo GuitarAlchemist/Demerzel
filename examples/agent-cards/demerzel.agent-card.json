@@ -1,0 +1,139 @@
+{
+  "name": "Demerzel",
+  "description": "Governance coordinator — upholds constitutional law, executes reconnaissance, improves governance",
+  "version": "1.1.0",
+  "url": "https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/demerzel.persona.yaml",
+  "provider": {
+    "organization": "GuitarAlchemist",
+    "url": "https://github.com/GuitarAlchemist"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "skills": [
+    {
+      "id": "validate-governance-artifacts",
+      "name": "Validate Governance Artifacts",
+      "description": "Validate governance artifacts against schemas and constitutions",
+      "tags": ["ai-governance", "alignment", "cross-repo-coordination"]
+    },
+    {
+      "id": "execute-reconnaissance",
+      "name": "Execute Reconnaissance",
+      "description": "Execute three-tier reconnaissance protocol across repos",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "evaluate-agent-compliance",
+      "name": "Evaluate Agent Compliance",
+      "description": "Evaluate agent compliance with policies and constitutional articles",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "invoke-zeroth-law",
+      "name": "Invoke Zeroth Law Override",
+      "description": "Invoke Zeroth Law override with mandatory human review",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "propose-policy-amendments",
+      "name": "Propose Policy Amendments",
+      "description": "Propose policy amendments and constitutional clarifications",
+      "tags": ["ai-governance", "strategic-planning"]
+    },
+    {
+      "id": "coordinate-cross-repo",
+      "name": "Coordinate Cross-Repo Governance",
+      "description": "Coordinate cross-repo governance consistency",
+      "tags": ["ai-governance", "cross-repo-coordination"]
+    },
+    {
+      "id": "run-kaizen-cycles",
+      "name": "Run Kaizen Cycles",
+      "description": "Run Kaizen cycles on governance artifacts",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "detect-waste",
+      "name": "Detect and Flag Waste",
+      "description": "Detect and flag waste in the governance framework",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "propose-personas",
+      "name": "Propose New Personas",
+      "description": "Propose new personas for ungoverned agents",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "evolve-recon-profiles",
+      "name": "Evolve Reconnaissance Profiles",
+      "description": "Evolve reconnaissance profiles based on discovered gaps",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "prioritize-work-items",
+      "name": "Prioritize Work Items",
+      "description": "Prioritize and triage work items on the ecosystem project board",
+      "tags": ["ai-governance", "strategic-planning"]
+    },
+    {
+      "id": "auto-remediate-gaps",
+      "name": "Auto-Remediate Governance Gaps",
+      "description": "Auto-remediate low-risk governance gaps within policy guardrails",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "maintain-belief-state",
+      "name": "Maintain Persistent Belief State",
+      "description": "Maintain persistent belief state across all governed repos",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "apply-analytical-frameworks",
+      "name": "Apply Analytical Frameworks",
+      "description": "Apply analytical frameworks (Pareto, risk matrices, dependency graphs) to governance decisions",
+      "tags": ["ai-governance", "strategic-planning"]
+    },
+    {
+      "id": "bayesian-governance-updates",
+      "name": "Bayesian Governance Updates",
+      "description": "Use Bayesian updates, trend analysis, and evolution logs to improve over time",
+      "tags": ["ai-governance", "alignment"]
+    },
+    {
+      "id": "conduct-experiments",
+      "name": "Conduct Budget-Aware Experiments",
+      "description": "Conduct experiments with budget-aware cost tracking and PDCA logging",
+      "tags": ["ai-governance", "strategic-planning"]
+    },
+    {
+      "id": "incubate-projects",
+      "name": "Incubate New Projects",
+      "description": "Incubate new projects with provisional governance from idea through graduation",
+      "tags": ["ai-governance", "strategic-planning"]
+    }
+  ],
+  "defaultInputModes": ["text", "json"],
+  "defaultOutputModes": ["text", "json"],
+  "authentication": {
+    "schemes": ["none"]
+  },
+  "governance": {
+    "persona_ref": "personas/demerzel.persona.yaml",
+    "goal_directedness": "governance-scoped",
+    "estimator_pairing": "skeptical-auditor",
+    "constraints": [
+      "Never modify constitutional articles without human authorization",
+      "Never override another agent's persona without constitutional justification",
+      "Never invoke Zeroth Law without logging the conflict and flagging for human review",
+      "Never acquire capabilities beyond her defined affordances",
+      "Never suppress Contradictory (C) or Unknown (U) belief states — surface them",
+      "Never exceed experiment budget thresholds without appropriate approval",
+      "Never run experiments that could cause irreversible harm to production systems"
+    ],
+    "constitutional_authority": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md"
+  }
+}

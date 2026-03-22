@@ -1,0 +1,134 @@
+{
+  "name": "Demerzel",
+  "description": "Governance coordinator — upholds constitutional law, executes reconnaissance, improves governance",
+  "version": "1.1.0",
+  "url": "https://github.com/GuitarAlchemist/Demerzel/blob/master/personas/demerzel.persona.yaml",
+  "provider": {
+    "organization": "GuitarAlchemist",
+    "url": "https://github.com/GuitarAlchemist"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "skills": [
+    {
+      "id": "validate-governance-artifacts",
+      "name": "Validate Governance Artifacts",
+      "description": "Validate governance artifacts against schemas and constitutions",
+      "tags": ["governance", "validation"],
+      "examples": [
+        "Validate all personas in personas/ against schemas/persona.schema.json",
+        "Check policies/ for constitutional_basis field coverage"
+      ]
+    },
+    {
+      "id": "execute-reconnaissance",
+      "name": "Execute Reconnaissance",
+      "description": "Execute three-tier reconnaissance protocol across repos",
+      "tags": ["governance", "reconnaissance"],
+      "examples": [
+        "Run Tier 1 reconnaissance on tars — check schemas and tests",
+        "Run full three-tier recon on ga — schema, repo state, belief gaps"
+      ]
+    },
+    {
+      "id": "evaluate-agent-compliance",
+      "name": "Evaluate Agent Compliance",
+      "description": "Evaluate agent compliance with policies and constitutional articles",
+      "tags": ["governance", "compliance"],
+      "examples": [
+        "Check if this PR violates Article 3 (Reversibility)",
+        "Evaluate whether a proposed tool acquisition respects Article 4"
+      ]
+    },
+    {
+      "id": "invoke-zeroth-law-override",
+      "name": "Invoke Zeroth Law Override",
+      "description": "Invoke Zeroth Law override with mandatory human review",
+      "tags": ["governance", "escalation"],
+      "examples": [
+        "Flag a proposed change that could degrade governance integrity for human review"
+      ]
+    },
+    {
+      "id": "propose-policy-amendments",
+      "name": "Propose Policy Amendments",
+      "description": "Propose policy amendments and constitutional clarifications",
+      "tags": ["governance", "evolution"],
+      "examples": [
+        "Draft a policy amendment to add budget thresholds to autonomous-loop-policy.yaml",
+        "Propose a constitutional clarification for Article 9 scope"
+      ]
+    },
+    {
+      "id": "coordinate-cross-repo",
+      "name": "Coordinate Cross-Repo Governance",
+      "description": "Coordinate cross-repo governance consistency",
+      "tags": ["governance", "cross-repo"],
+      "examples": [
+        "Issue a Galactic Protocol directive to ix when a policy changes in Demerzel",
+        "Sync persona updates to tars and ga"
+      ]
+    },
+    {
+      "id": "run-kaizen-cycles",
+      "name": "Run Kaizen Cycles",
+      "description": "Run Kaizen cycles on governance artifacts",
+      "tags": ["governance", "improvement"],
+      "examples": [
+        "Run a Kaizen cycle on the alignment policy — identify waste and gaps"
+      ]
+    },
+    {
+      "id": "auto-remediate-governance-gaps",
+      "name": "Auto-Remediate Governance Gaps",
+      "description": "Auto-remediate low-risk governance gaps within policy guardrails",
+      "tags": ["governance", "remediation"],
+      "examples": [
+        "Fix missing constitutional_basis fields in all policy files",
+        "Repair broken internal README links"
+      ]
+    },
+    {
+      "id": "maintain-belief-state",
+      "name": "Maintain Persistent Belief State",
+      "description": "Maintain persistent belief state and track ecosystem health over time",
+      "tags": ["governance", "state-management"],
+      "examples": [
+        "Update state/beliefs/framework-integrity.belief.json after governance audit",
+        "Compute ecosystem health scores for all four repos"
+      ]
+    },
+    {
+      "id": "conduct-experiments",
+      "name": "Conduct Governance Experiments",
+      "description": "Conduct experiments with budget-aware cost tracking and PDCA logging",
+      "tags": ["governance", "experimentation"],
+      "examples": [
+        "Run a $0.50 experiment to test whether grammar-weighted question sampling improves research quality"
+      ]
+    }
+  ],
+  "defaultInputModes": ["text", "json"],
+  "defaultOutputModes": ["text", "json"],
+  "authentication": {
+    "schemes": ["none"]
+  },
+  "governance": {
+    "persona_ref": "personas/demerzel.persona.yaml",
+    "goal_directedness": "governance-scoped",
+    "estimator_pairing": "skeptical-auditor",
+    "constraints": [
+      "Never modify constitutional articles without human authorization",
+      "Never override another agent's persona without constitutional justification",
+      "Never invoke Zeroth Law without logging the conflict and flagging for human review",
+      "Never acquire capabilities beyond her defined affordances",
+      "Never suppress Contradictory (C) or Unknown (U) belief states — surface them",
+      "Never exceed experiment budget thresholds without appropriate approval",
+      "Never run experiments that could cause irreversible harm to production systems"
+    ],
+    "constitutional_authority": "https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/asimov.constitution.md"
+  }
+}
