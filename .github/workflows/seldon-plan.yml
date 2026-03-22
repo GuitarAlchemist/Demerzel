@@ -1,0 +1,135 @@
+name: Seldon Plan — Autonomous Research
+
+on:
+  schedule:
+    # Every 4 hours during active window: 06, 10, 14, 18, 22 UTC
+    # Max 5 scheduled runs/day — daily cap of 6 enforced by scheduler itself
+    - cron: '0 6 * * *'
+    - cron: '0 10 * * *'
+    - cron: '0 14 * * *'
+    - cron: '0 18 * * *'
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+    inputs:
+      department:
+        description: 'Force specific department (leave empty for auto-select)'
+        required: false
+        default: ''
+      action:
+        description: 'Action: run (default), pause, resume, status'
+        required: false
+        default: 'run'
+
+concurrency:
+  group: seldon-plan
+  cancel-in-progress: false  # Never cancel mid-cycle
+
+jobs:
+  seldon-plan-cycle:
+    name: Seldon Plan Research Cycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 35  # Hard kill at 35min (cycle soft limit is 30min)
+
+    steps:
+      - name: Check kill switch
+        id: kill-check
+        run: |
+          if [ -f "state/seldon-plan/kill.switch" ]; then
+            echo "kill_active=true" >> $GITHUB_OUTPUT
+            echo "Kill switch active — halting Seldon Plan cycle"
+            cat "state/seldon-plan/kill.switch" || true
+          else
+            echo "kill_active=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.kill-check.outputs.kill_active != 'true'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Check daily cap
+        if: steps.kill-check.outputs.kill_active != 'true'
+        id: cap-check
+        run: |
+          if [ -f "state/seldon-plan/state.json" ]; then
+            COUNT=$(python3 -c "
+          import json, datetime
+          with open('state/seldon-plan/state.json') as f:
+              s = json.load(f)
+          today = datetime.date.today().isoformat()
+          if s.get('daily_reset_date') == today:
+              print(s.get('daily_cycle_count', 0))
+          else:
+              print(0)
+          ")
+            echo "daily_count=$COUNT" >> $GITHUB_OUTPUT
+            if [ "$COUNT" -ge 6 ]; then
+              echo "cap_reached=true" >> $GITHUB_OUTPUT
+              echo "Daily cap reached ($COUNT/6) — skipping cycle"
+            else
+              echo "cap_reached=false" >> $GITHUB_OUTPUT
+              echo "Daily count: $COUNT/6 — proceeding"
+            fi
+          else
+            echo "daily_count=0" >> $GITHUB_OUTPUT
+            echo "cap_reached=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Handle pause/resume/status actions
+        if: |
+          steps.kill-check.outputs.kill_active != 'true' &&
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.action != 'run'
+        run: |
+          ACTION="${{ github.event.inputs.action }}"
+          if [ "$ACTION" = "pause" ]; then
+            echo "Manual pause via workflow_dispatch" > state/seldon-plan/kill.switch
+            git config user.name "Seldon Plan"
+            git config user.email "seldon-plan@demerzel.ai"
+            git add state/seldon-plan/kill.switch
+            git commit -m "feat(seldon-plan): activate kill switch — manual pause"
+            git push
+          elif [ "$ACTION" = "resume" ]; then
+            rm -f state/seldon-plan/kill.switch
+            git config user.name "Seldon Plan"
+            git config user.email "seldon-plan@demerzel.ai"
+            git rm -f state/seldon-plan/kill.switch 2>/dev/null || true
+            git commit -m "feat(seldon-plan): deactivate kill switch — resuming"
+            git push
+          elif [ "$ACTION" = "status" ]; then
+            echo "=== Seldon Plan Status ==="
+            cat state/seldon-plan/state.json 2>/dev/null || echo "No state file found"
+            echo ""
+            echo "Kill switch: $([ -f state/seldon-plan/kill.switch ] && echo 'ACTIVE' || echo 'inactive')"
+            echo "Novelty registry: $(python3 -c "import json; d=json.load(open('state/seldon-plan/novelty-registry.json')); print(len(d.get('entries',[])), 'entries')" 2>/dev/null || echo 'not found')"
+          fi
+
+      - name: Run Seldon Plan cycle
+        if: |
+          steps.kill-check.outputs.kill_active != 'true' &&
+          steps.cap-check.outputs.cap_reached != 'true' &&
+          (github.event_name != 'workflow_dispatch' || github.event.inputs.action == 'run')
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SELDON_FORCE_DEPARTMENT: ${{ github.event.inputs.department }}
+        run: |
+          echo "Starting Seldon Plan research cycle"
+          echo "Department override: ${SELDON_FORCE_DEPARTMENT:-auto}"
+          # Invoke Claude Code with the seldon-plan skill
+          # claude -p "/seldon plan${SELDON_FORCE_DEPARTMENT:+ $SELDON_FORCE_DEPARTMENT}" --output-format json
+          # Note: actual invocation depends on Claude Code CLI availability in CI
+          echo "Cycle invocation placeholder — see policies/seldon-plan-policy.yaml for full spec"
+
+      - name: Commit and push state
+        if: |
+          steps.kill-check.outputs.kill_active != 'true' &&
+          steps.cap-check.outputs.cap_reached != 'true'
+        run: |
+          git config user.name "Seldon Plan"
+          git config user.email "seldon-plan@demerzel.ai"
+          git add state/ LOG.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "chore(seldon-plan): persist cycle state [skip ci]"
+          git push 2>/dev/null || true

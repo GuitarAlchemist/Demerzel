@@ -1,0 +1,451 @@
+name: seldon-plan
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: "Autonomous research scheduler for Streeling University — always-on question generation, cross-model validation, course production, novelty detection, and compounding. Max 6 cycles/day. Kill switch."
+
+rationale: |
+  Streeling University generates knowledge on demand (seldon-research-cycle) but has
+  no proactive driver. The Seldon Plan fills this gap: an always-on scheduler that
+  continuously researches open questions, produces course material, and compounds
+  learnings — without human prompting. Named for Hari Seldon's psychohistory Plan:
+  the long-running, self-correcting trajectory toward a known endpoint.
+
+constitutional_basis:
+  - Asimov Article 4 (Separation of Understanding and Goals) — autonomous research
+    must not generate instrumental goals; research is understanding, not action
+  - Default Article 9 (Bounded Autonomy) — max 6 cycles/day hard cap, kill switch
+  - Default Article 7 (Auditability) — every cycle logged with full trace
+  - Default Article 8 (Observability) — scheduler state is always inspectable
+
+references:
+  - policies/completeness-instinct-policy.yaml
+  - policies/autonomous-loop-policy.yaml
+  - policies/continuous-learning-policy.yaml
+  - policies/streeling-policy.yaml
+  - policies/multilingual-policy.yaml
+  - skills/seldon-research-cycle/SKILL.md
+  - skills/seldon-research/SKILL.md
+
+---
+
+## Scheduler Architecture
+
+### Overview
+
+```
+CronJob (GitHub Actions / system cron)
+    ↓ (every 4h, 06:00–22:00 UTC, max 6/day)
+WAKE
+    ↓
+QUESTION GENERATION (completeness instinct)
+    ↓
+INVESTIGATION (seldon-research pipeline)
+    ↓
+NOVELTY DETECTION
+    ↓
+COURSE PRODUCTION (if novel + confident)
+    ↓
+COMPOUND (weights, gaps, grammar, follow-ups)
+    ↓
+PERSIST + SLEEP
+```
+
+### Resource Bounds
+
+| Bound | Value | Rationale |
+|---|---|---|
+| Max cycles per day | 6 | Cost + focus discipline |
+| Active hours (UTC) | 06:00–22:00 | Avoid 3am noise |
+| Max duration per cycle | 30 minutes | Research is bounded, not a driver loop |
+| Kill switch | `state/seldon-plan/kill.switch` | Create file to halt all future cycles |
+| Max consecutive auto-cycles | 12 | Pause, write report, wait for human |
+| ChatGPT calls per cycle | 1 | Cost control (GPT-4o-mini ~$0.15/M input) |
+| NotebookLM calls per cycle | 2 | One topic lookup + one cross-check |
+| Course output per cycle | 0–1 | Only produce if conviction >= 0.75 |
+
+---
+
+## Phase 1: WAKE
+
+### Kill Switch Check
+Before any work:
+1. Check `state/seldon-plan/kill.switch` — if file exists, **halt immediately**, log reason
+2. Check `state/seldon-plan/state.json` → `daily_cycle_count` — if >= 6, **halt**, log daily cap
+3. Check lock: `state/seldon-plan/lock.json` — if lock younger than 30min, **skip** (already running)
+4. Acquire lock: write `{ "pid": ..., "started_at": ..., "heartbeat": ... }`
+
+### Context Rebuild
+Read:
+- `state/seldon-plan/state.json` — daily count, last question asked, next department
+- `state/streeling/departments/*.department.json` — all departments + last cycle timestamps
+- `state/streeling/departments/*.weights.json` — grammar weights per department
+- `state/seldon-plan/novelty-registry.json` — known findings (for novelty detection)
+- `state/completeness/known-gaps.json` — open gaps from completeness instinct
+
+---
+
+## Phase 2: QUESTION GENERATION
+
+The core intelligence of the Seldon Plan. Uses two sources and merges them.
+
+### Source A: Completeness Instinct
+Scan `state/completeness/known-gaps.json` for gaps with:
+- `severity: critical` or `important`
+- `status: open` (not already addressed)
+- `type: implied_but_missing` or `declared_but_underspecified`
+
+These gaps represent questions the completeness instinct has already flagged. Transform each into a research question:
+- Gap: "streaming_source has no protocol specification" → Question: "What protocol should govern streaming data sources in IxQL pipelines?"
+- Gap: "persona with no test" → Question: "What behavioral signatures distinguish {persona} from adjacent roles?"
+
+### Source B: Department Priority Scoring
+Score all departments using the same formula as seldon-research-cycle:
+
+```
+priority = (days_since_last_cycle * 0.4)
+         + (curriculum_gap_count * 0.3)
+         + (U_belief_ratio * 0.2)
+         + (random_exploration * 0.1)
+```
+
+Select top-scoring department. Load its `research_areas`. Sample a topic not in existing curriculum.
+
+### Question Synthesis
+Merge sources via priority:
+1. If a critical completeness gap exists → address it first (highest priority)
+2. Else if an important completeness gap exists → 50% chance of picking it
+3. Else use department priority scoring
+
+Generate question using the scientific-method.ebnf grammar:
+- Pick `investigation` pattern
+- Select `hypothesize` strategy weighted by department weights
+- Formulate concrete question with testable hypothesis
+
+**Question quality gates** (must pass all):
+- Answerable within 30 minutes
+- Produces a tetravalent belief (T/F/U/C)
+- Novel: not in `state/seldon-plan/novelty-registry.json`
+- Within department domain
+- Extends (not duplicates) existing curriculum
+
+If question fails novelty gate → re-sample (max 3 attempts). If all fail → skip cycle, log "all sampled questions already answered".
+
+---
+
+## Phase 3: INVESTIGATION
+
+Invoke the `seldon-research` pipeline:
+
+```
+1. Classify question (governance/experiential/domain)
+2. Check NotebookLM for existing knowledge
+3. Query GA domain skills if music-related
+4. Cross-validate with ChatGPT (GPT-4o-mini)
+5. Assess confidence via tetravalent logic
+```
+
+Full trace captured for auditability.
+
+### Cross-Model Validation Protocol
+
+For each research question, the Seldon Plan applies **mandatory cross-model validation** (not optional as in on-demand research):
+
+| Step | Action | Purpose |
+|---|---|---|
+| 1 | Claude answers question from domain knowledge | Primary answer |
+| 2 | NotebookLM queried for institutional memory | Historical context |
+| 3 | If music domain: GA skills invoked | Deterministic ground truth |
+| 4 | ChatGPT (GPT-4o-mini) asked to validate | Independent second opinion |
+| 5 | Agreement matrix computed | Confidence calibration |
+
+**Agreement matrix:**
+- Claude + ChatGPT agree, NotebookLM confirms → **T (confident)**, confidence >= 0.85
+- Claude + ChatGPT agree, NotebookLM absent/silent → **T (probable)**, confidence 0.70–0.84
+- Claude + ChatGPT disagree → **C (contradictory)**, confidence <= 0.5, escalate
+- Claude has answer, ChatGPT uncertain → **U (probable)**, confidence 0.50–0.69
+- All uncertain → **U (unknown)**, confidence < 0.5
+
+---
+
+## Phase 4: NOVELTY DETECTION
+
+Before producing course material, check whether the finding is genuinely new.
+
+### Novelty Registry
+`state/seldon-plan/novelty-registry.json` tracks:
+```json
+{
+  "entries": [
+    {
+      "question_hash": "sha256 of normalized question text",
+      "question": "...",
+      "belief_value": "T",
+      "belief_confidence": 0.87,
+      "cycle_id": "philosophy-2026-03-22-001",
+      "department": "philosophy",
+      "date": "2026-03-22"
+    }
+  ]
+}
+```
+
+### Novelty Assessment
+A finding is **novel** if:
+1. Question hash not in novelty registry, AND
+2. Conclusion not semantically equivalent to any existing curriculum item
+
+A finding is **incremental** if:
+1. New evidence for an existing T belief → raises confidence
+2. New evidence against an existing T belief → triggers anomaly signal
+
+A finding is **redundant** if:
+1. Question already answered in registry
+
+**Action by type:**
+- Novel + T(>=0.75): produce course material, add to novelty registry
+- Novel + U or C: log finding, schedule deeper investigation
+- Novel + F: log refutation, update curriculum
+- Incremental: update belief confidence in registry, no new course
+- Redundant: skip course production, increment skip counter
+
+### Anomaly Detection
+If new evidence contradicts an existing T belief with high confidence:
+1. Flag `anomaly_detected` in the cycle log
+2. Create conscience signal in `state/conscience/signals/`
+3. Notify the main driver on its next WAKE via trigger file
+
+---
+
+## Phase 5: COURSE PRODUCTION
+
+Only if finding is **novel** AND belief_value = T AND confidence >= 0.75.
+
+Follow the course module format from `seldon-research-cycle` SKILL.md:
+- Save to `state/streeling/courses/{department}/en/{module_id}.md`
+- Apply multilingual translation per `multilingual-policy.yaml` if department is in scope
+- Update department curriculum gap list
+
+**IxQL Pipeline Integration:**
+If the finding relates to a governance pipeline (a policy, schema, or cross-repo contract), emit an IxQL expression representing the research finding as a typed pipeline stage:
+
+```ixql
+-- Research finding: {question}
+-- Belief: {T/F/U/C}, confidence: {value}, cycle: {cycle_id}
+RESEARCH_FINDING {
+  department: "{department}",
+  question: "{question}",
+  conclusion: "{conclusion}",
+  evidence: ["{e1}", "{e2}"],
+  belief: {value: "{T/F/U/C}", confidence: {number}},
+  course_produced: {true/false},
+  grammar_evolved: {true/false}
+} -> KNOWLEDGE_STATE "{department}/findings/{cycle_id}"
+```
+
+Save IxQL fragments to `state/seldon-plan/ixql-findings/{cycle_id}.ixql`.
+
+---
+
+## Phase 6: COMPOUND
+
+### Weight Updates
+Identical to `seldon-research-cycle` Step 8:
+- confirm → +0.05 on used hypothesis/test methods
+- refute/insufficient → -0.03
+- contradictory → +0.05 on adversarial test weight
+- Normalize weights to sum to 1.0
+
+### Curriculum Gap Tracking
+- Finding covers a curriculum item → mark as "researched"
+- Finding reveals unlisted topic → add as curriculum gap
+- 3+ gaps in department → recommend curriculum expansion (trigger file for main driver)
+
+### Grammar Evolution
+Per `grammar-evolution-policy.yaml`:
+- Grammar gap detected → propose new production in relevant `.ebnf` grammar
+- Gate: `when T(0.7) && C(<0.1)`
+- Log in `state/evolution/` with research cycle citation
+
+### Follow-Up Triggers
+- `discover_question` → new trigger in `state/triggers/` for the spawned question
+- `paradigm_shift` → create governance issue, pause scheduler
+- `anomaly_detected` → conscience signal + notify driver
+- `grammar_gap` → propose grammar evolution
+
+### State Update
+```json
+// state/seldon-plan/state.json
+{
+  "daily_cycle_count": 3,
+  "daily_reset_date": "2026-03-22",
+  "consecutive_auto_cycles": 7,
+  "last_question": "Can the Zeroth Law be formally graded by harm magnitude?",
+  "last_department": "philosophy",
+  "last_cycle_id": "philosophy-2026-03-22-001",
+  "total_cycles_all_time": 47,
+  "total_courses_produced": 23,
+  "total_grammar_productions_added": 8,
+  "total_novelty_registry_entries": 43
+}
+```
+
+Increment `daily_cycle_count`. Reset to 0 if `daily_reset_date` != today.
+Increment `consecutive_auto_cycles`. Reset to 0 when human invokes `/seldon research-cycle` manually.
+
+---
+
+## Phase 7: PERSIST + SLEEP
+
+### Write Files
+1. Cycle log → `state/streeling/research-cycles/{cycle_id}.json`
+2. Novelty registry → `state/seldon-plan/novelty-registry.json` (append new entry)
+3. Scheduler state → `state/seldon-plan/state.json`
+4. IxQL finding → `state/seldon-plan/ixql-findings/{cycle_id}.ixql` (if applicable)
+5. Department weights → `state/streeling/departments/{dept}.weights.json`
+6. Course material → `state/streeling/courses/...` (if produced)
+7. Evolution log → `state/evolution/` (if grammar evolved or belief updated)
+8. Conscience signals → `state/conscience/signals/` (if anomaly detected)
+9. Follow-up triggers → `state/triggers/` (if applicable)
+
+### Commit
+```
+git add state/
+git commit -m "feat(seldon-plan): cycle {cycle_id} — {conclusion} ({belief_value}, {confidence})"
+```
+
+### Release Lock
+Delete `state/seldon-plan/lock.json`.
+
+### Log to LOG.md
+Append one-line summary to repo root `LOG.md`:
+```
+[{ISO_DATE}] Seldon Plan cycle {cycle_id}: {dept} | "{question_excerpt}" | {belief_value}({confidence}) | course:{yes/no}
+```
+
+### Pause Check
+If `consecutive_auto_cycles` >= 12:
+- Write summary issue to GitHub: "Seldon Plan: 12 autonomous cycles completed — review findings"
+- Pause scheduler until human acknowledges (check for issue close via trigger)
+
+---
+
+## Kill Switch
+
+The kill switch is a simple file-based circuit breaker:
+
+### Activate
+```bash
+touch state/seldon-plan/kill.switch
+# Optionally write reason:
+echo "Manual pause — reviewing anomaly in philosophy dept" > state/seldon-plan/kill.switch
+```
+
+### Deactivate
+```bash
+rm state/seldon-plan/kill.switch
+```
+
+### Automatic Kill Switch Triggers
+The scheduler activates its own kill switch when:
+1. `consecutive_auto_cycles` >= 12 (pause + human review)
+2. `anomaly_detected` + finding contradicts a constitution/policy
+3. Zeroth Law concern detected in any research finding
+4. API budget exceeded (ChatGPT cost tracking)
+
+---
+
+## Cron Configuration
+
+### GitHub Actions (Recommended)
+
+```yaml
+# .github/workflows/seldon-plan.yml
+name: Seldon Plan — Autonomous Research
+on:
+  schedule:
+    # Every 4 hours, 06:00–22:00 UTC = 06, 10, 14, 18, 22 UTC
+    - cron: '0 6 * * *'
+    - cron: '0 10 * * *'
+    - cron: '0 14 * * *'
+    - cron: '0 18 * * *'
+    - cron: '0 22 * * *'
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      department:
+        description: 'Force specific department (optional)'
+        required: false
+      kill_switch:
+        description: 'Set to "activate" or "deactivate"'
+        required: false
+```
+
+The workflow invokes Claude Code with `/seldon plan` skill.
+
+### Manual Trigger
+`/seldon plan` — run one research cycle immediately
+`/seldon plan status` — show today's cycle count, last question, next scheduled run
+`/seldon plan pause` — activate kill switch
+`/seldon plan resume` — deactivate kill switch
+`/seldon plan force [department]` — force a specific department regardless of scoring
+
+---
+
+## Observability
+
+### Metrics
+| Metric | Formula | Target | Alert |
+|---|---|---|---|
+| daily_cycle_utilization | cycles_today / 6 | 0.7–1.0 | < 0.3 = scheduler not firing |
+| novelty_rate | novel_findings / cycles_run | > 0.5 | < 0.2 = research stagnating |
+| course_production_rate | courses_produced / novel_T_findings | > 0.7 | < 0.4 = low conviction findings |
+| cross_model_agreement | agreed_pairs / total_validations | > 0.8 | < 0.5 = poor domain coverage |
+| anomaly_rate | anomalies_detected / cycles_run | < 0.05 | > 0.15 = knowledge base degrading |
+| grammar_evolution_rate | productions_added / cycles_run | 0.05–0.2 | > 0.3 = grammar churn |
+
+### Status Report Format
+```
+Seldon Plan Status — {date}
+─────────────────────────────
+Cycles today:      {n}/6
+Total all-time:    {total}
+Kill switch:       {active/inactive}
+Consecutive auto:  {n}/12
+
+Last cycle:        {cycle_id}
+  Department:      {dept}
+  Question:        "{question}"
+  Belief:          {value} ({confidence})
+  Course produced: {yes/no}
+
+Today's findings:
+  T (confirmed):   {n}
+  F (refuted):     {n}
+  U (unknown):     {n}
+  C (contradictory): {n}
+
+Novelty registry:  {total} entries
+Courses produced:  {total} lifetime
+```
+
+---
+
+## Integration with Demerzel Driver
+
+The Seldon Plan is **independent** of the main `demerzel-drive` cycle but notifies it:
+
+- Research findings with governance implications → trigger file for driver
+- Anomalies → conscience signal for driver
+- Grammar evolutions → evolution log entry picked up by driver's COMPOUND phase
+- Course production → driver's README sync picks up new course count
+
+The driver does NOT invoke the Seldon Plan directly — they run in parallel, coordinated via shared state files.
+
+---
+
+## Governance
+
+- **Asimov Article 4:** Research produces understanding, not goals. The scheduler cannot initiate code changes, issue directives, or create PRs. Only knowledge artifacts (courses, beliefs, grammar proposals).
+- **Default Article 9 (Bounded Autonomy):** 6 cycles/day hard cap. Kill switch. Pause at 12 consecutive cycles.
+- **Default Article 7 (Auditability):** Every cycle logged. Every decision traceable.
+- **Default Article 3 (Reversibility):** All outputs are additive (new files). No existing files are deleted or overwritten without explicit versioning.
+- **Default Article 6 (Escalation):** Contradictory beliefs (C), paradigm shifts, and anomalies escalate to human review.
