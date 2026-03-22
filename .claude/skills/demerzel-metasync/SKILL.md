@@ -52,7 +52,45 @@ Check that named files referenced in README ecosystem table exist:
 
 README states IxQL grammar has "11 sections" — verify against actual `grammars/sci-ml-pipelines.ebnf` section headers.
 
-### 5. Streeling University Description
+### 5. Wiki Sync (CRITICAL — previously a blind spot)
+
+The GitHub Wiki (github.com/GuitarAlchemist/Demerzel/wiki) contains 14+ pages with counts and descriptions. MetaSync MUST check:
+
+| Wiki Page | What to Check |
+|-----------|---------------|
+| Home.md | Policy count, test count, department count, persona count |
+| Streeling-University.md | Department count, department list matches actual |
+| Policies.md | Policy list matches `policies/*.yaml` |
+| Architecture.md | References to IxQL, agent teams, meta-tools exist |
+| Metrics-and-Observability.md | D_c, ERGOL/LOLLI mentioned |
+
+**How to check:** Clone wiki: `git clone https://github.com/GuitarAlchemist/Demerzel.wiki.git`
+Then grep for counts and compare against disk.
+
+**Fix process:** Same as README — auto-fix trivial count drift, flag structural drift.
+
+**Why this was missed:** MetaSync v1 only checked README.md and CLAUDE.md. The wiki was a blind spot. This is a meta-recognition failure — documentation exists in multiple places but only some are in sync scope.
+
+**Prevention:** Any new documentation surface (wiki, gh-pages, org README, Discord channel topics) must be added to MetaSync's check list immediately.
+
+### 6. GitHub Pages Sync
+
+The gh-pages site (guitaralchemist.github.io) contains counts in:
+- index.html stats bar and department table
+- demos/roadmap/index.html stats bar
+
+Verify these match actual counts.
+
+### 7. Org README Sync
+
+The org README (github.com/GuitarAlchemist/.github/profile/README.md) contains counts in:
+- Stats bar at top
+- Streeling University section
+- Grammar library section
+
+Verify these match actual counts.
+
+### 8. Streeling University Description
 
 README body text says "16-department knowledge framework" — verify against actual department count in `state/streeling/departments/`.
 
