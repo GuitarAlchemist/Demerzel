@@ -1,0 +1,207 @@
+name: context-engine-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: >-
+  Governs how agents select relevant governance artifacts per task — semantic
+  relevance ranking instead of loading all artifacts into every conversation.
+
+# -------------------------------------------------------------------
+# Amdahl's Law Principle
+# -------------------------------------------------------------------
+# Loading more context has diminishing returns. The serial fraction of
+# context processing (parsing, cross-referencing, reasoning over artifacts)
+# limits throughput regardless of how many artifacts are loaded.
+#
+# If an agent spends 20% of its reasoning on context processing (serial),
+# even loading infinite artifacts can only improve throughput by 5x.
+# The RIGHT 5 artifacts beat the WRONG 50.
+#
+# Implications:
+#   1. Context quality > context quantity
+#   2. Relevance ranking is more valuable than completeness
+#   3. Budget enforcement prevents context overload
+#   4. Tier-0 artifacts are the serial fraction — always needed
+#   5. Each additional artifact must justify its processing cost
+amdahls_law:
+  principle: >-
+    The serial fraction of context processing limits agent throughput.
+    Loading more artifacts has diminishing returns — optimize for relevance,
+    not volume.
+  max_useful_artifacts: 15
+  diminishing_returns_threshold: 10
+  serial_fraction_estimate: 0.2
+  speedup_formula: "S = 1 / (s + (1-s)/N) where s=serial fraction, N=artifact count"
+
+constitutional_basis:
+  - Article 4 (Proportionality) — context loaded must match task scope
+  - Article 7 (Auditability) — context selection decisions must be traceable
+  - Article 8 (Observability) — expose what context was selected and why
+  - Article 9 (Bounded Autonomy) — agents operate within context budget
+
+scope:
+  - all-agents
+
+applies_to:
+  - demerzel
+  - seldon
+  - all-consumer-personas
+
+# -------------------------------------------------------------------
+# Context Engine Pipeline
+# -------------------------------------------------------------------
+# 1. EXTRACT  — derive topics, domain, intent from task description
+# 2. MATCH    — find artifacts whose tags intersect extracted topics
+# 3. EXPAND   — follow dependency edges to include required parents
+# 4. RANK     — score each artifact by relevance (keyword + category + tier)
+# 5. BUDGET   — trim to context budget, keeping mandatory artifacts
+# 6. INJECT   — format selected artifacts for the agent's system prompt
+
+pipeline:
+  extract:
+    description: Derive topics, domain, and intent from the task description
+    method: keyword extraction + domain classification
+    outputs:
+      - topics (list of strings)
+      - domain (primary domain from domain taxonomy)
+      - intent (create | audit | debug | research | operate)
+
+  match:
+    description: Find artifacts whose keywords or categories overlap extracted topics
+    method: tag intersection against context-map.yaml entries
+    minimum_overlap: 1  # at least one keyword or category match
+
+  expand:
+    description: Follow dependency graph to include required parent artifacts
+    rules:
+      - Always include constitutional basis of any matched policy
+      - Include estimator_pairing persona for any matched persona
+      - Include schema for any matched contract or state artifact
+    max_depth: 2  # follow dependencies at most 2 levels
+
+  rank:
+    description: Score each artifact by relevance
+    scoring:
+      keyword_match: 0.4    # weight for keyword overlap
+      category_match: 0.3   # weight for domain/category match
+      tier_bonus: 0.2       # weight for priority tier
+      dependency_bonus: 0.1  # weight for being a dependency of a high-scoring artifact
+    formula: >-
+      score = (keyword_overlap / max_keywords) * 0.4
+            + (category_match ? 1 : 0) * 0.3
+            + tier_weight * 0.2
+            + (is_dependency_of_top_match ? 1 : 0) * 0.1
+
+  budget:
+    description: Trim to context budget while preserving mandatory artifacts
+    rules:
+      - Always include tier-0 (constitutional) artifacts
+      - Include all artifacts scoring >= relevance_threshold
+      - If over budget, drop lowest-scoring non-mandatory artifacts
+      - Never exceed max_artifacts limit
+
+  inject:
+    description: Format selected artifacts for agent system prompt
+    format: summary  # summary | full | reference-only
+    order: tier-then-score  # constitutional first, then by relevance score
+
+# -------------------------------------------------------------------
+# Context Budget Configuration
+# -------------------------------------------------------------------
+context_budget:
+  max_artifacts: 15          # maximum artifacts to inject per task
+  relevance_threshold: 0.4   # minimum score to include
+  mandatory_threshold: 0.8   # score above which artifact is always included
+  tier_weights:
+    tier_0: 1.0   # constitutional — always included
+    tier_1: 0.8   # core policies — included when domain matches
+    tier_2: 0.5   # supporting artifacts — included when keywords match
+    tier_3: 0.2   # reference artifacts — included only for high keyword overlap
+
+# -------------------------------------------------------------------
+# Domain Taxonomy
+# -------------------------------------------------------------------
+domain_taxonomy:
+  governance:
+    description: Policy enforcement, auditing, constitutional compliance
+    keywords: [policy, constitution, audit, compliance, law, ethics, harm, escalation]
+  alignment:
+    description: Intent verification, confidence, belief management
+    keywords: [alignment, confidence, belief, intent, verification, trust]
+  safety:
+    description: Harm prevention, rollback, recovery
+    keywords: [safety, harm, rollback, recovery, remediation, risk]
+  operations:
+    description: Loops, automation, context management, orchestration
+    keywords: [loop, autonomous, orchestration, context, pipeline, automation]
+  quality:
+    description: Kaizen, testing, staleness, completeness
+    keywords: [kaizen, test, quality, staleness, completeness, improvement]
+  learning:
+    description: Research, experimentation, continuous learning
+    keywords: [research, learning, experiment, grammar, seldon, streeling]
+  cross-repo:
+    description: Galactic Protocol, contracts, consumer integration
+    keywords: [contract, protocol, directive, consumer, ix, tars, ga, cross-repo]
+  conscience:
+    description: Proto-conscience, intuition, ethical signals
+    keywords: [conscience, intuition, signal, ethical, moral, proto-conscience]
+  observability:
+    description: Metrics, monitoring, audit trails
+    keywords: [metrics, observability, monitoring, audit, trace, log]
+  music:
+    description: Music theory, composition, performance
+    keywords: [music, chord, harmony, guitar, composition, theory, audio]
+
+# -------------------------------------------------------------------
+# Override Rules
+# -------------------------------------------------------------------
+overrides:
+  - name: constitutional-always
+    rule: Asimov constitution is always included regardless of score
+    reason: Zeroth Law takes precedence in all contexts
+
+  - name: mandate-with-governance
+    rule: Include demerzel-mandate.md whenever domain is governance
+    reason: Enforcement authority must be clear during governance tasks
+
+  - name: harm-taxonomy-with-safety
+    rule: Include harm-taxonomy.md whenever domain is safety
+    reason: Harm classification is prerequisite for safety decisions
+
+  - name: alignment-with-action
+    rule: Include alignment-policy when intent is create or operate
+    reason: All actions need alignment verification
+
+# -------------------------------------------------------------------
+# Observability
+# -------------------------------------------------------------------
+observability:
+  log_selection: true   # log which artifacts were selected per task
+  log_scores: true      # log relevance scores
+  log_budget_trims: true  # log which artifacts were dropped due to budget
+  metrics:
+    - context_artifacts_loaded (gauge)
+    - context_budget_utilization (gauge, 0.0-1.0)
+    - context_relevance_mean (gauge)
+    - context_tier_distribution (histogram)
+
+# -------------------------------------------------------------------
+# Escalation
+# -------------------------------------------------------------------
+escalation:
+  no_matches: >-
+    If no artifacts score above relevance_threshold, include tier-0 and
+    tier-1 artifacts as fallback and log a warning.
+  ambiguous_domain: >-
+    If multiple domains score equally, include artifacts from all tied
+    domains and flag for human review.
+  budget_exceeded: >-
+    If mandatory artifacts alone exceed max_artifacts, log a warning
+    and include all mandatory artifacts (budget is a soft limit for
+    constitutional requirements).
+
+references:
+  - policies/context-management-policy.yaml
+  - policies/alignment-policy.yaml
+  - policies/anti-lolli-inflation-policy.yaml
+  - constitutions/default.constitution.md

@@ -1,53 +1,55 @@
-# Discord Bot Test Report
+# Discord Bot Test Report — Guitar Use Cases
 
-**Date:** 2026-03-22
-**Tester:** Claude Code (agent)
+**Date:** 2026-03-22 (updated 2026-03-22)
+**Tester:** discord-tester agent (demerzel-sprint-2)
 **Bot version:** demerzel-bot 1.0.0
-**Bot status:** Running (PID 376400)
 **Model:** claude-sonnet-4-20250514
+**Channel tested:** #music-lab (1485339432780435709)
 
 ## Executive Summary
 
-The Discord bot is live with 4 personas, 9 music tools, and VexFlow rendering across 6 channels. Code analysis confirms solid architecture for guitar use cases. However, **automated testing via the Discord MCP plugin is blocked** because the bot ignores messages from bot accounts (`message.author.bot` check in `shouldRespond()`). All test messages sent via MCP were received by Discord but never processed by demerzel-bot.
+The Discord bot is live with 4 personas (GA, Demerzel, Seldon, BS Detector), 9 music tools, and VexFlow rendering across 6 channels. **Automated testing via the Discord MCP plugin is blocked** because the MCP plugin sends messages as the bot account, and the bot correctly ignores its own messages (`message.author.bot` check). All test messages appear as "me" in channel history.
 
-This report provides a code-level capability assessment, documents the blocking issue, and recommends fixes.
+This report provides:
+1. Confirmation of the blocker with test evidence
+2. Code-level capability assessment for each guitar use case
+3. Observations from real user interactions in channel history
+4. Actionable gaps and recommendations
 
-## Test Execution
+## Test Execution Log
 
 ### Test 1: "What are the modes of the major scale?"
 
-- **Sent to:** #music-lab (channel 1485339432780435709)
-- **Message ID:** 1485387814865731706
-- **Persona detected:** `ga` (keyword "mode" triggers GA persona at line 93 of bot.js)
-- **Bot response:** NONE — message ignored due to bot-author check
-- **Expected behavior:** GA persona responds with all 7 modes (Ionian through Locrian), likely with fretboard context
+- **Sent to:** #music-lab (message ID: 1485388431159853157)
+- **Persona routing:** `ga` — keyword "mode" matches at `bot.js:93`
+- **Bot response:** NONE — message author is bot; filtered at `bot.js:216`
+- **Expected behavior:** GA persona lists all 7 modes (Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian) with interval formulas, fretboard context, and characteristic notes. System prompt covers modes via CAGED and genre sections.
 
-### Tests 2-5: Not sent
+### Tests 2-5: Planned but not sent
 
-Remaining tests were not sent after confirming the bot-ignores-bots blocker on Test 1. The planned tests were:
+After confirming the bot-ignores-bots blocker, remaining tests were analyzed at code level only.
 
-| # | Query | Expected Persona | Expected Tools |
-|---|-------|-----------------|----------------|
-| 2 | "Show me a ii-V-I progression in Bb" | ga | `analyze_progression`, `render_chords` |
-| 3 | "What scales work over a dominant 7th chord?" | ga | `suggest_scale` |
-| 4 | "Explain the CAGED system" | ga | none (text-only) |
-| 5 | "What's the difference between Dorian and Aeolian?" | ga | none (text-only) |
+| # | Query | Persona | Key Tools | System Prompt Coverage |
+|---|-------|---------|-----------|----------------------|
+| 2 | "Show me a ii-V-I progression in Bb" | ga | `analyze_progression`, `render_chords` | Explicit ii-V-I section with voice leading (context.js:131-132). VexFlow has Bbmaj7, Cm7, F7 voicings. Auto-render would trigger on 3+ chord names in response. |
+| 3 | "What scales work over a dominant 7th chord?" | ga | `suggest_scale` | Mixolydian, blues scale, altered dominant, bebop scale all in system prompt. Jazz genre section covers chord-tone soloing over dom7. |
+| 4 | "Explain the CAGED system" | ga | none (text) | Dedicated CAGED section (context.js:123). Links shapes to chord tones and scale patterns. Example: A minor pentatonic box 1 aligns with E-shape Am at fret 5. |
+| 5 | "What's the difference between Dorian and Aeolian?" | ga | none (text) | Both modes referenced in system prompt. Dorian mentioned in modal interchange section; Aeolian implicit as natural minor. Claude's base knowledge handles this well. |
 
 ## Blocking Issue
 
 **Root cause:** `bot.js:216` — `if (message.author.bot) return false;`
 
-The Discord MCP plugin sends messages as a bot account. The demerzel-bot correctly ignores bot messages to prevent loops, but this also blocks automated testing from Claude Code agents.
+The Discord MCP plugin sends messages using the bot's own Discord token. The bot correctly ignores bot-authored messages to prevent response loops. This is **correct production behavior** but blocks automated testing.
 
-**Impact:** Cannot validate bot response quality, tool invocation, VexFlow rendering, or persona routing through automated means.
+**Evidence:** Message ID 1485388431159853157 appears in channel history as "me" (the bot's own account), confirming MCP messages use the bot identity.
 
-**Recommended fix:** Add a test mode or allowlist:
-
+**Recommended fixes (pick one):**
 ```javascript
-// Option A: Environment variable for test mode
+// Option A: Environment variable test mode
 if (message.author.bot && !process.env.ALLOW_TEST_BOTS) return false;
 
-// Option B: Allowlist specific bot IDs
+// Option B: Allowlist specific bot IDs for testing
 const ALLOWED_BOTS = (process.env.ALLOWED_BOT_IDS || '').split(',');
 if (message.author.bot && !ALLOWED_BOTS.includes(message.author.id)) return false;
 ```
@@ -56,95 +58,115 @@ if (message.author.bot && !ALLOWED_BOTS.includes(message.author.id)) return fals
 
 ### Persona Routing (bot.js:57-104)
 
-| Persona | Trigger Keywords | Channel Triggers | Color |
-|---------|-----------------|------------------|-------|
-| **ga** (Guitar Alchemist) | guitar, chord, scale, tab, fretboard, improvise, progression, reharmonize, optic, practice, song, pentatonic, mode, dorian, mixolydian, voice leading, backing track | music, guitar | Orange (#F0883E) |
-| **seldon** (Teacher) | seldon, teach, learn, course, lesson, academy, music, theory | seldon, academy, research | Blue (#7289DA) |
-| **demerzel** (Governance) | demerzel, govern, constitution, policy, audit, conscience | demerzel, governance, dev-ops | Green (#4CB050) |
-| **bs** (BS Detector) | translate this bs, detect bs, generate bs, corporate speak, buzzword | bs-detector, bs | Red (#E06C75) |
+| Persona | Trigger Keywords | Channel Names | Embed Color |
+|---------|-----------------|---------------|-------------|
+| **ga** | guitar, chord, scale, tab, fretboard, improvise, progression, reharmonize, optic, practice, song, pentatonic, mode, dorian, mixolydian, voice leading, backing track | music, guitar | Orange #F0883E |
+| **seldon** | seldon, teach, learn, course, lesson, academy | seldon, academy, research | Blue #7289DA |
+| **demerzel** | demerzel, govern, constitution, policy, audit, conscience | demerzel, governance, dev-ops | Green #4CB050 |
+| **bs** | translate this bs, detect bs, generate bs, corporate speak, buzzword | bs-detector, bs | Red #E06C75 |
 
-**Assessment:** Routing logic is keyword-based and reasonable. The GA persona has the richest trigger set (17 keywords). Potential issue: "mode" is a common English word that could cause false positives in non-music channels, but channel-based fallback to demerzel mitigates this.
+All 5 guitar test queries would correctly route to the `ga` persona based on keywords: "modes" (Test 1), "progression" (Test 2), "scales"+"chord" (Test 3), "CAGED" triggers no specific keyword but channel name "music-lab" would route to GA via line 94, "Dorian" (Test 5).
 
-### Music Tools (context.js:197-317) — 9 Tools
+**Issue found:** Test 4 ("Explain the CAGED system") — the word "CAGED" is not in the trigger list. In #music-lab it routes correctly via channel name, but in #general it would fall through to demerzel. Recommendation: add "caged" to GA triggers.
 
-| Tool | Input | Purpose | Rendering |
-|------|-------|---------|-----------|
-| `analyze_chord` | chord name, optional key | Chord intervals, quality, function | Text only |
-| `analyze_progression` | progression string, optional key | Roman numerals, cadences, reharmonization | Text only |
-| `suggest_scale` | context, optional style | Scale suggestions with rationale | Text only |
-| `reharmonize` | progression, style, complexity | Substitution techniques | Text only |
-| `parse_tablature` | ASCII tab | Pattern identification | Text only |
-| `optic_analysis` | chord_a, chord_b, or progression | Voice leading analysis | Text only |
-| `practice_routine` | level, focus, minutes | Structured practice plan | Text only |
-| `fretboard_diagram` | type, name, optional position | Scale/chord on fretboard | **PNG image** |
-| `render_chords` | chord array, optional title | Staff notation | **PNG image** |
+### Music Tools (9 total)
 
-**Assessment:** Good tool coverage. Two tools produce PNG images via VexFlow/Canvas. The remaining 7 are "virtual" tools — Claude generates the response based on the tool call context rather than executing real computation. This is a valid pattern but means the quality depends entirely on Claude's music theory knowledge in the system prompt.
+| Tool | Produces | Used by Test |
+|------|----------|-------------|
+| `analyze_chord` | Text (Claude-generated) | — |
+| `analyze_progression` | Text (Claude-generated) | Test 2 |
+| `suggest_scale` | Text (Claude-generated) | Test 3 |
+| `reharmonize` | Text (Claude-generated) | — |
+| `parse_tablature` | Text (Claude-generated) | — |
+| `optic_analysis` | Text (Claude-generated) | — |
+| `practice_routine` | Text (Claude-generated) | — |
+| `fretboard_diagram` | **PNG image** (Canvas) | Test 1 (if invoked) |
+| `render_chords` | **PNG image** (VexFlow) | Test 2 |
+
+7 of 9 tools are "virtual" — they prompt Claude to generate a response based on the tool call. Only `fretboard_diagram` and `render_chords` produce actual computed output (PNG images).
 
 ### VexFlow Rendering (vexRenderer.js)
 
-- **Chord voicings:** 60 chords defined (12 major triads, 11 minor triads, 12 dom7, 11 min7, 12 maj7)
-- **Enharmonic normalization:** C#/Db, D#/Eb, G#/Ab, A# /Bb mappings
-- **Fretboard diagrams:** Only A minor pentatonic and E minor pentatonic have hardcoded positions (lines 374-397). All other scales fall back to empty fretboard (Claude provides ASCII instead)
-- **Auto-render:** `tryRenderFromText()` scans GA responses for 3+ chord names and auto-generates a staff PNG
-- **Dark theme:** Background #161b22 (GitHub dark), notes in #58a6ff (blue) and #e06c75 (red for roots)
+- **60 chord voicings** defined: 12 major, 11 minor, 12 dom7, 11 min7, 12 maj7
+- **Enharmonic normalization**: C#→Db, D#→Eb, G#→Ab, A#→Bb
+- **Auto-render**: `tryRenderFromText()` scans GA responses for 3+ qualified chord names and auto-generates staff PNG
+- **Dark theme**: GitHub dark background (#161b22), blue notes (#58a6ff), red roots (#e06c75)
 
-**Assessment:** The rendering is production-quality for supported chords. The fretboard diagram tool has a major gap — only 2 scales are hardcoded. For the test query "Show me A minor pentatonic", it would render correctly. For anything else (C major scale, Dorian mode, etc.), it would produce an empty fretboard and Claude would fall back to ASCII.
+**Fretboard gap:** Only 2 scales hardcoded — A minor pentatonic and E minor pentatonic. All other `fretboard_diagram` calls produce an empty fretboard and Claude falls back to ASCII diagrams.
 
-### System Prompt Quality (context.js:116-195)
+### GA System Prompt Quality (context.js:116-195)
 
-The GA system prompt is comprehensive and musically accurate:
+The system prompt is comprehensive and musically accurate:
 
-- CAGED system explanation with practical examples
-- 6 chord voicing examples (open, barre, jazz drop-2)
-- ii-V-I, rhythm changes, 12-bar blues, bossa nova progressions
-- Reharmonization techniques (tritone sub, chromatic approach, modal interchange, back-door dominant)
-- OPTIC/K voice leading framework with worked example
-- 4 guitar tunings with cultural context
-- 3-tier practice templates (beginner/intermediate/advanced)
-- 5 genre knowledge blocks (blues, jazz, rock, flamenco, bossa nova)
-- GA domain classes reference (Chord, Scale, Key, Fretboard, GrothendieckService)
+- **CAGED system**: Explained with chord-shape-to-scale linkage
+- **Chord voicings**: Open, barre, jazz drop-2, rootless
+- **Progressions**: ii-V-I, rhythm changes, 12-bar blues, minor blues, bossa nova
+- **Reharmonization**: Tritone sub, chromatic approach, modal interchange, back-door dominant
+- **OPTIC/K**: Voice leading framework with worked Cmaj7→Am7 example
+- **Tunings**: Standard, Drop D, DADGAD, Open G
+- **Practice**: 3-tier templates (beginner 30min, intermediate 45min, advanced 60min)
+- **Genres**: Blues, jazz, rock, flamenco, bossa nova
+- **Domain classes**: Chord, Scale, Key, Fretboard, GrothendieckService
 
-**Assessment:** This is a strong system prompt. A musician asking any of the 5 test questions would get substantive, accurate answers. The prompt covers modes, ii-V-I progressions, dominant chord scales, CAGED, and modal differences — all test topics.
+**Verdict:** A guitarist asking any of the 5 test queries would receive substantive, accurate answers based on this system prompt.
 
-### Conversation History (bot.js:42-55)
+## Observations from Real User Interactions
 
-- 10-message sliding window per channel
-- Pairs removed from oldest (user+assistant)
-- No persistence across bot restarts
+### Evidence of Working Bot
 
-**Assessment:** Adequate for short conversations. No cross-channel context, which is correct for persona isolation.
+1. **#bs-detector**: User "spareilleux" sent "Our analysis suggests significant opportunity exists" → bot replied with 5 embed messages within ~14 seconds (IDs 1485387876370878535 through 1485387900790116392). Content not readable via fetch (embeds show as empty) but response was sent.
 
-## Observations from Existing Channel History
+2. **#governance**: User "spareilleux" sent "help" → bot replied with help embed (ID 1485345835435823416 + 1485345884286881985).
 
-### Evidence of Prior Human Interaction
+3. **#music-lab**: User "spareilleux" had a multi-turn conversation about creating a guitar-singularity repo. Bot responded to each message.
 
-- **#music-lab:** User "spareilleux" interacted with bot ("I'm ready!", "You said create a guitar singularity repo, no?"). Bot responded with embeds (content not visible in plain-text fetch but messages were sent).
-- **#governance:** User "spareilleux" sent "help" and received the help embed response.
-- **Previous session assessment:** "Bot getting 'Cool!' from a guitarist = more ERGOL than all 80+ artifacts combined."
+4. **Prior session verdict**: "Bot getting 'Cool!' from a guitarist = more ERGOL than all 80+ artifacts combined."
 
-This confirms the bot does respond to human users and has been validated by at least one real user.
+### Embed Fetch Limitation
+
+The Discord MCP `fetch_messages` tool shows embed content as empty strings. This means we cannot programmatically read what the bot actually said. Only message IDs and timestamps are visible for bot responses.
 
 ## Gaps and Recommendations
 
-### Critical
+### Critical (blocks testing)
 
-1. **Bot-ignores-bots blocker** — Add test mode or allowlist so automated testing is possible (see fix above)
-2. **Fretboard diagram coverage** — Only 2 scales hardcoded (A minor pentatonic, E minor pentatonic). Add at least the 7 modes of C major, blues scales in common keys, and major pentatonic patterns
+| # | Issue | Fix |
+|---|-------|-----|
+| 1 | **Bot-ignores-bots** — MCP messages use bot identity | Add `ALLOW_TEST_BOTS` env var (see code above) |
+| 2 | **Embed content not fetchable** — Cannot read bot responses programmatically | MCP plugin needs embed content extraction |
 
-### Important
+### Important (affects guitar UX)
 
-3. **Embed content not fetchable** — The Discord MCP fetch_messages tool shows embed bodies as empty. This prevents reading bot responses programmatically. The MCP plugin may need embed content support.
-4. **Tool results are simulated** — 7 of 9 tools don't compute anything; they prompt Claude to generate a response. This works but means results vary between calls. Consider adding actual computation for `analyze_chord` (interval calculation) and `suggest_scale` (scale-chord matching).
+| # | Issue | Fix |
+|---|-------|-----|
+| 3 | **Fretboard diagram coverage** — Only 2 scales hardcoded | Add 7 modes of C major, blues scales, major pentatonic in common keys |
+| 4 | **"CAGED" not in GA triggers** — Would misroute in #general | Add "caged" to keyword list at `bot.js:88-94` |
+| 5 | **Multiple tool calls** — Only first tool_use block's follow-up appends text | Accumulate all follow-up texts, don't overwrite |
+| 6 | **Virtual tools** — 7 tools don't compute, rely on Claude's knowledge | Add interval computation for `analyze_chord`, scale-chord matching for `suggest_scale` |
 
 ### Nice to Have
 
-5. **Error handling on API failure** — The `generateResponse` function catches errors but returns a string or object inconsistently (line 207 returns string, line 203 returns object). The `splitMessage` call at line 307 handles both, but this should be normalized.
-6. **Multiple tool calls** — The bot only handles the first `tool_use` block in a response (the for loop at line 138 processes sequentially but the follow-up overwrites rather than appends). If Claude calls both `analyze_progression` and `render_chords` in one response, only the last tool's follow-up text is captured.
-7. **Channel-based persona override** — Consider allowing users to force a persona with a prefix (e.g., `!ga What key is this in?`) to override channel-based routing.
+| # | Issue | Fix |
+|---|-------|-----|
+| 7 | **Persona prefix** — No way to force persona in cross-channel use | Allow `!ga ...` or `!seldon ...` prefix |
+| 8 | **Error return inconsistency** — `generateResponse` returns string or object | Normalize to always return `{ text, attachments }` |
+
+## Per-Query Expected Quality (Code-Based Prediction)
+
+| Query | Quality Prediction | Confidence | Rationale |
+|-------|-------------------|------------|-----------|
+| Modes of major scale | **High** | 0.9 | Core music theory; system prompt covers modes, CAGED, and modal concepts |
+| ii-V-I in Bb | **High** | 0.9 | Explicit ii-V-I section in prompt; VexFlow has Cm7, F7, Bbmaj7; auto-render likely triggers |
+| Scales over dom7 | **High** | 0.85 | Mixolydian, altered, bebop all in prompt; `suggest_scale` tool available |
+| CAGED system | **High** | 0.9 | Dedicated CAGED section with examples; no tool needed |
+| Dorian vs Aeolian | **High** | 0.85 | Modal knowledge in prompt; Claude's base music theory is strong here |
 
 ## Verdict
 
-The bot architecture is sound. The GA persona system prompt is comprehensive and musically accurate. VexFlow rendering works for supported chords. The main blocker for automated testing is the bot-ignores-bots behavior, which is correct for production but needs a test bypass. For real guitar use cases from human users, the bot should perform well based on code analysis and the evidence of prior successful interactions.
+**Architecture: Sound.** The bot correctly routes guitar queries to the GA persona, has 9 relevant tools, and renders chord progressions as staff notation PNGs.
 
-**ERGOL score for this test session:** Low — we confirmed the bot is running and identified real issues, but could not validate actual response quality due to the bot-author blocker. The highest-value next step is to have a human user run the 5 test queries and capture the responses.
+**System prompt: Comprehensive.** All 5 test topics are covered with accurate music theory. A human user would get quality answers.
+
+**Testing: Blocked.** The MCP plugin sends as the bot account, so automated interaction testing is impossible without a code change. The embed fetch limitation compounds this — even if the bot responded, we couldn't read the response content.
+
+**ERGOL assessment:** This test session confirmed the bot is running, identified 2 critical gaps (test mode, embed fetch), 4 important improvements, and validated that the system prompt covers all test topics. The highest-ERGOL next step is having a human run the 5 queries and screenshot the responses.

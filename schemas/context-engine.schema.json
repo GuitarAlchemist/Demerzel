@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://demerzel.dev/schemas/context-engine.schema.json",
+  "title": "Context Engine Configuration",
+  "description": "Schema for context budget configuration and artifact relevance ranking",
+  "type": "object",
+  "required": ["context_budget", "artifact_entry"],
+  "properties": {
+    "context_budget": {
+      "type": "object",
+      "description": "Configuration for context budget limits and thresholds",
+      "required": ["max_artifacts", "relevance_threshold", "tier_weights"],
+      "properties": {
+        "max_artifacts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of artifacts to inject per task"
+        },
+        "relevance_threshold": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Minimum relevance score to include an artifact"
+        },
+        "mandatory_threshold": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Score above which an artifact is always included"
+        },
+        "tier_weights": {
+          "type": "object",
+          "required": ["tier_0", "tier_1", "tier_2", "tier_3"],
+          "properties": {
+            "tier_0": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "Weight for constitutional artifacts" },
+            "tier_1": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "Weight for core policy artifacts" },
+            "tier_2": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "Weight for supporting artifacts" },
+            "tier_3": { "type": "number", "minimum": 0.0, "maximum": 1.0, "description": "Weight for reference artifacts" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifact_entry": {
+      "type": "object",
+      "description": "Schema for a single artifact in the context map",
+      "required": ["id", "type", "tier", "domains", "keywords"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Relative path to the artifact file",
+          "pattern": "^[a-zA-Z0-9_./-]+$"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["constitution", "policy", "persona", "schema", "contract", "logic", "test", "template", "example"],
+          "description": "Artifact type category"
+        },
+        "tier": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3],
+          "description": "Priority tier: 0=constitutional, 1=core, 2=supporting, 3=reference"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["governance", "alignment", "safety", "operations", "quality", "learning", "cross-repo", "conscience", "observability", "music"]
+          },
+          "minItems": 1,
+          "description": "Primary domains this artifact belongs to"
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Topic keywords for matching against task descriptions"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Artifact IDs this artifact depends on (for graph expansion)"
+        },
+        "consumed_by": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Repos or artifacts that consume this artifact"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Brief description for relevance matching"
+        }
+      },
+      "additionalProperties": false
+    },
+    "context_selection": {
+      "type": "object",
+      "description": "Schema for a context selection result (what was chosen for a task)",
+      "required": ["task_description", "selected_artifacts", "total_score"],
+      "properties": {
+        "task_description": {
+          "type": "string",
+          "description": "The task that triggered context selection"
+        },
+        "extracted_topics": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Topics extracted from the task description"
+        },
+        "extracted_domain": {
+          "type": "string",
+          "description": "Primary domain classified from the task"
+        },
+        "extracted_intent": {
+          "type": "string",
+          "enum": ["create", "audit", "debug", "research", "operate"],
+          "description": "Classified intent of the task"
+        },
+        "selected_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "score", "reason"],
+            "properties": {
+              "id": { "type": "string" },
+              "score": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+              "reason": {
+                "type": "string",
+                "enum": ["keyword_match", "category_match", "dependency", "mandatory", "override"],
+                "description": "Primary reason this artifact was selected"
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Artifacts selected with their scores"
+        },
+        "dropped_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "score": { "type": "number" },
+              "drop_reason": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "description": "Artifacts that scored but were dropped due to budget"
+        },
+        "total_score": {
+          "type": "number",
+          "minimum": 0.0,
+          "description": "Mean relevance score of selected artifacts"
+        },
+        "budget_utilization": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Fraction of max_artifacts used"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

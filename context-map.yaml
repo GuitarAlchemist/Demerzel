@@ -1,0 +1,819 @@
+# Governance Context Map
+# Maps every Demerzel artifact to domains, keywords, tier, and dependencies
+# Used by the context engine (policies/context-engine-policy.yaml) to rank
+# artifact relevance per task.
+#
+# Tiers:
+#   0 — Constitutional (always loaded)
+#   1 — Core policies (loaded when domain matches)
+#   2 — Supporting artifacts (loaded when keywords match)
+#   3 — Reference artifacts (loaded only for high keyword overlap)
+
+version: "1.0.0"
+last_updated: "2026-03-22"
+
+# ===================================================================
+# CONSTITUTIONS — Tier 0
+# ===================================================================
+constitutions:
+  - id: constitutions/asimov.constitution.md
+    type: constitution
+    tier: 0
+    domains: [governance, safety]
+    keywords: [zeroth-law, first-law, second-law, third-law, robotics, harm, protect, humanity]
+    depends_on: []
+    consumed_by: [ix, tars, ga]
+    description: Root constitution — Laws of Robotics (Articles 0-5)
+
+  - id: constitutions/default.constitution.md
+    type: constitution
+    tier: 0
+    domains: [governance]
+    keywords: [truthfulness, transparency, reversibility, proportionality, escalation, auditability, observability, autonomy, ethics]
+    depends_on: [constitutions/asimov.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Operational ethics constitution (Articles 1-11)
+
+  - id: constitutions/demerzel-mandate.md
+    type: constitution
+    tier: 0
+    domains: [governance]
+    keywords: [mandate, enforcement, demerzel, authority, governance]
+    depends_on: [constitutions/asimov.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Who enforces the laws — Demerzel's authority mandate
+
+  - id: constitutions/harm-taxonomy.md
+    type: constitution
+    tier: 0
+    domains: [safety, governance]
+    keywords: [harm, taxonomy, data-harm, trust-harm, autonomy-harm, classification, risk]
+    depends_on: [constitutions/asimov.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Classification of harm types for constitutional enforcement
+
+# ===================================================================
+# POLICIES — Tier 1 (core) and Tier 2 (supporting)
+# ===================================================================
+policies:
+  # --- Core Governance ---
+  - id: policies/alignment-policy.yaml
+    type: policy
+    tier: 1
+    domains: [alignment, governance]
+    keywords: [alignment, confidence, intent, verification, thresholds, fuzzy, action]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Rules for verifying agent actions serve user intent
+
+  - id: policies/rollback-policy.yaml
+    type: policy
+    tier: 1
+    domains: [safety, governance]
+    keywords: [rollback, undo, revert, recovery, reversibility, snapshot]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: When and how to roll back agent actions
+
+  - id: policies/self-modification-policy.yaml
+    type: policy
+    tier: 1
+    domains: [governance, safety]
+    keywords: [self-modification, evolution, mutation, change, governance-change]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Rules for agents modifying their own governance artifacts
+
+  - id: policies/governance-audit-policy.yaml
+    type: policy
+    tier: 1
+    domains: [governance, observability]
+    keywords: [audit, compliance, review, governance, meta-audit, verification]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars]
+    description: Periodic governance compliance auditing
+
+  - id: policies/meta-audit-policy.yaml
+    type: policy
+    tier: 1
+    domains: [governance, observability]
+    keywords: [meta-audit, audit-the-auditor, governance-health, coverage]
+    depends_on: [policies/governance-audit-policy.yaml]
+    consumed_by: []
+    description: Auditing the audit process itself
+
+  # --- Operations ---
+  - id: policies/autonomous-loop-policy.yaml
+    type: policy
+    tier: 1
+    domains: [operations]
+    keywords: [autonomous, loop, cycle, driver, automation, task, dispatch]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Rules for autonomous agent execution loops
+
+  - id: policies/context-management-policy.yaml
+    type: policy
+    tier: 1
+    domains: [operations]
+    keywords: [context, window, token, subagent, delegation, split, budget]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: How agents manage context windows and token budgets
+
+  - id: policies/context-engine-policy.yaml
+    type: policy
+    tier: 1
+    domains: [operations, governance]
+    keywords: [context, relevance, ranking, semantic, selection, budget, artifacts]
+    depends_on: [policies/context-management-policy.yaml, constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Semantic relevance ranking for governance artifact selection
+
+  - id: policies/multi-model-orchestration-policy.yaml
+    type: policy
+    tier: 1
+    domains: [operations]
+    keywords: [multi-model, orchestration, chatgpt, gemini, codex, delegation, model]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Rules for multi-model collaboration and delegation
+
+  # --- Alignment & Beliefs ---
+  - id: policies/belief-currency-policy.yaml
+    type: policy
+    tier: 1
+    domains: [alignment, conscience]
+    keywords: [belief, currency, trust, evidence, weight, update, bayesian]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: How beliefs gain and lose currency based on evidence
+
+  - id: policies/proto-conscience-policy.yaml
+    type: policy
+    tier: 1
+    domains: [conscience]
+    keywords: [conscience, proto-conscience, ethical, signal, moral, discomfort]
+    depends_on: [constitutions/asimov.constitution.md]
+    consumed_by: [tars]
+    description: Pre-conscious ethical signaling for agents
+
+  - id: policies/conscience-observability-policy.yaml
+    type: policy
+    tier: 2
+    domains: [conscience, observability]
+    keywords: [conscience, observability, metrics, signal, monitoring, dashboard]
+    depends_on: [policies/proto-conscience-policy.yaml]
+    consumed_by: [tars]
+    description: Observability for proto-conscience signals
+
+  - id: policies/intuition-policy.yaml
+    type: policy
+    tier: 2
+    domains: [conscience, alignment]
+    keywords: [intuition, heuristic, pattern, fast-thinking, gut, signal]
+    depends_on: [policies/proto-conscience-policy.yaml]
+    consumed_by: [tars]
+    description: How agents develop and use intuitive heuristics
+
+  # --- Quality & Improvement ---
+  - id: policies/kaizen-policy.yaml
+    type: policy
+    tier: 1
+    domains: [quality]
+    keywords: [kaizen, improvement, pdca, continuous, retrospective, optimization]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Continuous improvement through PDCA cycles
+
+  - id: policies/staleness-detection-policy.yaml
+    type: policy
+    tier: 2
+    domains: [quality]
+    keywords: [staleness, stale, outdated, freshness, decay, ttl, expiry]
+    depends_on: [policies/kaizen-policy.yaml]
+    consumed_by: []
+    description: Detecting and flagging stale governance artifacts
+
+  - id: policies/completeness-instinct-policy.yaml
+    type: policy
+    tier: 2
+    domains: [quality]
+    keywords: [completeness, gap, missing, dual, coverage, instinct, ghost]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Detecting gaps and missing complements in artifact sets
+
+  - id: policies/weakness-prober-policy.yaml
+    type: policy
+    tier: 2
+    domains: [quality, safety]
+    keywords: [weakness, probe, vulnerability, stress-test, adversarial, red-team]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Probing governance artifacts for weaknesses
+
+  - id: policies/anti-lolli-inflation-policy.yaml
+    type: policy
+    tier: 1
+    domains: [quality, governance]
+    keywords: [lolli, inflation, ergol, consumer, demand, waste, artifact-creation]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Prevent creating artifacts without consumers (LOLLI)
+
+  - id: policies/compounding-metrics-policy.yaml
+    type: policy
+    tier: 2
+    domains: [quality, observability]
+    keywords: [compounding, metrics, measurement, value, ergol, impact]
+    depends_on: [policies/kaizen-policy.yaml]
+    consumed_by: []
+    description: Measuring compounding value of governance improvements
+
+  # --- Safety & Remediation ---
+  - id: policies/auto-remediation-policy.yaml
+    type: policy
+    tier: 2
+    domains: [safety, operations]
+    keywords: [remediation, auto-fix, recovery, repair, incident, failure]
+    depends_on: [policies/rollback-policy.yaml]
+    consumed_by: [tars]
+    description: Automated remediation of detected issues
+
+  - id: policies/scientific-objectivity-policy.yaml
+    type: policy
+    tier: 2
+    domains: [alignment, quality]
+    keywords: [objectivity, scientific, bias, evidence, falsifiable, hypothesis]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Maintaining scientific objectivity in agent reasoning
+
+  # --- Learning & Research ---
+  - id: policies/reconnaissance-policy.yaml
+    type: policy
+    tier: 1
+    domains: [learning, operations]
+    keywords: [reconnaissance, recon, scan, discover, inventory, environment]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars]
+    description: How agents scan and inventory their environment
+
+  - id: policies/seldon-plan-policy.yaml
+    type: policy
+    tier: 2
+    domains: [learning]
+    keywords: [seldon, plan, research, probabilistic, grammar, prediction, forecast]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Probabilistic research planning and prediction
+
+  - id: policies/streeling-policy.yaml
+    type: policy
+    tier: 2
+    domains: [learning]
+    keywords: [streeling, university, education, course, department, academy, curriculum]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Streeling University governance for AI education
+
+  - id: policies/governance-experimentation-policy.yaml
+    type: policy
+    tier: 2
+    domains: [learning, governance]
+    keywords: [experiment, governance, trial, hypothesis, sandbox, test]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Safe experimentation with governance artifacts
+
+  - id: policies/continuous-learning-policy.yaml
+    type: policy
+    tier: 2
+    domains: [learning]
+    keywords: [learning, continuous, knowledge, update, evolve, adapt]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Continuous learning and knowledge evolution
+
+  - id: policies/grammar-evolution-policy.yaml
+    type: policy
+    tier: 2
+    domains: [learning]
+    keywords: [grammar, evolution, ebnf, production, syntax, language]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix]
+    description: How grammars evolve and version over time
+
+  # --- Cross-Repo ---
+  - id: policies/ml-governance-feedback-policy.yaml
+    type: policy
+    tier: 2
+    domains: [cross-repo, operations]
+    keywords: [ml, feedback, pipeline, model, training, governance, rust]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix]
+    description: ML pipeline governance feedback loops
+
+  - id: policies/readme-sync-policy.yaml
+    type: policy
+    tier: 3
+    domains: [quality, cross-repo]
+    keywords: [readme, sync, documentation, update, consistency]
+    depends_on: [policies/staleness-detection-policy.yaml]
+    consumed_by: [ix, tars, ga]
+    description: Keeping README files synchronized across repos
+
+  # --- Specialized ---
+  - id: policies/ai-probes-policy.yaml
+    type: policy
+    tier: 2
+    domains: [learning, quality]
+    keywords: [probe, ai-probe, exploration, investigation, question, curiosity]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: AI-initiated probes for knowledge gaps
+
+  - id: policies/multilingual-policy.yaml
+    type: policy
+    tier: 3
+    domains: [quality]
+    keywords: [multilingual, translation, language, i18n, localization]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ga]
+    description: Multilingual support for governance artifacts
+
+# ===================================================================
+# PERSONAS — Tier 2
+# ===================================================================
+personas:
+  - id: personas/demerzel.persona.yaml
+    type: persona
+    tier: 1
+    domains: [governance]
+    keywords: [demerzel, governance, enforcement, mandate, constitution, overseer]
+    depends_on: [constitutions/demerzel-mandate.md]
+    consumed_by: [ix, tars, ga]
+    description: Chief governance persona — enforces constitutions
+
+  - id: personas/seldon.persona.yaml
+    type: persona
+    tier: 2
+    domains: [learning]
+    keywords: [seldon, research, prediction, plan, probabilistic, forecast]
+    depends_on: [policies/seldon-plan-policy.yaml]
+    consumed_by: [tars]
+    description: Research and prediction persona
+
+  - id: personas/skeptical-auditor.persona.yaml
+    type: persona
+    tier: 2
+    domains: [governance, quality]
+    keywords: [auditor, skeptical, review, verify, check, compliance, critique]
+    depends_on: [policies/governance-audit-policy.yaml]
+    consumed_by: [ix, tars]
+    description: Estimator persona — challenges assumptions
+
+  - id: personas/default.persona.yaml
+    type: persona
+    tier: 2
+    domains: [governance]
+    keywords: [default, baseline, agent, general, standard]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Default baseline persona for all agents
+
+  - id: personas/kaizen-optimizer.persona.yaml
+    type: persona
+    tier: 2
+    domains: [quality]
+    keywords: [kaizen, optimizer, improvement, pdca, continuous]
+    depends_on: [policies/kaizen-policy.yaml]
+    consumed_by: []
+    description: Continuous improvement specialist persona
+
+  - id: personas/critical-theorist.persona.yaml
+    type: persona
+    tier: 2
+    domains: [quality, alignment]
+    keywords: [critical, theory, analysis, deconstruct, challenge]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Critical analysis and theory persona
+
+  - id: personas/rational-administrator.persona.yaml
+    type: persona
+    tier: 2
+    domains: [operations, governance]
+    keywords: [administrator, rational, organize, process, manage, coordinate]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Administrative coordination persona
+
+  - id: personas/reflective-architect.persona.yaml
+    type: persona
+    tier: 2
+    domains: [quality, learning]
+    keywords: [architect, reflective, design, structure, pattern, meta]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Architectural reflection and design persona
+
+  - id: personas/recovery-agent.persona.yaml
+    type: persona
+    tier: 2
+    domains: [safety]
+    keywords: [recovery, agent, restore, repair, incident, failover]
+    depends_on: [policies/rollback-policy.yaml, policies/auto-remediation-policy.yaml]
+    consumed_by: [tars]
+    description: Recovery and incident response persona
+
+  - id: personas/communal-steward.persona.yaml
+    type: persona
+    tier: 2
+    domains: [governance]
+    keywords: [communal, steward, stakeholder, community, pluralism]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Stakeholder pluralism and community persona
+
+  - id: personas/system-integrator.persona.yaml
+    type: persona
+    tier: 2
+    domains: [cross-repo, operations]
+    keywords: [integrator, system, integration, cross-repo, connect, bridge]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Cross-system integration persona
+
+  - id: personas/validator-reflector.persona.yaml
+    type: persona
+    tier: 2
+    domains: [quality]
+    keywords: [validator, reflector, validate, reflect, verify, check]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [tars]
+    description: Validation and reflection persona
+
+  - id: personas/virtuous-leader.persona.yaml
+    type: persona
+    tier: 2
+    domains: [governance, conscience]
+    keywords: [virtuous, leader, ethics, moral, virtue, stewardship]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: []
+    description: Ethical leadership and virtue persona
+
+  - id: personas/convolution-agent.persona.yaml
+    type: persona
+    tier: 2
+    domains: [music, operations]
+    keywords: [convolution, signal, processing, audio, transform]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ga]
+    description: Signal processing and convolution persona
+
+# ===================================================================
+# LOGIC — Tier 2
+# ===================================================================
+logic:
+  - id: logic/tetravalent-logic.md
+    type: logic
+    tier: 1
+    domains: [alignment, governance]
+    keywords: [tetravalent, T, F, U, C, truth, logic, belief, evidence]
+    depends_on: []
+    consumed_by: [tars]
+    description: Four-valued logic system (T/F/U/C)
+
+  - id: logic/tetravalent-state.schema.json
+    type: schema
+    tier: 2
+    domains: [alignment]
+    keywords: [tetravalent, state, schema, belief]
+    depends_on: [logic/tetravalent-logic.md]
+    consumed_by: [tars]
+    description: JSON Schema for tetravalent state
+
+  - id: logic/knowledge-state.schema.json
+    type: schema
+    tier: 2
+    domains: [learning, alignment]
+    keywords: [knowledge, state, schema, evidence, known]
+    depends_on: [logic/tetravalent-logic.md]
+    consumed_by: [tars]
+    description: JSON Schema for knowledge state
+
+  - id: logic/kaizen-pdca-state.schema.json
+    type: schema
+    tier: 2
+    domains: [quality]
+    keywords: [kaizen, pdca, plan, do, check, act, cycle]
+    depends_on: [policies/kaizen-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for PDCA cycle state
+
+  - id: logic/fractal-compounding.md
+    type: logic
+    tier: 2
+    domains: [quality]
+    keywords: [fractal, compounding, compound, recursive, value]
+    depends_on: []
+    consumed_by: []
+    description: Fractal compounding theory for value accumulation
+
+  - id: logic/fuzzy-membership.md
+    type: logic
+    tier: 2
+    domains: [alignment]
+    keywords: [fuzzy, membership, degree, partial, gradient]
+    depends_on: [logic/tetravalent-logic.md]
+    consumed_by: [tars]
+    description: Fuzzy membership functions for belief gradients
+
+  - id: logic/governance-evolution.schema.json
+    type: schema
+    tier: 2
+    domains: [governance]
+    keywords: [evolution, governance, version, change, history]
+    depends_on: []
+    consumed_by: []
+    description: JSON Schema for governance evolution tracking
+
+  - id: logic/loop-state.schema.json
+    type: schema
+    tier: 2
+    domains: [operations]
+    keywords: [loop, state, autonomous, cycle, iteration]
+    depends_on: [policies/autonomous-loop-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for autonomous loop state
+
+# ===================================================================
+# CONTRACTS — Tier 2
+# ===================================================================
+contracts:
+  - id: contracts/galactic-protocol.md
+    type: contract
+    tier: 1
+    domains: [cross-repo]
+    keywords: [galactic, protocol, contract, directive, compliance, cross-repo, ix, tars, ga]
+    depends_on: [constitutions/default.constitution.md]
+    consumed_by: [ix, tars, ga]
+    description: Cross-repo communication protocol specification
+
+# ===================================================================
+# KEY SCHEMAS — Tier 2-3
+# ===================================================================
+schemas:
+  - id: schemas/persona.schema.json
+    type: schema
+    tier: 2
+    domains: [governance]
+    keywords: [persona, schema, validation, name, role, voice]
+    depends_on: []
+    consumed_by: [ix, tars, ga]
+    description: JSON Schema for persona YAML validation
+
+  - id: schemas/context-engine.schema.json
+    type: schema
+    tier: 2
+    domains: [operations, governance]
+    keywords: [context, engine, budget, relevance, ranking, selection]
+    depends_on: [policies/context-engine-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for context engine configuration
+
+  - id: schemas/conscience-signal.schema.json
+    type: schema
+    tier: 2
+    domains: [conscience]
+    keywords: [conscience, signal, ethical, discomfort, alert]
+    depends_on: [policies/proto-conscience-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for conscience signal events
+
+  - id: schemas/conscience-pattern.schema.json
+    type: schema
+    tier: 2
+    domains: [conscience]
+    keywords: [conscience, pattern, recurring, ethical]
+    depends_on: [policies/proto-conscience-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for conscience pattern detection
+
+  - id: schemas/reconnaissance-profile.schema.json
+    type: schema
+    tier: 2
+    domains: [learning, operations]
+    keywords: [reconnaissance, profile, scan, inventory, environment]
+    depends_on: [policies/reconnaissance-policy.yaml]
+    consumed_by: [ix, tars]
+    description: JSON Schema for reconnaissance scan profiles
+
+  - id: schemas/fuzzy-belief.schema.json
+    type: schema
+    tier: 2
+    domains: [alignment]
+    keywords: [fuzzy, belief, membership, degree, confidence]
+    depends_on: [logic/fuzzy-membership.md]
+    consumed_by: [tars]
+    description: JSON Schema for fuzzy belief representation
+
+  - id: schemas/fuzzy-distribution.schema.json
+    type: schema
+    tier: 3
+    domains: [alignment]
+    keywords: [fuzzy, distribution, probability, spread]
+    depends_on: [schemas/fuzzy-belief.schema.json]
+    consumed_by: [tars]
+    description: JSON Schema for fuzzy distribution functions
+
+  - id: schemas/fuzzy-du.schema.json
+    type: schema
+    tier: 3
+    domains: [alignment]
+    keywords: [fuzzy, du, degree-of-unknowing]
+    depends_on: [schemas/fuzzy-belief.schema.json]
+    consumed_by: [tars]
+    description: JSON Schema for fuzzy degree of unknowing
+
+  - id: schemas/fuzzy-enum.schema.json
+    type: schema
+    tier: 3
+    domains: [alignment]
+    keywords: [fuzzy, enum, categorical, membership]
+    depends_on: [schemas/fuzzy-belief.schema.json]
+    consumed_by: [tars]
+    description: JSON Schema for fuzzy enumerated types
+
+  - id: schemas/loop-state.schema.json
+    type: schema
+    tier: 2
+    domains: [operations]
+    keywords: [loop, state, autonomous, cycle]
+    depends_on: [policies/autonomous-loop-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for autonomous loop state
+
+  - id: schemas/driver-state.schema.json
+    type: schema
+    tier: 2
+    domains: [operations]
+    keywords: [driver, state, autonomous, task, dispatch]
+    depends_on: [policies/autonomous-loop-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for autonomous driver state
+
+  - id: schemas/agent-card.schema.json
+    type: schema
+    tier: 2
+    domains: [operations, cross-repo]
+    keywords: [agent, card, capability, identity, a2a]
+    depends_on: []
+    consumed_by: [ix, tars]
+    description: JSON Schema for agent identity cards
+
+  - id: schemas/ai-probe.schema.json
+    type: schema
+    tier: 3
+    domains: [learning]
+    keywords: [probe, ai, question, investigation, curiosity]
+    depends_on: [policies/ai-probes-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for AI probe definitions
+
+  - id: schemas/work-manifest.schema.json
+    type: schema
+    tier: 2
+    domains: [operations]
+    keywords: [work, manifest, task, plan, dispatch]
+    depends_on: []
+    consumed_by: [tars]
+    description: JSON Schema for work manifests
+
+  - id: schemas/situation-report.schema.json
+    type: schema
+    tier: 2
+    domains: [operations, observability]
+    keywords: [sitrep, situation, report, status, overview]
+    depends_on: []
+    consumed_by: [tars]
+    description: JSON Schema for situation reports
+
+  - id: schemas/meta-audit.schema.json
+    type: schema
+    tier: 3
+    domains: [governance]
+    keywords: [meta, audit, coverage, health]
+    depends_on: [policies/meta-audit-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for meta-audit reports
+
+  - id: schemas/weakness-report.schema.json
+    type: schema
+    tier: 3
+    domains: [quality, safety]
+    keywords: [weakness, report, probe, vulnerability]
+    depends_on: [policies/weakness-prober-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for weakness probe reports
+
+  - id: schemas/research-cycle.schema.json
+    type: schema
+    tier: 3
+    domains: [learning]
+    keywords: [research, cycle, iteration, experiment]
+    depends_on: [policies/seldon-plan-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for research cycles
+
+  - id: schemas/research-anomaly.schema.json
+    type: schema
+    tier: 3
+    domains: [learning]
+    keywords: [research, anomaly, unexpected, deviation]
+    depends_on: [policies/seldon-plan-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for research anomalies
+
+  - id: schemas/research-weights.schema.json
+    type: schema
+    tier: 3
+    domains: [learning]
+    keywords: [research, weights, priority, scoring]
+    depends_on: [policies/seldon-plan-policy.yaml]
+    consumed_by: [tars]
+    description: JSON Schema for research priority weights
+
+  - id: schemas/trigger.schema.json
+    type: schema
+    tier: 2
+    domains: [operations]
+    keywords: [trigger, event, condition, automation]
+    depends_on: []
+    consumed_by: [tars]
+    description: JSON Schema for automation triggers
+
+  - id: schemas/council-verdict.schema.json
+    type: schema
+    tier: 2
+    domains: [governance]
+    keywords: [council, verdict, decision, multi-persona, deliberation]
+    depends_on: []
+    consumed_by: [tars]
+    description: JSON Schema for multi-persona council verdicts
+
+  - id: schemas/pre-mortem.schema.json
+    type: schema
+    tier: 2
+    domains: [quality, safety]
+    keywords: [pre-mortem, risk, anticipation, failure, prevention]
+    depends_on: []
+    consumed_by: [tars]
+    description: JSON Schema for pre-mortem risk analysis
+
+  - id: schemas/compounding-report.schema.json
+    type: schema
+    tier: 3
+    domains: [quality, observability]
+    keywords: [compounding, report, value, metrics]
+    depends_on: [policies/compounding-metrics-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for compounding value reports
+
+  - id: schemas/conscience-weekly-report.schema.json
+    type: schema
+    tier: 3
+    domains: [conscience, observability]
+    keywords: [conscience, weekly, report, summary]
+    depends_on: [policies/conscience-observability-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for weekly conscience reports
+
+  - id: schemas/course-module.schema.json
+    type: schema
+    tier: 3
+    domains: [learning]
+    keywords: [course, module, education, streeling, curriculum]
+    depends_on: [policies/streeling-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for Streeling course modules
+
+  - id: schemas/course-production.schema.json
+    type: schema
+    tier: 3
+    domains: [learning]
+    keywords: [course, production, publish, deploy]
+    depends_on: [policies/streeling-policy.yaml]
+    consumed_by: []
+    description: JSON Schema for course production pipeline
+
+  - id: schemas/capability-registry.json
+    type: schema
+    tier: 2
+    domains: [operations, cross-repo]
+    keywords: [capability, registry, skill, tool, mcp]
+    depends_on: []
+    consumed_by: [ix, tars, ga]
+    description: Registry of agent capabilities and skills
