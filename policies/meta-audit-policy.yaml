@@ -1,0 +1,161 @@
+name: meta-audit-policy
+version: "1.0.0"
+effective_date: "2026-03-23"
+description: >
+  Governs the meta-audit loop — how Demerzel audits her own meta-governance tools
+  (metabuild, metafix, metasync, meta-recognition) for accuracy, drift, and compounding value.
+
+constitutional_basis:
+  - Article 7 (Auditability) — meta-tool operations must be logged and traceable
+  - Article 8 (Observability) — meta-tool accuracy is a first-class governance health metric
+  - Article 1 (Truthfulness) — meta-audit findings must be reported without fabrication
+  - Article 9 (Bounded Autonomy) — meta-audit is read-only analysis; remediation requires separate authorization
+
+rationale: |
+  Demerzel governs other agents and repos. But who governs Demerzel?
+  The meta-audit loop is Demerzel auditing herself. If metabuild produces
+  schema-invalid artifacts, if metafix creates more drift than it resolves,
+  or if meta-recognition detects false patterns — these failures compound.
+  The meta-audit loop catches meta-tool failures before they propagate.
+
+scope:
+  - demerzel-repo
+  - all_meta_tools
+
+meta_tools:
+  metabuild:
+    purpose: "Factory of factories — bootstrap complete departments from domain descriptions"
+    log_file: "state/evolution/metabuild-log.json"
+    accuracy_target: 0.95
+    schema_validation_required: true
+    failure_modes:
+      - "Produced artifacts fail schema validation"
+      - "Department missing required grammar, weights, or behavioral tests"
+      - "Bootstrap produces LOLLI inflation without ERGOL gain"
+
+  metafix:
+    purpose: "Don't just fix the problem — fix the system that allowed it"
+    log_file: "state/evolution/metafix-log.json"
+    accuracy_target: 0.90
+    failure_modes:
+      - "Fix at 'instance' level when 'pattern' level was appropriate"
+      - "Fix creates new drift while resolving original"
+      - "Recurrence check omitted (recurrence_check: pending never resolved)"
+
+  metasync:
+    purpose: "Detect and fix documentation drift — README counts, cross-repo references"
+    log_file: "state/evolution/metasync-log.json"
+    accuracy_target: 0.98
+    failure_modes:
+      - "Sync fixes wrong artifact (off-by-one or incorrect category)"
+      - "Structural flags detected but not escalated"
+      - "Sync runs without checking dependent files"
+
+  meta_recognition:
+    purpose: "Detect higher-order patterns — overlaps, drift, dead code, repetition"
+    log_file: "state/evolution/meta-recognition-log.json"
+    accuracy_target: 0.85
+    failure_modes:
+      - "False positive detection triggers unnecessary remediation"
+      - "Known pattern class has zero detections across 5+ cycles (blind spot)"
+      - "Confidence > 0.9 but outcome = false_positive (overconfident)"
+
+# How often to run the meta-audit
+schedule:
+  primary: "End of every Driver cycle COMPOUND phase, after D_c computation"
+  on_demand: "/demerzel audit --meta"
+  minimum_interval: "1 cycle — do not run multiple meta-audits in same cycle"
+
+# What the meta-audit checks
+checks:
+  accuracy_check:
+    description: "For each meta-tool, compute accuracy = true_positives / (true_positives + false_positives)"
+    method: "Read log file, count outcome values, compute ratio"
+    threshold: 0.85
+    action_below_threshold: "Conscience signal + add meta-tool review to next PDCA cycle PLAN"
+
+  log_freshness_check:
+    description: "Each meta-tool log must have an entry in the last 14 days"
+    method: "Read most recent entry timestamp per log file"
+    stale_threshold_days: 14
+    action_on_stale: "Flag as staleness gap; trigger meta-tool on next Driver cycle"
+
+  schema_compliance_check:
+    description: "All meta-audit log files must validate against schemas/meta-audit.schema.json"
+    method: "Parse JSON, validate against schema"
+    action_on_failure: "Auto-flag structural_flags += 1; escalate if count > 3"
+
+  recurrence_resolution_check:
+    description: "No metafix entry may remain with recurrence_check: pending for > 7 days"
+    method: "Scan metafix-log.json for pending entries older than 7 days"
+    action_on_violation: "Escalate to human — unresolved recurrence check is a governance blind spot"
+
+  false_positive_trend_check:
+    description: "If false_positive rate rises above 15% for any tool over 3 cycles, investigate"
+    method: "Rolling 3-cycle false_positive_rate per tool"
+    threshold: 0.15
+    action_on_violation: "Conscience signal; add calibration task to PDCA PLAN"
+
+  coverage_check:
+    description: "meta-recognition must have at least one detection per known pattern class every 10 cycles"
+    known_patterns: [overlap, drift, template, repetition, dead_code, orphan, staleness, missing_test]
+    window_cycles: 10
+    action_on_gap: "Flag pattern class as potential blind spot; add targeted scan to next RECON"
+
+# Meta-audit output
+output:
+  file: "state/evolution/meta-audit-report.json"
+  format: "summary + per-tool breakdown"
+  fields:
+    - scan_timestamp
+    - tools_audited
+    - per_tool_accuracy
+    - freshness_status
+    - schema_violations
+    - recurrence_pending_count
+    - false_positive_trends
+    - coverage_gaps
+    - overall_health
+    - recommended_actions
+
+  overall_health_levels:
+    healthy:
+      condition: "All tools >= accuracy_target, all logs fresh, no schema violations"
+      action: "Log only"
+    degraded:
+      condition: "One tool below accuracy_target OR one log stale"
+      action: "Log warning; include in next governance report"
+    failing:
+      condition: "Two or more tools below accuracy_target OR schema violations detected"
+      action: "Conscience signal; add meta-tool remediation to PDCA PLAN; human notification if 3+ cycles"
+
+# Integration points
+integration:
+  driver_compound: "Primary trigger — meta-audit runs after D_c report in COMPOUND phase"
+  compounding_metrics: "Meta-tool accuracy feeds into D_c value as governance effectiveness signal"
+  conscience: "Failing health level triggers conscience signal with source: meta-audit"
+  kaizen: "Meta-audit findings drive PDCA improvement cycles for individual meta-tools"
+  weakness_prober: "meta_tool_accuracy probe reads meta-audit-report.json"
+  staleness_detection: "meta-audit-report.json is subject to staleness check (freshness_cycles: 2)"
+
+observability:
+  metrics:
+    - name: meta_tool_accuracy
+      formula: "Weighted average accuracy across all four meta-tools"
+      target: ">= 0.90"
+      alert: "< 0.80 — meta-governance is producing unreliable outputs"
+
+    - name: meta_log_freshness
+      formula: "Days since most recent entry in any meta-tool log"
+      target: "< 14 days"
+      alert: ">= 14 days — meta-tool has not been used"
+
+    - name: recurrence_pending_age
+      formula: "Max days any metafix entry has been in recurrence_check: pending"
+      target: "< 7 days"
+      alert: ">= 7 days — unresolved recurrence check"
+
+    - name: false_positive_rate_trend
+      formula: "3-cycle rolling false_positive_rate per tool"
+      target: "< 0.15"
+      alert: ">= 0.15 — meta-tool is detecting phantom problems"

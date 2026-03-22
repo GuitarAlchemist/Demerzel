@@ -1,0 +1,204 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/meta-audit.schema.json",
+  "title": "MetaAuditLog",
+  "description": "Persistent log of meta-governance operations — metabuild, metafix, metasync, meta-recognition. Each log file records what the meta-tool did, whether it was correct, and a summary for D_c computation.",
+  "type": "object",
+  "required": ["schema", "tool", "entries", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "meta-audit-log",
+      "description": "Fixed discriminator — always 'meta-audit-log'"
+    },
+    "tool": {
+      "type": "string",
+      "enum": ["metabuild", "metafix", "metasync", "meta-recognition"],
+      "description": "Which meta-governance tool produced this log"
+    },
+    "entries": {
+      "type": "array",
+      "description": "Ordered list of operations or detections produced by the tool",
+      "items": { "$ref": "#/$defs/meta_audit_entry" },
+      "minItems": 0
+    },
+    "summary": {
+      "$ref": "#/$defs/meta_audit_summary"
+    }
+  },
+  "$defs": {
+    "meta_audit_entry": {
+      "type": "object",
+      "required": ["timestamp", "outcome"],
+      "additionalProperties": true,
+      "description": "One recorded operation or detection. Shape varies by tool — only timestamp and outcome are universal.",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when this entry was recorded"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["true_positive", "false_positive", "false_negative", "not_yet_assessed"],
+          "description": "Whether the meta-tool action was correct. Used for accuracy tracking."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Human-authored annotation — context, caveats, lessons learned"
+        },
+        "operation": {
+          "type": "string",
+          "description": "metabuild/metafix/metasync: the specific operation performed (e.g. bootstrap_department, reference_fix, count_sync)"
+        },
+        "target": {
+          "type": "string",
+          "description": "The artifact, file, or department this entry acted upon"
+        },
+        "artifacts_produced": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "metabuild: list of artifact filenames produced"
+        },
+        "schema_validation": {
+          "type": "string",
+          "enum": ["pass", "fail", "skipped"],
+          "description": "metabuild: schema validation result for produced artifacts"
+        },
+        "fix": {
+          "type": "string",
+          "description": "metafix: description of the fix applied"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["instance", "pattern", "policy", "constitutional"],
+          "description": "metafix: generalization level of the fix"
+        },
+        "recurrence_check": {
+          "type": "string",
+          "enum": ["pending", "confirmed_isolated", "confirmed_recurring", "not_applicable"],
+          "description": "metafix: whether the same problem recurs elsewhere"
+        },
+        "pattern": {
+          "type": "string",
+          "enum": ["overlap", "drift", "template", "repetition", "dead_code", "orphan", "staleness", "missing_test"],
+          "description": "meta-recognition: the pattern class detected"
+        },
+        "signal": {
+          "type": "string",
+          "description": "meta-recognition: the specific signal that triggered detection"
+        },
+        "proposed_action": {
+          "type": "string",
+          "description": "meta-recognition: the recommended meta-tool action"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "meta-recognition: confidence in the detection (aligns with alignment-policy thresholds)"
+        },
+        "actioned": {
+          "type": "boolean",
+          "description": "meta-recognition: whether the proposed action was actually executed"
+        },
+        "result": {
+          "type": "string",
+          "description": "meta-recognition/metafix: outcome description after the action was taken"
+        },
+        "artifact": {
+          "type": "string",
+          "description": "metasync: name of the artifact whose count or reference was synced"
+        },
+        "was": {
+          "description": "metasync: value before sync (number or string)"
+        },
+        "now": {
+          "description": "metasync: value after sync (number or string)"
+        },
+        "file": {
+          "type": "string",
+          "description": "metasync: the file that was updated"
+        }
+      }
+    },
+    "meta_audit_summary": {
+      "type": "object",
+      "required": ["total_operations", "true_positives", "false_positives", "accuracy"],
+      "additionalProperties": true,
+      "description": "Aggregate metrics for this log file — used by D_c computation and governance reports",
+      "properties": {
+        "total_operations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of entries in this log. metasync uses total_detections instead — both are accepted."
+        },
+        "total_detections": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "meta-recognition alias for total_operations"
+        },
+        "true_positives": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Entries with outcome=true_positive"
+        },
+        "false_positives": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Entries with outcome=false_positive"
+        },
+        "accuracy": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "true_positives / (true_positives + false_positives). Null if total_operations = 0."
+        },
+        "meta_Dc": {
+          "type": "string",
+          "description": "Optional D_c assessment for this tool's compounding value this session"
+        },
+        "patterns_detected": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "meta-recognition: pattern types that were detected"
+        },
+        "patterns_not_yet_detected": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "meta-recognition: known pattern types with no detections yet — growth targets"
+        },
+        "trivial_drifts_fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "metasync: number of count mismatches corrected"
+        },
+        "structural_flags": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "metasync: number of structural issues found (schema violations, missing files)"
+        },
+        "artifacts_checked": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "metasync: number of artifact categories checked in the scan"
+        },
+        "fixes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["artifact", "was", "now", "file"],
+            "properties": {
+              "artifact": { "type": "string" },
+              "was": {},
+              "now": {},
+              "file": { "type": "string" }
+            }
+          },
+          "description": "metasync: detailed list of changes applied"
+        }
+      }
+    }
+  }
+}
