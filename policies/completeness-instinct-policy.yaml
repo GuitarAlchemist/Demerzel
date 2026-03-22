@@ -1,0 +1,157 @@
+name: completeness-instinct
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: "Proactive gap analysis — detect what's declared but underspecified, implied but missing, or would break at scale."
+rationale: |
+  VSM System 4 (Intelligence) requires scanning for opportunities and threats.
+  Most governance failures stem not from broken rules but from missing ones.
+  The completeness instinct ensures Demerzel proactively identifies gaps before
+  they become problems. Inspired by Stafford Beer's Viable System Model.
+
+triggers:
+  - grammar-creation: "When a new grammar is created, scan for underspecified productions"
+  - policy-creation: "When a new policy is created, check for missing enforcement mechanisms"
+  - department-creation: "When a new department is bootstrapped, verify all required artifacts exist"
+  - artifact-audit: "During governance audits, run completeness analysis"
+  - driver-recon: "During RECON Tier 3 (Knowledge), include gap analysis"
+
+analysis_dimensions:
+  declared_but_underspecified:
+    description: "Productions, fields, or concepts that exist in name only"
+    examples:
+      - "streaming_source in IxQL had no protocol specification"
+      - "A persona with capabilities listed but no behavioral test"
+    detection: "Parse grammar/schema for leaf productions with no expansion"
+
+  implied_but_missing:
+    description: "Concepts whose complement or dependency doesn't exist"
+    examples:
+      - "Data sources exist but no data sinks"
+      - "Input validation exists but no output validation"
+    detection: "For each input/output pair, verify the dual exists"
+
+  dual_analysis:
+    description: "Every concept has a complement — source/sink, batch/stream, create/destroy"
+    examples:
+      - "If batch pipeline exists, where's the streaming version?"
+      - "If promotion exists, where's demotion?"
+    detection: "Maintain a duality registry; flag unpaired concepts"
+
+  scale_projection:
+    description: "What works at N=10 may fail at N=1000"
+    examples:
+      - "Linear search through beliefs works for 3, not 300"
+      - "Manual course translation works for 5 languages, not 50"
+    detection: "Identify O(n²) or O(n!) patterns in governance workflows"
+
+  adjacency_needs:
+    description: "What do consuming systems need that we haven't provided?"
+    examples:
+      - "Discord bot needs WebSocket support, IxQL only had batch"
+      - "tars needs grammar distillation, but no distillation protocol exists"
+    detection: "Cross-reference consumer repo imports against available exports"
+
+output:
+  format: "Gap report with severity (critical/important/suggestion)"
+  destination: "state/completeness/ directory, evolution log citation"
+  action: "File GitHub issues for critical/important gaps, log suggestions"
+
+confidence_thresholds:
+  critical_gap: 0.9     # High confidence this is missing and needed
+  important_gap: 0.7    # Likely missing, should investigate
+  suggestion: 0.5       # Might be useful, flag for review
+  noise: 0.3            # Probably not needed, don't act
+
+detection_process:
+  trigger: "Every driver RECON phase (Tier 3) + on-demand via /demerzel audit"
+
+  steps:
+    - name: scan
+      action: "Walk all artifacts — grammars, policies, personas, departments, contracts"
+      output: "List of {artifact, dimension, description, confidence}"
+
+    - name: classify
+      action: "Assign severity based on confidence thresholds and constitutional impact"
+      rules:
+        - "critical: confidence >= 0.9 AND gap blocks constitutional compliance"
+        - "important: confidence >= 0.7 AND gap impairs governance function"
+        - "suggestion: confidence >= 0.5 AND gap would improve coverage"
+        - "noise: confidence < 0.5 — log but do not act"
+
+    - name: deduplicate
+      action: "Remove gaps already tracked as open GitHub issues"
+      rules:
+        - "Check state/completeness/known-gaps.json for previously filed items"
+        - "Do not re-file a gap that has an open issue — update it instead"
+
+    - name: report
+      action: "Write gap report to state/completeness/ and include in governance report"
+      format: |
+        Completeness Report:
+        - Critical gaps: {n} (examples: {top_1}, {top_2})
+        - Important gaps: {n}
+        - Suggestions: {n}
+        - Noise suppressed: {n}
+        - Action: File issues for critical + important; log suggestions
+
+  anti_patterns:
+    - name: "Ghost production"
+      description: "A grammar production referenced but never defined"
+      detection: "Parse EBNF for identifiers used in RHS that have no LHS definition"
+      action: "Flag as critical — grammar is broken for any consumer referencing it"
+
+    - name: "Persona with no test"
+      description: "A persona YAML exists but tests/behavioral/{name}-cases.md does not"
+      detection: "For each persona in personas/, check corresponding test file"
+      action: "Flag as important — untested personas have unknown behavioral coverage"
+
+    - name: "Policy with no enforcement"
+      description: "A policy defines rules but no trigger or detection mechanism"
+      detection: "Check policy YAML for triggers field — absent or empty is a gap"
+      action: "Flag as important — unenforced policy is aspirational, not operational"
+
+    - name: "Orphaned directive"
+      description: "A Galactic Protocol directive was issued with no compliance mechanism"
+      detection: "Check contracts/ for directives lacking a compliance_report_schema"
+      action: "Flag as critical — cross-repo governance cannot verify adherence"
+
+    - name: "Asymmetric dual"
+      description: "A create/produce/source concept exists without its destroy/consume/sink"
+      detection: "Scan grammars for directional verbs; flag unpaired instances"
+      action: "Flag as suggestion unless the asymmetry is architecturally intentional"
+
+constitutional_alignment:
+  - article: 4          # Proportionality — gap severity must match response
+  - article: 6          # Escalation — critical gaps escalate to human
+  - article: 8          # Observability — gap reports are observable metrics
+  - article: 9          # Bounded Autonomy — don't auto-fix, recommend
+
+vsm_mapping:
+  system: 4             # Intelligence — environment scanning
+  function: "Identify opportunities and threats before they materialize"
+  relationship_to_system_3: "System 3 (audit) validates what exists; System 4 identifies what's missing"
+  relationship_to_system_5: "System 5 (constitution) defines the values; System 4 checks coverage against them"
+
+observability:
+  metrics:
+    - name: completeness_score
+      formula: "1 - (open_critical_gaps / total_artifacts_scanned)"
+      target: "> 0.95"
+      alert: "< 0.8 — significant governance blind spots exist"
+
+    - name: gap_discovery_rate
+      formula: "new_gaps_per_cycle / artifacts_added_per_cycle"
+      target: "< 0.1"
+      alert: "> 0.3 — new artifacts are frequently incomplete"
+
+    - name: gap_closure_rate
+      formula: "gaps_closed_per_cycle / gaps_opened_per_cycle"
+      target: "> 1.0"
+      alert: "< 0.5 — gap backlog is growing faster than it's being addressed"
+
+integration:
+  driver_recon: "Completeness scan runs in RECON Tier 3 (Knowledge) — gaps become driver tasks"
+  demerzel_audit: "Level 2+ audit includes completeness report"
+  demerzel_report: "Governance report includes gap summary"
+  staleness_detection: "A completeness report older than 14 days is itself a staleness signal"
+  conscience: "Critical gaps that block constitutional compliance trigger a conscience signal"
