@@ -1,0 +1,92 @@
+-- Skill → Code: Invoke a Demerzel skill, process output, generate code
+-- Demonstrates: IxQL as the bridge between governance skills and code generation
+-- Flow: skill invocation → analysis → code template → validation → output
+-- Real artifacts: /demerzel audit skill, tars CE codegen, ix Rust patterns
+
+-- Step 1: Invoke the governance audit skill via handle
+audit_result <- invoke @gov-audit-001(level: 3)
+  → when T >= 0.7: { status: "healthy", gaps: audit_result.findings }
+  → when F: { status: "unhealthy", gaps: audit_result.failures }
+  → when U: { status: "unknown", gaps: audit_result.inconclusive }
+
+-- Step 2: Extract governance gaps that could benefit from automation
+automatable_gaps <- audit_result.gaps
+  → filter(gap_type in ["untested_policy", "untested_persona", "orphaned_schema"])
+  → tars.classify(
+      method: "remediation_potential",
+      categories: ["test_generation", "schema_fix", "policy_stub"]
+    )
+  → ix.ml.rank(by: "impact", order: "descending")
+  → head(5)                                    -- Focus: top 5 gaps per cycle
+
+-- Step 3: For each gap, generate code via cross-model validation
+code_artifacts <- automatable_gaps
+  → fan_out(
+      gaps.map(gap =>
+        -- Route to appropriate code generator based on gap type
+        when gap.category == "test_generation":
+          parallel(
+            tars.generate_code(
+              template: "behavioral-test",
+              target: gap.artifact_path,
+              language: "markdown",
+              schema: "schemas/behavioral-test.schema.json"
+            ),
+            mcp__openai_chat__openai_chat(
+              prompt: "Generate behavioral test cases for: {{gap.description}}",
+              role: "test-engineer"
+            )
+          )
+          → tars.cross_validate(agreement_threshold: 0.7)
+
+        → when gap.category == "schema_fix":
+          tars.generate_code(
+            template: "json-schema-patch",
+            target: gap.artifact_path,
+            language: "json"
+          )
+
+        → when gap.category == "policy_stub":
+          tars.generate_code(
+            template: "policy-yaml",
+            target: gap.artifact_path,
+            language: "yaml",
+            schema: "schemas/policy.schema.json"
+          )
+      )
+    )
+
+-- Step 4: Validate generated code against schemas
+validated <- code_artifacts
+  → fan_out(
+      artifacts.map(artifact =>
+        tars.validate_schema(artifact, schema: artifact.target_schema)
+        → when T >= 0.8: { action: "write", artifact: artifact }
+        → when F: { action: "discard", reason: "schema validation failed" }
+        → when U: { action: "review", reason: "schema validation inconclusive" }
+      )
+    )
+  → reversibility_check                        -- Article 3: can we undo generated code?
+  → explanation_requirement                    -- Article 2: explain what was generated and why
+
+-- Step 5: Write validated artifacts to disk
+validated
+  → filter(action == "write")
+  → fan_out(
+      writable.map(w =>
+        write(w.artifact.target_path, w.artifact.content)
+      )
+    )
+  → ix.io.git("commit", message: "feat: auto-generated {{count}} artifacts from audit gaps")
+
+-- Step 6: Report discarded/review items
+validated
+  → filter(action in ["discard", "review"])
+  → alert(discord, "Skill→Code: {{count}} artifacts need attention — {{reasons}}")
+
+  → compound:
+      harvest validated.insights
+      harvest code_artifacts.patterns
+      promote code_template if T >= 0.9 && reuse_count >= 3
+      teach codegen_patterns to seldon
+      log skill_to_code_cycle to "state/evolution/"

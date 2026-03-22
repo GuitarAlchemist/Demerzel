@@ -1,0 +1,127 @@
+-- MCP → Data: Use MCP tools to gather data, transform, and store
+-- Demonstrates: IxQL orchestrating real MCP servers as data sources
+-- Flow: Discord + NotebookLM + context7 → normalize → analyze → persist
+-- Real artifacts: MCP servers (discord, notebooklm, context7), state/beliefs/
+
+-- Step 1: Gather data from three MCP sources in parallel
+raw_data <- parallel(
+    -- Discord: fetch recent governance discussion
+    mcp__plugin_discord_discord__fetch_messages(
+      chat_id: "1350996189981872259",       -- #demerzel channel
+      limit: 50
+    )
+    → tars.extract(fields: ["content", "author", "timestamp", "reactions"]),
+
+    -- NotebookLM: query existing research notebooks
+    mcp__notebooklm__search_notebooks(query: "governance patterns")
+    → tars.extract(fields: ["title", "summary", "sources", "created_at"]),
+
+    -- context7: resolve latest Claude Code docs for comparison
+    mcp__plugin_context7_context7__resolve_library_id(libraryName: "anthropic/claude-code")
+    → mcp__plugin_context7_context7__query_docs(
+        libraryId: resolved_id,
+        topic: "agent governance patterns"
+      )
+    → tars.extract(fields: ["content", "relevance_score"])
+  )
+
+-- Step 2: Normalize heterogeneous MCP outputs into common schema
+normalized <- raw_data
+  → fan_out(
+      -- Discord messages → structured observations
+      raw_data.discord
+        → tars.classify(
+            categories: ["governance_feedback", "feature_request", "bug_report", "discussion"],
+            method: "semantic"
+          )
+        → filter(confidence >= 0.6),
+
+      -- NotebookLM results → knowledge entries
+      raw_data.notebooklm
+        → tars.normalize(schema: "schemas/knowledge-state.schema.json"),
+
+      -- context7 docs → reference entries
+      raw_data.context7
+        → tars.normalize(schema: "schemas/reference-entry.schema.json")
+    )
+
+-- Step 3: Cross-reference and enrich
+enriched <- normalized
+  → tars.cross_reference(
+      method: "semantic_similarity",
+      threshold: 0.6
+    )
+  → fan_out(
+      -- Find themes across sources
+      tars.cluster(method: "topic_modeling", min_cluster_size: 2),
+      -- Detect sentiment trends in Discord
+      normalized.discord → ix.ml.compute(metric: "sentiment_trend"),
+      -- Identify gaps: what does context7 cover that we don't?
+      tars.gap_analysis(
+        our_coverage: normalized.notebooklm,
+        external: normalized.context7
+      )
+    )
+
+-- Step 4: Produce actionable outputs
+outputs <- enriched
+  → fan_out(
+      -- Update beliefs based on community sentiment
+      enriched.sentiment
+        → when avg_sentiment < 0.4:
+            tars.propose_belief_update(
+              target: "state/beliefs/community-health.belief.json",
+              value: "U",
+              rationale: "Negative sentiment trend detected in Discord"
+            )
+        → when avg_sentiment >= 0.7:
+            tars.propose_belief_update(
+              target: "state/beliefs/community-health.belief.json",
+              value: "T",
+              confidence: enriched.sentiment.confidence,
+              rationale: "Positive community engagement"
+            ),
+
+      -- Create knowledge entries from cross-referenced themes
+      enriched.clusters
+        → filter(cluster_coherence >= 0.7)
+        → fan_out(
+            clusters.map(c =>
+              write(
+                "state/streeling/courses/computer-science/en/MCP-{c.theme_slug}.md",
+                tars.produce_course(findings: c.evidence, level: "intermediate")
+              )
+            )
+          ),
+
+      -- Log coverage gaps as research triggers
+      enriched.gaps
+        → filter(gap_significance >= 0.5)
+        → fan_out(
+            gaps.map(g =>
+              write(
+                "state/triggers/{timestamp}-mcp-gap.trigger.json",
+                { type: "research_gap", topic: g.topic, source: "mcp-to-data pipeline" }
+              )
+            )
+          )
+    )
+  → confidence_calibration                     -- Are our sentiment scores reliable?
+  → explanation_requirement                    -- Article 2: explain data transformations
+
+-- Step 5: Persist pipeline run metadata
+write("state/oversight/mcp-data-runs/{date}-run.json", {
+    run_at: now(),
+    sources: { discord: raw_data.discord.count, notebooklm: raw_data.notebooklm.count, context7: raw_data.context7.count },
+    clusters_found: enriched.clusters.count,
+    gaps_detected: enriched.gaps.count,
+    beliefs_updated: outputs.belief_updates.count,
+    courses_produced: outputs.courses.count
+  })
+
+  → compound:
+      harvest enriched.themes
+      harvest outputs.gap_insights
+      promote mcp_pattern if T >= 0.9 && reuse_count >= 3
+      teach cross_source_patterns to seldon
+      log mcp_to_data_cycle to "state/evolution/"

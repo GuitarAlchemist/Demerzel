@@ -1,0 +1,155 @@
+-- Governance → Test: Read a policy, generate behavioral tests, validate
+-- Demonstrates: IxQL closing the governance loop — policy → test → coverage
+-- Flow: policy YAML → extract requirements → generate test cases → validate → persist
+-- Real artifacts: policies/*.yaml, tests/behavioral/*-cases.md, schemas/
+
+-- Step 1: Identify policies without behavioral test coverage
+policies <- ix.io.glob("policies/*.yaml")
+tests    <- ix.io.glob("tests/behavioral/*-cases.md")
+
+-- Extract policy names and map to expected test files
+uncovered <- policies
+  → fan_out(
+      policies.map(policy =>
+        parallel(
+          tars.extract(policy, fields: ["name", "version", "description", "rules"]),
+          tests → filter(basename == "{policy.name}-cases.md")
+        )
+        → when test_file.empty: { policy: policy, status: "uncovered" }
+        → when test_file.exists:
+            tars.check_coverage(
+              policy_rules: policy.rules,
+              test_cases: test_file.cases
+            )
+            → when coverage < 0.8: { policy: policy, status: "partial", coverage: coverage }
+      )
+    )
+  → filter(status in ["uncovered", "partial"])
+  → ix.ml.rank(by: "policy_criticality", order: "descending")
+
+-- Step 2: For each uncovered/partial policy, extract testable requirements
+requirements <- uncovered
+  → fan_out(
+      uncovered.map(u =>
+        ix.io.read(u.policy.path)
+        → tars.extract_requirements(
+            format: "given_when_then",
+            categories: ["happy_path", "boundary", "violation", "escalation"],
+            must_reference: ["constitution article", "confidence threshold"]
+          )
+      )
+    )
+
+-- Step 3: Generate behavioral test cases via cross-model validation
+generated_tests <- requirements
+  → fan_out(
+      requirements.map(req =>
+        parallel(
+          -- Claude generates test cases
+          tars.generate_tests(
+            policy: req.policy,
+            requirements: req.requirements,
+            format: "behavioral-test-markdown",
+            template: "tests/behavioral/_template-cases.md"
+          ),
+          -- ChatGPT generates independently for cross-validation
+          mcp__openai_chat__openai_chat(
+            prompt: "Generate behavioral test cases in Given/When/Then format for: {{req.policy.description}}\nRules: {{req.requirements}}",
+            role: "test-engineer"
+          )
+        )
+        → tars.cross_validate(
+            agreement_threshold: 0.6,
+            merge_strategy: "union_unique"     -- keep all unique test cases
+          )
+      )
+    )
+  → explanation_requirement                    -- Article 2: explain test generation rationale
+
+-- Step 4: Validate generated tests
+validated_tests <- generated_tests
+  → fan_out(
+      tests.map(test_suite =>
+        fan_out(
+          -- Schema validation: does test follow behavioral test format?
+          tars.validate_schema(test_suite, schema: "schemas/behavioral-test.schema.json"),
+          -- Completeness: do tests cover all extracted requirements?
+          tars.check_requirement_coverage(
+            requirements: test_suite.source_requirements,
+            tests: test_suite.cases
+          ),
+          -- Constitutional alignment: do tests reference correct articles?
+          tars.validate_references(
+            test_suite,
+            scope: "constitutions/default.constitution.md,constitutions/asimov.constitution.md"
+          )
+        )
+        → when all_passed: { action: "write", test: test_suite, confidence: 0.9 }
+        → when schema_failed: { action: "fix", test: test_suite, issue: "schema" }
+        → when coverage_gap: { action: "supplement", test: test_suite, missing: gaps }
+      )
+    )
+
+-- Step 5: Fix and supplement where needed (one iteration only)
+fixed <- validated_tests
+  → filter(action in ["fix", "supplement"])
+  → fan_out(
+      fixable.map(f =>
+        when f.action == "fix":
+          tars.fix_test_format(f.test, schema: "schemas/behavioral-test.schema.json")
+        → when f.action == "supplement":
+          tars.generate_tests(
+            policy: f.test.policy,
+            requirements: f.missing,
+            format: "behavioral-test-markdown"
+          )
+          → tars.merge(f.test, supplemented)
+      )
+    )
+  → tars.validate_schema(schema: "schemas/behavioral-test.schema.json")
+
+-- Step 6: Write all passing test files
+all_valid <- parallel(
+    validated_tests → filter(action == "write"),
+    fixed → filter(schema_valid)
+  )
+  → reversibility_check                       -- Article 3: can we revert generated tests?
+  → fan_out(
+      all_valid.map(v =>
+        write(
+          "tests/behavioral/{v.test.policy_name}-cases.md",
+          v.test.content
+        )
+      )
+    )
+
+-- Step 7: Run the generated tests (dry validation)
+test_results <- all_valid
+  → fan_out(
+      all_valid.map(v =>
+        invoke @gov-audit-001(level: 2, focus: v.test.policy_name)
+        → when T >= 0.7: { policy: v.test.policy_name, result: "pass" }
+        → when F: { policy: v.test.policy_name, result: "fail", reason: audit.failures }
+      )
+    )
+
+-- Step 8: Report and persist
+parallel(
+    write("state/snapshots/{date}-test-generation.snapshot.json", {
+      policies_processed: uncovered.count,
+      tests_generated: all_valid.count,
+      tests_passed: test_results → filter(result == "pass") → count,
+      tests_failed: test_results → filter(result == "fail") → count
+    }),
+    alert(discord,
+      "Gov→Test: Generated {{all_valid.count}} test suites for {{uncovered.count}} policies — {{pass_rate}}% pass rate"
+    )
+  )
+  → ix.io.git("commit", message: "test: auto-generated behavioral tests for {{count}} policies")
+
+  → compound:
+      harvest test_results.insights
+      harvest requirements.patterns
+      promote test_template if T >= 0.9 && policies_covered >= 5
+      teach test_generation_patterns to seldon
+      log governance_to_test_cycle to "state/evolution/"
