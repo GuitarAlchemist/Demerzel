@@ -1,0 +1,268 @@
+--- LOLLI Linter Pipeline
+--- Meta-IxQL: an IxQL pipeline that lints OTHER IxQL pipelines for dead values.
+--- This is the governance immune system — detecting waste before it compounds.
+--- Source: anti-lolli-inflation-policy.yaml, Issue #LOLLI-lint
+--- Trigger: pre-commit hook, CI gate, or on-demand via `/demerzel lolli-lint`
+--- Output: LOLLI lint report with dead value locations, confidence, and auto-mitigation proposals
+
+--- ## Step 1: Collect target pipelines
+--- Accept a specific file from stdin or glob all pipelines.
+--- The linter eats its own output — it can lint itself.
+
+targets <- when stdin is not empty:
+    [stdin]                                        -- lint a single file
+  → when stdin is empty:
+    ix.io.glob("pipelines/*.ixql")                 -- lint everything
+
+--- ## Step 2: Parse each pipeline — extract bindings and references
+--- For each target, extract the structural elements that participate in data flow.
+
+parsed <- targets
+  → fan_out(
+      targets.map(target =>
+        ix.io.read(target)
+        → tars.extract(fields: [
+            "bindings",            -- name <- expression pairs
+            "references",          -- uses of bound names downstream
+            "read_paths",          -- ix.io.read() arguments
+            "write_paths",         -- ix.io.write() / write() arguments
+            "fan_out_branches",    -- each branch in fan_out blocks
+            "parallel_branches",   -- each branch in parallel blocks
+            "when_guards",         -- conditional branches
+            "side_effects"         -- alert(), ix.io.git(), tars.propose_*
+          ])
+        → { file: target, structure: extracted }
+      )
+    )
+
+--- ## Step 3: Detect dead values at 5 levels
+--- Each level catches a different class of waste, from broad to narrow.
+
+--- ### Level 0 (File): Cross-reference all .ixql files for consumers
+--- A pipeline that nobody reads from is potentially orphaned infrastructure.
+
+level_0_file <- parsed
+  → fan_out(
+      parsed.map(p =>
+        -- Does any other pipeline read what this one writes?
+        p.structure.write_paths
+          → filter(path not in all_read_paths(parsed, exclude: p.file))
+          → when not empty: {
+              level: 0,
+              kind: "orphaned_output",
+              file: p.file,
+              paths: orphaned_paths,
+              severity: "warning",
+              confidence: 0.75       -- might be consumed outside IxQL
+            }
+      )
+    )
+
+--- ### Level 1 (Pipeline): Check write() targets against read() sources
+--- Within a single pipeline, flag writes whose output path pattern
+--- never appears as a read in any pipeline.
+
+level_1_pipeline <- parsed
+  → fan_out(
+      parsed.map(p =>
+        p.structure.write_paths
+          → filter(path not in global_read_paths(parsed))
+          → when not empty: {
+              level: 1,
+              kind: "unconsumed_write",
+              file: p.file,
+              paths: unconsumed,
+              severity: "info",
+              confidence: 0.7        -- path might use dynamic date patterns
+            }
+      )
+    )
+
+--- ### Level 2 (Binding): Flag unreferenced bindings
+--- The classic dead variable: `x <- expr` where `x` is never used.
+
+level_2_binding <- parsed
+  → fan_out(
+      parsed.map(p =>
+        p.structure.bindings
+          → filter(name not in p.structure.references)
+          → fan_out(
+              dead.map(b =>
+                -- Check if the binding has side effects in its expression
+                when b.expression.has_side_effects:
+                  { level: 2, kind: "dead_binding_with_side_effect",
+                    file: p.file, binding: b.name,
+                    severity: "info", confidence: 0.5,
+                    note: "Binding unreferenced but expression has side effects" }
+                → when not b.expression.has_side_effects:
+                  { level: 2, kind: "dead_binding",
+                    file: p.file, binding: b.name,
+                    severity: "error", confidence: 0.95,
+                    note: "Pure dead binding — safe to remove" }
+              )
+            )
+      )
+    )
+
+--- ### Level 3 (Branch): Flag orphaned fan_out branches
+--- A fan_out branch whose result is never collected or used downstream.
+
+level_3_branch <- parsed
+  → fan_out(
+      parsed.map(p =>
+        p.structure.fan_out_branches
+          → filter(branch.output not in p.structure.references
+                   && branch.output not in p.structure.write_paths)
+          → fan_out(
+              orphaned.map(branch =>
+                -- Side-effect branches (alert, write) are intentional
+                when branch.has_side_effects:
+                  { level: 3, kind: "orphaned_branch_with_side_effect",
+                    file: p.file, branch: branch.path,
+                    severity: "info", confidence: 0.4,
+                    note: "Branch output unused but has side effects — likely intentional" }
+                → when not branch.has_side_effects:
+                  { level: 3, kind: "orphaned_branch",
+                    file: p.file, branch: branch.path,
+                    severity: "warning", confidence: 0.85,
+                    note: "Branch output unused with no side effects" }
+              )
+            )
+      )
+    )
+
+--- ### Level 4 (Expression): Trace from outputs backwards
+--- Walk the data flow graph from final outputs (write, alert, compound)
+--- backwards. Anything not on a path to an output is dead.
+
+level_4_expression <- parsed
+  → fan_out(
+      parsed.map(p =>
+        -- Build reachability set from outputs
+        tars.trace_backwards(
+          outputs: p.structure.write_paths
+                   ++ p.structure.side_effects
+                   ++ p.structure.compound_targets,
+          bindings: p.structure.bindings,
+          references: p.structure.references
+        )
+        → filter(binding not in reachable_set)
+        → when not empty: {
+            level: 4, kind: "unreachable_expression",
+            file: p.file,
+            unreachable: unreachable_bindings,
+            severity: "warning",
+            confidence: 0.8
+          }
+      )
+    )
+
+--- ## Step 4: Auto-mitigation escalation ladder
+--- Article 3 (Reversibility): auto-removals must be reversible.
+--- Article 6 (Escalation): uncertain cases escalate to human.
+
+all_findings <- parallel(
+    level_0_file,
+    level_1_pipeline,
+    level_2_binding,
+    level_3_branch,
+    level_4_expression
+  )
+  → ix.ml.flatten()
+
+governance_gate(
+  article: 3,            -- Reversibility
+  confidence: 0.9,
+  on_fail: escalate
+)
+
+mitigations <- all_findings
+  → fan_out(
+      findings.map(f =>
+        -- Tier 1: High confidence, no side effects → propose auto-removal
+        when f.confidence >= 0.9:
+          { finding: f,
+            action: "auto_remove",
+            tier: 1,
+            rationale: "Dead binding with no side effects — safe to remove",
+            reversibility: "git revert" }
+          → reversibility_check,
+
+        -- Tier 2: Medium confidence → flag for human review
+        when f.confidence >= 0.7 && f.confidence < 0.9:
+          { finding: f,
+            action: "flag_for_review",
+            tier: 2,
+            rationale: "Likely dead but may have dynamic references",
+            review_hint: "Check for string interpolation or external consumers" },
+
+        -- Tier 3: Low confidence → escalate, do NOT auto-remove
+        when f.confidence < 0.7:
+          { finding: f,
+            action: "escalate",
+            tier: 3,
+            rationale: "Insufficient confidence — possible dynamic reference or side effect",
+            escalation: "Article 6: human review required" }
+      )
+    )
+
+--- ## Step 5: Produce LOLLI lint report
+--- Compute per-file and aggregate LOLLI scores.
+
+lolli_report <- parallel(
+    -- Per-file scores
+    parsed → fan_out(
+      parsed.map(p =>
+        {
+          file: p.file,
+          total_bindings: p.structure.bindings.count,
+          dead_bindings: all_findings
+            → filter(file == p.file && level == 2).count,
+          lolli_score: dead_bindings / total_bindings,
+          findings: all_findings → filter(file == p.file)
+        }
+      )
+    ),
+    -- Aggregate score
+    {
+      total_files: parsed.count,
+      total_bindings: sum(parsed.map(p => p.structure.bindings.count)),
+      total_dead: all_findings → filter(level == 2).count,
+      aggregate_lolli: total_dead / total_bindings,
+      by_level: all_findings → group_by(level) → count_each,
+      by_severity: all_findings → group_by(severity) → count_each
+    },
+    -- Mitigations summary
+    {
+      auto_removable: mitigations → filter(tier == 1).count,
+      needs_review: mitigations → filter(tier == 2).count,
+      escalated: mitigations → filter(tier == 3).count,
+      mitigations: mitigations
+    }
+  )
+  → tars.synthesize(template: "lolli-lint-report")
+  → explanation_requirement                        -- Article 2: report must explain each finding
+
+--- Persist the report
+parallel(
+    write("state/driver/lolli-lint-report.json", lolli_report),
+    when lolli_report.aggregate_lolli > 0.2:
+      alert(discord,
+        "LOLLI lint: {{lolli_report.aggregate_lolli * 100}}% dead code across {{lolli_report.total_files}} pipelines — {{mitigations.auto_removable}} auto-removable"
+      )
+  )
+
+--- ## Step 6: Compound — harvest patterns, teach to Seldon
+--- The linter learns what kinds of dead code recur so future pipelines avoid them.
+
+  → compound:
+      harvest lolli_report.dead_code_patterns
+      harvest mitigations.successful_removals
+      promote dead_code_detector if T >= 0.9
+      when lolli_report.aggregate_lolli > 0.3:
+        tars.propose_action(
+          action: "creation_freeze_check",
+          rationale: "High LOLLI ratio across pipelines — trigger anti-lolli-inflation-policy"
+        )
+      teach dead_code_patterns to seldon
+      log lolli_lint_run to "state/evolution/"

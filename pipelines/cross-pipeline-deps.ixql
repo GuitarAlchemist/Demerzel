@@ -1,0 +1,175 @@
+--- Cross-Pipeline Dependency Graph Scanner
+--- Builds the global read/write dependency graph across ALL .ixql files.
+--- Detects orphaned outputs (write with no reader) and orphaned inputs (read with no writer).
+--- Source: anti-lolli-inflation-policy.yaml, lolli-lint.ixql (Level 0/1 companion)
+--- Trigger: weekly schedule or on-demand via `/demerzel dep-graph`
+--- Output: dependency graph edges + orphan report
+
+--- ## Step 1: Collect all pipelines
+--- Scan both production pipelines and example pipelines to get the full picture.
+
+all_pipelines <- parallel(
+    ix.io.glob("pipelines/*.ixql"),
+    ix.io.glob("examples/ixql/*.ixql")
+  )
+  → ix.ml.flatten()
+
+--- ## Step 2: Extract read/write paths from every pipeline
+--- For each pipeline, parse out every `ix.io.read()`, `read()`, `ix.io.write()`,
+--- `write()`, and `ix.io.append()` call with its path argument.
+
+io_map <- all_pipelines
+  → fan_out(
+      all_pipelines.map(pipeline =>
+        ix.io.read(pipeline)
+        → tars.extract(fields: [
+            "read_paths",          -- ix.io.read() and read() arguments
+            "write_paths",         -- ix.io.write(), write(), ix.io.append() arguments
+            "glob_patterns",       -- ix.io.glob() patterns (implicit reads)
+            "side_effect_targets"  -- alert() channels, ix.io.git() targets
+          ])
+        → {
+            pipeline: pipeline,
+            reads:  extracted.read_paths ++ extracted.glob_patterns,
+            writes: extracted.write_paths,
+            side_effects: extracted.side_effect_targets
+          }
+      )
+    )
+
+--- ## Step 3: Build dependency edges
+--- Pipeline A writes X, Pipeline B reads X → edge A → B.
+--- Use path pattern matching to handle globs (e.g., `state/beliefs/*.json`
+--- matches `state/beliefs/confidence.belief.json`).
+
+edges <- io_map
+  → fan_out(
+      -- For each writer, find all readers of the same path
+      io_map.map(writer =>
+        writer.writes
+          → fan_out(
+              write_paths.map(write_path =>
+                io_map
+                  → filter(reader => reader.pipeline != writer.pipeline
+                           && reader.reads.any(r => path_matches(r, write_path)))
+                  → map(reader => {
+                      from: writer.pipeline,
+                      to: reader.pipeline,
+                      via: write_path,
+                      type: "data_dependency"
+                    })
+              )
+            )
+      )
+    )
+  → ix.ml.flatten()
+  → tars.deduplicate(by: ["from", "to", "via"])
+
+--- ## Step 4: Flag orphaned outputs — write() with no reader
+--- These are pipelines producing data that nothing consumes.
+
+orphaned_outputs <- io_map
+  → fan_out(
+      io_map.map(p =>
+        p.writes
+          → filter(write_path =>
+              not edges.any(e => e.from == p.pipeline && e.via == write_path)
+            )
+          → when not empty: {
+              kind: "orphaned_output",
+              pipeline: p.pipeline,
+              paths: orphaned_write_paths,
+              severity: "warning",
+              note: "This pipeline writes data that no other pipeline reads"
+            }
+      )
+    )
+  → filter(not empty)
+
+--- ## Step 5: Flag orphaned inputs — read() with no writer
+--- These are pipelines expecting data that nothing produces.
+--- Excludes static files (constitutions, policies, schemas) which are
+--- hand-authored, not pipeline-produced.
+
+static_paths <- ["constitutions/", "policies/", "schemas/", "personas/",
+                 "grammars/", "templates/", "contracts/", "tests/",
+                 "docs/", "examples/"]
+
+orphaned_inputs <- io_map
+  → fan_out(
+      io_map.map(p =>
+        p.reads
+          → filter(read_path =>
+              not static_paths.any(s => read_path.starts_with(s))
+              && not io_map.any(other =>
+                   other.pipeline != p.pipeline
+                   && other.writes.any(w => path_matches(read_path, w))
+                 )
+              && not ix.io.exists(read_path)    -- also check if file exists on disk
+            )
+          → when not empty: {
+              kind: "orphaned_input",
+              pipeline: p.pipeline,
+              paths: orphaned_read_paths,
+              severity: "error",
+              note: "This pipeline reads data that no pipeline writes and does not exist on disk"
+            }
+      )
+    )
+  → filter(not empty)
+
+--- ## Step 6: Detect cycles in the dependency graph
+--- Circular dependencies between pipelines indicate potential infinite loops.
+
+cycles <- edges
+  → tars.detect_cycles(graph: edges, node_key: "pipeline")
+  → when not empty: {
+      kind: "circular_dependency",
+      cycles: detected_cycles,
+      severity: "critical",
+      note: "Circular data dependency — pipelines may deadlock"
+    }
+
+--- ## Step 7: Produce dependency report
+
+dep_report <- parallel(
+    -- Graph summary
+    {
+      total_pipelines: all_pipelines.count,
+      total_edges: edges.count,
+      graph: edges,
+      connected_components: tars.connected_components(edges),
+      isolated_pipelines: all_pipelines
+        → filter(p => not edges.any(e => e.from == p || e.to == p))
+    },
+    -- Orphan summary
+    {
+      orphaned_outputs: orphaned_outputs,
+      orphaned_inputs: orphaned_inputs,
+      orphaned_output_count: orphaned_outputs.count,
+      orphaned_input_count: orphaned_inputs.count
+    },
+    -- Cycle summary
+    {
+      cycles: cycles,
+      has_cycles: cycles is not empty
+    }
+  )
+  → tars.synthesize(template: "cross-pipeline-deps-report")
+  → explanation_requirement                        -- Article 2: explain each finding
+
+--- Persist and alert
+parallel(
+    write("state/driver/cross-pipeline-deps.json", dep_report),
+    when orphaned_outputs.count > 0 || orphaned_inputs.count > 0:
+      alert(discord,
+        "Dep graph: {{dep_report.total_edges}} edges, {{orphaned_outputs.count}} orphaned outputs, {{orphaned_inputs.count}} orphaned inputs"
+      )
+  )
+
+  → compound:
+      harvest dep_report.graph_patterns
+      harvest orphaned_outputs                     -- feed into lolli-lint Level 0
+      promote dependency_patterns if T >= 0.9
+      teach pipeline_topology to seldon
+      log dep_graph_scan to "state/evolution/"
