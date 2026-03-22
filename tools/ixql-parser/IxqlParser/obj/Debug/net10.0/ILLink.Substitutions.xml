@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="IxqlParser">
+    <resource name="FSharpSignatureData.IxqlParser" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.IxqlParser" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.IxqlParser" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.IxqlParser" action="remove"></resource>
+    <resource name="FSharpOptimizationData.IxqlParser" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.IxqlParser" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.IxqlParser" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.IxqlParser" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.IxqlParser" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.IxqlParser" action="remove"></resource>
+  </assembly>
+</linker>

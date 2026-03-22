@@ -1,0 +1,5 @@
+C:\Users\spare\source\repos\Demerzel\tools\ixql-parser\IxQL.Parser\obj\Debug\net10.0\IxQL.Parser.fsproj.AssemblyReference.cache
+C:\Users\spare\source\repos\Demerzel\tools\ixql-parser\IxQL.Parser\obj\Debug\net10.0\IxQL.Parser.AssemblyInfoInputs.cache
+C:\Users\spare\source\repos\Demerzel\tools\ixql-parser\IxQL.Parser\obj\Debug\net10.0\IxQL.Parser.AssemblyInfo.fs
+C:\Users\spare\source\repos\Demerzel\tools\ixql-parser\IxQL.Parser\obj\Debug\net10.0\IxQL.Parser.fsproj.CoreCompileInputs.cache
+C:\Users\spare\source\repos\Demerzel\tools\ixql-parser\IxQL.Parser\obj\Debug\net10.0\IxQL.Parser.sourcelink.json

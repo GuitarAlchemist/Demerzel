@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="IxQL.Parser.Tests/IxQL.Parser.Tests.fsproj" />
+  <Project Path="IxQL.Parser/IxQL.Parser.fsproj" />
+</Solution>
