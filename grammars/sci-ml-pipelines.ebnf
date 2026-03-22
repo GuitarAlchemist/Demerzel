@@ -219,7 +219,77 @@ reactive_pipeline ::= reactive_source "=>" pipeline "=>" output_sink
                     | pipeline "=>" output_sink   (* batch with explicit sink *)
 
 (* ============================================================ *)
-(* 10. Evolution Hooks                                           *)
+(* 10. MCP Orchestration — formerly MOG                          *)
+(* ============================================================ *)
+
+(* MCP tool invocation and orchestration folded into IxQL.        *)
+(* Supersedes: docs/superpowers/specs/2026-03-21-mcp-orchestration-grammar-design.md *)
+(* See: #109 for rationale.                                       *)
+
+mcp_pipeline ::= mcp_step ("→" mcp_step)*
+
+mcp_step ::= tool_invocation | parallel_tools | gated_tool
+           | binding_step | conditional_step
+
+tool_invocation ::= namespace "." method "(" arg_list? ")"
+namespace       ::= identifier ("." identifier)*        (* e.g., context7, tars.grammar, ix.ml *)
+arg_list        ::= expression ("," expression)*
+
+parallel_tools ::= "parallel" "(" tool_invocation ("," tool_invocation)+ ")"
+gated_tool     ::= "when" mog_guard ":" mcp_step
+binding_step   ::= identifier "<-" mcp_step            (* bind result to variable *)
+conditional_step ::= "if" mog_guard mcp_step ("else" mcp_step)?
+
+(* Tetravalent gates — from MOG spec *)
+mog_guard       ::= membership_test | semantic_predicate | guard_conjunction
+membership_test ::= truth_value comparison_op? confidence_threshold
+guard_conjunction ::= mog_guard "&&" mog_guard
+
+truth_value          ::= "T" | "F" | "U" | "C"
+comparison_op        ::= ">=" | "<=" | ">" | "<"
+confidence_threshold ::= float_literal
+
+semantic_predicate ::= "?" identifier "(" arg_list? ")"    (* custom predicate function *)
+
+(* MCP-specific data flow *)
+mcp_source ::= tool_invocation                              (* use tool output as data_source *)
+mcp_sink   ::= "mcp_register" "(" tool_name "," description ")"
+             | "mcp_invoke" "(" tool_invocation ")"
+
+(* Compound phase — harvest learnings from MCP orchestration *)
+mcp_compound ::= "compound" ":" compound_step+
+compound_step ::= "harvest" expression
+                | "promote" expression "if" mog_guard
+                | "teach" expression "to" identifier
+                | "log" expression
+
+(* Examples:
+   -- Governed MCP orchestration with tetravalent gates
+   result <- context7.resolve("react")
+   → when T >= 0.8: analysis <- tars.analyze(result)
+   → when T >= 0.7: ix.train(analysis.features)
+   → compound:
+       harvest analysis.insights
+       promote analysis if T >= 0.9
+       teach analysis to seldon
+
+   -- Parallel tool fanout
+   parallel(
+     tars.grammar.parse(input),
+     ix.ml.classify(input),
+     context7.query("react", input)
+   ) → when T >= 0.7: merge_results → output_sink
+
+   -- Reactive MCP: GitHub webhook triggers orchestration
+   webhook(github, "push")
+   → context7.resolve(repo)
+   → when T >= 0.8: tars.analyze(changes)
+   → ix.train(features)
+   → alert(discord, "Analysis complete")
+*)
+
+(* ============================================================ *)
+(* 11. Evolution Hooks                                           *)
 (* ============================================================ *)
 
 (* This grammar evolves via: *)
