@@ -1,0 +1,21 @@
+[
+  {
+    "timestamp": "2026-03-22T00:00:00Z",
+    "scan_date": "2026-03-22",
+    "trivial_drifts_fixed": 7,
+    "structural_flags": 0,
+    "artifacts_checked": 9,
+    "fixes": [
+      {"artifact": "Policies", "was": 24, "now": 27, "file": "README.md"},
+      {"artifact": "Grammars", "was": 21, "now": 26, "file": "README.md"},
+      {"artifact": "Schemas", "was": 23, "now": 24, "file": "README.md"},
+      {"artifact": "Behavioral tests", "was": 44, "now": 53, "file": "README.md"},
+      {"artifact": "Skills", "was": 37, "now": 39, "file": "README.md"},
+      {"artifact": "Departments", "was": 16, "now": 21, "file": "README.md"},
+      {"artifact": "Streeling prose", "was": "16-department", "now": "21-department", "file": "README.md"},
+      {"artifact": "Policies count", "was": 24, "now": 27, "file": "CLAUDE.md"},
+      {"artifact": "Behavioral tests count", "was": 41, "now": 53, "file": "CLAUDE.md"},
+      {"artifact": "Schemas count", "was": "6 contract schemas", "now": "24 JSON schemas", "file": "CLAUDE.md"}
+    ]
+  }
+]

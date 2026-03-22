@@ -51,12 +51,12 @@ Demerzel/
 |----------|-------|--------|
 | Constitutions | 3 + harm taxonomy | `constitutions/` |
 | Personas | 14 | `personas/*.persona.yaml` |
-| Policies | 24 | `policies/*.yaml` |
-| Grammars | 21 | `grammars/*.ebnf` |
-| Schemas | 23 | `schemas/*.json` |
-| Behavioral tests | 44 | `tests/behavioral/*.md` |
-| Skills | 37 | `.claude/skills/*/` |
-| Departments | 16 | `state/streeling/departments/` |
+| Policies | 27 | `policies/*.yaml` |
+| Grammars | 26 | `grammars/*.ebnf` |
+| Schemas | 24 | `schemas/*.json` |
+| Behavioral tests | 53 | `tests/behavioral/*.md` |
+| Skills | 39 | `.claude/skills/*/` |
+| Departments | 21 | `state/streeling/departments/` |
 | Courses | 14 | `state/streeling/courses/**/en/` |
 
 ## Usage
@@ -78,7 +78,7 @@ When adding governance artifacts:
 
 ## Streeling University
 
-Demerzel hosts [Streeling University](state/streeling/) — a 16-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
+Demerzel hosts [Streeling University](state/streeling/) — a 21-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
 
 ## IxQL — ML Pipeline Language
 
