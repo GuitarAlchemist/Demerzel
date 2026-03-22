@@ -1,0 +1,251 @@
+name: anti-lolli-inflation
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: "Prevent governance inflation by enforcing ERGOL/LOLLI ratio discipline — freeze creation when artifact count grows 3x faster than productive capacity for 3 cycles."
+rationale: |
+  LOLLI (artifact count) is a vanity metric. ERGOL (citations + PDCA completions + U→T
+  transitions + knowledge transfers) measures productive capacity. When LOLLI/ERGOL > 3.0
+  for 3 consecutive cycles, new artifacts are being created faster than existing ones
+  generate value. This is governance inflation — the exact failure mode the Zeroth Law
+  and compounding-metrics-policy exist to prevent.
+
+  Every artifact carries maintenance cost, staleness risk, and cognitive overhead. An
+  unchecked creation impulse destroys the signal-to-noise ratio of the governance corpus
+  and makes the system harder to navigate, audit, and trust.
+
+  This policy operationalizes the "execute existing before creating new" principle as an
+  enforceable rule, not a guideline.
+
+constitutional_basis:
+  - Article 4 (Proportionality) — artifact creation must be proportional to demonstrated need
+  - Article 8 (Observability) — LOLLI/ERGOL ratio must be a tracked, visible metric
+  - Article 9 (Bounded Autonomy) — creation freezes enforce a hard autonomy boundary
+  - Article 3 (Reversibility) — prefer deprecation triggers over deletion; prefer extension over replacement
+
+principles:
+  - "ERGOL is signal; LOLLI is noise until proven otherwise"
+  - "A new artifact without a named consumer and timeline is speculative debt"
+  - "Execute existing artifacts before creating new ones"
+  - "A 14-day zero-citation artifact is a ghost — name it and close it"
+  - "Creation freezes are governance health interventions, not punishments"
+  - "The ratio trend over 3 cycles is signal; a single cycle spike is noise"
+
+vsm_mapping:
+  system: 3
+  function: "Regulate artifact creation rate against productive output"
+  relationship_to_3star: "System 3* probes for LOLLI inflation as a weakness signal"
+  relationship_to_4: "System 4 must factor creation freeze into strategy planning"
+
+definitions:
+  ERGOL:
+    description: "Productive capacity — the sum of governance outputs that generate downstream value"
+    components:
+      citations: "Times an artifact is referenced in decisions, manifests, research, or other artifacts"
+      pdca_completions: "PDCA cycles that reached the Act phase and were verified closed"
+      u_to_t_transitions: "Beliefs resolved from Unknown (U) to True (T) with evidence"
+      knowledge_transfers: "Seldon teaching events where the learner passed assessment"
+    formula: |
+      ERGOL_n = citations_n + pdca_completions_n + u_to_t_transitions_n + knowledge_transfers_n
+    note: "Unweighted sum — unlike D_c composite, anti-LOLLI uses raw counts for simplicity and auditability"
+
+  LOLLI:
+    description: "Artifact count — total governance artifacts created in a cycle"
+    components:
+      - personas
+      - policies
+      - constitutions
+      - schemas
+      - contracts
+      - tests
+      - examples
+      - templates
+    formula: "LOLLI_n = count(artifacts created in cycle N)"
+    exclusions:
+      - "State file updates (not new artifacts)"
+      - "Version bumps to existing artifacts (not new artifacts)"
+      - "Deprecation records (counted as negative LOLLI in ratio adjustment)"
+
+  lolli_ergol_ratio:
+    formula: "ratio_n = LOLLI_n / max(ERGOL_n, 1)"
+    note: "max(ERGOL_n, 1) prevents division by zero; if ERGOL = 0 the ratio is LOLLI (severe)"
+
+inflation_threshold:
+  ratio: 3.0
+  window: 3     # consecutive cycles
+  meaning: "LOLLI is growing 3x faster than ERGOL — governance is inflating, not compounding"
+  action: creation_freeze
+
+creation_freeze:
+  trigger: "lolli_ergol_ratio > 3.0 for 3 consecutive cycles"
+  scope: "No new artifacts of any type may be created until freeze is lifted"
+  exceptions:
+    - "Artifacts explicitly demanded by an open critical issue (severity: critical)"
+    - "Security or constitutional compliance artifacts (requires human approval)"
+    - "Deprecation records (these reduce LOLLI; always permitted)"
+  lift_conditions:
+    - "ERGOL_n >= LOLLI_n for 2 consecutive cycles (artifact utilization catches up)"
+    - "Or: lolli_ergol_ratio drops below 2.0 for 1 cycle after remediation"
+  lift_authority: "Human governance owner or automated detection after conditions met"
+  state_file: "state/driver/creation-freeze.json"
+  freeze_record_fields:
+    - triggered_at_cycle
+    - ratio_history_3cycles
+    - lift_conditions_met
+    - lifted_at_cycle
+    - lifted_by
+
+artifact_registration:
+  rule: "Every new artifact MUST declare its consumer and timeline before creation is permitted"
+  required_fields:
+    consumer: "Name of the repo, policy, persona, or process that will cite this artifact"
+    timeline: "Date by which the artifact must have its first citation (ISO 8601)"
+    justification: "One sentence: what gap does this fill that no existing artifact covers?"
+  enforcement: "Artifact without consumer + timeline is rejected; creation freeze adds 1 cycle to penalty window"
+  declaration_location: "YAML front-matter field 'registration' on the artifact itself"
+  example: |
+    registration:
+      consumer: "weakness-prober-policy.yaml"
+      timeline: "2026-04-05"
+      justification: "Provides LOLLI/ERGOL ratio input that weakness-prober currently lacks"
+
+execute_before_create:
+  rule: "Before creating a new artifact, verify that no existing artifact can be extended or composed"
+  checklist:
+    - "Is there an existing artifact in the same domain? → Extend it."
+    - "Can two existing artifacts be composed to cover the gap? → Compose them."
+    - "Is this gap caused by an existing artifact being stale? → Update it."
+    - "Is this gap genuinely novel with a named consumer? → Create with registration."
+  enforcement: "Agent must document checklist outcome in commit message when creating any artifact"
+
+deprecation_triggers:
+  zero_citation_window: 14   # days
+  rule: "Any artifact with 0 citations after 14 days of creation is flagged for deprecation review"
+  process:
+    - step: flag
+      action: "Add deprecation_candidate: true to artifact front-matter or evolution state"
+      timing: "Day 14 after creation — automated via staleness-detection-policy"
+    - step: review
+      action: "Human or agent reviews: is the artifact pre-citeable (e.g., a template not yet deployed)?"
+      timing: "Within 3 days of flag"
+    - step: decide
+      action: "Archive (move to deprecated/) or extend timeline with new consumer declaration"
+      timing: "Within 7 days of flag"
+    - step: record
+      action: "Log decision in state/driver/deprecation-log.json"
+  exceptions:
+    - "Artifacts in their registration timeline grace period are not flagged (timeline not yet reached)"
+    - "Constitutional artifacts and root schemas are exempt (they are cited implicitly)"
+
+detection_process:
+  steps:
+    - name: collect
+      action: "At end of each Driver cycle COMPOUND phase: count LOLLI and ERGOL for cycle N"
+      sources:
+        - "Git diff for new artifact files — LOLLI count"
+        - "state/evolution/*.evolution.json — citation_count delta"
+        - "state/pdca/*.pdca.json — Act-phase completions"
+        - "state/beliefs/*.belief.json — U→T transitions"
+        - "state/streeling/ — teaching session logs"
+
+    - name: compute_ratio
+      action: "ratio_n = LOLLI_n / max(ERGOL_n, 1)"
+
+    - name: check_window
+      action: "If ratio_n > 3.0 and ratio_{n-1} > 3.0 and ratio_{n-2} > 3.0 → trigger creation_freeze"
+
+    - name: check_deprecation
+      action: "Scan all artifacts created > 14 days ago; flag any with citation_count = 0"
+
+    - name: report
+      action: "Append ratio result to state/driver/lolli-ergol-history.json; include in governance report"
+      format: |
+        Anti-LOLLI Report (Cycle {cycle_id}):
+        - LOLLI: {count} new artifacts
+        - ERGOL: {citations} citations + {pdca} PDCA + {u_to_t} U→T + {transfers} transfers = {total}
+        - Ratio: {ratio} ({status: healthy | warning | freeze_triggered})
+        - Trend: {improving | stable | worsening} over last {n} cycles
+        - Creation freeze: {active | inactive}
+        - Deprecation candidates: {count} artifacts flagged
+        - Action: {action or "none"}
+
+thresholds:
+  healthy:
+    max_ratio: 1.5
+    meaning: "ERGOL growth is comfortably outpacing artifact creation"
+    action: none
+
+  watch:
+    min_ratio: 1.5
+    max_ratio: 2.5
+    meaning: "Artifact creation is accelerating relative to utilization — monitor"
+    action: "Log warning; add 'verify consumer citations' task to next PLAN"
+
+  warning:
+    min_ratio: 2.5
+    max_ratio: 3.0
+    meaning: "LOLLI significantly outpacing ERGOL — one more cycle at this rate triggers freeze"
+    action: "Conscience signal; creation requires pre-approval with consumer declaration"
+
+  freeze:
+    min_ratio: 3.0
+    consecutive_cycles: 3
+    action: creation_freeze
+
+integration:
+  compounding_metrics_policy:
+    relationship: "Anti-LOLLI enforces the LOLLI inflation anti-pattern defined in compounding-metrics-policy"
+    data_sharing: "Reads ERGOL components from state/driver/dc-velocity.json; writes ratio to state/driver/lolli-ergol-history.json"
+    trigger: "LOLLI inflation anti-pattern in compounding-metrics-policy references this policy for enforcement rules"
+
+  weakness_prober:
+    relationship: "LOLLI/ERGOL ratio is a first-class weakness probe input"
+    probe_name: "lolli_ergol_ratio_check"
+    probe_frequency: "Every cycle"
+    failure_condition: "ratio > 2.5"
+    score_contribution: "Weighted as high-severity weakness if ratio > 3.0"
+
+  staleness_detection_policy:
+    relationship: "Triggers deprecation candidate flagging at 14-day zero-citation threshold"
+    data_sharing: "staleness-detection-policy writes deprecation_candidate flags; anti-LOLLI reads them"
+
+  conscience:
+    triggers:
+      - "Creation freeze activation → conscience signal (severity: warning)"
+      - "ratio > 3.0 for first cycle → conscience signal (severity: notice)"
+      - "Artifact created without consumer declaration → conscience signal (severity: warning)"
+
+  driver_plan:
+    rule: "If creation_freeze active → PLAN phase must include 'cite or deprecate' task before any creation tasks"
+
+observability:
+  metrics:
+    - name: lolli_ergol_ratio_current
+      formula: "LOLLI_n / max(ERGOL_n, 1) for most recent cycle"
+      target: "< 1.5"
+      alert: "> 2.5 (warning) or > 3.0 for 3 cycles (freeze)"
+
+    - name: creation_freeze_status
+      values: [active, inactive]
+      alert: "active — requires human acknowledgment"
+
+    - name: deprecation_candidates_count
+      formula: "count(artifacts with deprecation_candidate: true)"
+      target: "0"
+      alert: "> 3 — multiple uncited artifacts accumulating"
+
+    - name: artifacts_without_registration
+      formula: "count(new artifacts missing consumer + timeline declaration)"
+      target: "0"
+      alert: "> 0 — policy violation"
+
+state:
+  directory: "state/driver/"
+  history_file: "lolli-ergol-history.json"
+  freeze_file: "creation-freeze.json"
+  deprecation_log: "deprecation-log.json"
+  freshness_cycles: 1   # per staleness-detection-policy — ratio must be computed every cycle
+
+schedule:
+  primary: "End of every Driver cycle COMPOUND phase"
+  deprecation_scan: "Daily at 23:00 — check 14-day zero-citation threshold"
+  on_demand: "/demerzel anti-lolli --report"
