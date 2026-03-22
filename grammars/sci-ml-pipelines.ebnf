@@ -289,7 +289,61 @@ compound_step ::= "harvest" expression
 *)
 
 (* ============================================================ *)
-(* 11. Evolution Hooks                                           *)
+(* 11. Pipeline Identity & Routing                               *)
+(* ============================================================ *)
+
+(* Every pipeline has a formal identity for invocation *)
+pipeline_declaration ::= "pipeline" handle display_name? "{" pipeline_body "}"
+
+handle       ::= "@" identifier              (* formal address: @driver-cycle *)
+display_name ::= string_literal              (* human-readable: "Driver Cycle" *)
+
+pipeline_body ::= metadata? pipeline
+metadata ::= version_decl? trigger_decl? description_decl?
+version_decl     ::= "version:" semver
+trigger_decl     ::= "trigger:" trigger_source
+description_decl ::= "description:" string_literal
+
+trigger_source ::= cron_source | webhook_source | file_watcher
+                 | "manual" | "on_invoke"
+
+(* Formal invocation — deterministic, typed *)
+invoke ::= "invoke" handle ("(" arg_list? ")")?
+         | "invoke" handle "=>" binding_step
+
+(* Semantic routing — fuzzy, intent-based *)
+route ::= "route" "(" intent_description ")" routing_options?
+routing_options ::= "prefer:" handle | "fallback:" handle
+intent_description ::= string_literal
+
+(* Resolution priority:
+   1. Exact handle match (@driver-cycle)
+   2. Display name match ("Driver Cycle")
+   3. Semantic similarity to description (cosine > 0.7)
+   4. Fallback handle if specified
+   5. Error: no matching pipeline *)
+
+(* Pipeline registry: state/pipeline-registry.json
+   Updated by MetaSync on every pipeline file change *)
+
+(* Examples:
+   pipeline @driver-cycle "Driver Cycle" {
+     version: "1.0.0"
+     trigger: cron("0 6 * * *")
+     wake → invoke @gov-audit-001(level: "tier1")
+         → invoke @weakness-probe
+         → invoke @research-cycle(department: auto_select)
+   }
+
+   result <- invoke @gov-audit-001(level: "full")
+   → when result.conclusion == U: invoke @weakness-probe(focus: result.gaps)
+
+   → route("find related research")        -- resolves to @research-cycle
+   → route("check for drift")              -- resolves to @metasync
+*)
+
+(* ============================================================ *)
+(* 12. Evolution Hooks                                           *)
 (* ============================================================ *)
 
 (* This grammar evolves via: *)
