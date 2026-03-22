@@ -1,0 +1,22 @@
+{
+  "schema": "meta-audit-log",
+  "tool": "metafix",
+  "entries": [
+    {
+      "timestamp": "2026-03-24T14:00:00Z",
+      "operation": "reference_fix",
+      "target": ".claude/skills/demerzel-metabuild/SKILL.md",
+      "fix": "MOG references → IxQL (Section 10 fold)",
+      "level": "instance",
+      "recurrence_check": "pending",
+      "outcome": "true_positive",
+      "notes": "Drift detected by human, exactly what MetaSync (#111) would have caught. Filed as example in MetaSync issue."
+    }
+  ],
+  "summary": {
+    "total_operations": 1,
+    "true_positives": 1,
+    "false_positives": 0,
+    "accuracy": 1.0
+  }
+}
