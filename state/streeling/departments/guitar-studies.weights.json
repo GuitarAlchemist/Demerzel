@@ -2,24 +2,24 @@
   "department": "guitar-studies",
   "grammar_version": "1.0.0",
   "hypothesis_weights": {
-    "inductive": 0.35,
-    "deductive": 0.10,
-    "abductive": 0.20,
+    "inductive": 0.37,
+    "deductive": 0.09,
+    "abductive": 0.19,
     "analogical": 0.25,
     "combinatorial": 0.10
   },
   "test_weights": {
-    "empirical": 0.30,
+    "empirical": 0.28,
     "formal_proof": 0.05,
-    "simulation": 0.15,
-    "thought_experiment": 0.15,
-    "cross_validation": 0.25,
+    "simulation": 0.14,
+    "thought_experiment": 0.14,
+    "cross_validation": 0.29,
     "adversarial": 0.10
   },
   "metadata": {
-    "last_updated": "2026-03-18",
-    "cycle_count": 0,
-    "total_T": 0,
+    "last_updated": "2026-03-23",
+    "cycle_count": 1,
+    "total_T": 1,
     "total_F": 0,
     "total_U": 0,
     "total_C": 0
