@@ -8,7 +8,12 @@
 
 Making coding 10x faster with AI gives you only 1.4x faster product delivery — because coding was only 30% of the work.
 
-This is [Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law), and Sebastian Müller documented it happening in real engineering teams. AI solved the speed problem and created five new ones:
+This is **[Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law)** — a 1967 principle from computer architecture that says: **speeding up one part of a system only helps proportionally to how much that part matters.** If coding is 30% of your delivery pipeline and you make it infinitely fast, the other 70% (requirements, review, testing, deployment, alignment) still takes the same time. Maximum speedup: 1/(1-0.3) = 1.43x. Not 10x.
+
+[![Amdahl's Law diagram](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/AmdsBar.svg/500px-AmdahlsBar.svg.png)](https://en.wikipedia.org/wiki/Amdahl%27s_law)
+*[Amdahl's Law](https://en.wikipedia.org/wiki/Amdahl%27s_law): the green portion (parallelizable/automatable work) shrinks, but the blue portion (sequential/human work) stays fixed. This is why 10x faster coding ≠ 10x faster products.*
+
+Sebastian Müller documented this happening in real engineering teams. AI solved the speed problem and created five new ones:
 
 1. **Requirements are still vague.** Now you build the wrong thing faster.
 2. **Code review can't keep up.** Humans review at human speed. AI generates at AI speed.
