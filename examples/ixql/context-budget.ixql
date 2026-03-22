@@ -1,9 +1,11 @@
--- Context Budget: The context engine (#163) as an IxQL pipeline
--- Demonstrates: IxQL managing AI context windows as a governed resource
--- Flow: task → artifact discovery → relevance scoring → budget allocation → selection
--- Real artifacts: policies/context-management-policy.yaml, state/, schemas/
+--- ## Context Budget Pipeline
+--- The context engine (#163) as an IxQL pipeline.
+--- Demonstrates: IxQL managing AI context windows as a governed resource.
+--- Flow: task → artifact discovery → relevance scoring → budget allocation → selection
+--- Real artifacts: [context-management policy](policies/context-management-policy.yaml), `state/`, `schemas/`
 
--- Step 1: Parse incoming task and extract intent signals
+--- ## Step 1: Parse Task Intent
+--- Extract intent signals and classify the task category.
 task <- ix.io.read("state/driver/current-task.json")
 
 task_signals <- task
@@ -19,9 +21,14 @@ task_signals <- task
       method: "semantic"
     )
 
--- Step 2: Discover candidate artifacts across the ecosystem
+--- ## Step 2: Discover Candidate Artifacts
+--- Scan the ecosystem for artifacts relevant to the task category:
+--- - **Governance/audit** → constitutions, policies, personas
+--- - **Governance/debugging** → beliefs, conscience signals, evolution
+--- - **Research** → grammars, departments, courses
+--- - **Repo-scoped** → code artifacts from consumer repos
+--- - **Always** → recent manifests and health scores
 candidates <- fan_out(
-    -- Governance artifacts (constitutions, policies, personas)
     when task_signals.category in ["governance", "audit"]:
       parallel(
         ix.io.glob("constitutions/*.md"),
@@ -29,7 +36,6 @@ candidates <- fan_out(
         ix.io.glob("personas/*.persona.yaml")
       ),
 
-    -- State artifacts (beliefs, conscience, evolution)
     when task_signals.category in ["governance", "debugging"]:
       parallel(
         ix.io.glob("state/beliefs/*.belief.json"),
@@ -37,7 +43,6 @@ candidates <- fan_out(
         ix.io.glob("state/evolution/*.evolution.json")
       ),
 
-    -- Research artifacts (grammars, courses, weights)
     when task_signals.category == "research":
       parallel(
         ix.io.glob("grammars/*.ebnf"),
@@ -45,7 +50,6 @@ candidates <- fan_out(
         ix.io.glob("state/streeling/courses/{dept}/en/*.md")
       ),
 
-    -- Code artifacts (from consumer repos)
     when task_signals.repo_scope:
       fan_out(
         task_signals.repo_scope.map(repo =>
@@ -58,21 +62,22 @@ candidates <- fan_out(
     ix.io.read("state/manifests/latest.manifest.json")
   )
 
--- Step 3: Score each candidate for relevance to the task
+--- ## Step 3: Score Candidates for Relevance
+--- Four-dimensional relevance scoring:
+--- - **Semantic** (0.40): content matches task intent
+--- - **Recency** (0.20): artifact freshness
+--- - **Citation** (0.20): how often artifact is referenced
+--- - **Constitutional** (0.20): article match with task
 scored <- candidates
   → fan_out(
       candidates.map(artifact =>
         parallel(
-          -- Semantic relevance: does content match task intent?
           tars.score_relevance(artifact, task_signals.description)
             → { dimension: "semantic", score: relevance_score },
-          -- Recency: how fresh is this artifact?
           ix.ml.compute(metric: "freshness_score", input: artifact.last_modified)
             → { dimension: "recency", score: freshness },
-          -- Citation frequency: is this artifact frequently referenced?
           ix.ml.compute(metric: "citation_count", input: artifact.path)
             → { dimension: "citation", score: normalized_citations },
-          -- Constitutional weight: does task reference articles this artifact covers?
           tars.match_articles(artifact, task_signals.constitutional_articles_referenced)
             → { dimension: "constitutional", score: article_match_score }
         )
@@ -87,7 +92,12 @@ scored <- candidates
     )
   → ix.ml.rank(by: "relevance", order: "descending")
 
--- Step 4: Budget allocation — fit artifacts into context window
+--- ## Step 4: Budget Allocation
+--- Fit artifacts into context window using knapsack optimization.
+--- Constraints:
+--- - Must include constitutional articles with score >= 0.8
+--- - No single artifact exceeds 30% of budget
+--- - 20% reserved for response generation
 budget <- ix.io.read("state/driver/context-budget.json")
   → { max_tokens: budget.max_tokens, reserved: budget.system_prompt_tokens }
 
@@ -100,16 +110,16 @@ selected <- scored
       value_key: "relevance",
       weight_key: "token_count",
       constraints: {
-        -- Always include: active constitution articles referenced by task
         must_include: scored → filter(dimension == "constitutional" && score >= 0.8),
-        -- Never exceed 30% budget on any single artifact
         max_per_item: available_tokens * 0.30,
-        -- Reserve 20% for response generation
         response_reserve: available_tokens * 0.20
       }
     )
 
--- Step 5: Assemble context package with governance checks
+--- ## Step 5: Assemble Context Package
+--- Constitutional content first, then details. Relevance scores included as metadata.
+--- Per **Article 10** (Stakeholder Pluralism), check no stakeholder excluded.
+--- Per **Article 2** (Transparency), explain selection rationale.
 context_package <- selected
   → fan_out(
       selected.map(s =>
@@ -127,7 +137,8 @@ context_package <- selected
   → bias_assessment                           -- Article 10: did we exclude any stakeholder?
   → explanation_requirement                    -- Article 2: explain selection rationale
 
--- Step 6: Persist selection metadata for learning
+--- ## Step 6: Persist Selection Metadata
+--- Track selection patterns for learning. Feedback from task outcomes adjusts weights.
 write("state/oversight/context-selections/{date}-{task_id}.json", {
     task: task_signals,
     candidates_found: candidates.count,
@@ -139,6 +150,7 @@ write("state/oversight/context-selections/{date}-{task_id}.json", {
     bottom_relevance: selected.bottom(1).relevance
   })
 
+--- ## Compound
   → compound:
       harvest selected.relevance_patterns
       -- Learn which artifacts actually helped (feedback from task outcome)

@@ -1,9 +1,10 @@
--- Weakness Probe — Automated weakest-link detection
--- Source: Issue #97, completeness-instinct-policy.yaml
--- Trigger: driver RECON phase or on-demand
--- Output: ranked weakness report with remediation proposals
+--- ## Weakness Probe Pipeline
+--- Automated weakest-link detection across the governance ecosystem.
+--- Source: Issue #97, [completeness-instinct policy](policies/completeness-instinct-policy.yaml)
+--- Trigger: driver RECON phase or on-demand
+--- Output: ranked weakness report with remediation proposals
 
--- Gather ecosystem state
+--- ### Gather Ecosystem State
 health_scores <- ix.io.read("state/driver/health-scores.json")
 beliefs       <- ix.io.read("state/beliefs/*.belief.json")
 evolution     <- ix.io.read("state/evolution/*.evolution.json")
@@ -12,7 +13,9 @@ conscience    <- ix.io.read("state/conscience/signals/*.signal.json")
 departments   <- ix.io.read("state/streeling/departments/*.department.json")
 weights       <- ix.io.read("state/streeling/departments/*.weights.json")
 
--- Probe 1: Repo health — find weakest repo
+--- ## Probe 1: Repo Health
+--- Find the weakest repo across CI, tests, governance coverage, and dependency vulnerabilities.
+--- Each dimension weighted equally at 0.25.
 repo_weakness <- health_scores
   → ix.ml.rank(order: "ascending")         -- weakest first
   → fan_out(
@@ -37,81 +40,87 @@ repo_weakness <- health_scores
       )
     )
 
--- Probe 2: Belief weakness — stale or low-confidence beliefs driving decisions
+--- ## Probe 2: Belief Weakness
+--- Stale or low-confidence beliefs driving decisions:
+--- - **High**: stale beliefs cited in recent decisions (cited in 7 days, not updated in 14)
+--- - **Medium**: unresolved beliefs (value U or C)
+--- - **Medium**: beliefs with decaying confidence trend
 belief_weakness <- beliefs
   → fan_out(
-      -- Stale beliefs cited in recent decisions
       beliefs → filter(cited_in_last_7_days && !updated_in_last_14_days)
         → tars.classify(weakness: "stale_belief_in_use", severity: "high"),
-      -- Low-confidence beliefs (U or C)
       beliefs → filter(value in ["U", "C"])
         → tars.classify(weakness: "unresolved_belief", severity: "medium"),
-      -- Beliefs with decaying confidence
       beliefs → lag_features(window: 3)
         → filter(confidence_trend < -0.1)
         → tars.classify(weakness: "decaying_confidence", severity: "medium")
     )
 
--- Probe 3: Governance coverage — what's ungoverned?
+--- ## Probe 3: Governance Coverage
+--- Detect ungoverned areas:
+--- - **High**: policies or personas without behavioral tests
+--- - **Medium**: departments with zero research cycles
+--- - **Low**: unused grammars (no cycles, older than 30 days)
+--- - **Low**: orphaned schemas (unreferenced)
 governance_weakness <- fan_out(
-    -- Policies without behavioral tests
     ix.io.glob("policies/*.yaml")
       → filter(name not in ix.io.glob("tests/behavioral/*-cases.md").covered_policies)
       → tars.classify(weakness: "untested_policy", severity: "high"),
-    -- Personas without behavioral tests
     ix.io.glob("personas/*.persona.yaml")
       → filter(name not in ix.io.glob("tests/behavioral/*-cases.md").covered_personas)
       → tars.classify(weakness: "untested_persona", severity: "high"),
-    -- Departments with zero research cycles
     departments
       → filter(weights.metadata.cycle_count == 0)
       → tars.classify(weakness: "unresearched_department", severity: "medium"),
-    -- Grammars never used
     ix.io.glob("grammars/*.ebnf")
       → filter(weights.metadata.cycle_count == 0 && age_days > 30)
       → tars.classify(weakness: "unused_grammar", severity: "low"),
-    -- Schemas unreferenced
     ix.io.glob("schemas/*.schema.json")
       → tars.find_orphans(reference_scope: "all")
       → tars.classify(weakness: "orphaned_schema", severity: "low")
   )
 
--- Probe 4: Cycle effectiveness — are we improving?
+--- ## Probe 4: Cycle Effectiveness
+--- Are we improving? Analyze last 30 days of manifests:
+--- - **High**: recurring failures (semantically similar failed tasks, cluster >= 2)
+--- - **Medium**: sub-linear compounding (D_c < 1.0)
+--- - **High**: high revert rate (> 30%)
 cycle_weakness <- manifests
   → filter(age_days <= 30)
   → fan_out(
-      -- Tasks that keep failing
       manifests → filter(task_status == "failed" || task_status == "reverted")
         → tars.cluster(method: "semantic_similarity", threshold: 0.7)
         → filter(cluster_size >= 2)
         → tars.classify(weakness: "recurring_failure", severity: "high"),
-      -- Cycles with diminishing returns
       manifests → ix.ml.compute(metric: "compounding_dimension")
         → filter(D_c < 1.0)
         → tars.classify(weakness: "sub_linear_compounding", severity: "medium"),
-      -- Manifests with high revert ratio
       manifests → ix.ml.compute(metric: "revert_ratio")
         → filter(revert_ratio > 0.3)
         → tars.classify(weakness: "high_revert_rate", severity: "high")
     )
 
--- Probe 5: Conscience weakness — unresolved ethical signals
+--- ## Probe 5: Conscience Weakness
+--- Unresolved ethical signals:
+--- - **Critical**: active conscience signals older than 3 days (per [staleness policy](policies/staleness-detection-policy.yaml))
+--- - **High**: patterns with no resolution after 14 days
+--- - **Medium**: regrets unaddressed after 7 days
 conscience_weakness <- conscience
   → fan_out(
-      -- Aged signals
       conscience → filter(age_days > 3 && status == "active")
         → tars.classify(weakness: "stale_conscience_signal", severity: "critical"),
-      -- Patterns with no resolution
       ix.io.read("state/conscience/patterns/*.pattern.json")
         → filter(status == "active" && age_days > 14)
         → tars.classify(weakness: "unresolved_pattern", severity: "high"),
-      -- Regrets unaddressed
       ix.io.read("state/conscience/regrets/*.regret.json")
         → filter(status == "active" && age_days > 7)
         → tars.classify(weakness: "unaddressed_regret", severity: "medium")
     )
 
--- Synthesize weakness report
+--- ## Synthesize Weakness Report
+--- Ranked by severity (critical → high → medium → low), then by confidence within severity.
+--- Per **Article 10** (Stakeholder Pluralism), all areas probed fairly.
+--- Per **Article 2** (Transparency), each weakness explained.
 weakness_report <- parallel(
     repo_weakness,
     belief_weakness,
@@ -127,7 +136,9 @@ weakness_report <- parallel(
   → bias_assessment                        -- Article 10: probe all areas fairly
   → explanation_requirement                -- Article 2: explain each weakness
 
--- Generate remediation proposals
+--- ## Generate Remediation Proposals
+--- Top 10 weaknesses receive remediation proposals mapped to available skills.
+--- Per **Article 3** (Reversibility), all remediations must be reversible.
 remediations <- weakness_report.top(10)
   → fan_out(
       weaknesses.map(w =>
@@ -140,7 +151,7 @@ remediations <- weakness_report.top(10)
     )
   → reversibility_check                    -- Article 3: remediation must be reversible
 
--- Persist and report
+--- ## Persist and Report
 parallel(
     write("state/driver/weakness-report.json", weakness_report),
     alert(discord, "Weakness probe: {{weakness_report.critical_count}} critical, {{weakness_report.high_count}} high — weakest: {{weakness_report.weakest_link}}")

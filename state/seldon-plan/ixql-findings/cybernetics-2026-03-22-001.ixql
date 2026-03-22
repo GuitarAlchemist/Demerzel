@@ -1,6 +1,6 @@
--- Research finding: VSM-to-AI Governance Mapping
--- Belief: T, confidence: 0.82, cycle: cybernetics-2026-03-22-001
--- First Seldon Plan cycle ever executed
+--- ## Research Finding: VSM-to-AI Governance Mapping
+--- Belief: **T**, confidence: 0.82, cycle: cybernetics-2026-03-22-001
+--- First Seldon Plan cycle ever executed.
 RESEARCH_FINDING {
   department: "cybernetics",
   question: "Does Stafford Beer's Viable System Model (VSM) provide a complete structural mapping for AI governance frameworks, and what gaps emerge when applying VSM's five systems to Demerzel's architecture?",

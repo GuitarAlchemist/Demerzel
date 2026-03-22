@@ -1,20 +1,23 @@
--- Content Intelligence Pipeline
--- Watch for interesting AI engineering content, analyze, extract lessons, compound
--- Trigger: manual (/demerzel reflect <url>) or scheduled (daily scan of bookmarks)
+--- ## Content Intelligence Pipeline
+--- Watch for interesting AI engineering content, analyze, extract lessons, compound.
+--- Trigger: manual (`/demerzel reflect <url>`) or scheduled (daily scan of bookmarks)
 
--- Phase 1: INGEST
+--- ## Phase 1: INGEST
+--- Fetch content and extract metadata.
 source content_url
   → fetch(url, format: "markdown")
   → extract_metadata(author, date, platform, topic, engagement_metrics)
 
--- Phase 2: ANALYZE
+--- ## Phase 2: ANALYZE
+--- Classify relevance across six domains. Skip if relevance < 0.6.
   → classify_relevance(
       domains: ["claude-code", "ai-agents", "governance", "devops", "ml-ops", "music-tech"],
       threshold: 0.6
     )
   → when relevance < 0.6: log("Low relevance, skip") → conclude F "Not relevant"
 
--- Phase 3: CROSS-REFERENCE with our ecosystem
+--- ## Phase 3: CROSS-REFERENCE
+--- Compare with our ecosystem to find gaps, validations, and adoptable techniques.
   → compare_with_demerzel(
       check: [
         "What does the author do that we don't?",
@@ -25,7 +28,13 @@ source content_url
       artifacts: context_engine.query(content.topics)  -- uses #163 when available
     )
 
--- Phase 4: EXTRACT actionable insights
+--- ## Phase 4: EXTRACT Actionable Insights
+--- Structured extraction with ERGOL/LOLLI check:
+--- - **Agree**: where we violently agree (with citation)
+--- - **Learn**: what we should steal (specific, actionable)
+--- - **Teach**: what we could teach them (from our experience)
+--- - **Challenge**: what we'd push back on (with evidence)
+--- - **ERGOL check**: proven in practice or unvalidated?
   → extract_insights(
       format: {
         agree: "Where we violently agree (with citation)",
@@ -36,13 +45,15 @@ source content_url
       }
     )
 
--- Phase 5: BS CHECK
+--- ## Phase 5: BS CHECK
+--- Apply specificity, falsifiability, density, and commitment tests to key claims.
   → bs_detect(
       tests: [specificity, falsifiability, density, commitment],
       on_claims: content.key_claims
     )
 
--- Phase 6: COMPOUND
+--- ## Phase 6: COMPOUND
+--- Actionable insights become GitHub issues. Challenges become draft responses.
   → when insights.learn.length > 0:
       create_issue(
         title: "learn: {insight.summary}",

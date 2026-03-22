@@ -1,15 +1,22 @@
--- Skill → Code: Invoke a Demerzel skill, process output, generate code
--- Demonstrates: IxQL as the bridge between governance skills and code generation
--- Flow: skill invocation → analysis → code template → validation → output
--- Real artifacts: /demerzel audit skill, tars CE codegen, ix Rust patterns
+--- ## Skill → Code Pipeline
+--- Invoke a Demerzel skill, process output, generate code.
+--- Demonstrates: IxQL as the bridge between governance skills and code generation.
+--- Flow: skill invocation → analysis → code template → validation → output
+--- Real artifacts: `/demerzel audit` skill, tars CE codegen, ix Rust patterns
 
--- Step 1: Invoke the governance audit skill via handle
+--- ## Step 1: Invoke Governance Audit
+--- Run a Level 3 audit and classify the result as **T/F/U**.
 audit_result <- invoke @gov-audit-001(level: 3)
   → when T >= 0.7: { status: "healthy", gaps: audit_result.findings }
   → when F: { status: "unhealthy", gaps: audit_result.failures }
   → when U: { status: "unknown", gaps: audit_result.inconclusive }
 
--- Step 2: Extract governance gaps that could benefit from automation
+--- ## Step 2: Extract Automatable Gaps
+--- Filter for gaps that can be remediated with code generation:
+--- - `untested_policy` → test generation
+--- - `untested_persona` → test generation
+--- - `orphaned_schema` → schema fix
+--- Focus on top 5 gaps per cycle.
 automatable_gaps <- audit_result.gaps
   → filter(gap_type in ["untested_policy", "untested_persona", "orphaned_schema"])
   → tars.classify(
@@ -19,11 +26,12 @@ automatable_gaps <- audit_result.gaps
   → ix.ml.rank(by: "impact", order: "descending")
   → head(5)                                    -- Focus: top 5 gaps per cycle
 
--- Step 3: For each gap, generate code via cross-model validation
+--- ## Step 3: Generate Code via Cross-Model Validation
+--- Route to appropriate code generator based on gap type.
+--- Cross-validation with ChatGPT for test generation ensures quality.
 code_artifacts <- automatable_gaps
   → fan_out(
       gaps.map(gap =>
-        -- Route to appropriate code generator based on gap type
         when gap.category == "test_generation":
           parallel(
             tars.generate_code(
@@ -56,7 +64,12 @@ code_artifacts <- automatable_gaps
       )
     )
 
--- Step 4: Validate generated code against schemas
+--- ## Step 4: Validate Generated Code
+--- Each artifact validated against its target schema.
+--- Results mapped to **T/F/U** actions:
+--- - **T >= 0.8** → write to disk
+--- - **F** → discard (schema validation failed)
+--- - **U** → flag for review
 validated <- code_artifacts
   → fan_out(
       artifacts.map(artifact =>
@@ -69,7 +82,7 @@ validated <- code_artifacts
   → reversibility_check                        -- Article 3: can we undo generated code?
   → explanation_requirement                    -- Article 2: explain what was generated and why
 
--- Step 5: Write validated artifacts to disk
+--- ## Step 5: Write Validated Artifacts
 validated
   → filter(action == "write")
   → fan_out(
@@ -79,11 +92,12 @@ validated
     )
   → ix.io.git("commit", message: "feat: auto-generated {{count}} artifacts from audit gaps")
 
--- Step 6: Report discarded/review items
+--- ## Step 6: Report Discarded/Review Items
 validated
   → filter(action in ["discard", "review"])
   → alert(discord, "Skill→Code: {{count}} artifacts need attention — {{reasons}}")
 
+--- ## Compound
   → compound:
       harvest validated.insights
       harvest code_artifacts.patterns

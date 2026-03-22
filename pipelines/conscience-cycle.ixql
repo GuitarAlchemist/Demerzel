@@ -1,18 +1,22 @@
--- Conscience Cycle — Process conscience signals, detect patterns, produce digests
--- Source: policies/proto-conscience-policy.yaml, conscience-observability-policy.yaml
--- Trigger: daily via driver COMPOUND phase or on-demand
--- Output: daily digest, pattern updates, escalations
+--- ## Conscience Cycle
+--- Process conscience signals, detect patterns, produce digests.
+--- Source: [proto-conscience policy](policies/proto-conscience-policy.yaml), [conscience observability](policies/conscience-observability-policy.yaml)
+--- Trigger: daily via driver COMPOUND phase or on-demand
+--- Output: daily digest, pattern updates, escalations
 
+--- ### Load State
 -- Load all active conscience state
 signals  <- ix.io.read("state/conscience/signals/*.signal.json")
 patterns <- ix.io.read("state/conscience/patterns/*.pattern.json")
 regrets  <- ix.io.read("state/conscience/regrets/*.regret.json")
 weekly   <- ix.io.read("state/conscience/weekly/*.report.json")
 
--- Stage 1: Classify signals by age and severity
+--- ## Stage 1: Classify Signals
+--- Classify signals by age and severity into four tiers.
+--- Per [staleness-detection policy](policies/staleness-detection-policy.yaml), unprocessed signals older than 3 days are **critical**.
 classified <- signals
   → fan_out(
-      -- Critical: unprocessed signals older than 3 days (per staleness-detection-policy)
+      -- Critical: unprocessed signals older than 3 days
       signals → filter(age_days > 3 && status == "active")
         → tars.classify(severity: "critical", reason: "unprocessed conscience signal"),
 
@@ -31,7 +35,9 @@ classified <- signals
         → tars.classify(severity: "low", reason: "near resolution")
     )
 
--- Stage 2: Pattern detection — find recurring themes
+--- ## Stage 2: Pattern Detection
+--- Find recurring themes using semantic clustering, temporal correlation, and causal inference.
+--- Patterns with **T >= 0.7** are persisted to state.
 new_patterns <- classified
   → tars.pattern_detect(
       existing_patterns: patterns,
@@ -41,7 +47,12 @@ new_patterns <- classified
     )
   → when T >= 0.7: write("state/conscience/patterns/", json)
 
--- Stage 3: Process each signal
+--- ## Stage 3: Process Each Signal
+--- Route signals by severity:
+--- - **Critical** → escalate to human per **Article 6** (Escalation)
+--- - **High** → root cause analysis, propose resolution
+--- - **Medium** → correlate with existing patterns
+--- - **Low** → assess for archival
 processed <- classified
   → fan_out(
       classified.map(signal =>
@@ -70,7 +81,11 @@ processed <- classified
   → reversibility_check                    -- Article 3: can we undo signal resolution?
   → explanation_requirement                -- Article 2: explain why signals were resolved
 
--- Stage 4: Regret analysis — have past decisions caused harm?
+--- ## Stage 4: Regret Analysis
+--- Have past decisions caused harm? Active regrets older than 7 days are assessed:
+--- - **T >= 0.8** → archive (addressed)
+--- - **F** → escalate (unresolved)
+--- - **U** → keep active (uncertain)
 regret_check <- regrets
   → filter(status == "active" && age_days > 7)
   → fan_out(
@@ -82,12 +97,16 @@ regret_check <- regrets
       )
     )
 
--- Stage 5: Produce daily digest
+--- ## Stage 5: Daily Digest
+--- Synthesize all classified signals, new patterns, processed results, and regret checks
+--- into a single daily digest written to `state/conscience/digests/`.
 daily_digest <- parallel(classified, new_patterns, processed, regret_check)
   → tars.synthesize(template: "conscience-daily-digest")
   → write("state/conscience/digests/{date}-daily.digest.json", json)
 
--- Stage 6: Weekly report (if 7 days since last)
+--- ## Stage 6: Weekly Report
+--- Produced if 7+ days since last weekly report. Aggregates daily digests, patterns, and regrets.
+--- Posts summary to Discord.
 weekly_report <- when days_since(weekly.latest) >= 7:
   parallel(
     ix.io.read("state/conscience/digests/*.digest.json")
@@ -99,7 +118,8 @@ weekly_report <- when days_since(weekly.latest) >= 7:
   → write("state/conscience/weekly/{date}-weekly.report.json", json)
   → alert(discord, "Weekly conscience report: {{summary}}")
 
--- Compound: what did we learn from this cycle?
+--- ## Compound
+--- Harvest new patterns and resolutions. Promote patterns with **T >= 0.9** and 5+ occurrences.
   → compound:
       harvest new_patterns
       harvest processed.resolutions
@@ -107,7 +127,9 @@ weekly_report <- when days_since(weekly.latest) >= 7:
       teach conscience_learnings to seldon
       log conscience_cycle to "state/evolution/"
 
--- Pre-mortem: what could go wrong next?
+--- ## Pre-Mortem
+--- Active patterns with worsening trends are projected 7 days forward.
+--- Per **Article 6** (Escalation), governance failures are flagged proactively.
 pre_mortem <- patterns
   → filter(status == "active" && trend == "worsening")
   → tars.pre_mortem(

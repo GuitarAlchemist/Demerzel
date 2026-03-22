@@ -1,9 +1,10 @@
--- Meta-Pipeline: An IxQL pipeline that generates other IxQL pipelines
--- Demonstrates: Factory of factories — the meta-generative pattern
--- Flow: intent → analyze existing → generate pipeline → validate → register
--- Real artifacts: pipelines/*.ixql, grammars/sci-ml-pipelines.ebnf, schemas/
+--- ## Meta-Pipeline
+--- An IxQL pipeline that generates other IxQL pipelines.
+--- Demonstrates: **Factory of factories** — the meta-generative pattern.
+--- Flow: intent → analyze existing → generate pipeline → validate → register
+--- Real artifacts: `pipelines/*.ixql`, `grammars/sci-ml-pipelines.ebnf`, `schemas/`
 
--- Step 1: Accept pipeline generation request
+--- ## Step 1: Accept Pipeline Generation Request
 request <- {
     intent: "Create a pipeline that {{description}}",
     domain: domain_arg,                        -- e.g., "governance", "research", "ml"
@@ -12,7 +13,9 @@ request <- {
     output_targets: targets_arg                -- e.g., ["state/", "discord", "github_issue"]
   }
 
--- Step 2: Analyze existing pipelines to learn patterns
+--- ## Step 2: Analyze Existing Pipelines
+--- Extract structural patterns from all existing pipelines, cluster by similarity,
+--- and find the best template for the request.
 existing_patterns <- ix.io.glob("pipelines/*.ixql")
   → fan_out(
       pipelines.map(p =>
@@ -34,13 +37,18 @@ best_template <- existing_patterns.clusters
   → tars.score_relevance(each, request.intent)
   → ix.ml.argmax()
 
--- Step 3: Load grammar to constrain generation
+--- ## Step 3: Load Grammar Constraints
+--- Pipeline generation is constrained by [sci-ml-pipelines grammar](grammars/sci-ml-pipelines.ebnf).
 grammar <- ix.io.read("grammars/sci-ml-pipelines.ebnf")
 grammar_weights <- ix.io.read("state/streeling/departments/computer-science.weights.json")
 
--- Step 4: Generate pipeline via grammar-constrained generation
+--- ## Step 4: Generate Pipeline via Grammar-Constrained Generation
+--- Cross-model validation: Claude (ecosystem knowledge) + ChatGPT (independent perspective).
+--- Generated pipelines must include:
+--- - governance gates (`governance_gate`, `explanation_requirement`)
+--- - compound phase
+--- - real artifact paths (no fictional paths)
 generated <- parallel(
-    -- Claude: generate with deep ecosystem knowledge
     tars.generate_pipeline(
       request: request,
       template: best_template,
@@ -52,7 +60,6 @@ generated <- parallel(
         max_stages: 10
       }
     ),
-    -- ChatGPT: independent generation for cross-validation
     mcp__openai_chat__openai_chat(
       prompt: "Generate an IxQL pipeline (declarative ML/governance language) for: {{request.intent}}\n\nExisting pattern:\n{{best_template.content}}\n\nGrammar rules: {{grammar.summary}}",
       role: "pipeline-architect"
@@ -63,12 +70,15 @@ generated <- parallel(
       merge_strategy: "best_of_both"
     )
 
--- Step 5: Validate generated pipeline
+--- ## Step 5: Validate Generated Pipeline
+--- Four validation checks:
+--- - **Syntax**: follows IxQL grammar
+--- - **Artifact references**: all referenced files exist
+--- - **Governance**: required gates present (`reversibility_check`, `explanation_requirement`)
+--- - **Completeness**: compound phase present
 validated <- generated
   → fan_out(
-      -- Syntax: does it follow IxQL grammar?
       tars.grammar.validate(generated.content, grammar: grammar),
-      -- Artifact references: do all referenced files exist?
       tars.extract_paths(generated.content)
         → fan_out(
             paths.map(p =>
@@ -76,19 +86,17 @@ validated <- generated
               → when F: { invalid_ref: p }
             )
           ),
-      -- Governance: are required gates present?
       tars.check_governance_coverage(generated.content, required: [
         "reversibility_check",
         "explanation_requirement"
       ]),
-      -- Completeness: does it have a compound phase?
       tars.check_section(generated.content, section: "compound")
     )
   → when all_passed: { status: "valid" }
   → when syntax_failed: { status: "fix_syntax" }
   → when invalid_refs: { status: "fix_refs", bad_paths: invalid_refs }
 
--- Step 6: Auto-fix common issues (one pass)
+--- ## Step 6: Auto-Fix Common Issues (one pass)
 pipeline <- when validated.status != "valid":
     generated
     → fan_out(
@@ -101,13 +109,12 @@ pipeline <- when validated.status != "valid":
   → when validated.status == "valid":
     generated
 
--- Step 7: Register the new pipeline
+--- ## Step 7: Register the New Pipeline
+--- Write pipeline file, update registry, generate behavioral test stub, post to Discord.
 when pipeline.valid:
   parallel(
-    -- Write pipeline file
     write("pipelines/{request.handle}.ixql", pipeline.content),
 
-    -- Update pipeline registry
     ix.io.read("state/pipeline-registry.json")
       → tars.register_pipeline({
           handle: "@{request.handle}",
@@ -120,7 +127,6 @@ when pipeline.valid:
         })
       → write("state/pipeline-registry.json", json),
 
-    -- Generate behavioral test stub
     tars.generate_tests(
       target: pipeline,
       format: "behavioral-test-markdown",
@@ -128,18 +134,19 @@ when pipeline.valid:
     )
     → write("tests/behavioral/{request.handle}-pipeline-cases.md", markdown),
 
-    -- Post to Discord
     alert(discord,
       "Meta-Pipeline: Generated @{request.handle} — {{request.intent}} [from template: {{best_template.name}}]"
     )
   )
   → ix.io.git("commit", message: "feat: meta-generated pipeline @{request.handle}")
 
+--- ## Compound
+--- Meta-meta: if this pipeline itself could be improved, propose self-modification
+--- per **Article 9** (Bounded Autonomy).
   → compound:
       harvest pipeline.structural_patterns
       harvest validated.fix_patterns              -- Learn what commonly needs fixing
       promote pipeline_template if T >= 0.9 && reuse_count >= 3
-      -- Meta-meta: if this pipeline itself could be improved, propose changes
       when pipeline.improvement_signal:
         tars.propose_self_modification(
           target: "pipelines/meta-pipeline.ixql",

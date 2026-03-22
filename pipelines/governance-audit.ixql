@@ -1,116 +1,121 @@
--- Governance Audit Pipeline — Three-level validation as IxQL
--- Source: .claude/skills/demerzel-audit/SKILL.md
--- Levels: 1 (schema) → 2 (cross-reference) → 3 (full governance)
--- Each level includes all checks from lower levels
+--- ## Governance Audit Pipeline
+--- Three-level validation: schema → cross-reference → full governance.
+--- Source: [demerzel-audit skill](.claude/skills/demerzel-audit/SKILL.md)
+--- Each level includes all checks from lower levels.
+--- Input: audit level (1, 2, or 3)
+--- Output: audit report with pass/fail per check, belief updates
 
--- Input: audit level (1, 2, or 3)
--- Output: audit report with pass/fail per check, belief updates
-
--- Load baseline state
+--- ### Load Baseline State
 beliefs   <- ix.io.read("state/beliefs/*.belief.json")
 evolution <- ix.io.read("state/evolution/*.evolution.json")
 
--- Level 1: Schema Validation (always runs)
+--- ## Level 1: Schema Validation (always runs)
+--- Validates all governance artifacts against their JSON schemas:
+--- - Personas → [persona.schema.json](schemas/persona.schema.json)
+--- - Contracts → JSON Schema meta-validation
+--- - Recon profiles → [reconnaissance-profile.schema.json](schemas/reconnaissance-profile.schema.json)
+--- - PDCA state → [kaizen-pdca-state.schema.json](logic/kaizen-pdca-state.schema.json)
+--- - Knowledge state → [knowledge-state.schema.json](logic/knowledge-state.schema.json)
+--- - Loop state → [loop-state.schema.json](logic/loop-state.schema.json)
 level_1 <- fan_out(
-    -- Persona schema validation
     ix.io.glob("personas/*.persona.yaml")
       → tars.validate_schema("schemas/persona.schema.json"),
-    -- Contract schema validation
     ix.io.glob("schemas/*.schema.json")
       → tars.validate_schema("json-schema-meta"),
-    -- Reconnaissance profile validation
     ix.io.glob("policies/reconnaissance-policy.yaml")
       → tars.validate_schema("schemas/reconnaissance-profile.schema.json"),
-    -- PDCA state validation
     ix.io.glob("state/pdca/*.pdca.json")
       → tars.validate_schema("logic/kaizen-pdca-state.schema.json"),
-    -- Knowledge state validation
     ix.io.glob("state/streeling/**/*.json")
       → tars.validate_schema("logic/knowledge-state.schema.json"),
-    -- Loop state validation
     ix.io.glob("state/loops/*.json")
       → tars.validate_schema("logic/loop-state.schema.json")
   )
   → confidence_calibration                 -- Are validation results reliable?
 
--- Level 2: Cross-Reference Integrity (level >= 2)
+--- ## Level 2: Cross-Reference Integrity (level >= 2)
+--- Checks referential integrity across the governance framework:
+--- - Every persona has a behavioral test
+--- - `estimator_pairing` references valid personas
+--- - Policy references resolve
+--- - Schema `$ref` values resolve
+--- - Orphaned artifacts detected
+--- - Stale artifacts flagged
 level_2 <- when audit_level >= 2:
   fan_out(
-    -- Every persona has a behavioral test
     ix.io.glob("personas/*.persona.yaml")
       → filter(name not in ix.io.glob("tests/behavioral/*-cases.md").basenames),
-    -- estimator_pairing references valid personas
     ix.io.glob("personas/*.persona.yaml")
       → filter(estimator_pairing not in all_persona_names),
-    -- Policy references resolve
     ix.io.glob("policies/*.yaml")
       → tars.validate_references(scope: "constitutions,policies"),
-    -- Contract schema $ref values resolve
     ix.io.glob("schemas/*.schema.json")
       → tars.validate_refs(),
-    -- Orphaned artifacts (unreferenced files)
     ix.io.walk("state/", "schemas/", "policies/", "personas/")
       → tars.find_orphans(reference_scope: "all"),
-    -- Stale artifacts
     ix.io.walk("state/")
       → filter(references_deprecated_capability)
   )
 
--- Level 3: Full Governance Audit (level >= 3)
+--- ## Level 3: Full Governance Audit (level >= 3)
+--- Deep structural validation:
+--- - [Asimov constitution](constitutions/asimov.constitution.md) precedence hierarchy consistency
+--- - Every Asimov article (0-5) has behavioral test coverage
+--- - Every policy has behavioral test coverage
+--- - README artifact listings match files on disk
+--- - [Galactic Protocol](contracts/galactic-protocol.md) schema coverage
+--- - All artifacts have valid semver
 level_3 <- when audit_level >= 3:
   fan_out(
-    -- Precedence hierarchy consistency
     parallel(
       ix.io.read("constitutions/asimov.constitution.md"),
       ix.io.read("constitutions/demerzel-mandate.md"),
       ix.io.read("constitutions/default.constitution.md")
     ) → tars.validate_hierarchy(),
-    -- Every Asimov article has behavioral test coverage
     tars.check_coverage(
       source: "constitutions/asimov.constitution.md",
       tests: "tests/behavioral/*-cases.md",
       require: "articles 0-5"
     ),
-    -- Every policy has behavioral test coverage
     ix.io.glob("policies/*.yaml")
       → tars.check_coverage(tests: "tests/behavioral/"),
-    -- Architecture doc matches actual files on disk
     ix.io.read("README.md")
       → tars.validate_artifact_listings(root: "."),
-    -- Contract schemas cover all protocol flows
     tars.validate_protocol_coverage(
       protocol: "contracts/galactic-protocol.md",
       schemas: "schemas/*-contract.schema.json"
     ),
-    -- All artifacts have valid semver
     ix.io.glob("policies/*.yaml", "personas/*.persona.yaml")
       → filter(!version.matches("^\\d+\\.\\d+\\.\\d+$"))
   )
   → explanation_requirement                -- Article 2: audit must be explainable
   → bias_assessment                        -- Article 10: audit fairness
 
--- Synthesize report
+--- ## Synthesize Report
+--- Map audit results to tetravalent conclusions:
+--- - **T** → all checks passed (confidence 0.95)
+--- - **F** → some checks failed (confidence = 1.0 - pass_rate)
+--- - **U** → some checks could not be evaluated
+--- - **C** → hierarchy inconsistency detected
 audit_report <- parallel(level_1, level_2, level_3)
   → tars.synthesize(template: "governance-audit-report")
 
--- Map to tetravalent conclusion
   → when all_passed:  { logic: "T", confidence: 0.95 }
   → when any_failed:  { logic: "F", confidence: 1.0 - (pass_rate) }
   → when inconclusive: { logic: "U", reason: "some checks could not be evaluated" }
   → when contradictory: { logic: "C", reason: "hierarchy inconsistency detected" }
 
--- Persist results
+--- ## Persist Results
   → compound:
       harvest audit_report.findings
       promote findings if T >= 0.9
       log audit_report to "state/snapshots/{date}-audit-level{audit_level}.snapshot.json"
 
--- Update beliefs based on audit findings
+--- ### Update Beliefs
+--- Framework integrity belief and evolution log updated based on audit findings.
 parallel(
-    -- Framework integrity belief
     ix.io.write("state/beliefs/framework-integrity.belief.json",
       { value: audit_report.logic, confidence: audit_report.confidence,
         evidence: audit_report.summary, last_updated: now() }),
-    -- Evolution log update
     ix.io.append("state/evolution/", audit_report.evolution_entries)
   )

@@ -1,9 +1,11 @@
--- Research → Course: Full Seldon research cycle as IxQL
--- Demonstrates: IxQL connecting the complete knowledge production pipeline
--- Flow: question → investigate → cross-validate → assess → produce → translate → evolve
--- Real artifacts: grammars/*.ebnf, state/streeling/, policies/seldon-plan-policy.yaml
+--- ## Research → Course Pipeline
+--- Full Seldon research cycle as IxQL.
+--- Demonstrates: IxQL connecting the complete knowledge production pipeline.
+--- Flow: question → investigate → cross-validate → assess → produce → translate → evolve
+--- Real artifacts: `grammars/*.ebnf`, `state/streeling/`, [seldon-plan policy](policies/seldon-plan-policy.yaml)
 
--- Step 1: Select department using weighted scoring
+--- ## Step 1: Select Department
+--- Weighted scoring across four dimensions to pick the most impactful department.
 departments <- ix.io.read("state/streeling/departments/*.department.json")
 weights     <- ix.io.read("state/streeling/departments/*.weights.json")
 
@@ -16,7 +18,7 @@ department <- departments
     )
   → ix.ml.argmax()
 
--- Step 2: Load context and sample a research question
+--- ## Step 2: Load Context and Sample Research Question
 dept_context <- parallel(
     ix.io.read("state/streeling/departments/{department.name}.department.json"),
     ix.io.read("state/streeling/departments/{department.name}.weights.json"),
@@ -24,6 +26,8 @@ dept_context <- parallel(
     ix.io.glob("state/streeling/courses/{department.name}/en/*.md")
   )
 
+--- ### Grammar-Weighted Sampling
+--- Sample from the department grammar, avoiding existing courses to prevent duplication.
 question <- dept_context
   → tars.grammar.sample(
       grammar: dept_context.grammar,
@@ -36,14 +40,13 @@ question <- dept_context
       must_be: ["answerable_in_one_cycle", "expressible_as_TFUC", "domain_relevant"]
     )
 
--- Step 3: Investigate via three independent sources
+--- ## Step 3: Investigate via Three Independent Sources
+--- Cross-model validation: Claude (primary), ChatGPT (independent), NotebookLM (domain).
+--- Per **Article 2** (Transparency), findings must be explainable.
 investigation <- question
   → fan_out(
-      -- Primary: Claude deep research
       tars.research(question, depth: "thorough"),
-      -- Cross-validation: ChatGPT independent perspective
       mcp__openai_chat__openai_chat(question, role: "researcher"),
-      -- Domain knowledge: NotebookLM search existing notebooks
       mcp__notebooklm__search_notebooks(query: question.text)
         → when results.count > 0:
             mcp__notebooklm__ask_question(question: question.text)
@@ -55,7 +58,11 @@ investigation <- question
   → confidence_calibration                     -- Are confidence levels honest?
   → explanation_requirement                    -- Article 2: can we explain findings?
 
--- Step 4: Assess conclusion → tetravalent belief
+--- ## Step 4: Assess Conclusion → Tetravalent Belief
+--- - **T** → agreement >= 0.8 with strong evidence
+--- - **F** → agreement >= 0.8 with evidence against
+--- - **C** → agreement < 0.5 (contradictory)
+--- - **U** → evidence density < 0.3 (insufficient)
 conclusion <- investigation
   → when agreement >= 0.8 && evidence_density >= 0.7:
       { conclude: "confirm", belief: "T", confidence: investigation.confidence }
@@ -66,7 +73,8 @@ conclusion <- investigation
   → when evidence_density < 0.3:
       { conclude: "insufficient", belief: "U", confidence: 0.2 }
 
--- Kuhnian paradigm reflection
+--- ### Kuhnian Paradigm Reflection
+--- Detect anomalies and paradigm shifts per Thomas Kuhn's framework.
 reflection <- conclusion
   → when dept_context.weights.metadata.cycle_count < 5:
       { reflect: "normal_progress" }
@@ -75,7 +83,8 @@ reflection <- conclusion
   → when consecutive_U_count >= 3:
       { reflect: "paradigm_tension" }
 
--- Step 5: Produce course material (only on confirmation)
+--- ## Step 5: Produce Course Material
+--- Only on confirmation conclusions.
 course <- when conclusion.conclude == "confirm":
   investigation
     → tars.produce_course(
@@ -87,7 +96,8 @@ course <- when conclusion.conclude == "confirm":
     → tars.validate_schema(schema: "schemas/course-module.schema.json")
     → write("state/streeling/courses/{department.name}/en/{module_id}.md", markdown)
 
--- Step 6: Translate to 5 languages (per multilingual-policy.yaml)
+--- ## Step 6: Translate to 5 Languages
+--- Per [multilingual policy](policies/multilingual-policy.yaml), cultural adaptation applied.
 translations <- when course:
   fan_out(
     tars.translate(course, lang: "es", adapt: "cultural"),
@@ -105,7 +115,9 @@ translations <- when course:
       )
     )
 
--- Step 7: Evolve grammar if gap detected
+--- ## Step 7: Evolve Grammar
+--- If a gap is detected, propose new EBNF production rules.
+--- Gate: **T >= 0.7** and **C < 0.1** required.
 grammar_evolution <- when investigation.grammar_gap_detected:
   investigation
     → tars.propose_production(
@@ -116,7 +128,7 @@ grammar_evolution <- when investigation.grammar_gap_detected:
     → when T >= 0.7 && C < 0.1:
         ix.io.append("grammars/{department.grammar}.ebnf", new_production)
 
--- Step 8: Persist and compound
+--- ## Step 8: Persist and Compound
 cycle_log <- parallel(conclusion, reflection, course, grammar_evolution)
   → write("state/streeling/research-cycles/{cycle_id}.json", json)
 

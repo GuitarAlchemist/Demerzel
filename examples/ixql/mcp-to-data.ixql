@@ -1,22 +1,24 @@
--- MCP → Data: Use MCP tools to gather data, transform, and store
--- Demonstrates: IxQL orchestrating real MCP servers as data sources
--- Flow: Discord + NotebookLM + context7 → normalize → analyze → persist
--- Real artifacts: MCP servers (discord, notebooklm, context7), state/beliefs/
+--- ## MCP → Data Pipeline
+--- Use MCP tools to gather data, transform, and store.
+--- Demonstrates: IxQL orchestrating real MCP servers as data sources.
+--- Flow: Discord + NotebookLM + context7 → normalize → analyze → persist
+--- Real artifacts: MCP servers (discord, notebooklm, context7), `state/beliefs/`
 
--- Step 1: Gather data from three MCP sources in parallel
+--- ## Step 1: Gather Data from Three MCP Sources
+--- Fetch in parallel from Discord, NotebookLM, and context7.
 raw_data <- parallel(
-    -- Discord: fetch recent governance discussion
+    --- ### Discord: fetch recent governance discussion
     mcp__plugin_discord_discord__fetch_messages(
       chat_id: "1350996189981872259",       -- #demerzel channel
       limit: 50
     )
     → tars.extract(fields: ["content", "author", "timestamp", "reactions"]),
 
-    -- NotebookLM: query existing research notebooks
+    --- ### NotebookLM: query existing research notebooks
     mcp__notebooklm__search_notebooks(query: "governance patterns")
     → tars.extract(fields: ["title", "summary", "sources", "created_at"]),
 
-    -- context7: resolve latest Claude Code docs for comparison
+    --- ### context7: resolve latest Claude Code docs for comparison
     mcp__plugin_context7_context7__resolve_library_id(libraryName: "anthropic/claude-code")
     → mcp__plugin_context7_context7__query_docs(
         libraryId: resolved_id,
@@ -25,10 +27,11 @@ raw_data <- parallel(
     → tars.extract(fields: ["content", "relevance_score"])
   )
 
--- Step 2: Normalize heterogeneous MCP outputs into common schema
+--- ## Step 2: Normalize Heterogeneous Outputs
+--- Transform MCP-specific formats into common schemas.
 normalized <- raw_data
   → fan_out(
-      -- Discord messages → structured observations
+      --- Discord messages → structured observations
       raw_data.discord
         → tars.classify(
             categories: ["governance_feedback", "feature_request", "bug_report", "discussion"],
@@ -36,16 +39,17 @@ normalized <- raw_data
           )
         → filter(confidence >= 0.6),
 
-      -- NotebookLM results → knowledge entries
+      --- NotebookLM results → knowledge entries
       raw_data.notebooklm
         → tars.normalize(schema: "schemas/knowledge-state.schema.json"),
 
-      -- context7 docs → reference entries
+      --- context7 docs → reference entries
       raw_data.context7
         → tars.normalize(schema: "schemas/reference-entry.schema.json")
     )
 
--- Step 3: Cross-reference and enrich
+--- ## Step 3: Cross-Reference and Enrich
+--- Find themes across sources, detect sentiment trends, identify coverage gaps.
 enriched <- normalized
   → tars.cross_reference(
       method: "semantic_similarity",
@@ -63,7 +67,11 @@ enriched <- normalized
       )
     )
 
--- Step 4: Produce actionable outputs
+--- ## Step 4: Produce Actionable Outputs
+--- - Negative sentiment → update community health belief to **U**
+--- - Positive sentiment → update to **T**
+--- - Coherent clusters → generate course material
+--- - Significant gaps → create research triggers
 outputs <- enriched
   → fan_out(
       -- Update beliefs based on community sentiment
@@ -109,7 +117,7 @@ outputs <- enriched
   → confidence_calibration                     -- Are our sentiment scores reliable?
   → explanation_requirement                    -- Article 2: explain data transformations
 
--- Step 5: Persist pipeline run metadata
+--- ## Step 5: Persist Pipeline Run Metadata
 write("state/oversight/mcp-data-runs/{date}-run.json", {
     run_at: now(),
     sources: { discord: raw_data.discord.count, notebooklm: raw_data.notebooklm.count, context7: raw_data.context7.count },
@@ -119,6 +127,7 @@ write("state/oversight/mcp-data-runs/{date}-run.json", {
     courses_produced: outputs.courses.count
   })
 
+--- ## Compound
   → compound:
       harvest enriched.themes
       harvest outputs.gap_insights

@@ -1,9 +1,15 @@
--- Research Cycle — Department research → knowledge → course production
--- Source: .claude/skills/seldon-research-cycle/SKILL.md
--- Trigger: driver EXECUTE phase, cron, or manual invocation
--- Output: beliefs, courses, grammar evolution, weight updates
+--- ## Research Cycle
+--- Department research → knowledge → course production.
+--- Source: [seldon-research-cycle skill](.claude/skills/seldon-research-cycle/SKILL.md)
+--- Trigger: driver EXECUTE phase, cron, or manual invocation
+--- Output: beliefs, courses, grammar evolution, weight updates
 
--- Step 1: SELECT department (auto-select if not specified)
+--- ## Step 1: SELECT Department
+--- Auto-select using weighted scoring if not specified:
+--- - **0.4** days since last cycle (prioritize neglected)
+--- - **0.3** curriculum gap count (prioritize knowledge gaps)
+--- - **0.2** U-belief ratio (prioritize unresolved beliefs)
+--- - **0.1** random exploration
 departments <- ix.io.read("state/streeling/departments/*.department.json")
 weights     <- ix.io.read("state/streeling/departments/*.weights.json")
 university  <- ix.io.read("state/streeling/university.json")
@@ -20,7 +26,7 @@ department <- when department_arg:
         )
       → ix.ml.argmax()
 
--- Step 2: LOAD department context
+--- ## Step 2: LOAD Department Context
 dept_context <- parallel(
     ix.io.read("state/streeling/departments/{department.name}.department.json"),
     ix.io.read("state/streeling/departments/{department.name}.weights.json"),
@@ -28,7 +34,9 @@ dept_context <- parallel(
     ix.io.glob("state/streeling/courses/{department.name}/en/*.md")
   )
 
--- Step 3: GENERATE research question (grammar-weighted sampling)
+--- ## Step 3: GENERATE Research Question
+--- Grammar-weighted sampling produces an investigation question.
+--- Existing courses are avoided to prevent duplication.
 question <- dept_context
   → tars.grammar.sample(
       grammar: dept_context.grammar,
@@ -42,14 +50,13 @@ question <- dept_context
       must_be: ["answerable_in_one_cycle", "expressible_as_TFUC", "domain_relevant"]
     )
 
--- Step 4: INVESTIGATE via cross-model validation
+--- ## Step 4: INVESTIGATE via Cross-Model Validation
+--- Three independent sources: Claude (primary), ChatGPT (cross-validation), NotebookLM (domain).
+--- Per **Article 2** (Transparency), findings must be explainable.
 investigation <- question
   → fan_out(
-      -- Primary: Claude research
       tars.research(question, depth: "thorough"),
-      -- Cross-validation: ChatGPT
       mcp__openai_chat__openai_chat(question, role: "researcher"),
-      -- Domain knowledge: NotebookLM
       mcp__notebooklm__ask_question(question)
     )
   → tars.cross_validate(
@@ -59,7 +66,12 @@ investigation <- question
   → confidence_calibration                 -- Are confidence levels honest?
   → explanation_requirement                -- Article 2: can we explain findings?
 
--- Step 5: ASSESS conclusion → tetravalent belief
+--- ## Step 5: ASSESS Conclusion → Tetravalent Belief
+--- Map cross-validated results to **T/F/U/C**:
+--- - **T** → agreement >= 0.8 with strong evidence
+--- - **F** → agreement >= 0.8 with evidence against
+--- - **C** → agreement < 0.5 (contradictory)
+--- - **U** → evidence density < 0.3 (insufficient)
 conclusion <- investigation
   → when agreement >= 0.8 && evidence_density >= 0.7:
       { conclude: "confirm", belief: "T", confidence: investigation.confidence }
@@ -70,14 +82,20 @@ conclusion <- investigation
   → when evidence_density < 0.3:
       { conclude: "insufficient", belief: "U", confidence: 0.2 }
 
--- Reflection (Kuhnian paradigm detection)
+--- ### Kuhnian Paradigm Reflection
+--- Detect paradigm shifts per Thomas Kuhn's framework:
+--- - Normal progress (early cycles)
+--- - Anomaly detected (contradicts existing beliefs)
+--- - Paradigm tension (3+ consecutive U conclusions)
+--- - Paradigm shift (invalidates governance)
 reflection <- conclusion
   → when dept_context.weights.metadata.cycle_count < 5: { reflect: "normal_progress" }
   → when conclusion.contradicts(beliefs): { reflect: "anomaly_detected" }
   → when consecutive_U_count >= 3: { reflect: "paradigm_tension" }
   → when conclusion.invalidates_governance: { reflect: "paradigm_shift" }
 
--- Step 6: PRODUCE course material (only on confirm or discover_question)
+--- ## Step 6: PRODUCE Course Material
+--- Only on confirm or discover_question conclusions.
 course <- when conclusion.conclude in ["confirm", "discover_question"]:
   investigation
     → tars.produce_course(
@@ -88,7 +106,8 @@ course <- when conclusion.conclude in ["confirm", "discover_question"]:
       )
     → write("state/streeling/courses/{department.name}/en/{module_id}.md", markdown)
 
--- Multilingual translation (per multilingual-policy.yaml)
+--- ### Multilingual Translation
+--- Per [multilingual policy](policies/multilingual-policy.yaml), courses are translated to 5 languages with cultural adaptation.
 translations <- when course:
   fan_out(
     tars.translate(course, lang: "es", adapt: "cultural"),
@@ -103,7 +122,9 @@ translations <- when course:
       )
     )
 
--- Step 6b: EVOLVE grammar (if gap detected)
+--- ### Step 6b: EVOLVE Grammar
+--- If a grammar gap was detected during investigation, propose new production rules.
+--- Gate: **T >= 0.7** and **C < 0.1** required for grammar modification.
 grammar_evolution <- when investigation.grammar_gap_detected:
   investigation
     → tars.propose_production(
@@ -114,13 +135,13 @@ grammar_evolution <- when investigation.grammar_gap_detected:
     → when T >= 0.7 && C < 0.1:           -- Grammar evolution gate
         ix.io.append("grammars/{department.grammar}.ebnf", new_production)
 
--- Step 7: LOG cycle
+--- ## Step 7: LOG Cycle
 cycle_log <- parallel(conclusion, reflection, course, grammar_evolution)
   → write("state/streeling/research-cycles/{cycle_id}.json", json)
 
--- Step 8: COMPOUND
+--- ## Step 8: COMPOUND
+--- Update grammar weights based on outcome, flag curriculum gaps, trigger follow-ups.
   → compound:
-      -- Update grammar weights
       harvest conclusion
       when conclusion.conclude == "confirm":
         weights.hypothesis_weights[used_method] += 0.05

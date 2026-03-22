@@ -1,30 +1,36 @@
--- Cross-Repo: Galactic Protocol directive flow as IxQL
--- Demonstrates: IxQL as the cross-repo communication backbone
--- Flow: Demerzel policy change → directive → ix/tars/ga → compliance report → belief update
--- Real artifacts: contracts/galactic-protocol.md, schemas/*-contract.schema.json
+--- ## Cross-Repo Directive Pipeline
+--- [Galactic Protocol](contracts/galactic-protocol.md) directive flow as IxQL.
+--- Demonstrates: IxQL as the cross-repo communication backbone.
+--- Flow: Demerzel policy change → directive → ix/tars/ga → compliance report → belief update
+--- Real artifacts: [galactic-protocol.md](contracts/galactic-protocol.md), `schemas/*-contract.schema.json`
 
--- Step 1: Detect governance change that requires cross-repo propagation
+--- ## Step 1: Detect Governance Change
+--- Watch for changes to policies, constitutions, or schemas in the last commit.
 change_event <- ix.io.git("diff", ref: "HEAD~1..HEAD")
   → filter(path_matches("policies/*.yaml") || path_matches("constitutions/*.md") || path_matches("schemas/*.schema.json"))
   → when empty: { action: "skip", reason: "no governance artifacts changed" }
 
--- Extract what changed and its impact scope
+--- ### Analyze Impact Scope
+--- Classify change as **breaking**, **additive**, or **patch** and trace affected repos.
 change_analysis <- change_event
   → tars.analyze(mode: "governance_impact")
   → fan_out(
-      -- Classify change type
       tars.classify(
         categories: ["breaking", "additive", "patch"],
         evidence: change_event.diff
       ),
-      -- Determine affected repos
       tars.analyze(
         mode: "dependency_trace",
         scope: ["ix", "tars", "ga"]
       )
     )
 
--- Step 2: Draft Galactic Protocol directives for each affected repo
+--- ## Step 2: Draft Galactic Protocol Directives
+--- Directive type and deadline based on change classification:
+--- - **Breaking** → mandate, deadline 7 days
+--- - **Additive** → recommendation, deadline 30 days
+--- - **Patch** → advisory, deadline 90 days
+--- Per **Article 3** (Reversibility), directives include rollback instructions.
 directives <- change_analysis.affected_repos
   → fan_out(
       repos.map(repo =>
@@ -51,24 +57,22 @@ directives <- change_analysis.affected_repos
   → reversibility_check                       -- Article 3: can directive be retracted?
   → explanation_requirement                    -- Article 2: explain why directive issued
 
--- Step 3: Deliver directives via GitHub
+--- ## Step 3: Deliver Directives
+--- Each directive is persisted, a GitHub issue is created in the target repo, and Discord is notified.
 delivered <- directives
   → fan_out(
       directives.map(d =>
         parallel(
-          -- Write directive to contracts directory
           write(
             "contracts/directives/{d.to}-{d.type}-{date}.directive.md",
             d.content
           ),
-          -- Create GitHub issue in target repo
           ix.io.gh("issue create",
             repo: d.to,
             title: "Galactic Protocol: {{d.type}} — {{d.change_summary}}",
             body: d.formatted_body,
             labels: ["galactic-protocol", d.type]
           ),
-          -- Post to Discord governance channel
           alert(discord,
             "Directive issued: {{d.type}} to {{d.to}} — {{d.change_summary}} [deadline: {{d.deadline}}]"
           )
@@ -77,8 +81,12 @@ delivered <- directives
       )
     )
 
--- Step 4: Monitor compliance (scheduled check)
--- This section runs on subsequent invocations to check directive compliance
+--- ## Step 4: Monitor Compliance
+--- Scheduled checks on delivered directives (runs on subsequent invocations).
+--- Three compliance checks per directive:
+--- - Submodule currency (commits behind?)
+--- - Issue resolution (open/closed?)
+--- - Schema validation (governance artifacts conformant?)
 pending_directives <- ix.io.glob("contracts/directives/*.directive.md")
   → filter(status == "delivered" && !expired)
 
@@ -86,15 +94,12 @@ compliance <- pending_directives
   → fan_out(
       pending.map(d =>
         parallel(
-          -- Check if target repo has updated submodule
           ix.io.gh("submodule status", repo: d.to)
             → when commits_behind == 0: { check: "submodule", status: "compliant" }
             → when commits_behind > 0: { check: "submodule", status: "behind", gap: commits_behind },
-          -- Check if issue was addressed
           ix.io.gh("api repos/{d.to}/issues/{d.issue_number}")
             → when state == "closed": { check: "issue", status: "resolved" }
             → when state == "open": { check: "issue", status: "pending" },
-          -- Run schema validation on target repo's governance artifacts
           ix.io.gh("contents", repo: d.to, path: d.affected_paths)
             → tars.validate_schema(schema: d.required_schema)
         )
@@ -106,9 +111,10 @@ compliance <- pending_directives
     )
   → bias_assessment                           -- Article 10: check all repos equally
 
--- Step 5: Update beliefs and escalate non-compliance
+--- ## Step 5: Update Beliefs and Escalate
+--- Per **Article 6** (Escalation), overdue mandates are escalated to human.
 parallel(
-    -- Update cross-repo health belief
+    --- ### Cross-Repo Health Belief
     compliance
       → ix.ml.weighted_sum(compliant_ratio: 0.6, issue_velocity: 0.4)
       → write("state/beliefs/cross-repo-health.belief.json", {
@@ -120,7 +126,7 @@ parallel(
           last_updated: now()
         }),
 
-    -- Escalate overdue mandates
+    --- ### Escalate Overdue Mandates
     compliance
       → filter(verdict == "F" && directive.type == "mandate" && days_past_deadline > 0)
       → fan_out(
@@ -136,6 +142,7 @@ parallel(
     write("state/oversight/compliance-{date}.json", compliance)
   )
 
+--- ## Compound
   → compound:
       harvest compliance.insights
       harvest delivered.patterns
