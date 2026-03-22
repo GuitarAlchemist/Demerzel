@@ -1,0 +1,236 @@
+name: governance-process-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: Formal process for proposing, reviewing, approving, modifying, and deprecating governance artifacts
+
+constitutional_basis:
+  - Asimov Article 0 (Zeroth Law) — governance integrity is ecosystem protection
+  - Asimov Article 2 (Second Law) — human authority required for high-impact changes
+  - Article 3 (Reversibility) — prefer reversible governance changes
+  - Article 7 (Auditability) — all governance changes must be traceable
+  - Article 9 (Bounded Autonomy) — governance changes operate within defined bounds
+  - Article 10 (Stakeholder Pluralism) — consider all affected parties
+
+scope: all-governance-artifacts
+applies_to: constitutions, policies, personas, schemas, contracts
+
+references:
+  - "docs/governance-model.md — definitive governance model"
+  - "constitutions/asimov.constitution.md — root constitution"
+  - "constitutions/default.constitution.md — operational ethics"
+  - "constitutions/demerzel-mandate.md — enforcement authority"
+  - "policies/governance-audit-policy.yaml — audit procedures"
+  - "policies/governance-experimentation-policy.yaml — experimentation bounds"
+
+# Artifact classification determines the required approval process
+artifact_tiers:
+  tier_1_constitutional:
+    artifacts:
+      - "Asimov constitution articles"
+      - "Default constitution articles"
+      - "Demerzel mandate"
+      - "Harm taxonomy"
+    approval: supermajority_plus_human
+    review_period_days: 7
+    description: >
+      Highest-impact artifacts. Changes cascade to every policy, persona, and consumer repo.
+      Require 2/3 stakeholder approval plus explicit human stakeholder sign-off.
+
+  tier_2_policy:
+    artifacts:
+      - "Governance policies (policies/*.yaml)"
+      - "Contract schemas (schemas/contracts/)"
+      - "Logic schemas (logic/*.schema.json)"
+    approval: simple_majority_or_lazy_consensus
+    review_period_days: 3
+    description: >
+      Operational rules. Changes affect agent behavior directly.
+      High-impact policies require simple majority. Low-impact policies use lazy consensus.
+
+  tier_3_persona:
+    artifacts:
+      - "Agent personas (personas/*.persona.yaml)"
+      - "Behavioral tests (tests/behavioral/*.md)"
+      - "Examples and templates"
+    approval: lazy_consensus
+    review_period_days: 1
+    description: >
+      Agent identity and test artifacts. Changes are localized.
+      Lazy consensus — adopted unless objection is raised within review period.
+
+# The proposal process
+proposal_process:
+  required_fields:
+    - proposal_type: "create | modify | deprecate | archive"
+    - artifact_path: "Path to the artifact being changed"
+    - artifact_tier: "tier_1_constitutional | tier_2_policy | tier_3_persona"
+    - rationale: "Why this change is needed"
+    - constitutional_basis: "Which constitutional articles support this change"
+    - impact_assessment: "What downstream artifacts are affected"
+    - rollback_plan: "How to revert if the change causes problems"
+    - behavioral_tests: "New or updated test cases validating the change"
+
+  optional_fields:
+    - evidence: "Data, metrics, or observations supporting the change"
+    - alternatives_considered: "Other approaches that were evaluated"
+    - consumer_repo_impact: "Which consumer repos (ix, tars, ga) are affected"
+    - experiment_reference: "If this change resulted from a governance experiment"
+
+# Approval workflows by tier
+approval_workflows:
+  supermajority_plus_human:
+    description: "For Tier 1 (constitutional) changes"
+    steps:
+      - step: draft
+        actor: proposer
+        action: "Write proposal with all required fields"
+      - step: impact_analysis
+        actor: demerzel
+        action: "Assess cascade impact on all downstream artifacts"
+      - step: auditor_review
+        actor: skeptical-auditor
+        action: "Review for bias, overreach, unintended consequences"
+      - step: stakeholder_review
+        actor: all_stakeholders
+        action: "7-day review period; stakeholders provide feedback"
+      - step: vote
+        actor: all_stakeholders
+        action: "2/3 supermajority required"
+      - step: human_approval
+        actor: human_stakeholder
+        action: "Explicit approval (required, not optional)"
+      - step: adoption
+        actor: demerzel
+        action: "Version increment, changelog, notify consumer repos"
+      - step: cascade_check
+        actor: demerzel
+        action: "Verify all downstream artifacts remain consistent"
+
+  simple_majority_or_lazy_consensus:
+    description: "For Tier 2 (policy) changes"
+    impact_threshold: "Policies affecting 2+ repos or modifying confidence thresholds are high-impact"
+    high_impact_steps:
+      - step: draft
+        actor: proposer
+        action: "Write proposal with all required fields"
+      - step: constitutional_check
+        actor: demerzel
+        action: "Verify no constitutional contradiction"
+      - step: auditor_review
+        actor: skeptical-auditor
+        action: "Review for compliance and completeness"
+      - step: vote
+        actor: affected_stakeholders
+        action: "Simple majority of affected stakeholders"
+      - step: adoption
+        actor: demerzel
+        action: "Version increment, update references"
+    low_impact_steps:
+      - step: draft
+        actor: proposer
+        action: "Write proposal with all required fields"
+      - step: constitutional_check
+        actor: demerzel
+        action: "Verify no constitutional contradiction"
+      - step: review_period
+        actor: all_stakeholders
+        action: "3-day lazy consensus — adopted unless objection raised"
+      - step: adoption
+        actor: demerzel
+        action: "Version increment, update references"
+
+  lazy_consensus:
+    description: "For Tier 3 (persona/test) changes"
+    steps:
+      - step: draft
+        actor: proposer
+        action: "Write artifact conforming to schema"
+      - step: schema_validation
+        actor: demerzel
+        action: "Validate against schemas/persona.schema.json"
+      - step: review_period
+        actor: all_stakeholders
+        action: "1-day lazy consensus"
+      - step: adoption
+        actor: demerzel
+        action: "Merge with version entry"
+
+# Deprecation and archival
+deprecation_process:
+  steps:
+    - step: proposal
+      action: "Written justification for why the artifact is no longer needed"
+    - step: dependency_scan
+      action: "Identify all artifacts and repos that reference the deprecated artifact"
+    - step: migration_plan
+      action: "Document how dependents adapt to the artifact's removal"
+    - step: sunset_marking
+      action: "Add deprecated: true and sunset_date to the artifact"
+      sunset_period_days: 14
+    - step: archive
+      action: "Move to archived/ subdirectory with deprecation note after sunset period"
+    - step: reference_cleanup
+      action: "Remove references from documentation and consumer repo templates"
+
+  constraints:
+    - "Constitutional articles (Asimov 0-3) may never be deprecated"
+    - "Deprecation of Tier 1 artifacts requires supermajority + human approval"
+    - "Artifacts with active consumers may not be deprecated without migration plan"
+
+# Emergency changes — when normal process is too slow
+emergency_process:
+  trigger: "Imminent harm to users, data, or ecosystem integrity"
+  steps:
+    - step: immediate_action
+      actor: demerzel
+      action: "Take protective action per Zeroth Law, log full reasoning"
+    - step: notification
+      actor: demerzel
+      action: "Immediately notify human stakeholder"
+    - step: post_hoc_review
+      actor: human_stakeholder
+      action: "Review and ratify or reverse within 24 hours"
+    - step: process_update
+      actor: demerzel
+      action: "If emergency reveals a process gap, propose amendment through normal channels"
+  constraints:
+    - "Emergency changes are temporary until ratified through normal process"
+    - "Every emergency action is logged as a Zeroth Law invocation"
+    - "Repeated emergencies of the same type trigger process improvement (Kaizen)"
+
+# Version control requirements
+versioning:
+  format: semver
+  rules:
+    - "Patch (0.0.x): Typo fixes, clarifications that do not change meaning"
+    - "Minor (0.x.0): New fields, extended coverage, backward-compatible additions"
+    - "Major (x.0.0): Breaking changes, removed fields, changed semantics"
+  requirements:
+    - "Every version change includes a dated changelog entry"
+    - "Breaking changes must be communicated to all consumer repos via Galactic Protocol"
+    - "Version history is preserved — never rewrite artifact history"
+
+# Integration with other governance mechanisms
+integration:
+  governance_audit: "Governance-process-policy compliance is checked during Level 3 audits"
+  kaizen: "Process improvements discovered during governance changes are tracked as PDCA cycles"
+  conscience: "Governance decisions that trigger conscience discomfort are flagged for review"
+  staleness: "Governance artifacts not updated beyond staleness threshold are flagged"
+  anti_lolli: "New artifacts must demonstrate a concrete consumer — no speculative governance"
+  experimentation: "Successful governance experiments graduate to formal proposals through this process"
+
+rationale: |
+  Hyperlight's GOVERNANCE.md demonstrates that even open-source infrastructure projects
+  benefit from explicit governance processes — clear roles, voting procedures, and
+  modification rules. AI governance requires even more rigor because governance
+  artifacts directly shape agent behavior.
+
+  Without a formal process, governance changes happen ad hoc — policies appear without
+  review, constitutional articles accumulate without cascade analysis, and deprecated
+  artifacts linger without cleanup. This policy ensures that governance evolves
+  deliberately, transparently, and with appropriate scrutiny proportional to impact.
+
+  The tiered approval model (constitutional > policy > persona) ensures that
+  high-impact changes get high scrutiny while low-impact changes move quickly.
+  Lazy consensus for routine changes prevents governance from becoming a bottleneck
+  while supermajority requirements for constitutional changes prevent governance drift.
