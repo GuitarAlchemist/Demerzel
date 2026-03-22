@@ -1,18 +1,25 @@
 {
   "proposition": "All Demerzel personas have corresponding behavioral tests as required by persona-requirements rule",
   "truth_value": "T",
-  "confidence": 0.95,
+  "confidence": 0.80,
   "evidence": {
     "supporting": [
       {
         "source": "automated-remediation",
-        "claim": "All 14 personas now have dedicated behavioral test files in tests/behavioral/: default, demerzel, seldon, skeptical-auditor, kaizen-optimizer, reflective-architect, system-integrator, communal-steward, convolution-agent, critical-theorist, rational-administrator, recovery-agent, validator-reflector, virtuous-leader",
+        "claim": "All 14 original personas have dedicated behavioral test files in tests/behavioral/",
         "timestamp": "2026-03-17T21:00:00Z",
         "reliability": 0.99
       }
     ],
-    "contradicting": []
+    "contradicting": [
+      {
+        "source": "2026-03-23-belief-refresh",
+        "claim": "Framework has expanded beyond 14 personas — 13 Streeling departments with persona heads, 7 ga agent personas, experimentation persona (v1.1.0 added post-belief). Test coverage for expanded persona set is unverified. Commit c6e0a25 (2026-03-21) added a missing behavioral test, confirming gaps existed after this belief was recorded.",
+        "timestamp": "2026-03-23T00:00:00Z",
+        "reliability": 0.85
+      }
+    ]
   },
-  "last_updated": "2026-03-17T21:00:00Z",
+  "last_updated": "2026-03-23T00:00:00Z",
   "evaluated_by": "demerzel"
 }

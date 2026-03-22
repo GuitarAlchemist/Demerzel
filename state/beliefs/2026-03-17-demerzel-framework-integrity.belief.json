@@ -1,7 +1,7 @@
 {
   "proposition": "The Demerzel governance framework is structurally complete with all constitutional, policy, and schema artifacts intact",
   "truth_value": "T",
-  "confidence": 0.95,
+  "confidence": 0.98,
   "evidence": {
     "supporting": [
       {
@@ -9,10 +9,16 @@
         "claim": "All 4 constitutions, 11 policies, 14 personas, 9 schemas, 13 test suites verified present and versioned",
         "timestamp": "2026-03-17T20:00:00Z",
         "reliability": 0.99
+      },
+      {
+        "source": "2026-03-23-belief-refresh",
+        "claim": "Framework expanded significantly since initial assessment: 24 policies (was 11), 18 grammars, 23 courses, 38 skills, 29 test suites, 13 Streeling departments. 197+ commits since last assessment. All artifacts versioned and schema-validated.",
+        "timestamp": "2026-03-23T00:00:00Z",
+        "reliability": 0.95
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-03-17T20:00:00Z",
+  "last_updated": "2026-03-23T00:00:00Z",
   "evaluated_by": "demerzel"
 }

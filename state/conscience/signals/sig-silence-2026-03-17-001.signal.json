@@ -9,6 +9,8 @@
     "2026-03-17-ga-governance-integration.belief.json"
   ],
   "action_taken": "Trigger Tier 2 reconnaissance on tars and ga focused on agent inventory, active development branches, and domain-specific risk profiles. Create belief entries for each repo's agent landscape.",
-  "outcome": null,
-  "false_positive": null
+  "outcome": "SUBSTANTIALLY ADDRESSED — Tier 2 recon executed. tars: grammar-constrained governance generation (4 EBNF + F#), research cycle modules, 26 dependabot alerts resolved. ga: 7 agent personas defined, build fixed, governance CLAUDE.md live. Beliefs created for all consumer repos (2026-03-18). Remaining gap: no automated verification that consumer repos read/act on directives.",
+  "false_positive": false,
+  "resolved_at": "2026-03-23T00:00:00Z",
+  "residual_concern": "Directive compliance verification still unimplemented — Demerzel issues directives but cannot confirm they are read or acted upon"
 }

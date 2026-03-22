@@ -23,16 +23,11 @@
         "reliability": 0.90
       }
     ],
-    "contradicting": [
-      {
-        "source": "ga-pr-status",
-        "claim": "ga governance scaffolding is on docs/ix-ml-pipeline branch (PR #13), not yet merged to main",
-        "timestamp": "2026-03-18T00:00:00Z",
-        "reliability": 0.80
-      }
-    ]
+    "contradicting": []
   },
   "previous_value": "F",
-  "last_updated": "2026-03-18T00:00:00Z",
+  "last_updated": "2026-03-23T00:00:00Z",
+  "refresh_note": "2026-03-23: PR #13 was closed because governance scaffolding was committed directly to ga main (commit 11abf7af). Contradiction resolved — all 3 repos now have governance on main branch. Confidence upgraded from 0.85 to 0.90.",
+  "confidence_override": 0.90,
   "evaluated_by": "demerzel"
 }

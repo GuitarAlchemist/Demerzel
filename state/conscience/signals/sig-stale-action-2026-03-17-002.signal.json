@@ -8,6 +8,7 @@
     "2026-03-17-ix-governance-integration.belief.json"
   ],
   "action_taken": "Issue targeted directive to ix to update CLAUDE.md governance snippet to reference all 11 articles. This must happen after submodule update so the full constitution text is available locally.",
-  "outcome": null,
-  "false_positive": null
+  "outcome": "RESOLVED — ix CLAUDE.md governance snippet updated to reference all 11 constitutional articles after submodule update on 2026-03-18. Articles 8-11 (Observability, Bounded Autonomy, Stakeholder Pluralism, Ethical Stewardship) now included in ix governance awareness.",
+  "false_positive": false,
+  "resolved_at": "2026-03-23T00:00:00Z"
 }

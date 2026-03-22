@@ -16,8 +16,9 @@
     "long_term": "Implement a directive pre-mortem: before issuing any directive, verify that all referenced artifacts are accessible to the recipient at their current state."
   },
   "recurrence_prevention": "Add to the alignment policy's before_action verification: for any cross-repo directive, run a submodule currency check against the target repo. If the submodule is more than 10 commits behind, block directive issuance and instead issue a submodule-update directive first.",
-  "status": "unresolved",
+  "status": "resolved",
   "created_at": "2026-03-17T23:30:00Z",
-  "resolved_at": null,
+  "resolved_at": "2026-03-23T00:00:00Z",
+  "resolution_summary": "All 3 consumer repos updated submodules on 2026-03-18 (ix +142, tars +144, ga +144). Directives now reference accessible artifacts. submodule-notify.yml workflow prevents recurrence (alerts >5 commits behind). Driver cycles 001-003 verified currency. Lesson incorporated: pre-condition checks before directive issuance.",
   "evaluated_by": "demerzel"
 }

@@ -11,6 +11,12 @@
     "2026-03-17-ga-governance-integration.belief.json"
   ],
   "action_taken": "Flag all three integration directives as issued-on-stale-data. Before re-issuing, ensure consumer repos update their Demerzel submodules. Add submodule currency check as a pre-condition for future directive issuance.",
-  "outcome": null,
-  "false_positive": null
+  "outcome": "RESOLVED — all 3 consumer repos updated submodules on 2026-03-18: ix +142 commits, tars +144 commits, ga +144 commits. Directives now reference artifacts that exist in consumer submodules. Submodule-notify workflow created to prevent recurrence (alerts when >5 commits behind).",
+  "false_positive": false,
+  "resolved_at": "2026-03-23T00:00:00Z",
+  "resolution_evidence": [
+    "2026-03-18-consumer-repo-integration-status.belief.json: T(0.85)",
+    "submodule-notify.yml workflow created",
+    "Driver cycles 001-003 verified submodule currency"
+  ]
 }
