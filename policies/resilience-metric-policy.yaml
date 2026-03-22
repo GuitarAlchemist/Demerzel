@@ -65,11 +65,24 @@ amdahls_law:
   serial_fraction: "Report aggregation — combining per-level scores into overall R"
   implication: "Adding more detection levels scales linearly; the bottleneck is the final aggregation step"
 
+inspiration:
+  name: "Netflix Chaos Monkey"
+  year: 2011
+  principle: "The best way to avoid failure is to fail constantly."
+  reference: "Chaos Engineering — Casey Rosenthal et al. (O'Reilly, 2020)"
+  application: >
+    The governance shake-test is Chaos Monkey applied to AI governance.
+    Instead of killing servers, we inject LOLLI poison to verify the
+    governance immune system detects and responds correctly. If Demerzel
+    can't catch deliberate poison, she can't catch accidental LOLLI.
+
 rationale: >
-  The resilience metric makes governance health visible and measurable.
-  A system that cannot detect injected poisons has no immune response.
-  By measuring R over time, we track whether governance tooling is
-  actually working or just declared. The honest baseline of R=0.0
-  means detection policies exist but automated tooling does not yet.
-  As the F# parser, LOLLI lint pipeline, and shake-test come online,
-  R should improve toward 1.0.
+  Inspired by Netflix's Chaos Monkey (2011), which proved that deliberately
+  injecting failure into production systems builds genuine resilience.
+  We apply the same principle to governance: the resilience metric makes
+  governance health visible and measurable. A system that cannot detect
+  injected poisons has no immune response. By measuring R over time, we
+  track whether governance tooling is actually working or just declared.
+  The honest baseline of R=0.0 means detection policies exist but automated
+  tooling does not yet. As the F# parser, LOLLI lint pipeline, and
+  shake-test come online, R should improve toward 1.0.

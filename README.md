@@ -51,7 +51,7 @@ Demerzel/
 |:---:|:---:|:---:|:---:|:---:|
 | 0% (11 gaps) | L0-L4 + Policy + Schema | 35 | 14 | 66 |
 
-**Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, and dead computations.
+**Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, and dead computations. Inspired by [Netflix's Chaos Monkey](https://netflix.github.io/chaosmonkey/) (2011), which proved that deliberately injecting failure into production systems builds genuine resilience. We apply the same principle to governance: if Demerzel can't catch deliberate poison, she can't catch accidental LOLLI. (See also: *Chaos Engineering* by Casey Rosenthal et al., O'Reilly 2020.)
 
 ```
 R = injections_caught / injections_total
