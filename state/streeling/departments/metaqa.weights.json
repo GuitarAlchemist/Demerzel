@@ -1,0 +1,38 @@
+{
+  "department": "metaqa",
+  "grammar_version": "1.0.0",
+  "research_area_weights": {
+    "test-theory": 0.20,
+    "mutation-testing": 0.20,
+    "formal-verification": 0.10,
+    "property-based-testing": 0.12,
+    "metamorphic-testing": 0.12,
+    "test-adequacy-criteria": 0.10,
+    "coverage-analysis": 0.08,
+    "test-oracle-problem": 0.08
+  },
+  "hypothesis_weights": {
+    "inductive": 0.20,
+    "deductive": 0.30,
+    "abductive": 0.20,
+    "analogical": 0.15,
+    "combinatorial": 0.15
+  },
+  "test_weights": {
+    "empirical": 0.20,
+    "formal_proof": 0.25,
+    "simulation": 0.20,
+    "thought_experiment": 0.10,
+    "cross_validation": 0.15,
+    "adversarial": 0.10
+  },
+  "metadata": {
+    "last_updated": "2026-03-22",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0,
+    "bootstrapped_by": "demerzel-metabuild"
+  }
+}

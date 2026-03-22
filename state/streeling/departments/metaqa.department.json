@@ -1,0 +1,38 @@
+{
+  "department": "metaqa",
+  "full_name": "Department of Meta Quality Assurance",
+  "head_persona": "skeptical-auditor",
+  "established": "2026-03-22",
+  "domain": "governance",
+  "grammar": "gov-metaqa.ebnf",
+  "bootstrapped_by": "demerzel-metabuild",
+  "research_areas": [
+    "test-theory",
+    "mutation-testing",
+    "formal-verification",
+    "property-based-testing",
+    "metamorphic-testing",
+    "test-adequacy-criteria",
+    "coverage-analysis",
+    "test-oracle-problem"
+  ],
+  "consumer_repos": ["Demerzel", "ix", "tars", "ga"],
+  "related_departments": ["computer-science", "mathematics", "philosophy", "cybernetics"],
+  "curriculum": [
+    "Test taxonomy — unit, integration, behavioral, property, mutation, metamorphic",
+    "Mutation testing — operators, mutation score, equivalent mutant problem",
+    "Property-based testing — generators, shrinking, invariant specification",
+    "Metamorphic testing — relations, source test cases, follow-up test cases",
+    "Test oracle problem — expected value, invariant, differential, metamorphic",
+    "Coverage criteria — statement, branch, MC/DC, path, subsumption lattice",
+    "Formal verification — model checking, theorem proving, abstract interpretation",
+    "Test adequacy — adequacy criteria, subsumption, mutation score as proxy",
+    "Boundary value analysis — equivalence partitioning, boundary conditions",
+    "Grammar-based testing — grammar coverage, derivation trees, mutation of grammars",
+    "Model-based testing — state machines, transition coverage, sneak paths",
+    "Symbolic execution — path conditions, constraint solving, concolic testing",
+    "Governance audit testing — meta-testing of governance behavioral tests",
+    "Test suite maintenance — flaky tests, test debt, obsolescence detection",
+    "Probabilistic testing — hypothesis testing, confidence intervals, effect sizes"
+  ]
+}

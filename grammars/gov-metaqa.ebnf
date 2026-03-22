@@ -1,0 +1,276 @@
+(* MetaQA Grammar — Streeling University *)
+(* Department: metaqa *)
+(* Head Persona: skeptical-auditor *)
+(* Prefix: gov- (Governance) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in test theory and meta-quality-assurance *)
+(* Domain: test types, adequacy criteria, oracles, test generation, *)
+(*         governance integration, mutation testing, metamorphic testing *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum, governance audits *)
+(* See: state/streeling/departments/metaqa.department.json *)
+(* Living grammar: evolves via research cycles *)
+(* Bootstrapped by: /demerzel metabuild metaqa *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe enumerate_mutants kill_mutants score reflect
+                | observe specify_property generate_cases check_invariant reflect
+
+(* ============================================================ *)
+(* 2. Test Types                                                  *)
+(* ============================================================ *)
+
+test_type ::= unit_test
+            | integration_test
+            | behavioral_test
+            | property_test
+            | mutation_test
+            | metamorphic_test
+            | model_based_test
+            | grammar_based_test
+
+unit_test        ::= subject precondition stimulus expected_output postcondition
+integration_test ::= component+ interface interaction expected_behavior
+behavioral_test  ::= persona scenario stimulus expected_behavior constraint*
+property_test    ::= generator+ invariant shrinking_strategy
+mutation_test    ::= program mutant_set test_suite mutation_score
+metamorphic_test ::= source_test_case relation follow_up_test_case verdict
+
+(* ============================================================ *)
+(* 3. Test Adequacy Criteria                                     *)
+(* ============================================================ *)
+
+adequacy_criterion ::= coverage_criterion | mutation_criterion | oracle_criterion
+
+coverage_criterion ::= statement_coverage
+                     | branch_coverage
+                     | condition_coverage
+                     | mc_dc_coverage
+                     | path_coverage
+                     | subsumption_hierarchy
+
+mutation_criterion ::= mutation_score killed_count survived_count equivalent_count
+mutation_score     ::= "killed" "/" "(" "total" "-" "equivalent" ")"
+
+boundary_analysis  ::= equivalence_class+ boundary_value+ edge_case*
+equivalence_class  ::= valid_partition | invalid_partition
+boundary_value     ::= lower_boundary | upper_boundary | nominal_value
+
+subsumption_hierarchy ::= criterion "subsumes" criterion
+(* statement ⊆ branch ⊆ condition ⊆ MC/DC ⊆ path *)
+
+(* ============================================================ *)
+(* 4. Test Oracle Problem                                        *)
+(* ============================================================ *)
+
+oracle ::= expected_value_oracle
+         | invariant_oracle
+         | metamorphic_relation_oracle
+         | differential_oracle
+         | statistical_oracle
+
+expected_value_oracle    ::= input expected_output comparison
+invariant_oracle         ::= state invariant_predicate
+                             (* invariant holds before and after operation *)
+metamorphic_relation_oracle ::= source_input relation transformed_input
+                                 source_output relation_constraint transformed_output
+differential_oracle      ::= implementation_a implementation_b input
+                             "output_a" "==" "output_b"        (* cross-check *)
+statistical_oracle       ::= distribution_spec sample_size confidence_level tolerance
+
+(* ============================================================ *)
+(* 5. Mutation Testing                                           *)
+(* ============================================================ *)
+
+mutation_operators ::= aor | ror | cor | lcr | uoi | abs | aois | sdl
+
+aor  ::= arithmetic_operator_replacement     (* + → - → * → / *)
+ror  ::= relational_operator_replacement     (* < → <= → > → >= → == → != *)
+cor  ::= conditional_operator_replacement    (* && → || → ! *)
+lcr  ::= logical_connector_replacement       (* AND → OR *)
+uoi  ::= unary_operator_insertion           (* +x → -x → x++ → x-- *)
+abs  ::= absolute_value_insertion           (* x → |x| → -|x| *)
+aois ::= arithmetic_operator_insertion      (* x → -x, x+1 *)
+sdl  ::= statement_deletion                 (* remove a statement *)
+
+mutant_state ::= live | killed | equivalent | stubborn
+live        ::= "no test killed this mutant"
+killed      ::= "at least one test killed this mutant"
+equivalent  ::= "mutant semantically identical to original"
+stubborn    ::= "mutant is non-equivalent but very hard to kill"
+
+equivalent_mutant_problem ::= undecidable                (* in general — Rice's theorem *)
+                            | heuristic_detection
+
+(* ============================================================ *)
+(* 6. Property-Based Testing                                     *)
+(* ============================================================ *)
+
+property_test_spec ::= property_name generator+ property_predicate
+                       shrink_strategy counterexample?
+
+generator ::= random_generator
+            | boundary_biased_generator
+            | grammar_based_generator
+            | model_based_generator
+
+property_predicate ::= invariant | relation | round_trip | idempotence
+                     | commutativity | associativity | identity_element
+
+shrink_strategy ::= minimal_counterexample_search       (* delta debugging *)
+counterexample  ::= input failure_output shrunk_input
+
+(* ============================================================ *)
+(* 7. Metamorphic Testing                                        *)
+(* ============================================================ *)
+
+metamorphic_relation ::= input_relation output_relation confidence_level
+                       (* if input_relation(x, x') then output_relation(f(x), f(x')) *)
+
+input_relation ::= permutation | scaling | negation | addition | subset
+output_relation ::= equality | ordering | proportionality | monotonicity | invariance
+
+source_test_case   ::= input expected_output
+follow_up_test_case ::= transformed_input expected_transformed_output
+
+metamorphic_verdict ::= relation_holds | relation_violated | undetermined
+relation_holds    ::= "T"   (* supports correctness *)
+relation_violated ::= "F"   (* reveals fault *)
+undetermined      ::= "U"   (* insufficient data *)
+
+(* ============================================================ *)
+(* 8. Test Generation Strategies                                 *)
+(* ============================================================ *)
+
+test_generation ::= random_generation
+                  | symbolic_execution
+                  | grammar_based_generation
+                  | model_based_generation
+                  | search_based_generation
+                  | mutation_based_generation
+
+random_generation    ::= distribution input_space sample_count
+symbolic_execution   ::= path_condition constraint_solver path_enumeration
+grammar_based_generation ::= grammar derivation_tree terminal_sequence
+model_based_generation   ::= model transition_coverage sneak_path_detection
+search_based_generation  ::= fitness_function search_algorithm test_budget
+
+(* ============================================================ *)
+(* 9. Formal Verification                                        *)
+(* ============================================================ *)
+
+formal_verification ::= model_checking | theorem_proving | abstract_interpretation
+
+model_checking     ::= state_space_spec property_spec model_checker result
+                       (* result: verified | counterexample_trace | unknown *)
+theorem_proving    ::= specification proof_obligation proof_tactic proof_status
+abstract_interpretation ::= concrete_semantics abstract_domain abstraction_function
+                             widening_operator fixpoint_computation
+
+property_spec      ::= safety_property | liveness_property | fairness_property
+safety_property    ::= "always" predicate           (* bad state never reached *)
+liveness_property  ::= "eventually" predicate       (* good state eventually reached *)
+fairness_property  ::= "infinitely_often" predicate (* enabled action taken infinitely often *)
+
+(* ============================================================ *)
+(* 10. Coverage Analysis                                         *)
+(* ============================================================ *)
+
+coverage_report ::= subject total_elements covered_elements uncovered_elements
+                    coverage_percentage gaps
+
+coverage_gap    ::= uncovered_branch | uncovered_path | uncovered_mutation
+                  | uncovered_state_transition | uncovered_property
+
+gap_priority    ::= critical | high | medium | low
+(* critical: error-handling paths, boundary conditions, governance checks *)
+(* high: primary business logic branches *)
+
+(* ============================================================ *)
+(* 11. Governance Integration                                    *)
+(* ============================================================ *)
+
+(* MetaQA validates that governance behavioral tests actually catch what they claim *)
+
+governance_test_audit ::= behavioral_test_suite
+                           identify_claims
+                           verify_oracle_strength
+                           measure_mutation_score
+                           report_gaps
+
+behavioral_test_claim ::= "given" scenario "when" action "then" expected_behavior
+oracle_strength       ::= strong_oracle | weak_oracle | absent_oracle
+strong_oracle ::= "precise expected values or invariants specified"
+weak_oracle   ::= "only polarity checked (pass/fail)"
+absent_oracle ::= "no verifiable outcome stated"
+
+meta_test_of_governance_audit ::= governance_audit_procedure
+                                   inject_fault
+                                   verify_audit_detects_fault
+                                   (* audits must be self-auditing *)
+
+constitution_test_coverage ::= article+ covered_by_test+
+(* Map each constitution article to at least one behavioral test *)
+
+(* ============================================================ *)
+(* 12. Hypothesis Methods                                        *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe patterns in defect distributions, infer weak spots *)
+              | deductive       (* derive from test theory first principles — adequacy criteria *)
+              | abductive       (* infer why tests failed to catch a known defect *)
+              | analogical      (* "this oracle problem resembles..." *)
+              | combinatorial   (* combine mutation + metamorphic for hybrid coverage *)
+
+(* ============================================================ *)
+(* 13. Test Methods                                              *)
+(* ============================================================ *)
+
+test ::= empirical             (* run test suites, measure real mutation scores *)
+       | formal_proof          (* prove adequacy criterion subsumption *)
+       | simulation            (* simulate fault injection, model defect distributions *)
+       | thought_experiment    (* "what if this oracle were removed?" *)
+       | cross_validation      (* compare test strategies across repos (ix, tars, ga) *)
+       | adversarial           (* deliberately craft tests that pass for the wrong reason *)
+
+(* ============================================================ *)
+(* 14. Conclusions — maps to tetravalent logic                  *)
+(* ============================================================ *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+(* confirm      → T: test suite is adequate for claimed coverage *)
+(* refute       → F: test suite fails to detect known fault class *)
+(* insufficient → U: not enough data to assess adequacy *)
+(* contradictory → C: two criteria give conflicting adequacy signals *)
+
+(* ============================================================ *)
+(* 15. Reflection — Kuhnian paradigm detection                  *)
+(* ============================================================ *)
+
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+(* anomaly: test suite covers 100% branches but misses 30% mutations *)
+(* paradigm_tension: formal verification vs. pragmatic testing tradeoffs *)
+(* paradigm_shift: LLM-based test generation changing oracle assumptions *)
+
+(* ============================================================ *)
+(* 16. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: *)
+(*   Jia & Harman (2011) — An Analysis and Survey of the Development of Mutation Testing *)
+(*   Hamlet & Taylor (1990) — Partition Testing Does Not Inspire Confidence *)
+(*   Chen et al. (2018) — Metamorphic Testing: A Review of Challenges and Opportunities *)
+(*   Claessen & Hughes (2000) — QuickCheck: A Lightweight Tool for Random Testing *)
+(*   Clarke & Emerson (1981) — Model Checking *)
+(*   Weyuker (1982) — On Testing Non-Testable Programs — oracle problem *)
+(* This grammar evolves via: *)
+(* 1. Research cycles in metaqa department *)
+(* 2. Governance audit meta-testing results *)
+(* 3. Cross-pollination with formal-verification and property-based testing literature *)
