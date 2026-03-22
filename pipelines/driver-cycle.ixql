@@ -1,0 +1,172 @@
+-- Driver Cycle — The 8-phase governance loop as IxQL
+-- Source: .claude/skills/demerzel-drive/SKILL.md
+-- Phases: WAKE → RECON → PLAN → EXECUTE → VERIFY → COMPOUND → PERSIST → SLEEP
+-- Trigger: cron or manual invocation
+
+-- Phase 1: WAKE — acquire lock, rebuild context
+lock_state <- ix.io.read("state/driver/lock.json")
+  → filter(lock_state.heartbeat_age > 120 || !lock_state.exists)
+  → ix.io.write("state/driver/lock.json", { pid: self, heartbeat: now() })
+
+last_cycle    <- ix.io.read("state/driver/last-cycle.json")
+schedule      <- ix.io.read("state/driver/schedule.json")
+health_scores <- ix.io.read("state/driver/health-scores.json")
+strategy      <- ix.io.read("state/driver/strategy.json")
+triggers      <- ix.io.move("state/triggers/*.trigger.json", "state/triggers/processing/")
+beliefs       <- ix.io.read("state/beliefs/*.belief.json")
+conscience    <- ix.io.read("state/conscience/signals/*.signal.json")
+
+-- Phase 2: RECON — four-stage discovery pipeline
+-- Stage 1: Gather (Tier 0 — no model)
+recon_raw <- fan_out(
+    ix.io.gh("api repos/{repo}/actions/runs", per_repo: ["ix", "tars", "ga", "Demerzel"]),
+    ix.io.gh("api repos/{repo}/issues?state=open", per_repo: ["ix", "tars", "ga", "Demerzel"]),
+    ix.io.gh("api repos/{repo}/dependabot/alerts", per_repo: ["ix", "tars", "ga"]),
+    ix.io.gh("log --since={last_cycle.timestamp}", per_repo: ["ix", "tars", "ga", "Demerzel"]),
+    ix.io.gh("submodule status", per_repo: ["ix", "tars", "ga"])
+  )
+
+-- Stage 2: Enrich (Tier 1 → fallback Tier 2)
+health <- recon_raw
+  → governance_health_scorer(
+      ci_health:             0.20,
+      test_health:           0.15,
+      governance_coverage:   0.15,
+      belief_freshness:      0.15,
+      issue_velocity:        0.10,
+      dependency_health:     0.10,
+      submodule_currency:    0.10,
+      conscience_clarity:    0.05
+    )
+  → write("state/driver/health-scores.json", json)
+
+-- Stage 3: Analyze (Tier 2)
+analysis <- fan_out(
+    -- Governance drift detection
+    tars.analyze(health, mode: "governance_drift"),
+    -- Anomaly detection on health time series
+    health → lag_features(window: 5) → isolation_forest → filter(anomaly_score > 0.7),
+    -- Cross-repo dependency analysis
+    tars.analyze(recon_raw.commits, mode: "cross_repo_impact"),
+    -- Blind spot scan (ungoverned components)
+    tars.analyze(recon_raw.issues, mode: "blind_spot_scan"),
+    -- Staleness detection (per staleness-detection-policy)
+    ix.io.walk("state/") → filter(staleness > max_allowed)
+  )
+
+-- Stage 3b: Meta-Recognition (per meta-recognition-engine spec)
+meta_proposals <- fan_out(
+    analysis → filter(type == "repetition")  → meta_recognize(detector: "repetition"),
+    analysis → filter(type == "template")    → meta_recognize(detector: "template"),
+    analysis → filter(type == "drift")       → meta_recognize(detector: "drift"),
+    analysis → filter(type == "dead_code")   → meta_recognize(detector: "dead_code"),
+    analysis → filter(type == "overlap")     → meta_recognize(detector: "overlap")
+  )
+  → write("state/meta-recognition/proposals/", json)
+
+-- Stage 4: Surface — produce situation report
+situation_report <- parallel(
+    health,
+    analysis,
+    meta_proposals,
+    triggers,
+    conscience
+  )
+  → tars.synthesize(template: "situation-report")
+  → bias_assessment                        -- Article 10
+  → confidence_calibration                 -- Are health scores well-calibrated?
+
+-- Phase 3: PLAN — adaptive strategy + work manifest
+roadmap <- ix.io.gh("project item-list 2 --owner GuitarAlchemist --format json")
+  → filter(status in ["Todo", "In Progress"])
+
+manifest <- parallel(situation_report, roadmap, strategy)
+  → tars.plan(
+      max_tasks: 10,
+      strategy: strategy.manifests_analyzed >= 10 ? "adaptive" : "static",
+      authorization_required: true           -- Article 4: every task traces to authorization
+    )
+  → reversibility_check                    -- Article 3: rollback plans mandatory
+  → explanation_requirement                -- Article 2: rationale for each task
+
+-- Phase 4: EXECUTE — dispatch agents per repo
+results <- manifest.tasks
+  → fan_out(
+      tasks.map(task =>
+        when T >= 0.5:
+          tars.execute(task,
+            discipline: "autoresearch",       -- read before write, one change per iteration
+            risk_delivery: task.risk_level,   -- low: push, medium: PR, high: PR+council
+            rollback: task.rollback_plan
+          )
+      )
+    )
+  → throttle(4, concurrent)               -- max 4 parallel agents
+
+-- Phase 5: VERIFY — metrics-driven, never subjective
+verified <- results
+  → fan_out(
+      results.map(result =>
+        parallel(
+          ix.io.run_tests(result.repo),
+          ix.io.check_ci(result.repo),
+          tars.validate_governance(result.artifacts)
+        )
+        → when T >= 0.7: { status: "keep", result: result }
+        → when F: ix.io.git("revert", result.commit)
+      )
+    )
+
+-- Council review for high-risk items
+council_items <- verified
+  → filter(result.risk_level == "high" && result.status == "keep")
+  → fan_out(
+      items.map(item =>
+        parallel(
+          tars.review(item, identity: "anonymous_a"),
+          mcp__openai_chat__openai_chat(item, identity: "anonymous_b")
+        )
+        → tars.synthesize(template: "council-verdict")
+        → when T >= 0.7: { verdict: "approve" }
+        → when C: { verdict: "escalate", risk: "critical" }
+      )
+    )
+
+-- Phase 6: COMPOUND — meta-compounding cycle
+  → compound:
+      harvest verified.learnings
+      harvest meta_proposals.outcomes
+      promote findings if T >= 0.9
+      teach findings to seldon
+      log evolution_entries to "state/evolution/"
+
+-- README sync (per readme-sync-policy)
+readme_counts <- ix.io.count_artifacts(
+    policies: "policies/*.yaml",
+    personas: "personas/*.persona.yaml",
+    grammars: "grammars/*.ebnf",
+    tests: "tests/behavioral/*-cases.md",
+    schemas: "schemas/*.schema.json"
+  )
+  → when readme_counts != current_readme_counts:
+      ix.io.update("README.md", readme_counts)
+
+-- Phase 7: PERSIST — write all updated state
+parallel(
+    ix.io.write("state/manifests/{date}-{cycle_id}.manifest.json", manifest),
+    ix.io.write("state/driver/health-scores.json", health),
+    ix.io.write("state/driver/strategy.json", strategy.update(verified)),
+    ix.io.write("state/driver/last-cycle.json", cycle_summary),
+    ix.io.write("state/beliefs/", new_beliefs),
+    ix.io.write("state/conscience/signals/", new_signals),
+    ix.io.delete("state/triggers/processing/*.trigger.json"),
+    ix.io.archive("state/manifests/", max_age: 30)
+  )
+  → ix.io.git("commit", message: "persist: driver cycle {cycle_id}")
+  → ix.io.git("push")
+
+-- Phase 8: SLEEP — release lock, log summary
+ix.io.delete("state/driver/lock.json")
+  → ix.io.append("LOG.md", cycle_summary)
+  → when follow_ups.any:
+      ix.io.write("state/triggers/{timestamp}-self.trigger.json", follow_ups)

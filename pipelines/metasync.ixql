@@ -1,0 +1,171 @@
+-- MetaSync — Drift detection and correction pipeline
+-- Source: Issue #111, meta-recognition engine (drift detector)
+-- Trigger: driver EXECUTE phase when drift proposal accepted, or on-demand
+-- Output: synchronized artifacts, compliance reports, drift metrics
+
+-- Load drift sources
+health_scores <- ix.io.read("state/driver/health-scores.json")
+beliefs       <- ix.io.read("state/beliefs/*.belief.json")
+evolution     <- ix.io.read("state/evolution/*.evolution.json")
+contracts     <- ix.io.read("contracts/directives/*.directive.md")
+readme        <- ix.io.read("README.md")
+
+-- Sync 1: Submodule drift — consumer repos behind Demerzel
+submodule_drift <- fan_out(
+    ix.io.gh("submodule status", repo: "ix"),
+    ix.io.gh("submodule status", repo: "tars"),
+    ix.io.gh("submodule status", repo: "ga")
+  )
+  → filter(commits_behind > 0)
+  → fan_out(
+      drifted.map(repo =>
+        when commits_behind > 5:
+          -- Significant drift: update submodule and verify
+          ix.io.git("submodule update --remote", repo: repo.name)
+          → ix.io.run_tests(repo.name)
+          → when T >= 0.7: ix.io.git("commit", message: "sync: update Demerzel submodule")
+          → when F: ix.io.git("revert") → alert(discord, "Submodule sync failed for {{repo.name}}")
+
+        → when commits_behind <= 5:
+          -- Minor drift: schedule for next cycle
+          { action: "defer", repo: repo.name, drift: commits_behind }
+      )
+    )
+  → reversibility_check                    -- Article 3
+
+-- Sync 2: Contract version alignment
+contract_drift <- contracts
+  → fan_out(
+      contracts.map(contract =>
+        parallel(
+          -- Check Demerzel's version
+          ix.io.read(contract.source_path) → tars.extract_version(),
+          -- Check consumer repo's version
+          ix.io.gh("contents", repo: contract.target_repo, path: contract.target_path)
+            → tars.extract_version()
+        )
+        → when source_version != target_version:
+            { type: "contract_drift",
+              contract: contract.name,
+              source_version: source_version,
+              target_version: target_version,
+              drift_magnitude: version_distance(source_version, target_version) }
+      )
+    )
+  → filter(drift_magnitude > 0)
+  → fan_out(
+      drifted.map(d =>
+        -- Issue Galactic Protocol directive
+        tars.draft_directive(
+          type: "sync",
+          from: "Demerzel",
+          to: d.contract.target_repo,
+          content: "Contract {{d.contract.name}} at version {{d.source_version}}, target at {{d.target_version}}"
+        )
+        → write("contracts/directives/sync-{d.contract.name}.directive.md", markdown)
+      )
+    )
+
+-- Sync 3: Belief currency — beliefs cited but not validated
+belief_drift <- beliefs
+  → fan_out(
+      -- Stale beliefs driving decisions
+      beliefs → filter(cited_in_last_7_days && age_days > 14)
+        → fan_out(
+            stale.map(belief =>
+              tars.research(belief.claim, depth: "quick")
+              → when T >= 0.7:
+                  ix.io.write(belief.path, { value: "T", confidence: new_confidence, last_updated: now() })
+              → when F:
+                  ix.io.write(belief.path, { value: "F", confidence: new_confidence, last_updated: now() })
+                  → alert(discord, "Belief invalidated: {{belief.name}} — was T, now F")
+              → when U:
+                  ix.io.write(belief.path, { value: "U", last_updated: now() })
+            )
+          ),
+      -- Contradictory beliefs unresolved
+      beliefs → filter(value == "C" && age_days > 7)
+        → fan_out(
+            contradictions.map(belief =>
+              tars.research(belief.claim, depth: "thorough", mode: "resolve_contradiction")
+              → when T >= 0.8: ix.io.write(belief.path, { value: resolved_value })
+              → when C: alert(discord, "Contradiction persists: {{belief.name}} — escalate to human")
+            )
+          )
+    )
+  → confidence_calibration                 -- Are our re-evaluations well-calibrated?
+  → explanation_requirement                -- Article 2: explain belief changes
+
+-- Sync 4: README drift — counts diverge from reality
+readme_drift <- parallel(
+    -- Count actual artifacts
+    ix.io.count_artifacts(
+      policies: "policies/*.yaml",
+      personas: "personas/*.persona.yaml",
+      grammars: "grammars/*.ebnf",
+      tests: "tests/behavioral/*-cases.md",
+      schemas: "schemas/*.schema.json",
+      departments: "state/streeling/departments/*.department.json",
+      courses: "state/streeling/courses/**/en/*.md",
+      skills: ".claude/skills/*/SKILL.md"
+    ),
+    -- Extract current README counts
+    ix.io.read("README.md") → tars.extract_counts()
+  )
+  → filter(actual != documented)
+  → when any_mismatch:
+      ix.io.update("README.md", actual_counts)
+      → ix.io.update("CLAUDE.md", actual_counts)
+      → ix.io.git("commit", message: "sync: update artifact counts in README and CLAUDE.md")
+
+-- Sync 5: Evolution log drift — artifact versions vs deployed
+evolution_drift <- evolution
+  → fan_out(
+      evolution.map(entry =>
+        parallel(
+          entry.artifact_version,
+          ix.io.read(entry.artifact_path) → tars.extract_version()
+        )
+        → when entry_version != deployed_version:
+            { type: "evolution_drift",
+              artifact: entry.artifact_path,
+              logged_version: entry_version,
+              actual_version: deployed_version }
+      )
+    )
+  → filter(drift_detected)
+  → fan_out(
+      drifted.map(d =>
+        ix.io.update(d.evolution_path, { artifact_version: d.actual_version })
+      )
+    )
+
+-- Synthesize drift report
+drift_report <- parallel(
+    submodule_drift,
+    contract_drift,
+    belief_drift,
+    readme_drift,
+    evolution_drift
+  )
+  → tars.synthesize(template: "drift-report")
+  → bias_assessment                        -- Article 10: check all repos equally
+
+-- Persist
+parallel(
+    write("state/meta-recognition/sync-report.json", drift_report),
+    -- Update detector weights for the drift detector
+    ix.io.read("state/meta-recognition/detector-weights.json")
+      → tars.update_weights(detector: "drift", outcome: drift_report.outcome)
+      → write("state/meta-recognition/detector-weights.json", json)
+  )
+
+  → compound:
+      harvest drift_report.corrections
+      harvest drift_report.unresolved
+      promote sync_pattern if T >= 0.9
+      teach drift_learnings to seldon
+      log metasync_cycle to "state/evolution/"
+      -- Feed unresolved drift back as trigger
+      when drift_report.unresolved.any:
+        log trigger to "state/triggers/{timestamp}-drift-followup.trigger.json"
