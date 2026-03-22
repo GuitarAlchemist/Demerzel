@@ -8,6 +8,14 @@ We build composable systems where AI agents operate under principled governance 
 
 ---
 
+## Ecosystem Roadmap
+
+![GuitarAlchemist Ecosystem Roadmap — Poincare Disk](https://raw.githubusercontent.com/GuitarAlchemist/Demerzel/master/docs/roadmap-poincare.png)
+
+*Center = core systems, middle = active work, edge = horizon. Hyperbolic space naturally represents hierarchical depth.*
+
+---
+
 ## Zero to Hero — Learning Paths
 
 ### Path 1: Music Theory (for guitarists)
