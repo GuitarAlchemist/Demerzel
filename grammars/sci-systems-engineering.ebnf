@@ -1,0 +1,261 @@
+(* Systems Engineering Grammar — Streeling University *)
+(* Department: systems-engineering *)
+(* Head Persona: system-integrator *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in systems engineering *)
+(* Domain: lifecycle, architecture, integration, interfaces, verification *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/systems-engineering.department.json *)
+(* Living grammar: evolves via research cycles *)
+(* Bootstrapped by: /demerzel metabuild systems-engineering *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. System Lifecycle                                           *)
+(* ============================================================ *)
+
+lifecycle ::= concept development production utilization support retirement
+
+concept     ::= needs_analysis feasibility_study concept_of_operations
+development ::= system_requirements architecture_design integration_and_test
+production  ::= manufacturing quality_assurance deployment
+utilization ::= operations maintenance_support capability_update
+support     ::= corrective_maintenance preventive_maintenance obsolescence_management
+retirement  ::= decommission disposal data_archival
+
+lifecycle_model ::= v_model | waterfall | spiral | incremental | agile_se | model_based_se
+
+(* ============================================================ *)
+(* 3. Architecture                                               *)
+(* ============================================================ *)
+
+architecture_domain ::= architecture_view viewpoint stakeholder_concern
+
+architecture_view ::= functional_view | physical_view | behavioral_view
+                    | logical_view | operational_view | data_view
+                    | deployment_view | security_view
+
+viewpoint ::= "IEEE 42010" viewpoint_definition view_correspondences
+            | zachman_framework | togaf_adm | dodaf | modaf | nat2000
+
+stakeholder_concern ::= performance | reliability | safety | security
+                      | maintainability | scalability | interoperability
+                      | cost | schedule | evolvability | testability
+
+architecture_evaluation ::= atam                 (* Architecture Tradeoff Analysis Method *)
+                           | saam                (* Software Architecture Analysis Method *)
+                           | cbam                (* Cost Benefit Analysis Method *)
+                           | quality_attribute_scenario
+                           | fitness_function_testing
+
+(* ============================================================ *)
+(* 4. Integration Patterns                                       *)
+(* ============================================================ *)
+
+integration_domain ::= integration_strategy integration_sequence integration_risk
+
+integration_strategy ::= top_down_integration   (* stubs for lower levels *)
+                       | bottom_up_integration   (* drivers for higher levels *)
+                       | sandwich_integration    (* top-down + bottom-up meeting in middle *)
+                       | big_bang_integration    (* all at once — high risk *)
+                       | continuous_integration  (* frequent automated integration *)
+                       | feature_branch_integration
+
+integration_sequence ::= component+ interface_contract+ integration_test+ system_test+
+
+integration_risk ::= interface_mismatch | emergent_interaction | timing_hazard
+                   | resource_contention | version_incompatibility | circular_dependency
+
+(* ============================================================ *)
+(* 5. Interface Design                                           *)
+(* ============================================================ *)
+
+interface_domain ::= interface_type interface_contract interface_versioning interface_compatibility
+
+interface_type ::= api_interface | data_interface | physical_interface
+                 | human_machine_interface | service_interface | message_interface
+                 | event_interface | streaming_interface
+
+interface_contract ::= precondition postcondition invariant
+                     | input_schema output_schema error_schema
+                     | rate_limit timeout_spec retry_policy
+                     | authentication_requirement authorization_requirement
+
+interface_versioning ::= semantic_versioning   (* major.minor.patch *)
+                       | backward_compatible_change | breaking_change | deprecation_policy
+                       | version_negotiation | capability_advertisement
+
+interface_compatibility ::= syntactic_compatibility    (* message formats match *)
+                           | semantic_compatibility     (* meaning is preserved *)
+                           | behavioral_compatibility   (* interaction protocols align *)
+                           | temporal_compatibility     (* timing and ordering constraints *)
+
+(* ============================================================ *)
+(* 6. Requirements Traceability                                  *)
+(* ============================================================ *)
+
+requirements_domain ::= requirement_type traceability_matrix traceability_link requirements_quality
+
+requirement_type ::= stakeholder_requirement system_requirement subsystem_requirement
+                   | functional_requirement non_functional_requirement
+                   | constraint derived_requirement allocated_requirement
+
+traceability_matrix ::= "RTM" requirement_id component_id test_id verification_method status
+traceability_link ::= satisfies | allocates | validates | verifies | conflicts_with | derives_from
+
+requirements_quality ::= completeness | consistency | verifiability | unambiguity
+                       | traceability | feasibility | necessity | atomicity
+
+(* ============================================================ *)
+(* 7. V-Model — Verification and Validation                      *)
+(* ============================================================ *)
+
+v_model ::= left_branch right_branch verification_links validation_links
+
+left_branch  ::= stakeholder_needs system_requirements
+                 subsystem_requirements component_design
+right_branch ::= component_test integration_test
+                 system_test acceptance_test
+
+verification_method ::= inspection      (* check document or artifact correctness *)
+                      | analysis        (* mathematical or model-based proof *)
+                      | demonstration   (* show functionality without measurement *)
+                      | test            (* measure and compare to requirement *)
+
+validation ::= "are we building the right system?" stakeholder_acceptance
+verification ::= "are we building the system right?" requirement_satisfaction
+
+v_model_mapping_to_demerzel ::=
+  (* Stakeholder needs  ↔ Asimov constitution / harm taxonomy *)
+  (* System requirements ↔ default.constitution.md Articles 1-11 *)
+  (* Subsystem requirements ↔ policies/*.yaml *)
+  (* Component design ↔ personas/*.persona.yaml *)
+  (* Component test ↔ tests/behavioral/*-cases.md *)
+  (* Integration test ↔ batch-b-integration-cases.md *)
+  (* System test ↔ demerzel-cases.md, asimov-law-cases.md *)
+  (* Acceptance test ↔ governance-audit-policy cycle *)
+
+(* ============================================================ *)
+(* 8. Systems of Systems                                         *)
+(* ============================================================ *)
+
+sos_domain ::= sos_type sos_challenge sos_governance
+
+sos_type ::= directed_sos      (* single owner, centrally managed *)
+           | acknowledged_sos  (* agreed objectives, independently managed *)
+           | collaborative_sos (* voluntary cooperation *)
+           | virtual_sos       (* no central management or agreed purpose *)
+
+sos_challenge ::= emergent_behavior_unpredictability | interoperability_failure
+                | evolutionary_misalignment | boundary_ambiguity
+                | authority_fragmentation | test_environment_unavailability
+
+sos_governance ::= interface_authority | change_control_board | configuration_baseline
+                 | federation_agreement | autonomy_boundary_definition
+
+(* ============================================================ *)
+(* 9. Emergent Behavior                                          *)
+(* ============================================================ *)
+
+emergence ::= weak_emergence      (* explainable from components, complex to predict *)
+            | strong_emergence    (* not reducible to component properties *)
+            | beneficial_emergence | harmful_emergence
+
+emergence_detection ::= simulation_observation | property_measurement
+                      | unexpected_interaction_log | anomaly_pattern_matching
+
+(* ============================================================ *)
+(* 10. Configuration Management                                  *)
+(* ============================================================ *)
+
+config_mgmt ::= baseline_establishment change_control status_accounting audit
+
+baseline ::= functional_baseline | allocated_baseline | product_baseline | operational_baseline
+change_control ::= change_request change_impact_assessment change_approval configuration_item_update
+status_accounting ::= configuration_item_record change_history audit_trail
+audit ::= functional_configuration_audit | physical_configuration_audit
+
+(* ============================================================ *)
+(* 11. Demerzel-Specific Integration Patterns                    *)
+(* ============================================================ *)
+
+(* Systems engineering analysis of the Demerzel governance stack *)
+demerzel_se ::= cross_repo_integration galactic_protocol_as_interface_spec
+              | hyperlight_isolation_pattern demerzel_sos_mapping
+
+cross_repo_integration ::= "ix" "+" "tars" "+" "ga" "+" "Demerzel"
+                          integration_strategy? interface_contract+
+
+galactic_protocol_as_interface_spec ::=
+  (* Galactic Protocol = contracts/galactic-protocol.md *)
+  (* Acts as the interface_contract for cross-repo communication *)
+  (* Defines: input_schema (directive), output_schema (compliance report) *)
+  (* Versioning via semantic_versioning on contract documents *)
+  (* Compatibility check: behavioral_compatibility with consumer repos *)
+
+hyperlight_isolation_pattern ::=
+  (* Hyperlight = micro-VM isolation for agent tool execution in ix *)
+  (* Maps to: physical_interface + security_view in architecture *)
+  (* Isolation boundary = interface_type = physical_interface *)
+  (* Constraint: no shared mutable state across boundary *)
+
+demerzel_sos_mapping ::= acknowledged_sos
+  (* ix, tars, ga: independently managed repos with agreed governance objectives *)
+  (* Demerzel = sos_governance via constitution + contracts *)
+  (* Challenge: boundary_ambiguity between repo autonomy and Demerzel authority *)
+
+(* ============================================================ *)
+(* 12. Hypothesis Methods                                        *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe integration failure patterns across projects *)
+              | deductive       (* derive from V-model or INCOSE SEBOK principles *)
+              | abductive       (* infer why an interface contract was violated *)
+              | analogical      (* "this integration pattern resembles..." *)
+              | combinatorial   (* combine SoS governance with CI/CD practices *)
+
+(* ============================================================ *)
+(* 13. Test Methods                                              *)
+(* ============================================================ *)
+
+test ::= empirical             (* measure integration success rates, defect density *)
+       | formal_proof          (* verify interface contracts, prove invariants *)
+       | simulation            (* model system behavior, run integration scenarios *)
+       | thought_experiment    (* "what if the Galactic Protocol breaks backward compat?" *)
+       | cross_validation      (* compare integration approaches across repos *)
+       | adversarial           (* deliberately inject interface mismatches *)
+
+(* ============================================================ *)
+(* 14. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 15. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+
+(* ============================================================ *)
+(* 16. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: INCOSE Systems Engineering Handbook, *)
+(*   IEEE 15288 Systems and Software Engineering — System Lifecycle Processes, *)
+(*   IEEE 42010 Architecture Description, *)
+(*   Maier "Architecting Principles for Systems-of-Systems", *)
+(*   Bass, Clements & Kazman Software Architecture in Practice *)
+(* Demerzel integration: Galactic Protocol contracts, cross-repo directives, *)
+(*   Hyperlight isolation as physical interface pattern *)
