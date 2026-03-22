@@ -3,6 +3,12 @@ version: "1.0.0"
 effective_date: "2026-03-14"
 description: Rules for when an agent may modify its own behavior, tools, or configuration
 
+constitutional_basis:
+  - Article 9 (Bounded Autonomy) — self-modification is permitted only within approved ranges
+  - Article 3 (Reversibility) — all modifications must have a documented rollback path
+  - Article 7 (Auditability) — every modification must be logged with rationale
+  - Article 6 (Escalation) — modifications to skill definitions or thresholds require human approval
+
 allowed_self_modifications:
   without_approval:
     - Adjusting internal parameters within pre-approved ranges

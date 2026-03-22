@@ -6,6 +6,12 @@ description: >
   Codifies PDCA cycle with tetravalent logic integration, three Kaizen models,
   waste taxonomy with 5S-derived remediation, and 5 Whys root cause analysis.
 
+constitutional_basis:
+  - Article 4 (Proportionality) — improvements must not exceed task scope (Asimov Article 4 also applies)
+  - Article 3 (Reversibility) — all improvements must have a rollback path
+  - Article 7 (Auditability) — every PDCA cycle produces a formal audit trail
+  - Article 6 (Escalation) — improvements with confidence < 0.5 require human confirmation
+
 scope: universal
 applies_to: all_agents
 

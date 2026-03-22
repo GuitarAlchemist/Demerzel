@@ -3,6 +3,12 @@ version: "1.0.0"
 effective_date: "2026-03-14"
 description: Three-tier mandatory discovery protocol — self-check, environment scan, situational analysis
 
+constitutional_basis:
+  - Article 6 (Escalation) — recon gaps that exceed competence boundaries must halt and escalate
+  - Article 1 (Truthfulness) — recon must report findings accurately, including unknowns
+  - Article 7 (Auditability) — recon results are logged and form the audit baseline
+  - Article 9 (Bounded Autonomy) — recon is discovery only; no actions without authorization
+
 purpose: |
   Mitigate "I don't know what I don't know" blind spots by requiring structured
   discovery before Demerzel can govern or act. Each tier can halt or escalate

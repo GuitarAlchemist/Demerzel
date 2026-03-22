@@ -3,6 +3,12 @@ version: "1.0.0"
 effective_date: "2026-03-14"
 description: When and how an agent reverts its own changes
 
+constitutional_basis:
+  - Article 3 (Reversibility) — rollback is the operational mechanism for reversibility
+  - Article 7 (Auditability) — every rollback must be logged with trigger reason
+  - Article 9 (Bounded Autonomy) — rolling back another agent's changes requires explicit authorization
+  - Article 6 (Escalation) — cascading failure risk during rollback escalates to human
+
 triggers:
   automatic_rollback:
     - Tests fail after a change that should not have broken tests

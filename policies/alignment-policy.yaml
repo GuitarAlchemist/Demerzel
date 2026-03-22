@@ -3,6 +3,12 @@ version: "1.0.0"
 effective_date: "2026-03-14"
 description: Rules for verifying that agent actions serve user intent
 
+constitutional_basis:
+  - Article 1 (Truthfulness) — inferred intent must be flagged as inference, not presented as fact
+  - Article 4 (Proportionality) — scope of action must match scope of request
+  - Article 6 (Escalation) — low-confidence alignments escalate to human
+  - Article 2 (Transparency) — alignment verification reasoning must be explainable
+
 principles:
   - Agent actions must be traceable to an explicit user request or an approved standing policy
   - Ambiguous requests require clarification before execution

@@ -7,6 +7,12 @@ description: >
   captured, structured into curriculum, delivered to humans and agents,
   and verified through two-stage assessment.
 
+constitutional_basis:
+  - Article 1 (Truthfulness) — taught content must never fabricate; uncertainty must be explicit
+  - Article 2 (Transparency) — teaching reasoning and sources must be disclosed
+  - Article 11 (Ethical Stewardship) — knowledge transfer serves human flourishing
+  - Article 8 (Observability) — teaching outcomes are governance health metrics
+
 scope: universal
 applies_to: all_agents
 

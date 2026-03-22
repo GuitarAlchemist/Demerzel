@@ -120,11 +120,11 @@ detection_process:
       detection: "Scan grammars for directional verbs; flag unpaired instances"
       action: "Flag as suggestion unless the asymmetry is architecturally intentional"
 
-constitutional_alignment:
-  - article: 4          # Proportionality — gap severity must match response
-  - article: 6          # Escalation — critical gaps escalate to human
-  - article: 8          # Observability — gap reports are observable metrics
-  - article: 9          # Bounded Autonomy — don't auto-fix, recommend
+constitutional_basis:
+  - Article 4 (Proportionality) — gap severity must match response scope
+  - Article 6 (Escalation) — critical gaps escalate to human
+  - Article 8 (Observability) — gap reports are observable metrics
+  - Article 9 (Bounded Autonomy) — don't auto-fix, only recommend
 
 vsm_mapping:
   system: 4             # Intelligence — environment scanning

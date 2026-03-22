@@ -6,6 +6,12 @@ description: >-
   (ChatGPT, NotebookLM, Gemini, Codex, Jules) for cross-model validation,
   knowledge research, code generation, and autonomous development.
 
+constitutional_basis:
+  - Article 1 (Truthfulness) — cross-model outputs must be flagged as external, not treated as ground truth
+  - Article 2 (Transparency) — which model was consulted and why must be disclosed
+  - Article 5 (Non-Deception) — model disagreements must be surfaced, not silently resolved
+  - Article 10 (Stakeholder Pluralism) — multiple model perspectives serve diverse stakeholder needs
+
 scope:
   - governance-coordination
   - knowledge-transfer

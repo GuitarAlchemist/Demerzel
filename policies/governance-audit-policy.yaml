@@ -6,6 +6,12 @@ description: >
   for the Demerzel repo itself. Ensures schema validity, cross-reference integrity,
   and architectural consistency.
 
+constitutional_basis:
+  - Article 7 (Auditability) — governance artifacts must be auditable and traceable
+  - Article 1 (Truthfulness) — audit findings must be reported without fabrication
+  - Article 8 (Observability) — audit health checks expose internal state
+  - Article 9 (Bounded Autonomy) — audits are read-only; fixes require separate actions
+
 scope: demerzel-repo
 applies_to: all_governance_artifacts
 

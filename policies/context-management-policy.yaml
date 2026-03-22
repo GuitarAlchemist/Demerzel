@@ -6,6 +6,12 @@ description: >-
   when to split/clear, how to remain token efficient, and when to
   delegate to subagents vs. continue in session.
 
+constitutional_basis:
+  - Article 4 (Proportionality) — context strategy must match task scope, not over-delegate
+  - Article 6 (Escalation) — critical context exhaustion escalates to human
+  - Article 7 (Auditability) — context decisions must be logged for traceability
+  - Article 9 (Bounded Autonomy) — agents must not spawn unbounded subagent trees
+
 scope:
   - all-agents
 
