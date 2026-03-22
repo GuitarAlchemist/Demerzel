@@ -1,0 +1,21 @@
+{
+  "name": "cybernetics",
+  "display_name": "Cybernetics",
+  "domain": "science",
+  "head_persona": "system-integrator",
+  "grammar": "sci-cybernetics.ebnf",
+  "research_areas": [
+    "feedback-loops",
+    "control-theory",
+    "homeostasis",
+    "viable-system-model",
+    "self-regulation",
+    "requisite-variety",
+    "autopoiesis",
+    "second-order-cybernetics"
+  ],
+  "curriculum": [],
+  "status": "active",
+  "created": "2026-03-24",
+  "notes": "VSM mapping to Demerzel governance. Stafford Beer's organizational cybernetics."
+}

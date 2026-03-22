@@ -1,0 +1,159 @@
+(* Cybernetics Grammar — Streeling University *)
+(* Department: cybernetics *)
+(* Head Persona: system-integrator *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in cybernetics and control theory *)
+(* Domain: feedback loops, control theory, VSM, homeostasis *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/cybernetics.department.json *)
+(* Living grammar: evolves via research cycles *)
+(* Bootstrapped by: /demerzel metabuild cybernetics *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. Systems                                                    *)
+(* ============================================================ *)
+
+system ::= input process output feedback
+         | input process output                (* open-loop *)
+         | viable_system
+
+feedback ::= negative_feedback | positive_feedback | delayed_feedback
+negative_feedback ::= sensor comparator effector         (* homeostatic regulation *)
+positive_feedback ::= sensor amplifier effector           (* growth/runaway *)
+delayed_feedback ::= sensor delay comparator effector     (* oscillation risk *)
+
+(* ============================================================ *)
+(* 3. Control Theory                                             *)
+(* ============================================================ *)
+
+control_loop ::= setpoint sensor controller actuator plant
+controller ::= proportional | integral | derivative | pid
+             | adaptive_controller | model_predictive
+plant ::= linear_plant | nonlinear_plant | stochastic_plant
+
+stability_analysis ::= eigenvalue_analysis | nyquist | bode | root_locus
+                     | lyapunov | describing_function
+
+(* ============================================================ *)
+(* 4. Viable System Model — Stafford Beer                        *)
+(* ============================================================ *)
+
+viable_system ::= system_1 system_2 system_3 system_3_star system_4 system_5
+
+system_1      ::= operation+                           (* doing the work *)
+system_2      ::= coordination_mechanism+              (* preventing oscillation *)
+system_3      ::= control_function audit_channel?      (* internal regulation *)
+system_3_star ::= audit_function                       (* sporadic audit *)
+system_4      ::= intelligence_function                (* environment scanning *)
+system_5      ::= policy_function identity_function    (* purpose and values *)
+
+(* VSM ↔ Demerzel mapping *)
+(* System 1 = ix, tars, ga (operational repos) *)
+(* System 2 = Galactic Protocol, contracts *)
+(* System 3 = Driver, PDCA, policies *)
+(* System 3* = RECON, governance audits *)
+(* System 4 = Seldon research, completeness instinct *)
+(* System 5 = Constitution, Asimov Laws, conscience *)
+
+(* ============================================================ *)
+(* 5. Homeostasis                                                *)
+(* ============================================================ *)
+
+homeostasis ::= essential_variable acceptable_range regulatory_mechanism
+essential_variable ::= identifier range_spec
+acceptable_range ::= "[" lower_bound "," upper_bound "]"
+regulatory_mechanism ::= feedback | buffer | structural_change
+
+(* ============================================================ *)
+(* 6. Ashby's Law of Requisite Variety                           *)
+(* ============================================================ *)
+
+requisite_variety ::= "variety" "(" regulator ")" ">=" "variety" "(" disturbance ")"
+variety_amplifier ::= intelligence | delegation | automation
+variety_attenuator ::= policy | filter | abstraction
+
+(* ============================================================ *)
+(* 7. Autopoiesis — self-creating systems                        *)
+(* ============================================================ *)
+
+autopoiesis ::= boundary production_network component_generation
+boundary ::= membrane | interface | api_contract
+production_network ::= process+ feedback+
+component_generation ::= "self_produce" "(" component ")"
+
+(* ============================================================ *)
+(* 8. Second-Order Cybernetics                                   *)
+(* ============================================================ *)
+
+(* The observer is part of the system *)
+second_order ::= observer_system observed_system coupling
+coupling ::= "observes" | "perturbs" | "co-evolves"
+(* In governance: Demerzel observing herself is second-order cybernetics *)
+(* The conscience, self-modification policy, and meta-compounding are all second-order *)
+
+(* ============================================================ *)
+(* 9. Governance Integration                                     *)
+(* ============================================================ *)
+
+(* Cybernetic analysis of governance pipelines *)
+governance_cybernetic ::= identify_feedback_loops
+                        | measure_variety_ratio
+                        | check_homeostatic_bounds
+                        | vsm_level_assessment
+                        | detect_oscillation
+
+(* ============================================================ *)
+(* 10. Hypothesis Methods                                        *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe patterns in real control systems *)
+              | deductive       (* derive from control theory first principles *)
+              | abductive       (* infer why a system is oscillating or failing *)
+              | analogical      (* "this feedback loop behaves like..." *)
+              | combinatorial   (* combine VSM with homeostasis models *)
+
+(* ============================================================ *)
+(* 11. Test Methods                                              *)
+(* ============================================================ *)
+
+test ::= empirical             (* measure real systems, instrument feedback *)
+       | formal_proof          (* stability proofs, Lyapunov functions *)
+       | simulation            (* model system dynamics, run time-series *)
+       | thought_experiment    (* "what if this feedback loop were removed?" *)
+       | cross_validation      (* compare VSM mappings across organizations *)
+       | adversarial           (* stress-test homeostatic bounds *)
+
+(* ============================================================ *)
+(* 12. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 13. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+
+(* ============================================================ *)
+(* 14. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: Stafford Beer VSM, Norbert Wiener Cybernetics, *)
+(*   Ashby Design for a Brain, Maturana & Varela Autopoiesis *)
+(* This grammar evolves via: *)
+(* 1. Research cycles in cybernetics department *)
+(* 2. VSM mapping analysis of Demerzel governance *)
+(* 3. Cross-pollination with control theory literature *)

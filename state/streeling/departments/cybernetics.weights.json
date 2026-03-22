@@ -1,0 +1,38 @@
+{
+  "department": "cybernetics",
+  "grammar_version": "1.0.0",
+  "research_weights": {
+    "feedback-loops": 0.20,
+    "control-theory": 0.15,
+    "viable-system-model": 0.20,
+    "homeostasis": 0.10,
+    "self-regulation": 0.10,
+    "requisite-variety": 0.10,
+    "autopoiesis": 0.08,
+    "second-order-cybernetics": 0.07
+  },
+  "hypothesis_weights": {
+    "inductive": 0.20,
+    "deductive": 0.25,
+    "abductive": 0.25,
+    "analogical": 0.20,
+    "combinatorial": 0.10
+  },
+  "test_weights": {
+    "empirical": 0.25,
+    "formal_proof": 0.15,
+    "simulation": 0.30,
+    "thought_experiment": 0.15,
+    "cross_validation": 0.10,
+    "adversarial": 0.05
+  },
+  "metadata": {
+    "last_updated": "2026-03-24",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0,
+    "bootstrapped_by": "demerzel-metabuild"
+  }
+}
