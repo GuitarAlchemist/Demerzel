@@ -210,7 +210,77 @@ Before any AI-generated artifact enters a pipeline:
 
 ---
 
-## 7. The Factory-of-Factories Pattern
+## 7. Semantic Backpressure — Filtering Work Before It Wastes Capacity
+
+AI makes engineers faster. But faster engineers working on the wrong things is not progress — it is expensive noise. The highest-leverage intervention is not speeding up execution. It is filtering intake.
+
+### The Problem: Garbage In, Faster Garbage Out
+
+Every sprint starts with a backlog. Some tickets are clear, well-scoped, and connected to a real user need. Some are vague, duplicative, contradictory, or solve problems nobody has. In a typical engineering organization, 30-40% of tickets that enter a sprint are noise — unclear requirements, duplicate work, features without a named user, or tasks that contradict other in-flight work.
+
+Without AI, this noise consumes engineering capacity at human speed. With AI, it consumes capacity at AI speed. Making engineers 3x faster on a backlog that is 40% noise means you are now producing waste 3x faster.
+
+Amdahl's Law again: if 40% of your serial pipeline is noise, no amount of parallel speedup fixes the throughput problem. The noise is the bottleneck. Filter it before sprint start, and you unlock more capacity than any coding tool ever will.
+
+### The BS Decoder: AI as Intake Filter
+
+Before a ticket enters a sprint, run it through an AI intake filter that scores it on four dimensions:
+
+| Dimension | Question | Fail Example |
+|---|---|---|
+| **Specificity** | Does the ticket describe a concrete, observable problem or outcome? | "Improve performance" (of what? measured how?) |
+| **Consumer** | Does the ticket name who benefits and how they will know? | "Refactor auth module" (who asked? what breaks if we don't?) |
+| **Falsifiability** | Can we tell whether the ticket is done? | "Make the UI better" (by what measure?) |
+| **Non-contradiction** | Does the ticket conflict with other in-flight work? | "Add caching to call routing" while another ticket says "Remove caching from call routing" |
+
+Tickets scoring below threshold get sent back for rewriting — not rejected, rewritten. The AI can draft the rewrite: "You wrote 'Improve performance.' Did you mean 'Reduce P95 latency of call routing lookup from 200ms to under 50ms, measured at the PSAP gateway'?" The rewrite takes 30 seconds. The engineering time it saves is days.
+
+### ERGOL Gate
+
+Every ticket entering a sprint must answer two questions:
+
+1. **Who is the consumer?** A named person, team, PSAP, or regulatory body — not "the business" or "stakeholders."
+2. **What is the success metric?** A measurable outcome — not "completed" or "shipped."
+
+If a ticket cannot answer both, it is not ready for engineering. It is ready for product refinement. This is not bureaucracy. This is the difference between a sprint that delivers value and a sprint that delivers activity.
+
+### Tetravalent Triage
+
+Apply four-valued logic to backlog triage:
+
+| State | Meaning | Action |
+|---|---|---|
+| **T (True)** | Clear requirement, named consumer, measurable outcome, no conflicts | Approve for sprint |
+| **F (False)** | No consumer, no metric, solves a non-problem, or already solved | Reject with explanation |
+| **U (Unknown)** | Unclear scope, ambiguous requirements, uncertain priority | Investigate first — do not start work until the unknowns are resolved |
+| **C (Contradictory)** | Conflicts with another ticket, contradicts a recent decision, or duplicates in-flight work | Resolve the contradiction before either ticket proceeds |
+
+The critical rule: **Unknown tickets do not enter sprints.** They enter investigation. Starting work on a ticket you do not fully understand is how you build the wrong thing fast. In a 911 system, building the wrong thing fast is how you introduce routing errors that take months to diagnose.
+
+### The Math
+
+Consider a team of 8 engineers running two-week sprints:
+
+- **Without backpressure:** 40 tickets enter the sprint. 16 are noise (40%). Each noise ticket consumes an average of 2 engineer-days before someone realizes it is wrong, vague, or duplicative. That is 32 engineer-days wasted — 4 full engineer-sprints out of 80 available engineer-days. The team's effective capacity is 60%.
+- **With backpressure:** AI intake filter catches 12 of the 16 noise tickets before sprint start. 4 slip through (no filter is perfect). Waste drops from 32 engineer-days to 8. Effective capacity rises from 60% to 90%. That is a 50% improvement in real throughput — from filtering, not from faster coding.
+
+No coding tool delivers a 50% throughput improvement. Intake filtering does, because it removes waste from the serial path.
+
+### For Intrado
+
+This maps directly to how Intrado engineering teams work:
+
+- **JIRA tickets for NG911 migration** — each migration has dozens of sub-tasks. How many are clearly scoped with measurable completion criteria? How many say "update configuration" without specifying which configuration, for which PSAP, verified by what test?
+- **Bug tickets from PSAP operators** — some describe exact reproduction steps with log references. Some say "calls are dropping sometimes." The second type needs investigation before engineering, not a sprint commitment.
+- **Compliance tickets** — FCC mandate changes generate tickets. Are they traced to the specific regulation section, the specific code path affected, and the specific test that verifies compliance? Or do they say "ensure FCC compliance" as if that is a single task?
+
+**So what?** The fastest way to make your engineering team more productive is not giving them better tools. It is giving them better work. AI can filter, score, and rewrite incoming tickets faster and more consistently than any human process. This is the lowest-risk, highest-impact application of AI to engineering management.
+
+**What do we do Monday?** Pull the last sprint's JIRA board. Score every ticket on the four dimensions (specificity, consumer, falsifiability, non-contradiction). Count how many would have failed. That number — the percentage of sprint capacity consumed by noise — is the business case for semantic backpressure. If it is above 20%, the ROI on an intake filter exceeds the ROI on any coding tool.
+
+---
+
+## 8. The Factory-of-Factories Pattern
 
 The highest-leverage use of AI is not building things. It is building systems that build things.
 
@@ -237,7 +307,7 @@ Each level multiplies output, but also multiplies risk if ungoverned. A test fac
 
 ---
 
-## 8. Risk Management
+## 9. Risk Management
 
 AI in life-safety software introduces specific risks that AI in e-commerce does not. Here is an honest accounting.
 
@@ -273,7 +343,7 @@ Engineers who have built life-safety systems for decades will reasonably questio
 
 ---
 
-## 9. Three-Year Roadmap
+## 10. Three-Year Roadmap
 
 ### Year 1: Foundation (Months 1-12)
 
@@ -302,7 +372,7 @@ Engineers who have built life-safety systems for decades will reasonably questio
 
 ---
 
-## 10. The Ask
+## 11. The Ask
 
 ### Budget
 
@@ -346,10 +416,11 @@ If this describes the state after 12 months, the program was LOLLI. Shut it down
 |---|---|
 | What is AI-native engineering? | AI as a governed team member, not just a code-completion tool |
 | Why does Intrado need it? | NG911 complexity is scaling faster than our team can scale |
+| What is the fastest win? | Semantic backpressure — filter noise tickets before they waste sprint capacity |
 | What does it cost? | $80-160K for a one-product-line pilot in Year 1 |
 | What is the risk? | Confident wrong answers, test illusion, over-automation of critical paths |
 | How do we manage the risk? | Constitutional governance, multi-model verification, criticality tiers, ERGOL metrics |
-| What do we do Monday? | Audit one product line. Map the pipeline. Define ERGOL metrics. Start with test intelligence. |
+| What do we do Monday? | Score last sprint's tickets for BS level. Count the noise. That number is your business case. |
 
 ---
 
