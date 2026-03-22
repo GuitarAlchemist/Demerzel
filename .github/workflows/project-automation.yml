@@ -12,6 +12,7 @@ permissions:
 jobs:
   auto-add-to-project:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: github.event_name == 'issues'
     steps:
       - name: Add issue to Demerzel Governance project
@@ -35,6 +36,7 @@ jobs:
 
   auto-comment-governance:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: github.event.action == 'opened'
     steps:
       - name: Add governance comment

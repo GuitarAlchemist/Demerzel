@@ -1,0 +1,24 @@
+{
+  "id": "sync-2026-03-23-wiki-001",
+  "direction": "export",
+  "target_system": "github-wiki",
+  "payload_type": "belief-snapshot",
+  "payload": {
+    "snapshot_id": "bsnap-2026-03-23-001",
+    "repo": "GuitarAlchemist/Demerzel",
+    "captured_at": "2026-03-23T00:00:00Z",
+    "beliefs": [
+      {
+        "id": "belief-zeroth-law-primacy",
+        "statement": "Zeroth Law always overrides all other constitutional articles",
+        "confidence": { "T": 0.98, "F": 0.01, "U": 0.01, "C": 0.0 },
+        "source": "constitutions/asimov.constitution.md"
+      }
+    ],
+    "pdca_state": "act",
+    "knowledge_gaps": []
+  },
+  "adapter": "github-wiki-adapter",
+  "synced_at": "2026-03-23T00:05:00Z",
+  "channel": "crisp"
+}
