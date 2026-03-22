@@ -513,3 +513,145 @@ conclusion_binding ::= identifier "<-"
    quality_verdict <- assert error model_performance: csv("test.csv") → random_forest → f1_score
      assert_check(metric f1_score >= 0.80, message: "Minimum performance threshold")
 *)
+
+(* ============================================================ *)
+(* 13. Traceability — Full Stack Audit Trail                     *)
+(* ============================================================ *)
+
+(* Every IxQL execution produces a trace chain from constitutional
+   article down to C#/F# class method and back up. Article 7. *)
+
+trace_record ::= trace_header trace_stages trace_summary
+
+trace_header ::= pipeline_handle version timestamp trigger_source
+               routing_level routing_confidence caller_context
+
+trace_stages ::= trace_stage+
+trace_stage ::= stage_name stage_type input_snapshot output_snapshot
+              duration_ms conclusion runtime_binding?
+
+(* Runtime binding: which actual code executed this stage *)
+runtime_binding ::= mcp_binding | ce_binding | native_binding
+
+mcp_binding    ::= "mcp" namespace "." method
+                   "→" runtime_class                (* C#/F# class that handled it *)
+ce_binding     ::= "tars_ce" method_name
+                   "→" fsharp_module "." fsharp_function
+native_binding ::= "ix" crate_name "::" rust_function
+
+runtime_class   ::= dotnet_namespace "." class_name "." method_name
+fsharp_module   ::= identifier ("." identifier)*
+dotnet_namespace ::= identifier ("." identifier)*
+
+(* Example trace:
+   {
+     "pipeline": "@gov-audit-001",
+     "version": "1.0.0",
+     "timestamp": "2026-03-24T18:00:00Z",
+     "trigger": "invoke from @driver-cycle",
+     "routing": { "level": "L0", "confidence": 1.0 },
+     "stages": [
+       {
+         "name": "bias_assessment",
+         "type": "governance_gate",
+         "input": { "model_output": { "predictions": [...] } },
+         "output": { "conclusion": "T", "confidence": 0.88 },
+         "duration_ms": 142,
+         "binding": {
+           "type": "mcp",
+           "tool": "tars.governance.check_bias",
+           "runtime": "GA.Domain.Services.Governance.BiasAssessmentService.Evaluate()"
+         }
+       },
+       {
+         "name": "confidence_calibration",
+         "type": "governance_gate",
+         "binding": {
+           "type": "tars_ce",
+           "method": "gate ConfidenceCalibration",
+           "runtime": "Tars.IxQL.Gates.ConfidenceGate.check()"
+         }
+       }
+     ],
+     "summary": {
+       "conclusion": "T",
+       "confidence": 0.85,
+       "total_duration_ms": 1247,
+       "stages_passed": 5,
+       "stages_failed": 0,
+       "deepest_binding": "GA.Domain.Core.Theory.Atonal.PitchClassSet.ComputeIcv()"
+     }
+   }
+*)
+
+(* Trace storage: state/traces/{handle}/{timestamp}.trace.json *)
+(* Queryable by: handle, date range, conclusion, binding class *)
+
+(* ============================================================ *)
+(* 14. Auto-Distillation & Type Providers                        *)
+(* ============================================================ *)
+
+(* Pipelines learn from their own execution and generate types *)
+
+(* Auto-distillation: traces feed back into grammar weights *)
+distill ::= "distill" "(" trace_source "→" weight_target ")"
+
+trace_source  ::= "traces" "(" handle "," time_range? ")"
+weight_target ::= "grammar_weights" "(" grammar_file ")"
+                | "production_weights" "(" production_name ")"
+
+(* Example:
+   distill(traces(@gov-audit-001, last: 30d) → grammar_weights("sci-ml-pipelines.ebnf"))
+   -- Counts which stages are invoked most → adjusts production weights
+   -- governance_gate used 500x → weight 0.85
+   -- dimensionality_model used 2x → weight 0.02
+*)
+
+(* Auto-test: generate assertions from successful execution traces *)
+auto_assert ::= "auto_assert" "(" handle "," capture_spec ")"
+capture_spec ::= "capture:" "[" field_list "]"
+               "when:" conclusion_filter
+               "generate:" assertion_template
+
+(* Example:
+   auto_assert(@driver-cycle,
+     capture: [input, stages.conclusion, summary.confidence],
+     when: conclusion == T && confidence >= 0.8,
+     generate: assert @driver-cycle-regression { given input → expect T }
+   )
+*)
+
+(* Regression: run auto-generated assertions on grammar/pipeline changes *)
+regression_suite ::= "regression" handle "{" assert+ "}"
+(* Triggered by: on_grammar_change, on_pipeline_change, on_deploy *)
+
+(* Type providers — F# inspired, IxQL native *)
+(* Pipelines can declare dynamic types based on runtime data *)
+type_provider ::= "type" identifier "=" "provided" "(" provider_source ")"
+
+provider_source ::= "schema" "(" path ")"           (* JSON Schema → type *)
+                  | "pipeline" "(" handle ")"        (* pipeline output shape → type *)
+                  | "mcp_tool" "(" tool_name ")"     (* MCP tool response → type *)
+                  | "database" "(" connection ")"    (* DB schema → type *)
+                  | "csv_header" "(" path ")"        (* CSV columns → type *)
+
+(* Example:
+   type AuditResult = provided(pipeline(@gov-audit-001))
+   -- Compiler/LSP knows: AuditResult has .conclusion, .confidence, .stages[]
+   -- Auto-complete works on AuditResult fields
+
+   type ChordAnalysis = provided(mcp_tool("ga.chord.analyze"))
+   -- Type inferred from MCP tool's output schema
+   -- ChordAnalysis has .root, .quality, .intervals[], .pitchClassSet
+
+   type FeatureRow = provided(csv_header("data/features.csv"))
+   -- Columns become typed fields
+*)
+
+(* Cross-language type mapping:
+   IxQL provided type  →  F# record (tars CE)
+   IxQL provided type  →  C# record/class (ga)
+   IxQL provided type  →  Rust struct (ix)
+   IxQL provided type  →  JSON Schema (validation)
+   All generated from the same source via type_provider *)
+
