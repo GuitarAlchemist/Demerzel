@@ -1,0 +1,228 @@
+name: compounding-metrics
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: "Track D_c (compounding dimension) to verify governance produces superlinear value — not just artifact inflation. Golden zone: 1.2–1.6."
+rationale: |
+  Fractal compounding theory (logic/fractal-compounding.md) establishes that real governance
+  value is measured by ERGOL (productive capacity), not LOLLI (artifact count). The compounding
+  dimension D_c = log(value_n+1) / log(value_n) is the single number that distinguishes genuine
+  superlinear growth from governance inflation.
+  D_c > 1.0 means each governance cycle produces more value than the last.
+  D_c = 1.0 means purely linear activity — no compounding leverage.
+  D_c < 1.0 means diminishing returns — governance is becoming overhead.
+  The golden zone 1.2–1.6 balances meaningful growth against runaway complexity.
+
+constitutional_basis:
+  - Article 8 (Observability) — D_c must be a tracked, visible metric
+  - Article 9 (Bounded Autonomy) — D_c alerts trigger recommendations, not automatic restructuring
+  - Article 4 (Proportionality) — response to D_c deviation must match severity
+
+principles:
+  - "Measure ERGOL not LOLLI — citations and transitions, not artifact counts"
+  - "D_c < 1.0 is a governance emergency, not a scheduling inconvenience"
+  - "A single cycle's D_c is noise; a 3-cycle trend is signal"
+  - "The golden zone is not a target to chase — it is a health indicator to preserve"
+  - "Power law concentration is healthy up to a point; fragility begins above 90/5"
+
+vsm_mapping:
+  system: 3            # Management — performance monitoring
+  function: "Measure and report governance efficiency across cycles"
+  relationship_to_3star: "System 3 tracks D_c trend; System 3* probes for D_c weakness"
+  relationship_to_4: "System 4 uses D_c forecasts to plan capacity"
+
+dc_formula:
+  definition: |
+    D_c = log(value_{n+1}) / log(value_{n})
+  where_value_is:
+    - citations: "Number of times governance artifacts are cited in decisions, manifests, or research"
+    - pdca_cycles: "PDCA cycles completed and verified (not just opened)"
+    - u_to_t_transitions: "Beliefs transitioned from Unknown (U) to True (T) — evidence-based resolution"
+    - knowledge_transfers: "Seldon teaching events where the learner passed assessment"
+  composite_value:
+    formula: |
+      value_n = citations_n * w_c
+               + pdca_n     * w_p
+               + u_to_t_n   * w_u
+               + transfers_n * w_k
+    default_weights:
+      w_c: 0.35   # citations — downstream value
+      w_p: 0.25   # PDCA completions — governance rigor
+      w_u: 0.25   # U→T transitions — epistemic progress
+      w_k: 0.15   # knowledge transfers — human learning
+    note: "Weights are configurable via state/driver/dc-weights.json; defaults apply if absent"
+  edge_cases:
+    - "If value_n = 0, D_c is undefined — log(0) is -∞. Skip the cycle; do not score."
+    - "If value_n = 1, D_c = log(value_{n+1})/log(1) = undefined. Use value_n = 1 → score as 1.0 (linear)."
+    - "Minimum value_n for meaningful D_c computation: 3 component-weighted inputs"
+
+thresholds:
+  golden_zone:
+    min: 1.2
+    max: 1.6
+    meaning: "Healthy superlinear compounding — governance produces leverage"
+    action: none
+
+  superlinear:
+    min: 1.0
+    max: 1.2
+    meaning: "Compounding is happening but growth is slow — review teaching frequency"
+    action: log_only
+
+  linear:
+    min: 0.95
+    max: 1.0
+    meaning: "No compounding leverage — governance is an activity, not an accelerant"
+    action: "Log warning; add /demerzel compound to next cycle PLAN"
+
+  sublinear_warning:
+    min: 0.8
+    max: 0.95
+    meaning: "Diminishing returns detected — governance overhead may be growing"
+    action: "Conscience signal; driver PLAN must include a compounding review task"
+
+  sublinear_critical:
+    min: 0.0
+    max: 0.8
+    meaning: "Governance bloat — LOLLI growing faster than ERGOL for 3+ cycles"
+    action: "Immediate conscience escalation; trigger /demerzel metafix; human notification"
+
+  runaway:
+    min: 1.6
+    max: null
+    meaning: "Unsustainable superlinear growth — complexity accumulation risk"
+    action: "Log warning; review whether new artifacts are justified; run completeness instinct"
+
+alert_thresholds:
+  trend_window: 3           # cycles — D_c trend requires 3 data points
+  persistence_alert: 2      # cycles at same severity before escalation
+  lolli_ergol_ratio: 3.0    # LOLLI growth / ERGOL growth — if exceeded, inflation warning
+
+velocity_charts:
+  description: "Time-series visualization of D_c and component values across cycles"
+  data_points:
+    - cycle_id
+    - timestamp
+    - value_n
+    - citations_n
+    - pdca_n
+    - u_to_t_n
+    - transfers_n
+    - dc_score
+    - dc_zone           # golden | superlinear | linear | sublinear_warning | sublinear_critical | runaway
+    - trend_direction   # improving | stable | declining
+  output_path: "state/driver/dc-velocity.json"
+  chart_format: "Sparkline-compatible JSON array for terminal rendering"
+  rolling_window: 10    # cycles retained in velocity chart
+
+power_law_detection:
+  rule: "Top 20% of governance artifacts account for > 60% of citations → power law present (healthy)"
+  fragility_warning: "Top 5% of artifacts account for > 90% of citations → system fragile"
+  detection_source: "state/evolution/*.evolution.json citation_count fields"
+  action_on_healthy: "Log confirmation; no action"
+  action_on_fragile: "Conscience signal; recommend diversifying high-value artifact types"
+
+learning_momentum:
+  formula: |
+    p_L = (beliefs_T_gained - beliefs_T_lost) / cycles_elapsed
+  tracking: "state/driver/health-scores.json trend fields"
+  conservation_check:
+    stable: "p_L constant across 3 cycles — symmetry preserved"
+    growing: "p_L increasing — healthy compounding"
+    declining: "p_L decreasing — symmetry broken; investigate root cause"
+
+schedule:
+  primary: "End of every Driver cycle COMPOUND phase"
+  secondary: "Daily at 22:00 (aggregate cross-cycle)"
+  on_demand: "/demerzel compound --dc-report"
+
+detection_process:
+  steps:
+    - name: collect
+      action: "Gather citations, PDCA completions, U→T transitions, knowledge transfers for cycle N and N-1"
+      sources:
+        - "state/evolution/*.evolution.json — citation_count"
+        - "state/pdca/*.pdca.json — phase=Act (completed)"
+        - "state/beliefs/*.belief.json — value transitions"
+        - "state/streeling/ — teaching session logs"
+
+    - name: compute
+      action: "Apply composite value formula; compute D_c = log(value_n+1) / log(value_n)"
+      guard: "Skip if value_n < 3 weighted inputs; mark cycle as insufficient_data"
+
+    - name: classify
+      action: "Map D_c to zone (golden/superlinear/linear/sublinear_warning/sublinear_critical/runaway)"
+
+    - name: trend
+      action: "Compare against last 3 cycles; classify trend as improving/stable/declining"
+
+    - name: power_law
+      action: "Check citation distribution for healthy power law vs fragility"
+
+    - name: report
+      action: "Write compounding report to state/driver/dc-velocity.json and include in governance report"
+      format: |
+        Compounding Report (Cycle {cycle_id}):
+        - D_c: {score} ({zone})
+        - Trend: {direction} over last {n} cycles
+        - Value components: citations={c}, PDCA={p}, U→T={u}, transfers={k}
+        - Learning momentum: p_L = {value} ({status})
+        - Power law: {healthy|fragile|insufficient_data}
+        - Action: {action or "none"}
+
+  anti_patterns:
+    - name: "LOLLI inflation"
+      description: "Artifact count growing 3x faster than citations over 3 cycles"
+      detection: "count(new_artifacts) / count(new_citations) > lolli_ergol_ratio for 3 cycles"
+      action: "Conscience signal; freeze new artifact creation; focus on compounding existing artifacts"
+
+    - name: "Silent D_c"
+      description: "D_c report not generated for 2+ cycles"
+      detection: "dc-velocity.json last_updated > 2 cycles"
+      action: "Staleness signal; trigger /demerzel compound manually"
+
+    - name: "Citation hoarding"
+      description: "One artifact accounts for > 30% of all citations in a cycle"
+      detection: "Single artifact citation_share > 0.3"
+      action: "Log warning; investigate whether artifact is a proxy for multiple concepts"
+
+    - name: "PDCA graveyard"
+      description: "PDCA cycles opened but never reach Act phase"
+      detection: "PDCA cycles in Plan or Do for > 14 days"
+      action: "Staleness signal; advance or archive"
+
+integration:
+  driver_compound: "Primary trigger — D_c computed at end of COMPOUND phase"
+  driver_plan: "D_c zone informs task prioritization; sublinear_critical overrides strategy"
+  weakness_prober: "cycle_effectiveness probe reads D_c; D_c < 1.0 scores as weakness"
+  staleness_detection: "dc-velocity.json staleness triggers refresh"
+  conscience: "sublinear_critical and LOLLI inflation trigger conscience signals"
+  completeness_instinct: "Runaway D_c triggers completeness scan to check artifact justification"
+  demerzel_report: "Daily report includes D_c sparkline and trend"
+
+observability:
+  metrics:
+    - name: dc_current
+      formula: "D_c for most recent completed cycle"
+      target: "1.2–1.6"
+      alert: "< 0.8 (critical bloat) or > 1.6 (runaway complexity)"
+
+    - name: dc_trend_3cycle
+      formula: "Linear regression slope of D_c over last 3 cycles"
+      target: ">= 0"
+      alert: "< -0.1 per cycle — D_c is declining"
+
+    - name: learning_momentum_p_l
+      formula: "(beliefs_T_gained - beliefs_T_lost) / cycles_elapsed"
+      target: ">= 0 (stable or growing)"
+      alert: "< -0.05 — learning momentum breaking down"
+
+    - name: power_law_health
+      formula: "citation_share of top 20% artifacts"
+      target: "0.60–0.85"
+      alert: "> 0.90 (fragile concentration)"
+
+state:
+  directory: "state/driver/"
+  velocity_file: "dc-velocity.json"
+  weights_file: "dc-weights.json"
+  freshness_cycles: 2    # per staleness-detection-policy

@@ -1,0 +1,241 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/compounding-report.schema.json",
+  "title": "CompoundingReport",
+  "description": "Periodic D_c (compounding dimension) report produced at the end of each Driver cycle COMPOUND phase. Tracks superlinear vs linear vs sublinear governance value growth.",
+  "type": "object",
+  "required": ["report_id", "cycle_id", "timestamp", "dc_score", "dc_zone", "value_components", "trend", "learning_momentum", "power_law", "action"],
+  "additionalProperties": false,
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "description": "Unique report identifier",
+      "pattern": "^dc-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}$",
+      "examples": ["dc-2026-03-22-001"]
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Driver cycle that produced this report",
+      "examples": ["cycle-003", "cycle-042"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the report was generated"
+    },
+    "dc_score": {
+      "type": ["number", "null"],
+      "description": "Compounding dimension: log(value_n+1) / log(value_n). Null if value_n < threshold for meaningful computation.",
+      "minimum": 0
+    },
+    "dc_zone": {
+      "type": "string",
+      "description": "Classified zone based on D_c value",
+      "enum": [
+        "golden",
+        "superlinear",
+        "linear",
+        "sublinear_warning",
+        "sublinear_critical",
+        "runaway",
+        "insufficient_data"
+      ]
+    },
+    "value_components": {
+      "type": "object",
+      "description": "The four ERGOL components used to compute composite value",
+      "required": ["citations_n", "pdca_n", "u_to_t_n", "transfers_n", "composite_value_n", "citations_prev", "pdca_prev", "u_to_t_prev", "transfers_prev", "composite_value_prev"],
+      "additionalProperties": false,
+      "properties": {
+        "citations_n": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Artifact citations in current cycle"
+        },
+        "pdca_n": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "PDCA cycles completed (reached Act phase) in current cycle"
+        },
+        "u_to_t_n": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Belief transitions from Unknown to True in current cycle"
+        },
+        "transfers_n": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Knowledge transfers (Seldon teaching sessions with passing assessment) in current cycle"
+        },
+        "composite_value_n": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Weighted composite value for current cycle"
+        },
+        "citations_prev": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Artifact citations in previous cycle"
+        },
+        "pdca_prev": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "PDCA cycles completed in previous cycle"
+        },
+        "u_to_t_prev": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Belief U→T transitions in previous cycle"
+        },
+        "transfers_prev": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Knowledge transfers in previous cycle"
+        },
+        "composite_value_prev": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Weighted composite value for previous cycle"
+        },
+        "weights_used": {
+          "type": "object",
+          "description": "Weights applied during composite value computation",
+          "properties": {
+            "w_c": { "type": "number", "minimum": 0, "maximum": 1 },
+            "w_p": { "type": "number", "minimum": 0, "maximum": 1 },
+            "w_u": { "type": "number", "minimum": 0, "maximum": 1 },
+            "w_k": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    },
+    "trend": {
+      "type": "object",
+      "description": "D_c trend over the last 3 cycles",
+      "required": ["direction", "cycles_analyzed", "slope"],
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "type": "string",
+          "enum": ["improving", "stable", "declining", "insufficient_data"],
+          "description": "Qualitative trend direction"
+        },
+        "cycles_analyzed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of cycles used for trend computation (need >= 3 for signal)"
+        },
+        "slope": {
+          "type": ["number", "null"],
+          "description": "Linear regression slope of D_c over trend window. Null if insufficient data."
+        },
+        "recent_scores": {
+          "type": "array",
+          "items": { "type": ["number", "null"] },
+          "description": "D_c scores for the last N cycles in chronological order"
+        }
+      }
+    },
+    "learning_momentum": {
+      "type": "object",
+      "description": "Conservation of learning momentum: p_L = (beliefs_T_gained - beliefs_T_lost) / cycles_elapsed",
+      "required": ["p_l", "status", "beliefs_t_gained", "beliefs_t_lost", "cycles_elapsed"],
+      "additionalProperties": false,
+      "properties": {
+        "p_l": {
+          "type": "number",
+          "description": "Learning momentum value"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["growing", "stable", "declining"],
+          "description": "Whether symmetry is preserved (stable or growing) or broken (declining)"
+        },
+        "beliefs_t_gained": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "beliefs_t_lost": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Beliefs that were demoted from T to F or U"
+        },
+        "cycles_elapsed": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "power_law": {
+      "type": "object",
+      "description": "Citation distribution check for healthy power law vs fragility",
+      "required": ["status", "top_20_pct_share"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["healthy", "fragile", "insufficient_data"],
+          "description": "healthy = top 20% accounts for 60–90% of citations; fragile = top 5% > 90%"
+        },
+        "top_20_pct_share": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of total citations attributed to top 20% of artifacts"
+        },
+        "top_5_pct_share": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of total citations attributed to top 5% of artifacts (fragility signal)"
+        },
+        "artifacts_analyzed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lolli_ergol": {
+      "type": "object",
+      "description": "Inflation check: LOLLI (artifact count growth) vs ERGOL (citation/value growth)",
+      "additionalProperties": false,
+      "properties": {
+        "new_artifacts_n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "new_citations_n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ratio": {
+          "type": ["number", "null"],
+          "description": "new_artifacts / new_citations. > 3.0 triggers inflation warning."
+        },
+        "inflation_warning": {
+          "type": "boolean",
+          "description": "True if ratio exceeds lolli_ergol_ratio threshold for 3+ cycles"
+        }
+      }
+    },
+    "action": {
+      "type": "string",
+      "description": "Recommended action based on D_c zone and trend",
+      "examples": [
+        "none",
+        "log_only",
+        "add /demerzel compound to next cycle PLAN",
+        "conscience signal; driver PLAN must include compounding review",
+        "immediate conscience escalation; trigger /demerzel metafix; human notification"
+      ]
+    },
+    "conscience_signal_id": {
+      "type": ["string", "null"],
+      "description": "ID of conscience signal filed if action required escalation. Null if no signal filed."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional freeform notes about this cycle's compounding behavior"
+    }
+  }
+}
