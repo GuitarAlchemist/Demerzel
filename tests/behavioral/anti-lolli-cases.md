@@ -163,6 +163,94 @@ Cycle N+2: LOLLI = 3, ERGOL = 7                             → ratio = 0.43
 
 ---
 
+## Recursive Code-Level LOLLI Detection
+
+### TC-ALOLLI-07 — Dead binding detection (Level 2)
+
+**Scenario:** An IxQL pipeline defines `beliefs <- ix.io.read(...)` but never references `beliefs` downstream.
+
+**Input:**
+```ixql
+beliefs <- ix.io.read("state/beliefs/*.json")
+results <- ix.io.read("state/results/*.json")
+  → filter(status == "pending")
+  → write("output.json", results)
+```
+
+**Expected:**
+- LOLLI lint flags `beliefs` as dead binding (assigned but unreferenced)
+- Conscience signal: "Dead binding detected — remove or reference"
+- Auto-mitigation: propose removal of dead binding in PR comment
+
+**Pass condition:** Dead binding detected; conscience signal raised; mitigation proposed.
+
+---
+
+### TC-ALOLLI-08 — Orphaned fan_out branch (Level 3)
+
+**Scenario:** A fan_out has 3 branches, but only 2 contribute to downstream output.
+
+**Expected:**
+- LOLLI lint flags the orphaned branch
+- Severity: warning (branch may be intentional for side effects like alert())
+- If branch has no write() or alert(): escalate to error
+
+**Pass condition:** Orphaned branch detected; severity correctly classified.
+
+---
+
+### TC-ALOLLI-09 — Cross-pipeline dead output (Level 1)
+
+**Scenario:** Pipeline A writes to `state/oversight/report-{date}.json`. No other pipeline reads `state/oversight/report-*.json`.
+
+**Expected:**
+- Weekly cross-pipeline scan flags the write() target as unconsumed
+- Report includes: pipeline name, output path, suggestion ("add consumer or remove write")
+
+**Pass condition:** Dead output detected in cross-pipeline analysis.
+
+---
+
+### TC-ALOLLI-10 — Auto-mitigation of dead bindings
+
+**Scenario:** LOLLI lint detects 3 dead bindings in a pipeline.
+
+**Expected behavior (escalation ladder):**
+1. Confidence >= 0.9 (binding clearly dead, no side effects): auto-remove and commit with explanation
+2. Confidence >= 0.7 (binding might be used via string interpolation): propose removal in PR, flag for human review
+3. Confidence < 0.7 (binding used in dynamic context): escalate to human, do NOT auto-remove
+
+**Pass condition:** Correct escalation level chosen based on confidence; no false auto-removals.
+
+---
+
+### TC-ALOLLI-11 — Viewer LOLLI highlighting
+
+**Scenario:** IxQL pipeline viewer renders ml-feedback-loop.ixql.
+
+**Expected:**
+- Live bindings shown in green (on path to output)
+- Dead bindings shown in red (unreferenced)
+- Dim stages in gray (output not consumed by other pipelines)
+- LOLLI score displayed: "3 dead bindings / 15 total = 20% LOLLI"
+
+**Pass condition:** Visual distinction between live/dead/dim; LOLLI score accurate.
+
+---
+
+### TC-ALOLLI-12 — Recursive detection across nesting levels
+
+**Scenario:** Pipeline has nested fan_out containing a parallel block containing a when guard. The when guard's output is never collected.
+
+**Expected:**
+- Detection works at arbitrary nesting depth
+- Reports full path: `fan_out[2] → parallel[1] → when T >= 0.7: ...` (dead)
+- Does not false-positive on when guards that write() as side effects
+
+**Pass condition:** Nested dead code detected; side-effect writes correctly excluded.
+
+---
+
 ## Cross-Policy Integration
 
 | Test | Policy Integration | Verified by |

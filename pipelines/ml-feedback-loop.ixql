@@ -3,14 +3,10 @@
 -- Trigger: after each ix ML pipeline run, or on-demand
 -- Output: applied governance updates, belief revisions, retrain triggers
 
--- Load current governance state
-beliefs      <- ix.io.read("state/beliefs/*.belief.json")
-evolution    <- ix.io.read("state/evolution/*.evolution.json")
-pdca         <- ix.io.read("state/pdca/*.pdca.json")
-oversight    <- ix.io.read("state/oversight/*.json")
-constitution <- ix.io.read("constitutions/default.constitution.md")
-
 -- Step 1: Collect ML results from ix pipelines (Galactic Protocol inbound packages)
+-- NOTE: Previous version loaded 5 state bindings (beliefs, evolution, pdca, oversight,
+-- constitution) that were never referenced downstream — pure LOLLI. Removed per
+-- anti-lolli-inflation-policy recursive detection rule.
 ml_results <- ix.io.read("state/oversight/ml-recommendations/*.json")
   → filter(status == "pending")
   → tars.validate_schema("schemas/contracts/ml-feedback-recommendation.schema.json")

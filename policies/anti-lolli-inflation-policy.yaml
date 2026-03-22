@@ -136,6 +136,75 @@ deprecation_triggers:
     - "Artifacts in their registration timeline grace period are not flagged (timeline not yet reached)"
     - "Constitutional artifacts and root schemas are exempt (they are cited implicitly)"
 
+recursive_code_detection:
+  description: |
+    LOLLI exists not just at the artifact level but INSIDE code. Dead bindings,
+    unconsumed outputs, and orphaned branches are code-level LOLLI — they add
+    cognitive load, maintenance cost, and false confidence without producing value.
+
+  levels:
+    - level: 0
+      name: file
+      question: "Does this .ixql file have any consumer (another pipeline, a skill, a workflow)?"
+      detection: "Cross-reference all ix.io.read() paths across all .ixql files"
+      action: "Flag files with 0 inbound references as LOLLI candidates"
+
+    - level: 1
+      name: pipeline
+      question: "Does this pipeline's final output get read by anything downstream?"
+      detection: "Check write() targets against read() sources in other pipelines"
+      action: "Flag write-only pipelines (output never consumed)"
+
+    - level: 2
+      name: binding
+      question: "Is this variable referenced after assignment?"
+      detection: "AST walk — track binding names, flag unreferenced ones"
+      action: "Remove dead bindings or add downstream reference"
+      example: |
+        -- LOLLI: beliefs loaded but never used
+        beliefs <- ix.io.read("state/beliefs/*.json")  -- Dead binding
+        -- Fix: remove the binding, or reference it downstream
+
+    - level: 3
+      name: branch
+      question: "Does this fan_out branch's output get collected?"
+      detection: "Check fan_out branches — each must contribute to the parent binding"
+      action: "Remove dead branches or wire their output"
+
+    - level: 4
+      name: expression
+      question: "Does this computation's result affect any output?"
+      detection: "Transitive closure — trace from final write()/alert() backwards"
+      action: "Remove computations not on any path to an output"
+
+  enforcement:
+    parser_integration: |
+      The IxQL FParsec parser (tools/ixql-parser/) MUST implement analyzeLolli()
+      alongside analyzeSerialFraction(). Both are AST-walking analyses:
+      - analyzeSerialFraction: counts serial vs parallel stages (Amdahl's Law)
+      - analyzeLolli: counts referenced vs unreferenced bindings (LOLLI detection)
+
+    pipeline_linting: |
+      Every IxQL pipeline MUST pass LOLLI lint before commit:
+      - 0 dead bindings (Level 2)
+      - 0 orphaned fan_out branches (Level 3)
+      - All write() targets must have a documented consumer (Level 1)
+      Violations trigger a conscience signal.
+
+    cross_pipeline_analysis: |
+      Weekly scan across all .ixql files:
+      - Build global read/write dependency graph
+      - Flag write() targets with no corresponding read() in any pipeline
+      - Flag pipelines with no inbound trigger (no cron, no webhook, no caller)
+      Results: state/oversight/lolli-lint-report.json
+
+    viewer_integration: |
+      The IxQL pipeline viewer MUST visually distinguish:
+      - Live bindings (green): referenced downstream, on path to output
+      - Dead bindings (red): unreferenced, pure LOLLI
+      - Dim stages (gray): output never consumed by another pipeline
+      This makes LOLLI visible at a glance — humans catch what linters miss.
+
 detection_process:
   steps:
     - name: collect
