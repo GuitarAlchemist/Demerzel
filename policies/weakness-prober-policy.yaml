@@ -1,0 +1,199 @@
+name: weakness-prober-policy
+version: "1.0.0"
+effective_date: "2026-03-24"
+description: Automated weakest-link detection — five probes rank system weaknesses by severity, feeding remediation proposals into the Driver PLAN phase. VSM System 3* (sporadic audit).
+
+constitutional_basis:
+  - Article 3 (Reversibility) — remediations must be reversible
+  - Article 4 (Proportionality) — severity determines response scope
+  - Article 6 (Escalation) — critical weaknesses escalate to human
+  - Article 7 (Auditability) — all findings logged with evidence
+  - Article 8 (Observability) — resilience score is a governance metric
+  - Article 9 (Bounded Autonomy) — prober recommends, driver decides
+
+principles:
+  - "A system is only as strong as its weakest link"
+  - "Sporadic audit reveals what routine monitoring misses"
+  - "Weakness detection without remediation is just anxiety — always propose a fix"
+  - "Critical weaknesses cannot be deprioritized — they override adaptive strategy"
+
+vsm_mapping:
+  system: "3*"
+  function: "Sporadic audit — probe for hidden weaknesses beyond routine management"
+  relationship: "Complements System 3 (driver) with deeper, less frequent inspections"
+
+probes:
+  - id: repo_health
+    name: "Repo Health Weakness"
+    description: "Which repo is the weakest link across CI, tests, governance, dependencies"
+    data_sources:
+      - "state/driver/health-scores.json"
+      - "GitHub API: CI runs, test results, Dependabot alerts"
+    indicators:
+      - metric: ci_failure_rate
+        threshold: "> 0.2"
+        severity_if_exceeded: high
+      - metric: test_pass_rate
+        threshold: "< 0.9"
+        severity_if_exceeded: high
+      - metric: governance_coverage
+        threshold: "< 0.8"
+        severity_if_exceeded: medium
+      - metric: critical_dependabot_alerts
+        threshold: "> 0"
+        severity_if_exceeded: critical
+      - metric: submodule_drift
+        threshold: "> 5 commits"
+        severity_if_exceeded: medium
+    remediation: "/demerzel metafix, /demerzel metasync"
+
+  - id: belief
+    name: "Belief Weakness"
+    description: "Beliefs that are stale, low-confidence, or contradictory while still driving decisions"
+    data_sources:
+      - "state/beliefs/*.belief.json"
+      - "state/manifests/*.manifest.json (cited beliefs)"
+      - "state/evolution/*.evolution.json"
+    indicators:
+      - metric: stale_belief_in_use
+        condition: "cited in last 7 days AND not updated in 14 days"
+        severity_if_exceeded: high
+      - metric: unresolved_contradiction
+        condition: "value == C for > 7 days"
+        severity_if_exceeded: medium
+      - metric: decaying_confidence
+        condition: "confidence trending down over 3+ cycles"
+        severity_if_exceeded: medium
+      - metric: orphan_belief
+        condition: "not cited in any recent decision"
+        severity_if_exceeded: low
+    remediation: "/demerzel metasync, /seldon research"
+
+  - id: governance_coverage
+    name: "Governance Coverage Weakness"
+    description: "Governance artifacts that exist but lack enforcement, testing, or integrity"
+    data_sources:
+      - "policies/*.yaml"
+      - "personas/*.persona.yaml"
+      - "tests/behavioral/*-cases.md"
+      - "grammars/*.ebnf"
+      - "schemas/*.schema.json"
+    indicators:
+      - metric: untested_policy
+        condition: "policy has no corresponding behavioral test"
+        severity_if_exceeded: high
+      - metric: untested_persona
+        condition: "persona has no corresponding behavioral test"
+        severity_if_exceeded: high
+      - metric: unenforced_policy
+        condition: "policy has no triggers field or empty triggers"
+        severity_if_exceeded: high
+      - metric: unused_grammar
+        condition: "grammar with cycle_count == 0 and age > 30 days"
+        severity_if_exceeded: medium
+      - metric: orphaned_schema
+        condition: "schema not referenced by any JSON file"
+        severity_if_exceeded: low
+      - metric: empty_department
+        condition: "department exists but has no courses"
+        severity_if_exceeded: medium
+      - metric: untested_asimov_article
+        condition: "Asimov article 0-5 without behavioral test"
+        severity_if_exceeded: critical
+    remediation: "/demerzel metabuild --test, /seldon research-cycle"
+
+  - id: cycle_effectiveness
+    name: "Cycle Effectiveness Weakness"
+    description: "Is the governance system actually improving or stagnating?"
+    data_sources:
+      - "state/manifests/*.manifest.json"
+      - "state/evolution/*.evolution.json"
+      - "state/pdca/*.pdca.json"
+    indicators:
+      - metric: recurring_failure
+        condition: "same task type fails 2+ times across cycles"
+        severity_if_exceeded: high
+      - metric: high_revert_ratio
+        condition: "> 30% of tasks reverted in a cycle"
+        severity_if_exceeded: high
+      - metric: sub_linear_compounding
+        condition: "D_c < 1.0"
+        severity_if_exceeded: medium
+      - metric: stalled_pdca
+        condition: "PDCA stuck in Plan > 14 days"
+        severity_if_exceeded: medium
+      - metric: diminishing_completion
+        condition: "fewer tasks completed per cycle over 3-cycle trend"
+        severity_if_exceeded: medium
+    remediation: "/demerzel metafix, /demerzel compound"
+
+  - id: conscience
+    name: "Conscience Weakness"
+    description: "Ethical signals that are unresolved, aging, or being ignored"
+    data_sources:
+      - "state/conscience/signals/*.signal.json"
+      - "state/conscience/patterns/*.pattern.json"
+      - "state/conscience/regrets/*.regret.json"
+    indicators:
+      - metric: stale_signal
+        condition: "active signal > 3 days"
+        severity_if_exceeded: critical
+      - metric: unresolved_pattern
+        condition: "active pattern > 14 days with no resolution"
+        severity_if_exceeded: high
+      - metric: unaddressed_regret
+        condition: "active regret > 7 days"
+        severity_if_exceeded: medium
+      - metric: rising_discomfort
+        condition: "discomfort increasing over 3+ signals"
+        severity_if_exceeded: medium
+    remediation: "conscience-cycle pipeline, escalate to human"
+
+scoring:
+  method: "Normalized 0.0-1.0 per weakness finding"
+  severity_mapping:
+    critical: ">= 0.7"
+    high: ">= 0.5"
+    medium: ">= 0.3"
+    low: "< 0.3"
+  ranking: "Sort by severity descending, then score descending within severity"
+
+integration:
+  driver_recon: "Runs as RECON Stage 3c — after meta-recognition, before Surface"
+  driver_plan: "Critical weaknesses become mandatory tasks; others boost priority scoring"
+  driver_compound: "Track weakness closure rate; feed persistent weaknesses to meta-recognition"
+  conscience: "Critical conscience weakness triggers hard escalation"
+  completeness_instinct: "Weakness prober and completeness instinct share analysis but differ in scope — missing vs weak"
+
+observability:
+  metrics:
+    - name: overall_resilience
+      formula: "1.0 - max(weakness_scores)"
+      target: "> 0.7"
+      alert: "< 0.5 — system has critical weaknesses"
+
+    - name: critical_weakness_count
+      formula: "count(severity == critical)"
+      target: 0
+      alert: "> 0 — immediate remediation required"
+
+    - name: weakness_closure_rate
+      formula: "closed_per_cycle / opened_per_cycle"
+      target: "> 1.0"
+      alert: "< 0.5 — weakness backlog growing"
+
+    - name: probe_coverage
+      formula: "probes_successfully_run / total_probes"
+      target: 1.0
+      alert: "< 0.8 — some probes are failing"
+
+    - name: mean_weakness_age
+      formula: "avg(days_since_first_detected) across all open weaknesses"
+      target: "< 14 days"
+      alert: "> 30 days — weaknesses are not being addressed"
+
+state:
+  directory: "state/driver/"
+  report_file: "weakness-report.json"
+  freshness: 3  # days — per staleness-detection-policy
+  refresh_action: "Run weakness probe via driver RECON or /demerzel audit"

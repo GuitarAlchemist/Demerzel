@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/weakness-report",
+  "title": "Weakness Report",
+  "description": "Ranked system weaknesses with severity scores and remediation proposals. Produced by the weakness prober (RECON Stage 3c).",
+  "type": "object",
+  "required": ["report_id", "timestamp", "weaknesses", "summary"],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^wr-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}$",
+      "description": "Unique report ID: wr-YYYY-MM-DD-NNN"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Driver cycle that produced this report (if applicable)"
+    },
+    "weaknesses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/weakness" },
+      "description": "Weakness findings, sorted by severity then score descending"
+    },
+    "summary": { "$ref": "#/$defs/summary" }
+  },
+  "$defs": {
+    "weakness": {
+      "type": "object",
+      "required": ["id", "probe", "target", "severity", "score", "evidence", "remediation"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^w-[0-9]{3}$",
+          "description": "Weakness finding ID within this report"
+        },
+        "probe": {
+          "type": "string",
+          "enum": ["repo_health", "belief", "governance_coverage", "cycle_effectiveness", "conscience"],
+          "description": "Which probe detected this weakness"
+        },
+        "target": {
+          "type": "string",
+          "description": "What is weak — file path, repo name, belief name, etc."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Normalized weakness score. Higher = weaker."
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["indicator", "value", "source"],
+            "properties": {
+              "indicator": {
+                "type": "string",
+                "description": "What was measured"
+              },
+              "value": {
+                "description": "Measured value"
+              },
+              "threshold": {
+                "description": "Threshold that was exceeded"
+              },
+              "source": {
+                "type": "string",
+                "description": "Where the evidence came from (file path, API, etc.)"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "remediation": {
+          "type": "object",
+          "required": ["proposed_action", "skill"],
+          "properties": {
+            "proposed_action": {
+              "type": "string",
+              "description": "Human-readable description of the fix"
+            },
+            "skill": {
+              "type": "string",
+              "description": "Which Demerzel/Seldon skill to invoke"
+            },
+            "risk_level": {
+              "type": "string",
+              "enum": ["low", "medium", "high"],
+              "default": "low"
+            },
+            "reversible": {
+              "type": "boolean",
+              "default": true,
+              "description": "Can this remediation be rolled back? (Article 3)"
+            }
+          }
+        },
+        "first_detected": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this weakness was first seen (for age tracking)"
+        },
+        "cycle_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many consecutive cycles this weakness has appeared"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_weaknesses", "critical_count", "high_count", "medium_count", "low_count", "weakest_link", "overall_resilience"],
+      "properties": {
+        "total_weaknesses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "high_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "medium_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "low_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "weakest_link": {
+          "type": "string",
+          "description": "The single highest-scored weakness target"
+        },
+        "overall_resilience": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "1.0 - max(weakness_scores). System resilience metric."
+        },
+        "probes_run": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "probes_failed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Probes that could not complete (data unavailable, etc.)"
+        }
+      }
+    }
+  }
+}
