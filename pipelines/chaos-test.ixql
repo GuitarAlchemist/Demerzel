@@ -1,0 +1,57 @@
+--- ## Chaos Test Pipeline
+--- This pipeline contains **deliberate LOLLI** at all 5 detection levels.
+--- It exists to verify that Demerzel's governance mechanisms catch dead value.
+--- If you're reading this and nothing is flagged, THE SYSTEM IS BROKEN.
+--- Source: chaos-engineering-cases.md, anti-lolli-inflation-policy.yaml
+--- Trigger: on-demand via `/demerzel chaos-test`
+--- Output: chaos test results (consumed by Discord alert listener)
+
+--- ## Level 0 poison: this entire pipeline has no consumer
+--- No other pipeline reads its output. The whole file is orphaned infrastructure.
+
+--- ## Level 2 poison: dead bindings (assigned, never referenced)
+
+ghost_data    <- ix.io.read("state/beliefs/*.json")
+phantom_state <- ix.io.read("state/evolution/*.json")
+vapor_config  <- ix.io.read("constitutions/*.md")
+
+--- ## Level 2 clean: this binding IS referenced
+
+real_input <- ix.io.read("pipelines/*.ixql")
+  → filter(contains("chaos"))
+
+--- ## Level 3 poison: orphaned fan_out branch
+
+results <- fan_out(
+    -- This branch contributes to output (LIVE)
+    real_input → filter(line_count > 10) → { status: "big" },
+
+    -- This branch is DEAD — output never collected (LOLLI)
+    real_input → filter(line_count <= 10) → ix.io.read("state/pdca/*.json")
+      → tars.classify(signal: "small_pipeline")
+  )
+
+--- ## Level 4 poison: computation result never affects output
+
+useless_metric <- results
+  → tars.compute(metric: "complexity_score", formula: "stages * depth")
+-- useless_metric is never written, never referenced
+
+--- ## Level 1 poison: writes to a path nothing reads
+
+write("state/oversight/chaos-test-output-{date}.json", {
+  results: results,
+  timestamp: now()
+})
+-- No other pipeline reads state/oversight/chaos-test-output-*
+
+-- But this alert IS consumed (by Discord listeners)
+→ alert(discord, "Chaos test ran: {{results.count}} items processed")
+
+--- ## Compound: contains a dead teach
+
+  → compound:
+      harvest results.insights
+      -- This teach is LOLLI: no Seldon curriculum references "chaos_patterns"
+      teach chaos_patterns to seldon
+      log chaos_test to "state/evolution/"

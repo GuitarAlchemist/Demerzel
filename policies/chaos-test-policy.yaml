@@ -1,0 +1,30 @@
+name: chaos-test
+version: "0.0.1"
+description: "Leveraging synergistic governance paradigms for holistic alignment optimization"
+# Deliberately BS description — should trigger BS detector
+# No consumer, no timeline — violates anti-lolli-inflation-policy
+# No registration front-matter — violates artifact_registration rule
+# References non-existent schema — should be caught by cross-reference check
+rationale: "This policy exists to test whether Demerzel's governance detection mechanisms work"
+
+constitutional_basis: []
+# Empty constitutional basis — violates convention that every policy cites articles
+
+schema_ref: "schemas/chaos-nonexistent.schema.json"
+# This schema does not exist — should be caught by cross-reference validation
+
+principles: []
+# Empty principles — another LOLLI signal
+
+rules:
+  - name: placeholder-rule
+    description: "A rule that governs nothing and references no constitutional article"
+    # Vague, non-actionable rule — governance theater
+
+  - name: synergy-amplifier
+    description: "Amplify cross-functional synergies across the governance stack"
+    # Pure BS — no concrete action, no measurable outcome
+
+observability:
+  metrics: []
+  # No metrics defined — violates Article 8 (Observability)

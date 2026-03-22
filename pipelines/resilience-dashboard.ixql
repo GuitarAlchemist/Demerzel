@@ -1,0 +1,68 @@
+--- Resilience Dashboard Pipeline
+--- Generates governance health dashboard from resilience history
+---
+--- Consumer: README.md (Governance Health section), Discord alerts
+--- Constitutional basis: Article 8 (Observability), Article 7 (Auditability)
+--- Schema: schemas/resilience-metric.schema.json
+
+--- Step 1: Load resilience history
+--- Read the append-only history of resilience measurements
+file_reader("state/resilience/history.json")
+  → json_parse
+
+--- Step 2: Compute current score and trend
+--- Extract latest record, compute trend from last 3 records
+--- Trend: improving if latest > avg(previous 2), degrading if <, else stable
+  → select(records[-1]) AS current
+  → select(records[-3:]) AS window
+  → compute(trend = IF(current.overall_score > avg(window[:-1].overall_score),
+                        "improving",
+                        IF(current.overall_score < avg(window[:-1].overall_score),
+                           "degrading",
+                           "stable")))
+
+--- Step 3: Compute per-level scores and identify weakest level
+--- Each level score: caught_at_level / total_at_level
+--- Weakest level = argmin(level_scores)
+  → compute(weakest_level = argmin(current.level_scores))
+  → compute(strongest_level = argmax(current.level_scores))
+
+--- Step 4: Generate dashboard output
+--- Produce both markdown (for README) and JSON (for programmatic consumption)
+  → format_dashboard(
+      overall_score = current.overall_score,
+      trend = trend,
+      injections_total = current.injections_total,
+      injections_caught = current.injections_caught,
+      injections_missed = current.injections_missed,
+      level_scores = current.level_scores,
+      weakest_level = weakest_level,
+      gaps = current.gaps,
+      threshold = CASE
+        WHEN current.overall_score >= 0.9 THEN "healthy"
+        WHEN current.overall_score >= 0.7 THEN "watch"
+        WHEN current.overall_score >= 0.5 THEN "warning"
+        ELSE "critical"
+      END
+    )
+
+--- Step 5: Write dashboard state
+--- Persist dashboard JSON for consumption by other pipelines and tools
+  → file_writer("state/resilience/dashboard.json")
+
+--- Step 6: Alert Discord if score changed
+--- Compare current score to previous record; post summary if different
+  → conditional(
+      IF current.overall_score != window[-2].overall_score
+      THEN discord_post(
+        channel = "governance",
+        embed = {
+          title: "Governance Resilience Update",
+          score: current.overall_score,
+          trend: trend,
+          gaps_remaining: current.injections_missed,
+          threshold: threshold,
+          link: "state/resilience/history.json"
+        }
+      )
+    )

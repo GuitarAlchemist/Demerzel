@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/resilience-metric.schema.json",
+  "title": "Governance Resilience Metric",
+  "description": "Schema for resilience metric records — R = injections_caught / injections_total across 7 detection levels",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the measurement was taken"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Identifier of the governance-shake-test cycle that produced this measurement"
+    },
+    "overall_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "R = injections_caught / injections_total (0.0 to 1.0)"
+    },
+    "injections_total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of poison injections in the test cycle"
+    },
+    "injections_caught": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of injections detected by governance mechanisms"
+    },
+    "injections_missed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of injections that escaped detection"
+    },
+    "level_scores": {
+      "type": "object",
+      "description": "Per-level resilience sub-scores",
+      "properties": {
+        "L0_file": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "File-level consumer detection"
+        },
+        "L1_pipeline": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Cross-pipeline output detection"
+        },
+        "L2_binding": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Dead binding detection"
+        },
+        "L3_branch": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Orphaned branch detection"
+        },
+        "L4_expression": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Dead computation detection"
+        },
+        "policy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Policy-level BS/staleness detection"
+        },
+        "schema": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Schema-level consumer detection"
+        }
+      },
+      "additionalProperties": false
+    },
+    "gaps": {
+      "type": "array",
+      "description": "Detailed list of each injection and its detection status",
+      "items": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "description": "Detection level (L0-L4, policy, schema)"
+          },
+          "injection": {
+            "type": "string",
+            "description": "What was injected"
+          },
+          "expected_detector": {
+            "type": "string",
+            "description": "Which mechanism should have caught this"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["caught", "missed"],
+            "description": "Whether the injection was detected"
+          }
+        },
+        "required": ["level", "injection", "status"]
+      }
+    },
+    "trend": {
+      "type": "string",
+      "enum": ["improving", "stable", "degrading"],
+      "description": "Trend computed from last 3 records"
+    },
+    "note": {
+      "type": "string",
+      "description": "Optional context for the measurement"
+    }
+  },
+  "required": ["timestamp", "overall_score", "injections_total", "injections_caught"],
+  "additionalProperties": false
+}

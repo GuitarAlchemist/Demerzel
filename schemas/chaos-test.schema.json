@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chaos Test Schema",
+  "description": "Schema with no consumer — exists to test staleness detection",
+  "type": "object",
+  "properties": {
+    "ghost_field": {
+      "type": "string",
+      "description": "A field nobody references or validates against"
+    }
+  }
+}

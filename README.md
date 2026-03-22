@@ -43,6 +43,38 @@ Demerzel/
 - **Tetravalent logic** extends boolean True/False with Unknown and Contradictory states
 - **Grammars** define formal languages for music theory, governance, and research domains
 
+## Governance Health
+
+<!-- README-SYNC: Resilience score is updated by the resilience-dashboard pipeline. -->
+
+| Resilience Score | LOLLI Detection | Policies | Personas | Tests |
+|:---:|:---:|:---:|:---:|:---:|
+| 0% (11 gaps) | L0-L4 + Policy + Schema | 35 | 14 | 66 |
+
+**Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, and dead computations.
+
+```
+R = injections_caught / injections_total
+```
+
+The score is computed after each [governance-shake-test](pipelines/governance-shake-test.ixql) cycle across 7 detection levels:
+
+| Level | What it detects | Detector |
+|-------|----------------|----------|
+| L0 file | Files with no consumer | File consumer check |
+| L1 pipeline | Cross-pipeline unconsumed outputs | Cross-pipeline scan |
+| L2 binding | Dead `let` bindings | `analyzeLolli()` (F# parser) |
+| L3 branch | Orphaned fan-out branches | LOLLI lint |
+| L4 expression | Dead computations | Transitive closure |
+| Policy | BS descriptions, missing consumers | BS decoder, anti-LOLLI policy |
+| Schema | Unreferenced schemas | Staleness detection |
+
+**Current status:** R = 0.0 (baseline). Detection policies exist but automated tooling does not yet. As the F# parser, LOLLI lint pipeline, and shake-test come online, the score will improve.
+
+**Trend:** stable (single record — baseline).
+
+Full history: [`state/resilience/history.json`](state/resilience/history.json) | Dashboard pipeline: [`pipelines/resilience-dashboard.ixql`](pipelines/resilience-dashboard.ixql)
+
 ## Artifact Counts
 
 <!-- README-SYNC: These counts are verified by the driver cycle. Do not edit manually. -->
@@ -51,10 +83,10 @@ Demerzel/
 |----------|-------|--------|
 | Constitutions | 3 + harm taxonomy | `constitutions/` |
 | Personas | 14 | `personas/*.persona.yaml` |
-| Policies | 27 | `policies/*.yaml` |
+| Policies | 35 | `policies/*.yaml` |
 | Grammars | 26 | `grammars/*.ebnf` |
-| Schemas | 24 | `schemas/*.json` |
-| Behavioral tests | 55 | `tests/behavioral/*.md` |
+| Schemas | 30 | `schemas/*.json` |
+| Behavioral tests | 66 | `tests/behavioral/*.md` |
 | Skills | 40 | `.claude/skills/*/` |
 | Departments | 21 | `state/streeling/departments/` |
 | Courses | 14 | `state/streeling/courses/**/en/` |

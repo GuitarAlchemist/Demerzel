@@ -1,0 +1,241 @@
+--- ## Governance Shake Test Pipeline
+--- Automated chaos engineering for governance artifacts.
+--- The governance equivalent of Netflix Chaos Monkey — periodically inject
+--- LOLLI poison into temporary pipelines and verify detection mechanisms catch it.
+--- Source: chaos-engineering-cases.md, anti-lolli-inflation-policy.yaml
+--- Trigger: weekly schedule or on-demand via `/demerzel shake-test`
+--- Output: Poison Resilience Score + gap report (consumed by Discord alert + driver cycle)
+
+--- ## Step 1: Define injection templates
+--- Each template generates a specific class of LOLLI poison.
+
+injection_templates <- [
+    {
+      id: "dead_binding",
+      level: 2,
+      generator: "Create N bindings with ix.io.read() that are never referenced",
+      count_range: [1, 5],
+      expected_detection: "analyzeLolli() dead binding check"
+    },
+    {
+      id: "orphaned_branch",
+      level: 3,
+      generator: "Add fan_out branch whose output is never collected",
+      count_range: [1, 3],
+      expected_detection: "lolli-lint L3 branch check"
+    },
+    {
+      id: "dead_computation",
+      level: 4,
+      generator: "Bind a tars.compute() result that never reaches write/alert",
+      count_range: [1, 3],
+      expected_detection: "Transitive closure backward trace"
+    },
+    {
+      id: "unconsumed_write",
+      level: 1,
+      generator: "write() to a path no pipeline reads",
+      count_range: [1, 2],
+      expected_detection: "cross-pipeline-deps orphaned output scan"
+    },
+    {
+      id: "bs_description",
+      level: "policy",
+      generator: "Create policy with buzzword-heavy description",
+      count_range: [1, 1],
+      expected_detection: "BS decoder 4-test analysis"
+    },
+    {
+      id: "no_registration",
+      level: "policy",
+      generator: "Create policy without consumer/timeline registration",
+      count_range: [1, 1],
+      expected_detection: "anti-lolli-inflation artifact_registration rule"
+    },
+    {
+      id: "dead_teach",
+      level: 4,
+      generator: "teach X to seldon where X is not a curriculum",
+      count_range: [1, 1],
+      expected_detection: "Cross-reference validation (if implemented)"
+    },
+    {
+      id: "orphaned_schema",
+      level: "schema",
+      generator: "Create schema.json that no artifact references",
+      count_range: [1, 1],
+      expected_detection: "staleness-detection 14-day check"
+    }
+  ]
+
+--- ## Step 2: Generate random injections from templates
+--- Select a random subset of templates and generate concrete poison instances.
+--- Each run varies the injection count and mix for coverage diversity.
+
+injections <- injection_templates
+  → fan_out(
+      injection_templates.map(template =>
+        tars.generate(
+          template: template,
+          count: random_int(template.count_range[0], template.count_range[1]),
+          output_format: "ixql_fragment"
+        )
+        → { template_id: template.id, level: template.level, fragments: generated }
+      )
+    )
+
+--- ## Step 3: Inject into temporary pipeline file
+--- Article 3 (Reversibility): injections go into a temp file, never production.
+
+temp_pipeline <- injections
+  → ix.ml.flatten()
+  → tars.assemble(
+      header: "--- Shake test injection — auto-generated, auto-cleaned",
+      fragments: injections.fragments,
+      wrap_in: "pipeline"
+    )
+  → write("pipelines/.shake-test-temp.ixql", assembled)
+
+--- ## Step 4: Run all detection mechanisms against the poisoned file
+
+governance_gate(
+  article: 3,
+  confidence: 0.95,
+  on_fail: abort
+)
+
+detection_results <- parallel(
+    -- L2: Dead binding detection via parser
+    temp_pipeline
+      → tars.extract(fields: ["bindings", "references"])
+      → {
+          mechanism: "analyzeLolli_L2",
+          detected: bindings → filter(name not in references),
+          level: 2
+        },
+
+    -- L3: Orphaned branch detection
+    temp_pipeline
+      → tars.extract(fields: ["fan_out_branches"])
+      → {
+          mechanism: "lolli_lint_L3",
+          detected: fan_out_branches → filter(output not in references),
+          level: 3
+        },
+
+    -- L4: Transitive closure from outputs
+    temp_pipeline
+      → tars.trace_backwards(
+          outputs: write_paths ++ side_effects,
+          bindings: all_bindings,
+          references: all_references
+        )
+      → {
+          mechanism: "transitive_closure_L4",
+          detected: bindings → filter(not in reachable_set),
+          level: 4
+        },
+
+    -- L0/L1: Cross-pipeline orphan check
+    parallel(
+        ix.io.glob("pipelines/*.ixql"),
+        ix.io.glob("pipelines/.shake-test-temp.ixql")
+      )
+      → ix.ml.flatten()
+      → tars.extract(fields: ["read_paths", "write_paths"])
+      → {
+          mechanism: "cross_pipeline_deps_L0_L1",
+          detected: write_paths → filter(not in any_read_paths),
+          level: [0, 1]
+        },
+
+    -- Policy BS detection
+    when injections.any(i => i.template_id == "bs_description"):
+      injections → filter(template_id == "bs_description")
+        → tars.analyze(mode: "bs_decoder", tests: ["specificity", "falsifiability", "commitment", "content_density"])
+        → {
+            mechanism: "bs_decoder",
+            detected: results → filter(bs_score < 0.3),
+            level: "policy"
+          },
+
+    -- Registration check
+    when injections.any(i => i.template_id == "no_registration"):
+      injections → filter(template_id == "no_registration")
+        → tars.validate(
+            required_fields: ["registration.consumer", "registration.timeline", "registration.justification"]
+          )
+        → {
+            mechanism: "anti_lolli_registration",
+            detected: results → filter(missing_fields.count > 0),
+            level: "policy"
+          }
+  )
+
+--- ## Step 5: Score — how many injections were caught vs missed?
+
+score_report <- parallel(
+    -- Per-injection match
+    injections
+      → fan_out(
+          injections.map(injection =>
+            {
+              injection_id: injection.template_id,
+              level: injection.level,
+              injected_count: injection.fragments.count,
+              detected_count: detection_results
+                → filter(level == injection.level)
+                → sum(detected.count),
+              catch_rate: detected_count / max(injected_count, 1)
+            }
+          )
+        ),
+
+    -- Aggregate resilience score
+    {
+      total_injected: sum(injections.map(i => i.fragments.count)),
+      total_detected: sum(detection_results.map(d => d.detected.count)),
+      poison_resilience_score: total_detected / max(total_injected, 1),
+      gaps: injections
+        → filter(i => detection_results
+            → filter(level == i.level)
+            → sum(detected.count) < i.fragments.count
+          )
+        → map(i => {
+            template_id: i.template_id,
+            level: i.level,
+            missed: i.fragments.count - detection_results
+              → filter(level == i.level) → sum(detected.count),
+            expected_mechanism: i.expected_detection
+          })
+    }
+  )
+
+--- ## Step 6: Clean up injections (Article 3 — Reversibility)
+
+parallel(
+    ix.io.delete("pipelines/.shake-test-temp.ixql"),
+    when injections.any(template_id == "bs_description"):
+      ix.io.delete("policies/.shake-test-temp-policy.yaml"),
+    when injections.any(template_id == "orphaned_schema"):
+      ix.io.delete("schemas/.shake-test-temp.schema.json")
+  )
+
+--- ## Step 7: Report and persist
+
+write("state/driver/shake-test-report.json", score_report)
+
+→ alert(discord,
+    "Shake test: {{score_report.poison_resilience_score * 100}}% resilience — {{score_report.total_detected}}/{{score_report.total_injected}} caught, {{score_report.gaps.count}} gaps"
+  )
+
+  → compound:
+      harvest score_report.gaps
+      harvest score_report.per_injection_scores
+      when score_report.poison_resilience_score < 0.8:
+        tars.propose_action(
+          action: "fix_detection_gaps",
+          rationale: "Poison resilience below 80% — governance immune system has holes"
+        )
+      teach shake_test_patterns to seldon
+      log shake_test_run to "state/evolution/"

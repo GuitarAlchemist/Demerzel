@@ -1,0 +1,75 @@
+name: resilience-metric-policy
+version: "1.0.0"
+description: Governance resilience metric — R = caught/total across 7 detection levels
+constitutional_basis:
+  - article_8_observability
+  - article_7_auditability
+
+trigger: governance-shake-test cycle completion
+
+metric:
+  name: governance_resilience
+  formula: "R = injections_caught / injections_total"
+  range: [0.0, 1.0]
+  sub_scores:
+    - L0_file: "File-level consumer detection"
+    - L1_pipeline: "Cross-pipeline output detection"
+    - L2_binding: "Dead binding detection"
+    - L3_branch: "Orphaned branch detection"
+    - L4_expression: "Dead computation detection"
+    - policy: "Policy-level BS/staleness detection"
+    - schema: "Schema-level consumer detection"
+
+thresholds:
+  healthy:
+    range: ">= 0.9"
+    action: "No action required"
+  watch:
+    range: ">= 0.7"
+    action: "Note in governance report, monitor trend"
+  warning:
+    range: ">= 0.5"
+    action: "Create issue for each missed injection, prioritize detector implementation"
+  critical:
+    range: "< 0.5"
+    action: "Emergency review — governance detection is fundamentally broken"
+
+computation:
+  when: "After every governance-shake-test cycle"
+  steps:
+    - "Count total injections in test cycle"
+    - "Count injections caught by detection mechanisms"
+    - "Compute R = caught / total"
+    - "Compute per-level sub-scores"
+    - "Record gaps with level, injection, expected detector, and status"
+    - "Append record to state/resilience/history.json"
+  trend:
+    method: "Compare last 3 records"
+    improving: "Latest R > average of previous 2"
+    degrading: "Latest R < average of previous 2"
+    stable: "Otherwise"
+
+persistence:
+  state_file: "state/resilience/history.json"
+  schema: "schemas/resilience-metric.schema.json"
+  append_only: true
+
+dashboard:
+  pipeline: "pipelines/resilience-dashboard.ixql"
+  output: "state/resilience/dashboard.json"
+  readme_section: "Governance Health"
+  discord_alert: true
+
+amdahls_law:
+  parallel_fraction: "Detection mechanisms run independently per level (L0-L4, policy, schema)"
+  serial_fraction: "Report aggregation — combining per-level scores into overall R"
+  implication: "Adding more detection levels scales linearly; the bottleneck is the final aggregation step"
+
+rationale: >
+  The resilience metric makes governance health visible and measurable.
+  A system that cannot detect injected poisons has no immune response.
+  By measuring R over time, we track whether governance tooling is
+  actually working or just declared. The honest baseline of R=0.0
+  means detection policies exist but automated tooling does not yet.
+  As the F# parser, LOLLI lint pipeline, and shake-test come online,
+  R should improve toward 1.0.
