@@ -70,6 +70,8 @@ module Ast =
         | MapExpr of source: Expr * param: string * body: Expr
         /// Comment (preserved in AST for tooling/LSP)
         | Comment of string
+        /// Markdown comment: --- prefix, rendered by viewer
+        | MarkdownComment of string
         /// I/O operations
         | Write of path: Expr * format: string option
         | Read of path: Expr
@@ -127,6 +129,14 @@ module Ast =
         | L2_Tagged    // Route by capability tags
         | L3_Inferred  // Route by semantic similarity
         | L4_Ambient   // Broadcast to all matching
+
+    /// LOLLI (Lines Of Logic Lost to Inflation) analysis report
+    type LolliReport = {
+        DeadBindings: string list
+        OrphanedBranches: string list
+        TotalBindings: int
+        LolliScore: float
+    }
 
     /// Top-level IxQL program
     type Program = { Statements: Expr list }

@@ -26,6 +26,9 @@ module Parser =
 
     // ── Comments ────────────────────────────────────────────────
 
+    let markdownComment: Parser<Expr, unit> =
+        pstring "---" >>. restOfLine true |>> (fun s -> MarkdownComment(s.Trim()))
+
     let lineComment: Parser<Expr, unit> =
         pstring "--" >>. restOfLine true |>> (fun s -> Comment(s.Trim()))
 
@@ -315,6 +318,7 @@ module Parser =
 
     let statement: Parser<Expr, unit> =
         ws >>. choice [
+            attempt markdownComment
             lineComment
             bindingStmt
             pipelineExpr
@@ -337,6 +341,92 @@ module Parser =
         match run (ws >>. pipelineExpr .>> eof) source with
         | ParserResult.Success(result, _, _) -> Result.Ok result
         | ParserResult.Failure(errorMsg, _, _) -> Result.Error errorMsg
+
+    // ── LOLLI Analysis: Dead Binding Detection ─────────────────
+
+    /// Collects all binding names defined in the AST (left side of <-)
+    let rec private collectBindings (expr: Expr) : string list =
+        match expr with
+        | Binding(name, body) -> name :: collectBindings body
+        | Pipeline stages -> stages |> List.collect collectBindings
+        | FanOut exprs | Parallel exprs -> exprs |> List.collect collectBindings
+        | FanIn(sources, sink) -> (sources |> List.collect collectBindings) @ collectBindings sink
+        | When(_, body) -> collectBindings body
+        | Compound directives -> directives |> List.collect collectBindingsFromDirective
+        | Ensemble(pipelines, combiner) -> (pipelines |> List.collect collectBindings) @ collectBindings combiner
+        | MapExpr(source, _, body) -> collectBindings source @ collectBindings body
+        | _ -> []
+
+    and private collectBindingsFromDirective (dir: CompoundDirective) : string list =
+        match dir with
+        | Harvest e | Promote(e, _) -> collectBindings e
+        | Teach(what, dest) -> collectBindings what @ collectBindings dest
+        | Log(what, dest) -> collectBindings what @ collectBindings dest
+        | CompoundWhen(_, d) -> collectBindingsFromDirective d
+
+    /// Collects all referenced names (identifiers used in expressions)
+    let rec private collectReferences (expr: Expr) : string list =
+        match expr with
+        | Ident name -> [name]
+        | Binding(_, body) -> collectReferences body
+        | Pipeline stages -> stages |> List.collect collectReferences
+        | FanOut exprs | Parallel exprs | ListExpr exprs -> exprs |> List.collect collectReferences
+        | FanIn(sources, sink) -> (sources |> List.collect collectReferences) @ collectReferences sink
+        | FuncCall(_, pos, named) ->
+            (pos |> List.collect collectReferences) @ (named |> List.collect (fun na -> collectReferences na.Value))
+        | DotAccess(e, _) -> collectReferences e
+        | Filter pred -> collectRefsFromPredicate pred
+        | When(cond, body) -> collectRefsFromCondition cond @ collectReferences body
+        | Compound directives -> directives |> List.collect collectRefsFromDirective
+        | Ensemble(pipelines, combiner) -> (pipelines |> List.collect collectReferences) @ collectReferences combiner
+        | MapExpr(source, _, body) -> collectReferences source @ collectReferences body
+        | Write(path, _) -> collectReferences path
+        | Read path -> collectReferences path
+        | Alert(ch, msg) -> collectReferences ch @ collectReferences msg
+        | Invoke(_, named) -> named |> List.collect (fun na -> collectReferences na.Value)
+        | InterpolatedString parts ->
+            parts |> List.collect (function ExprPart e -> collectReferences e | _ -> [])
+        | _ -> []
+
+    and private collectRefsFromPredicate (pred: Predicate) : string list =
+        match pred with
+        | Comparison(l, _, r) -> collectReferences l @ collectReferences r
+        | BoolCombine(l, _, r) -> collectRefsFromPredicate l @ collectRefsFromPredicate r
+        | InList(e, vals) -> collectReferences e @ (vals |> List.collect collectReferences)
+        | NotPred p -> collectRefsFromPredicate p
+
+    and private collectRefsFromCondition (cond: Condition) : string list =
+        match cond with
+        | BoolCondition pred -> collectRefsFromPredicate pred
+        | IdentCondition name -> [name]
+        | NegatedCondition name -> [name]
+        | _ -> []
+
+    and private collectRefsFromDirective (dir: CompoundDirective) : string list =
+        match dir with
+        | Harvest e -> collectReferences e
+        | Promote(e, _) -> collectReferences e
+        | Teach(what, dest) -> collectReferences what @ collectReferences dest
+        | Log(what, dest) -> collectReferences what @ collectReferences dest
+        | CompoundWhen(cond, d) -> collectRefsFromCondition cond @ collectRefsFromDirective d
+
+    /// Analyze LOLLI: find dead (unreferenced) bindings in a program.
+    /// Returns a LolliReport with dead bindings, total count, and score.
+    let analyzeLolli (prog: Program) : LolliReport =
+        let bindings =
+            prog.Statements |> List.collect collectBindings
+        let references =
+            prog.Statements |> List.collect collectReferences |> Set.ofList
+        let dead =
+            bindings |> List.filter (fun name -> not (Set.contains name references))
+        let total = bindings.Length
+        let score =
+            if total = 0 then 0.0
+            else float dead.Length / float total
+        { DeadBindings = dead
+          OrphanedBranches = []
+          TotalBindings = total
+          LolliScore = score }
 
     // ── Amdahl's Law: Serial Fraction Analysis ─────────────────
 

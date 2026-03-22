@@ -260,6 +260,59 @@ processed <- signals -> filter(confidence >= 0.5)
 """
     Assert.Equal(4, prog.Statements.Length)
 
+// ── Markdown comments ────────────────────────────────────────
+
+[<Fact>]
+let ``Parse markdown comment`` () =
+    let prog = mustParse "--- ## Step 1: Safety Gate\n"
+    Assert.Equal(1, prog.Statements.Length)
+    match prog.Statements.[0] with
+    | MarkdownComment c -> Assert.Equal("## Step 1: Safety Gate", c)
+    | _ -> failwith "Expected MarkdownComment"
+
+[<Fact>]
+let ``Markdown comment distinct from line comment`` () =
+    let prog = mustParse "--- **bold** doc\n-- plain note\n"
+    Assert.Equal(2, prog.Statements.Length)
+    match prog.Statements.[0] with
+    | MarkdownComment _ -> ()
+    | _ -> failwith "Expected MarkdownComment for ---"
+    match prog.Statements.[1] with
+    | Comment _ -> ()
+    | _ -> failwith "Expected Comment for --"
+
+// ── LOLLI Analysis ──────────────────────────────────────────
+
+[<Fact>]
+let ``analyzeLolli detects dead binding`` () =
+    let prog = mustParse """data <- ix.io.read("input.csv")
+unused <- ix.io.read("other.csv")
+result <- data -> normalize
+"""
+    let report = analyzeLolli prog
+    Assert.Contains("unused", report.DeadBindings)
+    Assert.DoesNotContain("data", report.DeadBindings)
+    Assert.True(report.LolliScore > 0.0, "Should have non-zero LOLLI score")
+
+[<Fact>]
+let ``analyzeLolli correctly excludes referenced bindings`` () =
+    let prog = mustParse """signals <- ix.io.read("state/signals/*.json")
+processed <- signals -> filter(confidence >= 0.5)
+output <- processed -> tars.deploy()
+"""
+    let report = analyzeLolli prog
+    Assert.DoesNotContain("signals", report.DeadBindings)
+    Assert.DoesNotContain("processed", report.DeadBindings)
+    Assert.Equal(3, report.TotalBindings)
+
+[<Fact>]
+let ``analyzeLolli handles fan_out references`` () =
+    let prog = mustParse """data <- ix.io.read("input.csv")
+results <- fan_out(data, data, data)
+"""
+    let report = analyzeLolli prog
+    Assert.DoesNotContain("data", report.DeadBindings)
+
 // ── Error handling ──────────────────────────────────────────
 
 [<Fact>]

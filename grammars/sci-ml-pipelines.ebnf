@@ -655,3 +655,35 @@ provider_source ::= "schema" "(" path ")"           (* JSON Schema → type *)
    IxQL provided type  →  JSON Schema (validation)
    All generated from the same source via type_provider *)
 
+(* ============================================================ *)
+(* 15. Literate Comments                                        *)
+(* ============================================================ *)
+
+(* Markdown-enabled comments for documentation generation.       *)
+(* Distinct from -- plain comments: --- comments are rendered    *)
+(* as rich documentation by the IxQL viewer.                     *)
+
+literate_comment = "---" , markdown_content , newline ;
+markdown_content = { any_char - newline } ;
+(* Markdown comments support: headers (#, ##), bold (**), italic (*),
+   links [text](url), code `backtick`, lists (- item).
+   Plain -- comments remain for inline notes.
+   --- comments are rendered as documentation by the IxQL viewer. *)
+
+(* Examples:
+   --- ## Step 1: Safety Gate
+   --- Validate all inputs against **governance policy** before proceeding.
+   --- See [alignment policy](policies/alignment-policy.yaml) for thresholds.
+   data <- ix.io.read("state/beliefs/*.json")
+
+   --- ### Parallel Analysis
+   --- Fan out to three independent analysis pipelines:
+   --- - `pipeline_a`: Drift detection
+   --- - `pipeline_b`: Confidence calibration
+   --- - `pipeline_c`: Staleness check
+   results <- fan_out(pipeline_a, pipeline_b, pipeline_c)
+
+   -- This is a plain comment (not rendered by viewer)
+   --- This is a **literate comment** (rendered as markdown)
+*)
+
