@@ -100,7 +100,35 @@ streaming_source → lag_features → memristive_markov → time_series_validati
 data_source → bias_assessment → model → confidence_calibration → explanation_requirement → deployment
 ```
 
-**8 sections** — data sources, preprocessing, models (supervised/unsupervised/neural/probabilistic/reinforcement), evaluation, deployment, governance gates, ix-specific patterns, evolution hooks. See the [full grammar](grammars/sci-ml-pipelines.ebnf).
+**10 sections** — data sources, preprocessing, models, evaluation, deployment, governance gates, ix-specific patterns, ix patterns, I/O & reactive patterns, evolution hooks. See the [full grammar](grammars/sci-ml-pipelines.ebnf).
+
+## Manifesto for AI-Age Development
+
+The original [Agile Manifesto](https://agilemanifesto.org/) (2001) was written for human teams building software. Demerzel operates in a world where AI agents build software alongside humans. This demands new principles.
+
+### We have come to value:
+
+1. **Governance over heroics** — Agents need constitutional guardrails, not just talented operators. A single brilliant agent without bounds is more dangerous than a mediocre one with good governance.
+
+2. **Compounding over sprinting** — Every cycle should leave the system stronger. Measure compounding dimension (D_c > 1.0), not velocity. A sprint that doesn't compound is waste.
+
+3. **Bounded autonomy over full delegation** — Agents operate within explicit confidence thresholds: ≥0.9 proceed, ≥0.7 note, ≥0.5 confirm, <0.3 stop. Trust is earned through calibrated confidence, not assumed.
+
+4. **Tetravalent truth over binary status** — Not everything is pass/fail. Unknown (U) triggers investigation. Contradictory (C) triggers escalation. Admitting uncertainty is stronger than false certainty.
+
+5. **Observable conscience over hidden judgment** — Agents should track regrets, detect patterns, and learn from mistakes visibly. A conscience without observability is theater.
+
+6. **Reactive governance over periodic review** — Watch → detect → act → compound in real time. Don't wait for the retrospective to discover what IxQL `file_watcher → debounce → pipeline` would have caught immediately.
+
+7. **Constitutional hierarchy over flat rules** — Hard limits (Asimov Laws) override operational policies, which override persona preferences. Not all rules are equal. [Zeroth Law](constitutions/asimov.constitution.md) overrides everything.
+
+8. **Completeness instinct over gap tolerance** — Proactively ask: what's declared but underspecified? What's implied but missing? What's the dual? What would break at scale? ([VSM System 4](https://en.wikipedia.org/wiki/Viable_system_model))
+
+9. **Factory of factories over manual creation** — Don't create things; create systems that create things. [MetaBuild](https://github.com/GuitarAlchemist/Demerzel/blob/master/.claude/skills/demerzel-metabuild/SKILL.md) bootstraps entire departments. [MetaFix](https://github.com/GuitarAlchemist/Demerzel/blob/master/.claude/skills/demerzel-metafix/SKILL.md) fixes the system that allowed the problem.
+
+10. **Human-AI collaboration over human-or-AI** — Neither pure automation nor pure human control. The [HITL pattern](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/alignment-policy.yaml) defines when to escalate, when to proceed, and when to ask. The human is always in the loop — the question is where.
+
+> *That is, while there is value in the items on the right of the original manifesto, we value the items above as essential for the age of AI agents.*
 
 ## Ecosystem
 
