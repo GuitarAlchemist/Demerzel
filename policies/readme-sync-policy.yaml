@@ -56,7 +56,7 @@ sync_fields_definition:
     current: 18
   policy_count:
     source: "count files in policies/*.yaml"
-    current: 22
+    current: 24
   persona_count:
     source: "count files in personas/*.persona.yaml"
     current: 14
@@ -65,7 +65,7 @@ sync_fields_definition:
     current: 13
   course_count:
     source: "count .md files in state/streeling/courses/**/en/"
-    current: 13
+    current: 14
   language_count:
     source: "count from policies/multilingual-policy.yaml tier_2"
     current: 6
@@ -75,6 +75,12 @@ sync_fields_definition:
   test_count:
     source: "count files in tests/behavioral/*.md"
     current: 41
+  skill_count:
+    source: "count directories in .claude/skills/*/"
+    current: 36
+  schema_count:
+    source: "count files in schemas/*.json"
+    current: 21
 
 verification:
   link_check:

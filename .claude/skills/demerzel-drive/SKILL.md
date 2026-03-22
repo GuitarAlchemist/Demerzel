@@ -88,6 +88,14 @@ Additionally validate per `reconnaissance-policy.yaml`:
 - Tier 2: Repo state, ungoverned components, failing CI
 - Tier 3: Knowledge requirements, assumption audit, confidence assessment
 
+### README Link Verification (per `readme-sync-policy.yaml`)
+During RECON, verify all links in managed READMEs:
+1. Extract all `[text](url)` links from `README.md` and other managed READMEs
+2. Internal links (relative paths): verify target file/directory exists
+3. GitHub links: verify repo/file/branch exists via `gh api`
+4. Broken internal link → queue fix for EXECUTE phase
+5. Report link health in situation report under `readme_health`
+
 ### Stage 4: Surface [Tier 0 template; Tier 2 for complex synthesis]
 Produce structured **situation report** (conforming to `schemas/situation-report.schema.json`):
 - `ecosystem_health`: per-repo composite scores
@@ -190,6 +198,12 @@ Meta-compounding cycle:
 2. Promote/demote artifacts per Governance Promotion staircase (pattern → policy → constitutional)
 3. Package learnings via Seldon (`/seldon deliver`)
 4. Identify follow-up work → write self-initiated trigger files
+5. **README sync** (per `readme-sync-policy.yaml`):
+   - Recount all sync fields (policies, personas, grammars, courses, departments, tests, skills, schemas)
+   - Compare against values in `README.md` artifact counts table and `CLAUDE.md` structure block
+   - If any mismatch → update READMEs with actual counts
+   - Update `readme-sync-policy.yaml` `current` values to match
+   - Commit README updates as part of the cycle
 
 ## Phase 7: PERSIST
 

@@ -18,15 +18,21 @@ This repo is deliberately separate from runtime code. It defines *how agents sho
 
 ```text
 Demerzel/
-├── personas/              # Agent personality definitions
-├── constitutions/         # Behavioral boundaries and principles
-├── policies/              # Alignment, rollback, self-modification rules
-├── logic/                 # Tetravalent logic and multi-valued reasoning
-├── schemas/               # JSON schemas for all artifact types
+├── constitutions/         # 11-article constitution + Asimov root + Demerzel mandate + harm taxonomy
+├── personas/              # 14 persona archetypes (YAML) defining agent roles and voices
+├── policies/              # 24 governance policies (alignment, rollback, kaizen, conscience, etc.)
+├── logic/                 # Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
+├── grammars/              # 18 EBNF grammars for domain-specific languages
+├── schemas/               # 21 JSON schemas for personas, beliefs, contracts, and more
+├── contracts/             # Galactic Protocol specification for cross-repo communication
+├── state/                 # Persistent governance state (beliefs, conscience, streeling, driver)
+│   └── streeling/         # Streeling University: 13 departments, 14 courses
+├── tests/behavioral/      # 41 behavioral test suites
+├── .claude/skills/        # 36 Claude Code skills (driver, recon, teach, research, etc.)
+├── templates/             # Integration templates for consumer repos
+├── examples/              # Scenario walkthroughs and sample data
 ├── sources/               # Extraction material (TARS v1 chats, etc.)
-├── tests/behavioral/      # Behavioral test cases and contradiction scenarios
-├── examples/claude-code/  # Integration examples for Claude Code
-└── docs/                  # Architecture and design documentation
+└── docs/                  # Architecture docs, design specs, implementation plans
 ```
 
 ## Key Concepts
@@ -35,6 +41,23 @@ Demerzel/
 - **Constitutions** define hard boundaries that override persona preferences
 - **Policies** are versioned, auditable rules for alignment, rollback, and self-modification
 - **Tetravalent logic** extends boolean True/False with Unknown and Contradictory states
+- **Grammars** define formal languages for music theory, governance, and research domains
+
+## Artifact Counts
+
+<!-- README-SYNC: These counts are verified by the driver cycle. Do not edit manually. -->
+
+| Artifact | Count | Source |
+|----------|-------|--------|
+| Constitutions | 3 + harm taxonomy | `constitutions/` |
+| Personas | 14 | `personas/*.persona.yaml` |
+| Policies | 24 | `policies/*.yaml` |
+| Grammars | 18 | `grammars/*.ebnf` |
+| Schemas | 21 | `schemas/*.json` |
+| Behavioral tests | 41 | `tests/behavioral/*.md` |
+| Skills | 36 | `.claude/skills/*/` |
+| Departments | 13 | `state/streeling/departments/` |
+| Courses | 14 | `state/streeling/courses/**/en/` |
 
 ## Usage
 
