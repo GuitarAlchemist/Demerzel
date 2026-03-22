@@ -1,6 +1,6 @@
 # Demerzel Governance Model
 
-Version: 1.0.0
+Version: 1.1.0
 Effective: 2026-03-22
 
 ## Purpose
@@ -251,9 +251,11 @@ When a governance belief enters the Contradictory (C) state:
 
 ## 6. Governance of Governance (Meta-Governance)
 
-### 6.1 Cybernetic Feedback Loop
+### 6.1 Second-Order Cybernetics
 
-Demerzel governance is a cybernetic system — it observes its own behavior and adjusts. This is the "governance of governance" layer, aligned with Article 10 (Stakeholder Pluralism) and the Kaizen policy.
+Demerzel governance is a second-order cybernetic system — it not only observes and controls agent behavior (first-order) but also observes and controls *its own governance processes* (second-order). The observer is part of the system being observed.
+
+This is the "governance of governance" layer, aligned with Article 10 (Stakeholder Pluralism) and the Kaizen policy.
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -410,4 +412,5 @@ Adapted from Hyperlight's governance values for the AI governance context:
 
 ## Changelog
 
+- **1.1.0** (2026-03-22): Added Amdahl's Law section (throughput tiers, serial bottleneck analysis). Upgraded cybernetics section to second-order cybernetics framing.
 - **1.0.0** (2026-03-22): Initial governance model — roles, decision framework, change processes, escalation paths, meta-governance, cross-repo governance, values.
