@@ -2,24 +2,24 @@
   "department": "audio-engineering",
   "grammar_version": "1.0.0",
   "hypothesis_weights": {
-    "inductive": 0.30,
-    "deductive": 0.15,
-    "abductive": 0.20,
-    "analogical": 0.20,
-    "combinatorial": 0.15
+    "inductive": 0.29,
+    "deductive": 0.14,
+    "abductive": 0.24,
+    "analogical": 0.19,
+    "combinatorial": 0.14
   },
   "test_weights": {
-    "empirical": 0.35,
+    "empirical": 0.38,
     "formal_proof": 0.05,
-    "simulation": 0.20,
-    "thought_experiment": 0.10,
-    "cross_validation": 0.20,
+    "simulation": 0.19,
+    "thought_experiment": 0.09,
+    "cross_validation": 0.19,
     "adversarial": 0.10
   },
   "metadata": {
     "last_updated": "2026-03-23",
-    "cycle_count": 0,
-    "total_T": 0,
+    "cycle_count": 1,
+    "total_T": 1,
     "total_F": 0,
     "total_U": 0,
     "total_C": 0,

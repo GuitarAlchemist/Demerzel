@@ -1,0 +1,25 @@
+{
+  "cycle_id": "audio-engineering-2026-03-23-001",
+  "department": "audio-engineering",
+  "question": "Does the order of compression before EQ versus EQ before compression produce measurably different results on vocals — and if so, which order preserves more natural dynamics while controlling problematic frequencies?",
+  "production_path": ["observe", "hypothesize:abductive", "test:empirical", "conclude:confirm", "reflect:normal_progress"],
+  "hypothesis": "EQ before compression produces more natural-sounding vocal dynamics because it prevents the compressor from reacting to problematic frequency peaks (proximity effect, sibilance), resulting in compression that responds to musical performance rather than frequency artifacts.",
+  "test_method": "empirical",
+  "evidence": [
+    "Compressor responds to input level — problematic frequency peaks trigger frequency-dependent pumping when compression comes first",
+    "EQ→Comp gives the compressor a cleaner signal, reducing frequency-dependent compression artifacts",
+    "EQ→Comp→EQ sandwich is the professional standard: corrective EQ, then dynamics, then tonal shaping",
+    "No universally 'correct' order exists — context-dependent based on recording quality, genre, and intent",
+    "Dynamic EQ is a modern alternative for frequency-dependent dynamics (per-band threshold compression)",
+    "Cross-validated with GPT-4o: high agreement on all 6 analysis points"
+  ],
+  "conclusion": "confirm",
+  "belief_value": "T",
+  "belief_confidence": 0.80,
+  "cross_model_agreement": "high",
+  "models_consulted": ["claude-opus-4-6", "gpt-4o"],
+  "course_produced": "aud-001-eq-compression-order",
+  "grammar_evolved": false,
+  "duration_seconds": 240,
+  "timestamp": "2026-03-23T02:00:00Z"
+}
