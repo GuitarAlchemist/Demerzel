@@ -1,0 +1,62 @@
+-- Content Intelligence Pipeline
+-- Watch for interesting AI engineering content, analyze, extract lessons, compound
+-- Trigger: manual (/demerzel reflect <url>) or scheduled (daily scan of bookmarks)
+
+-- Phase 1: INGEST
+source content_url
+  → fetch(url, format: "markdown")
+  → extract_metadata(author, date, platform, topic, engagement_metrics)
+
+-- Phase 2: ANALYZE
+  → classify_relevance(
+      domains: ["claude-code", "ai-agents", "governance", "devops", "ml-ops", "music-tech"],
+      threshold: 0.6
+    )
+  → when relevance < 0.6: log("Low relevance, skip") → conclude F "Not relevant"
+
+-- Phase 3: CROSS-REFERENCE with our ecosystem
+  → compare_with_demerzel(
+      check: [
+        "What does the author do that we don't?",
+        "What do we do that the author doesn't?",
+        "What claims can we validate or refute from experience?",
+        "What specific technique should we adopt?"
+      ],
+      artifacts: context_engine.query(content.topics)  -- uses #163 when available
+    )
+
+-- Phase 4: EXTRACT actionable insights
+  → extract_insights(
+      format: {
+        agree: "Where we violently agree (with citation)",
+        learn: "What we should steal (specific, actionable)",
+        teach: "What we could teach them (from our experience)",
+        challenge: "What we'd push back on (with evidence)",
+        ergol_check: "Is this ERGOL (proven in practice) or LOLLI (sounds good, unvalidated)?"
+      }
+    )
+
+-- Phase 5: BS CHECK
+  → bs_detect(
+      tests: [specificity, falsifiability, density, commitment],
+      on_claims: content.key_claims
+    )
+
+-- Phase 6: COMPOUND
+  → when insights.learn.length > 0:
+      create_issue(
+        title: "learn: {insight.summary}",
+        body: insights.learn,
+        labels: ["continuous-learning"]
+      )
+  → when insights.challenge.length > 0:
+      draft_response(
+        platform: content.platform,
+        tone: "constructive, specific, evidence-based",
+        include: [our_experience, our_data, links_to_demerzel]
+      )
+  → compound:
+      log_to evolution("content-intelligence")
+      update department_weights(content.domains)
+      when novel_technique: create_skill_candidate(insights.learn)
+      post_summary(discord, channel: "research")
