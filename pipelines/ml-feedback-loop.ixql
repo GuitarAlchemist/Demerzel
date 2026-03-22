@@ -1,0 +1,182 @@
+-- ML Governance Feedback Loop — ix results → Demerzel governance
+-- Source: ml-governance-feedback-policy.yaml, Issue #ML-feedback
+-- Trigger: after each ix ML pipeline run, or on-demand
+-- Output: applied governance updates, belief revisions, retrain triggers
+
+-- Load current governance state
+beliefs      <- ix.io.read("state/beliefs/*.belief.json")
+evolution    <- ix.io.read("state/evolution/*.evolution.json")
+pdca         <- ix.io.read("state/pdca/*.pdca.json")
+oversight    <- ix.io.read("state/oversight/*.json")
+constitution <- ix.io.read("constitutions/default.constitution.md")
+
+-- Step 1: Collect ML results from ix pipelines (Galactic Protocol inbound packages)
+ml_results <- ix.io.read("state/oversight/ml-recommendations/*.json")
+  → filter(status == "pending")
+  → tars.validate_schema("schemas/contracts/ml-feedback-recommendation.schema.json")
+
+-- Step 2: Constitutional safety gate — Article 9 (Bounded Autonomy)
+-- No ML result may exceed Demerzel's authority bounds or touch constitutional articles
+safe_results <- ml_results
+  → filter(recommendation_type not in ["modify_constitution", "override_policy"])
+  → filter(confidence >= 0.7)                    -- Article 6: only act on reliable signals
+  → tars.validate(
+      check: "constitutional_check == true",
+      reject_message: "ML result lacks self-assessed constitutional check — discard"
+    )
+
+-- Step 3: Evaluate each recommendation type in parallel
+governance_gate(
+  article: 9,          -- Bounded Autonomy
+  confidence: 0.8,
+  on_fail: escalate
+)
+
+processed <- fan_out(
+    -- 3a: Confidence calibration updates
+    safe_results
+      → filter(recommendation_type == "calibration_report")
+      → fan_out(
+          -- Check overconfidence: if high-confidence beliefs frequently revised,
+          -- nudge threshold downward (capped at -0.1 per cycle per policy)
+          r → filter(r.overconfidence_rate > 0.15)
+            → ix.ml.compute(
+                metric: "threshold_adjustment",
+                formula: "max(-0.1, -1 * overconfidence_rate * 0.5)"
+              )
+            → tars.propose_belief_update(
+                target: "state/beliefs/confidence-calibration.belief.json",
+                field: "threshold_nudge",
+                rationale: "ML calibration: overconfidence detected"
+              ),
+          -- Check underconfidence: low-confidence beliefs that were correct
+          r → filter(r.underconfidence_rate > 0.20)
+            → ix.ml.compute(
+                metric: "threshold_adjustment",
+                formula: "min(0.1, underconfidence_rate * 0.5)"
+              )
+            → tars.propose_belief_update(
+                target: "state/beliefs/confidence-calibration.belief.json",
+                field: "threshold_nudge",
+                rationale: "ML calibration: underconfidence detected"
+              )
+        ),
+
+    -- 3b: Staleness prediction — schedule proactive recons
+    safe_results
+      → filter(recommendation_type == "staleness_forecast")
+      → filter(at_risk_beliefs.count > 0)
+      → ix.ml.rank(by: "staleness_velocity", order: "descending")
+      → head(3)                                  -- Policy: max 3 proactive recons/day
+      → tars.propose_action(
+          action: "schedule_recon",
+          targets: at_risk_beliefs,
+          rationale: "ML staleness predictor: proactive recon required"
+        ),
+
+    -- 3c: Drift detection — retrain trigger
+    -- If violation patterns shift significantly, flag for policy review
+    safe_results
+      → filter(recommendation_type == "pattern_analysis")
+      → fan_out(
+          r → filter(r.systemic_patterns.count >= 2)
+            → tars.classify(signal: "systemic_governance_drift", severity: "high")
+            → tars.propose_action(
+                action: "policy_review_request",
+                patterns: systemic_patterns,
+                rationale: "ML pattern detector: systemic violations suggest policy gap"
+              ),
+          r → filter(r.emerging_risks.count >= 1)
+            → tars.classify(signal: "emerging_risk_detected", severity: "medium")
+            → alert(discord,
+                "ML feedback: {{r.emerging_risks.count}} emerging risk(s) detected — review recommended"
+              )
+        ),
+
+    -- 3d: Remediation strategy optimization
+    safe_results
+      → filter(recommendation_type == "strategy_report")
+      → filter(success_rates_by_strategy is not empty)
+      → tars.propose_belief_update(
+          target: "state/beliefs/remediation-effectiveness.belief.json",
+          field: "strategy_success_rates",
+          value: success_rates_by_strategy,
+          rationale: "ML optimizer: updated remediation strategy success rates"
+        ),
+
+    -- 3e: Anomaly alerts — real-time signals
+    safe_results
+      → filter(recommendation_type == "anomaly_alert")
+      → filter(anomalies.any(severity in ["high", "critical"]))
+      → tars.classify(signal: "governance_anomaly", severity: "critical")
+      → alert(discord,
+          "ML anomaly: {{anomalies.count}} governance anomalies detected — {{anomalies.top.description}}"
+        )
+  )
+
+-- Step 4: Apply approved low-risk updates autonomously; escalate the rest
+applied    <- processed → filter(risk_level in ["low", "medium"] && confidence >= 0.85)
+escalated  <- processed → filter(risk_level == "high" || confidence < 0.85)
+
+-- Write approved belief updates
+parallel(
+    applied
+      → tars.apply_belief_updates(scope: "state/beliefs/")
+      → explanation_requirement,                 -- Article 2: every update must explain itself
+    escalated
+      → ix.io.write("state/oversight/pending-human-review.json", escalated)
+      → alert(discord,
+          "ML feedback: {{escalated.count}} recommendation(s) queued for human review"
+        )
+  )
+
+-- Step 5: Drift-triggered retrain directive
+retrain_needed <- processed
+  → filter(signal == "systemic_governance_drift" || signal == "governance_anomaly")
+
+when retrain_needed is not empty:
+  ix.io.write(
+    "state/oversight/retrain-directive.json",
+    {
+      issued_at: now(),
+      reason: retrain_needed.map(r => r.rationale),
+      pipeline_ids: retrain_needed.map(r => r.pipeline_id),
+      logic: "C",
+      escalation: "Prompt"
+    }
+  )
+  → alert(discord,
+      "Retrain directive issued: {{retrain_needed.count}} drift signal(s) — see state/oversight/retrain-directive.json"
+    )
+
+-- Step 6: Persist loop results and update evolution log
+parallel(
+    ix.io.write("state/oversight/ml-feedback-loop-{date}.json", {
+      run_at:     now(),
+      results_in: ml_results.count,
+      applied:    applied.count,
+      escalated:  escalated.count,
+      retrain:    retrain_needed.count
+    }),
+    ix.io.append("state/evolution/", {
+      event: "ml_feedback_loop_run",
+      timestamp: now(),
+      metrics: {
+        applied_updates:  applied.count,
+        escalated:        escalated.count,
+        retrain_triggers: retrain_needed.count
+      }
+    })
+  )
+
+-- Mark processed recommendations as handled
+ml_results
+  → filter(id in safe_results.ids)
+  → tars.set_status("processed")
+
+  → compound:
+      harvest processed.insights
+      harvest applied.updates
+      promote calibration_updates if T >= 0.9
+      teach drift_patterns to seldon
+      log ml_feedback_run to "state/evolution/"
