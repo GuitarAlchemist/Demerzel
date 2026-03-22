@@ -1,0 +1,37 @@
+{
+  "department": "audio-engineering",
+  "full_name": "Department of Audio Engineering",
+  "head_persona": "system-integrator",
+  "established": "2026-03-23",
+  "domain": "Recording, mixing, mastering, signal processing, acoustics, spatial audio, and studio design",
+  "bootstrapped_by": "demerzel-metabuild",
+  "research_areas": [
+    "Signal flow optimization and gain staging",
+    "Frequency analysis and spectral balance techniques",
+    "Dynamic range processing and loudness management",
+    "Spatial audio formats and immersive mixing",
+    "Microphone techniques and recording methodology",
+    "Mixing workflow and depth perception",
+    "Mastering for multiple delivery formats",
+    "Room acoustics and treatment"
+  ],
+  "consumer_repos": ["ga", "ix"],
+  "related_departments": ["physics", "music", "computer-science", "guitar-studies"],
+  "curriculum": [
+    "Signal chain fundamentals — source to destination",
+    "Microphone types and polar patterns",
+    "Gain staging and headroom management",
+    "EQ fundamentals — subtractive vs additive",
+    "Compression essentials — ratio, threshold, attack, release",
+    "Reverb and spatial depth creation",
+    "Stereo imaging and panning strategies",
+    "Mixing workflow — static balance to automation",
+    "Mastering loudness — LUFS, true peak, dynamic range",
+    "Room acoustics — modes, RT60, treatment",
+    "Sidechain compression and frequency ducking",
+    "Mid/Side processing techniques",
+    "Immersive audio — Atmos, Ambisonics, binaural",
+    "A/B listening methodology and ear training",
+    "DAW signal flow and routing architecture"
+  ]
+}

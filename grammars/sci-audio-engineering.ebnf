@@ -1,0 +1,183 @@
+(* Audio Engineering Grammar — Streeling University *)
+(* Department: Audio Engineering *)
+(* Head Persona: system-integrator *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in audio engineering domains *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/audio-engineering.department.json *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+(* Bootstrapped by: /demerzel metabuild audio-engineering *)
+
+(* ============================================================ *)
+(* 1. Investigation Patterns                                     *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 2. Signal Flow & Architecture                                 *)
+(* ============================================================ *)
+
+signal_domain ::= signal_source signal_chain signal_destination
+
+signal_source ::= microphone | line_input | digital_input | virtual_instrument | field_recording
+
+signal_chain ::= preamp_stage processing_stage conversion_stage
+               | preamp_stage conversion_stage
+               | direct_injection
+
+preamp_stage ::= tube_preamp | solid_state_preamp | transformer_preamp | ribbon_preamp
+
+processing_stage ::= eq_stage dynamics_stage effects_stage
+                   | dynamics_stage eq_stage effects_stage
+                   | effects_stage
+
+conversion_stage ::= adc_conversion | dac_conversion | sample_rate_conversion
+
+signal_destination ::= mix_bus | submix | aux_send | monitor_output | master_bus
+
+(* ============================================================ *)
+(* 3. Frequency Analysis                                         *)
+(* ============================================================ *)
+
+frequency_domain ::= spectral_analysis eq_technique frequency_problem
+
+spectral_analysis ::= fft_analysis | spectrogram | phase_correlation | frequency_masking_check
+
+eq_technique ::= subtractive_eq | additive_eq | dynamic_eq | mid_side_eq | linear_phase_eq
+               | minimum_phase_eq | parametric_eq | graphic_eq | shelf_eq | notch_filter
+
+frequency_problem ::= masking | resonance | harshness | muddiness | thinness | boxiness
+
+(* ============================================================ *)
+(* 4. Dynamics Processing                                        *)
+(* ============================================================ *)
+
+dynamics_domain ::= dynamics_analysis dynamics_technique dynamics_target
+
+dynamics_analysis ::= peak_measurement | rms_measurement | lufs_measurement
+                    | crest_factor | dynamic_range_measurement
+
+dynamics_technique ::= compression | limiting | expansion | gating | parallel_compression
+                     | multiband_compression | sidechain_compression | upward_compression
+                     | transient_shaping | de_essing | ducking
+
+dynamics_target ::= vocal | drums | bass | guitar | full_mix | bus | master
+
+(* ============================================================ *)
+(* 5. Spatial Audio                                              *)
+(* ============================================================ *)
+
+spatial_domain ::= spatial_format spatial_technique spatial_perception
+
+spatial_format ::= mono | stereo | mid_side | lcr | surround_5_1 | surround_7_1
+                 | dolby_atmos | ambisonics | binaural | wave_field_synthesis
+
+spatial_technique ::= panning | stereo_widening | haas_effect | ms_processing
+                    | object_based_audio | channel_based_audio | scene_based_audio
+                    | hrtf_processing | room_simulation | spatial_reverb
+
+spatial_perception ::= localization | envelopment | width | depth | height
+                     | phantom_center | precedence_effect | interaural_time_difference
+
+(* ============================================================ *)
+(* 6. Recording Techniques                                       *)
+(* ============================================================ *)
+
+recording_domain ::= mic_technique room_consideration gain_management
+
+mic_technique ::= close_mic | room_mic | ambient_mic | overhead
+                | xy_pair | ab_pair | ortf | mid_side_pair | blumlein
+                | decca_tree | spaced_omni | boundary_mic
+
+room_consideration ::= room_treatment | reflection_management | isolation
+                     | room_mode_analysis | rt60_measurement | noise_floor
+
+gain_management ::= gain_staging | headroom | clipping_prevention
+                  | noise_floor_optimization | signal_to_noise
+
+(* ============================================================ *)
+(* 7. Mixing Methodology                                         *)
+(* ============================================================ *)
+
+mixing_domain ::= balance_technique depth_technique automation_technique
+
+balance_technique ::= static_balance | frequency_balance | dynamic_balance
+                    | arrangement_balance | spectral_complementarity
+
+depth_technique ::= reverb_layering | delay_staging | predelay_management
+                  | high_frequency_rolloff | level_reduction | stereo_placement
+
+automation_technique ::= volume_automation | pan_automation | send_automation
+                       | plugin_automation | vca_grouping | clip_gain
+
+(* ============================================================ *)
+(* 8. Mastering                                                  *)
+(* ============================================================ *)
+
+mastering_domain ::= mastering_analysis mastering_process delivery_format
+
+mastering_analysis ::= loudness_measurement | frequency_balance_check | stereo_correlation
+                     | dynamic_range_check | true_peak_measurement | phase_check
+
+mastering_process ::= eq_adjustment | stereo_enhancement | compression_glue
+                    | limiting | dithering | sample_rate_conversion
+                    | loudness_normalization | sequencing
+
+delivery_format ::= cd_master | streaming_master | vinyl_master | broadcast_master
+                  | immersive_master | stem_master | dolby_atmos_master
+
+(* ============================================================ *)
+(* 9. Hypothesis Methods (weighted per research cycle)           *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe patterns in recordings/mixes *)
+              | deductive       (* derive from acoustics/physics principles *)
+              | abductive       (* infer best explanation for sonic result *)
+              | analogical      (* "this technique works like..." *)
+              | combinatorial   (* combine techniques from different domains *)
+
+(* ============================================================ *)
+(* 10. Test Methods (weighted per research cycle)                *)
+(* ============================================================ *)
+
+test ::= empirical             (* A/B listening tests, measurements *)
+       | formal_proof          (* acoustic physics derivation *)
+       | simulation            (* DAW modeling, room simulation *)
+       | thought_experiment    (* "what would happen if..." *)
+       | cross_validation      (* multi-model or multi-engineer consensus *)
+       | adversarial           (* deliberately try to break the finding *)
+
+(* ============================================================ *)
+(* 11. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+(* confirm → T (technique works as hypothesized) *)
+(* refute → F (technique does not produce claimed result) *)
+(* insufficient → U (need more listening tests or measurements) *)
+(* contradictory → C (works in some contexts, fails in others) *)
+(* revise → re-enter cycle with refined hypothesis *)
+(* discover_question → spawn new investigation *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 12. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress    (* routine finding, update weights *)
+          | anomaly_detected   (* unexpected result, log conscience signal *)
+          | paradigm_tension   (* challenges established audio wisdom *)
+          | paradigm_shift     (* fundamental rethinking required, human review *)
+
+(* ============================================================ *)
+(* 13. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions proposed by research cycles with gate: T(0.7) && C(<0.1) *)
+(* Weight updates: +0.05 on confirm, -0.03 on refute/insufficient *)
+(* External grammar candidates: AES standards, ITU-R BS.1770, EBU R128 *)
