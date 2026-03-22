@@ -1,7 +1,8 @@
 # Galactic Protocol Specification
 
-Version: 1.0.0
+Version: 1.1.0
 Effective: 2026-03-15
+Updated: 2026-03-22
 
 ## Purpose
 
@@ -243,6 +244,167 @@ Governance artifacts can be demoted or deprecated if unused (waste category: cer
 - Same approval levels (Stage 1: Demerzel + skeptical-auditor; Stage 2: human)
 - Deprecated artifacts remain in repository with deprecated flag for audit trail
 
+## Claude Code Agent Team Integration
+
+This section defines how the Galactic Protocol maps onto Claude Code multi-agent teams (CC teams) executing inside GitHub repos.
+
+### Agent Team Topology
+
+Each consumer repo (ix, tars, ga) runs a CC agent team. Demerzel's coordinator agent participates as a cross-repo teammate.
+
+```
+Demerzel (governor)
+  └─ coordinator agent (sends directives, receives reports)
+        │
+        ├─ ix team (Rust ML forge)
+        │     └─ agents: architect, auditor, seldon, integrator
+        ├─ tars team (F# reasoning)
+        │     └─ agents: architect, auditor, seldon, integrator
+        └─ ga team (.NET music)
+              └─ agents: architect, auditor, seldon, integrator
+```
+
+### Directive → GitHub Issue Mapping
+
+Governance directives are materialized as GitHub Issues in the target repo.
+
+| Directive field | GitHub Issue field |
+|----------------|--------------------|
+| `id` | Issue label: `directive:<id>` |
+| `type` | Issue label: `type:<type>` |
+| `priority` | Issue label: `priority:<priority>` |
+| `directive_content` | Issue body (structured, see format below) |
+| `deadline` | Issue milestone (if set) |
+| `source_article` | Issue body section: "Constitutional Authority" |
+| `target_agent` | Issue assignee (mapped via persona → GitHub username) |
+
+**Issue body format:**
+
+```markdown
+## Governance Directive — <id>
+
+**From:** Demerzel
+**Priority:** <priority>
+**Constitutional Authority:** <source_article>
+**Deadline:** <deadline or "none">
+
+### Requirement
+
+<directive_content>
+
+### Acceptance Criteria
+
+- Compliance report submitted within deadline
+- Report references this directive ID: `<id>`
+- All schema-required fields present
+
+### Rejection Grounds
+
+Per Galactic Protocol §1, valid rejection requires First Law or Second Law override with logged constitutional citations.
+
+---
+*Issued via Galactic Protocol v1.1 — [directive schema](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/contracts/directive.schema.json)*
+```
+
+### Compliance Report → Issue Comment Mapping
+
+Consumer repos respond to directive Issues with a structured comment.
+
+**Comment format:**
+
+```markdown
+## Compliance Report — <directive-id>
+
+**Repo:** <repo-name>
+**Status:** compliant | partial | rejected
+**Report date:** <ISO date>
+**Agent:** <persona-name>
+
+### Summary
+
+<what was done>
+
+### Evidence
+
+- <link to commit / PR / state file>
+- <link to test result or belief snapshot>
+
+### Tetravalent Outcome
+
+`T` — All acceptance criteria met
+`F` — Could not comply (see rejection grounds below)
+`U` — Partial — <what is unknown or pending>
+`C` — Contradictory — escalating to human review
+
+### Belief State Update
+
+State file: `state/beliefs/<date>-<directive-id>.belief.json`
+
+---
+*Report schema: [compliance-report.schema.json](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/contracts/compliance-report.schema.json)*
+```
+
+### Reconnaissance Request → Issue Flow
+
+1. Demerzel opens a `type:reconnaissance-request` Issue in the target repo
+2. CC team agent runs the recon pipeline (Tier 1-3) and posts findings as a comment
+3. Demerzel closes the Issue when the snapshot is accepted
+
+### IxQL Pipeline for Cross-Repo Directive Flow
+
+The end-to-end directive lifecycle expressed as an IxQL pipeline:
+
+```ixql
+-- Demerzel issues a directive and tracks compliance
+directive_event(source: "demerzel", type: "compliance-requirement")
+  → validate(directive.schema.json)
+  → github.issue.create(
+      repo: directive.target_repo,
+      labels: ["directive:" + directive.id, "type:" + directive.type, "priority:" + directive.priority],
+      body: format_directive_issue(directive)
+    )
+  → watch(github.issue_comments, filter: "directive:" + directive.id)
+  → debounce(1h)
+  → parse_compliance_report
+  → when T: github.issue.close(resolved: true)
+  → when F: alert(demerzel, "Rejection: " + report.rejection_reason)
+  → when U: schedule_followup(7d)
+  → when C: escalate(human, "Contradictory compliance: " + directive.id)
+  → compound:
+      harvest compliance_outcome
+      update state/beliefs/<date>-<directive.id>.belief.json
+      promote if T >= 0.9
+
+-- Consumer repo receives and processes a directive
+watch(github.issues, filter: "label:directive:*")
+  → parse_directive_issue
+  → validate(directive.schema.json)
+  → affordance_match(directive.target_agent)
+  → execute_directive(assigned_agent)
+  → generate_compliance_report
+  → github.issue.comment(report: format_compliance_comment(report))
+  → update state/beliefs/<date>-<directive.id>.belief.json
+```
+
+### AGENTS.md Integration
+
+Consumer repos include an `AGENTS.md` file (see `templates/AGENTS.md`) that:
+- Registers the repo with the Galactic Protocol
+- Declares agent roles and their persona mappings
+- Defines the directive intake procedure for CC agent teams
+- Specifies which agent handles each directive type
+
+### CC Team Behavioral Contracts
+
+Each agent role has a defined responsibility for Galactic Protocol messages:
+
+| Agent role | Directive types handled | Compliance format |
+|-----------|------------------------|-------------------|
+| `architect` | `compliance-requirement`, `policy-update` | GitHub Issue comment |
+| `auditor` | `violation-remediation`, `reconnaissance-request` | GitHub Issue comment |
+| `seldon` | Knowledge packages (inbound), learning outcomes (outbound) | Belief state file |
+| `integrator` | `reconnaissance-request`, cross-repo coordination | GitHub Issue comment |
+
 ## References
 
 - `constitutions/asimov.constitution.md` — Law hierarchy for directive rejection
@@ -253,3 +415,4 @@ Governance artifacts can be demoted or deprecated if unused (waste category: cer
 - `policies/streeling-policy.yaml` — Knowledge transfer integration
 - `schemas/contracts/*.schema.json` — Message format definitions
 - `logic/governance-evolution.schema.json` — Artifact effectiveness tracking
+- `templates/AGENTS.md` — Consumer repo agent team registration template
