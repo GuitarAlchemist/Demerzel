@@ -1,0 +1,14 @@
+{
+  "description": "Initial uniform transition matrix for governance Markov model",
+  "version": "1.0.0",
+  "created": "2026-03-22T00:00:00Z",
+  "states": ["Healthy", "Watch", "Warning", "Freeze"],
+  "state_indices": { "Healthy": 0, "Watch": 1, "Warning": 2, "Freeze": 3 },
+  "matrix": [
+    [0.25, 0.25, 0.25, 0.25],
+    [0.25, 0.25, 0.25, 0.25],
+    [0.25, 0.25, 0.25, 0.25],
+    [0.25, 0.25, 0.25, 0.25]
+  ],
+  "note": "Uniform prior — no observations yet. The MemristiveEngine VLMM will learn actual transition probabilities as governance cycles are observed. This file is the human-readable snapshot; the engine's internal state is in engine-state.json."
+}

@@ -1,0 +1,135 @@
+--- ## Governance Markov Simulation
+--- Connects ix/memristive-markov to Demerzel governance state.
+--- Predicts governance health transitions using memristive conductance.
+--- Consumer: state/markov/predictions.json, governance alerts
+--- Trigger: end of each Driver cycle COMPOUND phase
+
+--- ## Step 1: Load governance state
+--- Gather all input signals from the most recent cycle.
+resilience   <- ix.io.read("state/resilience/history.json")
+  → transform(r => r.records[r.records.length - 1])
+
+lolli_ergol  <- ix.io.read("state/driver/lolli-ergol-history.json")
+  → transform(l => l.records[l.records.length - 1])
+  → default({ ratio: 1.0, lolli: 0, ergol: 1 })
+
+conscience   <- ix.io.read("state/conscience/signals/*.signal.json")
+  → filter(s => s.resolved == false)
+  → count()
+
+lolli_lint   <- ix.io.read("state/oversight/lolli-lint-report.json")
+  → transform(l => l.dead_binding_count)
+  → default(0)
+
+violations   <- ix.io.read("state/oversight/governance-audit.json")
+  → transform(a => a.violation_count)
+  → default(0)
+
+--- ## Step 2: Classify current state
+--- Map observation vector to one of 4 governance states.
+current_state <- fan_out(resilience, lolli_ergol, conscience, lolli_lint, violations)
+  → transform(inputs => {
+      R     = inputs.resilience.overall_score,
+      ratio = inputs.lolli_ergol.ratio,
+      consecutive = inputs.lolli_ergol.consecutive_high_ratio_cycles ?? 0,
+
+      -- Classify by worst signal
+      state = if R < 0.5 or (ratio > 3.0 and consecutive >= 3) then 3   -- Freeze
+              elif R < 0.7 or ratio > 2.5                      then 2   -- Warning
+              elif R < 0.9 or ratio > 1.5                      then 1   -- Watch
+              else                                                   0   -- Healthy
+    })
+
+--- ## Step 3: Initialize or load Markov engine
+--- Load persisted engine state, or create fresh if first run.
+engine_state <- ix.io.read("state/markov/engine-state.json")
+  → default(null)
+
+engine <- ix.ml.memristive_markov.load(engine_state, {
+    max_order:                3,
+    min_observations:         2,
+    session_alpha:            0.15,
+    session_beta:             0.0669,
+    long_term_alpha:          0.05,
+    long_term_beta:           0.02,
+    g_min:                    0.01,
+    consolidation_gamma:      0.3,
+    min_session_observations: 5,
+    fallback:                 "uniform"
+  })
+
+--- ## Step 4: Update memristive resistance from recent history
+--- Feed the classified state as an observation; conductance matrix updates automatically.
+engine <- engine
+  → ix.ml.memristive_markov.observe(current_state.state)
+
+--- ## Step 5: Compute P(next_state) for each possible transition
+predictions <- engine
+  → ix.ml.memristive_markov.predict()
+  → transform(dist => {
+      state_names = ["Healthy", "Watch", "Warning", "Freeze"],
+      probabilities = dist.map((s, p) => { state: state_names[s], probability: p }),
+      p_freeze = dist.find(d => d[0] == 3)?.[1] ?? 0.0,
+      cycles_to_freeze = if p_freeze > 0.01
+                          then math.log(0.5) / math.log(1.0 - p_freeze)
+                          else null,
+      timestamp = now(),
+      cycle_id = resilience.cycle_id,
+      actual_state = current_state.state,
+      actual_state_name = state_names[current_state.state],
+      observation_vector = {
+        resilience_score:       inputs.resilience.overall_score,
+        lolli_ergol_ratio:      inputs.lolli_ergol.ratio,
+        dead_binding_count:     lolli_lint,
+        conscience_signal_count: conscience,
+        policy_violation_count: violations
+      }
+    })
+
+--- ## Step 6: Alert if P(Freeze) > 0.3
+--- Determine recommended intervention from dominant risk signal.
+intervention <- predictions
+  → filter(p => p.p_freeze > 0.3)
+  → transform(p => {
+      dominant_risk = if p.observation_vector.lolli_ergol_ratio > 2.5
+                      then "High LOLLI/ERGOL ratio — execute existing, cite or deprecate"
+                      elif p.observation_vector.resilience_score < 0.7
+                      then "Low resilience — fix detection gaps from resilience history"
+                      elif p.observation_vector.dead_binding_count > 3
+                      then "Rising dead bindings — run LOLLI lint, remove dead bindings"
+                      elif p.observation_vector.conscience_signal_count > 5
+                      then "Rising conscience signals — resolve before next cycle"
+                      else "Policy violations — governance audit, address in next PLAN"
+    })
+  → ix.io.alert("governance-markov-freeze-risk", {
+      severity: "warning",
+      message: "P(Freeze) = {p.p_freeze:.2f} — intervention recommended",
+      intervention: intervention.dominant_risk,
+      cycles_to_freeze: predictions.cycles_to_freeze
+    })
+
+--- ## Step 7: Write prediction + persist engine state
+predictions
+  → ix.io.append("state/markov/predictions.json", predictions)
+
+engine
+  → ix.ml.memristive_markov.export_state()
+  → ix.io.write("state/markov/engine-state.json")
+
+--- ## Step 8: Compound — harvest prediction accuracy
+--- Compare last cycle's prediction to this cycle's actual state.
+previous_predictions <- ix.io.read("state/markov/predictions.json")
+  → transform(preds => preds[preds.length - 2])
+  → filter(prev => prev != null)
+
+accuracy <- fan_out(previous_predictions, current_state)
+  → transform(inputs => {
+      predicted_distribution = inputs.previous_predictions.probabilities,
+      actual_state = inputs.current_state.state,
+      predicted_top = predicted_distribution.reduce((a, b) => if a.probability > b.probability then a else b).state,
+      correct = predicted_top == state_names[actual_state],
+      brier_score = predicted_distribution.reduce((sum, d) =>
+        sum + (d.probability - (if d.state == state_names[actual_state] then 1.0 else 0.0))^2
+      , 0.0)
+    })
+  → ix.io.append("state/markov/prediction-accuracy.json", accuracy)
