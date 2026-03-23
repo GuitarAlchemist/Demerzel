@@ -1,0 +1,69 @@
+# Local Policy Template
+# Copy this file and customize for repo-specific policies.
+# Local policies operate subordinate to Demerzel policies.
+
+name: local-policy-name  # kebab-case
+version: "1.0.0"
+effective_date: "YYYY-MM-DD"
+status: active  # active | deprecated | draft
+
+# Which constitutional article(s) this policy implements
+constitutional_authority:
+  - article: 12  # Reference local article number
+    source: "governance/constitution.md"
+
+# Parent Demerzel policy (if extending one)
+parent_policy: null  # e.g., "alignment-policy" if extending Demerzel alignment
+
+description: |
+  One-paragraph description of what this policy governs and why.
+
+scope:
+  repos: [self]  # This policy applies only to this repo
+  agents: [all]  # Or list specific persona names
+
+rules:
+  - id: LP-001
+    description: "First rule of this policy"
+    severity: medium  # low | medium | high | critical
+    enforcement: automated  # automated | manual | advisory
+    violation_response: escalate  # escalate | warn | block | remediate
+
+  - id: LP-002
+    description: "Second rule of this policy"
+    severity: low
+    enforcement: advisory
+    violation_response: warn
+
+# Confidence thresholds (inherited from Demerzel unless overridden)
+# Override only if domain requires stricter thresholds
+confidence_thresholds:
+  autonomous: 0.9
+  proceed_with_note: 0.7
+  confirm: 0.5
+  escalate: 0.3
+
+# Galactic Protocol integration
+reporting:
+  # How violations are reported to Demerzel
+  channel: galactic-protocol
+  report_type: compliance-report
+  frequency: on-violation  # on-violation | daily | weekly | on-demand
+
+# PDCA integration
+kaizen:
+  review_cycle: monthly  # How often this policy is reviewed
+  metrics:
+    - compliance_rate
+    - violation_count
+    - false_positive_rate
+
+rationale: |
+  Why this policy exists. What harm does it prevent?
+  What governance gap does it fill?
+
+changelog:
+  - version: "1.0.0"
+    date: "YYYY-MM-DD"
+    change: "Initial policy creation"
+    rationale: "Adopted via recursive governance kit"
