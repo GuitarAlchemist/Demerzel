@@ -154,6 +154,79 @@ deprecation_triggers:
     - "Artifacts in their registration timeline grace period are not flagged (timeline not yet reached)"
     - "Constitutional artifacts and root schemas are exempt (they are cited implicitly)"
 
+bs_scoring:
+  description: |
+    Automated BS detection for policy descriptions and artifact declarations.
+    A description that scores 3/4 or 4/4 BS signals is governance LOLLI — it
+    occupies space without conveying meaning. This section provides concrete
+    scoring rules that can be automated.
+
+  tests:
+    - id: BS-1
+      name: specificity
+      question: "Does the description contain at least one concrete noun, system name, or measurable target?"
+      scoring:
+        high: "Contains system name AND measurable target (e.g., 'Detect dead IxQL bindings with >0 unreferenced count')"
+        medium: "Contains system name OR measurable target but not both"
+        low: "Contains only abstract nouns (e.g., 'governance', 'alignment', 'optimization') with no concrete referent"
+        score_range: "0.0 (pure abstract) to 1.0 (fully concrete)"
+      threshold: 0.3
+      bs_signal_if: "score < 0.3"
+
+    - id: BS-2
+      name: falsifiability
+      question: "Can any claim in the description be tested, measured, or disproven?"
+      scoring:
+        high: "Contains testable claim (e.g., 'flags artifacts with 0 citations after 14 days')"
+        medium: "Contains claim that could be tested with additional context"
+        low: "No claim can be tested — pure aspirational language"
+        score_range: "0.0 (unfalsifiable) to 1.0 (directly testable)"
+      threshold: 0.1
+      bs_signal_if: "score < 0.1"
+
+    - id: BS-3
+      name: commitment
+      question: "Does the description identify WHO does WHAT by WHEN?"
+      scoring:
+        high: "All three present: actor, action, timeline"
+        medium: "Two of three present"
+        low: "None present — gerunds, passive voice, no deadlines"
+        score_range: "0.0 (no commitment) to 1.0 (full commitment)"
+      threshold: 0.2
+      bs_signal_if: "score < 0.2"
+
+    - id: BS-4
+      name: content_density
+      question: "What fraction of words carry semantic weight vs. filler/buzzwords?"
+      scoring:
+        filler_words: ["leveraging", "synergistic", "holistic", "paradigm", "optimize",
+                       "innovative", "transformative", "cutting-edge", "best-in-class",
+                       "scalable", "robust", "seamless", "mission-critical", "proactive",
+                       "streamline", "empower", "disruptive", "world-class", "next-gen"]
+        formula: "1.0 - (filler_word_count / total_word_count)"
+        score_range: "0.0 (all filler) to 1.0 (no filler)"
+      threshold: 0.5
+      bs_signal_if: "score < 0.5"
+
+  aggregate:
+    bs_score: "count of tests where score triggers bs_signal"
+    thresholds:
+      clean: "0/4 — description is concrete and meaningful"
+      suspect: "1/4 — minor vagueness, acceptable with review"
+      warning: "2/4 — significant vagueness, requires rewrite"
+      reject: "3/4 or 4/4 — pure BS, reject artifact"
+    tetravalent_mapping:
+      clean: "T — description verified as meaningful"
+      suspect: "U — unknown quality, investigate"
+      warning: "C — conflicting signals (some concrete, some BS)"
+      reject: "F — description fails to describe anything"
+
+  automation_status: |
+    Currently manual. Future: LLM-based scoring via tars.classify() with the
+    filler_words list as a concrete first pass. The specificity and falsifiability
+    tests require semantic understanding but can be approximated by checking for
+    the presence of proper nouns, numbers, file paths, and conditional statements.
+
 recursive_code_detection:
   description: |
     LOLLI exists not just at the artifact level but INSIDE code. Dead bindings,

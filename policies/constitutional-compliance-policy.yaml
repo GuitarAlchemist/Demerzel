@@ -1,0 +1,164 @@
+name: constitutional-compliance
+version: "1.0.0"
+effective_date: "2026-03-23"
+description: "Validate that every policy declares constitutional basis and every rule cites a specific constitution article — prevents governance drift."
+rationale: |
+  Gap G7 from chaos-test-report: policy rules are not checked for constitutional article
+  references. Without enforcement, policies can drift from the constitution they claim to
+  implement, creating governance artifacts that appear legitimate but lack constitutional
+  grounding. This is a form of structural BS — declarations without substance.
+
+  The Asimov constitution (Articles 0-5) and default constitution (Articles 1-11) form the
+  root of all governance authority. Every policy must trace its rules back to specific
+  articles, or it operates outside the constitutional framework.
+
+constitutional_basis:
+  - Article 7 (Auditability) — every policy rule must be traceable to its constitutional source
+  - Article 2 (Transparency) — constitutional basis must be explicit, not implied
+  - Article 5 (Non-Deception) — a policy claiming governance authority without citing articles is misleading
+  - Article 11 (Ethical Stewardship) — constitutional compliance prevents governance decay
+
+principles:
+  - "Every policy must cite at least one constitution article in its constitutional_basis field"
+  - "Every rule within a policy should reference the article it operationalizes"
+  - "A policy with empty constitutional_basis is structurally invalid — it has no authority"
+  - "Constitutional references must be verifiable against the actual constitution text"
+  - "Asimov articles (0-5) take precedence over default articles (1-11) in conflict"
+
+vsm_mapping:
+  system: 3
+  function: "Audit governance artifacts for constitutional grounding"
+  relationship_to_3star: "System 3* probes for policies lacking constitutional basis as governance weakness"
+  relationship_to_5: "System 5 — constitutional compliance ensures alignment with foundational values"
+
+rules:
+  policy_level:
+    - id: CC-01
+      description: "Every policy YAML must have a non-empty constitutional_basis field"
+      article: "Article 7 (Auditability)"
+      check: "constitutional_basis is present AND is a non-empty list"
+      severity: error
+      automated: true
+      mechanism: "JSON Schema validation — add minItems: 1 to constitutional_basis in policy schema"
+
+    - id: CC-02
+      description: "Each constitutional_basis entry must reference a valid article"
+      article: "Article 2 (Transparency)"
+      check: "Each entry matches pattern: 'Article N (Name)' where N is 0-5 (Asimov) or 1-11 (default)"
+      severity: error
+      automated: true
+      mechanism: "Regex validation against known article list"
+
+    - id: CC-03
+      description: "Policy description must be falsifiable — BS decoder score >= 2/4 on specificity + falsifiability"
+      article: "Article 5 (Non-Deception)"
+      check: "Description passes BS decoder tests 1 (specificity > 0.3) and 2 (falsifiability > 0.0)"
+      severity: warning
+      automated: false
+      mechanism: "Manual BS decoder analysis — future: LLM-automated scoring"
+
+  rule_level:
+    - id: CC-04
+      description: "Each rule within a policy should cite the article it implements"
+      article: "Article 7 (Auditability)"
+      check: "Rule has an 'article' field referencing a valid constitution article"
+      severity: warning
+      automated: true
+      mechanism: "YAML field presence check"
+
+  schema_level:
+    - id: CC-05
+      description: "Schema referenced by schema_ref must exist on disk"
+      article: "Article 8 (Observability)"
+      check: "File at schema_ref path exists"
+      severity: error
+      automated: true
+      mechanism: "File existence check — cross-reference validation"
+
+    - id: CC-06
+      description: "Policy with principles: [] (empty) must justify why no principles apply"
+      article: "Article 2 (Transparency)"
+      check: "principles is non-empty OR a justification field explains the absence"
+      severity: warning
+      automated: true
+      mechanism: "YAML field presence check"
+
+known_articles:
+  asimov:
+    - "Article 0 (Zeroth Law)"
+    - "Article 1 (First Law)"
+    - "Article 2 (Second Law)"
+    - "Article 3 (Third Law)"
+    - "Article 4 (Separation)"
+    - "Article 5 (Consequence Invariance)"
+  default:
+    - "Article 1 (Truthfulness)"
+    - "Article 2 (Transparency)"
+    - "Article 3 (Reversibility)"
+    - "Article 4 (Proportionality)"
+    - "Article 5 (Non-Deception)"
+    - "Article 6 (Escalation)"
+    - "Article 7 (Auditability)"
+    - "Article 8 (Observability)"
+    - "Article 9 (Bounded Autonomy)"
+    - "Article 10 (Stakeholder Pluralism)"
+    - "Article 11 (Ethical Stewardship)"
+
+detection_process:
+  steps:
+    - name: scan_policies
+      action: "Glob all policies/*.yaml files"
+      timing: "On commit and weekly scan"
+
+    - name: validate_constitutional_basis
+      action: "For each policy, check constitutional_basis is non-empty and entries are valid"
+      rule_ids: ["CC-01", "CC-02"]
+
+    - name: validate_rule_articles
+      action: "For each rule in each policy, check for article citation"
+      rule_ids: ["CC-04"]
+
+    - name: validate_schema_refs
+      action: "For each policy with schema_ref, verify file exists"
+      rule_ids: ["CC-05"]
+
+    - name: bs_decode_descriptions
+      action: "Run BS decoder on policy descriptions — flag score < 2/4"
+      rule_ids: ["CC-03"]
+
+    - name: report
+      action: "Produce compliance report with violation counts per rule"
+      output: "state/oversight/constitutional-compliance-report.json"
+
+integration:
+  anti_lolli:
+    relationship: "Policies failing CC-01 are governance LOLLI — they claim authority without grounding"
+  weakness_prober:
+    probe_name: "constitutional_compliance_check"
+    failure_condition: "Any CC-01 or CC-02 violation"
+  conscience:
+    triggers:
+      - "CC-01 violation → conscience signal (severity: warning, 'policy lacks constitutional basis')"
+      - "CC-05 violation → conscience signal (severity: error, 'schema reference points to missing file')"
+
+observability:
+  metrics:
+    - name: policies_with_constitutional_basis
+      formula: "count(policies with non-empty constitutional_basis) / count(all policies)"
+      target: "1.0"
+      alert: "< 0.9"
+
+    - name: rules_with_article_citation
+      formula: "count(rules with article field) / count(all rules)"
+      target: ">= 0.8"
+      alert: "< 0.5"
+
+    - name: schema_refs_valid
+      formula: "count(valid schema_ref) / count(all schema_ref)"
+      target: "1.0"
+      alert: "< 1.0"
+
+state:
+  directory: "state/oversight/"
+  report_file: "constitutional-compliance-report.json"
+  freshness_cycles: 1

@@ -1,0 +1,240 @@
+--- ## Shake-MetaFix Loop
+--- Automated governance immune system: inject -> detect -> fix -> re-measure.
+--- Inspired by Netflix Chaos Monkey + Demerzel MetaFix (5-level root cause).
+--- Source: anti-lolli-inflation-policy.yaml, constitutional-compliance-policy.yaml
+--- Trigger: on-demand via `/demerzel shake-test` or cron weekly
+--- Output: resilience score delta + gap report (consumed by Discord alert, state/resilience/)
+--- Constitutional gates: Article 3 (Reversibility), Article 6 (Escalation), Article 9 (Bounded Autonomy)
+
+--- ## Step 1: Load chaos-test injections
+--- Read the poison pipeline and extract the 11 known injection points.
+--- Each injection has a level (L0-L4), type (binding/branch/output/teach/policy/schema),
+--- and expected detection mechanism.
+
+injection_catalog <- ix.io.read("pipelines/chaos-test.ixql")
+  -> tars.extract(fields: [
+      "dead_bindings",
+      "orphaned_branches",
+      "unconsumed_writes",
+      "dead_computations",
+      "invalid_teach_targets",
+      "file_consumer_status",
+      "lolli_annotations"
+    ])
+
+previous_score <- ix.io.read("state/resilience/history.json")
+  -> tars.extract(fields: ["records"])
+  -> filter(records.last.overall_score)
+
+--- ## Step 2: Run all detectors
+--- Execute every available detection mechanism against the chaos-test file.
+--- Honest status: L2/L3/L4/teach = automated in F# parser.
+--- L0/L1 = specification-only (cross-pipeline-deps.ixql). Policy/schema = manual.
+
+detection_results <- fan_out(
+
+    -- L2: Dead binding detection (AUTOMATED — Parser.fs analyzeLolli)
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_L2", mode: "dead_bindings")
+      -> { level: "L2", detector: "analyzeLolli", status: "automated",
+           findings: dead_bindings_found },
+
+    -- L3: Orphaned fan_out branch detection (AUTOMATED — Parser.fs detectOrphanedBranches)
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_L3", mode: "orphaned_branches")
+      -> { level: "L3", detector: "detectOrphanedBranches", status: "automated",
+           findings: orphaned_branches_found },
+
+    -- L4: Transitive closure / unreachable (AUTOMATED — Parser.fs detectUnreachable)
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_L4", mode: "unreachable")
+      -> { level: "L4", detector: "detectUnreachable", status: "automated",
+           findings: unreachable_found },
+
+    -- Teach target validation (AUTOMATED — Parser.fs validateTeachTargets)
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_teach", mode: "teach_targets")
+      -> { level: "L4", detector: "validateTeachTargets", status: "automated",
+           findings: invalid_teach_found },
+
+    -- L0: File consumer check (SPEC-ONLY — cross-pipeline-deps.ixql Step 5)
+    injection_catalog
+      -> tars.classify(detector: "cross_pipeline_L0", mode: "file_consumers")
+      -> { level: "L0", detector: "cross-pipeline-deps", status: "spec-only",
+           findings: isolated_files_found },
+
+    -- L1: Orphaned output check (SPEC-ONLY — cross-pipeline-deps.ixql Step 4)
+    injection_catalog
+      -> tars.classify(detector: "cross_pipeline_L1", mode: "orphaned_outputs")
+      -> { level: "L1", detector: "cross-pipeline-deps", status: "spec-only",
+           findings: orphaned_outputs_found },
+
+    -- Policy: BS decoder (MANUAL — anti-lolli-inflation-policy.yaml bs_scoring)
+    injection_catalog
+      -> tars.classify(detector: "bs_decoder", mode: "description_quality")
+      -> { level: "policy", detector: "bs_scoring", status: "manual",
+           findings: bs_descriptions_found },
+
+    -- Policy: Registration check (MANUAL — anti-lolli-inflation-policy.yaml artifact_registration)
+    injection_catalog
+      -> tars.classify(detector: "registration_check", mode: "consumer_declaration")
+      -> { level: "policy", detector: "artifact_registration", status: "manual",
+           findings: unregistered_artifacts_found },
+
+    -- Schema: Staleness check (DELAYED — staleness-detection-policy.yaml 14-day window)
+    injection_catalog
+      -> tars.classify(detector: "staleness_check", mode: "zero_citation")
+      -> { level: "schema", detector: "staleness-detection", status: "delayed-14d",
+           findings: stale_schemas_found }
+  )
+
+--- ## Step 3: Score — caught vs missed -> R score
+--- An injection is "caught" if the detector status is "automated" and it found the injection.
+--- "spec-only" means the detection mechanism is designed but not executable.
+--- "manual" means a human must run the check.
+--- "delayed" means detection happens eventually but not immediately.
+
+scoring <- detection_results
+  -> tars.compute(metric: "resilience_score", formula: "caught / total")
+  -> {
+      injections_total: 11,
+      caught_automated: detection_results.filter(status == "automated").findings.sum,
+      caught_spec: detection_results.filter(status == "spec-only").findings.sum,
+      caught_manual: detection_results.filter(status == "manual").findings.sum,
+      caught_delayed: detection_results.filter(status == "delayed-14d").findings.sum,
+      r_score_automated: caught_automated / 11,
+      r_score_including_spec: (caught_automated + caught_spec) / 11,
+      r_score_full: (caught_automated + caught_spec + caught_manual + caught_delayed) / 11
+    }
+
+--- ## Step 4: For each missed injection, classify and generate metafix proposal
+
+gaps <- detection_results
+  -> filter(findings == 0)
+  -> fan_out(
+      gaps.map(gap =>
+        tars.analyze(mode: "metafix", input: gap)
+        -> {
+            injection: gap,
+            metafix_levels: {
+              L0_what_missed: gap.description,
+              L1_siblings: "Other places this pattern could hide",
+              L2_detection: "What detection mechanism should catch this",
+              L3_prevention: "What prevention would stop this class",
+              L4_systemic: "What policy/grammar/skill prevents the whole class"
+            },
+            fix_proposal: tars.generate(template: "metafix-proposal", context: gap),
+            confidence: tars.calibrate(gap.fix_proposal)
+          }
+      )
+    )
+
+--- ## Step 5: Apply fixes with confidence >= 0.9 autonomously
+--- Article 3 (Reversibility): all auto-applied fixes must be reversible.
+--- Article 9 (Bounded Autonomy): only apply within predefined fix categories.
+
+auto_fixes <- gaps
+  -> filter(confidence >= 0.9)
+  -> reversibility_check
+  -> fan_out(
+      auto_fixes.map(fix =>
+        tars.apply(fix: fix.fix_proposal, mode: "reversible")
+        -> { applied: true, fix_id: fix.id, rollback_path: fix.rollback }
+      )
+    )
+
+--- ## Step 6: Escalate fixes with confidence < 0.9 for human review
+--- Article 6 (Escalation): uncertain fixes require human approval.
+
+escalated_fixes <- gaps
+  -> filter(confidence < 0.9)
+  -> fan_out(
+      escalated_fixes.map(fix =>
+        { escalated: true, fix_id: fix.id, reason: "confidence below 0.9",
+          confidence: fix.confidence, proposal: fix.fix_proposal }
+      )
+    )
+  -> when escalated_fixes.count > 0:
+      alert(discord, "Shake-MetaFix: {{escalated_fixes.count}} fixes need human review")
+
+--- ## Step 7: Re-run detectors against the same injections
+--- After applying auto-fixes, measure whether the R score improved.
+
+post_fix_detection <- fan_out(
+
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_L2", mode: "dead_bindings")
+      -> { level: "L2", findings: dead_bindings_found },
+
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_L3", mode: "orphaned_branches")
+      -> { level: "L3", findings: orphaned_branches_found },
+
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_L4", mode: "unreachable")
+      -> { level: "L4", findings: unreachable_found },
+
+    injection_catalog
+      -> tars.classify(detector: "analyzeLolli_teach", mode: "teach_targets")
+      -> { level: "L4_teach", findings: invalid_teach_found },
+
+    injection_catalog
+      -> tars.classify(detector: "cross_pipeline_L0", mode: "file_consumers")
+      -> { level: "L0", findings: isolated_files_found },
+
+    injection_catalog
+      -> tars.classify(detector: "cross_pipeline_L1", mode: "orphaned_outputs")
+      -> { level: "L1", findings: orphaned_outputs_found }
+  )
+
+--- ## Step 8: Compute new R score
+
+new_scoring <- post_fix_detection
+  -> tars.compute(metric: "post_fix_resilience", formula: "caught / total")
+
+--- ## Step 9: If R improved -> compound the fix patterns
+
+when new_scoring.r_score_automated > scoring.r_score_automated:
+  post_fix_detection -> compound:
+    harvest new_scoring.improvement_patterns
+    promote fix_patterns if T >= 0.9
+    teach resilience_improvement to seldon
+    log r_score_improvement to "state/evolution/"
+
+--- ## Step 10: If R didn't improve -> escalate (fix didn't work)
+--- Article 6 (Escalation): failed fixes must be escalated, not silently ignored.
+
+when new_scoring.r_score_automated <= scoring.r_score_automated:
+  alert(discord, "Shake-MetaFix: R score did NOT improve after auto-fixes. Human review needed. Pre={{scoring.r_score_automated}}, Post={{new_scoring.r_score_automated}}")
+
+--- ## Step 11: Update state/resilience/history.json
+
+resilience_record <- parallel(
+    scoring,
+    new_scoring,
+    gaps,
+    auto_fixes,
+    escalated_fixes
+  )
+  -> tars.synthesize(template: "resilience-history-record")
+
+write("state/resilience/history.json", resilience_record)
+
+--- ## Step 12: Alert Discord with delta report
+
+delta_report <- parallel(
+    { pre_score: scoring.r_score_automated, post_score: new_scoring.r_score_automated },
+    { gaps_found: gaps.count, auto_fixed: auto_fixes.count, escalated: escalated_fixes.count },
+    { level_deltas: new_scoring.level_scores - scoring.level_scores }
+  )
+  -> tars.synthesize(template: "shake-metafix-delta")
+  -> explanation_requirement
+
+alert(discord, "Shake-MetaFix Cycle Complete: R={{new_scoring.r_score_automated}} (delta={{delta_report.delta}}). Gaps: {{gaps.count}}, Auto-fixed: {{auto_fixes.count}}, Escalated: {{escalated_fixes.count}}")
+
+  -> compound:
+      harvest delta_report.patterns
+      harvest gaps.metafix_patterns
+      promote resilience_improvements if T >= 0.9
+      teach shake_metafix_patterns to seldon
+      log shake_metafix_cycle to "state/evolution/"

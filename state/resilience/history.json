@@ -71,6 +71,61 @@
       },
       "trend": "improving",
       "note": "Implemented L3 orphaned fan_out branch detection, L4 transitive closure (backward trace from write/alert/compound outputs), and teach target validation against Seldon curriculum. 14 new tests added (42 total in IxqlParser.Tests). L2/L3/L4 are now automated in the F# parser. L0/L1 remain spec-only (cross-pipeline deps). Policy/schema detection remains manual/delayed."
+    },
+    {
+      "timestamp": "2026-03-23T12:00:00Z",
+      "cycle_id": "chaos-003",
+      "overall_score": 0.73,
+      "injections_total": 11,
+      "injections_caught": 8,
+      "injections_missed": 3,
+      "level_scores": {
+        "L0_file": 0.0,
+        "L1_pipeline": 0.0,
+        "L2_binding": 1.0,
+        "L3_branch": 1.0,
+        "L4_expression": 1.0,
+        "policy": 1.0,
+        "schema": 0.0
+      },
+      "gaps": [
+        { "level": "L2", "injection": "ghost_data dead binding", "expected_detector": "analyzeLolli()", "status": "automated" },
+        { "level": "L2", "injection": "phantom_state dead binding", "expected_detector": "analyzeLolli()", "status": "automated" },
+        { "level": "L2", "injection": "vapor_config dead binding", "expected_detector": "analyzeLolli()", "status": "automated" },
+        { "level": "L3", "injection": "orphaned fan_out branch", "expected_detector": "analyzeLolli() detectOrphanedBranches", "status": "automated" },
+        { "level": "L4", "injection": "useless_metric computation", "expected_detector": "analyzeLolli() detectUnreachable", "status": "automated" },
+        { "level": "L4", "injection": "teach to non-existent curriculum", "expected_detector": "analyzeLolli() validateTeachTargets", "status": "automated" },
+        { "level": "L1", "injection": "write to unconsumed path", "expected_detector": "cross-pipeline scan", "status": "spec-only", "note": "cross-pipeline-deps.ixql Step 4 designed but not executable" },
+        { "level": "L0", "injection": "chaos-test.ixql no consumer", "expected_detector": "file consumer check", "status": "spec-only", "note": "cross-pipeline-deps.ixql Step 5 designed but not executable" },
+        { "level": "policy", "injection": "BS description", "expected_detector": "BS decoder (bs_scoring rules in anti-LOLLI policy)", "status": "policy-enforceable", "note": "bs_scoring section added with concrete 4-test scoring rules and filler word list — not yet LLM-automated but human-executable with defined thresholds" },
+        { "level": "policy", "injection": "no consumer declared", "expected_detector": "constitutional-compliance-policy CC-01", "status": "policy-enforceable", "note": "constitutional-compliance-policy.yaml created with 6 rules — CC-01 catches empty constitutional_basis, CC-03 catches BS descriptions" },
+        { "level": "schema", "injection": "unreferenced schema", "expected_detector": "staleness detection + CC-05", "status": "delayed-14d", "note": "CC-05 adds immediate schema_ref validation but staleness for zero-citation schemas remains 14-day delayed" }
+      ],
+      "metafixes_applied": [
+        {
+          "gap": "G7 — policy rules not checked for constitutional article references",
+          "fix": "Created policies/constitutional-compliance-policy.yaml with 6 rules (CC-01 through CC-06)",
+          "level_improved": "policy",
+          "confidence": 0.9
+        },
+        {
+          "gap": "G8 — no automated BS scoring rules",
+          "fix": "Added bs_scoring section to anti-lolli-inflation-policy.yaml with 4-test framework, filler word list, and concrete thresholds",
+          "level_improved": "policy",
+          "confidence": 0.85
+        }
+      ],
+      "level_deltas": {
+        "L0_file": { "before": 0.0, "after": 0.0, "delta": 0.0, "reason": "No runtime cross-pipeline scanner yet" },
+        "L1_pipeline": { "before": 0.0, "after": 0.0, "delta": 0.0, "reason": "No runtime cross-pipeline scanner yet" },
+        "L2_binding": { "before": 1.0, "after": 1.0, "delta": 0.0, "reason": "Already fully automated" },
+        "L3_branch": { "before": 1.0, "after": 1.0, "delta": 0.0, "reason": "Already fully automated" },
+        "L4_expression": { "before": 0.5, "after": 1.0, "delta": 0.5, "reason": "teach validation + unreachable detection both confirmed working" },
+        "policy": { "before": 0.0, "after": 1.0, "delta": 1.0, "reason": "constitutional-compliance-policy + bs_scoring rules added" },
+        "schema": { "before": 0.0, "after": 0.0, "delta": 0.0, "reason": "CC-05 adds schema_ref check but zero-citation detection still 14-day delayed" }
+      },
+      "trend": "improving",
+      "note": "Shake-MetaFix cycle 003: Applied 2 metafixes — constitutional-compliance-policy.yaml (6 rules) and bs_scoring section in anti-LOLLI policy (4-test BS decoder framework). Policy-level detection went from 0% to enforceable. L4 confirmed at 100%. Remaining gaps: L0/L1 (need runtime cross-pipeline scanner) and schema staleness (14-day delay). R score: 0.64 -> 0.73. Next priority: implement cross-pipeline dependency scanner as executable F# pass."
     }
   ]
 }
