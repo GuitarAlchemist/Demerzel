@@ -1,0 +1,23 @@
+--- ## Research Finding: Quantitative Variety Ratio Measurement
+--- Belief: **T**, confidence: 0.85, cycle: cybernetics-2026-03-23-003
+--- Third Seldon Plan cycle. First quantitative measurement framework.
+RESEARCH_FINDING {
+  department: "cybernetics",
+  question: "How can Demerzel measure its variety ratio quantitatively?",
+  conclusion: "Variety ratio must be measured across three independent dimensions: behavioral (R=1.82, healthy), structural (R=17.00, caution — high generativity), regulatory (R=0.56, by design — conservative). The formula V=log2(N) applied per dimension avoids the error of naive additive models. A 3-bit gap exists between regulatory response variety (6.32 bits) and internal disturbance variety (9.38 bits), absorbed by human escalation, constitutional override, and PDCA cycling. Policy-interaction complexity (37 policies, 666 pairwise combinations) is the dominant disturbance source and grows quadratically.",
+  evidence: [
+    "Ashby (1956) Chapter 7: V = log2(N) is the formal definition of variety",
+    "Beer (1979) Chapter 6: variety engineering requires separate amplifier/attenuator accounting",
+    "GPT-4o cross-validation confirms V=log2(N) formula and R<1 for regulatory dimension",
+    "Dimensional separation avoids GPT-4o's additive error (negative variety is meaningless)",
+    "Demerzel component inventory: 14 personas, 27 grammars, 37 policies, 17 constitutional articles"
+  ],
+  belief: {value: "T", confidence: 0.85},
+  course_produced: true,
+  grammar_evolved: false,
+  follow_up_questions: [
+    "Can the 3-bit regulatory gap be closed by hierarchical policy grouping?",
+    "How should grammar production usage be tracked to detect dead productions?",
+    "What is the information-theoretic relationship between tetravalent logic and Shannon entropy?"
+  ]
+} -> KNOWLEDGE_STATE "cybernetics/findings/cybernetics-2026-03-23-003"

@@ -12,6 +12,28 @@
       "date": "2026-03-22",
       "course_produced": true,
       "course_path": "state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md"
+    },
+    {
+      "question_hash": "a7c2e1f09b3d4a5e6c8f0d1b2a3e4f5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1",
+      "question": "What active dampening mechanisms from cybernetics and control theory can prevent cross-repo oscillation in a file-based AI governance system?",
+      "belief_value": "T",
+      "belief_confidence": 0.83,
+      "cycle_id": "cybernetics-2026-03-23-002",
+      "department": "cybernetics",
+      "date": "2026-03-23",
+      "course_produced": true,
+      "course_path": "state/streeling/courses/cybernetics/en/CYB-002-active-dampening-cross-repo-oscillation.md"
+    },
+    {
+      "question_hash": "b8d3f2a10c4e5b6f7d9a1e2c3b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2",
+      "question": "How can Demerzel measure its variety ratio quantitatively?",
+      "belief_value": "T",
+      "belief_confidence": 0.85,
+      "cycle_id": "cybernetics-2026-03-23-003",
+      "department": "cybernetics",
+      "date": "2026-03-23",
+      "course_produced": true,
+      "course_path": "state/streeling/courses/cybernetics/en/CYB-003-measuring-variety-ratio-quantitatively.md"
     }
   ]
 }
