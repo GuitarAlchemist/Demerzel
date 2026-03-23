@@ -1,0 +1,231 @@
+--- ## Hyperlight Orchestrator
+--- Massively parallel parameter sweep using Hyperlight micro-VMs.
+--- Maps IxQL fan_out stages to N isolated VMs, each evaluating one parameter set.
+--- First consumer: spectral-optimizer.ixql (replaces Steps 3-8).
+--- Spec: docs/specs/hyperlight-ixql-parallel.md
+--- Issue: #171
+--- Trigger: invoked by spectral-optimizer or any pipeline needing parallel evaluation
+--- Output: best parameter set + full sweep results + convergence state
+
+--- ## Amdahl's Law Analysis
+--- Serial fraction: Steps 1-2 (define + partition) + Steps 4-6 (collect, select, converge)
+--- Parallel fraction: Step 3 (N Hyperlight VMs — fully independent)
+--- With N=100 parallel VMs:
+---   Speedup = 1 / (S + P/N) = 1 / (0.05 + 0.95/100) = 1 / 0.0595 ≈ 16.8x
+--- With N=1000: ≈ 19.6x (theoretical max: 20x at S=0.05)
+--- Sweet spot: N=100 achieves 84% of theoretical maximum.
+
+--- ## Step 1: Define Parameter Sweep Space
+--- Generate the full set of parameter combinations to evaluate.
+--- Supports grid search (uniform spacing) or random sampling (Latin hypercube).
+--- Each combination is a complete parameter set ready for the WASM engine.
+sweep_config <- ix.io.read("state/hyperlight/sweep-config.json")
+  → tars.validate_schema("schemas/sweep-config.schema.json")
+  → default({
+      strategy: "grid",
+      n_samples: 100,
+      ranges: {
+        brightness: { min: 0.0, max: 1.0, step: 0.1 },
+        decay:      { min: 0.001, max: 0.02, step: 0.002 },
+        dispersion: { min: 0.0, max: 2.0, step: 0.2 },
+        reverb_mix: { min: 0.0, max: 0.3, step: 0.03 }
+      }
+    })
+
+reference <- ix.io.read("ga/data/reference-recordings/{instrument_id}.spectral.json")
+  → tars.validate_schema("schemas/spectral-profile.schema.json")
+
+parameter_sets <- ix.ml.generate_sweep(
+    strategy: sweep_config.strategy,
+    ranges: sweep_config.ranges,
+    n_samples: sweep_config.n_samples,
+    seed: sweep_config.seed ?? 42
+  )
+
+--- ## Step 2: Partition into N Micro-VM Workloads
+--- Each workload is a self-contained unit: parameter set + reference data + scoring weights.
+--- The workload is serialized as a JSON payload injected into the VM at spawn.
+--- 1:1 mapping — one workload per VM, no work sharing, no cross-VM dependencies.
+scoring_weights <- {
+    centroid: 0.30,
+    rolloff: 0.15,
+    flux: 0.15,
+    hnr: 0.25,
+    inharmonicity: 0.15
+  }
+
+workloads <- parameter_sets
+  → map(params → {
+      params: params,
+      reference: reference,
+      scoring_weights: scoring_weights,
+      engine: "guitar-web-wasm",
+      duration_ms: 2000,
+      sample_rate: 44100,
+      features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"]
+    })
+
+--- ## Step 3: Fan Out to N Hyperlight Micro-VMs (Parallel)
+--- This is the parallelizable fraction (~95% of total work).
+--- Each VM: spawns (~34ms), loads WASM engine, renders audio, analyzes spectrum,
+--- computes realism score, returns result, and dies.
+--- No cross-VM state. No shared memory. Each VM is fully sandboxed.
+--- Per Article 3 (Reversibility): a failed VM has no side effects.
+--- Per Article 9 (Bounded Autonomy): each VM has read-only input, write-only output.
+vm_results <- fan_out(
+    workloads,
+    executor: "hyperlight",
+    vm_config: {
+      wasm_module: "ga/wasm/guitar-engine.wasm",
+      memory_limit_mb: 16,
+      timeout_ms: 5000,
+      sandbox: {
+        network: false,
+        filesystem: false,
+        cross_vm_communication: false
+      }
+    },
+    --- Per-VM execution pipeline:
+    --- 1. Load WASM guitar engine into VM
+    --- 2. Render audio with assigned parameters
+    --- 3. Analyze spectral features via STFT
+    --- 4. Score against reference using weighted Euclidean distance
+    --- 5. Return score + metadata
+    per_vm: workload → {
+      synthesized: ix.audio.render(
+          engine: workload.engine,
+          params: workload.params,
+          duration_ms: workload.duration_ms,
+          sample_rate: workload.sample_rate
+        ),
+      spectrum: ix.audio.spectral_analyze(
+          audio: synthesized,
+          features: workload.features,
+          window_size: 2048,
+          hop_size: 512
+        ),
+      score: ix.ml.compute(
+          metric: "spectral_distance",
+          formula: "1.0 - weighted_euclidean(spectrum, workload.reference, workload.scoring_weights)",
+          weights: workload.scoring_weights
+        ),
+      return: {
+        params: workload.params,
+        score: score,
+        spectrum_summary: {
+          centroid: spectrum.centroid,
+          hnr: spectrum.hnr
+        }
+      }
+    }
+  )
+
+--- ## Step 4: Collect Results
+--- Gather all VM outputs. Failed VMs (timeout, crash) are logged but excluded from selection.
+--- Per Article 7 (Auditability): every VM result is recorded, including failures.
+successful_results <- vm_results
+  → filter(status == "completed")
+  → map(r → r.return)
+
+failed_vms <- vm_results
+  → filter(status != "completed")
+
+when failed_vms.count > 0:
+  → tars.classify(
+      signal: "hyperlight_vm_failures",
+      severity: when failed_vms.count > workloads.count * 0.1: "high" else: "low",
+      metadata: { failed: failed_vms.count, total: workloads.count }
+    )
+
+--- ## Step 5: Select Best Parameter Set
+--- Rank all successful results by realism score, pick the top.
+--- If no results improve over the previous best, we may be at the optimum.
+ranked <- successful_results
+  → ix.ml.rank(by: "score", order: "descending")
+
+best <- ranked → head(1)
+
+previous_best <- ix.io.read("state/hyperlight/previous-best.json")
+  → default({ score: 0.0 })
+
+improvement <- best.score - previous_best.score
+
+--- ## Step 6: Convergence Check
+--- Three stopping conditions, checked in order:
+---   1. Score >= target threshold (good enough — Article 9, Bounded Autonomy)
+---   2. Improvement < epsilon for consecutive iterations (converged)
+---   3. Max iterations reached (resource bound)
+iteration <- ix.io.read("state/hyperlight/iteration-counter.json")
+  → default({ count: 0, stall_count: 0 })
+
+iteration <- {
+    count: iteration.count + 1,
+    stall_count: when improvement < 0.005: iteration.stall_count + 1 else: 0
+  }
+
+--- ### 6a: Target achieved — stop
+governance_gate(
+    article: 9,
+    confidence: best.score,
+    threshold: 0.9,
+    on_pass: stop("Hyperlight sweep converged: score={{best.score}} after {{iteration.count}} iterations")
+  )
+
+--- ### 6b: Stalled — escalate or narrow
+when iteration.stall_count >= 3:
+  → alert(discord,
+      "Hyperlight optimizer stalled: <0.005 improvement for 3 sweeps. Best score: {{best.score}}. Consider expanding parameter ranges or changing strategy."
+    )
+  → escalate(article: 6, reason: "Hyperlight sweep stalled — human guidance needed for parameter space exploration")
+
+--- ### 6c: Max iterations — stop with current best
+when iteration.count >= 10:
+  → stop("Max iterations reached. Best score: {{best.score}}. Params: {{best.params}}")
+
+--- ### 6d: Not converged — narrow sweep and repeat
+--- Shrink parameter ranges to ±20% around the best result for finer-grained search.
+narrowed_config <- {
+    strategy: "grid",
+    n_samples: sweep_config.n_samples,
+    ranges: sweep_config.ranges
+      → map_values((range, key) → {
+          min: max(range.min, best.params[key] - (range.max - range.min) * 0.2),
+          max: min(range.max, best.params[key] + (range.max - range.min) * 0.2),
+          step: range.step * 0.5
+        }),
+    seed: sweep_config.seed + iteration.count
+  }
+
+--- ## Step 7: Persist State
+--- Write results, update iteration state, log sweep history.
+--- Per Article 7 (Auditability): full trace of every sweep.
+parallel(
+    ix.io.write("state/hyperlight/previous-best.json", {
+      score: best.score,
+      params: best.params,
+      iteration: iteration.count,
+      timestamp: now()
+    }),
+    ix.io.write("state/hyperlight/iteration-counter.json", iteration),
+    ix.io.write("state/hyperlight/sweep-config.json", narrowed_config),
+    ix.io.append("state/hyperlight/sweep-history.json", {
+      iteration: iteration.count,
+      n_vms: workloads.count,
+      successful: successful_results.count,
+      failed: failed_vms.count,
+      best_score: best.score,
+      best_params: best.params,
+      improvement: improvement,
+      top_5: ranked → head(5),
+      timestamp: now()
+    })
+  )
+
+--- ## Step 8: Compound
+--- Harvest insights from the sweep for the broader governance system.
+  → compound:
+      harvest sweep_history.convergence_rate
+      harvest best.param_sensitivity from ranked → top_n(10)
+      promote best.params if best.score >= 0.85
+      teach hyperlight_sweep_patterns to seldon
+      log hyperlight_orchestrator_run to "state/evolution/"
