@@ -49,7 +49,7 @@ Demerzel/
 
 | Resilience Score | LOLLI Detection | Policies | Personas | Tests |
 |:---:|:---:|:---:|:---:|:---:|
-| 0% (11 gaps) | L0-L4 + Policy + Schema | 35 | 14 | 66 |
+| 64% (4 gaps) | L0-L4 + Policy + Schema | 35 | 14 | 70+ |
 
 **Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, and dead computations. Inspired by [Netflix's Chaos Monkey](https://netflix.github.io/chaosmonkey/) (2011), which proved that deliberately injecting failure into production systems builds genuine resilience. We apply the same principle to governance: if Demerzel can't catch deliberate poison, she can't catch accidental LOLLI. (See also: *Chaos Engineering* by Casey Rosenthal et al., O'Reilly 2020.)
 
@@ -69,9 +69,9 @@ The score is computed after each [governance-shake-test](pipelines/governance-sh
 | Policy | BS descriptions, missing consumers | BS decoder, anti-LOLLI policy |
 | Schema | Unreferenced schemas | Staleness detection |
 
-**Current status:** R = 0.0 (baseline). Detection policies exist but automated tooling does not yet. As the F# parser, LOLLI lint pipeline, and shake-test come online, the score will improve.
+**Current status:** R = 0.64 (7/11 injections caught). F# parser `analyzeLolli()` covers L2/L3/L4 with 42 tests. First LOLLI lint run: [0% dead code across 28 pipelines](docs/reports/lolli-lint-report-2026-03-23.md). Remaining gaps: L0/L1 cross-file analysis, automated BS scoring, constitutional compliance validation.
 
-**Trend:** stable (single record — baseline).
+**Trend:** improving (0.0 → 0.64 in one session).
 
 Full history: [`state/resilience/history.json`](state/resilience/history.json) | Dashboard pipeline: [`pipelines/resilience-dashboard.ixql`](pipelines/resilience-dashboard.ixql)
 
@@ -88,8 +88,9 @@ Full history: [`state/resilience/history.json`](state/resilience/history.json) |
 | Schemas | 30 | `schemas/*.json` |
 | Behavioral tests | 66 | `tests/behavioral/*.md` |
 | Skills | 40 | `.claude/skills/*/` |
-| Departments | 21 | `state/streeling/departments/` |
-| Courses | 14 | `state/streeling/courses/**/en/` |
+| Departments | 22 | `state/streeling/departments/` |
+| Courses | 16 | `state/streeling/courses/**/en/` |
+| IxQL pipelines | 12 | `pipelines/*.ixql` |
 
 ## Usage
 
@@ -161,6 +162,21 @@ The original [Agile Manifesto](https://agilemanifesto.org/) (2001) was written f
 10. **Human-AI collaboration over human-or-AI** — Neither pure automation nor pure human control. The [HITL pattern](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/alignment-policy.yaml) defines when to escalate, when to proceed, and when to ask. The human is always in the loop — the question is where.
 
 > *That is, while there is value in the items on the right of the original manifesto, we value the items above as essential for the age of AI agents.*
+
+## Prime Radiant
+
+The [Prime Radiant](https://github.com/GuitarAlchemist/ga/tree/master/ReactComponents/ga-react-components/src/components/PrimeRadiant) is Demerzel's 3D governance visualization engine — named after [Hari Seldon's device](https://foundation.fandom.com/wiki/Prime_Radiant) for viewing the mathematical equations of psychohistory.
+
+Built with Three.js + WebGPU, it renders the entire governance ecosystem as an explorable force-directed graph:
+
+- **8 node types** — constitutions (golden icosahedrons), policies (octahedrons), personas (glowing spheres), pipelines (torus rings), departments (particle clouds), schemas (cubes), tests (tetrahedrons), IxQL files (cylinders)
+- **Animated particle streams** for pipeline data flow
+- **Health aura** — pulsing green/yellow/red based on resilience score
+- **LOLLI decay particles** — red particles emanating from dead-value nodes
+- **Bloom post-processing** + starfield background
+- **Interactive** — orbit, zoom, click for details, search, double-click to focus
+
+Route: `/test/prime-radiant` in the [ga-react-components](https://github.com/GuitarAlchemist/ga/tree/master/ReactComponents/ga-react-components) app.
 
 ## Ecosystem
 
