@@ -15,11 +15,12 @@
     "second-order-cybernetics"
   ],
   "curriculum": [
-    "CYB-001: VSM-to-AI Governance Mapping — structural validity, four gaps (temporal dynamics, recursive depth, non-human S5, missing algedonic channel), requisite variety assessment"
+    "CYB-001: VSM-to-AI Governance Mapping — structural validity, four gaps (temporal dynamics, recursive depth, non-human S5, missing algedonic channel), requisite variety assessment",
+    "CYB-002: Active Dampening for Cross-Repo Oscillation — five control theory mechanisms (negative feedback, hysteresis, deadbands, rate limiting, exponential backoff), open-loop to closed-loop transformation, coordination transparency framework"
   ],
-  "course_count": 1,
-  "last_research_cycle": "2026-03-22",
-  "last_cycle_id": "cybernetics-2026-03-22-001",
+  "course_count": 2,
+  "last_research_cycle": "2026-03-23",
+  "last_cycle_id": "cybernetics-2026-03-23-002",
   "status": "active",
   "created": "2026-03-24",
   "notes": "VSM mapping to Demerzel governance. Stafford Beer's organizational cybernetics."

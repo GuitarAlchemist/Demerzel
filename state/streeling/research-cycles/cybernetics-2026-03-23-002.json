@@ -1,0 +1,112 @@
+{
+  "cycle_id": "cybernetics-2026-03-23-002",
+  "cycle_number": 2,
+  "department": "cybernetics",
+  "timestamp": "2026-03-23T00:00:00Z",
+  "trigger": "follow-up from cycle 001 — question 2 of 3 (question 1 answered via algedonic-channel-policy.yaml)",
+  "question_generation": {
+    "source": "cycle_001_follow_up",
+    "parent_cycle": "cybernetics-2026-03-22-001",
+    "priority_score_rationale": "Question 2 chosen over question 3: active dampening has richer research depth (control theory + VSM + distributed systems), more concrete engineering implications, and directly addresses a gap identified in CYB-001 (static contracts lack active dampening)",
+    "question": "What active dampening mechanisms from cybernetics and control theory can prevent cross-repo oscillation in a file-based AI governance system?",
+    "hypothesis": "Control theory dampening mechanisms (negative feedback, hysteresis, deadbands, rate limiting) can be adapted to file-based governance coordination, transforming Demerzel's static Galactic Protocol contracts into an active System 2",
+    "hypothesis_method": "analogical_engineering",
+    "test_method": "cross_validation",
+    "novelty_check": "passed — no existing course or policy covers oscillation dampening; Galactic Protocol defines interfaces but not dampening"
+  },
+  "investigation": {
+    "claude_analysis": {
+      "finding": "Five control theory mechanisms map directly to file-based governance: (1) negative feedback via compliance-report loops, (2) hysteresis via threshold-gated state propagation, (3) deadbands via tolerance zones where minor state changes don't trigger cross-repo reactions, (4) rate limiting via bounded update frequency on Galactic Protocol messages, (5) exponential backoff via escalating cooldown after repeated coordination failures. The key insight is that Demerzel's Galactic Protocol currently operates as an open-loop system — contracts define message formats but provide no closed-loop correction. Adding dampening transforms S2 from passive coordination to active anti-oscillation.",
+      "confidence": 0.85
+    },
+    "web_search": {
+      "queries": [
+        "Stafford Beer VSM System 2 active dampening oscillation control multi-agent coordination cybernetics 2025 2026",
+        "anti-oscillation mechanisms distributed systems governance feedback loop dampening cross-repository coordination",
+        "control theory PID controller governance systems deadband hysteresis feedback dampening software architecture 2025",
+        "coordination transparency distributed agency AI systems governance oscillation Springer 2026"
+      ],
+      "key_findings": [
+        "IBM Research (Feb 2025) 'Agentic AI Needs a Systems Theory' — identifies coordination gap in multi-agent systems that become brittle without dampening blueprints",
+        "Gorelkin (2025) — VSM S2 coordination agents as 'workflow brokers' synchronizing operational micro-agents",
+        "Springer AI & Society (2026) — 'Coordination transparency: governing distributed agency in AI systems' — four-component framework: interaction logging, live coordination monitoring (oscillation indices, policy-similarity drift), intervention hooks (circuit breakers, rate limiters, approval gates), boundary conditions (sandboxing)",
+        "Control theory literature confirms deadband as 'region around setpoint where no control actions are taken' — directly applicable to governance state change tolerance",
+        "Hysteresis in on/off control defines switching gap between activate/deactivate thresholds — prevents rapid toggling"
+      ],
+      "sources": [
+        "https://link.springer.com/article/10.1007/s00146-026-02853-w",
+        "https://medium.com/@magorelkin/stafford-beers-viable-system-model-for-building-enterprise-agentic-systems-81982d6f59c0",
+        "https://medium.com/@fearney/applying-stafford-beers-viable-system-model-to-create-the-autonomous-ai-organisation-aaaed39b37e2",
+        "https://www.geeksforgeeks.org/system-design/feedback-loops-in-distributed-systems/",
+        "https://www.sciencedirect.com/science/article/pii/S2466802825000010X"
+      ]
+    },
+    "chatgpt_cross_validation": {
+      "model": "gpt-4o",
+      "agrees_with_claude": true,
+      "confidence": 0.80,
+      "key_agreements": [
+        "System 2 primary role is dampening oscillations between S1 operational units",
+        "Five dampening mechanisms (negative feedback, hysteresis, deadbands, rate limiting, exponential backoff) all applicable to file-based governance",
+        "Galactic Protocol currently operates as open-loop — needs closed-loop correction"
+      ],
+      "additional_insights": [
+        "Negative feedback should compare expected vs actual interaction patterns and self-adjust",
+        "Hysteresis requires state-dependent response conditions with significant threshold crossings",
+        "Rate limiting controls the update pulse between repositories",
+        "Exponential backoff provides dynamic response timing under high load"
+      ]
+    },
+    "agreement_matrix": "Claude + ChatGPT agree on all five mechanisms and the open-loop gap. Web search confirms with 2025-2026 literature. T (probable), confidence 0.83"
+  },
+  "belief": {
+    "value": "T",
+    "confidence": 0.83,
+    "rationale": "Both models agree on mechanism applicability. 2026 Springer paper provides academic validation of coordination monitoring with oscillation indices. IBM 2025 paper confirms coordination gap in multi-agent AI. Control theory mappings are well-established engineering practice."
+  },
+  "novelty_assessment": {
+    "type": "novel",
+    "rationale": "No existing Demerzel policy or course addresses oscillation dampening. Galactic Protocol defines message formats but not dampening semantics. The coordination-transparency framework (Springer 2026) is a new academic contribution not yet integrated."
+  },
+  "course_production": {
+    "produced": true,
+    "course_id": "CYB-002",
+    "path": "state/streeling/courses/cybernetics/en/CYB-002-active-dampening-cross-repo-oscillation.md",
+    "title": "Active Dampening Mechanisms for Cross-Repo Oscillation Control"
+  },
+  "compound": {
+    "weight_updates": {
+      "feedback-loops": "+0.05",
+      "self-regulation": "+0.05",
+      "requisite-variety": "+0.02",
+      "analogical_engineering": "+0.05",
+      "cross_validation": "+0.03"
+    },
+    "curriculum_gaps_revealed": [
+      "coordination-transparency-framework",
+      "oscillation-index-metrics",
+      "circuit-breaker-governance"
+    ],
+    "follow_up_questions": [
+      "How can Demerzel measure its variety ratio quantitatively — what metrics track the balance between variety amplifiers (personas, Seldon Plan) and variety attenuators (policies, constitutions)?",
+      "Can circuit breakers in governance coordination be made self-tuning, adapting their thresholds based on observed oscillation frequency?",
+      "How does recursive VSM dampening work — should each consumer repo (ix, tars, ga) have its own internal S2 dampening, or is Demerzel-level dampening sufficient?"
+    ],
+    "grammar_evolution": false,
+    "anomaly_detected": false,
+    "cycle_001_resolution": {
+      "question_1_algedonic_channel": "RESOLVED — implemented as policies/algedonic-channel-policy.yaml (2026-03-22)",
+      "question_2_active_dampening": "RESOLVED — this cycle (CYB-002)",
+      "question_3_variety_ratio": "CARRIED FORWARD as follow-up question 1 for cycle 003"
+    }
+  },
+  "reflection": {
+    "type": "normal_progress",
+    "notes": "Second ERGOL cycle. Five dampening mechanisms mapped from control theory to file-based governance. Key insight: Galactic Protocol is open-loop. 2026 Springer paper validates coordination-transparency approach. Three new follow-up questions generated, including carried-forward variety ratio question from cycle 001."
+  },
+  "amdahl_analysis": {
+    "parallel_phases": ["web_search", "chatgpt_cross_validation"],
+    "serial_phases": ["question_generation", "novelty_detection", "course_production", "compound"],
+    "bottleneck": "course_production — depends on investigation synthesis"
+  }
+}
