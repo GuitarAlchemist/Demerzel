@@ -1,0 +1,232 @@
+--- ## Spectral Optimizer
+--- Automated parameter optimization for guitar synthesis realism.
+--- Compares synthesized audio against reference recordings using spectral analysis,
+--- then adjusts parameters (decay, brightness, dispersion, reverb) to minimize distance.
+--- Implements gradient-free optimization via spectral critic feedback.
+--- Source: ga/Rust/guitar-web-wasm-demo/ (spectral critic engine)
+--- Trigger: after reference recording is loaded, or on-demand
+--- Output: optimized parameter set + convergence history
+
+--- ## Amdahl's Law Analysis
+--- Serial fraction: Steps 1-5 (load, render, score) + Steps 8-12 (select, gate, write)
+--- Parallel fraction: Steps 6-7 (parameter perturbations — 4 independent evaluations)
+--- With 4 parallel perturbation workers:
+---   Speedup = 1 / (S + P/N) = 1 / (0.6 + 0.4/4) = 1 / 0.7 ≈ 1.43x per iteration
+--- The serial scoring bottleneck (WASM render + STFT) dominates.
+--- Scaling beyond 4 workers yields diminishing returns — invest in faster scoring instead.
+
+--- ## Step 1: Load Reference Recording
+--- Load the target spectral profile from a reference .wav or precomputed JSON.
+--- This is what we're trying to match — the "ground truth" timbre.
+reference <- ix.io.read("ga/data/reference-recordings/{instrument_id}.spectral.json")
+  → tars.validate_schema("schemas/spectral-profile.schema.json")
+  → filter(sample_rate >= 44100)
+
+--- ## Step 2: Load Current Engine Parameters
+--- Read the synthesis parameters that control the WASM guitar engine.
+--- These are the knobs we turn: decay, brightness, dispersion, attack/decay, reverb.
+current_params <- ix.io.read("ga/data/engine-params/{instrument_id}.params.json")
+  → tars.validate(
+      check: "all_keys_present(['decay', 'brightness', 'dispersion', 'attack_decay', 'reverb_mix'])",
+      reject_message: "Engine params incomplete — cannot optimize without all 5 parameters"
+    )
+
+--- ## Step 3: Render Synthesis
+--- Invoke the WASM engine to synthesize audio with the current parameter set.
+--- This is the serial bottleneck — one render per evaluation.
+synthesized <- ix.audio.render(
+    engine: "guitar-web-wasm",
+    params: current_params,
+    duration_ms: 2000,
+    sample_rate: 44100
+  )
+
+--- ## Step 4: Compute Spectral Metrics
+--- Extract spectral features from the synthesized audio for comparison.
+--- Uses STFT-based analysis matching the reference profile's feature set.
+synth_spectrum <- ix.audio.spectral_analyze(
+    audio: synthesized,
+    features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"],
+    window_size: 2048,
+    hop_size: 512
+  )
+
+--- ## Step 5: Score Realism
+--- Weighted distance function comparing synth vs. reference spectra.
+--- Weights reflect perceptual importance: centroid and HNR matter most for "realness."
+--- Score range: 0.0 (completely different) to 1.0 (indistinguishable).
+realism_score <- ix.ml.compute(
+    metric: "spectral_distance",
+    formula: "1.0 - weighted_euclidean(synth_spectrum, reference, weights)",
+    weights: {
+      centroid: 0.30,
+      rolloff: 0.15,
+      flux: 0.15,
+      hnr: 0.25,
+      inharmonicity: 0.15
+    }
+  )
+
+--- ## Step 6: Parallel Parameter Perturbations
+--- Fan out independent +/- perturbations for each parameter.
+--- Per Amdahl's analysis: these 4 branches are the parallelizable fraction (~40%).
+--- Each branch perturbs one parameter while holding others constant.
+perturbations <- fan_out(
+    --- ### 6a: Brightness perturbation (±0.05)
+    --- Controls spectral tilt — higher values push energy toward upper harmonics.
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(brightness: current_params.brightness + 0.05),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "brightness", direction: "+0.05", spectrum: _ },
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(brightness: current_params.brightness - 0.05),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "brightness", direction: "-0.05", spectrum: _ },
+
+    --- ### 6b: Decay perturbation (±0.001)
+    --- Controls how quickly the string vibration decays — affects sustain and flux.
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(decay: current_params.decay + 0.001),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "decay", direction: "+0.001", spectrum: _ },
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(decay: current_params.decay - 0.001),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "decay", direction: "-0.001", spectrum: _ },
+
+    --- ### 6c: Dispersion perturbation (±0.1)
+    --- Models frequency-dependent propagation speed — affects inharmonicity.
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(dispersion: current_params.dispersion + 0.1),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "dispersion", direction: "+0.1", spectrum: _ },
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(dispersion: current_params.dispersion - 0.1),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "dispersion", direction: "-0.1", spectrum: _ },
+
+    --- ### 6d: Reverb mix perturbation (±0.02)
+    --- Wet/dry balance — affects perceived room and spectral rolloff.
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(reverb_mix: current_params.reverb_mix + 0.02),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "reverb_mix", direction: "+0.02", spectrum: _ },
+    ix.audio.render(
+        engine: "guitar-web-wasm",
+        params: current_params.with(reverb_mix: current_params.reverb_mix - 0.02),
+        duration_ms: 2000, sample_rate: 44100
+      )
+      → ix.audio.spectral_analyze(features: ["centroid", "rolloff", "flux", "hnr", "inharmonicity"])
+      → { param: "reverb_mix", direction: "-0.02", spectrum: _ }
+  )
+
+--- ## Step 7: Re-Score Each Perturbation
+--- Compute realism score for each perturbed render against the same reference.
+--- This is the "evaluate neighbors" step of hill climbing.
+perturbation_scores <- perturbations
+  → map(p → {
+      param: p.param,
+      direction: p.direction,
+      score: ix.ml.compute(
+          metric: "spectral_distance",
+          formula: "1.0 - weighted_euclidean(p.spectrum, reference, weights)",
+          weights: { centroid: 0.30, rolloff: 0.15, flux: 0.15, hnr: 0.25, inharmonicity: 0.15 }
+        )
+    })
+
+--- ## Step 8: Select Best Improvement
+--- Gradient-free hill climbing: pick the perturbation with the highest score.
+--- If no perturbation improves over current, we may be at a local minimum.
+best <- perturbation_scores
+  → filter(score > realism_score)
+  → ix.ml.rank(by: "score", order: "descending")
+  → head(1)
+
+improvement <- best.score - realism_score
+
+--- Update current params if improvement found
+updated_params <- when best is not empty:
+  current_params.with({ [best.param]: current_params[best.param] + best.direction })
+else:
+  current_params
+
+--- ## Step 9: Governance Gate — Good Enough
+--- Per **Article 9** (Bounded Autonomy): stop when realism is sufficient.
+--- 0.9 threshold chosen because human listeners cannot reliably distinguish
+--- synthesized from recorded audio above this spectral similarity.
+governance_gate(
+  article: 9,
+  confidence: realism_score,
+  threshold: 0.9,
+  on_pass: stop("Realism target achieved: {{realism_score}}")
+)
+
+--- ## Step 10: Local Minimum Detection
+--- If improvement < 0.01 for 3 consecutive iterations, we're stuck.
+--- Per **Article 6** (Escalation): escalate to human for parameter space exploration.
+stall_count <- ix.io.read("state/spectral-optimizer/stall-counter.json")
+  → default({ count: 0 })
+
+when improvement < 0.01:
+  stall_count <- { count: stall_count.count + 1 }
+  when stall_count.count >= 3:
+    → tars.classify(signal: "local_minimum_detected", severity: "medium")
+    → alert(discord,
+        "Spectral optimizer stuck: <0.01 improvement for 3 iterations. Score: {{realism_score}}. Try different initial params or expand perturbation range."
+      )
+    → escalate(article: 6, reason: "Local minimum — human intervention needed for parameter space exploration")
+else:
+  stall_count <- { count: 0 }
+
+ix.io.write("state/spectral-optimizer/stall-counter.json", stall_count)
+
+--- ## Step 11: Write Optimized Params + Score History
+--- Persist the updated parameters and append to convergence history.
+--- Per **Article 7** (Auditability): full trace of optimization steps.
+parallel(
+    ix.io.write("ga/data/engine-params/{instrument_id}.params.json", updated_params),
+    ix.io.append("state/spectral-optimizer/convergence-history.json", {
+      iteration: now(),
+      realism_score: realism_score,
+      best_perturbation: best,
+      improvement: improvement,
+      params: updated_params
+    }),
+    ix.io.write("state/spectral-optimizer/latest-run.json", {
+      instrument_id: instrument_id,
+      final_score: best.score ?? realism_score,
+      params: updated_params,
+      stall_count: stall_count.count,
+      timestamp: now()
+    })
+  )
+
+--- ## Step 12: Compound
+--- Harvest optimization insights for the broader governance system.
+  → compound:
+      harvest convergence_history.trends
+      harvest best.param_sensitivity
+      promote updated_params if realism_score >= 0.85
+      teach spectral_optimization_patterns to seldon
+      log spectral_optimizer_run to "state/evolution/"

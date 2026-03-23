@@ -1,0 +1,166 @@
+--- ## Spectrogram Validator
+--- Validates synthesized guitar audio against quality thresholds.
+--- Checks harmonic structure, decay envelope, attack transient, and body resonance
+--- to determine whether synthesis output is physically plausible.
+--- Source: ga/Rust/guitar-web-wasm-demo/ (spectral critic engine)
+--- Trigger: after spectral-optimizer writes updated params, or on-demand
+--- Output: quality verdict (T/F/U/C) + dimension scores + investigation suggestions
+
+--- ## Step 1: Load Synthesized Audio
+--- Read the latest synthesis output for validation.
+--- The audio comes from the WASM guitar engine after optimization.
+audio <- ix.io.read("ga/data/synthesized/{instrument_id}.wav")
+  → tars.validate(
+      check: "sample_rate >= 44100 && duration_ms >= 500",
+      reject_message: "Audio too short or wrong sample rate for reliable spectral analysis"
+    )
+
+--- ## Step 2: Compute STFT Spectrogram
+--- Short-Time Fourier Transform produces the time-frequency representation.
+--- Window size 2048 at 44.1kHz gives ~46ms frames with ~23ms hop — sufficient
+--- for guitar transient resolution while maintaining frequency precision.
+spectrogram <- ix.audio.stft(
+    audio: audio,
+    window_size: 2048,
+    hop_size: 512,
+    window_type: "hann"
+  )
+
+--- ## Step 3: Extract Features
+--- Compute per-frame and aggregate spectral features from the spectrogram.
+features <- ix.audio.extract_features(
+    spectrogram: spectrogram,
+    metrics: ["centroid", "bandwidth", "flux", "transient_times", "harmonic_peaks", "decay_curve"]
+  )
+
+--- ## Step 4: Load Guitar Profile Expectations
+--- Each guitar type (classical, steel-string, electric) has characteristic spectral signatures.
+--- These profiles define expected ranges for each quality dimension.
+profile <- ix.io.read("ga/data/guitar-profiles/{instrument_id}.profile.json")
+  → tars.validate_schema("schemas/guitar-profile.schema.json")
+
+--- ## Step 5: Score Each Dimension
+--- Compare extracted features against profile expectations.
+--- Each dimension scored 0.0 (violation) to 1.0 (perfect match).
+dimension_scores <- ix.ml.compute(
+    metric: "profile_conformance",
+    dimensions: {
+      centroid:   { actual: features.centroid,   expected: profile.centroid_range },
+      bandwidth:  { actual: features.bandwidth,  expected: profile.bandwidth_range },
+      flux:       { actual: features.flux,       expected: profile.flux_range },
+      transients: { actual: features.transient_times, expected: profile.transient_expectations }
+    }
+  )
+
+--- ## Step 6: Parallel Quality Checks
+--- Four independent validation passes, each testing a physical property of guitar sound.
+--- Per Amdahl's Law: these are fully parallel (no data dependencies between branches).
+quality_checks <- fan_out(
+    --- ### 6a: Harmonic Structure
+    --- Real guitar partials should be near-integer multiples of the fundamental frequency.
+    --- Inharmonicity is expected (stiff strings stretch partials sharp) but within bounds.
+    --- Deviation > 2% from expected partial frequencies suggests synthesis error.
+    features.harmonic_peaks
+      → ix.audio.validate_harmonics(
+          fundamental: features.fundamental_freq,
+          max_partial_deviation_cents: 30,
+          expected_inharmonicity_model: "stiff_string"
+        )
+      → { dimension: "harmonic_structure", pass: deviation_cents <= 30, score: _, details: _ },
+
+    --- ### 6b: Decay Envelope
+    --- Guitar strings decay approximately exponentially (energy loss to air + bridge).
+    --- Linear or stepped decay indicates a synthesis artifact.
+    --- R-squared of exponential fit should be >= 0.85.
+    features.decay_curve
+      → ix.audio.fit_decay(model: "exponential")
+      → { dimension: "decay_envelope",
+          pass: r_squared >= 0.85 && model == "exponential",
+          score: r_squared,
+          details: { model: _, r_squared: _, time_constant: _ } },
+
+    --- ### 6c: Attack Transient
+    --- Guitar pluck/strike must produce a transient: sharp onset < 10ms.
+    --- Missing or slow attack makes synthesis sound "electronic" rather than plucked.
+    features.transient_times
+      → ix.audio.validate_transient(
+          max_attack_ms: 10,
+          min_amplitude_jump_db: 12
+        )
+      → { dimension: "attack_transient",
+          pass: attack_ms <= 10 && amplitude_jump_db >= 12,
+          score: _,
+          details: { attack_ms: _, amplitude_jump_db: _ } },
+
+    --- ### 6d: Body Resonance Peaks
+    --- Guitar body has characteristic resonant frequencies (air mode ~100Hz, top plate ~200Hz, etc.).
+    --- These must appear as peaks in the spectrum matching the profile's resonator model.
+    spectrogram
+      → ix.audio.find_resonance_peaks(
+          expected_frequencies: profile.resonator_frequencies,
+          tolerance_hz: 15,
+          min_peak_db: -30
+        )
+      → { dimension: "body_resonance",
+          pass: matched_peaks >= profile.resonator_frequencies.count * 0.7,
+          score: matched_peaks / profile.resonator_frequencies.count,
+          details: { matched: _, missing: _, spurious: _ } }
+  )
+
+--- ## Step 7: Overall Realism Verdict
+--- Map quality check results to tetravalent logic:
+---   T — all 4 checks pass (score >= 0.8 each)
+---   F — any check scores below 0.4 (clear synthesis failure)
+---   U — scores between 0.4 and 0.8 (ambiguous, needs investigation)
+---   C — some checks pass strongly while others fail (contradictory quality)
+verdict <- tars.classify_tetravalent(
+    inputs: quality_checks,
+    rules: {
+      T: "all(checks, score >= 0.8)",
+      F: "any(checks, score < 0.4)",
+      C: "any(checks, score >= 0.8) && any(checks, score < 0.5)",
+      U: "otherwise"
+    }
+  )
+
+--- Per **Article 1** (Truthfulness): report the actual verdict, do not inflate.
+--- Per **Article 7** (Auditability): log all dimension scores.
+ix.io.write("state/spectral-validator/verdict-{instrument_id}-{date}.json", {
+    instrument_id: instrument_id,
+    verdict: verdict,
+    dimension_scores: dimension_scores,
+    quality_checks: quality_checks,
+    timestamp: now()
+  })
+
+--- ## Step 8: Investigation Suggestions
+--- If verdict is U or C, identify which parameter to investigate.
+--- This feeds back into spectral-optimizer for targeted re-optimization.
+when verdict in ["U", "C"]:
+  investigation <- quality_checks
+    → filter(pass == false || score < 0.7)
+    → map(check → {
+        dimension: check.dimension,
+        suggested_param: tars.lookup(
+            mapping: {
+              "harmonic_structure": "dispersion",
+              "decay_envelope":    "decay",
+              "attack_transient":  "attack_decay",
+              "body_resonance":    "brightness"
+            },
+            key: check.dimension
+          ),
+        current_score: check.score,
+        details: check.details
+      })
+
+  ix.io.write("state/spectral-validator/investigation-{instrument_id}.json", investigation)
+  → alert(discord,
+      "Spectrogram validator: {{verdict}} for {{instrument_id}} — investigate {{investigation.map(i => i.suggested_param).join(', ')}}"
+    )
+
+when verdict == "F":
+  → tars.classify(signal: "synthesis_quality_failure", severity: "high")
+  → alert(discord,
+      "Spectrogram validator: FAIL for {{instrument_id}} — {{quality_checks.filter(c => c.score < 0.4).map(c => c.dimension).join(', ')}} below threshold"
+    )
