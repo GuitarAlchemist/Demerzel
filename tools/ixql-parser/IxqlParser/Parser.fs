@@ -410,8 +410,207 @@ module Parser =
         | Log(what, dest) -> collectReferences what @ collectReferences dest
         | CompoundWhen(cond, d) -> collectRefsFromCondition cond @ collectRefsFromDirective d
 
-    /// Analyze LOLLI: find dead (unreferenced) bindings in a program.
-    /// Returns a LolliReport with dead bindings, total count, and score.
+    // ── L3: Orphaned fan_out branch detection ─────────────────
+
+    /// Collects fan_out branch identifiers that are used inside a fan_out
+    /// but whose output is never referenced by the parent binding context.
+    /// A fan_out(a, b, c) is orphaned if a branch's result is never consumed
+    /// downstream of the fan_out — detected by checking if the branch name
+    /// appears as a reference outside the fan_out itself.
+    let rec private collectFanOutBranches (expr: Expr) : string list =
+        match expr with
+        | Binding(_, body) -> collectFanOutBranches body
+        | Pipeline stages -> stages |> List.collect collectFanOutBranches
+        | FanOut exprs ->
+            // Each branch identifier inside a fan_out
+            let branchNames =
+                exprs |> List.choose (fun e ->
+                    match e with
+                    | Ident name -> Some name
+                    | FuncCall(name, _, _) -> Some name
+                    | _ -> None)
+            branchNames
+        | Parallel exprs -> exprs |> List.collect collectFanOutBranches
+        | FanIn(sources, sink) -> (sources |> List.collect collectFanOutBranches) @ collectFanOutBranches sink
+        | When(_, body) -> collectFanOutBranches body
+        | Compound directives -> directives |> List.collect collectFanOutBranchesFromDir
+        | Ensemble(pipelines, combiner) -> (pipelines |> List.collect collectFanOutBranches) @ collectFanOutBranches combiner
+        | MapExpr(source, _, body) -> collectFanOutBranches source @ collectFanOutBranches body
+        | _ -> []
+
+    and private collectFanOutBranchesFromDir (dir: CompoundDirective) : string list =
+        match dir with
+        | Harvest e | Promote(e, _) -> collectFanOutBranches e
+        | Teach(what, dest) -> collectFanOutBranches what @ collectFanOutBranches dest
+        | Log(what, dest) -> collectFanOutBranches what @ collectFanOutBranches dest
+        | CompoundWhen(_, d) -> collectFanOutBranchesFromDir d
+
+    /// Detects orphaned fan_out branches: branch identifiers inside fan_out()
+    /// that are not defined as bindings in the program. If a fan_out references
+    /// an identifier that was never bound, its output cannot be collected.
+    /// Function calls (e.g., pipeline_a()) are excluded — they produce their own results.
+    let private detectOrphanedBranches (prog: Program) : string list =
+        let allFanOutBranches =
+            prog.Statements |> List.collect collectFanOutBranches |> Set.ofList
+        let allBindings =
+            prog.Statements |> List.collect collectBindings |> Set.ofList
+        // A fan_out branch is orphaned if it's an identifier not defined
+        // as a binding anywhere in the program — it's a dangling reference
+        // whose output cannot be collected by any downstream consumer.
+        allFanOutBranches
+        |> Set.toList
+        |> List.filter (fun name -> not (Set.contains name allBindings))
+
+    // ── L4: Transitive closure — reachability from outputs ────
+
+    /// Collects all output sinks: write(), alert(), teach, log, promote, harvest
+    let rec private collectOutputRefs (expr: Expr) : string list =
+        match expr with
+        | Write(path, _) -> collectReferences path
+        | Alert(ch, msg) -> collectReferences ch @ collectReferences msg
+        | Binding(_, body) -> collectOutputRefs body
+        | Pipeline stages -> stages |> List.collect collectOutputRefs
+        | FanOut exprs | Parallel exprs -> exprs |> List.collect collectOutputRefs
+        | FanIn(sources, sink) -> (sources |> List.collect collectOutputRefs) @ collectOutputRefs sink
+        | When(_, body) -> collectOutputRefs body
+        | Compound directives -> directives |> List.collect collectOutputRefsFromDir
+        | Ensemble(pipelines, combiner) -> (pipelines |> List.collect collectOutputRefs) @ collectOutputRefs combiner
+        | MapExpr(source, _, body) -> collectOutputRefs source @ collectOutputRefs body
+        | _ -> []
+
+    and private collectOutputRefsFromDir (dir: CompoundDirective) : string list =
+        match dir with
+        | Harvest e -> collectReferences e
+        | Promote(e, _) -> collectReferences e
+        | Teach(what, dest) -> collectReferences what @ collectReferences dest
+        | Log(what, dest) -> collectReferences what @ collectReferences dest
+        | CompoundWhen(_, d) -> collectOutputRefsFromDir d
+
+    /// Checks if a statement (top-level expression) contains any output sink
+    let rec private hasOutputSink (expr: Expr) : bool =
+        match expr with
+        | Write _ | Alert _ -> true
+        | Binding(_, body) -> hasOutputSink body
+        | Pipeline stages -> stages |> List.exists hasOutputSink
+        | FanOut exprs | Parallel exprs -> exprs |> List.exists hasOutputSink
+        | FanIn(sources, sink) -> (sources |> List.exists hasOutputSink) || hasOutputSink sink
+        | When(_, body) -> hasOutputSink body
+        | Compound directives -> directives |> List.exists hasOutputSinkDir
+        | Ensemble(pipelines, combiner) -> (pipelines |> List.exists hasOutputSink) || hasOutputSink combiner
+        | MapExpr(source, _, body) -> hasOutputSink source || hasOutputSink body
+        | _ -> false
+
+    and private hasOutputSinkDir (dir: CompoundDirective) : bool =
+        match dir with
+        | Harvest _ | Promote _ | Teach _ | Log _ -> true  // compound directives are outputs
+        | CompoundWhen(_, d) -> hasOutputSinkDir d
+
+    /// Build a dependency map: binding name -> set of names it references
+    let private buildDependencyMap (stmts: Expr list) : Map<string, Set<string>> =
+        let rec collect (expr: Expr) : (string * Set<string>) list =
+            match expr with
+            | Binding(name, body) ->
+                let refs = collectReferences body |> Set.ofList
+                (name, refs) :: collect body
+            | Pipeline stages -> stages |> List.collect collect
+            | FanOut exprs | Parallel exprs -> exprs |> List.collect collect
+            | FanIn(sources, sink) -> (sources |> List.collect collect) @ collect sink
+            | When(_, body) -> collect body
+            | _ -> []
+        stmts |> List.collect collect |> Map.ofList
+
+    /// Transitive closure: given a set of "needed" names, walk backwards
+    /// through the dependency map to find all transitively needed bindings.
+    let private transitiveClosure (depMap: Map<string, Set<string>>) (seeds: Set<string>) : Set<string> =
+        let rec walk (frontier: Set<string>) (visited: Set<string>) =
+            if Set.isEmpty frontier then visited
+            else
+                let newVisited = Set.union visited frontier
+                let nextFrontier =
+                    frontier
+                    |> Set.toList
+                    |> List.collect (fun name ->
+                        match Map.tryFind name depMap with
+                        | Some deps -> Set.toList deps
+                        | None -> [])
+                    |> Set.ofList
+                    |> fun s -> Set.difference s newVisited
+                walk nextFrontier newVisited
+        walk seeds Set.empty
+
+    /// Detect unreachable bindings: bindings not on any path to an output.
+    /// Traces backwards from write/alert/compound outputs to find all
+    /// transitively needed bindings, then flags the rest.
+    let private detectUnreachable (prog: Program) : string list =
+        let allBindings =
+            prog.Statements |> List.collect collectBindings |> Set.ofList
+        // Collect names directly referenced by output sinks
+        let outputRefs =
+            prog.Statements |> List.collect collectOutputRefs |> Set.ofList
+        // Also: bindings whose body itself contains an output sink are "needed"
+        let bindingsWithOutputs =
+            prog.Statements |> List.collect (fun stmt ->
+                match stmt with
+                | Binding(name, body) when hasOutputSink body -> [name]
+                | _ -> [])
+            |> Set.ofList
+        let seeds = Set.union outputRefs bindingsWithOutputs
+        let depMap = buildDependencyMap prog.Statements
+        let reachable = transitiveClosure depMap seeds
+        // Unreachable = bound but not reachable from any output
+        allBindings
+        |> Set.toList
+        |> List.filter (fun name -> not (Set.contains name reachable))
+
+    // ── Teach target validation ──────────────────────────────────
+
+    /// Known Seldon curriculum departments (Streeling University)
+    let private knownSeldonCurriculum = Set.ofList [
+        "audio-engineering"; "cognitive-science"; "computer-science"
+        "cybernetics"; "data-visualization"; "futurology"
+        "guitar-alchemist-academy"; "guitar-studies"; "mathematics"
+        "music"; "musicology"; "philosophy"; "physics"
+        "product-management"; "psychohistory"; "world-music-languages"
+        // The generic "seldon" target is always valid (routes to Seldon Plan)
+        "seldon"
+    ]
+
+    /// Collect all teach targets from the program
+    let rec private collectTeachTargets (expr: Expr) : string list =
+        match expr with
+        | Binding(_, body) -> collectTeachTargets body
+        | Pipeline stages -> stages |> List.collect collectTeachTargets
+        | FanOut exprs | Parallel exprs -> exprs |> List.collect collectTeachTargets
+        | FanIn(sources, sink) -> (sources |> List.collect collectTeachTargets) @ collectTeachTargets sink
+        | When(_, body) -> collectTeachTargets body
+        | Compound directives -> directives |> List.collect collectTeachTargetsFromDir
+        | Ensemble(pipelines, combiner) -> (pipelines |> List.collect collectTeachTargets) @ collectTeachTargets combiner
+        | MapExpr(source, _, body) -> collectTeachTargets source @ collectTeachTargets body
+        | _ -> []
+
+    and private collectTeachTargetsFromDir (dir: CompoundDirective) : string list =
+        match dir with
+        | Teach(_, dest) ->
+            match dest with
+            | Ident name -> [name]
+            | _ -> []
+        | CompoundWhen(_, d) -> collectTeachTargetsFromDir d
+        | _ -> []
+
+    /// Validate teach targets against known Seldon curriculum.
+    /// Returns list of invalid target names.
+    let private validateTeachTargets (prog: Program) : string list =
+        let targets =
+            prog.Statements |> List.collect collectTeachTargets
+        targets
+        |> List.filter (fun name -> not (Set.contains name knownSeldonCurriculum))
+        |> List.distinct
+
+    // ── Combined LOLLI Analysis ─────────────────────────────────
+
+    /// Analyze LOLLI: find dead (unreferenced) bindings, orphaned fan_out
+    /// branches, unreachable computations, and invalid teach targets.
+    /// Returns a LolliReport with all findings and a composite score.
     let analyzeLolli (prog: Program) : LolliReport =
         let bindings =
             prog.Statements |> List.collect collectBindings
@@ -419,12 +618,19 @@ module Parser =
             prog.Statements |> List.collect collectReferences |> Set.ofList
         let dead =
             bindings |> List.filter (fun name -> not (Set.contains name references))
+        let orphaned = detectOrphanedBranches prog
+        let unreachable = detectUnreachable prog
+        let invalidTeach = validateTeachTargets prog
         let total = bindings.Length
+        let totalIssues = dead.Length + orphaned.Length + unreachable.Length + invalidTeach.Length
         let score =
-            if total = 0 then 0.0
-            else float dead.Length / float total
+            if total = 0 && totalIssues = 0 then 0.0
+            elif total = 0 then 1.0
+            else float totalIssues / float (max total totalIssues)
         { DeadBindings = dead
-          OrphanedBranches = []
+          OrphanedBranches = orphaned
+          UnreachableBindings = unreachable
+          InvalidTeachTargets = invalidTeach
           TotalBindings = total
           LolliScore = score }
 

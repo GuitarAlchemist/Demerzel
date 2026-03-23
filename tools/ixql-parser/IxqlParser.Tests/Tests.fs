@@ -313,6 +313,139 @@ results <- fan_out(data, data, data)
     let report = analyzeLolli prog
     Assert.DoesNotContain("data", report.DeadBindings)
 
+// ── L3: Orphaned fan_out branch detection ───────────────────
+
+[<Fact>]
+let ``L3 detects orphaned fan_out branch`` () =
+    // pipeline_a and pipeline_b are defined as bindings, but branch_c is not
+    let prog = mustParse """data <- ix.io.read("input.csv")
+pipeline_a <- data -> normalize
+pipeline_b <- data -> classify
+result <- fan_out(pipeline_a, pipeline_b, branch_c)
+output <- result -> write("out.json")
+"""
+    let report = analyzeLolli prog
+    // branch_c is not defined as a binding — orphaned
+    Assert.True(report.OrphanedBranches.Length > 0, "Should detect orphaned fan_out branches")
+    Assert.Contains("branch_c", report.OrphanedBranches)
+    Assert.DoesNotContain("pipeline_a", report.OrphanedBranches)
+    Assert.DoesNotContain("pipeline_b", report.OrphanedBranches)
+
+[<Fact>]
+let ``L3 no orphaned branches when all referenced`` () =
+    let prog = mustParse """pipeline_a <- ix.io.read("a.csv")
+pipeline_b <- ix.io.read("b.csv")
+result <- fan_out(pipeline_a, pipeline_b)
+output <- result -> write("out.json")
+"""
+    let report = analyzeLolli prog
+    // pipeline_a and pipeline_b are referenced as bindings AND as fan_out branches
+    // Since they appear in both bindings and references, they are not orphaned
+    Assert.DoesNotContain("pipeline_a", report.OrphanedBranches)
+    Assert.DoesNotContain("pipeline_b", report.OrphanedBranches)
+
+[<Fact>]
+let ``L3 mixed orphaned and consumed branches`` () =
+    // alpha is defined as a binding; orphan_x is not
+    let prog = mustParse """alpha <- ix.io.read("a.csv")
+result <- fan_out(alpha, orphan_x)
+merged <- result -> write("out.json")
+"""
+    let report = analyzeLolli prog
+    // orphan_x has no binding — orphaned branch
+    Assert.Contains("orphan_x", report.OrphanedBranches)
+    // alpha is a binding — not orphaned
+    Assert.DoesNotContain("alpha", report.OrphanedBranches)
+
+// ── L4: Transitive closure — unreachable bindings ───────────
+
+[<Fact>]
+let ``L4 detects unreachable binding with no path to output`` () =
+    let prog = mustParse """data <- ix.io.read("input.csv")
+useless <- ix.io.read("junk.csv")
+result <- data -> normalize
+final <- result -> write("output.json")
+"""
+    let report = analyzeLolli prog
+    Assert.Contains("useless", report.UnreachableBindings)
+    Assert.DoesNotContain("data", report.UnreachableBindings)
+    Assert.DoesNotContain("result", report.UnreachableBindings)
+    Assert.DoesNotContain("final", report.UnreachableBindings)
+
+[<Fact>]
+let ``L4 all bindings reachable when chain leads to output`` () =
+    let prog = mustParse """raw <- ix.io.read("input.csv")
+clean <- raw -> normalize
+result <- clean -> classify
+output <- result -> write("output.json")
+"""
+    let report = analyzeLolli prog
+    Assert.Empty(report.UnreachableBindings)
+
+[<Fact>]
+let ``L4 detects unreachable with compound output`` () =
+    let prog = mustParse """findings <- ix.io.read("data.json")
+orphan <- ix.io.read("other.json")
+compound:
+    harvest findings
+    teach findings to seldon
+"""
+    let report = analyzeLolli prog
+    Assert.Contains("orphan", report.UnreachableBindings)
+    Assert.DoesNotContain("findings", report.UnreachableBindings)
+
+[<Fact>]
+let ``L4 transitive chain — intermediate bindings are reachable`` () =
+    let prog = mustParse """step1 <- ix.io.read("input.csv")
+step2 <- step1 -> normalize
+step3 <- step2 -> classify
+alert("ops-channel", step3)
+"""
+    let report = analyzeLolli prog
+    Assert.Empty(report.UnreachableBindings)
+
+// ── Teach target validation ─────────────────────────────────
+
+[<Fact>]
+let ``Teach to seldon is valid`` () =
+    let prog = mustParse """findings <- ix.io.read("data.json")
+compound:
+    teach findings to seldon
+"""
+    let report = analyzeLolli prog
+    Assert.Empty(report.InvalidTeachTargets)
+
+[<Fact>]
+let ``Teach to known department is valid`` () =
+    let prog = mustParse """findings <- ix.io.read("data.json")
+compound:
+    teach findings to psychohistory
+"""
+    let report = analyzeLolli prog
+    Assert.Empty(report.InvalidTeachTargets)
+
+[<Fact>]
+let ``Teach to non-existent curriculum is invalid`` () =
+    let prog = mustParse """findings <- ix.io.read("data.json")
+compound:
+    teach findings to chaos_patterns
+"""
+    let report = analyzeLolli prog
+    Assert.Contains("chaos_patterns", report.InvalidTeachTargets)
+
+[<Fact>]
+let ``Teach to multiple targets — mixed valid and invalid`` () =
+    let prog = mustParse """findings <- ix.io.read("data.json")
+compound:
+    teach findings to seldon
+    teach findings to fake_department
+    teach findings to mathematics
+"""
+    let report = analyzeLolli prog
+    Assert.Contains("fake_department", report.InvalidTeachTargets)
+    Assert.DoesNotContain("seldon", report.InvalidTeachTargets)
+    Assert.DoesNotContain("mathematics", report.InvalidTeachTargets)
+
 // ── Error handling ──────────────────────────────────────────
 
 [<Fact>]

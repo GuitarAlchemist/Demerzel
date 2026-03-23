@@ -134,6 +134,8 @@ module Ast =
     type LolliReport = {
         DeadBindings: string list
         OrphanedBranches: string list
+        UnreachableBindings: string list
+        InvalidTeachTargets: string list
         TotalBindings: int
         LolliScore: float
     }
