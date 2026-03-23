@@ -1,0 +1,37 @@
+{
+  "department": "guitar-acoustics",
+  "full_name": "Department of Guitar Acoustics & Sound Synthesis",
+  "head_persona": "ga-musician",
+  "established": "2026-03-23",
+  "domain": "Physical modeling of guitar sound, spectral analysis, realism verification",
+  "bootstrapped_by": "demerzel-metabuild",
+  "research_areas": [
+    "Karplus-Strong extensions and parameter optimization",
+    "Waveguide string modeling and stiff-string dispersion",
+    "Body resonance simulation and resonator chain design",
+    "Spectral realism metrics and perceptual scoring",
+    "Perceptual audio quality and A/B validation",
+    "Real-time WASM synthesis with latency constraints",
+    "ML-guided parameter optimization for timbral targets",
+    "Multi-string interaction and sympathetic resonance"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["cybernetics", "computer-science", "audio-engineering", "physics", "guitar-studies"],
+  "curriculum": [
+    "Karplus-Strong algorithm — delay line, loop filter, decay",
+    "Digital waveguide string models",
+    "Excitation modeling — pluck shape, position, velocity",
+    "Body resonance — resonator chains and cavity modes",
+    "Guitar profile design — steel, nylon, jumbo, flamenco",
+    "Spectral analysis — FFT, STFT, centroid, rolloff",
+    "Realism scoring — spectral distance and perceptual metrics",
+    "Effects chain architecture — reverb, EQ, compression",
+    "Real-time synthesis constraints and latency budgets",
+    "WASM compilation and AudioWorklet integration",
+    "Reference recording methodology and quality validation",
+    "12-string and sympathetic resonance modeling",
+    "Dispersion filters and inharmonicity correction",
+    "ML-guided parameter search and optimization",
+    "Regression detection — ensuring parameter changes preserve realism"
+  ]
+}

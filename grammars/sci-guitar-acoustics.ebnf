@@ -1,0 +1,219 @@
+(* Guitar Acoustics & Sound Synthesis Grammar — Streeling University *)
+(* Department: Guitar Acoustics & Sound Synthesis *)
+(* Head Persona: ga-musician *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings in guitar sound synthesis and acoustic modeling *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum, ga WASM synth *)
+(* See: state/streeling/departments/guitar-acoustics.department.json *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+(* Bootstrapped by: /demerzel metabuild guitar-acoustics *)
+
+(* ============================================================ *)
+(* 1. String Models                                              *)
+(* ============================================================ *)
+
+string_model ::= karplus_strong | waveguide | digital_string | physical_model
+
+karplus_strong ::= excitation delay_line loop_filter output_tap
+                 | excitation delay_line loop_filter dispersion_filter output_tap
+
+waveguide ::= traveling_wave_right traveling_wave_left termination_left termination_right
+            | traveling_wave_right traveling_wave_left bridge_coupling nut_reflection
+
+digital_string ::= fir_model | iir_model | lattice_model | state_space_model
+
+physical_model ::= wave_equation | modal_decomposition | finite_difference
+                 | mass_spring_damper | digital_waveguide_network
+
+(* ============================================================ *)
+(* 2. Body Resonance                                             *)
+(* ============================================================ *)
+
+body_resonance ::= resonator_chain cavity_mode coupling
+
+resonator_chain ::= single_resonator
+                  | single_resonator resonator_chain
+
+single_resonator ::= biquad_resonator | modal_resonator | parametric_resonator
+
+cavity_mode ::= air_cavity | top_plate_mode | back_plate_mode
+              | soundhole_mode | bridge_mode | neck_mode
+
+coupling ::= bridge_admittance | string_body_coupling
+           | soundboard_radiation | sympathetic_coupling
+
+(* ============================================================ *)
+(* 3. Excitation                                                 *)
+(* ============================================================ *)
+
+excitation ::= pluck_model pick_position velocity
+
+pluck_model ::= noise_burst | shaped_impulse | recorded_excitation
+              | triangular_displacement | rounded_displacement
+
+pick_position ::= bridge_position | middle_position | neck_position
+                | sul_tasto | sul_ponticello | custom_position
+
+velocity ::= pianissimo | piano | mezzo_forte | forte | fortissimo
+
+attack_transient ::= nail_attack | flesh_attack | pick_attack
+                   | fingerstyle_attack | rasgueado | tremolo_attack
+
+(* ============================================================ *)
+(* 4. Effects Chain                                              *)
+(* ============================================================ *)
+
+effects_chain ::= effect
+               | effect effects_chain
+
+effect ::= reverb | eq | compression | distortion | chorus | delay_effect
+         | flanger | phaser | tremolo_effect | wah | octaver
+
+reverb ::= convolution_reverb | algorithmic_reverb | plate_reverb
+          | spring_reverb | room_simulation
+
+eq ::= parametric_eq | graphic_eq | shelf_eq | high_pass | low_pass | notch_filter
+
+compression ::= downward_compression | upward_compression | multiband_compression
+              | sidechain_compression | limiting
+
+distortion ::= overdrive | fuzz | tube_saturation | clipping | bitcrusher
+
+(* ============================================================ *)
+(* 5. Spectral Analysis                                          *)
+(* ============================================================ *)
+
+spectral_analysis ::= analysis_method spectral_feature
+
+analysis_method ::= fft | stft | wavelet_transform | cepstral_analysis
+                  | constant_q_transform | mel_spectrogram
+
+spectral_feature ::= spectral_centroid | spectral_rolloff | spectral_flux
+                   | harmonic_ratio | inharmonicity | spectral_envelope
+                   | fundamental_frequency | harmonic_partial_amplitudes
+
+(* ============================================================ *)
+(* 6. Realism Verification                                       *)
+(* ============================================================ *)
+
+realism_verification ::= reference_matching scoring_method quality_threshold
+
+reference_matching ::= spectral_distance | envelope_matching | attack_matching
+                     | decay_matching | perceptual_similarity
+
+scoring_method ::= mse_score | correlation_score | perceptual_score
+                 | multidimensional_score | ab_test_score
+
+quality_threshold ::= excellent | good | acceptable | poor | failing
+(* excellent >= 0.9, good >= 0.8, acceptable >= 0.7, poor >= 0.5, failing < 0.5 *)
+
+(* ============================================================ *)
+(* 7. Parameter Space                                            *)
+(* ============================================================ *)
+
+parameter_space ::= parameter_set optimization_target
+
+parameter_set ::= decay_coefficient | brightness_factor | dispersion_amount
+                | attack_decay_ratio | reverb_mix | pluck_width
+                | body_resonance_gain | string_tension | damping_factor
+
+optimization_target ::= realism_score | latency_target | perceptual_quality
+                      | spectral_match | parameter_stability
+
+decay_coefficient ::= "0.99" | "0.995" | "0.999" | "0.9995" | "0.9999"
+(* Valid range: 0.99 to 0.9999 — outside this range produces unrealistic decay *)
+
+(* ============================================================ *)
+(* 8. Guitar Profiles                                            *)
+(* ============================================================ *)
+
+guitar_profile ::= profile_type resonator_config string_config excitation_default
+
+profile_type ::= steel_bright | steel_warm | nylon_classical | jumbo_dreadnought
+               | classical_concert | flamenco | twelve_string
+
+resonator_config ::= resonator_chain
+(* Every profile MUST define its own resonator chain — no profile without resonators *)
+
+string_config ::= string_count tuning gauge_set
+string_count ::= six_string | twelve_string_doubled | seven_string
+tuning ::= standard | drop_d | open_g | dadgad | custom_tuning
+gauge_set ::= light | medium | heavy | custom_gauge
+
+excitation_default ::= pluck_model pick_position velocity
+
+(* ============================================================ *)
+(* 9. Synthesis Pipeline                                         *)
+(* ============================================================ *)
+
+synthesis_pipeline ::= excitation string_model body_resonance effects_chain output_stage
+
+output_stage ::= mono_output | stereo_output | multichannel_output
+
+pipeline_constraint ::= latency_budget sample_rate buffer_size
+latency_budget ::= realtime_10ms | interactive_20ms | offline_unlimited
+(* Real-time constraint: total pipeline < 10ms for playable instruments *)
+
+sample_rate ::= sr_44100 | sr_48000 | sr_96000
+buffer_size ::= buf_64 | buf_128 | buf_256 | buf_512 | buf_1024
+
+(* ============================================================ *)
+(* 10. Investigation Patterns                                    *)
+(* ============================================================ *)
+
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* ============================================================ *)
+(* 11. Hypothesis Methods (weighted per research cycle)          *)
+(* ============================================================ *)
+
+hypothesize ::= inductive       (* observe patterns in synthesis outputs *)
+              | deductive       (* derive from acoustic physics principles *)
+              | abductive       (* infer best explanation for timbral result *)
+              | analogical      (* "this resonator behaves like..." *)
+              | combinatorial   (* combine string model with novel excitation *)
+
+(* ============================================================ *)
+(* 12. Test Methods (weighted per research cycle)                *)
+(* ============================================================ *)
+
+test ::= empirical             (* A/B listening, spectral measurement *)
+       | formal_proof          (* acoustic physics derivation *)
+       | simulation            (* WASM synth modeling, parameter sweep *)
+       | thought_experiment    (* "what would happen if decay = 0.98..." *)
+       | cross_validation      (* multi-profile or multi-reference consensus *)
+       | adversarial           (* deliberately try to break realism score *)
+
+(* ============================================================ *)
+(* 13. Conclusions — maps to tetravalent logic                   *)
+(* ============================================================ *)
+
+(* confirm → T (synthesis matches reference within threshold) *)
+(* refute → F (synthesis does not produce realistic result) *)
+(* insufficient → U (need more reference recordings or measurements) *)
+(* contradictory → C (works for some profiles, fails for others) *)
+(* revise → re-enter cycle with refined parameters *)
+(* discover_question → spawn new investigation *)
+
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* ============================================================ *)
+(* 14. Reflection — Kuhnian paradigm detection                   *)
+(* ============================================================ *)
+
+reflect ::= normal_progress    (* routine finding, update weights *)
+          | anomaly_detected   (* unexpected spectral behavior, log conscience signal *)
+          | paradigm_tension   (* challenges established synthesis wisdom *)
+          | paradigm_shift     (* fundamental rethinking required, human review *)
+
+(* ============================================================ *)
+(* 15. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions proposed by research cycles with gate: T(0.7) && C(<0.1) *)
+(* Weight updates: +0.05 on confirm, -0.03 on refute/insufficient *)
+(* External grammar candidates: DAFX proceedings, ISMIR spectral descriptors, AES guitar modeling papers *)
