@@ -1,0 +1,152 @@
+name: visual-critic
+version: "1.0.0"
+effective_date: "2026-03-23"
+description: "Visual perception loop for AI-generated UIs — error detection, screenshot scoring, and iterative fix cycles."
+rationale: |
+  AI agents write code blind. They generate JSX, CSS, and component logic but never see
+  the rendered result. This perception gap means layout breaks, blank pages, and styling
+  errors go undetected until a human looks at the screen. The render critic closes this
+  loop: code → render → perceive → fix → re-render. It gives the AI eyes.
+
+  Amdahl's Law identifies screenshot capture (~200ms) as the serial bottleneck.
+  Error classification parallelizes across 4 branches, but scoring is inherently sequential.
+  Invest in faster screenshot tooling, not more classifiers.
+
+triggers:
+  - file_change: "File change detected in src/**/*.tsx — starts render critic cycle"
+  - on_demand: "/demerzel render-critic [component-path] — manual invocation"
+  - post_merge: "After PR merge to main, verify deployed UI visually"
+
+prerequisites:
+  error_free_render:
+    description: "Console must be free of console.error before visual scoring begins"
+    rationale: "Scoring a broken page wastes cycles — fix errors first, then judge aesthetics"
+    enforcement: "Steps 1-5 of render-critic.ixql must complete before Step 6"
+
+visual_scoring:
+  dimensions:
+    - name: layout_fidelity
+      weight: 0.35
+      description: "Component hierarchy matches intent — no overlapping elements, correct spacing, grid alignment"
+      pass_threshold: 0.7
+      wcag_reference: "WCAG 2.1 SC 1.4.10 (Reflow)"
+
+    - name: color_contrast
+      weight: 0.25
+      description: "Text/background contrast ratios meet WCAG AA standards"
+      pass_threshold: 0.7
+      wcag_reference: "WCAG 2.1 SC 1.4.3 (Contrast Minimum)"
+      rules:
+        - "Normal text: contrast ratio >= 4.5:1"
+        - "Large text (18pt+ or 14pt+ bold): contrast ratio >= 3:1"
+        - "Non-text UI components: contrast ratio >= 3:1"
+
+    - name: responsiveness
+      weight: 0.20
+      description: "No horizontal overflow, elements reflow correctly, touch targets appropriately sized"
+      pass_threshold: 0.7
+      rules:
+        - "No horizontal scrollbar at viewport widths >= 320px"
+        - "Touch targets >= 44x44 CSS pixels"
+        - "Text remains readable without zooming at 100% scale"
+
+    - name: component_completeness
+      weight: 0.20
+      description: "All expected UI elements present — no missing icons, empty containers, or placeholder text"
+      pass_threshold: 0.7
+      rules:
+        - "No 'undefined' or 'null' rendered as visible text"
+        - "No empty containers where content is expected"
+        - "All images have alt text or are decorative (role=presentation)"
+
+quality_thresholds:
+  ship_ready: 0.9       # Score >= 0.9 for 2 consecutive renders → SHIP
+  acceptable: 0.7       # Score >= 0.7 → proceed with caveats
+  needs_work: 0.5       # Score >= 0.5 → specific suggestions provided
+  broken: 0.3           # Score < 0.3 → escalate to human
+
+iteration_limits:
+  max_fix_iterations: 5
+  rationale: "Prevent infinite fix loops. If 5 iterations can't resolve errors, the problem is structural."
+  on_max_reached: "Escalate to human per Article 6 (Escalation)"
+
+  consecutive_ship_threshold: 2
+  rationale: "Require 2 consecutive high scores to prevent marking as ready on a lucky render."
+
+amdahls_law:
+  serial_bottleneck: "Screenshot capture via Windows MCP (~200ms)"
+  parallel_fraction: "Error classification across 4 branches (~30% of cycle time)"
+  implication: "Scaling classifiers beyond 4 yields < 5% improvement. Optimize screenshot speed instead."
+  total_cycle_estimate: "~2-5 seconds per iteration (HMR + DevTools read + screenshot + scoring)"
+
+mcp_integration:
+  chrome_devtools:
+    purpose: "Read console errors, warnings, and React error boundaries"
+    tools_used:
+      - "read_console — filter by error/warning level"
+      - "evaluate — check DOM state for mount failures"
+
+  windows_mcp:
+    purpose: "Capture browser viewport screenshot for visual scoring"
+    tools_used:
+      - "Screenshot — capture current browser viewport"
+
+  vite_dev_server:
+    purpose: "Trigger HMR reload after code changes and fixes"
+    integration: "Signal via process IPC or HTTP API"
+
+error_classification:
+  syntax_errors:
+    confidence: 0.95
+    action: "Auto-fix — deterministic solutions (missing brackets, typos)"
+    examples: ["SyntaxError: Unexpected token", "JSX parse error"]
+
+  runtime_errors:
+    confidence: 0.80
+    action: "Classify + fix — may need human review for complex state bugs"
+    examples: ["TypeError: Cannot read property", "ReferenceError: x is not defined"]
+
+  render_errors:
+    confidence: 0.70
+    action: "Check component mount lifecycle — useEffect order, missing providers, suspense"
+    examples: ["Minified React error", "Error boundary caught", "blank page"]
+
+  layout_errors:
+    confidence: 0.75
+    action: "Fix stylesheet — CSS module resolution, missing imports"
+    examples: ["Failed to resolve CSS module", "Unknown CSS property"]
+
+constitutional_basis:
+  - Article 2 (Transparency) — visual score breakdown is always reported with dimension-level detail
+  - Article 6 (Escalation) — errors that cannot be auto-fixed escalate to human
+  - Article 7 (Auditability) — every fix iteration is logged with before/after state
+  - Article 8 (Observability) — visual quality is an observable metric with thresholds and alerts
+  - Article 9 (Bounded Autonomy) — max 5 iterations prevents unbounded autonomous operation
+
+observability:
+  metrics:
+    - name: render_critic_score
+      formula: "weighted_sum(layout_fidelity, color_contrast, responsiveness, component_completeness)"
+      target: ">= 0.7 for acceptable, >= 0.9 for ship-ready"
+      alert: "< 0.5 — component has significant visual deficiencies"
+
+    - name: auto_fix_success_rate
+      formula: "errors_auto_fixed / total_errors_detected"
+      target: "> 0.8"
+      alert: "< 0.5 — most errors require human intervention"
+
+    - name: iterations_to_clean
+      formula: "average iterations to reach error-free render"
+      target: "< 3"
+      alert: "> 4 — code quality may need upstream improvement"
+
+    - name: ship_ready_rate
+      formula: "components_marked_ship / total_components_evaluated"
+      target: "> 0.7"
+      alert: "< 0.4 — visual quality standards consistently not met"
+
+integration:
+  pipeline: "pipelines/render-critic.ixql"
+  skill: ".claude/skills/demerzel-render-critic/SKILL.md"
+  state_dir: "state/render-critic/"
+  seldon_compound: "Error patterns and fix templates harvested for Seldon knowledge base"

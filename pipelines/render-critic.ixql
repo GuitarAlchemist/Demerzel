@@ -1,0 +1,264 @@
+--- ## Render Critic — Visual Perception Loop for AI-Generated UIs
+--- Closes the perception gap that makes AI-generated UIs brittle:
+--- AI writes code but cannot see the result. This pipeline gives it eyes.
+--- Pattern: code → render → perceive → fix → re-render (max 5 iterations).
+--- Uses Chrome DevTools MCP for error detection, Windows MCP for screenshots.
+--- Source: ga (any React/Vite project with HMR)
+--- Trigger: file change in src/**/*.tsx, or on-demand via /demerzel render-critic
+--- Output: ship-ready component with visual quality score + error pattern harvest
+
+--- ## Amdahl's Law Analysis
+--- Serial fraction: Steps 1-3 (detect, reload, read errors) + Steps 6-7 (screenshot, score)
+--- Parallel fraction: Step 4 (error classification branches — 4 independent classifiers)
+--- With 4 parallel classifiers:
+---   Speedup = 1 / (S + P/N) = 1 / (0.7 + 0.3/4) = 1 / 0.775 ≈ 1.29x per iteration
+--- The serial bottleneck is screenshot capture (~200ms) + DevTools read (~100ms).
+--- Scaling classifiers beyond 4 yields diminishing returns — invest in faster screenshot capture.
+
+--- ## Step 1: Detect Code Change
+--- File watcher on src/**/*.tsx triggers the pipeline.
+--- This is the entry point — every render critic cycle starts with a code change.
+change_event <- ix.io.watch("src/**/*.tsx")
+  → filter(event_type in ["modify", "create"])
+  → { file: change_event.path, timestamp: now() }
+
+--- ## Step 2: Trigger Vite HMR Reload
+--- Vite's Hot Module Replacement provides near-instant browser updates.
+--- No full page reload needed — React components swap in-place.
+--- Wait for HMR confirmation before proceeding to error check.
+hmr_result <- ix.process.signal(
+    target: "vite-dev-server",
+    action: "hmr-reload",
+    file: change_event.file,
+    timeout_ms: 3000
+  )
+  → tars.validate(
+      check: "hmr_result.status == 'success'",
+      reject_message: "HMR failed — dev server may be down. Check vite process."
+    )
+
+--- ## Step 3: Read Chrome DevTools MCP for Errors
+--- After HMR completes, read the browser console for any errors.
+--- Chrome DevTools MCP exposes console.error, uncaught exceptions, and React error boundaries.
+console_output <- ix.mcp.invoke(
+    server: "chrome-devtools",
+    tool: "read_console",
+    params: { filter: ["error", "warning"], since: change_event.timestamp }
+  )
+
+--- Extract structured error list
+errors <- console_output
+  → filter(level == "error")
+  → map(e → { message: e.message, source: e.source, line: e.line, column: e.column, stack: e.stack })
+
+--- ## Step 4: Error Classification (fan_out)
+--- Per Amdahl's analysis: these 4 branches are the parallelizable fraction (~30%).
+--- Each branch classifies a different error type and proposes a fix.
+fix_proposals <- when errors is not empty:
+  fan_out(
+    --- ### 4a: Syntax Errors
+    --- Missing brackets, typos, JSX malformations.
+    --- High confidence auto-fix — these have deterministic solutions.
+    errors
+      → filter(message matches "SyntaxError|Unexpected token|Parse error")
+      → map(e → {
+          type: "syntax",
+          confidence: 0.95,
+          error: e,
+          fix: tars.classify(
+            signal: "syntax_error",
+            source_file: change_event.file,
+            error_message: e.message,
+            action: "propose_fix"
+          )
+        }),
+
+    --- ### 4b: Runtime Errors
+    --- TypeError, ReferenceError, null access — require understanding of data flow.
+    --- Moderate confidence — may need human review for complex state bugs.
+    errors
+      → filter(message matches "TypeError|ReferenceError|Cannot read|undefined is not")
+      → map(e → {
+          type: "runtime",
+          confidence: 0.80,
+          error: e,
+          fix: tars.classify(
+            signal: "runtime_error",
+            source_file: change_event.file,
+            error_message: e.message,
+            stack_trace: e.stack,
+            action: "classify_and_fix"
+          )
+        }),
+
+    --- ### 4c: Render Errors (blank page / mount failure)
+    --- React component failed to mount, error boundary caught, or white screen.
+    --- Check lifecycle: useEffect order, missing providers, suspense boundaries.
+    errors
+      → filter(message matches "not a function|hook|render|mount|boundary|Minified React")
+      → map(e → {
+          type: "render",
+          confidence: 0.70,
+          error: e,
+          fix: tars.classify(
+            signal: "render_error",
+            source_file: change_event.file,
+            error_message: e.message,
+            action: "check_mount_lifecycle"
+          )
+        }),
+
+    --- ### 4d: Layout / CSS Errors
+    --- CSS parse errors, missing modules, broken imports.
+    --- If no CSS errors but page looks wrong, escalate to screenshot comparison.
+    errors
+      → filter(message matches "CSS|style|layout|module|Failed to resolve")
+      → map(e → {
+          type: "layout",
+          confidence: 0.75,
+          error: e,
+          fix: tars.classify(
+            signal: "layout_error",
+            source_file: change_event.file,
+            error_message: e.message,
+            action: "fix_stylesheet"
+          )
+        })
+  )
+  → flatten()
+
+--- ## Step 5: Apply Fixes and Re-render (Loop, Max 5 Iterations)
+--- Apply each fix proposal in confidence-descending order.
+--- Re-trigger HMR after each fix, re-read console, check if error is resolved.
+--- Per **Article 9** (Bounded Autonomy): max 5 iterations to prevent infinite loops.
+iteration_count <- 0
+
+loop(max: 5):
+  iteration_count <- iteration_count + 1
+
+  --- Apply highest-confidence fix
+  best_fix <- fix_proposals
+    → ix.ml.rank(by: "confidence", order: "descending")
+    → head(1)
+
+  when best_fix is not empty:
+    ix.io.patch(file: change_event.file, patch: best_fix.fix.patch)
+    → ix.process.signal(target: "vite-dev-server", action: "hmr-reload", file: change_event.file)
+    → ix.mcp.invoke(server: "chrome-devtools", tool: "read_console", params: { filter: ["error"], since: now() })
+    → { remaining_errors: _.filter(level == "error") }
+
+    when remaining_errors is empty:
+      break("All errors resolved after {{iteration_count}} iterations")
+
+    --- Reclassify remaining errors for next iteration
+    errors <- remaining_errors
+    fix_proposals <- reclassify(errors)
+
+  when best_fix is empty:
+    → escalate(article: 6, reason: "Errors remain but no fix proposals — human intervention needed")
+    break("No auto-fix available")
+
+--- ## Step 6: Screenshot via Windows MCP
+--- Error-free render confirmed. Capture the visual output for quality scoring.
+--- This is the serial bottleneck (~200ms) per Amdahl's analysis.
+screenshot <- ix.mcp.invoke(
+    server: "windows-mcp",
+    tool: "Screenshot",
+    params: { region: "browser-viewport" }
+  )
+  → tars.validate(
+      check: "screenshot.bytes > 0",
+      reject_message: "Screenshot capture failed — browser viewport may not be visible"
+    )
+
+--- ## Step 7: Score Visual Quality
+--- Evaluate the screenshot across 4 perceptual dimensions.
+--- Each dimension scored 0.0 to 1.0, weighted by user-facing impact.
+visual_score <- ix.ml.compute(
+    metric: "visual_quality",
+    input: screenshot,
+    dimensions: {
+      layout_fidelity: {
+        weight: 0.35,
+        check: "Component hierarchy matches intent — no overlapping elements, correct spacing"
+      },
+      color_contrast: {
+        weight: 0.25,
+        check: "WCAG AA compliance — text/background ratio >= 4.5:1, large text >= 3:1"
+      },
+      responsiveness: {
+        weight: 0.20,
+        check: "No horizontal overflow, elements reflow correctly, touch targets >= 44px"
+      },
+      component_completeness: {
+        weight: 0.20,
+        check: "All expected UI elements present — no missing icons, empty containers, or placeholder text"
+      }
+    },
+    formula: "weighted_sum(dimensions)"
+  )
+
+--- ## Step 8: Governance Gate — Visual Quality Threshold
+--- Per **Article 8** (Observability): visual quality is an observable metric.
+--- Per **Article 2** (Transparency): score breakdown is always reported.
+governance_gate(
+  article: 8,
+  confidence: visual_score.overall,
+  threshold: 0.7,
+  on_fail: proceed_to_step_9("Visual quality below threshold: {{visual_score.overall}}")
+)
+
+--- ## Step 9: Suggest Visual Fixes
+--- When score < 0.7, provide actionable suggestions per dimension.
+--- Each suggestion maps to a specific CSS/JSX change.
+when visual_score.overall < 0.7:
+  suggestions <- visual_score.dimensions
+    → filter(score < 0.7)
+    → map(d → {
+        dimension: d.name,
+        score: d.score,
+        suggestion: tars.classify(
+          signal: "visual_deficiency",
+          dimension: d.name,
+          screenshot: screenshot,
+          action: "suggest_fix"
+        )
+      })
+  → alert(discord,
+      "Render critic: visual score {{visual_score.overall}} (below 0.7). Suggestions:\n{{suggestions.map(s → '- ' + s.dimension + ': ' + s.suggestion).join('\n')}}"
+    )
+  → continue_loop()
+
+--- ## Step 10: Ship-Ready Detection
+--- If visual score >= 0.9 for 2 consecutive renders, mark as SHIP.
+--- This prevents marking as ready on a single lucky render.
+consecutive_high <- ix.io.read("state/render-critic/consecutive-high.json")
+  → default({ count: 0 })
+
+when visual_score.overall >= 0.9:
+  consecutive_high <- { count: consecutive_high.count + 1, last_score: visual_score.overall }
+  when consecutive_high.count >= 2:
+    → ix.io.write("state/render-critic/ship-ready.json", {
+        component: change_event.file,
+        score: visual_score.overall,
+        iterations: iteration_count,
+        timestamp: now(),
+        verdict: "SHIP"
+      })
+    → alert(discord,
+        "SHIP READY: {{change_event.file}} — visual score {{visual_score.overall}} (2 consecutive >= 0.9)"
+      )
+else:
+  consecutive_high <- { count: 0 }
+
+ix.io.write("state/render-critic/consecutive-high.json", consecutive_high)
+
+--- ## Step 11: Compound — Harvest Error Patterns for Seldon
+--- Every render critic cycle teaches the system about common UI errors.
+--- Error patterns become prevention rules; fix patterns become auto-fix templates.
+  → compound:
+      harvest fix_proposals.error_patterns
+      harvest visual_score.dimension_trends
+      promote fix_proposals if confidence >= 0.9
+      teach render_error_patterns to seldon
+      log render_critic_run to "state/evolution/"
