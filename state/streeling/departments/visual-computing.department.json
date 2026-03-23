@@ -1,0 +1,43 @@
+{
+  "department": "visual-computing",
+  "full_name": "Department of Visual Computing",
+  "head_persona": "architect",
+  "established": "2026-03-23",
+  "domain": "2D/3D rendering, WebGPU, game engines, data visualization, 3D modeling, animation, XR, post-processing, accessibility",
+  "research_areas": [
+    "Real-time 3D rendering pipelines (Three.js, Babylon.js, WebGPU)",
+    "WebGPU compute shaders and WGSL for general-purpose GPU programming",
+    "AI-driven render-critic perception loops for visual quality convergence",
+    "Procedural geometry and Blender Python API automation",
+    "Game engine architecture patterns (Godot, Unity, Unreal, Phaser)",
+    "Animation systems: spring physics, keyframe interpolation, GSAP timelines",
+    "Spatial computing and WebXR for immersive interfaces",
+    "Post-processing pipelines: bloom, SSAO, depth-of-field, tone mapping",
+    "Accessible visualization: WCAG compliance, screen reader support, reduced motion",
+    "Performance optimization: instanced rendering, LOD, frustum culling, GPU profiling"
+  ],
+  "consumer_repos": ["ga"],
+  "related_departments": ["computer-science", "guitar-acoustics", "data-visualization"],
+  "curriculum": [
+    "SVG fundamentals: paths, transforms, viewBox, responsive scaling",
+    "Canvas 2D API: drawing, compositing, double-buffering, dirty rects",
+    "CSS layout mastery: Flexbox, Grid, container queries, logical properties",
+    "Three.js scene graph: cameras, lights, materials, geometries, loaders",
+    "Babylon.js PBR materials and shadow generation",
+    "WebGPU from scratch: device, pipeline, shaders, bind groups, compute",
+    "WGSL shader language: vertex, fragment, compute entry points",
+    "D3.js data joins: enter-update-exit, scales, axes, transitions",
+    "React component architecture: hooks, context, suspense, server components",
+    "Svelte reactivity: runes, stores, actions, transitions",
+    "GSAP animation: tweens, timelines, ScrollTrigger, MorphSVG",
+    "Framer Motion: layout animations, AnimatePresence, gestures",
+    "Spring physics: damping ratio, natural frequency, critically damped systems",
+    "WebXR session management: VR, AR, hit testing, hand tracking",
+    "Godot GDScript: scene tree, signals, exports, TweenNode",
+    "Blender Python (bpy): mesh creation, modifiers, materials, rendering",
+    "Post-processing chains: bloom, SSAO, DoF, color grading, LUTs",
+    "Render-critic loop: screenshot, score, adjust, converge",
+    "GPU performance profiling: draw calls, fill rate, overdraw, instancing",
+    "WCAG accessibility: contrast ratios, ARIA roles, screen reader support, reduced motion"
+  ]
+}

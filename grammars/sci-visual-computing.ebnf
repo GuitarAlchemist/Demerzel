@@ -1,0 +1,373 @@
+(* Visual Computing Grammar — Streeling University *)
+(* Department: Visual Computing *)
+(* Head Persona: architect *)
+(* Prefix: sci- (Science/Engineering) *)
+(* Purpose: Generate research questions, structure investigations, *)
+(*          and classify findings across the full visual rendering spectrum *)
+(* Consumed by: Seldon research-cycle, Streeling curriculum *)
+(* See: state/streeling/departments/visual-computing.department.json *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+(* Bootstrapped by: /demerzel metabuild visual-computing *)
+
+(* ============================================================ *)
+(* 1. 2D Rendering                                              *)
+(* ============================================================ *)
+
+rendering_2d ::= svg_domain | canvas_2d_domain | css_layout_domain | dom_domain
+
+svg_domain ::= svg_element svg_attribute svg_animation
+svg_element ::= path | rect | circle | ellipse | line | polyline | polygon
+              | text_element | group | defs | clip_path | mask | filter
+svg_attribute ::= viewBox | preserveAspectRatio | transform | fill | stroke
+                | opacity | stroke_dasharray | marker
+svg_animation ::= smil_animate | css_transition | js_driven
+
+canvas_2d_domain ::= canvas_context canvas_operation canvas_pattern
+canvas_context ::= getContext_2d | offscreen_canvas | image_bitmap
+canvas_operation ::= fill_rect | stroke_path | draw_image | put_image_data
+                   | clip | composite_operation | gradient | pattern_fill
+canvas_pattern ::= double_buffering | dirty_rect | sprite_sheet | tile_map
+
+css_layout_domain ::= flexbox | grid_layout | container_queries
+                    | logical_properties | custom_properties | layer_cascade
+
+dom_domain ::= virtual_dom | shadow_dom | mutation_observer | intersection_observer
+             | resize_observer | custom_elements | template_slot
+
+(* ============================================================ *)
+(* 2. 3D Engines                                                *)
+(* ============================================================ *)
+
+engine_3d ::= three_js_domain | babylon_domain | playcanvas_domain | aframe_domain
+
+three_js_domain ::= scene_graph | camera | renderer | geometry | material
+                  | mesh | light | raycaster | orbit_controls | post_processing_pass
+                  | texture_loader | gltf_loader | instanced_mesh | buffer_geometry
+
+babylon_domain ::= babylon_scene | babylon_engine | pbr_material
+                 | shadow_generator | physics_engine | node_material
+                 | particle_system | animation_group | inspector
+
+playcanvas_domain ::= pc_application | pc_entity | pc_component
+                    | pc_script | pc_asset | pc_material
+
+aframe_domain ::= a_scene | a_entity | a_component | a_system
+                | a_primitive | a_mixin | a_asset_item
+
+(* ============================================================ *)
+(* 3. WebGPU                                                    *)
+(* ============================================================ *)
+
+webgpu_domain ::= wgsl_shader | compute_pipeline | render_pass | buffer_management
+
+wgsl_shader ::= vertex_shader | fragment_shader | compute_shader
+              | struct_definition | binding_group | entry_point
+              | builtin_variable | storage_qualifier | workgroup_size
+
+compute_pipeline ::= dispatch_workgroups | storage_buffer | uniform_buffer
+                   | bind_group_layout | pipeline_layout | compute_pass
+
+render_pass ::= color_attachment | depth_stencil | load_op | store_op
+              | multisample | render_bundle | render_pipeline
+              | vertex_buffer_layout | blend_state
+
+buffer_management ::= mapped_buffer | staging_buffer | ring_buffer
+                    | buffer_copy | texture_upload | mip_generation
+                    | gpu_readback | fence_sync
+
+(* ============================================================ *)
+(* 4. Data Visualization                                        *)
+(* ============================================================ *)
+
+data_viz_domain ::= d3_domain | observable_domain | vega_domain
+                  | recharts_domain | victory_domain
+
+d3_domain ::= selection | data_join | enter_update_exit | scale
+            | axis | transition | force_simulation | geo_projection
+            | hierarchy_layout | shape_generator | brush | zoom
+
+observable_domain ::= observable_plot | observable_notebook | observable_runtime
+                    | reactive_cell | file_attachment | database_client
+
+vega_domain ::= vega_spec | vega_lite_spec | vega_signal | vega_data_transform
+              | vega_mark | vega_scale | vega_encoding
+
+recharts_domain ::= composed_chart | responsive_container | custom_tooltip
+                  | animated_active_dot | reference_line | cartesian_grid
+
+victory_domain ::= victory_chart | victory_theme | victory_animation
+                 | victory_container | victory_label | victory_voronoi
+
+(* ============================================================ *)
+(* 5. Reactive UI Frameworks                                    *)
+(* ============================================================ *)
+
+reactive_ui_domain ::= react_domain | solid_domain | svelte_domain | vue_domain
+                     | component_lifecycle
+
+react_domain ::= jsx | hooks | context | suspense | concurrent_mode
+               | server_components | ref | portal | error_boundary | memo
+
+solid_domain ::= signal | effect | memo_solid | resource | show | for_solid
+               | dynamic | portal_solid | suspense_solid
+
+svelte_domain ::= reactive_declaration | store | action | transition_svelte
+                | slot | bind | each | await_block | rune
+
+vue_domain ::= composition_api | reactive_ref | computed | watch
+             | provide_inject | teleport | keep_alive | defineComponent
+
+component_lifecycle ::= mount | update | unmount | error_capture
+                      | hydration | lazy_loading | code_splitting
+
+(* ============================================================ *)
+(* 6. Animation                                                 *)
+(* ============================================================ *)
+
+animation_domain ::= gsap_domain | framer_motion_domain | lottie_domain
+                   | spring_physics | keyframe_domain | easing_domain
+
+gsap_domain ::= tween | timeline | scroll_trigger | morph_svg
+              | flip_plugin | draggable | motion_path | split_text
+
+framer_motion_domain ::= motion_component | animate_presence | layout_animation
+                       | gesture_handler | variant | use_animation_controls
+                       | shared_layout | drag_constraints
+
+lottie_domain ::= lottie_json | bodymovin | lottie_player | lottie_interactivity
+                | after_effects_export | dotlottie
+
+spring_physics ::= spring_constant | damping_ratio | natural_frequency
+                 | critically_damped | over_damped | under_damped
+                 | velocity_threshold | rest_delta
+
+keyframe_domain ::= css_keyframe | web_animation_api | fill_mode
+                  | animation_composition | scroll_linked
+
+easing_domain ::= linear | ease_in | ease_out | ease_in_out
+                | cubic_bezier | steps | spring_easing | elastic | bounce
+
+(* ============================================================ *)
+(* 7. Spatial/XR                                                *)
+(* ============================================================ *)
+
+spatial_xr_domain ::= webxr_domain | ar_js_domain | spatial_anchor
+                    | hand_tracking | xr_interaction
+
+webxr_domain ::= xr_session | xr_reference_space | xr_frame | xr_view
+               | xr_input_source | xr_hit_test | xr_layer
+               | immersive_vr | immersive_ar | inline_session
+
+ar_js_domain ::= marker_tracking | image_tracking | location_based
+               | nft_tracking | barcode_detection
+
+spatial_anchor ::= world_anchor | local_anchor | cloud_anchor
+                 | persistent_anchor | anchor_sharing
+
+hand_tracking ::= hand_joint | pinch_gesture | grab_gesture
+                | hand_mesh | finger_tracking | gesture_recognition
+
+xr_interaction ::= ray_casting | teleportation | grab_interaction
+                 | ui_panel_3d | gaze_pointer | controller_input
+
+(* ============================================================ *)
+(* 8. Game Engines                                              *)
+(* ============================================================ *)
+
+game_engine_domain ::= godot_domain | unity_domain | unreal_domain
+                     | phaser_domain | pixijs_domain
+
+godot_domain ::= gdscript | scene_tree | node_type | signal_godot
+               | export_var | tween_godot | area_body | tilemap
+               | animation_player | shader_material | autoload
+
+unity_domain ::= csharp_component | monobehaviour | scriptable_object
+               | prefab | coroutine | unity_physics | unity_ui
+               | shader_graph | addressables | unity_ecs
+
+unreal_domain ::= blueprint | actor | component_unreal | game_mode
+                | player_controller | widget | niagara | material_editor
+                | behavior_tree | level_streaming
+
+phaser_domain ::= phaser_scene | phaser_sprite | phaser_physics
+                | phaser_tilemap | phaser_animation | phaser_input
+                | phaser_camera | phaser_group
+
+pixijs_domain ::= pixi_application | pixi_sprite | pixi_container
+                | pixi_graphics | pixi_filter | pixi_ticker
+                | pixi_texture | pixi_particle
+
+(* ============================================================ *)
+(* 9. 3D Modeling                                               *)
+(* ============================================================ *)
+
+modeling_3d_domain ::= blender_python | procedural_geometry | material_domain
+                     | lighting_domain | bpy_domain
+
+blender_python ::= bpy_ops | bpy_data | bpy_context | bpy_types
+                 | addon_registration | operator_class | panel_class
+                 | modal_operator | property_group
+
+procedural_geometry ::= mesh_from_vertices | subdivision_surface
+                      | boolean_operation | curve_to_mesh | displacement
+                      | voronoi_tessellation | marching_cubes | iso_surface
+                      | geometry_nodes | scatter_on_surface
+
+material_domain ::= principled_bsdf | node_tree | texture_node
+                  | shader_node | mix_shader | emission | subsurface
+                  | metallic | roughness | normal_map | bump_map
+
+lighting_domain ::= point_light | sun_light | area_light | spot_light
+                  | hdri_environment | ambient_occlusion | global_illumination
+                  | light_probe | reflection_probe | irradiance_volume
+
+bpy_domain ::= mesh_data | object_data | scene_data | collection
+             | modifier_stack | constraint_stack | driver | keyframe_insert
+
+(* ============================================================ *)
+(* 10. Post-Processing                                          *)
+(* ============================================================ *)
+
+post_processing_domain ::= bloom_effect | ssao_effect | dof_effect
+                         | tone_mapping_op | color_grading_op
+
+bloom_effect ::= threshold | intensity | radius | soft_knee
+               | additive_blend | mip_chain | downsample_upsample
+
+ssao_effect ::= screen_space_ao | hbao | gtao | ssao_radius
+              | ssao_bias | ssao_samples | ssao_blur
+
+dof_effect ::= circle_of_confusion | bokeh_shape | focal_distance
+             | aperture | near_blur | far_blur | gather_pass
+
+tone_mapping_op ::= reinhard | aces_filmic | uncharted2 | hable
+                  | exposure_control | auto_exposure | hdr_to_ldr
+
+color_grading_op ::= lut_3d | lift_gamma_gain | color_balance
+                   | channel_mixer | vignette | film_grain
+                   | chromatic_aberration | lens_distortion
+
+(* ============================================================ *)
+(* 11. Perception Loop                                          *)
+(* ============================================================ *)
+
+perception_loop_domain ::= render_critic | screenshot_capture
+                         | devtools_analysis | visual_scoring
+
+render_critic ::= critic_prompt | reference_comparison | delta_detection
+                | aesthetic_score | functional_score | convergence_check
+
+screenshot_capture ::= headless_browser | puppeteer | playwright
+                     | canvas_to_blob | dom_to_image | html2canvas
+
+devtools_analysis ::= performance_timeline | paint_flashing | layer_panel
+                    | fps_meter | memory_snapshot | network_waterfall
+                    | lighthouse_audit | coverage_report
+
+visual_scoring ::= pixel_diff | structural_similarity | perceptual_hash
+                 | layout_shift_score | visual_completeness | contrast_ratio
+                 | color_accuracy | alignment_score | whitespace_balance
+
+(* ============================================================ *)
+(* 12. Component Libraries                                      *)
+(* ============================================================ *)
+
+component_lib_domain ::= mui_domain | radix_domain | shadcn_domain
+                       | chakra_domain | tailwind_domain
+
+mui_domain ::= mui_theme | mui_sx | mui_component | mui_system
+             | mui_data_grid | mui_date_picker | mui_lab
+
+radix_domain ::= radix_primitive | radix_color | radix_icon
+               | radix_theme | radix_slot | radix_portal
+               | unstyled_primitive | composable_api
+
+shadcn_domain ::= shadcn_component | shadcn_theme | shadcn_cli
+                | tailwind_variant | cn_utility | cva_variant
+
+chakra_domain ::= chakra_theme | chakra_style_props | chakra_component
+                | chakra_responsive | chakra_color_mode | chakra_factory
+
+tailwind_domain ::= utility_class | responsive_prefix | state_variant
+                  | custom_plugin | design_token | jit_mode
+                  | arbitrary_value | group_peer
+
+(* ============================================================ *)
+(* 13. Performance                                              *)
+(* ============================================================ *)
+
+performance_domain ::= instanced_rendering | lod_strategy | frustum_culling
+                     | gpu_profiling | render_budget
+
+instanced_rendering ::= instance_buffer | instance_attribute | draw_instanced
+                      | dynamic_batching | static_batching | merge_geometry
+
+lod_strategy ::= discrete_lod | continuous_lod | hlod | impostor
+               | billboard | screen_space_lod | distance_threshold
+
+frustum_culling ::= view_frustum | bounding_box | bounding_sphere
+                  | octree | bvh | portal_culling | occlusion_culling
+
+gpu_profiling ::= gpu_timestamp | render_doc | spector_js | chrome_gpu
+                | draw_call_count | triangle_count | texture_memory
+                | shader_complexity | overdraw | fill_rate
+
+render_budget ::= frame_budget_16ms | cpu_gpu_balance | main_thread
+                | worker_offload | wasm_acceleration | requestAnimationFrame
+                | requestIdleCallback | scheduler_yield
+
+(* ============================================================ *)
+(* 14. Accessibility                                            *)
+(* ============================================================ *)
+
+accessibility_domain ::= wcag_contrast | aria_domain | screen_reader_domain
+                       | reduced_motion
+
+wcag_contrast ::= contrast_ratio_aa | contrast_ratio_aaa | large_text_ratio
+                | non_text_contrast | focus_indicator | color_not_sole_indicator
+
+aria_domain ::= aria_role | aria_label | aria_describedby | aria_live
+              | aria_hidden | aria_expanded | aria_selected
+              | landmark_region | tabindex | focus_management
+
+screen_reader_domain ::= alt_text | figure_caption | data_table_header
+                       | chart_description | svg_title_desc | canvas_fallback
+                       | skip_navigation | heading_hierarchy
+
+reduced_motion ::= prefers_reduced_motion | animation_toggle | parallax_disable
+                 | auto_play_pause | transition_duration_zero | scroll_snap_safe
+
+(* ============================================================ *)
+(* 15. Evolution Hooks                                          *)
+(* ============================================================ *)
+
+(* Investigation pattern *)
+investigation ::= observe hypothesize predict test conclude reflect
+                | observe hypothesize test conclude reflect
+                | observe analogize transfer validate reflect
+
+(* Hypothesis methods *)
+hypothesize ::= inductive       (* observe patterns in existing renderings *)
+              | deductive       (* derive from rendering theory/GPU architecture *)
+              | abductive       (* infer why a visual approach works or fails *)
+              | analogical      (* "this rendering technique works like..." *)
+              | combinatorial   (* combine 2D, 3D, XR, game engine approaches *)
+
+(* Test methods *)
+test ::= empirical             (* render, screenshot, measure, compare *)
+       | formal_proof          (* GPU pipeline correctness, shader math *)
+       | simulation            (* procedural scene generation, stress tests *)
+       | thought_experiment    (* "what would happen if..." *)
+       | cross_validation      (* compare across engines/frameworks *)
+       | adversarial           (* edge cases: 0 triangles, NaN coords, OOM *)
+
+(* Conclusions — maps to tetravalent logic *)
+conclude ::= confirm | refute | insufficient | contradictory | revise | discover_question
+
+(* Reflection — Kuhnian paradigm detection *)
+reflect ::= normal_progress | anomaly_detected | paradigm_tension | paradigm_shift
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions: T(0.7) && C(<0.1) gate *)
+(* Weight updates: +0.05 confirm, -0.03 refute/insufficient *)
+(* External refs: Three.js docs, WebGPU spec, Blender Python API, MDN, Godot docs *)

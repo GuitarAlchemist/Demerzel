@@ -1,0 +1,28 @@
+{
+  "department": "visual-computing",
+  "grammar_version": "1.0.0",
+  "hypothesis_weights": {
+    "inductive": 0.20,
+    "deductive": 0.20,
+    "abductive": 0.20,
+    "analogical": 0.20,
+    "combinatorial": 0.20
+  },
+  "test_weights": {
+    "empirical": 0.167,
+    "formal_proof": 0.167,
+    "simulation": 0.167,
+    "thought_experiment": 0.167,
+    "cross_validation": 0.167,
+    "adversarial": 0.167
+  },
+  "metadata": {
+    "last_updated": "2026-03-23",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0,
+    "bootstrapped_by": "demerzel-metabuild"
+  }
+}
