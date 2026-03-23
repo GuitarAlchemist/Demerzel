@@ -69,6 +69,24 @@ definitions:
     formula: "ratio_n = LOLLI_n / max(ERGOL_n, 1)"
     note: "max(ERGOL_n, 1) prevents division by zero; if ERGOL = 0 the ratio is LOLLI (severe)"
 
+  lolli_suppression_annotations:
+    description: |
+      Inline annotations that mark intentional LOLLI in IxQL pipelines.
+      The linter MUST still detect the dead value but report it as "suppressed"
+      rather than counting it toward the LOLLI score.
+    syntax: "@lolli:<action>(\"reason\")"
+    actions:
+      intentional: "Deliberate dead value — chaos tests, examples, placeholders"
+      pending: "Will be connected in a future PR — time-boxed to 14 days max"
+      side-effect: "Binding triggers side effects not visible in AST (write, alert)"
+      external-consumer: "Consumed by a system outside IxQL (API, webhook, file watcher)"
+    rules:
+      - "Suppressed bindings are excluded from LOLLI score"
+      - "Suppressed bindings ARE tracked in a separate 'suppressed_count' metric"
+      - "@lolli:pending annotations expire after 14 days — linter re-flags them"
+      - "Suppression without a reason string is invalid — linter rejects it"
+      - "More than 5 suppressions in a single file triggers a review signal"
+
 inflation_threshold:
   ratio: 3.0
   window: 3     # consecutive cycles

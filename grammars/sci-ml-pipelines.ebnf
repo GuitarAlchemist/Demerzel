@@ -830,3 +830,21 @@ momentum_check ::= "momentum" "(" identifier ("," identifier)* ")" comparison_op
    → when dc >= 1.2: log "Golden zone confirmed"
 *)
 
+(* LOLLI Suppression Annotations *)
+(* Inline annotation: @lolli:intentional("reason") *)
+(* Placed in a comment on the same line as a binding to suppress LOLLI lint *)
+(* The linter MUST still detect the dead binding but report it as "suppressed" *)
+(* Suppressed bindings are excluded from the LOLLI score but tracked separately *)
+lolli_annotation   = "@lolli:" , lolli_action , "(" , quoted_string , ")" ;
+lolli_action       = "intentional"          (* Deliberate dead value — chaos test, example, placeholder *)
+                   | "pending"              (* Will be connected in a future PR — time-boxed 14 days *)
+                   | "side-effect"          (* Binding triggers side effects not visible in AST *)
+                   | "external-consumer" ;  (* Consumed by a system outside IxQL — API, webhook, file watcher *)
+
+(* Example usage:
+   ghost_data <- ix.io.read("state/beliefs/*.json")  -- @lolli:intentional("chaos-test poison")
+   pending_data <- compute_batch(input)               -- @lolli:pending("will wire in #174")
+   audit_log <- write("audit.json", data)             -- @lolli:side-effect("write is the point")
+   webhook_payload <- format(data)                    -- @lolli:external-consumer("consumed by Slack webhook")
+*)
+

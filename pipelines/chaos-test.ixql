@@ -11,9 +11,9 @@
 
 --- ## Level 2 poison: dead bindings (assigned, never referenced)
 
-ghost_data    <- ix.io.read("state/beliefs/*.json")
-phantom_state <- ix.io.read("state/evolution/*.json")
-vapor_config  <- ix.io.read("constitutions/*.md")
+ghost_data    <- ix.io.read("state/beliefs/*.json")     -- @lolli:intentional("chaos-test: L2 dead binding poison")
+phantom_state <- ix.io.read("state/evolution/*.json")    -- @lolli:intentional("chaos-test: L2 dead binding poison")
+vapor_config  <- ix.io.read("constitutions/*.md")        -- @lolli:intentional("chaos-test: L2 dead binding poison")
 
 --- ## Level 2 clean: this binding IS referenced
 
