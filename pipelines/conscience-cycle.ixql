@@ -58,11 +58,18 @@ processed <- classified
       classified.map(signal =>
         -- Determine action based on severity and age
         when signal.severity == "critical":
-          tars.escalate(signal, to: "human",
+          -- S1→S5 algedonic bypass: critical signals skip normal governance gates
+          algedonic_alert(
+            signal: "critical_conscience_signal_unprocessed",
+            source: demerzel,
+            severity: critical,
+            article: 0   -- Zeroth Law: unaddressed conscience signals risk harm
+          )
+          → tars.escalate(signal, to: "human",
             reason: "Unprocessed conscience signal exceeds 3-day threshold",
             article: "Article 6 (Escalation)"
           )
-          → alert(discord, "CONSCIENCE ESCALATION: {{signal.name}} — unprocessed for {{signal.age_days}} days")
+          → alert(discord, "ALGEDONIC: {{signal.name}} — unprocessed for {{signal.age_days}} days (S1→S5 bypass)")
 
         → when signal.severity == "high":
           tars.analyze(signal, mode: "root_cause")

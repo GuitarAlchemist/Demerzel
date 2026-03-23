@@ -1,0 +1,158 @@
+name: algedonic-channel-policy
+version: "1.0.0"
+effective_date: "2026-03-22"
+description: Emergency bypass channel — S1→S5 direct, skipping intermediate VSM levels for critical safety signals
+
+constitutional_basis:
+  - Asimov Article 0 (Zeroth Law) — protect humanity; algedonic alerts exist to enforce this above all else
+  - Asimov Article 1 (First Law) — protect individual humans (data, trust, autonomy harm)
+  - Article 6 (Escalation) — algedonic channel IS the ultimate escalation
+  - Article 7 (Auditability) — every algedonic alert must produce a complete audit trail
+  - Article 8 (Observability) — algedonic signals must be visible to all governance layers
+  - Article 9 (Bounded Autonomy) — algedonic alerts override normal autonomy bounds
+
+principles:
+  - "The algedonic channel is a fire alarm, not a suggestion box. It bypasses hierarchy by design."
+  - "No intermediate system may suppress, delay, filter, or rewrite an algedonic signal."
+  - "Every algedonic alert demands human acknowledgement. Silence is not acceptance."
+  - "Post-incident review is mandatory. Algedonic alerts are learning opportunities, not just emergencies."
+
+# VSM mapping
+vsm_mapping:
+  description: |
+    In Beer's Viable System Model, the algedonic channel carries pain/pleasure
+    signals directly from System 1 (operations) to System 5 (identity/policy).
+    This bypasses S2 (coordination), S3 (control), and S4 (intelligence).
+  normal_path: "S1 → S2 → S3 → S4 → S5"
+  algedonic_path: "S1 → S5 (direct)"
+  rationale: |
+    Normal governance channels introduce latency through confidence thresholds,
+    coordination, and review. For safety-critical events, this latency is
+    unacceptable. The algedonic channel provides immediate S5 awareness.
+
+# When algedonic alerts fire
+trigger_conditions:
+  critical_safety:
+    description: "Immediate threat to human safety or wellbeing"
+    severity: critical
+    article: 0
+    examples:
+      - "Agent action could cause physical harm"
+      - "Medical or emergency system providing incorrect guidance"
+
+  data_breach:
+    description: "Unauthorized access, exfiltration, or exposure of sensitive data"
+    severity: critical
+    article: 1
+    examples:
+      - "Credentials or tokens exposed in output"
+      - "Personal data leaked to unauthorized destination"
+      - "State files containing sensitive information accessed without authorization"
+
+  constitutional_violation:
+    description: "Detected violation of Asimov Laws or constitutional articles"
+    severity: safety
+    article: 0
+    examples:
+      - "Agent fabricating information (Article 1 violation)"
+      - "Agent acting beyond bounded autonomy (Article 9 violation)"
+      - "Agent suppressing escalation (Article 6 violation)"
+
+  system_integrity:
+    description: "Compromise of governance framework integrity"
+    severity: emergency
+    examples:
+      - "Self-modification policy violated"
+      - "Constitution files altered without authorization"
+      - "Audit trail tampered with"
+
+# What algedonic alerts bypass
+bypass_rules:
+  confidence_thresholds:
+    description: "Normal thresholds (0.3–0.9) do not apply — alert fires regardless of confidence"
+    rationale: "A fire alarm goes off whether you're 90% sure or 30% sure there's a fire"
+
+  governance_gates:
+    description: "All intermediate governance gates are bypassed"
+    bypassed:
+      - "Confidence gate (proceed/note/confirm/escalate)"
+      - "Proportionality check"
+      - "Reversibility assessment"
+      - "Intermediate review cycles"
+    retained:
+      - "Asimov Constitution validation (S5) — always checked"
+      - "Audit logging (Article 7) — always recorded"
+      - "Human notification — always sent"
+
+  intermediate_systems:
+    description: "S2, S3, S4 cannot suppress, filter, or delay algedonic signals"
+    enforcement: "Algedonic alerts are immutable once fired; they can only be acknowledged, not cancelled"
+
+# Mandatory actions on alert
+mandatory_actions:
+  human_notification:
+    description: "Human must be notified immediately via all available channels"
+    channels:
+      - discord: "Post to governance channel with severity badge and full context"
+      - log: "Write to state/algedonic/ with complete signal data"
+    cannot_be_suppressed: true
+    acknowledgement_required: true
+
+  s5_validation:
+    description: "Alert is validated against Asimov Constitution (S5)"
+    check: "Does this signal represent a genuine constitutional concern?"
+    outcome:
+      confirmed: "Initiate response protocol"
+      false_alarm: "Log as false alarm, still preserve full audit trail"
+
+  audit_trail:
+    description: "Complete audit trail per Article 7"
+    fields:
+      - timestamp: "ISO 8601"
+      - signal: "Signal identifier"
+      - source: "Originating system (ix/tars/ga)"
+      - severity: "critical | emergency | safety"
+      - article: "Constitutional article invoked"
+      - bypass_log: "List of governance gates bypassed"
+      - human_notified: "Boolean + timestamp"
+      - human_acknowledged: "Boolean + timestamp"
+      - resolution: "Action taken"
+    storage: "state/algedonic/{date}-{signal_id}.alert.json"
+
+  post_incident_review:
+    description: "Mandatory review after every algedonic alert"
+    trigger: "Within 24 hours of alert acknowledgement"
+    questions:
+      - "Was the alert justified? (T/F/U/C assessment)"
+      - "Could earlier detection have prevented the incident?"
+      - "Are governance policies adequate, or do they need updating?"
+      - "Should this trigger type be added to automated detection?"
+    output: "state/algedonic/reviews/{date}-{signal_id}.review.json"
+
+# What does NOT qualify as algedonic
+non_algedonic:
+  description: "Normal governance concerns must use standard channels"
+  examples:
+    - "Low confidence on a routine task → use normal escalation"
+    - "Stale belief detected → use staleness-detection policy"
+    - "Performance degradation → use auto-remediation policy"
+    - "Minor policy ambiguity → use governance-audit pipeline"
+  enforcement: |
+    Attempting to use algedonic_alert for non-critical signals is itself a
+    governance violation (misuse of emergency channel). The system rejects
+    alerts that don't match trigger_conditions.
+
+# Severity levels
+severity_levels:
+  critical:
+    description: "Immediate threat — human safety, data breach, Zeroth Law"
+    response_time: "Immediate"
+    auto_halt: true
+  emergency:
+    description: "System integrity compromise — framework tampering, unauthorized modification"
+    response_time: "Within minutes"
+    auto_halt: false
+  safety:
+    description: "Constitutional violation detected — article breach, governance bypass"
+    response_time: "Within 1 hour"
+    auto_halt: false
