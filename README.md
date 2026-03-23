@@ -20,15 +20,15 @@ This repo is deliberately separate from runtime code. It defines *how agents sho
 Demerzel/
 ├── constitutions/         # 11-article constitution + Asimov root + Demerzel mandate + harm taxonomy
 ├── personas/              # 14 persona archetypes (YAML) defining agent roles and voices
-├── policies/              # 24 governance policies (alignment, rollback, kaizen, conscience, etc.)
+├── policies/              # 38 governance policies (alignment, rollback, kaizen, conscience, etc.)
 ├── logic/                 # Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
-├── grammars/              # 21 EBNF grammars including IxQL (ML pipelines + MCP orchestration)
-├── schemas/               # 23 JSON schemas for personas, beliefs, contracts, and more
+├── grammars/              # 28 EBNF grammars including IxQL (ML pipelines + MCP orchestration)
+├── schemas/               # 30 JSON schemas for personas, beliefs, contracts, and more
 ├── contracts/             # Galactic Protocol specification for cross-repo communication
 ├── state/                 # Persistent governance state (beliefs, conscience, streeling, driver)
 │   └── streeling/         # Streeling University: 16 departments, 14 courses
-├── tests/behavioral/      # 44 behavioral test suites
-├── .claude/skills/        # 37 Claude Code skills (driver, recon, teach, research, etc.)
+├── tests/behavioral/      # 79 behavioral test suites
+├── .claude/skills/        # 46 Claude Code skills (driver, recon, teach, research, etc.)
 ├── templates/             # Integration templates for consumer repos
 ├── examples/              # Scenario walkthroughs and sample data
 ├── sources/               # Extraction material (TARS v1 chats, etc.)
@@ -49,7 +49,7 @@ Demerzel/
 
 | Resilience Score | LOLLI Detection | Policies | Personas | Tests |
 |:---:|:---:|:---:|:---:|:---:|
-| 64% (4 gaps) | L0-L4 + Policy + Schema | 35 | 14 | 70+ |
+| 82% (2 gaps) | L0-L4 + Policy + Schema | 38 | 14 | 79 |
 
 **Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, and dead computations. Inspired by [Netflix's Chaos Monkey](https://netflix.github.io/chaosmonkey/) (2011), which proved that deliberately injecting failure into production systems builds genuine resilience. We apply the same principle to governance: if Demerzel can't catch deliberate poison, she can't catch accidental LOLLI. (See also: *Chaos Engineering* by Casey Rosenthal et al., O'Reilly 2020.)
 
@@ -69,9 +69,9 @@ The score is computed after each [governance-shake-test](pipelines/governance-sh
 | Policy | BS descriptions, missing consumers | BS decoder, anti-LOLLI policy |
 | Schema | Unreferenced schemas | Staleness detection |
 
-**Current status:** R = 0.64 (7/11 injections caught). F# parser `analyzeLolli()` covers L2/L3/L4 with 42 tests. First LOLLI lint run: [0% dead code across 28 pipelines](docs/reports/lolli-lint-report-2026-03-23.md). Remaining gaps: L0/L1 cross-file analysis, automated BS scoring, constitutional compliance validation.
+**Current status:** R = 0.82 (9/11 injections caught). F# parser `analyzeLolli()` covers L2/L3/L4 with 42 tests. Policy-level detection (BS scoring + constitutional compliance) fully enforceable. Schema-level detection now immediate via cross-reference scan (no 14-day delay). First LOLLI lint run: [0% dead code across 28 pipelines](docs/reports/lolli-lint-report-2026-03-23.md). Remaining gaps: L0/L1 cross-file analysis (requires F# multi-file scanner in TARS).
 
-**Trend:** improving (0.0 → 0.64 in one session).
+**Trend:** improving (0.0 → 0.64 → 0.73 → 0.82 across 4 chaos cycles).
 
 Full history: [`state/resilience/history.json`](state/resilience/history.json) | Dashboard pipeline: [`pipelines/resilience-dashboard.ixql`](pipelines/resilience-dashboard.ixql)
 
@@ -83,14 +83,14 @@ Full history: [`state/resilience/history.json`](state/resilience/history.json) |
 |----------|-------|--------|
 | Constitutions | 3 + harm taxonomy | `constitutions/` |
 | Personas | 14 | `personas/*.persona.yaml` |
-| Policies | 35 | `policies/*.yaml` |
-| Grammars | 26 | `grammars/*.ebnf` |
+| Policies | 38 | `policies/*.yaml` |
+| Grammars | 28 | `grammars/*.ebnf` |
 | Schemas | 30 | `schemas/*.json` |
-| Behavioral tests | 66 | `tests/behavioral/*.md` |
-| Skills | 40 | `.claude/skills/*/` |
+| Behavioral tests | 79 | `tests/behavioral/*.md` |
+| Skills | 46 | `.claude/skills/*/` |
 | Departments | 22 | `state/streeling/departments/` |
 | Courses | 16 | `state/streeling/courses/**/en/` |
-| IxQL pipelines | 12 | `pipelines/*.ixql` |
+| IxQL pipelines | 20 | `pipelines/*.ixql` |
 
 ## Usage
 

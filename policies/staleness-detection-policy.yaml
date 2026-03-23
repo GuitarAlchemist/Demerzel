@@ -1,6 +1,6 @@
 name: staleness-detection-policy
-version: "1.0.0"
-effective_date: "2026-03-22"
+version: "1.1.0"
+effective_date: "2026-03-23"
 description: Detect stale, unprocessed, or non-iterated state artifacts and prioritize their refresh. Demerzel should never have blind spots about her own staleness.
 
 constitutional_basis:
@@ -126,6 +126,24 @@ detection_process:
         - Low: {n} items
         - Freshest: {category} ({days} days)
         - Stalest: {category} ({days} days)
+
+  immediate_checks:
+    - name: schema_consumed_by
+      description: "Every schema must declare at least one consumer at creation time — prevents orphaned schemas from requiring the 14-day staleness window"
+      check: "Schema file has at least one reference from a policy, persona, or contract within the repo"
+      severity: error
+      timing: "On creation (immediate) — no 14-day grace period"
+      mechanism: "Cross-reference scan: for each schemas/*.json, verify at least one reference exists in policies/*.yaml, personas/*.yaml, or contracts/"
+      article: "Article 7 (Auditability)"
+      rationale: "Injection #10 in chaos-003 demonstrated that a 14-day delay lets orphaned schemas persist undetected. Immediate cross-reference check closes this gap."
+
+    - name: artifact_consumer_declaration
+      description: "New governance artifacts (schemas, policies, grammars) must declare their consumer in metadata or front-matter"
+      check: "Artifact has a consumed_by, referenced_by, or integration section"
+      severity: warning
+      timing: "On creation"
+      mechanism: "YAML/JSON field presence check"
+      article: "Article 8 (Observability)"
 
   anti_patterns:
     - name: "Stale staleness signal"
