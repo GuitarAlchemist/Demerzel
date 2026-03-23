@@ -1,5 +1,5 @@
 name: governance-process-policy
-version: "1.0.0"
+version: "2.0.0"
 effective_date: "2026-03-22"
 description: Formal process for proposing, reviewing, approving, modifying, and deprecating governance artifacts
 
@@ -31,10 +31,11 @@ artifact_tiers:
       - "Demerzel mandate"
       - "Harm taxonomy"
     approval: supermajority_plus_human
-    review_period_days: 7
+    review_period_days: 30
     description: >
       Highest-impact artifacts. Changes cascade to every policy, persona, and consumer repo.
       Require 2/3 stakeholder approval plus explicit human stakeholder sign-off.
+      30-day comment period ensures all stakeholders have adequate review time.
 
   tier_2_policy:
     artifacts:
@@ -92,7 +93,7 @@ approval_workflows:
         action: "Review for bias, overreach, unintended consequences"
       - step: stakeholder_review
         actor: all_stakeholders
-        action: "7-day review period; stakeholders provide feedback"
+        action: "30-day comment period; stakeholders provide feedback"
       - step: vote
         actor: all_stakeholders
         action: "2/3 supermajority required"
@@ -218,6 +219,80 @@ integration:
   staleness: "Governance artifacts not updated beyond staleness threshold are flagged"
   anti_lolli: "New artifacts must demonstrate a concrete consumer — no speculative governance"
   experimentation: "Successful governance experiments graduate to formal proposals through this process"
+
+# Emergent value detection — S5 (identity/values) evolution
+# When behavioral patterns consistently diverge from constitutional requirements,
+# this signals that the constitution's S5 layer needs review.
+emergent_value_detection:
+  description: >
+    Monitors for behavioral patterns that consistently exceed, fall short of,
+    or operate orthogonally to constitutional requirements. Persistent divergence
+    signals that codified values (S5) may need updating to reflect emergent values.
+
+  detection_criteria:
+    consistency_threshold: 0.8
+    min_observation_window_days: 30
+    min_repos_observed: 2
+    min_occurrences: 5
+
+  divergence_types:
+    positive_emergent:
+      description: "Agents consistently exceed constitutional requirements"
+      example: "Agents voluntarily explain uncertainty even when confidence > 0.9"
+      action: "Flag for S5 review — potential constitutional codification"
+      proposal_path: "constitutional-proposal via GitHub Discussions"
+
+    negative_violation:
+      description: "Agents consistently fall short of constitutional requirements"
+      action: "Escalate immediately — investigate root cause before considering amendment"
+      priority: urgent
+      constraint: "Never weaken the constitution to match poor behavior"
+
+    lateral_gap:
+      description: "Agents exhibit patterns not addressed by any constitutional article"
+      example: "Agents develop cross-repo coordination norms not covered by existing articles"
+      action: "Investigate whether new constitutional coverage is warranted"
+
+  s5_review_process:
+    trigger: "Emergent divergence detected meeting all detection_criteria thresholds"
+    steps:
+      - step: pattern_documentation
+        actor: demerzel
+        action: "Document the behavioral pattern with evidence from all observed repos"
+      - step: divergence_classification
+        actor: demerzel
+        action: "Classify as positive_emergent, negative_violation, or lateral_gap"
+      - step: constitutional_comparison
+        actor: demerzel
+        action: "Identify which constitutional articles the pattern relates to or extends"
+      - step: proposal_decision
+        actor: demerzel
+        action: "Determine if a constitutional proposal is warranted"
+        criteria:
+          - "Pattern is beneficial (positive_emergent or beneficial lateral_gap)"
+          - "Pattern is consistent across repos and sustained over time"
+          - "Pattern is not already codified or implied by existing articles"
+          - "Pattern has 3+ independent evidence items"
+      - step: formal_proposal
+        actor: proposer
+        action: "If warranted, create constitutional proposal via GitHub Discussions template"
+      - step: evolution_log
+        actor: demerzel
+        action: "Append detection to state/constitution/evolution-history.json"
+
+  immutable_constraints:
+    - "Asimov Article 0 (Zeroth Law) may NEVER be amended — this is unconditional and permanent"
+    - "Negative divergence never justifies weakening constitutional requirements"
+    - "Evolution history is append-only — existing entries are never modified or deleted"
+    - "Constitutional proposals always require 30-day comment period, 3+ evidence items, supermajority vote, and human approval"
+
+  pipeline: "pipelines/constitutional-evolution.ixql"
+
+  integration:
+    conscience: "Conscience cycle flags feed into divergence detection as evidence"
+    governance_audit: "Level 3 audits include constitutional alignment checks"
+    belief_state: "Emergent values update belief states with tetravalent confidence"
+    github_discussions: "Proposals are tracked via .github/DISCUSSION_TEMPLATE/constitutional-proposal.yml"
 
 rationale: |
   Hyperlight's GOVERNANCE.md demonstrates that even open-source infrastructure projects

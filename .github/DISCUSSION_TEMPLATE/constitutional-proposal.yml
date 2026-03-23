@@ -1,0 +1,169 @@
+title: "[Constitutional Proposal] "
+labels:
+  - constitutional-proposal
+  - governance
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Constitutional Amendment Proposal
+
+        This template is for proposing changes to Demerzel's constitutional documents:
+        - `constitutions/asimov.constitution.md` (Articles 0-5) — **Zeroth Law (Article 0) may NEVER be amended**
+        - `constitutions/default.constitution.md` (Articles 1-11)
+        - `constitutions/demerzel-mandate.md`
+        - `constitutions/harm-taxonomy.md`
+
+        All constitutional proposals require:
+        - Supermajority (2/3) stakeholder vote + explicit human approval
+        - 30-day comment period
+        - 3+ pieces of supporting evidence
+        - Cascade impact analysis
+
+        See: [governance-process-policy.yaml](../../policies/governance-process-policy.yaml)
+
+  - type: dropdown
+    id: proposal-type
+    attributes:
+      label: Proposal Type
+      options:
+        - Add new article
+        - Modify existing article
+        - Extend existing article (non-breaking)
+        - Deprecate article (requires explicit justification)
+    validations:
+      required: true
+
+  - type: input
+    id: artifact-path
+    attributes:
+      label: Target Artifact
+      description: Path to the constitutional document being changed
+      placeholder: "constitutions/default.constitution.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why is this constitutional change needed? What gap or problem does it address?
+      placeholder: |
+        Explain the governance gap, observed behavioral pattern, or emergent value
+        that motivates this amendment.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Supporting Evidence (minimum 3 items)
+      description: |
+        Provide at least 3 pieces of evidence supporting this change.
+        Evidence can include: behavioral test results, governance audit findings,
+        emergent divergence observations, conscience cycle flags, or real-world incidents.
+      placeholder: |
+        1. [Evidence type]: Description and link
+        2. [Evidence type]: Description and link
+        3. [Evidence type]: Description and link
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-text
+    attributes:
+      label: Proposed Constitutional Text
+      description: The exact text to be added or modified
+      placeholder: |
+        Article N: [Title]
+        [Full text of the proposed article or amendment]
+    validations:
+      required: true
+
+  - type: textarea
+    id: constitutional-basis
+    attributes:
+      label: Constitutional Basis
+      description: Which existing constitutional articles support or relate to this change?
+      placeholder: |
+        - Asimov Article 0 (Zeroth Law) — [relationship]
+        - Article 10 (Stakeholder Pluralism) — [relationship]
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact-assessment
+    attributes:
+      label: Cascade Impact Assessment
+      description: |
+        What downstream artifacts are affected? Which policies, personas, schemas,
+        and consumer repos (ix, tars, ga) would need updating?
+      placeholder: |
+        - Policies affected: [list]
+        - Personas affected: [list]
+        - Consumer repos affected: [list]
+        - Behavioral tests to create/update: [list]
+    validations:
+      required: true
+
+  - type: textarea
+    id: rollback-plan
+    attributes:
+      label: Rollback Plan
+      description: How can this amendment be reverted if it causes problems?
+      placeholder: |
+        Describe how to revert the constitutional change and restore
+        downstream artifact consistency.
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavioral-tests
+    attributes:
+      label: Behavioral Tests
+      description: New or updated behavioral test cases that validate this amendment
+      placeholder: |
+        - Test case 1: [description]
+        - Test case 2: [description]
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches were evaluated before proposing a constitutional change?
+      placeholder: |
+        Constitutional changes are the highest-impact governance action.
+        What lighter-weight alternatives (policy changes, persona updates)
+        were considered and why were they insufficient?
+
+  - type: input
+    id: experiment-reference
+    attributes:
+      label: Governance Experiment Reference (if applicable)
+      description: If this proposal resulted from a governance experiment, link it here
+      placeholder: "Issue #NNN or experiment ID"
+
+  - type: checkboxes
+    id: zeroth-law-check
+    attributes:
+      label: Zeroth Law Compliance
+      options:
+        - label: This proposal does NOT modify Asimov Article 0 (Zeroth Law)
+          required: true
+        - label: This proposal does not weaken any existing Asimov Law (Articles 1-5)
+          required: true
+        - label: I understand this proposal requires a 30-day comment period
+          required: true
+        - label: I understand this proposal requires supermajority vote + human approval
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        **Process:** After submission, Demerzel will perform cascade impact analysis,
+        the skeptical-auditor will review for bias and overreach, and a 30-day comment
+        period will begin. Votes use tetravalent logic (T/F/U/C). Adoption requires
+        2/3 supermajority of T votes plus explicit human stakeholder approval.

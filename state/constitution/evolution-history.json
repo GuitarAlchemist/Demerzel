@@ -1,0 +1,81 @@
+{
+  "$schema": "../../schemas/constitution-evolution.schema.json",
+  "version": "1.0.0",
+  "description": "Immutable append-only log of all constitutional amendments, proposals, and S5 emergent value detections",
+  "metadata": {
+    "created": "2026-03-22",
+    "last_updated": "2026-03-22",
+    "immutability_rule": "Entries may NEVER be modified or deleted — append only",
+    "zeroth_law_lock": "Asimov Article 0 (Zeroth Law) may never appear as a target of amendment"
+  },
+  "amendments": [
+    {
+      "id": "GENESIS-001",
+      "date": "2026-03-14",
+      "type": "creation",
+      "artifact": "constitutions/asimov.constitution.md",
+      "description": "Initial creation of Asimov constitution — Articles 0-5 (Laws of Robotics)",
+      "evidence": [
+        "Asimov's Three Laws of Robotics as foundational AI safety framework",
+        "Zeroth Law extension from Foundation series canon",
+        "Separation of understanding/goals (Article 4) from alignment research"
+      ],
+      "proposer": "human-stakeholder",
+      "vote": {
+        "T": 1,
+        "F": 0,
+        "U": 0,
+        "C": 0
+      },
+      "outcome": "adopted",
+      "human_approval": true,
+      "cascade_impact": ["All downstream policies and personas inherit Asimov constitution"]
+    },
+    {
+      "id": "GENESIS-002",
+      "date": "2026-03-14",
+      "type": "creation",
+      "artifact": "constitutions/default.constitution.md",
+      "description": "Initial creation of operational ethics constitution — Articles 1-11",
+      "evidence": [
+        "AI safety best practices require explicit operational constraints",
+        "Reversibility, proportionality, and escalation from alignment research",
+        "Auditability and observability requirements from production AI systems"
+      ],
+      "proposer": "human-stakeholder",
+      "vote": {
+        "T": 1,
+        "F": 0,
+        "U": 0,
+        "C": 0
+      },
+      "outcome": "adopted",
+      "human_approval": true,
+      "cascade_impact": ["All policies inherit default constitution", "Consumer repos adopt via templates"]
+    },
+    {
+      "id": "GENESIS-003",
+      "date": "2026-03-14",
+      "type": "creation",
+      "artifact": "constitutions/demerzel-mandate.md",
+      "description": "Initial creation of Demerzel enforcement mandate — defines who enforces the laws",
+      "evidence": [
+        "Foundation series: Daneel as guardian of humanity",
+        "Need for explicit enforcement authority in AI governance",
+        "Constitutional hierarchy requires defined enforcer"
+      ],
+      "proposer": "human-stakeholder",
+      "vote": {
+        "T": 1,
+        "F": 0,
+        "U": 0,
+        "C": 0
+      },
+      "outcome": "adopted",
+      "human_approval": true,
+      "cascade_impact": ["Demerzel's authority over ix, tars, ga established"]
+    }
+  ],
+  "emergent_value_detections": [],
+  "pending_proposals": []
+}

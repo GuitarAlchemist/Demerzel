@@ -1,0 +1,165 @@
+--- ## Constitutional Evolution Pipeline
+--- Monitors behavioral divergence from constitution and detects emergent S5 values.
+--- Source: [governance-process-policy](../policies/governance-process-policy.yaml)
+--- Input: behavioral logs, governance state, constitution articles
+--- Output: divergence reports, emergent value detections, evolution history updates
+
+--- ### Load Constitutional Baseline
+--- Read all constitutional documents to establish expected behavioral norms.
+constitution <- fan_out(
+    ix.io.read("constitutions/asimov.constitution.md"),
+    ix.io.read("constitutions/default.constitution.md"),
+    ix.io.read("constitutions/demerzel-mandate.md")
+  )
+  → tars.extract_behavioral_norms()
+
+--- ### Load Behavioral Evidence
+--- Gather behavioral logs from all consumer repos over the trailing 30-day window.
+behaviors <- fan_out(
+    ix.io.read("state/conscience/*.json")
+      → filter(age_days <= 30),
+    ix.io.read("state/beliefs/*.belief.json")
+      → filter(age_days <= 30),
+    ix.io.read("state/evolution/*.evolution.json")
+      → filter(age_days <= 30),
+    ix.io.read("state/patterns/*.json")
+      → filter(age_days <= 30)
+  )
+
+--- ### Load Evolution History
+--- Immutable append-only record of all constitutional amendments.
+history <- ix.io.read("state/constitution/evolution-history.json")
+
+--- ## Phase 1: Divergence Detection
+--- Compare observed behavioral patterns against constitutional norms.
+--- Divergence types:
+---   - **positive**: agents exceed constitutional requirements (emergent values)
+---   - **negative**: agents fall short of constitutional requirements (violations)
+---   - **lateral**: agents exhibit patterns not addressed by constitution (gaps)
+divergence <- tars.compare_norms(
+    expected: constitution,
+    observed: behaviors,
+    threshold: 0.7,
+    min_occurrences: 5,
+    min_repos: 2
+  )
+  → classify:
+      when divergence.direction == "exceeds" and divergence.consistency >= 0.8:
+        { type: "positive_emergent", priority: "review" }
+      when divergence.direction == "falls_short" and divergence.severity >= 0.7:
+        { type: "negative_violation", priority: "urgent" }
+      when divergence.direction == "orthogonal" and divergence.frequency >= 10:
+        { type: "lateral_gap", priority: "investigate" }
+
+--- ## Phase 2: Emergent Value Analysis
+--- For positive divergences, evaluate whether they represent genuine emergent S5 values
+--- worthy of constitutional codification.
+emergent_candidates <- divergence
+  → filter(type == "positive_emergent")
+  → tars.evaluate_emergent_value(
+      criteria: [
+        "consistent_across_repos",     -- observed in 2+ consumer repos
+        "sustained_over_time",         -- present for 30+ days
+        "not_contradicting_existing",  -- does not conflict with current articles
+        "beneficial_to_stakeholders",  -- improves outcomes for affected parties
+        "not_already_codified"         -- genuinely new, not a restatement
+      ]
+    )
+  → confidence_calibration
+
+--- ## Phase 3: Zeroth Law Guard
+--- Ensure no detected pattern or proposal targets Asimov Article 0.
+--- This check is unconditional and cannot be overridden.
+zeroth_guard <- fan_out(
+    emergent_candidates
+      → filter(affects_article("asimov.article_0"))
+      → when any: {
+          logic: "F",
+          action: "REJECT — Zeroth Law is permanently immutable",
+          alert: "human_stakeholder",
+          log: "state/constitution/evolution-history.json"
+        },
+    ix.io.read("state/constitution/evolution-history.json")
+      → filter(amendments[].artifact contains "asimov" and amendments[].description contains "Article 0")
+      → when any: {
+          logic: "C",
+          action: "ALERT — historical attempt to modify Zeroth Law detected",
+          escalate: true
+        }
+  )
+
+--- ## Phase 4: Proposal Generation
+--- For validated emergent values, draft constitutional proposals.
+proposals <- emergent_candidates
+  → filter(confidence >= 0.8)
+  → filter(passes_all_criteria)
+  → tars.draft_proposal(
+      template: ".github/DISCUSSION_TEMPLATE/constitutional-proposal.yml",
+      required_evidence: 3,
+      comment_period_days: 30,
+      vote_type: "tetravalent"
+    )
+
+--- ## Phase 5: Vote Monitoring
+--- Track active proposals through their 30-day comment period.
+--- Map votes to tetravalent logic and detect unresolved U/C states.
+active_votes <- history.pending_proposals
+  → filter(status == "comment_period")
+  → fan_out(
+      tars.tally_votes(logic: "tetravalent")
+        → when any_vote == "U": { action: "investigate", provide_analysis: true }
+        → when any_vote == "C": { action: "escalate", resolve_conflict: true },
+      filter(days_since_proposal >= 30)
+        → when all_votes_resolved:
+            tars.evaluate_supermajority(threshold: 0.667, require_human: true)
+    )
+
+--- ## Phase 6: History Integrity Check
+--- Verify evolution-history.json is append-only — no modifications to existing entries.
+integrity <- ix.io.read("state/constitution/evolution-history.json")
+  → tars.verify_append_only(
+      check: "git_diff",
+      scope: "amendments",
+      rule: "existing entries must match previous commit exactly"
+    )
+  → when integrity_violated: {
+      logic: "F",
+      confidence: 1.0,
+      action: "ALERT — evolution history immutability violated",
+      escalate: "human_stakeholder"
+    }
+
+--- ## Synthesize Report
+--- Map pipeline results to tetravalent conclusions.
+report <- parallel(divergence, emergent_candidates, zeroth_guard, proposals, active_votes, integrity)
+  → tars.synthesize(template: "constitutional-evolution-report")
+
+  → when no_divergence:        { logic: "T", confidence: 0.9, note: "constitution and behavior aligned" }
+  → when positive_emergent:    { logic: "U", confidence: 0.7, note: "emergent values detected — S5 review needed" }
+  → when negative_violation:   { logic: "F", confidence: 0.95, note: "constitutional violations detected" }
+  → when integrity_violated:   { logic: "C", confidence: 1.0, note: "evolution history tampering detected" }
+
+--- ## Persist Results
+  → compound:
+      harvest report.emergent_values
+      promote emergent_values if confidence >= 0.8
+      log report to "state/snapshots/{date}-constitutional-evolution.snapshot.json"
+
+--- ### Update Evolution History (append only)
+--- New detections and proposal state changes are appended — never modified.
+parallel(
+    when report.emergent_values:
+      ix.io.append("state/constitution/evolution-history.json",
+        path: "emergent_value_detections",
+        entry: {
+          date: now(),
+          pattern: report.emergent_values,
+          confidence: report.confidence,
+          status: "detected",
+          proposal_id: null
+        }),
+    when report.adopted_proposals:
+      ix.io.append("state/constitution/evolution-history.json",
+        path: "amendments",
+        entry: report.adopted_proposals)
+  )
