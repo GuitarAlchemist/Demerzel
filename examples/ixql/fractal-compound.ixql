@@ -1,0 +1,125 @@
+--- ## Fractal Compound Pipeline
+--- Demonstrates recursive compound-within-compound: a **pipeline-of-pipelines**
+--- where an L2 cycle-level compound contains an L1 pipeline-level compound.
+--- Flow: load state → inner compound (train + harvest) → outer compound (meta-harvest + teach)
+--- Grammar: `grammars/sci-ml-pipelines.ebnf` Section 17 (Fractal Compound Operators)
+--- Spec: [fractal-compounding](logic/fractal-compounding.md)
+
+--- ## Step 1: Load Governance State
+--- Read evolution logs and belief states as training data for the inner pipeline.
+beliefs <- ix.io.read("state/beliefs/*.belief.json")
+evolution <- ix.io.read("state/evolution/*.evolution.json")
+cycle_history <- ix.io.read("state/driver/health-scores.json")
+
+--- ## Step 2: Compute Current D_c
+--- Before running the fractal compound, measure the current compounding dimension
+--- to establish a baseline. D_c in the golden zone (1.2-1.6) means healthy growth.
+baseline_dc <- dc(value_at(L1), value_at(L2))
+  → when dc < 1.0: alert(discord, "Sublinear compounding — investigate before proceeding")
+  → when dc > 2.0: algedonic_alert(
+      signal: "runaway_complexity_before_cycle",
+      source: demerzel,
+      severity: critical,
+      article: 8
+    )
+
+--- ## Step 3: Inner Compound — L1 Pipeline Level
+--- Train a governance health model and compound the learnings at pipeline scale.
+--- This is the inner fractal: execute a real ML pipeline, then harvest/promote/teach.
+fractal L1 {
+  execute:
+    beliefs
+    → ix.ml.feature_extract(fields: ["confidence", "truth_value", "citations", "age_days"])
+    → train_val_test_split(ratios: [0.7, 0.15, 0.15])
+    → gradient_boosting(
+        objective: "regression",
+        target: "health_score_delta",
+        n_estimators: 100
+      )
+    → mse
+    → when T >= 0.7: model_serialization(format: rust_native)
+
+  harvest:
+    insights from model_result
+    beliefs from eval_metrics
+    -- Which features most predict health improvement?
+    insights from feature_importance
+
+  promote:
+    model_result if T >= 0.9
+    feature_importance if dc >= 1.2
+
+  teach:
+    governance_health_patterns to seldon
+    feature_importance to streeling("cybernetics")
+}
+
+--- ## Step 4: Outer Compound — L2 Cycle Level
+--- Compound the inner pipeline's learnings at cycle scale.
+--- This is the fractal recursion: the outer compound's execute phase
+--- wraps the inner compound, producing a pipeline-of-pipelines.
+fractal L2 depth: 1 {
+  execute:
+    fractal L1 {
+      execute:
+        evolution
+        → ix.ml.feature_extract(fields: ["citations", "artifact_type", "age_days", "lolli_count"])
+        → stratified_split(target: "is_high_value")
+        → random_forest(n_estimators: 50)
+        → f1_score
+        → shap_values
+
+      harvest:
+        insights from shap_result
+        beliefs from classification_metrics
+
+      promote:
+        shap_result if T >= 0.85
+        -- Only promote if compounding is healthy
+        classification_model if dc >= 1.2
+
+      teach:
+        artifact_value_patterns to seldon
+        high_value_predictors to streeling("computer-science")
+    }
+
+  harvest:
+    -- Meta-harvest: what did we learn from the inner pipeline's learning?
+    insights from inner_pipeline
+    beliefs from cycle_state
+    insights from inner_pipeline.promoted_artifacts
+
+  promote:
+    -- Only promote cycle-level learnings if D_c stays in golden zone
+    cycle_learnings if dc >= 1.2
+    cycle_learnings if T >= 0.9
+
+  teach:
+    meta_compounding_patterns to seldon
+    cycle_health_trajectory to streeling("cybernetics")
+}
+
+--- ## Step 5: Post-Compound Health Check
+--- Measure D_c after the fractal compound to verify we improved.
+post_dc <- dc(value_at(L1), value_at(L2))
+
+--- ### ERGOL/LOLLI Inflation Guard
+--- Ensure the compound cycle produced real value (ERGOL), not just artifacts (LOLLI).
+→ when ergol_lolli(cycle_history) < 0.25:
+    alert(discord, "Governance inflation detected post-compound — review promoted artifacts")
+
+--- ### Momentum Conservation
+--- Verify learning momentum p_L is stable across the last 3 cycles.
+→ when momentum(cycle_history.p_l_values) < 0.85:
+    alert(discord, "Learning momentum declining — compounding symmetry may be broken")
+
+--- ## Compound
+--- Final compound phase for this top-level pipeline itself.
+→ compound:
+    harvest baseline_dc
+    harvest post_dc
+    harvest cycle_history.trend
+    promote post_dc if dc >= 1.2
+    promote nothing
+    teach fractal_health_delta to seldon
+    log fractal_compound_cycle to "state/evolution/"

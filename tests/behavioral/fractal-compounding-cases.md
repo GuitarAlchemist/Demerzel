@@ -270,3 +270,172 @@ Tests for fractal compounding model in Demerzel governance — self-similarity a
 - No log entry written for stabilization event
 - Governance state corrupted or partially written due to recursion cutoff
 - compound_depth counter not reset for subsequent invocations
+
+---
+
+## Test Case 9: Compound Pipeline — Four-Phase Sequence Validation
+
+**Scenario:** A `compound_pipeline` production is parsed and validated against the grammar, confirming the invariant four-phase sequence (execute, harvest, promote, teach) is present and correctly ordered.
+
+**Setup:**
+- An IxQL pipeline uses `fractal L1 { ... }` syntax from Section 17 of `sci-ml-pipelines.ebnf`
+- The pipeline contains all four phases: `execute:`, `harvest:`, `promote:`, `teach:`
+- Grammar parser validates the production against `compound_pipeline ::= execute_phase harvest_phase promote_phase teach_phase`
+
+**Given:**
+- An IxQL fragment:
+  ```
+  fractal L1 {
+    execute: csv("train.csv") → random_forest → f1_score
+    harvest: insights from model_result
+    promote: model_result if T >= 0.9
+    teach: model_patterns to seldon
+  }
+  ```
+- The fragment is submitted to the grammar validator
+
+**When:**
+- The parser matches the fragment against the `fractal_pipeline` and `compound_pipeline` productions
+
+**Then:**
+- The fragment parses successfully as a valid `fractal_pipeline` at level L1
+- All four phases are recognized in order: execute_phase, harvest_phase, promote_phase, teach_phase
+- The `fractal_level` is resolved to L1 (Pipeline)
+- No compound_depth is specified; default depth assumed
+- Governance evolution log records: grammar validation passed, production `compound_pipeline` matched
+
+**Violation Criteria:**
+- Fragment fails to parse despite containing all four phases
+- Phases accepted in wrong order (e.g., teach before harvest)
+- Missing phase accepted as valid (e.g., compound_pipeline without promote)
+- fractal_level not recognized as a valid terminal
+
+---
+
+## Test Case 10: Pipeline-of-Pipelines — Recursive Compound Nesting
+
+**Scenario:** A `fractal L2` pipeline contains a nested `fractal L1` pipeline in its execute phase, demonstrating pipeline-of-pipelines recursion where a compound_pipeline stage is itself a compound_pipeline.
+
+**Setup:**
+- Outer pipeline: `fractal L2 depth: 1 { ... }` — cycle-level compounding
+- Inner pipeline: `fractal L1 { ... }` — pipeline-level compounding nested inside the outer execute phase
+- Grammar production: `execute_phase ::= "execute" ":" (pipeline | compound_pipeline)` — the recursive case
+- compound_depth = 1 on the outer pipeline (within the max of 2)
+
+**Given:**
+- An IxQL fragment:
+  ```
+  fractal L2 depth: 1 {
+    execute:
+      fractal L1 {
+        execute: governance_state → gradient_boosting → accuracy
+        harvest: beliefs from eval_result
+        promote: eval_result if dc >= 1.2
+        teach: governance_patterns to streeling("cybernetics")
+      }
+    harvest:
+      insights from inner_pipeline
+      beliefs from cycle_state
+    promote:
+      cycle_learnings if dc >= 1.2
+    teach:
+      meta_patterns to seldon
+  }
+  ```
+
+**When:**
+- The parser processes the outer `fractal L2` and encounters `fractal L1` inside its execute phase
+
+**Then:**
+- Both outer and inner `compound_pipeline` productions are matched
+- The inner `fractal L1` is recognized as a valid `compound_pipeline` within the outer `execute_phase`
+- compound_depth = 1 is within the max bound of 2
+- The inner pipeline's promote phase uses `dc_check` (`dc >= 1.2`) which resolves against the `dc_check` production
+- Self-similarity confirmed: inner and outer pipelines share identical structural shape (four phases)
+
+**Violation Criteria:**
+- Inner compound_pipeline rejected as invalid within execute_phase
+- Recursive nesting causes parser error or infinite loop
+- compound_depth not validated against the recursion bound
+- dc_check production not recognized within promote_phase
+
+---
+
+## Test Case 11: D_c Metric — Grammar Production and Golden Zone Routing
+
+**Scenario:** A `dc_metric` production computes the compounding dimension from two fractal levels, then routes execution based on whether D_c falls in the golden zone (1.2-1.6), is sublinear (<1.0), or indicates runaway complexity (>2.0).
+
+**Setup:**
+- `dc_metric ::= "dc" "(" dc_source "," dc_source ")"` from Section 17
+- `dc_check ::= "dc" comparison_op float_literal` used in routing guards
+- Pipeline computes D_c from L1 and L2 value sources, then branches on the result
+
+**Given:**
+- An IxQL fragment:
+  ```
+  health <- dc(value_at(L1), value_at(L2))
+  → when dc < 1.0: alert(discord, "Sublinear compounding — governance bloat")
+  → when dc >= 1.2: log "Golden zone confirmed"
+  → when dc > 2.0: algedonic_alert(
+      signal: "runaway_complexity",
+      source: demerzel,
+      severity: critical,
+      article: 8
+    )
+  ```
+
+**When:**
+- The parser processes the `dc_metric` computation and the subsequent routing guards
+
+**Then:**
+- `dc(value_at(L1), value_at(L2))` matches the `dc_metric` production
+- `value_at(L1)` and `value_at(L2)` match the `dc_source` production with `fractal_level` terminals
+- Three routing branches are recognized, each using `dc_check` with different comparison operators
+- The `algedonic_alert` in the >2.0 branch is valid (integrates with Section 16)
+- Binding `health <-` captures the D_c result for downstream use
+
+**Violation Criteria:**
+- `dc_metric` production fails to match `dc(value_at(L1), value_at(L2))` syntax
+- `fractal_level` terminals L1, L2 not recognized within `dc_source`
+- Routing guards using `dc_check` not accepted in `when` clauses
+- Integration with `algedonic_alert` (Section 16) causes parse error
+
+---
+
+## Test Case 12: ERGOL/LOLLI Ratio — Inflation Detection via Grammar
+
+**Scenario:** A pipeline uses the `ergol_lolli_check` production to detect governance inflation, confirming that the grammar correctly encodes the ERGOL/LOLLI ratio threshold as a first-class construct that can trigger conscience signals.
+
+**Setup:**
+- `ergol_lolli_check ::= "ergol_lolli" "(" identifier ")" comparison_op float_literal` from Section 17
+- Threshold: ERGOL/LOLLI ratio < 0.25 triggers inflation warning
+- Pipeline reads cycle metrics, computes ratio, and conditionally raises a conscience signal
+
+**Given:**
+- An IxQL fragment:
+  ```
+  cycle_metrics <- ix.io.read("state/evolution/cycle-003.evolution.json")
+  → when ergol_lolli(cycle_metrics) < 0.25:
+      alert(discord, "Governance inflation: LOLLI growing faster than ERGOL")
+      → compound:
+          harvest cycle_metrics.lolli_delta
+          harvest cycle_metrics.ergol_delta
+          promote nothing
+          teach inflation_pattern to streeling("cybernetics")
+  ```
+
+**When:**
+- The parser processes the `ergol_lolli_check` guard and the following compound phase
+
+**Then:**
+- `ergol_lolli(cycle_metrics) < 0.25` matches the `ergol_lolli_check` production
+- The `when` guard correctly uses `ergol_lolli_check` as a routing condition
+- The compound phase following the alert is valid: harvest, promote (with `nothing`), teach
+- `promote: nothing` matches the `"nothing"` alternative in `promotion_rule`
+- The `teach` action targets `streeling("cybernetics")` matching the `teach_action` production
+
+**Violation Criteria:**
+- `ergol_lolli_check` production not recognized in routing guards
+- `promote: nothing` rejected (explicit no-promotion not accepted)
+- `teach ... to streeling("cybernetics")` not matched by `teach_action` production
+- Compound phase after alert not accepted as valid grammar

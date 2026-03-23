@@ -687,3 +687,146 @@ markdown_content = { any_char - newline } ;
    --- This is a **literate comment** (rendered as markdown)
 *)
 
+(* ============================================================ *)
+(* 16. Algedonic Signals — S1→S5 Emergency Bypass              *)
+(* ============================================================ *)
+
+(* Beer's algedonic channel: pain/pleasure signals that bypass  *)
+(* the management hierarchy. Like a fire alarm — doesn't go    *)
+(* through your manager. S1→S5 direct, skipping S2/S3/S4.     *)
+(* See: policies/algedonic-channel-policy.yaml                  *)
+
+algedonic_alert = "algedonic_alert" , "(" , signal_params , ")" ;
+signal_params = "signal:" , string , ","
+              , "source:" , identifier , ","
+              , "severity:" , severity_level , ","
+              , "article:" , integer ;
+
+severity_level = "critical" | "emergency" | "safety" ;
+
+(* Algedonic alerts bypass normal governance gates:
+   - No confidence threshold check
+   - No intermediate system filtering
+   - Direct to S5 (Asimov Constitution) validation
+   - Mandatory human notification (Discord + log)
+   - Full audit trail per Article 7 (Auditability)
+*)
+
+(* Example:
+   algedonic_alert(
+     signal: "data_breach_detected",
+     source: ix,
+     severity: critical,
+     article: 0   -- Zeroth Law
+   )
+
+   algedonic_alert(
+     signal: "constitutional_violation",
+     source: tars,
+     severity: safety,
+     article: 1   -- Truthfulness violation
+   )
+*)
+
+(* ============================================================ *)
+(* 17. Fractal Compound Operators                               *)
+(* ============================================================ *)
+
+(* Self-similar compounding: the same execute → harvest → promote → teach
+   sequence repeats at every scale (step, pipeline, cycle, session, evolution).
+   A pipeline stage can itself be a compound_pipeline, enabling recursive
+   pipeline-of-pipelines composition.
+   See: logic/fractal-compounding.md, policies/alignment-policy.yaml *)
+
+(* Fractal levels — the scale at which compounding occurs *)
+fractal_level ::= "L0"   (* Step:      step → learning *)
+                | "L1"   (* Pipeline:  pipeline → compound(step_learnings) *)
+                | "L2"   (* Cycle:     driver_cycle → compound(pipeline_learnings) *)
+                | "L3"   (* Session:   session → compound(cycle_learnings) *)
+                | "L4"   (* Evolution: evolution_log → compound(session_learnings) *)
+
+(* Compound pipeline — the four-phase invariant sequence *)
+compound_pipeline ::= execute_phase harvest_phase promote_phase teach_phase
+
+execute_phase ::= "execute" ":" (pipeline | compound_pipeline)
+                (* The subject of execution: a pipeline or a nested compound_pipeline *)
+                (* Pipeline-of-pipelines: execute phase can recurse *)
+
+harvest_phase ::= "harvest" ":" harvest_target+
+harvest_target ::= expression
+                 | "insights" "from" identifier
+                 | "beliefs" "from" identifier
+
+promote_phase ::= "promote" ":" promotion_rule+
+promotion_rule ::= expression "if" mog_guard
+                 | expression "if" dc_check
+                 | "nothing"   (* explicit no-promotion *)
+
+teach_phase ::= "teach" ":" teach_action+
+teach_action ::= expression "to" identifier
+               | expression "to" "seldon"
+               | expression "to" "streeling" "(" department_name ")"
+department_name ::= string_literal
+
+(* Compounding dimension — fractal health metric *)
+dc_metric ::= "dc" "(" dc_source "," dc_source ")"
+dc_source ::= "value_at" "(" fractal_level ")"
+            | identifier
+
+dc_check ::= "dc" comparison_op float_literal
+(* dc >= 1.2 : golden zone lower bound *)
+(* dc <= 1.6 : golden zone upper bound *)
+(* dc < 1.0  : sublinear — governance bloat *)
+(* dc > 2.0  : runaway complexity *)
+
+(* Compound depth — recursion bound *)
+compound_depth ::= "depth" ":" integer_literal
+(* Maximum compound_depth = 2; beyond that, inner compound is a no-op *)
+(* Enforced at runtime: if depth >= 2, compound_pipeline → identity *)
+
+(* Fractal compound pipeline declaration — wraps compound_pipeline with metadata *)
+fractal_pipeline ::= "fractal" fractal_level compound_depth? "{" compound_pipeline "}"
+
+(* ERGOL/LOLLI ratio check — governance inflation detection *)
+ergol_lolli_check ::= "ergol_lolli" "(" identifier ")" comparison_op float_literal
+(* If ERGOL growth / LOLLI growth < 0.25 → governance inflation warning *)
+
+(* Learning momentum — conservation check *)
+momentum_check ::= "momentum" "(" identifier ("," identifier)* ")" comparison_op float_literal
+(* p_L = (beliefs_T_gained - beliefs_T_lost) / cycles_elapsed *)
+(* Constant p_L across cycles → symmetry preserved *)
+
+(* Examples:
+   -- Simple compound pipeline at L1 (pipeline level)
+   fractal L1 {
+     execute: csv("train.csv") → random_forest → f1_score
+     harvest: insights from model_result
+     promote: model_result if T >= 0.9
+     teach: model_patterns to seldon
+   }
+
+   -- Nested fractal: L2 cycle compounds L1 pipeline learnings
+   fractal L2 depth: 1 {
+     execute:
+       fractal L1 {
+         execute: governance_state → gradient_boosting → accuracy
+         harvest: beliefs from eval_result
+         promote: eval_result if dc >= 1.2
+         teach: governance_patterns to streeling("cybernetics")
+       }
+     harvest:
+       insights from inner_pipeline
+       beliefs from cycle_state
+     promote:
+       cycle_learnings if dc >= 1.2
+       cycle_learnings if T >= 0.9
+     teach:
+       meta_patterns to seldon
+   }
+
+   -- D_c metric computation
+   health <- dc(value_at(L1), value_at(L2))
+   → when dc < 1.0: alert(discord, "Sublinear compounding detected")
+   → when dc >= 1.2: log "Golden zone confirmed"
+*)
+
