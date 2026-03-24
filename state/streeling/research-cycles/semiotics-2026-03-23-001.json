@@ -1,0 +1,24 @@
+{
+  "cycle_id": "semiotics-2026-03-23-001",
+  "department": "semiotics",
+  "question": "Does Peirce's icon-index-symbol trichotomy meaningfully classify the different types of signs found in AI governance constitutions?",
+  "production_path": ["observe", "hypothesize:abductive", "test:cross_validation", "conclude:confirm", "reflect:normal_progress"],
+  "hypothesis": "AI governance documents contain all three Peircean sign types: icons (diagrams, structural mirrors), indexes (references pointing to artifacts, version numbers), and symbols (conventional terms like 'Zeroth Law' or 'tetravalent logic'). This trichotomy provides a useful analytical lens for understanding how governance documents carry meaning.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "Icons are present: hierarchy charts in constitutions visually mirror the governance structure they describe; ASCII art diagrams in policies iconically represent data flows",
+    "Indexes are present: cross-references ('see policy X'), file paths, version numbers, and schema $ref pointers all function as indexical signs pointing causally to their referents",
+    "Symbols are present: terms like 'Zeroth Law', 'tetravalent logic', 'PDCA cycle', 'nigredo' are arbitrary conventional signs whose meaning is established by the governance framework's social contract",
+    "The trichotomy reveals that governance documents are multimodal sign systems — icons for quick comprehension, indexes for traceability, symbols for precision — and each mode serves a distinct governance function",
+    "Cross-validated with GPT-4o-mini: high agreement — strong analytical fit confirmed across all three sign categories with concrete examples"
+  ],
+  "conclusion": "confirm",
+  "belief_value": "T",
+  "belief_confidence": 0.85,
+  "cross_model_agreement": "high",
+  "models_consulted": ["claude-opus-4-6", "gpt-4o-mini"],
+  "course_produced": "sem-001-signs-in-governance",
+  "grammar_evolved": false,
+  "duration_seconds": 180,
+  "timestamp": "2026-03-23T14:10:00Z"
+}
