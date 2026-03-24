@@ -257,3 +257,5 @@ Automatically appended by Demerzel after each governance action.
 **Follow-up triggers:** fuzzy DU implementation, stale conscience (#68), first research cycle (#72), tars directive, dashboard reports (#73), Discord channels (#71), 55 course translations (#70)
 
 [2026-03-22] Seldon Plan cycle cybernetics-2026-03-22-001: cybernetics | "VSM-to-AI governance mapping — structural validity, three gaps, requisite variety" | T(0.82) | course:yes
+
+[2026-03-23] Seldon Auto-Research psychohistory-2026-03-23-001: psychohistory(ratio:0.00) | "Governance phase transition signals — six measurable precursors" | T(0.80) | course:yes

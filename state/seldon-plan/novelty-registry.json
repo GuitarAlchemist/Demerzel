@@ -34,6 +34,19 @@
       "date": "2026-03-23",
       "course_produced": true,
       "course_path": "state/streeling/courses/cybernetics/en/CYB-003-measuring-variety-ratio-quantitatively.md"
+    },
+    {
+      "question_hash": "902f4459a3526d5a2e4a7fb4dc4c64e52e53de40e7c43bb02367cf8840cd5f36",
+      "question": "What measurable signals in file-based AI governance state (belief distributions, health scores, policy counts) indicate that a governance system is approaching a phase transition — a qualitative shift from one operational regime to another?",
+      "belief_value": "T",
+      "belief_confidence": 0.80,
+      "cycle_id": "psychohistory-2026-03-23-001",
+      "department": "psychohistory",
+      "date": "2026-03-23",
+      "source": "seldon-auto-research",
+      "coverage_ratio_at_selection": 0.0,
+      "course_produced": true,
+      "course_path": "state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md"
     }
   ]
 }

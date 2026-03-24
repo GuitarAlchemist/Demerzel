@@ -2,24 +2,24 @@
   "department": "psychohistory",
   "grammar_version": "1.0.0",
   "hypothesis_weights": {
-    "inductive": 0.30,
-    "deductive": 0.30,
-    "abductive": 0.20,
-    "analogical": 0.10,
-    "combinatorial": 0.10
+    "inductive": 0.333,
+    "deductive": 0.286,
+    "abductive": 0.190,
+    "analogical": 0.095,
+    "combinatorial": 0.095
   },
   "test_weights": {
-    "empirical": 0.25,
-    "formal_proof": 0.15,
-    "simulation": 0.35,
-    "thought_experiment": 0.10,
-    "cross_validation": 0.10,
-    "adversarial": 0.05
+    "empirical": 0.238,
+    "formal_proof": 0.143,
+    "simulation": 0.333,
+    "thought_experiment": 0.095,
+    "cross_validation": 0.143,
+    "adversarial": 0.048
   },
   "metadata": {
-    "last_updated": "2026-03-21",
-    "cycle_count": 0,
-    "total_T": 0,
+    "last_updated": "2026-03-23",
+    "cycle_count": 1,
+    "total_T": 1,
     "total_F": 0,
     "total_U": 0,
     "total_C": 0
