@@ -1,0 +1,207 @@
+# 3D Visualization Aesthetics — Tetravalent Beliefs
+# Discovered via multi-model pipeline (Claude Opus 4.6 + GPT-4o + web research)
+# Domain: holographic graph visualization for governance data (~100 nodes)
+# Date: 2026-03-24
+
+beliefs:
+
+  # ─── LAYOUT ─────────────────────────────────────────────
+  - id: viz-layout-001
+    subject: "Force-directed layout"
+    proposition: "Force-directed (Fruchterman-Reingold / d3-force-3d) produces the most visually clear and aesthetic layout for 50-200 node graphs"
+    truth_value: T
+    confidence: 0.85
+    evidence:
+      supporting:
+        - source: "GPT-4o (graphics engineer persona)"
+          claim: "Force-directed naturally clusters related nodes, distributes evenly in space"
+        - source: "Fruchterman & Reingold 1991"
+          claim: "Aesthetic graph drawing via simulated annealing — foundational algorithm"
+        - source: "3d-force-graph library (15k+ GitHub stars)"
+          claim: "Most popular 3D graph viz — uses force-directed exclusively"
+      contradicting:
+        - source: "Performance at scale"
+          claim: "O(n²) per tick without Barnes-Hut; GPU compute needed for smooth animation"
+    action: "Use d3-force-3d for layout, not manual sector placement"
+
+  - id: viz-layout-002
+    subject: "Static spherical shell layout"
+    proposition: "Manually placing nodes in concentric spherical shells by type produces cluttered, hard-to-read visualizations"
+    truth_value: T
+    confidence: 0.80
+    evidence:
+      supporting:
+        - source: "User feedback (2026-03-24)"
+          claim: "Multiple complaints about density, overlap, inability to distinguish clusters"
+        - source: "Current Prime Radiant screenshot"
+          claim: "Labels heavily overlapping in dense center region"
+    action: "Replace static shell layout with force-directed physics simulation"
+
+  # ─── RENDERING ──────────────────────────────────────────
+  - id: viz-render-001
+    subject: "WebGPU vs WebGL for graph viz"
+    proposition: "WebGPU provides compute shader capability and better pipeline control, but at ~100 nodes the visual quality advantage over WebGL is negligible"
+    truth_value: T
+    confidence: 0.75
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "WebGPU offers better shader/compute capabilities for advanced effects"
+        - source: "Three.js WebGPURenderer"
+          claim: "Automatic WebGL fallback — no risk in adopting"
+      contradicting:
+        - source: "Scale reality"
+          claim: "114 nodes doesn't need GPU compute; d3-force-3d runs fine on CPU at this scale"
+    action: "Use WebGPURenderer for future-proofing and TSL materials, but don't over-engineer GPU compute for 114 nodes"
+
+  # ─── NODE REPRESENTATION ────────────────────────────────
+  - id: viz-node-001
+    subject: "Node visual representation"
+    proposition: "Combination of instanced mesh (for shape) + additive particle halo (for glow) produces the most holographic look"
+    truth_value: T
+    confidence: 0.80
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "Instanced sprites with transparent/emissive properties create holographic effect"
+        - source: "Foundation TV show reference"
+          claim: "Prime Radiant uses glowing points with halos, not solid geometry"
+        - source: "Three.js instanced rendering"
+          claim: "InstancedMesh with per-instance color/scale = 1 draw call for all nodes"
+    action: "Use InstancedMesh for core shape + additive point sprites for glow halo"
+
+  - id: viz-node-002
+    subject: "Hierarchy encoding"
+    proposition: "Node importance should be encoded via SIZE + BRIGHTNESS (not just one). Gestalt principles show these naturally draw focus."
+    truth_value: T
+    confidence: 0.85
+    evidence:
+      supporting:
+        - source: "Ware, C. 'Information Visualization: Perception for Design'"
+          claim: "Size and luminance are pre-attentive visual attributes — processed before conscious attention"
+        - source: "GPT-4o"
+          claim: "Combination of size and brightness best encodes importance"
+    action: "Constitution nodes 4x size + 2x brightness. Policies 1.5x. Schemas/tests 0.8x."
+
+  # ─── EDGES ─────────────────────────────────────────────
+  - id: viz-edge-001
+    subject: "Edge rendering technique"
+    proposition: "Bezier curves with hierarchical edge bundling reduce clutter while showing flow direction"
+    truth_value: T
+    confidence: 0.80
+    evidence:
+      supporting:
+        - source: "Holten 2006 — Hierarchical Edge Bundles"
+          claim: "Bundling reduces visual clutter, reveals high-level patterns"
+        - source: "GPT-4o"
+          claim: "Bezier curves with edge bundling are both clear and aesthetically beautiful"
+    action: "Implement edge bundling for same-type edges; use animated particles for direction"
+
+  # ─── COLOR ─────────────────────────────────────────────
+  - id: viz-color-001
+    subject: "Color palette for holographic viz"
+    proposition: "Cyan (#00FFFF) + magenta (#FF00FF) + gold (#FFD700) on pure black creates the strongest holographic impression"
+    truth_value: T
+    confidence: 0.85
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "Neon cool tones with stark contrast on dark backgrounds"
+        - source: "Foundation TV show"
+          claim: "Uses amber/gold primary with teal accents"
+        - source: "Sci-fi UI design conventions"
+          claim: "Tron, Blade Runner, Iron Man — all use cyan/gold/magenta on black"
+    action: "Primary: gold #FFD700. Structural: cyan #00CED1. Alert: magenta #FF1493. Background: pure black #000008"
+
+  # ─── BLOOM ─────────────────────────────────────────────
+  - id: viz-bloom-001
+    subject: "Bloom parameters"
+    proposition: "Bloom strength 0.3-0.5, radius 0.4-0.6, threshold 0.6-0.8 produces holographic glow without wash-out"
+    truth_value: T
+    confidence: 0.75
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "strength 0.3, radius 0.5, threshold 0.7"
+        - source: "User feedback (2026-03-24)"
+          claim: "Bloom 1.8/0.6/0.08 caused total white-out; 0.7/0.35/0.4 was acceptable"
+      contradicting:
+        - source: "Empirical testing"
+          claim: "Optimal values depend heavily on scene content — additive blending amplifies bloom unpredictably"
+    action: "Use strength 0.4, radius 0.5, threshold 0.7. Apply bloom selectively via layers."
+
+  # ─── INTERACTION ────────────────────────────────────────
+  - id: viz-interact-001
+    subject: "3D navigation controls"
+    proposition: "Orbit controls with damping + auto-rotate are best for graph exploration; fly-through is disorienting"
+    truth_value: T
+    confidence: 0.80
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "Trackball/orbit provides intuitive rotation + zoom for spatial comprehension"
+        - source: "3d-force-graph default"
+          claim: "Uses orbit controls as standard"
+    action: "Keep orbit controls. Add: click node → smooth zoom + Möbius focus."
+
+  # ─── LABELS ─────────────────────────────────────────────
+  - id: viz-label-001
+    subject: "Label rendering in 3D"
+    proposition: "Billboard sprites with distance-based LOD (show only when camera is close) prevents clutter"
+    truth_value: T
+    confidence: 0.90
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "Billboard sprites with on-demand display based on proximity"
+        - source: "Current implementation"
+          claim: "Distance-based fade already works but ALL labels show at medium zoom = clutter"
+    action: "Show only top-N closest labels (max 15). Hide rest. Show on hover."
+
+  # ─── ANIMATION ─────────────────────────────────────────
+  - id: viz-anim-001
+    subject: "Idle animation"
+    proposition: "Subtle breathing/pulsation + slow auto-rotate + gentle particle drift creates 'alive' feeling without distraction"
+    truth_value: T
+    confidence: 0.80
+    evidence:
+      supporting:
+        - source: "GPT-4o"
+          claim: "Idle motion akin to breathing creates sense of presence"
+        - source: "Foundation TV reference"
+          claim: "Prime Radiant slowly rotates with gentle equation drift"
+    action: "Keep auto-rotate 0.15 speed. Add subtle node pulse (sinusoidal scale ±3%). Equation drift at current rate."
+
+  # ─── KEY UNKNOWN ────────────────────────────────────────
+  - id: viz-unknown-001
+    subject: "Selective bloom (per-object)"
+    proposition: "Selective bloom (bloom only on nodes, not on containment sphere) would solve the wash-out problem permanently"
+    truth_value: U
+    confidence: 0.40
+    evidence:
+      supporting:
+        - source: "Three.js selective bloom examples"
+          claim: "Possible via render layers + multiple composers"
+      contradicting:
+        - source: "Complexity"
+          claim: "Requires 2 render passes and careful layer management"
+    questions_remaining:
+      - "Does Three.js WebGPURenderer support render layers for selective bloom?"
+    action: "Investigate — could be high-impact improvement"
+
+  - id: viz-unknown-002
+    subject: "3d-force-graph vs custom"
+    proposition: "Using 3d-force-graph library would be faster and produce better results than custom Three.js"
+    truth_value: U
+    confidence: 0.50
+    evidence:
+      supporting:
+        - source: "Library maturity"
+          claim: "15k+ stars, handles force layout + rendering + interaction out of box"
+      contradicting:
+        - source: "Aesthetic control"
+          claim: "Limited customization — hard to get holographic particle look"
+    questions_remaining:
+      - "Can 3d-force-graph accept custom Three.js objects for node rendering?"
+      - "Does it support WebGPU renderer?"
+    action: "Prototype with 3d-force-graph to test feasibility before committing"
