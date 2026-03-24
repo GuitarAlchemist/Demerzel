@@ -12,8 +12,8 @@ personas/          14 persona archetypes (YAML) defining agent roles and voices
 logic/             Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
 policies/          39 policies: alignment, rollback, self-modification, kaizen, recon, scientific objectivity, streeling, governance audit, autonomous-loop, multi-model orchestration, context management, context-engine, auto-remediation, ml-feedback, belief-currency, proto-conscience, conscience-observability, intuition, governance-experimentation, ai-probes, multilingual, grammar-evolution, staleness-detection, readme-sync, continuous-learning, completeness-instinct, seldon-plan, weakness-prober, compounding-metrics, meta-audit, capability-unity, chaos-test, resilience-metric, algedonic-channel, governance-process, constitutional-compliance, anti-lolli-inflation, visual-critic, adversarial-resilience
 state/             Demerzel's persistent governance state (beliefs, evolution, pdca, knowledge, snapshots, oversight, conscience, intuition, streeling)
-tests/behavioral/  80 behavioral test suites with 100+ test cases
-schemas/           30 JSON schemas for persona, belief state, reconnaissance, conscience, contracts, context engine, and more
+tests/behavioral/  80 behavioral test suites with 135+ test cases
+schemas/           37 JSON schemas for persona, belief state, reconnaissance, conscience, contracts, context engine, and more
 contracts/         Galactic Protocol specification for cross-repo communication
 examples/          5 scenario walkthroughs + 10 sample data files
 templates/         Integration templates for consumer repos (CLAUDE.md snippet, state directory, agent config)

@@ -20,15 +20,15 @@ This repo is deliberately separate from runtime code. It defines *how agents sho
 Demerzel/
 ├── constitutions/         # 11-article constitution + Asimov root + Demerzel mandate + harm taxonomy
 ├── personas/              # 14 persona archetypes (YAML) defining agent roles and voices
-├── policies/              # 38 governance policies (alignment, rollback, kaizen, conscience, etc.)
+├── policies/              # 39 governance policies (alignment, rollback, kaizen, conscience, etc.)
 ├── logic/                 # Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
-├── grammars/              # 28 EBNF grammars including IxQL (ML pipelines + MCP orchestration)
-├── schemas/               # 30 JSON schemas for personas, beliefs, contracts, and more
+├── grammars/              # 16 EBNF grammars including IxQL (ML pipelines + MCP orchestration)
+├── schemas/               # 37 JSON schemas for personas, beliefs, contracts, and more
 ├── contracts/             # Galactic Protocol specification for cross-repo communication
 ├── state/                 # Persistent governance state (beliefs, conscience, streeling, driver)
-│   └── streeling/         # Streeling University: 23 departments, 17 courses
-├── tests/behavioral/      # 79 behavioral test suites
-├── .claude/skills/        # 46 Claude Code skills (driver, recon, teach, research, etc.)
+│   └── streeling/         # Streeling University: 23 departments, 22 courses
+├── tests/behavioral/      # 80 behavioral test suites
+├── .claude/skills/        # 50 Claude Code skills (driver, recon, teach, research, etc.)
 ├── templates/             # Integration templates for consumer repos
 ├── examples/              # Scenario walkthroughs and sample data
 ├── sources/               # Extraction material (TARS v1 chats, etc.)
@@ -49,7 +49,7 @@ Demerzel/
 
 | Resilience Score | LOLLI Detection | Policies | Personas | Tests |
 |:---:|:---:|:---:|:---:|:---:|
-| 82% (2 gaps) | L0-L4 + Policy + Schema | 38 | 14 | 79 |
+| 82% (2 gaps) | L0-L4 + Policy + Schema | 39 | 14 | 80 |
 
 **Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, and dead computations. Inspired by [Netflix's Chaos Monkey](https://netflix.github.io/chaosmonkey/) (2011), which proved that deliberately injecting failure into production systems builds genuine resilience. We apply the same principle to governance: if Demerzel can't catch deliberate poison, she can't catch accidental LOLLI. (See also: *Chaos Engineering* by Casey Rosenthal et al., O'Reilly 2020.)
 
@@ -69,7 +69,7 @@ The score is computed after each [governance-shake-test](pipelines/governance-sh
 | Policy | BS descriptions, missing consumers | BS decoder, anti-LOLLI policy |
 | Schema | Unreferenced schemas | Staleness detection |
 
-**Current status:** R = 0.82 (9/11 injections caught). F# parser `analyzeLolli()` covers L2/L3/L4 with 42 tests. Policy-level detection (BS scoring + constitutional compliance) fully enforceable. Schema-level detection now immediate via cross-reference scan (no 14-day delay). First LOLLI lint run: [0% dead code across 28 pipelines](docs/reports/lolli-lint-report-2026-03-23.md). Remaining gaps: L0/L1 cross-file analysis (requires F# multi-file scanner in TARS).
+**Current status:** R = 0.82 (9/11 injections caught). F# parser `analyzeLolli()` covers L2/L3/L4 with 42 tests. Policy-level detection (BS scoring + constitutional compliance) fully enforceable. Schema-level detection now immediate via cross-reference scan (no 14-day delay). First LOLLI lint run: [0% dead code across 20 pipelines](docs/reports/lolli-lint-report-2026-03-23.md). Remaining gaps: L0/L1 cross-file analysis (requires F# multi-file scanner in TARS).
 
 **Trend:** improving (0.0 → 0.64 → 0.73 → 0.82 across 4 chaos cycles).
 
@@ -83,13 +83,13 @@ Full history: [`state/resilience/history.json`](state/resilience/history.json) |
 |----------|-------|--------|
 | Constitutions | 3 + harm taxonomy | `constitutions/` |
 | Personas | 14 | `personas/*.persona.yaml` |
-| Policies | 38 | `policies/*.yaml` |
-| Grammars | 28 | `grammars/*.ebnf` |
-| Schemas | 30 | `schemas/*.json` |
-| Behavioral tests | 79 | `tests/behavioral/*.md` |
-| Skills | 46 | `.claude/skills/*/` |
+| Policies | 39 | `policies/*.yaml` |
+| Grammars | 16 | `grammars/*.ebnf` |
+| Schemas | 37 | `schemas/*.json` + `schemas/contracts/` |
+| Behavioral tests | 80 | `tests/behavioral/*.md` |
+| Skills | 50 | `.claude/skills/*/` |
 | Departments | 23 | `state/streeling/departments/` |
-| Courses | 17 | `state/streeling/courses/**/en/` |
+| Courses | 22 | `state/streeling/courses/**/en/` |
 | IxQL pipelines | 20 | `pipelines/*.ixql` |
 
 ## Usage
@@ -111,7 +111,7 @@ When adding governance artifacts:
 
 ## Streeling University
 
-Demerzel hosts [Streeling University](state/streeling/) — a 23-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
+Demerzel hosts [Streeling University](state/streeling/) — a 23-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, semiotics, visual computing, network science, information theory, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and 22 course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
 
 ## IxQL — ML Pipeline Language
 
