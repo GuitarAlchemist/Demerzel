@@ -1,0 +1,383 @@
+# Cross-Model Code Review — GitHub Action Template
+#
+# No model reviews its own work. When one AI generates code,
+# a different model reviews the PR.
+#
+# SETUP:
+#   1. Copy this file to .github/workflows/cross-model-review.yml
+#   2. Create .github/cross-review-config.yml (see below for defaults)
+#   3. Add API keys as GitHub Secrets:
+#      - ANTHROPIC_API_KEY (for Claude reviews)
+#      - OPENAI_API_KEY (for Codex reviews)
+#      - GEMINI_API_KEY (for Gemini reviews)
+#   4. Adjust skip conditions and review matrix as needed
+#
+# GOVERNANCE:
+#   - Article 2 (Transparency): reviewer model is always disclosed
+#   - Article 5 (Non-Deception): model disagreements surface, never silently resolved
+#   - Article 10 (Stakeholder Pluralism): multiple model perspectives
+#   - multi-model-orchestration-policy: cross-validation pattern
+
+name: Cross-Model Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+# Cancel in-progress reviews when new commits are pushed
+concurrency:
+  group: cross-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  detect-and-review:
+    name: Cross-Model Review
+    runs-on: ubuntu-latest
+
+    # Skip draft PRs
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Load config
+        id: config
+        run: |
+          CONFIG_FILE=".github/cross-review-config.yml"
+          if [ -f "$CONFIG_FILE" ]; then
+            echo "config_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "config_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Defaults (used when config file is absent or fields are missing)
+          echo "min_lines=10" >> "$GITHUB_OUTPUT"
+          echo "max_chunk=500" >> "$GITHUB_OUTPUT"
+          echo "skip_docs_only=true" >> "$GITHUB_OUTPUT"
+
+      - name: Compute diff stats
+        id: diff
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          # Total lines changed
+          LINES=$(git diff --stat "$BASE".."$HEAD" | tail -1 | grep -oP '\d+(?= insertion)' || echo 0)
+          DELETIONS=$(git diff --stat "$BASE".."$HEAD" | tail -1 | grep -oP '\d+(?= deletion)' || echo 0)
+          TOTAL=$((LINES + DELETIONS))
+          echo "lines_changed=$TOTAL" >> "$GITHUB_OUTPUT"
+
+          # Check if only docs/config changed
+          NON_DOC=$(git diff --name-only "$BASE".."$HEAD" | grep -cvE '\.(md|txt|yml|yaml|json)$' || echo 0)
+          if [ "$NON_DOC" -eq 0 ]; then
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # File list for review context
+          git diff --name-only "$BASE".."$HEAD" > /tmp/changed_files.txt
+          echo "file_count=$(wc -l < /tmp/changed_files.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Check skip conditions
+        id: skip
+        run: |
+          SKIP="false"
+          REASON=""
+
+          # Too few lines
+          if [ "${{ steps.diff.outputs.lines_changed }}" -lt "${{ steps.config.outputs.min_lines }}" ]; then
+            SKIP="true"
+            REASON="PR has fewer than ${{ steps.config.outputs.min_lines }} lines changed"
+          fi
+
+          # Docs only
+          if [ "${{ steps.config.outputs.skip_docs_only }}" = "true" ] && [ "${{ steps.diff.outputs.docs_only }}" = "true" ]; then
+            SKIP="true"
+            REASON="PR only changes documentation/config files"
+          fi
+
+          # Explicit skip label
+          LABELS='${{ toJSON(github.event.pull_request.labels.*.name) }}'
+          if echo "$LABELS" | grep -q "skip-cross-review"; then
+            SKIP="true"
+            REASON="PR has skip-cross-review label"
+          fi
+
+          echo "should_skip=$SKIP" >> "$GITHUB_OUTPUT"
+          echo "reason=$REASON" >> "$GITHUB_OUTPUT"
+
+      - name: Detect author model
+        id: author
+        if: steps.skip.outputs.should_skip == 'false'
+        run: |
+          MODEL="unknown"
+
+          # Priority 1: PR labels
+          LABELS='${{ toJSON(github.event.pull_request.labels.*.name) }}'
+          if echo "$LABELS" | grep -qi "model:claude"; then
+            MODEL="claude"
+          elif echo "$LABELS" | grep -qi "model:gemini"; then
+            MODEL="gemini"
+          elif echo "$LABELS" | grep -qi "model:codex"; then
+            MODEL="codex"
+          fi
+
+          # Priority 2-4: Commit messages and PR body (if not yet detected)
+          if [ "$MODEL" = "unknown" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+            COMMITS=$(git log --format="%B" "$BASE".."$HEAD")
+            PR_BODY='${{ github.event.pull_request.body }}'
+            SEARCH_TEXT="$COMMITS $PR_BODY"
+
+            if echo "$SEARCH_TEXT" | grep -qiE "Claude Code|claude-opus|claude-sonnet|Co-Authored-By:.*Claude|Anthropic"; then
+              MODEL="claude"
+            elif echo "$SEARCH_TEXT" | grep -qiE "Gemini CLI|gemini-|Jules|Google AI"; then
+              MODEL="gemini"
+            elif echo "$SEARCH_TEXT" | grep -qiE "Codex|codex-|OpenAI|GitHub Copilot"; then
+              MODEL="codex"
+            fi
+          fi
+
+          echo "model=$MODEL" >> "$GITHUB_OUTPUT"
+          echo "Detected author model: $MODEL"
+
+      - name: Select reviewer model
+        id: reviewer
+        if: steps.skip.outputs.should_skip == 'false'
+        run: |
+          AUTHOR="${{ steps.author.outputs.model }}"
+
+          # Default review matrix (override via .github/cross-review-config.yml)
+          case "$AUTHOR" in
+            claude)  REVIEWER="codex"  ;;
+            gemini)  REVIEWER="claude" ;;
+            codex)   REVIEWER="claude" ;;
+            human)   REVIEWER="claude" ;;
+            unknown) REVIEWER="claude" ;;
+            *)       REVIEWER="claude" ;;
+          esac
+
+          # Load override from config if it exists
+          CONFIG_FILE=".github/cross-review-config.yml"
+          if [ -f "$CONFIG_FILE" ]; then
+            OVERRIDE=$(grep -A1 "review_matrix:" "$CONFIG_FILE" | grep "$AUTHOR:" | awk '{print $2}' || true)
+            if [ -n "$OVERRIDE" ]; then
+              REVIEWER="$OVERRIDE"
+            fi
+          fi
+
+          # Safety: reviewer must differ from author
+          if [ "$REVIEWER" = "$AUTHOR" ]; then
+            case "$REVIEWER" in
+              claude) REVIEWER="codex"  ;;
+              *)      REVIEWER="claude" ;;
+            esac
+          fi
+
+          echo "model=$REVIEWER" >> "$GITHUB_OUTPUT"
+          echo "Author: $AUTHOR -> Reviewer: $REVIEWER"
+
+      - name: Generate diff for review
+        id: diff-content
+        if: steps.skip.outputs.should_skip == 'false'
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          # Generate unified diff, chunked if large
+          DIFF=$(git diff "$BASE".."$HEAD")
+          DIFF_LINES=$(echo "$DIFF" | wc -l)
+
+          # Truncate to max chunk size to control costs
+          MAX_CHUNK="${{ steps.config.outputs.max_chunk }}"
+          if [ "$DIFF_LINES" -gt "$MAX_CHUNK" ]; then
+            DIFF=$(echo "$DIFF" | head -n "$MAX_CHUNK")
+            echo "truncated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "truncated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Write diff to file (avoids shell escaping issues)
+          echo "$DIFF" > /tmp/review_diff.txt
+
+      - name: Build review prompt
+        id: prompt
+        if: steps.skip.outputs.should_skip == 'false'
+        run: |
+          cat > /tmp/review_prompt.txt << 'PROMPT_EOF'
+          You are a cross-model code reviewer. A different AI model wrote this code.
+          Your job is to catch what the author model's biases might miss.
+
+          Review the following diff for:
+          1. CORRECTNESS: Logic errors, off-by-ones, edge cases, type mismatches
+          2. SECURITY: OWASP top 10, injection, auth gaps, secrets in code
+          3. ANTI-SLOP: Comments/docs that restate what code says, verbose where concise works
+          4. LOLLI: Dead code, unused exports, ahead-of-demand abstractions
+          5. CONSTITUTIONAL COMPLIANCE: Reversibility, proportionality, auditability
+
+          Output format (use exactly this structure):
+          ## Cross-Model Review
+
+          **Author model:** AUTHOR_MODEL
+          **Reviewer model:** REVIEWER_MODEL
+          **Files reviewed:** FILE_COUNT (LINES_CHANGED lines changed)
+
+          ### Findings
+
+          #### Correctness
+          - [ ] finding with file:line reference (or "none found")
+
+          #### Security
+          - [ ] finding (or "none found")
+
+          #### Anti-Slop
+          - [ ] finding (or "none found")
+
+          #### LOLLI
+          - [ ] finding (or "none found")
+
+          #### Constitutional Compliance
+          - compliant (or list violations)
+
+          ### Verdict: APPROVE | REQUEST_CHANGES | COMMENT
+
+          **Confidence:** 0.0-1.0
+          **Rationale:** one sentence
+
+          IMPORTANT:
+          - Be specific. Reference file names and line numbers.
+          - Do NOT approve by default. Genuine issues warrant REQUEST_CHANGES.
+          - If the diff is truncated, note that in your review.
+          PROMPT_EOF
+
+          # Substitute placeholders
+          sed -i "s/AUTHOR_MODEL/${{ steps.author.outputs.model }}/g" /tmp/review_prompt.txt
+          sed -i "s/REVIEWER_MODEL/${{ steps.reviewer.outputs.model }}/g" /tmp/review_prompt.txt
+          sed -i "s/FILE_COUNT/${{ steps.diff.outputs.file_count }}/g" /tmp/review_prompt.txt
+          sed -i "s/LINES_CHANGED/${{ steps.diff.outputs.lines_changed }}/g" /tmp/review_prompt.txt
+
+      #
+      # --- Reviewer API calls ---
+      # Uncomment the section matching the selected reviewer model.
+      # Each block calls the respective API and writes the review to /tmp/review_output.txt.
+      #
+
+      - name: Call Claude API (reviewer)
+        if: steps.skip.outputs.should_skip == 'false' && steps.reviewer.outputs.model == 'claude'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          PROMPT=$(cat /tmp/review_prompt.txt)
+          DIFF=$(cat /tmp/review_diff.txt)
+
+          # Combine prompt and diff
+          FULL_PROMPT="$PROMPT
+
+          --- DIFF START ---
+          $DIFF
+          --- DIFF END ---"
+
+          # Call Anthropic Messages API
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -d "$(jq -n \
+              --arg content "$FULL_PROMPT" \
+              '{
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 4096,
+                messages: [{role: "user", content: $content}]
+              }')")
+
+          echo "$RESPONSE" | jq -r '.content[0].text // "Review failed: no response"' > /tmp/review_output.txt
+
+      - name: Call OpenAI API (reviewer)
+        if: steps.skip.outputs.should_skip == 'false' && steps.reviewer.outputs.model == 'codex'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          PROMPT=$(cat /tmp/review_prompt.txt)
+          DIFF=$(cat /tmp/review_diff.txt)
+
+          FULL_PROMPT="$PROMPT
+
+          --- DIFF START ---
+          $DIFF
+          --- DIFF END ---"
+
+          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -d "$(jq -n \
+              --arg content "$FULL_PROMPT" \
+              '{
+                model: "gpt-4o",
+                max_tokens: 4096,
+                messages: [{role: "user", content: $content}]
+              }')")
+
+          echo "$RESPONSE" | jq -r '.choices[0].message.content // "Review failed: no response"' > /tmp/review_output.txt
+
+      - name: Call Gemini API (reviewer)
+        if: steps.skip.outputs.should_skip == 'false' && steps.reviewer.outputs.model == 'gemini'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          PROMPT=$(cat /tmp/review_prompt.txt)
+          DIFF=$(cat /tmp/review_diff.txt)
+
+          FULL_PROMPT="$PROMPT
+
+          --- DIFF START ---
+          $DIFF
+          --- DIFF END ---"
+
+          RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg content "$FULL_PROMPT" \
+              '{
+                contents: [{parts: [{text: $content}]}]
+              }')")
+
+          echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // "Review failed: no response"' > /tmp/review_output.txt
+
+      - name: Post review to PR
+        if: steps.skip.outputs.should_skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REVIEW=$(cat /tmp/review_output.txt)
+
+          # Determine review event based on verdict
+          if echo "$REVIEW" | grep -qi "Verdict:.*REQUEST_CHANGES"; then
+            EVENT="REQUEST_CHANGES"
+          elif echo "$REVIEW" | grep -qi "Verdict:.*APPROVE"; then
+            EVENT="APPROVE"
+          else
+            EVENT="COMMENT"
+          fi
+
+          # Post the review
+          gh pr review "${{ github.event.pull_request.number }}" \
+            --body "$REVIEW" \
+            --event "$EVENT" \
+            || gh pr comment "${{ github.event.pull_request.number }}" --body "$REVIEW"
+
+      - name: Post skip notice
+        if: steps.skip.outputs.should_skip == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --body "**Cross-Model Review:** Skipped. Reason: ${{ steps.skip.outputs.reason }}"
