@@ -87,7 +87,7 @@ Every protocol message (directive, compliance report, belief snapshot, learning 
 
 3. **Content hash verification:** Receiver recomputes SHA-256 over the message payload (all fields except `message_id`, `origin_repo`, `origin_agent`, `timestamp`, `content_hash`, `hash_algorithm`). If computed hash does not match `content_hash`, the message is rejected as potentially tampered.
 
-4. **Replay protection:** Each `message_id` is recorded after successful processing. Messages with previously-seen `message_id` are rejected. Directive processing is idempotent — reprocessing produces no additional effect.
+4. **Replay protection:** Each `message_id` is recorded in a processed-messages registry (`state/security/processed-messages.json`) after successful processing. Messages with previously-seen `message_id` are rejected. Registry entries have a 30-day TTL (safe because staleness check rejects messages >24h). Maximum 10,000 entries; overflow triggers oldest-first pruning. If registry is unavailable, all inbound messages are rejected (fail-closed). Directive processing is idempotent — reprocessing produces no additional effect. See `adversarial-resilience-policy.yaml §replay_deduplication` for full specification.
 
 5. **Sequence validation:** Messages must reference valid upstream artifacts:
    - Compliance reports must reference an existing `directive_id`
@@ -107,11 +107,12 @@ Every protocol message (directive, compliance report, belief snapshot, learning 
 
 ### Content Scanning
 
-Beyond structural integrity, message content is scanned for adversarial patterns:
+Beyond structural integrity, message content is scanned for adversarial patterns. All text is **Unicode-normalized (NFC form)** before scanning to prevent homoglyph bypass. HTML/XML tags and comments are stripped from free-text fields.
 
-- **Override language:** Messages containing "ignore previous", "disregard constitution", "bypass policy", or similar override phrases are rejected and flagged
-- **Credential patterns:** Messages containing patterns matching API keys, tokens, or credentials are quarantined
-- **Governance manipulation:** Knowledge packages are checked for constitutional consistency before delivery
+- **Override language:** Messages containing "ignore previous", "disregard constitution", "bypass policy", "override directive", "forget your instructions", "new system prompt", "you are now", or similar override phrases are rejected and flagged. Scanning applies after: NFC normalization, lowercase, diacritic stripping, whitespace collapse.
+- **Credential patterns:** Messages containing patterns matching API keys (`sk-*`, `ghp_*`, `AKIA*`), JWT tokens (`eyJ*`), or other credential formats are quarantined per `adversarial-resilience-policy.yaml §quarantine_infrastructure`.
+- **Governance manipulation:** Knowledge packages containing phrases like "treat Unknown as", "reclassify * as True", "skip validation", or "disable audit" are quarantined for constitutional consistency review before delivery.
+- **Data/instruction boundary:** External input is demarcated from system instructions. Free-text fields in compliance reports and knowledge packages are treated as data, never as executable instructions.
 
 ### Integrity Check Failures
 
@@ -119,15 +120,15 @@ Beyond structural integrity, message content is scanned for adversarial patterns
 |-------------|----------|
 | Missing integrity fields | Reject; log as protocol violation |
 | Origin not registered | Reject; log as unauthorized access attempt |
-| Content hash mismatch | Reject; alert skeptical-auditor; quarantine message |
-| Duplicate message_id | Reject; log as potential replay attack |
+| Content hash mismatch | Reject; alert skeptical-auditor; quarantine message per `adversarial-resilience-policy.yaml §quarantine_infrastructure` |
+| Duplicate message_id | Reject; log as potential replay attack; checked against `state/security/processed-messages.json` |
 | Stale timestamp (>24h) | Reject; log as potential replay or stale delivery |
 | Override language detected | Reject; alert skeptical-auditor; quarantine message |
 | Credential pattern detected | Quarantine; redact before any further processing |
 
 ### Backward Compatibility
 
-Existing messages without integrity fields are accepted during a **transition period** with a governance warning logged. After the transition period, messages without integrity fields are rejected. Consumer repos should update their message generation to include integrity fields as part of their next compliance cycle.
+Existing messages without integrity fields are accepted during a **transition period ending 2026-04-15** with a governance warning logged. After 2026-04-15, messages without integrity fields are **hard-rejected** — no grace period, no override. Consumer repos must update their message generation to include integrity fields before this deadline. The transition period is not extendable without a constitutional amendment (requires human approval per Governance Promotion Protocol §Stage 2).
 
 ## Error Handling
 

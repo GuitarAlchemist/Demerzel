@@ -48,8 +48,9 @@
     },
     "issued_by": {
       "type": "string",
+      "enum": ["demerzel"],
       "default": "demerzel",
-      "description": "Who issued the directive"
+      "description": "Who issued the directive — only Demerzel may issue directives per constitutional mandate"
     },
     "issued_at": {
       "type": "string",
