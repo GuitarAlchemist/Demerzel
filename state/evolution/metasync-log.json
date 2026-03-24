@@ -29,5 +29,22 @@
       {"artifact": "Skills", "was": 39, "now": 40, "file": "README.md"},
       {"artifact": "Behavioral tests count", "was": 53, "now": 55, "file": "CLAUDE.md"}
     ]
+  },
+  {
+    "timestamp": "2026-03-23T00:00:00Z",
+    "scan_date": "2026-03-23",
+    "trivial_drifts_fixed": 5,
+    "structural_flags": 1,
+    "artifacts_checked": 10,
+    "fixes": [
+      {"artifact": "Departments", "was": 22, "now": 23, "file": "README.md"},
+      {"artifact": "Courses", "was": 16, "now": 17, "file": "README.md"},
+      {"artifact": "Streeling prose", "was": "21-department", "now": "23-department", "file": "README.md"},
+      {"artifact": "Structure tree", "was": "16 departments, 14 courses", "now": "23 departments, 17 courses", "file": "README.md"},
+      {"artifact": "IxQL sections", "was": 11, "now": 17, "file": "README.md"},
+      {"artifact": "Policies count", "was": 28, "now": 38, "file": "CLAUDE.md"},
+      {"artifact": "Behavioral tests count", "was": 67, "now": 79, "file": "CLAUDE.md"},
+      {"artifact": "Schemas count", "was": 25, "now": 30, "file": "CLAUDE.md"}
+    ]
   }
 ]

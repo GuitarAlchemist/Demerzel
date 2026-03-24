@@ -26,7 +26,7 @@ Demerzel/
 ├── schemas/               # 30 JSON schemas for personas, beliefs, contracts, and more
 ├── contracts/             # Galactic Protocol specification for cross-repo communication
 ├── state/                 # Persistent governance state (beliefs, conscience, streeling, driver)
-│   └── streeling/         # Streeling University: 16 departments, 14 courses
+│   └── streeling/         # Streeling University: 23 departments, 17 courses
 ├── tests/behavioral/      # 79 behavioral test suites
 ├── .claude/skills/        # 46 Claude Code skills (driver, recon, teach, research, etc.)
 ├── templates/             # Integration templates for consumer repos
@@ -88,8 +88,8 @@ Full history: [`state/resilience/history.json`](state/resilience/history.json) |
 | Schemas | 30 | `schemas/*.json` |
 | Behavioral tests | 79 | `tests/behavioral/*.md` |
 | Skills | 46 | `.claude/skills/*/` |
-| Departments | 22 | `state/streeling/departments/` |
-| Courses | 16 | `state/streeling/courses/**/en/` |
+| Departments | 23 | `state/streeling/departments/` |
+| Courses | 17 | `state/streeling/courses/**/en/` |
 | IxQL pipelines | 20 | `pipelines/*.ixql` |
 
 ## Usage
@@ -111,7 +111,7 @@ When adding governance artifacts:
 
 ## Streeling University
 
-Demerzel hosts [Streeling University](state/streeling/) — a 21-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
+Demerzel hosts [Streeling University](state/streeling/) — a 23-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states and course catalogs governed by the [Streeling policy](policies/streeling-policy.yaml).
 
 ## IxQL — ML Pipeline Language
 
@@ -133,7 +133,7 @@ streaming_source → lag_features → memristive_markov → time_series_validati
 data_source → bias_assessment → model → confidence_calibration → explanation_requirement → deployment
 ```
 
-**11 sections** — data sources, preprocessing, models, evaluation, deployment, governance gates, ix-specific patterns, I/O & reactive patterns, MCP orchestration, evolution hooks. See the [full grammar](grammars/sci-ml-pipelines.ebnf) and the [IxQL Guide](docs/ixql-guide.md) for complex use cases.
+**17 sections** — pipeline architecture, data sources, preprocessing, models, evaluation, deployment, governance gates, ix-specific patterns, I/O & reactive patterns, MCP orchestration, pipeline identity & routing, evolution hooks, assertions, traceability, auto-distillation & type providers, literate comments, algedonic signals, fractal compound operators. See the [full grammar](grammars/sci-ml-pipelines.ebnf) and the [IxQL Guide](docs/ixql-guide.md) for complex use cases.
 
 ## Manifesto for AI-Age Development
 
