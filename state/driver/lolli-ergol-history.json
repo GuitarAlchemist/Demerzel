@@ -1,0 +1,48 @@
+[
+  {
+    "cycle": "001",
+    "timestamp": "2026-03-23T22:00:00Z",
+    "method": "demerzel-lolli-remediate dogfood",
+    "lolli_count": 419,
+    "ergol_count": 311,
+    "ratio": 1.35,
+    "ratio_status": "healthy",
+    "breakdown": {
+      "policies": { "total": 38, "with_consumers": 36, "lolli": 2 },
+      "schemas": { "total": 37, "with_consumers": 35, "lolli": 2 },
+      "personas": { "total": 14, "with_consumers": 14, "lolli": 0 },
+      "grammars": { "total": 28, "with_consumers": 16, "lolli": 12 },
+      "tests": { "total": 79, "with_consumers": 79, "lolli": 0 },
+      "examples": { "total": 57, "with_consumers": 48, "lolli": 9 },
+      "docs": { "total": 34, "with_consumers": 24, "lolli": 10 },
+      "superpowers": { "total": 47, "with_consumers": 13, "lolli": 34 },
+      "templates": { "total": 22, "with_consumers": 22, "lolli": 0 },
+      "skills": { "total": 49, "with_consumers": 41, "lolli": 8 },
+      "contracts": { "total": 10, "with_consumers": 10, "lolli": 0 },
+      "constitutions": { "total": 4, "with_consumers": 4, "lolli": 0 }
+    },
+    "actions": {
+      "deleted": 12,
+      "consolidated": 0,
+      "wired": 0
+    },
+    "deleted_artifacts": [
+      "grammars/core-scientific-method.ebnf",
+      "grammars/core-state-machines.ebnf",
+      "grammars/gov-product-management.ebnf",
+      "grammars/human-cognitive-science.ebnf",
+      "grammars/human-futurology.ebnf",
+      "grammars/human-philosophy.ebnf",
+      "grammars/human-psychohistory.ebnf",
+      "grammars/music-musicology-analysis.ebnf",
+      "grammars/music-satriani-advanced.ebnf",
+      "grammars/sci-acoustics-physics.ebnf",
+      "grammars/sci-algorithms.ebnf",
+      "grammars/sci-mathematical-proof.ebnf"
+    ],
+    "root_cause": "Batch speculative creation in commit 2f0ca46 — grammars created ahead of demand with no consuming course, test, or policy",
+    "projected_ratio_after": 1.27,
+    "sessions_in_safe_zone": 1,
+    "target_sessions_to_safe_zone": 3
+  }
+]

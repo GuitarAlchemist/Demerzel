@@ -4,7 +4,7 @@
 
 We build composable systems where AI agents operate under principled governance — combining music theory, ML algorithms, neuro-symbolic reasoning, and constitutional alignment into a federated ecosystem.
 
-**7 repos** | **200+ MCP tools** | **14 personas** | **24 policies** | **19 grammars** | **14 departments** | **6 languages** | **44 behavioral tests**
+**7 repos** | **200+ MCP tools** | **14 personas** | **38 policies** | **16 grammars** | **5 departments** | **6 languages** | **79 behavioral tests**
 
 ---
 
@@ -30,7 +30,7 @@ We build composable systems where AI agents operate under principled governance 
 | 5 | Ask the AI chatbot anything | [Discussions Q&A](https://github.com/orgs/GuitarAlchemist/discussions) |
 
 **Concepts:** intervals, chord qualities, scale formulas, modes, voice leading, functional harmony.
-**Grammar:** [`music-theory.ebnf`](https://github.com/GuitarAlchemist/Demerzel/blob/master/grammars/music-theory.ebnf) | [`music-satriani-advanced.ebnf`](https://github.com/GuitarAlchemist/Demerzel/blob/master/grammars/music-satriani-advanced.ebnf)
+**Grammar:** [`music-theory.ebnf`](https://github.com/GuitarAlchemist/Demerzel/blob/master/grammars/music-theory.ebnf)
 
 ### Path 2: ML Engineering (for developers)
 
@@ -58,7 +58,7 @@ We build composable systems where AI agents operate under principled governance 
 
 | Step | What You Learn | Where |
 |------|---------------|-------|
-| 1 | EBNF basics | [`core-scientific-method.ebnf`](https://github.com/GuitarAlchemist/Demerzel/blob/master/grammars/core-scientific-method.ebnf) |
+| 1 | EBNF basics | [`core-meta-grammar.ebnf`](https://github.com/GuitarAlchemist/Demerzel/blob/master/grammars/core-meta-grammar.ebnf) |
 | 2 | Weighted productions | `*.weights.json` files |
 | 3 | Distillation (traces to rules) | tars `GrammarDistillation` |
 | 4 | WoT DSL compilation | tars `WotParser` + `WotCompiler` |
@@ -96,17 +96,9 @@ Beliefs are T/F/U/C with fuzzy membership `{T:0.7, F:0.0, U:0.2, C:0.1}`. Unknow
 |------|---------|--------|
 | Music | music-theory.ebnf | Harmony, composition |
 | Guitar Studies | music-guitar-technique.ebnf | Technique, fretboard |
-| Musicology | music-musicology-analysis.ebnf | History, culture |
-| Mathematics | sci-mathematical-proof.ebnf | Proofs, algebra |
-| Physics | sci-acoustics-physics.ebnf | Acoustics, vibration |
-| Computer Science | sci-algorithms.ebnf | Algorithms, complexity |
-| Product Management | gov-product-management.ebnf | Communication + BS detection |
-| Futurology | human-futurology.ebnf | Scenarios, horizons |
-| Philosophy | human-philosophy.ebnf | Ethics, dialectic |
-| Cognitive Science | human-cognitive-science.ebnf | Biases, agent cognition |
-| GA Academy | music-satriani-advanced.ebnf | Beginner to Satriani |
+| ML Engineering | sci-ml-pipelines.ebnf | Pipelines, training |
+| Cybernetics | sci-cybernetics.ebnf | Feedback, control |
 | World Music | music-guitar-technique.ebnf | 12 languages, traditions |
-| Psychohistory | human-psychohistory.ebnf | Prediction, crisis |
 
 Courses in 6 languages: EN, ES, PT, FR, IT, DE
 
@@ -135,35 +127,33 @@ Grammar that generates AND detects empty rhetoric across 10 domains. If the gram
 
 Score: 0-1 fail = T (real) | 2 = U (unclear) | 3-4 = C (contradictory)
 
-### 7. Grammar Library (18 grammars)
+### 7. Grammar Library (16 grammars)
 
 All grammars are [living artifacts](https://github.com/GuitarAlchemist/Demerzel/blob/master/policies/grammar-evolution-policy.yaml) — evolved by research cycles, Bayesian weight updates, and tars distillation.
 
 ```
 grammars/
-├── core-                          # Universal foundations
-│   ├── core-meta-grammar.ebnf         # Grammar of grammars (self-governing)
-│   ├── core-scientific-method.ebnf    # Research investigation
-│   └── core-state-machines.ebnf       # Governance state transitions
-├── music-                         # Music domain
-│   ├── music-theory.ebnf              # Chords, scales, progressions, voice leading
-│   ├── music-guitar-technique.ebnf    # CAGED, fingerpicking, practice routines
-│   ├── music-musicology-analysis.ebnf # Periods, styles, comparative study
-│   └── music-satriani-advanced.ebnf   # Advanced technique, phrasing, composition
-├── sci-                           # Science & engineering
-│   ├── sci-mathematical-proof.ebnf    # Proof strategies, reasoning chains
-│   ├── sci-acoustics-physics.ebnf     # Vibration, harmonics, resonance
-│   ├── sci-algorithms.ebnf            # Paradigms, data structures, complexity
-│   └── sci-ml-pipelines.ebnf          # ML pipeline vocabulary, ix patterns
-├── gov-                           # Governance & detection
-│   ├── gov-blind-spot-detection.ebnf  # Staleness, coverage gaps, meta blind spots
-│   ├── gov-bs-generators.ebnf         # 10-domain BS generator + detector v2
-│   └── gov-product-management.ebnf    # PM communication + buzzword engine
-└── human-                         # Human sciences
-    ├── human-philosophy.ebnf          # Ethics, dialectic, thought experiments
-    ├── human-cognitive-science.ebnf   # Biases, agent architectures, paradigms
-    ├── human-futurology.ebnf          # Scenario planning, signal detection
-    └── human-psychohistory.ebnf       # Crisis prediction, power laws, Seldon Plan
+├── core-                              # Universal foundations
+│   └── core-meta-grammar.ebnf            # Grammar of grammars (self-governing)
+├── music-                             # Music domain
+│   ├── music-theory.ebnf                 # Chords, scales, progressions, voice leading
+│   └── music-guitar-technique.ebnf       # CAGED, fingerpicking, practice routines
+├── sci-                               # Science & engineering
+│   ├── sci-ml-pipelines.ebnf             # ML pipeline vocabulary, ix patterns
+│   ├── sci-cybernetics.ebnf              # Feedback loops, control systems
+│   ├── sci-information-theory.ebnf       # Entropy, KL divergence, compression
+│   ├── sci-network-science.ebnf          # Graphs, centrality, community detection
+│   ├── sci-systems-engineering.ebnf      # Requirements, architecture, verification
+│   ├── sci-data-visualization.ebnf       # Charts, encodings, perception
+│   ├── sci-audio-engineering.ebnf        # DSP, synthesis, mixing
+│   ├── sci-guitar-acoustics.ebnf         # Vibration, resonance, tone
+│   └── sci-visual-computing.ebnf         # Rendering, perception, layout
+├── gov-                               # Governance & detection
+│   ├── gov-blind-spot-detection.ebnf     # Staleness, coverage gaps, meta blind spots
+│   ├── gov-bs-generators.ebnf            # 10-domain BS generator + detector v2
+│   └── gov-metaqa.ebnf                   # Meta question analysis
+└── human-                             # Human sciences
+    └── human-semiotics.ebnf              # Signs, meaning, interpretation
 ```
 
 ### 8. MCP Tool Federation (200+ tools)
