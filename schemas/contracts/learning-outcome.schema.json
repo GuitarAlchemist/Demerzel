@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/learning-outcome",
   "title": "Learning Outcome",
   "description": "Results from PDCA cycles, 5 Whys analyses, or knowledge assessments reported to Demerzel",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["id", "repo", "agent", "outcome_type", "outcome_data", "reported_at"],
   "properties": {

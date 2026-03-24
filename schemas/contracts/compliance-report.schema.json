@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/compliance-report",
   "title": "Compliance Report",
   "description": "Agent governance status report from a consumer repo to Demerzel",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["id", "repo", "agent", "reporting_period", "constitutional_compliance", "policy_compliance", "overall_status", "reported_at"],
   "properties": {

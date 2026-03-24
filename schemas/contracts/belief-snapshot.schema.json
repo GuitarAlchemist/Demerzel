@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/belief-snapshot",
   "title": "Belief Snapshot",
   "description": "Export of an agent's current belief states for persistence and reconnaissance sync",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["id", "repo", "agent", "beliefs", "snapshot_at"],
   "properties": {

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/integrity-fields",
+  "title": "Galactic Protocol Integrity Fields",
+  "description": "Required integrity fields for all Galactic Protocol messages — prevents forgery, tampering, and replay attacks per galactic-protocol.md §Message Integrity",
+  "type": "object",
+  "required": ["message_id", "origin_repo", "origin_agent", "timestamp", "content_hash", "hash_algorithm"],
+  "properties": {
+    "message_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier (UUID v4) for deduplication and audit trail"
+    },
+    "origin_repo": {
+      "type": "string",
+      "enum": ["demerzel", "ix", "tars", "ga"],
+      "description": "Repository that sent the message"
+    },
+    "origin_agent": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Persona name of the sending agent (kebab-case)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message creation time (ISO 8601). Must be within 5 min of receiver clock; messages older than 24h are rejected as stale"
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hex digest of message payload (excluding integrity fields)"
+    },
+    "hash_algorithm": {
+      "type": "string",
+      "const": "sha256",
+      "description": "Hash algorithm used — always sha256 in protocol v1.2.0"
+    }
+  }
+}

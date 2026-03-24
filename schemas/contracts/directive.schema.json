@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/directive",
   "title": "Governance Directive",
   "description": "A governance directive from Demerzel to a consumer repo agent",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["id", "type", "priority", "source_article", "target_repo", "directive_content", "issued_by", "issued_at"],
   "properties": {

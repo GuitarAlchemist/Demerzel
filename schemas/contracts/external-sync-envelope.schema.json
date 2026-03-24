@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/external-sync-envelope",
   "title": "External Sync Envelope",
   "description": "Wrapper for synchronizing governance messages with external systems (e.g., Confluence, Neo4j, Notion)",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["id", "direction", "target_system", "payload_type", "payload", "synced_at"],
   "properties": {

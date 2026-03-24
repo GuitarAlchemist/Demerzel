@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/knowledge-package",
   "title": "Knowledge Package",
   "description": "Seldon teaching content for cross-repo delivery via the Streeling framework",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["id", "layer", "concept", "delivery_mode", "content", "source", "target_learner", "taught_by", "created_at"],
   "properties": {

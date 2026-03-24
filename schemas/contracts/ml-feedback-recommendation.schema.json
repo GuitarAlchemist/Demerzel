@@ -3,6 +3,9 @@
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/ml-feedback-recommendation",
   "title": "ML Feedback Recommendation",
   "description": "A recommendation from an ix ML pipeline to Demerzel for governance improvement",
+  "allOf": [
+    { "$ref": "integrity-fields.schema.json" }
+  ],
   "type": "object",
   "required": ["pipeline_id", "recommendation_type", "recommendation", "confidence", "evidence", "constitutional_check", "timestamp"],
   "properties": {
