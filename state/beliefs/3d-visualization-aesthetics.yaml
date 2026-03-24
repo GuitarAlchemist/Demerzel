@@ -205,3 +205,92 @@ beliefs:
       - "Can 3d-force-graph accept custom Three.js objects for node rendering?"
       - "Does it support WebGPU renderer?"
     action: "Prototype with 3d-force-graph to test feasibility before committing"
+
+  # ─── RESEARCH PIPELINE FINDINGS (2026-03-24) ──────────
+  - id: viz-webgpu-001
+    subject: "WebGPU production readiness"
+    proposition: "WebGPU graph viz is production-ready with ~70% browser support (2026). Three.js r171+ has zero-config WebGPURenderer with WebGL fallback."
+    truth_value: T
+    confidence: 0.90
+    evidence:
+      supporting:
+        - source: "GraphWaGu project"
+          claim: "100K nodes rendered on WebGPU compute shaders"
+        - source: "ChartGPU project"
+          claim: "1M data points at 60fps using WebGPU"
+        - source: "Browser support (2026)"
+          claim: "Safari 26 + Firefox 147 shipped WebGPU, joining Chrome/Edge"
+    action: "Adopt WebGPURenderer as default — browser support is no longer a blocker"
+
+  - id: viz-tsl-001
+    subject: "Three Shading Language (TSL)"
+    proposition: "TSL (Three Shading Language) compiles to both WGSL and GLSL from JavaScript — write once, run on WebGPU and WebGL. This is the future of Three.js shader authoring."
+    truth_value: T
+    confidence: 0.85
+    evidence:
+      supporting:
+        - source: "Three.js official docs"
+          claim: "TSL is the recommended shader authoring approach for WebGPURenderer"
+        - source: "Wawa Sensei tutorials"
+          claim: "Comprehensive TSL tutorial series demonstrating cross-backend compilation"
+        - source: "TSL GPGPU examples"
+          claim: "GPU compute via TSL nodes works on both WebGPU and WebGL backends"
+    action: "Use TSL for all custom materials — ensures WebGPU/WebGL portability"
+
+  - id: viz-library-001
+    subject: "3d-force-graph as starting point"
+    proposition: "3d-force-graph is the right starting point for ~100 node graphs. Custom Three.js objects via nodeThreeObject() provide full aesthetic control while the library handles physics+interaction."
+    truth_value: T
+    confidence: 0.90
+    evidence:
+      supporting:
+        - source: "GitHub (15k+ stars)"
+          claim: "Most popular 3D graph viz library, mature and well-maintained"
+        - source: "API documentation"
+          claim: "nodeThreeObject() accepts any Object3D — full aesthetic control per node"
+        - source: "React wrapper"
+          claim: "react-force-graph-3d available for React integration"
+    action: "Use 3d-force-graph with custom nodeThreeObject() for holographic nodes — resolves viz-unknown-002"
+
+  - id: viz-library-002
+    subject: "No prebuilt 3D + WebGPU + React library"
+    proposition: "No prebuilt library offers 3D + WebGPU + React. The upgrade path is R3F v9 + WebGPURenderer + d3-force-3d for layout + TSL materials for rendering."
+    truth_value: T
+    confidence: 0.85
+    evidence:
+      supporting:
+        - source: "Comprehensive npm search (viz-research agent)"
+          claim: "No library combines all three requirements"
+        - source: "graphgpu"
+          claim: "WebGPU but 2D only"
+        - source: "cosmograph"
+          claim: "Large-scale but WebGL only"
+    action: "Start with 3d-force-graph (WebGL), plan R3F v9 + WebGPU upgrade path for Phase 2"
+
+  - id: viz-bundling-001
+    subject: "Force-Directed Edge Bundling (FDEB)"
+    proposition: "Force-Directed Edge Bundling (FDEB) reduces visual clutter and reveals high-level patterns. Interactive unbundling on hover preserves detail."
+    truth_value: T
+    confidence: 0.80
+    evidence:
+      supporting:
+        - source: "Holten 2006"
+          claim: "Edge bundling reveals high-level connectivity patterns invisible in raw edge rendering"
+        - source: "Peacock Bundles experiments"
+          claim: "Interactive bundling/unbundling preserves both overview and detail"
+        - source: "3D Geographic Edge Bundling paper"
+          claim: "FDEB extends naturally to 3D spatial layouts"
+    action: "Implement FDEB with hover-unbundle interaction for governance graph edges"
+
+  - id: viz-fractal-001
+    subject: "Fractal node textures"
+    proposition: "Fractal node textures with self-similar branching patterns produce unique, organic-looking governance nodes. User validated: 'Beautiful'."
+    truth_value: T
+    confidence: 0.90
+    evidence:
+      supporting:
+        - source: "User feedback (2026-03-24)"
+          claim: "Explicit positive validation of fractal node aesthetic"
+        - source: "Implementation (commit bdb8e84b)"
+          claim: "Fractal branching patterns implemented and rendered successfully"
+    action: "Keep fractal textures as default node aesthetic — user-validated"
