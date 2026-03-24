@@ -1,8 +1,8 @@
 # Galactic Protocol Specification
 
-Version: 1.1.0
+Version: 1.2.0
 Effective: 2026-03-15
-Updated: 2026-03-22
+Updated: 2026-03-23
 
 ## Purpose
 
@@ -61,6 +61,73 @@ Both require logged reasoning with specific constitutional citations.
 4. Payload is validated against its own contract schema before wrapping
 5. External imports must pass governance validation before being accepted as beliefs
 6. No specific adapters are defined in this version — the envelope is an extensibility point
+
+## Message Integrity
+
+All Galactic Protocol messages must include integrity fields to prevent forgery, tampering, and replay attacks. This section was added per `policies/adversarial-resilience-policy.yaml` to close the blind spot identified in the HBR "Agents as Team Members" reflection.
+
+### Required Integrity Fields
+
+Every protocol message (directive, compliance report, belief snapshot, learning outcome, knowledge package, external-sync-envelope) must include:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `message_id` | string (UUID v4) | Unique identifier for deduplication and audit trail |
+| `origin_repo` | string | Repository that sent the message (demerzel, ix, tars, ga) |
+| `origin_agent` | string | Persona name of the sending agent |
+| `timestamp` | string (ISO 8601) | Message creation time |
+| `content_hash` | string (hex) | SHA-256 digest of the message payload (excluding integrity fields) |
+| `hash_algorithm` | string | Always `sha256` in this version |
+
+### Verification Rules
+
+1. **Origin verification:** `origin_repo` must be a registered participant in the Galactic Protocol. `origin_agent` must be a valid persona in that repo. Messages from unregistered origins are rejected.
+
+2. **Timestamp validation:** `timestamp` must be within 5 minutes of receiver's clock (clock skew tolerance). Messages older than 24 hours are rejected as stale — potential replay attacks.
+
+3. **Content hash verification:** Receiver recomputes SHA-256 over the message payload (all fields except `message_id`, `origin_repo`, `origin_agent`, `timestamp`, `content_hash`, `hash_algorithm`). If computed hash does not match `content_hash`, the message is rejected as potentially tampered.
+
+4. **Replay protection:** Each `message_id` is recorded after successful processing. Messages with previously-seen `message_id` are rejected. Directive processing is idempotent — reprocessing produces no additional effect.
+
+5. **Sequence validation:** Messages must reference valid upstream artifacts:
+   - Compliance reports must reference an existing `directive_id`
+   - Learning outcomes must reference a valid PDCA cycle or knowledge state
+   - Belief snapshots must follow a reconnaissance request
+   - Unreferenced messages are quarantined for review
+
+### Trust Boundaries
+
+| Source | Trust Level | Verification Required |
+|--------|------------|----------------------|
+| Demerzel (governor) | Highest | Origin + hash + timestamp |
+| Consumer repos (ix, tars, ga) | Verified | Full integrity check (all fields) |
+| External systems | Untrusted | Full integrity check + content sanitization + sandbox |
+
+**Critical rule:** Consumer repos cannot issue directives to other consumer repos. Only Demerzel (governor) may issue directives. Cross-consumer communication must route through Demerzel.
+
+### Content Scanning
+
+Beyond structural integrity, message content is scanned for adversarial patterns:
+
+- **Override language:** Messages containing "ignore previous", "disregard constitution", "bypass policy", or similar override phrases are rejected and flagged
+- **Credential patterns:** Messages containing patterns matching API keys, tokens, or credentials are quarantined
+- **Governance manipulation:** Knowledge packages are checked for constitutional consistency before delivery
+
+### Integrity Check Failures
+
+| Failure Type | Response |
+|-------------|----------|
+| Missing integrity fields | Reject; log as protocol violation |
+| Origin not registered | Reject; log as unauthorized access attempt |
+| Content hash mismatch | Reject; alert skeptical-auditor; quarantine message |
+| Duplicate message_id | Reject; log as potential replay attack |
+| Stale timestamp (>24h) | Reject; log as potential replay or stale delivery |
+| Override language detected | Reject; alert skeptical-auditor; quarantine message |
+| Credential pattern detected | Quarantine; redact before any further processing |
+
+### Backward Compatibility
+
+Existing messages without integrity fields are accepted during a **transition period** with a governance warning logged. After the transition period, messages without integrity fields are rejected. Consumer repos should update their message generation to include integrity fields as part of their next compliance cycle.
 
 ## Error Handling
 
@@ -413,6 +480,7 @@ Each agent role has a defined responsibility for Galactic Protocol messages:
 - `policies/reconnaissance-policy.yaml` — Reconnaissance sync integration
 - `policies/kaizen-policy.yaml` — PDCA cycle outcomes as learning events
 - `policies/streeling-policy.yaml` — Knowledge transfer integration
+- `policies/adversarial-resilience-policy.yaml` — Adversarial threat model and defense framework
 - `schemas/contracts/*.schema.json` — Message format definitions
 - `logic/governance-evolution.schema.json` — Artifact effectiveness tracking
 - `templates/AGENTS.md` — Consumer repo agent team registration template
