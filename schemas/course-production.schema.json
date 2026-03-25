@@ -43,7 +43,7 @@
           "type": "object",
           "properties": {
             "completed": { "type": "boolean" },
-            "belief_value": { "type": "string", "enum": ["T", "F", "U", "C"] },
+            "belief_value": { "type": "string", "enum": ["T", "P", "U", "D", "F", "C"] },
             "belief_confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
           },
           "required": ["completed"]

@@ -35,7 +35,7 @@
       "type": "object",
       "required": ["truth_value", "last_verified"],
       "properties": {
-        "truth_value": { "type": "string", "enum": ["T", "F", "U", "C"] },
+        "truth_value": { "type": "string", "enum": ["T", "P", "U", "D", "F", "C"], "description": "Hexavalent truth value: T=True, P=Probable, U=Unknown, D=Doubtful, F=False, C=Contradictory" },
         "membership": { "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution" },
         "last_verified": { "type": "string", "format": "date-time" },
         "verifier": { "type": "string", "description": "Agent or system that performed the verification" }

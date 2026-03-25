@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/hexavalent-state",
   "title": "Hexavalent Belief State",
-  "description": "A belief with a six-valued truth assignment: True, Probable, Unknown, Doubtful, False, or Contradictory. Backward-compatible extension of the original tetravalent schema.",
+  "description": "A belief with a six-valued truth assignment: True, Probable, Unknown, Doubtful, False, or Contradictory. Extends tetravalent logic with evidential gradient values P (probable) and D (doubtful).",
   "type": "object",
   "required": ["proposition", "truth_value"],
   "properties": {
@@ -13,7 +13,7 @@
     "truth_value": {
       "type": "string",
       "enum": ["T", "P", "U", "D", "F", "C"],
-      "description": "T=True, P=Probable, U=Unknown, D=Doubtful, F=False, C=Contradictory"
+      "description": "T=True (verified), P=Probable (leans true), U=Unknown (no evidence), D=Doubtful (leans false), F=False (refuted), C=Contradictory (conflicting evidence)"
     },
     "confidence": {
       "type": "number",

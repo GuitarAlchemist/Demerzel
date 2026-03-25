@@ -19,21 +19,35 @@
         "sleep->wake": 1.0
       }
     },
-    "belief_tetravalent": {
-      "states": ["T", "F", "U", "C"],
+    "belief_hexavalent": {
+      "states": ["T", "P", "U", "D", "F", "C"],
       "transitions": {
-        "U->T": 0.4,
-        "U->F": 0.3,
-        "U->C": 0.1,
+        "U->P": 0.30,
+        "U->D": 0.20,
+        "U->C": 0.05,
+        "U->U": 0.45,
+        "P->T": 0.40,
+        "P->C": 0.10,
+        "P->U": 0.10,
+        "P->P": 0.40,
+        "D->F": 0.35,
+        "D->C": 0.10,
+        "D->U": 0.10,
+        "D->D": 0.45,
         "T->C": 0.05,
+        "T->U": 0.05,
+        "T->T": 0.90,
         "F->C": 0.05,
-        "C->T": 0.4,
-        "C->F": 0.4,
-        "T->U": 0.1,
-        "F->U": 0.1,
-        "U->U": 0.2
+        "F->U": 0.05,
+        "F->F": 0.90,
+        "C->T": 0.25,
+        "C->P": 0.15,
+        "C->F": 0.25,
+        "C->D": 0.15,
+        "C->C": 0.20
       },
-      "forbidden": ["T->F", "F->T"]
+      "forbidden": ["T->F", "F->T", "T->D", "F->P", "U->T", "U->F"],
+      "note": "Beliefs must traverse the evidential gradient: U->P->T or U->D->F. Direct jumps from Unknown to verified are forbidden. T<->F must pass through C or U."
     },
     "pdca": {
       "states": ["plan", "do", "check", "act_standardize", "act_revert", "act_iterate"],

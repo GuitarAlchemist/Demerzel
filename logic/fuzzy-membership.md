@@ -1,15 +1,16 @@
-# Fuzzy Membership for Tetravalent Logic
+# Fuzzy Membership for Hexavalent Logic
 
 ## Overview
 
-Fuzzy membership extends Demerzel's tetravalent logic (T/F/U/C) with continuous membership degrees. Inspired by Jean-Pierre Petit's Logotron — not all truths are equally accessible. Membership captures how much evidential weight supports each truth value.
+Fuzzy membership extends Demerzel's hexavalent logic (T/P/U/D/F/C) with continuous membership degrees. Inspired by Jean-Pierre Petit's Logotron — not all truths are equally accessible. Membership captures how much evidential weight supports each truth value.
 
 ## Fuzzy Distribution
 
-- A fuzzy distribution is an object `{T, F, U, C}` where each value is in [0, 1]
-- Sum constraint: T + F + U + C = 1.0 (±0.01 tolerance for floating point)
+- A fuzzy distribution is an object `{T, P, U, D, F, C}` where each value is in [0, 1]
+- P (Probable) and D (Doubtful) are optional, defaulting to 0 for backward compatibility
+- Sum constraint: T + P + U + D + F + C = 1.0 (+-0.01 tolerance for floating point)
 - Argmax rule: `truth_value` must equal the key with highest membership
-- Tiebreak order: C > U > T > F (conservative — contradictions and unknowns surface first)
+- Tiebreak order: C > U > D > P > T > F (conservative — contradictions and unknowns surface first, doubt before hope)
 - Schema: `schemas/fuzzy-distribution.schema.json`
 
 ## Confidence vs. Membership
@@ -26,7 +27,9 @@ Fuzzy membership extends Demerzel's tetravalent logic (T/F/U/C) with continuous 
 
 ```
 result.T = min(a.T, b.T)
+result.P = min(a.P, b.P)
 result.F = max(a.F, b.F)
+result.D = max(a.D, b.D)
 result.U = max(a.U, b.U)
 result.C = max(a.C, b.C)
 Normalize: divide each by sum to restore sum=1.0
@@ -36,7 +39,9 @@ Normalize: divide each by sum to restore sum=1.0
 
 ```
 result.T = max(a.T, b.T)
+result.P = max(a.P, b.P)
 result.F = min(a.F, b.F)
+result.D = min(a.D, b.D)
 result.U = max(a.U, b.U)
 result.C = max(a.C, b.C)
 Normalize: divide each by sum to restore sum=1.0
@@ -46,8 +51,10 @@ Normalize: divide each by sum to restore sum=1.0
 
 ```
 result.T = a.F
-result.F = a.T
+result.P = a.D
 result.U = a.U
+result.D = a.P
+result.F = a.T
 result.C = a.C
 No normalization needed (swap preserves sum=1.0 invariant)
 ```
@@ -60,8 +67,9 @@ No normalization needed (swap preserves sum=1.0 invariant)
 
 ## Edge Cases
 
-1. **Tied argmax** (e.g., {T:0.25, F:0.25, U:0.25, C:0.25}): Use tiebreak order C > U > T > F. Result: truth_value = C, triggering escalation.
-2. **NOT on pure-U** ({T:0, F:0, U:1.0, C:0}): NOT swaps T↔F (both 0), preserves U and C. Result is identical to input — negating pure uncertainty yields uncertainty.
+1. **Tied argmax** (e.g., {T:0.17, P:0.17, U:0.17, D:0.17, F:0.16, C:0.16}): Use tiebreak order C > U > D > P > T > F. Result: truth_value = U (highest tied), triggering investigation.
+2. **NOT on pure-U** ({T:0, P:0, U:1.0, D:0, F:0, C:0}): NOT swaps T<->F and P<->D (all 0), preserves U and C. Result is identical to input — negating pure uncertainty yields uncertainty.
+3. **Legacy 4-value input** ({T:0.5, F:0.1, U:0.3, C:0.1}): P and D default to 0.0. Sum still equals 1.0. Fully backward compatible.
 3. **AND/OR with C > 0.3**: Escalation fires after the operation completes. Compute result first, then check C threshold.
 4. **All-zero membership**: Invalid — memberships must sum to 1.0.
 
@@ -97,7 +105,7 @@ AND, OR, NOT, renormalize, and sharpen generalize from tetravalent to any FuzzyE
 - **AND:** min per variant, renormalize
 - **OR:** max per variant, renormalize
 - **NOT (generic):** invert (1.0 - v) per variant, renormalize
-- **NOT (tetravalent):** swap T<->F, preserve U/C (backward compatible)
+- **NOT (hexavalent):** swap T<->F and P<->D, preserve U/C (backward compatible with tetravalent when P=D=0)
 - **Renormalize:** divide each by sum (idempotent)
 - **Sharpen:** if argmax > threshold, collapse to discrete
 
@@ -120,7 +128,7 @@ Seven existing ad-hoc fuzzy systems unify under FuzzyEnum:
 
 | System | Before | After |
 |--------|--------|-------|
-| Beliefs | `TruthValue` | `FuzzyEnum<TruthValue>` |
+| Beliefs | `HexavalentTruthValue` | `FuzzyEnum<TruthValue>` |
 | Grammar weights | `Map<string,float>` | `FuzzyEnum<HypothesisMethod>` |
 | Risk gates | hardcoded string | `FuzzyEnum<RiskLevel>` |
 | Persona routing | if/else chain | `FuzzyEnum<Persona>` |
@@ -130,7 +138,8 @@ Seven existing ad-hoc fuzzy systems unify under FuzzyEnum:
 
 ### Backward Compatibility
 
-- Discrete `TruthValue.T` = `FuzzyEnum.Pure(T, [T;F;U;C])` = `{T:1.0, F:0.0, U:0.0, C:0.0}`
+- Discrete `TruthValue.T` = `FuzzyEnum.Pure(T, [T;P;U;D;F;C])` = `{T:1.0, P:0.0, U:0.0, D:0.0, F:0.0, C:0.0}`
+- Legacy 4-value distributions `{T, F, U, C}` remain valid — P and D default to 0.0
 - Existing `BeliefState` gains optional `membership: FuzzyEnum<TruthValue>` field
 - When membership is absent, `truth_value` and `confidence` retain original meaning
 - All JSON schemas use `allOf` to extend, never breaking existing consumers

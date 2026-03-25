@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution",
-  "title": "Fuzzy Distribution",
-  "description": "A probability distribution over hexavalent truth values (T/P/U/D/F/C). Values must sum to 1.0 (+-0.01 tolerance). P and D are optional for backward compatibility with tetravalent distributions (default to 0). Used by fuzzy beliefs and pre-mortem harm likelihoods.",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/hexavalent-distribution",
+  "title": "Hexavalent Distribution",
+  "description": "A probability distribution over hexavalent truth values (T/P/U/D/F/C). Values must sum to 1.0 (+-0.01 tolerance). Extends fuzzy-distribution with Probable and Doubtful values.",
   "type": "object",
   "required": ["T", "F", "U", "C"],
   "properties": {

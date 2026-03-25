@@ -71,8 +71,8 @@
     },
     "belief_value": {
       "type": "string",
-      "enum": ["T", "F", "U", "C"],
-      "description": "Tetravalent belief value produced"
+      "enum": ["T", "P", "U", "D", "F", "C"],
+      "description": "Hexavalent belief value produced: T=True, P=Probable, U=Unknown, D=Doubtful, F=False, C=Contradictory"
     },
     "belief_confidence": {
       "type": "number",
