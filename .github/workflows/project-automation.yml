@@ -9,6 +9,10 @@ permissions:
   issues: write
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   auto-add-to-project:
     runs-on: [self-hosted, demerzel]
