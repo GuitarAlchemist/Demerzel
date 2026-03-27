@@ -18,6 +18,10 @@ env:
   MCP_TIMEOUT_SECONDS: 30
   DIRECT_MCP_TIMEOUT_SECONDS: 10
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   answer-music-question:
     runs-on: [self-hosted, demerzel]
