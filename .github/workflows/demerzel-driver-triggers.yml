@@ -11,6 +11,10 @@ on:
   discussion:
     types: [created]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   write-trigger:
     runs-on: [self-hosted, demerzel]
