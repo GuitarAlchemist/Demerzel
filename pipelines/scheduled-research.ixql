@@ -1,0 +1,193 @@
+--- ## Scheduled Research Team
+--- Orchestrates a two-agent (Seldon + Auditor) research cycle on a cron schedule.
+--- Source: [scheduled-research-team trigger](state/triggers/scheduled-research-team.trigger.json)
+--- Pipeline: [research-cycle](pipelines/research-cycle.ixql) (inner loop)
+--- Trigger: cron 0 9 * * 1,3,5 (Mon/Wed/Fri 9AM)
+--- Output: courses, beliefs, audit reports, Discord notifications
+
+--- ## Phase 1: SPAWN
+--- Check kill switch and rate limits before creating the team.
+--- Per **Article 9** (Bounded Autonomy), no spawn if kill switch or daily cap hit.
+kill_flag   <- ix.io.exists("state/triggers/kill-research.flag")
+  → when kill_flag:
+      ix.io.append("LOG.md", "[{now()}] Scheduled research team: kill switch active — aborting")
+      → halt("kill_switch_active")
+
+cycle_state <- ix.io.read("state/seldon-plan/state.json")
+  → when cycle_state.daily_reset_date != today():
+      cycle_state.daily_cycle_count = 0
+      cycle_state.daily_reset_date = today()
+      ix.io.write("state/seldon-plan/state.json", cycle_state)
+  → when cycle_state.daily_cycle_count >= 6:
+      ix.io.append("LOG.md", "[{now()}] Scheduled research team: daily cap reached ({cycle_state.daily_cycle_count}/6) — skipping")
+      → halt("daily_cap_reached")
+
+team <- ix.team.create(
+    template: "research",
+    agents: [
+      { role: "Seldon",  persona: "seldon",            skill: "seldon-auto-research" },
+      { role: "Auditor", persona: "skeptical-auditor",  skill: "seldon-assess" }
+    ],
+    max_runtime_minutes: 60,
+    mode: "bypassPermissions"
+  )
+
+--- ## Phase 2: SELECT
+--- Pick the department with the lowest coverage ratio.
+--- Delegates to research-cycle Step 1 scoring formula.
+departments <- ix.io.read("state/streeling/departments/*.department.json")
+weights     <- ix.io.read("state/streeling/departments/*.weights.json")
+
+department <- departments
+  → ix.ml.score(
+      days_since_last_cycle: 0.4,
+      curriculum_gap_count:  0.3,
+      u_belief_ratio:        0.2,
+      random_exploration:    0.1
+    )
+  → ix.ml.argmax()
+
+--- ## Phase 3: INVESTIGATE
+--- Seldon generates a research question and cross-validates with multiple models.
+--- Per **Article 2** (Transparency), all findings must be explainable.
+dept_context <- parallel(
+    ix.io.read("state/streeling/departments/{department.name}.department.json"),
+    ix.io.read("state/streeling/departments/{department.name}.weights.json"),
+    ix.io.read("grammars/{department.grammar}.ebnf"),
+    ix.io.glob("state/streeling/courses/{department.name}/en/*.md")
+  )
+
+question <- dept_context
+  → tars.grammar.sample(
+      grammar: dept_context.grammar,
+      weights: dept_context.weights,
+      pattern: "investigation",
+      avoid: dept_context.existing_courses
+    )
+  → tars.formulate_question(
+      research_area: department.research_areas,
+      must_be: ["answerable_in_one_cycle", "expressible_as_TFUC", "domain_relevant"]
+    )
+
+investigation <- question
+  → fan_out(
+      tars.research(question, depth: "thorough"),
+      mcp__openai_chat__openai_chat(question, role: "researcher"),
+      mcp__notebooklm__ask_question(question)
+    )
+  → tars.cross_validate(
+      agreement_threshold: 0.7,
+      require_evidence: true
+    )
+  → confidence_calibration
+  → explanation_requirement
+
+--- ## Phase 4: PRODUCE
+--- If T >= 0.8, produce course material; otherwise log the gap.
+conclusion <- investigation
+  → when agreement >= 0.8 && evidence_density >= 0.7:
+      { conclude: "confirm", belief: "T", confidence: investigation.confidence }
+  → when agreement >= 0.8 && evidence_against:
+      { conclude: "refute", belief: "F", confidence: investigation.confidence }
+  → when agreement < 0.5:
+      { conclude: "contradictory", belief: "C", confidence: 0.3 }
+  → when evidence_density < 0.3:
+      { conclude: "insufficient", belief: "U", confidence: 0.2 }
+
+course <- when conclusion.belief == "T" && conclusion.confidence >= 0.8:
+  investigation
+    → tars.produce_course(
+        department: department.name,
+        module_id: "{dept_code}-{sequence}-{slug}",
+        level: tars.infer_level(investigation),
+        findings: investigation.evidence
+      )
+    → write("state/streeling/courses/{department.name}/en/{module_id}.md", markdown)
+
+gap_log <- when conclusion.belief in ["U", "C", "F"]:
+  ix.io.write("state/streeling/research-gaps/{now()}-{department.name}.gap.json", {
+    department: department.name,
+    question: question,
+    belief: conclusion.belief,
+    confidence: conclusion.confidence,
+    reason: conclusion.conclude,
+    cycle_id: team.cycle_id
+  })
+
+--- ## Phase 5: AUDIT
+--- Auditor validates the research output: citations, contradictions, confidence scores.
+--- Per **Article 7** (Auditability), every finding must have a verifiable trail.
+audit <- team.agent("Auditor")
+  → tars.assess(
+      target: investigation,
+      checks: [
+        "citation_verification",      -- all claims have sources
+        "contradiction_detection",     -- no internal contradictions
+        "confidence_calibration",      -- confidence scores match evidence density
+        "belief_state_consistency",    -- TFUC assignment is justified
+        "course_quality"               -- if course produced, meets pedagogical standards
+      ]
+    )
+  → when audit.issues.any:
+      ix.io.write("state/conscience/signals/{now()}-audit-{team.cycle_id}.signal.json", {
+        type: "research_audit_issue",
+        cycle_id: team.cycle_id,
+        department: department.name,
+        issues: audit.issues,
+        severity: audit.max_severity
+      })
+
+--- ## Phase 6: COMPOUND
+--- Log learnings, update evolution, notify Discord.
+  → compound:
+      harvest conclusion
+      harvest audit.findings
+
+      -- Update grammar weights based on outcome
+      when conclusion.conclude == "confirm":
+        weights.hypothesis_weights[used_method] += 0.05
+        weights.test_weights[used_method] += 0.05
+      when conclusion.conclude in ["refute", "insufficient"]:
+        weights.hypothesis_weights[used_method] -= 0.03
+        weights.test_weights[used_method] -= 0.03
+
+      weights.normalize()
+      weights.metadata.cycle_count += 1
+      weights.metadata.last_updated = now()
+      log weights to "state/streeling/departments/{department.name}.weights.json"
+
+      -- Update daily counter
+      cycle_state.daily_cycle_count += 1
+      log cycle_state to "state/seldon-plan/state.json"
+
+      -- Evolution log entry
+      log evolution_entry to "state/evolution/"
+
+      promote findings if T >= 0.9
+      teach findings to seldon
+
+      -- Discord notification
+      when conclusion.belief == "T" && course:
+        discord.notify(
+          channel: "governance",
+          message: "Scheduled research complete: **{department.name}** — produced course `{module_id}` (T={conclusion.confidence}). [View course](https://github.com/GuitarAlchemist/Demerzel/blob/master/state/streeling/courses/{department.name}/en/{module_id}.md)"
+        )
+      when conclusion.belief != "T":
+        discord.notify(
+          channel: "governance",
+          message: "Scheduled research complete: **{department.name}** — {conclusion.belief}({conclusion.confidence}), no course produced. Gap logged."
+        )
+
+--- ## Phase 7: DISSOLVE
+--- Clean shutdown: release team, archive cycle, update LOG.md.
+cycle_summary <- parallel(conclusion, audit, course, gap_log)
+  → ix.io.write("state/streeling/research-cycles/{team.cycle_id}.json", json)
+
+ix.team.dissolve(team)
+  → ix.io.append("LOG.md", "[{now()}] Scheduled research team dissolved — {department.name}: {conclusion.belief}({conclusion.confidence}), audit: {audit.verdict}")
+  → when audit.issues.any && audit.max_severity == "critical":
+      ix.io.write("state/triggers/{now()}-audit-followup.trigger.json", {
+        type: "audit_followup",
+        cycle_id: team.cycle_id,
+        issues: audit.issues
+      })

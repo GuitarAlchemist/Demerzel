@@ -143,6 +143,115 @@ On `/demerzel team spawn <template>`, before assembling new agents:
 2. If found: offer to resume — "Paused team found (spawned <date>). Resume? (yes/no)".
 3. If resumed: restore `paused_state` for each member, re-queue tasks from saved manifest.
 
+## Claude Code Integration
+
+This section bridges the governance spec above to actual Claude Code tool calls.
+
+### TeamCreate Mapping
+
+Each template maps to a `TeamCreate` call. The team name follows the pattern `demerzel-<template>-<YYYY-MM-DD>`.
+
+```
+/demerzel team spawn full     → TeamCreate(team_name: "demerzel-full-2026-03-26",
+                                  description: "Full governance sprint — features, architecture, cross-repo")
+
+/demerzel team spawn research → TeamCreate(team_name: "demerzel-research-2026-03-26",
+                                  description: "Research cycle — knowledge harvesting, course production")
+
+/demerzel team spawn audit    → TeamCreate(team_name: "demerzel-audit-2026-03-26",
+                                  description: "Governance audit — compliance checks, behavioral tests")
+
+/demerzel team spawn build    → TeamCreate(team_name: "demerzel-build-2026-03-26",
+                                  description: "Implementation sprint — grammar, pipeline, schema work")
+
+/demerzel team spawn hotfix   → TeamCreate(team_name: "demerzel-hotfix-2026-03-26",
+                                  description: "Hotfix — urgent bug fixes, broken CI, cross-repo patches")
+```
+
+### Agent Spawning per Role
+
+After `TeamCreate`, spawn each team member as an Agent. Model and subagent_type map from the governance role:
+
+| Role | Name | subagent_type | model | Rationale |
+|------|------|---------------|-------|-----------|
+| Lead / Coordinator | Demerzel | `general-purpose` | `sonnet` | Throughput-heavy orchestration, task dispatch |
+| Research | Seldon | `general-purpose` | `sonnet` | High-volume knowledge harvesting, multi-source synthesis |
+| Quality / Auditor | Auditor | `octo:droids:octo-code-reviewer` | `opus` | Deep reasoning for compliance, behavioral test validation |
+| Design / Architect | Architect | `octo:droids:octo-backend-architect` | `opus` | Reasoning-heavy design decisions, constitutional review |
+| Cross-repo / Integrator | Integrator | `general-purpose` | `sonnet` | Throughput-heavy cross-repo coordination |
+
+Each Agent call includes the persona context in its prompt:
+
+```
+Agent(
+  subagent_type: "general-purpose",
+  model: "sonnet",
+  prompt: "You are Seldon (Research). Persona: personas/seldon.persona.yaml.
+           Constitutional constraints: Asimov Articles 0-5, Default Articles 1-11.
+           Your current task: <task description>.
+           Report findings via SendMessage to the team lead."
+)
+```
+
+### Task Distribution
+
+Use `TaskCreate` to create discrete work items and assign them to teammates:
+
+```
+TaskCreate(
+  description: "Research tetravalent logic extensions for hexavalent support",
+  assignee: "Seldon"
+)
+
+TaskCreate(
+  description: "Review schema changes for persona.schema.json v3",
+  assignee: "Auditor"
+)
+
+TaskCreate(
+  description: "Design cross-repo contract for ix ML feedback loop",
+  assignee: "Architect",
+  mode: "plan"   // Required for constitution/policy/contract work (Article 6)
+)
+```
+
+Track progress with `TaskGet` / `TaskList`. Update status with `TaskUpdate` as agents complete work.
+
+### YOLO Mode
+
+For unattended execution (e.g., overnight research cycles or CI-triggered audits), set bypass permissions:
+
+```
+mode: "bypassPermissions"
+```
+
+This enables agents to proceed without operator confirmation at each step. Constitutional constraints still apply — YOLO mode bypasses *permission prompts*, not *governance gates*. Conscience signals and confidence thresholds below 0.3 still trigger hard stops regardless of mode.
+
+Use YOLO mode only when:
+- All tasks are well-defined with clear acceptance criteria
+- No tasks touch constitutions, the Asimov root, or cross-repo contracts
+- An operator will review output within a bounded timeframe
+
+### Team Lifecycle via SendMessage
+
+Team control commands map to `SendMessage` calls targeting teammates:
+
+```
+# Status check — query all agents
+SendMessage(to: "*", message: "Report current task status and blockers")
+
+# Pause — signal all agents to save state and stop
+SendMessage(to: "*", message: "shutdown_request: pause — save current state to team manifest, do not start new tasks")
+
+# Dissolve — finalize and archive
+SendMessage(to: "*", message: "shutdown_request: dissolve — finalize all tasks, write final state, prepare for archival")
+
+# Direct a specific agent
+SendMessage(to: "Seldon", message: "Priority shift: drop current task, begin research on issue #142")
+```
+
+The team lead (Demerzel) coordinates lifecycle transitions. On pause, each agent writes `paused_state` to the team manifest before stopping. On dissolve, the lead runs the COMPOUND phase after all agents confirm finalization.
+
 ## Source
 
 `AGENTS.md`, `constitutions/asimov.constitution.md`, `constitutions/default.constitution.md`,

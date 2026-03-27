@@ -1,0 +1,303 @@
+--- ## Algedonic Belief Monitor
+--- Continuously monitor belief states and fire algedonic signals on dramatic changes.
+--- Source: [algedonic-channel policy](policies/algedonic-channel-policy.yaml), [belief-currency policy](policies/belief-currency-policy.yaml)
+--- Cybernetic basis: Beer's VSM — belief state changes as S1 operational signals,
+---   dramatic shifts bypass S2/S3/S4 via algedonic channel to S5 (Asimov Constitution).
+--- Trigger: after any belief file update, or on driver cycle RECON phase
+--- Output: algedonic alerts (pain/pleasure), pattern log, driver cycle integration
+
+--- ## Phase 1: WATCH
+--- Load current and previous belief snapshots for delta computation.
+--- Per Beer: S1 operations produce continuous signals — we sample on each belief write.
+current_beliefs  <- ix.io.read("state/beliefs/*.belief.json")
+previous_beliefs <- ix.io.read("state/snapshots/beliefs-last.snapshot.json")
+belief_history   <- ix.io.read("state/snapshots/beliefs-history.snapshot.json")
+  → filter(age_days <= 30)                    -- 30-day sliding window for trend detection
+
+--- Compute deltas between current and previous belief states.
+--- Each delta captures: proposition, old truth_value, new truth_value, old confidence, new confidence.
+deltas <- current_beliefs
+  → join(previous_beliefs, on: "proposition")
+  → map(b => {
+      proposition:       b.current.proposition,
+      domain:            b.current.domain,
+      old_truth:         b.previous.truth_value,
+      new_truth:         b.current.truth_value,
+      old_confidence:    b.previous.confidence,
+      new_confidence:    b.current.confidence,
+      confidence_delta:  b.current.confidence - b.previous.confidence,
+      truth_changed:     b.current.truth_value != b.previous.truth_value,
+      timestamp:         now()
+    })
+
+--- ## Phase 2: DETECT
+--- Identify algedonic-grade belief changes using five detectors.
+--- Per Beer: algedonic signals are pain (algos) or pleasure (hedos).
+--- Pain signals bypass S2/S3/S4; pleasure signals use normal channels unless extreme.
+
+detections <- fan_out(
+
+    --- ### Detector 1: Belief Collapse (PAIN)
+    --- A strong belief loses >0.3 confidence in a single update.
+    --- Cybernetic rationale: sudden loss of operational certainty = acute pain.
+    --- Example: T@0.92 → T@0.55 (evidence contradicted a cornerstone belief)
+    deltas
+      → filter(confidence_delta < -0.3 && old_confidence >= 0.7)
+      → map(d => {
+          signal_type:  "pain",
+          signal_name:  "belief_collapse",
+          proposition:  d.proposition,
+          domain:       d.domain,
+          severity:     when abs(d.confidence_delta) > 0.5: "critical"
+                        when abs(d.confidence_delta) > 0.3: "emergency",
+          detail:       "Confidence dropped {{d.old_confidence}} → {{d.new_confidence}} (delta: {{d.confidence_delta}})",
+          article:      8    -- Article 8 (Observability): belief state integrity
+        }),
+
+    --- ### Detector 2: Belief Reversal (PAIN)
+    --- Truth value flips from T→F or F→T. The most dramatic kind of belief change.
+    --- Cybernetic rationale: operational reality inverted = severe pain requiring S5 attention.
+    --- This fires regardless of confidence — a reversal at any confidence is algedonic.
+    deltas
+      → filter(
+          (old_truth == "T" && new_truth == "F") ||
+          (old_truth == "F" && new_truth == "T")
+        )
+      → map(d => {
+          signal_type:  "pain",
+          signal_name:  "belief_reversal",
+          proposition:  d.proposition,
+          domain:       d.domain,
+          severity:     when d.old_confidence >= 0.8: "critical"
+                        when d.old_confidence >= 0.5: "emergency"
+                        otherwise: "safety",
+          detail:       "Truth reversed: {{d.old_truth}}@{{d.old_confidence}} → {{d.new_truth}}@{{d.new_confidence}}",
+          article:      0    -- Zeroth Law: reality model integrity is foundational
+        }),
+
+    --- ### Detector 3: Cascade Drift (PAIN)
+    --- Multiple beliefs in the same domain shift simultaneously (>= 3 beliefs, >= 0.15 avg delta).
+    --- Cybernetic rationale: correlated operational failures = systemic pain.
+    --- Per ACL 2025 finding: errors compound through pipeline stages — cascade drift
+    --- is the belief-level manifestation of uncertainty propagation.
+    deltas
+      → filter(abs(confidence_delta) >= 0.1)
+      → group_by(domain)
+      → filter(count >= 3 && avg(abs(confidence_delta)) >= 0.15)
+      → map(group => {
+          signal_type:  "pain",
+          signal_name:  "cascade_drift",
+          proposition:  "Domain-level: {{group.domain}} ({{group.count}} beliefs shifted)",
+          domain:       group.domain,
+          severity:     "emergency",
+          detail:       "{{group.count}} beliefs shifted with avg delta {{group.avg_delta}} — possible systemic issue",
+          article:      8    -- Article 8 (Observability): systemic drift must be visible
+        }),
+
+    --- ### Detector 4: Belief Crystallization (PLEASURE)
+    --- A belief that was U or C resolves to T with confidence >= 0.95.
+    --- Cybernetic rationale: uncertainty resolved into knowledge = pleasure.
+    --- Per Kellogg: append to wins file, reinforce attractor basin.
+    --- NOTE: Pleasure signals use NORMAL channels, not algedonic bypass.
+    deltas
+      → filter(
+          old_truth in ["U", "C"] &&
+          new_truth == "T" &&
+          new_confidence >= 0.95
+        )
+      → map(d => {
+          signal_type:  "pleasure",
+          signal_name:  "belief_crystallization",
+          proposition:  d.proposition,
+          domain:       d.domain,
+          severity:     "info",
+          detail:       "Crystallized: {{d.old_truth}}@{{d.old_confidence}} → T@{{d.new_confidence}}",
+          article:      null  -- Pleasure signals don't invoke constitutional articles
+        }),
+
+    --- ### Detector 5: Domain Convergence (PLEASURE)
+    --- All beliefs in a domain converge to T with avg confidence >= 0.9.
+    --- Cybernetic rationale: an entire operational domain reaching verified state = deep pleasure.
+    --- This IS algedonic-grade pleasure — like Beer's "everything is working" signal to S5.
+    current_beliefs
+      → group_by(domain)
+      → filter(
+          all(truth_value == "T") &&
+          avg(confidence) >= 0.9 &&
+          count >= 3
+        )
+      → map(group => {
+          signal_type:  "pleasure",
+          signal_name:  "domain_convergence",
+          proposition:  "Domain convergence: {{group.domain}} ({{group.count}} beliefs, all T)",
+          domain:       group.domain,
+          severity:     "info",
+          detail:       "All {{group.count}} beliefs verified at avg confidence {{group.avg_confidence}}",
+          article:      null
+        })
+  )
+
+--- ## Phase 3: CLASSIFY
+--- Use tetravalent logic to assess each detection: genuine signal or noise?
+--- Per Dempster-Shafer: combine evidence from multiple sources before committing.
+
+classified <- detections
+  → fan_out(
+      detections.map(detection =>
+        --- Assess genuineness via tetravalent evaluation
+        tars.assess(detection,
+          question: "Is this a genuine algedonic signal or statistical noise?",
+          method: "tetravalent",
+          context: belief_history
+        )
+        → map(assessment => {
+            detection:    detection,
+            genuineness:  assessment.truth_value,    -- T/F/U/C
+            confidence:   assessment.confidence,
+            reasoning:    assessment.reasoning
+          })
+      )
+    )
+
+--- Filter: only genuine signals proceed.
+--- T → fire immediately
+--- U → flag for investigation (do not suppress — per Beer, doubt favors alerting)
+--- C → fire AND flag contradiction for resolution
+--- F → log as noise, do not fire
+genuine_signals <- classified
+  → filter(genuineness in ["T", "U", "C"])
+
+noise <- classified
+  → filter(genuineness == "F")
+  → write("state/algedonic/noise/{date}-noise.log.json", json)
+
+--- Match against algedonic trigger conditions from policy.
+--- Pain signals map to trigger_conditions; pleasure signals are always genuine if T/U/C.
+trigger_matched <- genuine_signals
+  → fan_out(
+      --- Pain signals: must match a recognized trigger condition
+      genuine_signals
+        → filter(detection.signal_type == "pain")
+        → map(s => {
+            signal: s,
+            matches_trigger: s.detection.signal_name in [
+              "belief_collapse",     -- maps to system_integrity
+              "belief_reversal",     -- maps to constitutional_violation (reality model broken)
+              "cascade_drift"        -- maps to system_integrity (systemic failure)
+            ],
+            algedonic: true          -- all matched pain signals are algedonic
+          }),
+
+      --- Pleasure signals: only domain_convergence is algedonic-grade
+      genuine_signals
+        → filter(detection.signal_type == "pleasure")
+        → map(s => {
+            signal: s,
+            matches_trigger: false,  -- pleasure does not match pain triggers
+            algedonic: s.detection.signal_name == "domain_convergence"
+          })
+    )
+
+--- ## Phase 4: FIRE
+--- For genuine algedonic signals, fire the alert. For non-algedonic, log normally.
+--- Per Beer: the algedonic channel is immutable once fired — it can only be acknowledged, not cancelled.
+
+--- ### 4a: Algedonic Alerts (S1 → S5 bypass)
+algedonic_alerts <- trigger_matched
+  → filter(algedonic == true)
+  → fan_out(
+      alerts.map(alert =>
+        --- Pain signals: full algedonic bypass
+        when alert.signal.detection.signal_type == "pain":
+          algedonic_alert(
+            signal:   alert.signal.detection.signal_name,
+            source:   demerzel,
+            severity: alert.signal.detection.severity,
+            article:  alert.signal.detection.article,
+            detail:   alert.signal.detection.detail,
+            belief:   alert.signal.detection.proposition,
+            domain:   alert.signal.detection.domain,
+            genuineness_assessment: {
+              truth_value: alert.signal.genuineness,
+              confidence:  alert.signal.confidence
+            }
+          )
+          → write("state/algedonic/{date}-{signal_id}.alert.json", json)
+          → alert(discord, "ALGEDONIC PAIN: {{alert.signal.detection.signal_name}} — {{alert.signal.detection.detail}} (S1→S5 bypass)")
+
+        --- Pleasure signals (domain_convergence only): algedonic pleasure
+        → when alert.signal.detection.signal_type == "pleasure":
+          algedonic_alert(
+            signal:   alert.signal.detection.signal_name,
+            source:   demerzel,
+            severity: "info",
+            article:  null,
+            detail:   alert.signal.detection.detail,
+            belief:   alert.signal.detection.proposition,
+            domain:   alert.signal.detection.domain,
+            genuineness_assessment: {
+              truth_value: alert.signal.genuineness,
+              confidence:  alert.signal.confidence
+            }
+          )
+          → write("state/algedonic/{date}-{signal_id}.alert.json", json)
+          → alert(discord, "ALGEDONIC PLEASURE: {{alert.signal.detection.signal_name}} — {{alert.signal.detection.detail}}")
+      )
+    )
+
+--- ### 4b: Normal Channel (non-algedonic pleasure)
+normal_signals <- trigger_matched
+  → filter(algedonic == false)
+  → write("state/conscience/signals/{date}-belief-{signal_name}.signal.json", json)
+
+--- ## Phase 5: COMPOUND
+--- Log detections, update pattern recognition, feed into driver cycle.
+--- Per Kellogg: wins file is append-only (pleasure), dissonance log is append-only (pain).
+
+--- Snapshot current beliefs for next cycle's delta computation.
+ix.io.write("state/snapshots/beliefs-last.snapshot.json", current_beliefs)
+
+--- Append to belief history (30-day rolling window).
+ix.io.append("state/snapshots/beliefs-history.snapshot.json", {
+  timestamp: now(),
+  beliefs:   current_beliefs,
+  deltas:    deltas,
+  detections: detections.count,
+  algedonic_fired: algedonic_alerts.count,
+  noise_filtered: noise.count
+})
+
+--- Update pattern recognition: track recurring signal types per domain.
+pattern_update <- algedonic_alerts
+  → group_by(domain)
+  → map(group => {
+      domain:           group.domain,
+      pain_count:       group.filter(signal_type == "pain").count,
+      pleasure_count:   group.filter(signal_type == "pleasure").count,
+      last_signal:      group.latest.timestamp,
+      trend:            when group.pain_count > group.pleasure_count: "degrading"
+                        when group.pleasure_count > group.pain_count: "improving"
+                        otherwise: "stable"
+    })
+  → write("state/algedonic/patterns/{date}-belief-patterns.json", json)
+
+--- Compound learnings into evolution log.
+  → compound:
+      harvest algedonic_alerts as "algedonic-belief-detections"
+      harvest noise as "filtered-noise-baseline"
+      promote detection_pattern if occurrence_count >= 3 && T >= 0.9
+      teach algedonic_learnings to seldon
+      log algedonic_cycle to "state/evolution/"
+
+--- Feed summary into driver cycle RECON phase (if running within driver).
+--- The algedonic monitor integrates with Phase 2 Stage 3 (Analyze) of driver-cycle.ixql.
+  → when context.caller == "driver-cycle":
+      yield {
+        algedonic_summary: {
+          pain_signals:     algedonic_alerts.filter(signal_type == "pain").count,
+          pleasure_signals: algedonic_alerts.filter(signal_type == "pleasure").count,
+          noise_filtered:   noise.count,
+          domains_affected: algedonic_alerts.distinct(domain),
+          severity_max:     algedonic_alerts.max(severity)
+        }
+      }
