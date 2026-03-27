@@ -12,6 +12,10 @@ permissions:
   contents: read
   discussions: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   harvest-and-report:
     runs-on: [self-hosted, demerzel]
