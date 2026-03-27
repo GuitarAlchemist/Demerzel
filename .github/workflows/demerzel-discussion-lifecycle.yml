@@ -17,6 +17,10 @@ permissions:
   discussions: write
   issues: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   # ── Promote discussion to issue when actionable ──
   promote-to-issue:
