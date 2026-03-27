@@ -12,6 +12,10 @@ on:
 permissions:
   issues: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   notify-consumers:
     runs-on: [self-hosted, demerzel]
