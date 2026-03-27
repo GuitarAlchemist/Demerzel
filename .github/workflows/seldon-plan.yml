@@ -24,6 +24,10 @@ concurrency:
   group: seldon-plan
   cancel-in-progress: false  # Never cancel mid-cycle
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   seldon-plan-cycle:
     name: Seldon Plan Research Cycle
