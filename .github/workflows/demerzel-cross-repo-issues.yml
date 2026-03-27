@@ -24,6 +24,10 @@ permissions:
   issues: write
   discussions: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   scan-and-create-issues:
     runs-on: [self-hosted, demerzel]
