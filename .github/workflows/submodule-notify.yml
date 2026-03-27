@@ -89,3 +89,15 @@ jobs:
               fi
             fi
           done
+
+          # Dispatch repository_dispatch events to trigger auto-update workflows
+          echo ""
+          echo "Dispatching auto-update events to consumer repos..."
+          for REPO in ix tars ga; do
+            gh api "repos/GuitarAlchemist/$REPO/dispatches" \
+              --method POST \
+              -f event_type="demerzel-updated" \
+              -f "client_payload[demerzel_head]=$DEMERZEL_HEAD" \
+              -f "client_payload[commit_msg]=$COMMIT_MSG" \
+              2>/dev/null && echo "Dispatched to $REPO" || echo "Failed to dispatch to $REPO"
+          done
