@@ -21,6 +21,10 @@ on:
 permissions:
   contents: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   sync-consumer-wikis:
     runs-on: [self-hosted, demerzel]
