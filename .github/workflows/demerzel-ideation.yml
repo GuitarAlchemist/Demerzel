@@ -20,6 +20,10 @@ permissions:
   discussions: write
   issues: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   generate-ideas:
     runs-on: [self-hosted, demerzel]
