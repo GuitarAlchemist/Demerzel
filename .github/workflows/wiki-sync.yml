@@ -11,6 +11,10 @@ on:
       - '.github/scripts/generate-wiki.sh'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   sync-wiki:
     runs-on: [self-hosted, demerzel]
