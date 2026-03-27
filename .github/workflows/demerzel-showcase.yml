@@ -10,6 +10,10 @@ permissions:
   contents: read
   discussions: write
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   create-showcase:
     runs-on: [self-hosted, demerzel]
