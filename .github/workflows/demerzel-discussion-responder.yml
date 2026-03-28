@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   respond-to-comment:
-    runs-on: [self-hosted, demerzel]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     # Only respond to comments on Demerzel-created discussions, skip bot comments
     if: >-
