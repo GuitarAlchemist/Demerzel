@@ -3,7 +3,10 @@
   "proposition": "Visual quality of earth-clouds rendering is acceptable",
   "truth_value": "U",
   "confidence": 0.0,
-  "evidence": { "supporting": [], "contradicting": [] },
+  "evidence": {
+    "supporting": [],
+    "contradicting": []
+  },
   "last_updated": "2026-03-27T00:00:00Z",
   "evaluated_by": "visual-critic-loop"
 }
