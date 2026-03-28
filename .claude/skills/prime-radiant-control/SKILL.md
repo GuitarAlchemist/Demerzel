@@ -124,3 +124,15 @@ curl -s localhost:5176/pr/state | python -m json.tool
 # Navigate to node
 curl -sX POST localhost:5176/pr/command -H 'Content-Type: application/json' -d '{"action":"navigate:node","params":{"nodeId":"alignment-policy"}}'
 ```
+
+## Visual Validation
+
+For full visual validation (command -> screenshot -> state check -> corrective loop), see [validate.md](./validate.md).
+
+The validation loop combines:
+1. Programmatic commands via `/pr/command`
+2. Screenshot capture via Windows MCP `Screenshot` tool
+3. State verification via `/pr/state`
+4. Automated mismatch detection and corrective re-sends
+
+Use this when you need to **prove** that Prime Radiant visuals match governance state -- not just trust the API response. Includes three worked scenarios (governance pins, clustering, node navigation) and a failure taxonomy.
