@@ -41,10 +41,11 @@ jobs:
 
       - name: Assess if discussion needs an issue
         id: assess
+        env:
+          DISCUSSION_TITLE: ${{ github.event.discussion.title }}
+          DISCUSSION_CATEGORY: ${{ github.event.discussion.category.name }}
         run: |
           DISCUSSION_NUMBER="${{ github.event.discussion.number }}"
-          DISCUSSION_TITLE="${{ github.event.discussion.title }}"
-          DISCUSSION_CATEGORY="${{ github.event.discussion.category.name }}"
 
           # Get full discussion body and recent comments
           DISCUSSION_BODY=$(gh api graphql -f query='query {
@@ -225,12 +226,13 @@ jobs:
 
     steps:
       - name: Find and comment on linked discussion
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
-          ISSUE_BODY="${{ github.event.issue.body }}"
           ISSUE_NUMBER="${{ github.event.issue.number }}"
-          ISSUE_TITLE="${{ github.event.issue.title }}"
 
-          # Extract discussion number from issue body
+          # Extract discussion number from issue body (via env to avoid shell injection)
           DISC_NUMBER=$(echo "$ISSUE_BODY" | grep -oP 'Discussion #\K[0-9]+' | head -1)
 
           if [ -z "$DISC_NUMBER" ]; then
