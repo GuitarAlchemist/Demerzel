@@ -1,0 +1,263 @@
+name: Cross-Model Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  detect-and-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check diff size and file types
+        id: gate
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+
+          # Count changed lines (additions + deletions)
+          LINES_CHANGED=$(git diff --stat "$BASE"..."$HEAD" | tail -1 | grep -oP '\d+ insertion' | grep -oP '^\d+' || echo 0)
+          LINES_DELETED=$(git diff --stat "$BASE"..."$HEAD" | tail -1 | grep -oP '\d+ deletion' | grep -oP '^\d+' || echo 0)
+          TOTAL=$((LINES_CHANGED + LINES_DELETED))
+          echo "lines_changed=$TOTAL" >> "$GITHUB_OUTPUT"
+
+          # Check if only markdown files changed (cost control)
+          NON_MD=$(git diff --name-only "$BASE"..."$HEAD" | grep -v '\.md$' | head -1 || true)
+          if [ -z "$NON_MD" ]; then
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if docs-only or < 10 lines
+        if: steps.gate.outputs.docs_only == 'true' || steps.gate.outputs.lines_changed < 10
+        run: |
+          echo "Skipping review: docs_only=${{ steps.gate.outputs.docs_only }}, lines=${{ steps.gate.outputs.lines_changed }}"
+          echo "SKIP_REVIEW=true" >> "$GITHUB_ENV"
+
+      - name: Detect author model
+        if: env.SKIP_REVIEW != 'true'
+        id: detect
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+          LABELS='${{ toJson(github.event.pull_request.labels.*.name) }}'
+          COMMITS=$(git log --format="%b" "$BASE"..."$HEAD")
+
+          AUTHOR="human"
+
+          # Check PR labels first
+          if echo "$LABELS" | grep -qi "claude"; then
+            AUTHOR="claude"
+          elif echo "$LABELS" | grep -qi "gemini"; then
+            AUTHOR="gemini"
+          elif echo "$LABELS" | grep -qi "codex"; then
+            AUTHOR="codex"
+          # Fall back to commit message signatures
+          elif echo "$COMMITS" | grep -qi "co-authored-by.*anthropic\|claude"; then
+            AUTHOR="claude"
+          elif echo "$COMMITS" | grep -qi "co-authored-by.*google\|gemini"; then
+            AUTHOR="gemini"
+          elif echo "$COMMITS" | grep -qi "co-authored-by.*openai\|codex"; then
+            AUTHOR="codex"
+          fi
+
+          echo "author=$AUTHOR" >> "$GITHUB_OUTPUT"
+          echo "Detected author model: $AUTHOR"
+
+      - name: Select reviewer model
+        if: env.SKIP_REVIEW != 'true'
+        id: reviewer
+        run: |
+          AUTHOR="${{ steps.detect.outputs.author }}"
+
+          # No model reviews its own work
+          case "$AUTHOR" in
+            claude)
+              # Prefer Gemini for Claude-authored PRs
+              if [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
+                REVIEWER="gemini"
+              else
+                REVIEWER="codex"
+              fi
+              ;;
+            gemini)
+              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+                REVIEWER="claude"
+              else
+                REVIEWER="codex"
+              fi
+              ;;
+            codex)
+              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+                REVIEWER="claude"
+              else
+                REVIEWER="gemini"
+              fi
+              ;;
+            human)
+              # Any model can review human work; prefer Claude
+              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+                REVIEWER="claude"
+              elif [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
+                REVIEWER="gemini"
+              else
+                REVIEWER="codex"
+              fi
+              ;;
+          esac
+
+          echo "reviewer=$REVIEWER" >> "$GITHUB_OUTPUT"
+          echo "Selected reviewer: $REVIEWER (author was $AUTHOR)"
+
+      - name: Generate diff for review
+        if: env.SKIP_REVIEW != 'true'
+        id: diff
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+
+          # Truncate diff to 12000 chars to stay within API limits
+          git diff "$BASE"..."$HEAD" | head -c 12000 > /tmp/pr_diff.txt
+          echo "diff_file=/tmp/pr_diff.txt" >> "$GITHUB_OUTPUT"
+
+      - name: Build review prompt
+        if: env.SKIP_REVIEW != 'true'
+        run: |
+          cat > /tmp/review_prompt.txt << 'PROMPT_EOF'
+          You are a cross-model code reviewer for the Demerzel governance framework.
+          Review this pull request diff for:
+
+          1. CORRECTNESS: Logic errors, off-by-one, missing edge cases
+          2. SECURITY (OWASP): Injection risks, secrets exposure, insecure defaults
+          3. ANTI-SLOP: Vague variable names, cargo-cult patterns, unnecessary complexity
+          4. LOLLI DETECTION: Does this create artifacts without named consumers? Does it add governance weight without proportional value?
+          5. CONSTITUTIONAL COMPLIANCE: Check against Demerzel's 11-article constitution — especially Article 4 (Proportionality), Article 3 (Reversibility), Article 9 (Bounded Autonomy)
+
+          Output format — use exactly this structure:
+          ## Cross-Model Review
+
+          **Author model:** AUTHOR_MODEL
+          **Reviewer model:** REVIEWER_MODEL
+
+          ### Findings
+          - [CATEGORY] Finding description
+
+          ### Verdict
+          APPROVE or REQUEST_CHANGES with one-line rationale
+
+          If no issues found, output APPROVE with a brief confirmation.
+          Do NOT pad the review with filler praise. Be direct.
+
+          DIFF:
+          PROMPT_EOF
+
+          # Append the actual diff
+          cat /tmp/pr_diff.txt >> /tmp/review_prompt.txt
+
+          # Replace placeholders
+          sed -i "s/AUTHOR_MODEL/${{ steps.detect.outputs.author }}/" /tmp/review_prompt.txt
+          sed -i "s/REVIEWER_MODEL/${{ steps.reviewer.outputs.reviewer }}/" /tmp/review_prompt.txt
+
+      - name: Run Claude review
+        if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'claude'
+        id: claude_review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          PROMPT=$(cat /tmp/review_prompt.txt)
+          ESCAPED=$(echo "$PROMPT" | jq -Rs .)
+
+          RESPONSE=$(curl -s -X POST https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d "{
+              \"model\": \"claude-sonnet-4-20250514\",
+              \"max_tokens\": 2048,
+              \"messages\": [{\"role\": \"user\", \"content\": $ESCAPED}]
+            }")
+
+          echo "$RESPONSE" | jq -r '.content[0].text // "Review failed: no response"' > /tmp/review_result.txt
+
+      - name: Run Gemini review
+        if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'gemini'
+        id: gemini_review
+        env:
+          GOOGLE_AI_KEY: ${{ secrets.GOOGLE_AI_KEY }}
+        run: |
+          PROMPT=$(cat /tmp/review_prompt.txt)
+          ESCAPED=$(echo "$PROMPT" | jq -Rs .)
+
+          RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GOOGLE_AI_KEY" \
+            -H "content-type: application/json" \
+            -d "{
+              \"contents\": [{\"parts\": [{\"text\": $ESCAPED}]}],
+              \"generationConfig\": {\"maxOutputTokens\": 2048}
+            }")
+
+          echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // "Review failed: no response"' > /tmp/review_result.txt
+
+      - name: Run Codex review
+        if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'codex'
+        id: codex_review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          PROMPT=$(cat /tmp/review_prompt.txt)
+          ESCAPED=$(echo "$PROMPT" | jq -Rs .)
+
+          RESPONSE=$(curl -s -X POST https://api.openai.com/v1/chat/completions \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "content-type: application/json" \
+            -d "{
+              \"model\": \"gpt-4o\",
+              \"max_tokens\": 2048,
+              \"messages\": [{\"role\": \"user\", \"content\": $ESCAPED}]
+            }")
+
+          echo "$RESPONSE" | jq -r '.choices[0].message.content // "Review failed: no response"' > /tmp/review_result.txt
+
+      - name: Post review to PR
+        if: env.SKIP_REVIEW != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          REVIEW=$(cat /tmp/review_result.txt)
+          REVIEWER="${{ steps.reviewer.outputs.reviewer }}"
+          AUTHOR="${{ steps.detect.outputs.author }}"
+
+          # Determine review event based on verdict
+          if echo "$REVIEW" | grep -q "REQUEST_CHANGES"; then
+            EVENT="REQUEST_CHANGES"
+          else
+            EVENT="COMMENT"
+          fi
+
+          gh pr review ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --"$(echo $EVENT | tr '[:upper:]' '[:lower:]' | tr '_' '-')" \
+            --body "$(cat <<EOF
+          $REVIEW
+
+          ---
+          *Cross-model review: $AUTHOR-authored PR reviewed by $REVIEWER*
+          *Policy: [cross-model-review](../blob/master/policies/) | [anti-lolli-inflation](../blob/master/policies/anti-lolli-inflation-policy.yaml)*
+          EOF
+          )"
