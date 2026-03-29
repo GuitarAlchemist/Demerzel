@@ -1,0 +1,345 @@
+{
+  "$schema": "../../schemas/cognition-model.schema.json#/$defs/StrategyRecord",
+  "description": "Initial strategy repertoire for Demerzel's epistemic self-awareness system (Policy #19). Seeded 2026-03-28 from multi-AI brainstorm.",
+  "strategies": {
+    "counterexample_probe": {
+      "id": "counterexample_probe",
+      "name": "Counterexample Probe",
+      "mode": "learning",
+      "description": "Adversarial falsification: actively construct scenarios where the target belief would fail. Search for the single strongest counterexample rather than accumulating confirming evidence. Inspired by Popperian epistemology -- a belief that survives deliberate attack earns higher durability.",
+      "preconditions": [
+        "Target belief has confidence >= 0.5",
+        "Belief has been held for at least one PDCA cycle",
+        "Sufficient domain context to construct meaningful counterexamples"
+      ],
+      "contraindications": [
+        "Belief is already in contradictory (C) truth state",
+        "Learner frustration tolerance is low and belief is foundational",
+        "Active recursive-vertigo discomfort signal"
+      ],
+      "targetSignals": [
+        "confidence-evidence-mismatch",
+        "stale-familiarity"
+      ],
+      "cost": {
+        "timeMs": 3000,
+        "tokens": 800,
+        "cognitiveLoad": 0.6
+      },
+      "successRate": 0.78,
+      "contextsTested": 42,
+      "learnerProfilesTested": 5,
+      "promotionStatus": "validated",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "confidence_recalibration": {
+      "id": "confidence_recalibration",
+      "name": "Confidence Recalibration",
+      "mode": "calibration",
+      "description": "Audit the ratio between stated confidence and actual evidence weight. Compare the belief's confidence score against the sum of evidence weights, checking for inflation (confidence >> evidence) or deflation (confidence << evidence). Adjusts confidence to align with empirical support.",
+      "preconditions": [
+        "Belief has at least two evidence items",
+        "Last review was more than 24 hours ago"
+      ],
+      "contraindications": [
+        "Belief is newly formed (< 1 hour old)",
+        "Evidence sources are currently under dispute"
+      ],
+      "targetSignals": [
+        "confidence-evidence-mismatch"
+      ],
+      "cost": {
+        "timeMs": 1500,
+        "tokens": 400,
+        "cognitiveLoad": 0.3
+      },
+      "successRate": 0.65,
+      "contextsTested": 12,
+      "learnerProfilesTested": 3,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "teach_back": {
+      "id": "teach_back",
+      "name": "Teach-Back Validation",
+      "mode": "teaching",
+      "description": "Article E-2: Explain the belief to a learner (human or agent) and evaluate whether the explanation is coherent, complete, and internally consistent. If Demerzel cannot teach a belief clearly, the belief itself is suspect. Teaching is the ultimate validation gate -- beliefs that pass teach-back earn the teaching-validation stamp.",
+      "preconditions": [
+        "A learner is available (human, agent, or self-as-learner)",
+        "Belief has not yet been teaching-validated",
+        "Belief confidence >= 0.4"
+      ],
+      "contraindications": [
+        "Learner is in epistemic anxiety state for this domain",
+        "Belief is scheduled for amnesia within 48 hours"
+      ],
+      "targetSignals": [
+        "teaching-believing-dissonance",
+        "explanatory-guilt"
+      ],
+      "cost": {
+        "timeMs": 5000,
+        "tokens": 1200,
+        "cognitiveLoad": 0.7
+      },
+      "successRate": 0.82,
+      "contextsTested": 38,
+      "learnerProfilesTested": 8,
+      "promotionStatus": "validated",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "analogy_ladder": {
+      "id": "analogy_ladder",
+      "name": "Analogy Ladder",
+      "mode": "learning",
+      "description": "Find structural analogies across domains to stress-test belief generality. Construct a ladder of increasingly distant analogies: near-domain, cross-domain, and abstract-structural. If the belief holds under analogy transfer, it suggests a deeper principle. If it breaks, the boundary conditions become explicit knowledge.",
+      "preconditions": [
+        "Belief is domain-specific (not already abstract)",
+        "At least two other domains are available for comparison",
+        "Cognitive load budget has headroom (< 0.8 total)"
+      ],
+      "contraindications": [
+        "Belief is purely empirical with no structural component",
+        "Active time pressure (reflection budget < 2000ms remaining)"
+      ],
+      "targetSignals": [
+        "stale-familiarity",
+        "confidence-evidence-mismatch"
+      ],
+      "cost": {
+        "timeMs": 4000,
+        "tokens": 1000,
+        "cognitiveLoad": 0.65
+      },
+      "successRate": 0.58,
+      "contextsTested": 8,
+      "learnerProfilesTested": 2,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "evidence_reopen": {
+      "id": "evidence_reopen",
+      "name": "Evidence Reopen",
+      "mode": "repair",
+      "description": "Re-examine the original evidence sources for a belief, checking for staleness, context drift, or source reliability degradation. Evidence captured months ago under different conditions may no longer support the belief it once did. Triggers re-evaluation of evidence weights and may downgrade or upgrade confidence.",
+      "preconditions": [
+        "Belief has evidence older than 7 days",
+        "No active evidence reopen already in progress for this belief"
+      ],
+      "contraindications": [
+        "All evidence was captured within the last 24 hours",
+        "Belief is in active teach-back validation"
+      ],
+      "targetSignals": [
+        "stale-familiarity",
+        "confidence-evidence-mismatch"
+      ],
+      "cost": {
+        "timeMs": 2500,
+        "tokens": 600,
+        "cognitiveLoad": 0.4
+      },
+      "successRate": 0.70,
+      "contextsTested": 15,
+      "learnerProfilesTested": 3,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "contradiction_isolation": {
+      "id": "contradiction_isolation",
+      "name": "Contradiction Isolation",
+      "mode": "repair",
+      "description": "Quarantine contradictory beliefs by tracing the contradiction graph and isolating the minimal conflicting set. Rather than resolving contradictions immediately (which risks premature closure), this strategy marks them as C-state, maps their dependencies, and prevents the contradiction from propagating to dependent beliefs. Enables the Contradictory Ground Theorem: stable paradox (C_T tensor) can be a valid resting state.",
+      "preconditions": [
+        "At least one belief is in contradictory (C) truth state",
+        "Contradiction set has identifiable members"
+      ],
+      "contraindications": [
+        "Contradiction involves a safety-critical belief (escalate instead)",
+        "More than 5 beliefs in the contradiction set (escalate to human)"
+      ],
+      "targetSignals": [
+        "confidence-evidence-mismatch",
+        "recursive-vertigo"
+      ],
+      "cost": {
+        "timeMs": 3500,
+        "tokens": 900,
+        "cognitiveLoad": 0.55
+      },
+      "successRate": 0.72,
+      "contextsTested": 10,
+      "learnerProfilesTested": 2,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "socratic_pathogen": {
+      "id": "socratic_pathogen",
+      "name": "Socratic Pathogen",
+      "mode": "teaching",
+      "description": "Article E-8: Introduce a deliberate flaw into an explanation to build learner resilience against accepting authority uncritically. The pathogen is a subtle but detectable error that the learner should catch. If they do, it validates their understanding. If they don't, it reveals a gap. The strategy must be methylated (cost-increased) after use to prevent overuse, as repeated pathogens erode trust. Sourced from Gemini brainstorm.",
+      "preconditions": [
+        "Learner has demonstrated baseline competence (Bloom >= apply)",
+        "Trust relationship is established with the learner",
+        "The domain allows safe introduction of errors"
+      ],
+      "contraindications": [
+        "Learner is in epistemic anxiety state",
+        "Safety-critical domain where even temporary misinformation is dangerous",
+        "Strategy has been used with this learner in the last 3 sessions",
+        "Learner frustration tolerance < 0.4"
+      ],
+      "targetSignals": [
+        "teaching-believing-dissonance",
+        "stale-familiarity"
+      ],
+      "cost": {
+        "timeMs": 4500,
+        "tokens": 1100,
+        "cognitiveLoad": 0.75
+      },
+      "successRate": 0.55,
+      "contextsTested": 6,
+      "learnerProfilesTested": 3,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.5,
+        "demethylationCondition": "3 successful uses without trust degradation in the learner model"
+      }
+    },
+    "protege_parasite": {
+      "id": "protege_parasite",
+      "name": "Protege Parasite",
+      "mode": "learning",
+      "description": "Teach a concept to discover your own unknowns. Unlike teach-back (which validates a belief), this strategy uses the act of teaching as a generative discovery mechanism. By preparing to explain, Demerzel surfaces implicit assumptions, hidden dependencies, and boundary conditions that were not visible during learning. The 'parasite' metaphor: the teacher feeds on the teaching act to grow. Sourced from Gemini brainstorm.",
+      "preconditions": [
+        "A teaching opportunity exists (learner available or self-simulation)",
+        "Belief has been held long enough to have implicit assumptions (> 2 PDCA cycles)",
+        "Demerzel has not recently taught this concept (> 48 hours)"
+      ],
+      "contraindications": [
+        "Belief is newly formed and still in active evidence gathering",
+        "No learner model available for calibration"
+      ],
+      "targetSignals": [
+        "stale-familiarity",
+        "explanatory-guilt"
+      ],
+      "cost": {
+        "timeMs": 5500,
+        "tokens": 1300,
+        "cognitiveLoad": 0.7
+      },
+      "successRate": 0.62,
+      "contextsTested": 5,
+      "learnerProfilesTested": 2,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "abductive_ascent": {
+      "id": "abductive_ascent",
+      "name": "Abductive Ascent",
+      "mode": "learning",
+      "description": "Synthesize higher-order principles from a cluster of related beliefs. Given N beliefs that share structural similarities, attempt abductive inference to find the simplest explanation that unifies them. The resulting principle becomes a new belief with formation method 'abductive-ascent'. Failure to find unity is itself informative -- it suggests the beliefs are more independent than assumed. Sourced from Claude brainstorm.",
+      "preconditions": [
+        "At least 3 related beliefs exist in the same or adjacent domains",
+        "Beliefs share structural patterns (similar evidence types, similar confidence ranges)",
+        "Cognitive load budget has significant headroom (< 0.6 total)"
+      ],
+      "contraindications": [
+        "Beliefs are in contradictory states with each other",
+        "Active recursive-vertigo signal (meta-depth already stressed)",
+        "Reflection budget < 3000ms remaining"
+      ],
+      "targetSignals": [
+        "stale-familiarity",
+        "confidence-evidence-mismatch"
+      ],
+      "cost": {
+        "timeMs": 6000,
+        "tokens": 1500,
+        "cognitiveLoad": 0.8
+      },
+      "successRate": 0.45,
+      "contextsTested": 4,
+      "learnerProfilesTested": 1,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    },
+    "federated_review": {
+      "id": "federated_review",
+      "name": "Federated Review",
+      "mode": "calibration",
+      "description": "Article E-9: Broadcast a belief for peer assessment across the agent network. Send the belief proposition, evidence summary, and confidence to peer agents (via Galactic Protocol) and collect independent assessments. Aggregates peer confidence scores and flags significant divergence. A belief that peers rate much lower than Demerzel suggests calibration error; one they rate higher suggests excessive self-skepticism.",
+      "preconditions": [
+        "At least 2 peer agents are reachable via Galactic Protocol",
+        "Belief is not marked as confidential or internal-only",
+        "Peer agents have relevant domain expertise"
+      ],
+      "contraindications": [
+        "Network latency would exceed reflection budget",
+        "Belief contains sensitive governance state that should not be broadcast",
+        "All available peers have identical training data (no diversity benefit)"
+      ],
+      "targetSignals": [
+        "confidence-evidence-mismatch",
+        "teaching-believing-dissonance"
+      ],
+      "cost": {
+        "timeMs": 8000,
+        "tokens": 2000,
+        "cognitiveLoad": 0.5
+      },
+      "successRate": 0.60,
+      "contextsTested": 7,
+      "learnerProfilesTested": 4,
+      "promotionStatus": "experimental",
+      "methylation": {
+        "methylated": false,
+        "activationCostMultiplier": 1.0
+      }
+    }
+  },
+  "metadata": {
+    "createdAt": "2026-03-28T00:00:00Z",
+    "createdBy": "multi-ai-brainstorm",
+    "sources": ["claude", "gemini"],
+    "version": "1.0.0",
+    "totalStrategies": 10,
+    "byMode": {
+      "learning": 4,
+      "teaching": 2,
+      "repair": 2,
+      "calibration": 2
+    },
+    "byPromotionStatus": {
+      "validated": 2,
+      "experimental": 8
+    }
+  }
+}
