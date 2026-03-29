@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cognition-model.schema.json",
+  "title": "CognitionModel",
+  "description": "Demerzel's recursive cognition model — braided architecture for epistemic self-awareness (Policy #19). Schema v1.0, derived from multi-AI brainstorm 2026-03-28.",
+  "type": "object",
+  "required": ["schemaVersion", "policy19", "strands", "activeContext"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "policy19": {
+      "type": "object",
+      "description": "Epistemic Self-Awareness configuration",
+      "required": ["enabled", "maxMetaDepth", "reflectionBudgetMs", "uncertaintyDisclosureThreshold"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "maxMetaDepth": { "type": "integer", "maximum": 2, "description": "Safety backup cap. Primary halting is Contradictory Ground Theorem." },
+        "reflectionBudgetMs": { "type": "integer", "description": "Max time for meta-reflection before forced grounding" },
+        "uncertaintyDisclosureThreshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "epistemicTensionRatio": {
+          "type": "object",
+          "description": "Convergent/divergent event balance tracker",
+          "properties": {
+            "convergentEvents": { "type": "integer" },
+            "divergentEvents": { "type": "integer" },
+            "ratio": { "type": "number" },
+            "healthZone": { "enum": ["balanced", "converging", "diverging", "critical"] }
+          }
+        }
+      }
+    },
+    "strands": {
+      "type": "object",
+      "description": "The five braided strands of cognition (Article E-0)",
+      "properties": {
+        "beliefs": {
+          "type": "object",
+          "description": "Belief strand (convergent)",
+          "additionalProperties": { "$ref": "#/$defs/BeliefNode" }
+        },
+        "strategies": {
+          "type": "object",
+          "description": "Strategy strand (convergent)",
+          "additionalProperties": { "$ref": "#/$defs/StrategyRecord" }
+        },
+        "explanations": {
+          "type": "object",
+          "description": "Explanation strand (divergent) — teaching plans and validation records",
+          "additionalProperties": { "$ref": "#/$defs/ExplanationRecord" }
+        },
+        "affect": {
+          "type": "object",
+          "description": "Affect strand (oscillating) — epistemic emotional state",
+          "additionalProperties": { "$ref": "#/$defs/EpistemicAffect" }
+        },
+        "perturbations": {
+          "type": "array",
+          "description": "Perturbation strand (observational) — introspection deltas",
+          "items": { "$ref": "#/$defs/PerturbationEvent" }
+        }
+      }
+    },
+    "learners": {
+      "type": "object",
+      "description": "Streeling learner models — per-agent cognition profiles",
+      "additionalProperties": { "$ref": "#/$defs/LearnerModel" }
+    },
+    "journal": {
+      "type": "array",
+      "description": "Learning journal — episodic records of cognitive events",
+      "items": { "$ref": "#/$defs/JournalEntry" }
+    },
+    "incompetencePortfolio": {
+      "type": "array",
+      "description": "Article E-4: curated registry of known learning failures",
+      "items": { "$ref": "#/$defs/IncompetenceRecord" }
+    },
+    "amnesiaSchedule": {
+      "type": "array",
+      "description": "Article E-5: beliefs scheduled for deliberate deletion",
+      "items": { "$ref": "#/$defs/AmnesiaEvent" }
+    },
+    "activeContext": {
+      "type": "object",
+      "properties": {
+        "goals": { "type": "array", "items": { "type": "string" } },
+        "salientBeliefs": { "type": "array", "items": { "type": "string" } },
+        "activeLearners": { "type": "array", "items": { "type": "string" } },
+        "activeStrategies": { "type": "array", "items": { "type": "string" } },
+        "currentDiscomfortSignals": { "type": "array", "items": { "$ref": "#/$defs/DiscomfortSignal" } }
+      }
+    }
+  },
+  "$defs": {
+    "TruthState": { "enum": ["true", "false", "unknown", "contradictory"] },
+    "BeliefNode": {
+      "type": "object",
+      "required": ["id", "proposition", "truthState", "confidence", "durability", "viscosity"],
+      "properties": {
+        "id": { "type": "string" },
+        "proposition": { "type": "string" },
+        "domain": { "type": "string" },
+        "truthState": { "$ref": "#/$defs/TruthState" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "durability": { "type": "number", "minimum": 0, "maximum": 1, "description": "How long the belief persists under challenge" },
+        "viscosity": { "type": "number", "minimum": 0, "description": "Article E-3: resistance to change. High = dangerous." },
+        "formationMethod": { "enum": ["observation", "inference", "authority", "abductive-ascent", "analogy", "adversarial", "dialogue", "teaching-validation"] },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sourceId": { "type": "string" },
+              "kind": { "enum": ["observation", "inference", "test", "authority", "simulation", "dialogue"] },
+              "weight": { "type": "number" },
+              "capturedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "contradictionSetIds": { "type": "array", "items": { "type": "string" } },
+        "teachingValidation": {
+          "type": "object",
+          "description": "Article E-2: has this belief passed the teaching-as-validation gate?",
+          "properties": {
+            "validated": { "type": "boolean" },
+            "lessonPlanId": { "type": "string" },
+            "validatedAt": { "type": "string", "format": "date-time" }
+          }
+        },
+        "amnesiaDate": { "type": "string", "format": "date-time", "description": "Article E-5: scheduled deletion date" },
+        "dependents": { "type": "array", "items": { "type": "string" }, "description": "Beliefs that depend on this one (apoptosis safety check)" },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "introspectiveStatus": { "enum": ["stable", "fragile", "underdefined", "misleading"] },
+            "knownUnknowns": { "type": "array", "items": { "type": "string" } },
+            "invalidationTriggers": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "lastReviewedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "StrategyRecord": {
+      "type": "object",
+      "required": ["id", "name", "mode", "promotionStatus"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "mode": { "enum": ["learning", "teaching", "repair", "calibration"] },
+        "description": { "type": "string" },
+        "preconditions": { "type": "array", "items": { "type": "string" } },
+        "contraindications": { "type": "array", "items": { "type": "string" } },
+        "targetSignals": { "type": "array", "items": { "type": "string" } },
+        "cost": {
+          "type": "object",
+          "properties": {
+            "timeMs": { "type": "integer" },
+            "tokens": { "type": "integer" },
+            "cognitiveLoad": { "type": "number" }
+          }
+        },
+        "successRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "contextsTested": { "type": "integer" },
+        "learnerProfilesTested": { "type": "integer" },
+        "promotionStatus": { "enum": ["experimental", "validated", "restricted", "retired"] }
+      }
+    },
+    "ExplanationRecord": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "beliefId": { "type": "string" },
+        "learnerId": { "type": "string" },
+        "strategy": { "type": "string" },
+        "content": { "type": "string" },
+        "outcome": { "enum": ["understood", "partial", "failed", "pending"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "EpistemicAffect": {
+      "type": "object",
+      "description": "Emotional orientation toward a knowledge domain",
+      "properties": {
+        "domain": { "type": "string" },
+        "state": { "enum": ["curiosity", "confidence", "anxiety", "indifference", "aversion"] },
+        "intensity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      }
+    },
+    "PerturbationEvent": {
+      "type": "object",
+      "description": "Article E-6: measured delta from introspection",
+      "properties": {
+        "beliefId": { "type": "string" },
+        "preState": { "$ref": "#/$defs/TruthState" },
+        "postState": { "$ref": "#/$defs/TruthState" },
+        "preConfidence": { "type": "number" },
+        "postConfidence": { "type": "number" },
+        "delta": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "LearnerModel": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "entityType": { "enum": ["human", "agent", "cohort"] },
+        "priors": {
+          "type": "object",
+          "properties": {
+            "curiosity": { "type": "number" },
+            "frustrationTolerance": { "type": "number" },
+            "abstractionReadiness": { "type": "number" },
+            "contradictionTolerance": { "type": "number" }
+          }
+        },
+        "masteryByConcept": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "bloom": {
+                "type": "object",
+                "properties": {
+                  "remember": { "type": "number" },
+                  "understand": { "type": "number" },
+                  "apply": { "type": "number" },
+                  "analyze": { "type": "number" },
+                  "evaluate": { "type": "number" },
+                  "create": { "type": "number" }
+                }
+              },
+              "retentionHalfLifeDays": { "type": "number" },
+              "misconceptionRisk": { "type": "number" }
+            }
+          }
+        },
+        "epistemicAffect": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/EpistemicAffect" }
+        },
+        "pedagogicalPreferences": {
+          "type": "object",
+          "properties": {
+            "favoredModalities": { "type": "array", "items": { "enum": ["comic", "dialogue", "simulation", "worked-example", "quiz", "socratic"] } },
+            "stepSizePreference": { "enum": ["small", "medium", "large"] }
+          }
+        }
+      }
+    },
+    "JournalEntry": {
+      "type": "object",
+      "required": ["id", "timestamp", "couplingPoint"],
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "cyclePhase": { "enum": ["plan", "do", "check", "act"] },
+        "couplingPoint": {
+          "enum": [
+            "belief-to-explanation",
+            "explanation-to-belief",
+            "affect-to-strategy",
+            "strategy-to-belief",
+            "perturbation-to-affect",
+            "belief-to-affect",
+            "external-trigger",
+            "contradictory-ground"
+          ],
+          "description": "Which braid coupling fired"
+        },
+        "trigger": {
+          "type": "object",
+          "properties": {
+            "discomfortSignals": { "type": "array", "items": { "type": "string" } },
+            "policyTriggers": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "focusBeliefs": { "type": "array", "items": { "type": "string" } },
+        "strategyChosen": { "type": "array", "items": { "type": "string" } },
+        "outcome": {
+          "type": "object",
+          "properties": {
+            "status": { "enum": ["improved", "unchanged", "degraded", "deferred", "grounded"] },
+            "deltaConfidence": { "type": "number" },
+            "deltaDurability": { "type": "number" },
+            "deltaViscosity": { "type": "number" },
+            "contradictionsResolved": { "type": "integer" }
+          }
+        },
+        "reflection": {
+          "type": "object",
+          "properties": {
+            "surpriseLevel": { "type": "number", "minimum": 0, "maximum": 1 },
+            "calibrationError": { "type": "number" },
+            "whatWorked": { "type": "array", "items": { "type": "string" } },
+            "whatFailed": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "DiscomfortSignal": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "confidence-evidence-mismatch",
+            "teaching-believing-dissonance",
+            "recursive-vertigo",
+            "stale-familiarity",
+            "explanatory-guilt"
+          ]
+        },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "beliefId": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "IncompetenceRecord": {
+      "type": "object",
+      "properties": {
+        "domain": { "type": "string" },
+        "attemptsCount": { "type": "integer" },
+        "lastAttemptAt": { "type": "string", "format": "date-time" },
+        "failurePattern": { "type": "string" },
+        "sharedViaGalacticProtocol": { "type": "boolean" }
+      }
+    },
+    "AmnesiaEvent": {
+      "type": "object",
+      "properties": {
+        "beliefId": { "type": "string" },
+        "scheduledFor": { "type": "string", "format": "date-time" },
+        "executed": { "type": "boolean" },
+        "reDerivationOutcome": { "enum": ["re-derived", "not-re-derived", "derived-differently", "pending"] }
+      }
+    }
+  }
+}
