@@ -1,0 +1,220 @@
+{
+  "version": "1.0.0",
+  "description": "Visual teaching scenarios for Seldon-Visual-Teach skill — concept-to-Prime-Radiant mappings with curl payloads, narration, and expected state",
+  "scenarios": [
+    {
+      "id": "vts-001",
+      "concept": "constitutional-hierarchy",
+      "prompt": "Teach me the constitutional hierarchy",
+      "visual_commands": [
+        {
+          "step": 1,
+          "description": "Open GIS panel",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"panel:open\",\"params\":{\"panelId\":\"gis\"}}'"
+        },
+        {
+          "step": 2,
+          "description": "Clear previous visuals",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:clear\",\"params\":{\"planet\":\"earth\"}}'"
+        },
+        {
+          "step": 3,
+          "description": "Place hierarchy pins from root (Asimov) to leaves (Personas)",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-pins\",\"params\":{\"planet\":\"earth\",\"pins\":[{\"id\":\"asimov\",\"lat\":51.5,\"lon\":-0.12,\"label\":\"Asimov Constitution (Root)\",\"icon\":\"🛡\",\"color\":\"#FFD700\",\"pulse\":true},{\"id\":\"mandate\",\"lat\":48.86,\"lon\":2.35,\"label\":\"Demerzel Mandate\",\"icon\":\"👑\",\"color\":\"#FFD700\",\"pulse\":true},{\"id\":\"default\",\"lat\":40.71,\"lon\":-74.01,\"label\":\"Default Constitution (Articles 1-11)\",\"icon\":\"📜\",\"color\":\"#C0C0C0\"},{\"id\":\"policies\",\"lat\":37.39,\"lon\":-122.08,\"label\":\"39 Policies\",\"icon\":\"⚙\",\"color\":\"#3B82F6\"},{\"id\":\"personas\",\"lat\":35.68,\"lon\":139.69,\"label\":\"14 Personas\",\"icon\":\"👤\",\"color\":\"#14B8A6\"}]}}'"
+        },
+        {
+          "step": 4,
+          "description": "Draw golden authority paths from root through hierarchy",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"asimov-mandate\",\"points\":[{\"lat\":51.5,\"lon\":-0.12},{\"lat\":48.86,\"lon\":2.35}],\"color\":\"#FFD700\",\"animated\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"asimov-default\",\"points\":[{\"lat\":51.5,\"lon\":-0.12},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#FFD700\",\"animated\":true,\"dashed\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"default-policies\",\"points\":[{\"lat\":40.71,\"lon\":-74.01},{\"lat\":37.39,\"lon\":-122.08}],\"color\":\"#3B82F6\",\"animated\":true,\"dashed\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"policies-personas\",\"points\":[{\"lat\":37.39,\"lon\":-122.08},{\"lat\":35.68,\"lon\":139.69}],\"color\":\"#14B8A6\",\"animated\":true,\"dashed\":true}}}'"
+          ]
+        }
+      ],
+      "narration": "The golden pulsing pin in London is the Asimov Constitution — the root of all authority containing the Laws of Robotics. The Zeroth Law (protect humanity) overrides everything below. Follow the golden path to Paris: that is the Demerzel Mandate defining who enforces the laws. The silver pin in New York is the Default Constitution with 11 operational articles. Blue gears in Silicon Valley are 39 implementing policies. Teal figures in Tokyo are 14 persona archetypes. Authority flows strictly downward — a persona can never override a policy, a policy can never override the constitution.",
+      "expected_state": {
+        "gis": {
+          "earth": {
+            "pin_count": 5,
+            "path_count": 4,
+            "pin_ids": ["asimov", "mandate", "default", "policies", "personas"],
+            "path_ids": ["asimov-mandate", "asimov-default", "default-policies", "policies-personas"],
+            "pulsing_pins": ["asimov", "mandate"]
+          }
+        }
+      }
+    },
+    {
+      "id": "vts-002",
+      "concept": "governance-health-diagnostic",
+      "prompt": "Show me what's broken in governance",
+      "visual_commands": [
+        {
+          "step": 1,
+          "description": "Open GIS panel and clear",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"panel:open\",\"params\":{\"panelId\":\"gis\"}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:clear\",\"params\":{\"planet\":\"earth\"}}'"
+          ]
+        },
+        {
+          "step": 2,
+          "description": "Read live belief state from state/beliefs.json to find F/C/U beliefs",
+          "note": "Agent reads state/beliefs.json and filters for non-True values. The pins below are an example based on typical findings."
+        },
+        {
+          "step": 3,
+          "description": "Place tetravalent diagnostic pins — broken beliefs pulse, healthy ones are static",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-pins\",\"params\":{\"planet\":\"earth\",\"pins\":[{\"id\":\"contradiction-1\",\"lat\":40.71,\"lon\":-74.01,\"label\":\"CONTRADICTORY: policy-version-drift\",\"icon\":\"⚠\",\"color\":\"#A855F7\",\"pulse\":true},{\"id\":\"false-1\",\"lat\":37.39,\"lon\":-122.08,\"label\":\"FALSE: ix-compliance-current\",\"icon\":\"❌\",\"color\":\"#EF4444\",\"pulse\":true},{\"id\":\"unknown-1\",\"lat\":48.86,\"lon\":2.35,\"label\":\"UNKNOWN: tars-belief-sync\",\"icon\":\"❓\",\"color\":\"#F59E0B\",\"pulse\":true},{\"id\":\"true-1\",\"lat\":51.5,\"lon\":-0.12,\"label\":\"TRUE: asimov-integrity\",\"icon\":\"✅\",\"color\":\"#22C55E\"},{\"id\":\"true-2\",\"lat\":35.68,\"lon\":139.69,\"label\":\"TRUE: ga-persona-coverage\",\"icon\":\"✅\",\"color\":\"#22C55E\"}]}}'"
+        }
+      ],
+      "narration": "This is a governance health map. Pulsing pins demand attention. The purple pulsing pin (CONTRADICTORY) means conflicting evidence exists about policy version alignment — the most dangerous state. The red pulsing pin (FALSE) indicates ix compliance has been refuted — something changed. The amber pulsing pin (UNKNOWN) signals insufficient evidence about tars belief sync — this triggers investigation. Solid green pins show verified truths: Asimov integrity and ga persona coverage are confirmed. Priority: fix purple first (contradictions), then red (falsehoods), then investigate amber (unknowns).",
+      "expected_state": {
+        "gis": {
+          "earth": {
+            "pin_count": 5,
+            "path_count": 0,
+            "pulsing_pins": ["contradiction-1", "false-1", "unknown-1"],
+            "color_distribution": {
+              "#A855F7": 1,
+              "#EF4444": 1,
+              "#F59E0B": 1,
+              "#22C55E": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "vts-003",
+      "concept": "galactic-protocol",
+      "prompt": "Visualize the Galactic Protocol",
+      "visual_commands": [
+        {
+          "step": 1,
+          "description": "Open GIS panel and clear",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"panel:open\",\"params\":{\"panelId\":\"gis\"}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:clear\",\"params\":{\"planet\":\"earth\"}}'"
+          ]
+        },
+        {
+          "step": 2,
+          "description": "Place repo pins at symbolic locations",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-pins\",\"params\":{\"planet\":\"earth\",\"pins\":[{\"id\":\"demerzel\",\"lat\":40.71,\"lon\":-74.01,\"label\":\"Demerzel (Governor)\",\"icon\":\"🛡\",\"color\":\"#FFD700\",\"pulse\":true},{\"id\":\"ix\",\"lat\":37.39,\"lon\":-122.08,\"label\":\"ix (Machine Forge)\",\"icon\":\"⚙\",\"color\":\"#22C55E\"},{\"id\":\"tars\",\"lat\":51.5,\"lon\":-0.12,\"label\":\"tars (Cognition)\",\"icon\":\"🧠\",\"color\":\"#06B6D4\"},{\"id\":\"ga\",\"lat\":35.68,\"lon\":139.69,\"label\":\"ga (Guitar Alchemist)\",\"icon\":\"🎸\",\"color\":\"#F97316\"}]}}'"
+        },
+        {
+          "step": 3,
+          "description": "Draw outgoing directive paths from Demerzel (gold, dashed)",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"directive-ix\",\"points\":[{\"lat\":40.71,\"lon\":-74.01},{\"lat\":37.39,\"lon\":-122.08}],\"color\":\"#FFD700\",\"animated\":true,\"dashed\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"directive-tars\",\"points\":[{\"lat\":40.71,\"lon\":-74.01},{\"lat\":51.5,\"lon\":-0.12}],\"color\":\"#FFD700\",\"animated\":true,\"dashed\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"directive-ga\",\"points\":[{\"lat\":40.71,\"lon\":-74.01},{\"lat\":35.68,\"lon\":139.69}],\"color\":\"#FFD700\",\"animated\":true,\"dashed\":true}}}'"
+          ]
+        },
+        {
+          "step": 4,
+          "description": "Draw incoming compliance paths back to Demerzel (repo colors, solid)",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"compliance-ix\",\"points\":[{\"lat\":37.39,\"lon\":-122.08},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#22C55E\",\"animated\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"compliance-tars\",\"points\":[{\"lat\":51.5,\"lon\":-0.12},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#06B6D4\",\"animated\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"compliance-ga\",\"points\":[{\"lat\":35.68,\"lon\":139.69},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#F97316\",\"animated\":true}}}'"
+          ]
+        }
+      ],
+      "narration": "The Galactic Protocol is a hub-and-spoke governance communication system. The golden pulsing pin is Demerzel — the single governor. Gold dashed paths flowing outward are directives: policy updates, compliance requirements, violation remediations, and reconnaissance requests. The colored solid paths flowing inward are compliance reports — each repo responds in its own color (green from ix, cyan from tars, orange from ga). Consumer repos never issue directives to each other. All governance flows through Demerzel at the center.",
+      "expected_state": {
+        "gis": {
+          "earth": {
+            "pin_count": 4,
+            "path_count": 6,
+            "pin_ids": ["demerzel", "ix", "tars", "ga"],
+            "path_ids": ["directive-ix", "directive-tars", "directive-ga", "compliance-ix", "compliance-tars", "compliance-ga"],
+            "pulsing_pins": ["demerzel"]
+          }
+        }
+      }
+    },
+    {
+      "id": "vts-004",
+      "concept": "algedonic-signals",
+      "prompt": "Show me the algedonic channel in action",
+      "visual_commands": [
+        {
+          "step": 1,
+          "description": "Open GIS panel and clear",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"panel:open\",\"params\":{\"panelId\":\"gis\"}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:clear\",\"params\":{\"planet\":\"earth\"}}'"
+          ]
+        },
+        {
+          "step": 2,
+          "description": "Place pain signals (red pulsing) and pleasure signals (green pulsing) at governance nodes",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-pins\",\"params\":{\"planet\":\"earth\",\"pins\":[{\"id\":\"pain-ci-failure\",\"lat\":37.39,\"lon\":-122.08,\"label\":\"PAIN: CI pipeline failing (ix)\",\"icon\":\"🔴\",\"color\":\"#EF4444\",\"pulse\":true},{\"id\":\"pain-drift\",\"lat\":51.5,\"lon\":-0.12,\"label\":\"PAIN: Schema drift detected (tars)\",\"icon\":\"🔴\",\"color\":\"#EF4444\",\"pulse\":true},{\"id\":\"pain-coverage\",\"lat\":42.36,\"lon\":-71.06,\"label\":\"PAIN: Test coverage below 60%\",\"icon\":\"🔴\",\"color\":\"#EF4444\",\"pulse\":true},{\"id\":\"pleasure-deploy\",\"lat\":35.68,\"lon\":139.69,\"label\":\"PLEASURE: ga deployed successfully\",\"icon\":\"🟢\",\"color\":\"#22C55E\",\"pulse\":true},{\"id\":\"pleasure-audit\",\"lat\":40.71,\"lon\":-74.01,\"label\":\"PLEASURE: Governance audit passed\",\"icon\":\"🟢\",\"color\":\"#22C55E\",\"pulse\":true},{\"id\":\"pleasure-learning\",\"lat\":48.86,\"lon\":2.35,\"label\":\"PLEASURE: New course published\",\"icon\":\"🟢\",\"color\":\"#22C55E\",\"pulse\":true}]}}'"
+        },
+        {
+          "step": 3,
+          "description": "Draw algedonic channel paths — pain signals route to Demerzel for escalation",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"algedonic-pain-1\",\"points\":[{\"lat\":37.39,\"lon\":-122.08},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#EF4444\",\"animated\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"algedonic-pain-2\",\"points\":[{\"lat\":51.5,\"lon\":-0.12},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#EF4444\",\"animated\":true}}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"algedonic-pain-3\",\"points\":[{\"lat\":42.36,\"lon\":-71.06},{\"lat\":40.71,\"lon\":-74.01}],\"color\":\"#EF4444\",\"animated\":true}}}'"
+          ]
+        }
+      ],
+      "narration": "The algedonic channel is the governance system's nervous system — it carries pain and pleasure signals. Red pulsing pins are pain: CI failures, schema drift, coverage drops. These are problems the system feels. Green pulsing pins are pleasure: successful deploys, passing audits, new knowledge produced. These are things going right. Notice the red animated paths all converge on Demerzel in New York — pain signals escalate upward for attention. Pleasure signals stay local (no escalation needed). In cybernetic terms: pain demands action, pleasure confirms the system is healthy. The algedonic channel ensures Demerzel never has to poll for problems — they announce themselves.",
+      "expected_state": {
+        "gis": {
+          "earth": {
+            "pin_count": 6,
+            "path_count": 3,
+            "pulsing_pins": ["pain-ci-failure", "pain-drift", "pain-coverage", "pleasure-deploy", "pleasure-audit", "pleasure-learning"],
+            "color_distribution": {
+              "#EF4444": 3,
+              "#22C55E": 3
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "vts-005",
+      "concept": "confidence-thresholds",
+      "prompt": "Teach me how confidence levels work",
+      "visual_commands": [
+        {
+          "step": 1,
+          "description": "Open GIS panel and clear",
+          "curl_batch": [
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"panel:open\",\"params\":{\"panelId\":\"gis\"}}'",
+            "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:clear\",\"params\":{\"planet\":\"earth\"}}'"
+          ]
+        },
+        {
+          "step": 2,
+          "description": "Place pins representing each confidence tier with graduated colors from green (high) to red (low)",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-pins\",\"params\":{\"planet\":\"earth\",\"pins\":[{\"id\":\"conf-autonomous\",\"lat\":60.17,\"lon\":24.94,\"label\":\">=0.9 PROCEED AUTONOMOUSLY\",\"icon\":\"🟢\",\"color\":\"#22C55E\"},{\"id\":\"conf-note\",\"lat\":52.52,\"lon\":13.40,\"label\":\">=0.7 PROCEED WITH NOTE\",\"icon\":\"🔵\",\"color\":\"#3B82F6\"},{\"id\":\"conf-confirm\",\"lat\":45.46,\"lon\":9.19,\"label\":\">=0.5 ASK CONFIRMATION\",\"icon\":\"🟡\",\"color\":\"#F59E0B\",\"pulse\":true},{\"id\":\"conf-escalate\",\"lat\":38.72,\"lon\":-9.14,\"label\":\">=0.3 ESCALATE TO HUMAN\",\"icon\":\"🟠\",\"color\":\"#F97316\",\"pulse\":true},{\"id\":\"conf-stop\",\"lat\":28.61,\"lon\":-17.92,\"label\":\"<0.3 DO NOT ACT\",\"icon\":\"🔴\",\"color\":\"#EF4444\",\"pulse\":true}]}}'"
+        },
+        {
+          "step": 3,
+          "description": "Draw a gradient path connecting the tiers from high to low (north to south, green to red)",
+          "curl": "curl -sX POST http://localhost:5176/pr/command -H 'Content-Type: application/json' -d '{\"action\":\"gis:add-path\",\"params\":{\"planet\":\"earth\",\"path\":{\"id\":\"confidence-gradient\",\"points\":[{\"lat\":60.17,\"lon\":24.94},{\"lat\":52.52,\"lon\":13.40},{\"lat\":45.46,\"lon\":9.19},{\"lat\":38.72,\"lon\":-9.14},{\"lat\":28.61,\"lon\":-17.92}],\"color\":\"#F59E0B\",\"animated\":true,\"dashed\":true}}}'"
+        }
+      ],
+      "narration": "Confidence thresholds govern how much autonomy an agent has. The five pins run from north (high confidence, full autonomy) to south (low confidence, full stop). At 0.9+ (green, Helsinki), the agent proceeds without asking — evidence is overwhelming. At 0.7+ (blue, Berlin), proceed but leave a note for review. At 0.5+ (amber, pulsing, Milan), stop and ask for human confirmation — you are at the edge of reliability. At 0.3+ (orange, pulsing, Lisbon), escalate to a human decision-maker — the agent lacks sufficient basis. Below 0.3 (red, pulsing, Canary Islands), do not act at all — acting on insufficient evidence violates Article 1 (Truthfulness) and Article 3 (Reversibility). Notice that the pulsing increases as confidence drops — visual urgency mirrors decision urgency.",
+      "expected_state": {
+        "gis": {
+          "earth": {
+            "pin_count": 5,
+            "path_count": 1,
+            "pulsing_pins": ["conf-confirm", "conf-escalate", "conf-stop"],
+            "pin_ids": ["conf-autonomous", "conf-note", "conf-confirm", "conf-escalate", "conf-stop"]
+          }
+        }
+      }
+    }
+  ]
+}

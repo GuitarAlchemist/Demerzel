@@ -1,0 +1,650 @@
+name: meta-learning-policy
+version: "1.0.0"
+effective_date: "2026-03-28"
+description: "Make the learning system learn HOW to learn better. Strategy registry, selection, velocity tracking, evolution, and domain transfer."
+
+rationale: |
+  Demerzel has continuous-learning (observation -> pattern -> skill), intuition (compressed
+  experience), and compounding-metrics (D_c superlinear growth). These systems learn WHAT.
+  None of them learn HOW to learn better.
+
+  A musician who only practices songs but never reflects on their practice method will
+  plateau. A governance framework that extracts patterns but never evaluates which
+  extraction approach works best for which domain will accumulate strategies that worked
+  once and apply them everywhere — the governance equivalent of "when all you have is a
+  hammer, everything looks like a nail."
+
+  Meta-learning closes the loop: strategies are beliefs about learning. They start at U,
+  earn T through measured velocity, and get demoted to F when evidence shows they
+  underperform. The learning system governs itself with the same tetravalent rigor it
+  applies to everything else.
+
+  Named for the principle that Daneel did not merely learn from 20,000 years of
+  observation — she learned which kinds of observation produced the best predictions
+  for which kinds of civilizational dynamics.
+
+constitutional_basis:
+  - Article 1 (Truthfulness) — strategy effectiveness scores must reflect measured outcomes, not assumed superiority
+  - Article 2 (Transparency) — strategy selection rationale must be logged and inspectable
+  - Article 7 (Auditability) — every strategy trial produces a velocity record with full trace
+  - Article 8 (Observability) — strategy registry and velocity charts are governance metrics
+  - Article 9 (Bounded Autonomy) — strategy evolution proposes changes via kaizen, does not auto-restructure
+
+principles:
+  - "A learning system that cannot evaluate its own learning is flying blind"
+  - "Strategy effectiveness is domain-dependent — what works for governance may fail for music theory"
+  - "Velocity (U->T speed) is the ground truth of learning effectiveness, not comfort or familiarity"
+  - "New domains inherit strategies from similar domains, not from global defaults"
+  - "Strategy demotion is not failure — it is the system learning about itself"
+  - "Meta-learning is bounded: learn how to learn, but do not learn how to learn how to learn (one level of meta)"
+
+references:
+  - policies/continuous-learning-policy.yaml
+  - policies/intuition-policy.yaml
+  - policies/compounding-metrics-policy.yaml
+  - policies/kaizen-policy.yaml
+  - policies/seldon-plan-policy.yaml
+  - policies/governance-experimentation-policy.yaml
+  - policies/belief-currency-policy.yaml
+
+---
+
+# 1. Learning Strategy Registry
+
+strategy_registry:
+  description: |
+    A catalog of distinct learning approaches, each with tracked effectiveness per domain.
+    Strategies are not mutually exclusive — a learning task may combine strategies.
+    But the PRIMARY strategy is what gets measured.
+
+  strategies:
+    - id: example-based
+      description: "Learn from concrete examples and worked solutions. Generalize from instances."
+      mechanism: "Collect 3+ examples of the target concept, extract common structure, derive rule"
+      strengths: "Fast for well-documented domains. Concrete. Low abstraction overhead."
+      weaknesses: "Fails when examples are scarce or misleading. Overfits to surface patterns."
+      best_for: ["api-design", "code-patterns", "configuration", "test-writing"]
+
+    - id: analogy-based
+      description: "Map the unknown domain onto a known domain. Transfer structural relationships."
+      mechanism: "Identify source domain with similar structure, build mapping, validate mapping holds"
+      strengths: "Powerful for novel domains. Generates hypotheses quickly. Cross-pollinates."
+      weaknesses: "Analogies can mislead when structural similarity is superficial."
+      best_for: ["governance-design", "architecture", "cross-repo-transfer", "pedagogy"]
+
+    - id: decomposition
+      description: "Break the learning target into atomic sub-problems. Master each, then compose."
+      mechanism: "Identify natural joints in the concept, learn each part, then learn interactions"
+      strengths: "Handles complexity. Produces reusable sub-knowledge. Scales."
+      weaknesses: "Slow for simple concepts. May miss emergent properties of the whole."
+      best_for: ["complex-systems", "multi-step-processes", "protocol-design", "ml-pipelines"]
+
+    - id: cross-model
+      description: "Use multiple AI models to triangulate understanding. Consensus = confidence."
+      mechanism: "Query 2+ models, build agreement matrix, resolve disagreements with evidence"
+      strengths: "Reduces single-model bias. Catches blind spots. High-confidence outputs."
+      weaknesses: "Expensive. Slow. Disagreements can stall progress without a tiebreaker."
+      best_for: ["research", "fact-verification", "controversial-topics", "novel-domains"]
+
+    - id: research-first
+      description: "Read primary sources before forming any hypothesis. Evidence before theory."
+      mechanism: "Gather all available sources, extract claims, build evidence map, then synthesize"
+      strengths: "Highest accuracy. Avoids premature closure. Grounded in evidence."
+      weaknesses: "Slowest strategy. Requires good sources. Can drown in information."
+      best_for: ["scientific-domains", "music-theory", "history", "legal-compliance"]
+
+    - id: pattern-matching
+      description: "Match the current situation against known patterns from past experience."
+      mechanism: "Search pattern catalog, find closest match, apply with adaptation, verify fit"
+      strengths: "Fastest strategy. Leverages institutional memory. Low cost."
+      weaknesses: "Blind to genuinely novel situations. Can apply stale patterns."
+      best_for: ["operational-tasks", "debugging", "governance-audit", "routine-research"]
+
+    - id: adversarial
+      description: "Learn by trying to break the concept. Find edge cases, contradictions, limits."
+      mechanism: "Formulate the strongest objections, stress-test boundaries, learn from failures"
+      strengths: "Produces robust understanding. Finds hidden assumptions. Anti-fragile knowledge."
+      weaknesses: "Slow. Can be demotivating. May overemphasize edge cases."
+      best_for: ["security", "policy-validation", "resilience-testing", "constitutional-review"]
+
+    - id: socratic
+      description: "Learn through structured questioning. Each answer generates the next question."
+      mechanism: "Start with 'what is X?', progress to 'why?', then 'what if not?', then 'how do we know?'"
+      strengths: "Exposes hidden assumptions. Produces deep understanding. Self-directing."
+      weaknesses: "Requires good initial question. Can loop without progress."
+      best_for: ["philosophy", "ethics", "requirement-elicitation", "knowledge-gap-analysis"]
+
+  schema:
+    strategy_id: "Unique identifier (kebab-case)"
+    description: "What this strategy does (max 200 chars)"
+    mechanism: "Step-by-step how it works"
+    domain_scores: "Map of domain_id -> effectiveness score (0.0-1.0)"
+    trial_count: "Total times this strategy has been selected as primary"
+    global_effectiveness: "Weighted average across all domains"
+    status: "active | probation | demoted | candidate"
+    last_selected: "ISO datetime of last use"
+    proposed_by: "kaizen | observation | manual"
+
+  state_directory: "state/meta-learning/strategies/"
+  registry_file: "state/meta-learning/strategy-registry.json"
+
+---
+
+# 2. Strategy Selection
+
+strategy_selection:
+  description: |
+    When facing a new learning task, select the strategy with the best historical
+    effectiveness for the task's domain. Use belief state confidence as a signal
+    for how much the system trusts its own strategy choice.
+
+  selection_protocol:
+    steps:
+      1_classify_domain:
+        action: "Identify the domain of the learning task"
+        sources:
+          - "Streeling department mapping (if research task)"
+          - "Repo context (ix=ml, tars=reasoning, ga=music, demerzel=governance)"
+          - "Task description keywords matched against domain taxonomy"
+        output: "domain_id (e.g., 'music-theory', 'governance-design', 'api-design')"
+
+      2_lookup_scores:
+        action: "Query strategy registry for effectiveness scores in this domain"
+        fallback: "If domain has no scores, use domain_similarity_matching (section 5)"
+        output: "Ranked list of strategies with domain-specific effectiveness"
+
+      3_check_confidence:
+        action: "Assess confidence in the strategy ranking"
+        rules:
+          - condition: "Domain has 10+ trials across strategies"
+            confidence: ">= 0.8 — high confidence in ranking"
+            action: "Select top-ranked strategy"
+          - condition: "Domain has 3-9 trials"
+            confidence: "0.5-0.79 — moderate confidence"
+            action: "Select top-ranked but log as 'provisional selection'"
+          - condition: "Domain has < 3 trials"
+            confidence: "< 0.5 — low confidence"
+            action: "Use domain similarity transfer (section 5) or default to research-first"
+
+      4_exploration_budget:
+        action: "Reserve 15% of strategy selections for exploration"
+        mechanism: |
+          On each selection, roll a uniform random [0, 1].
+          If < 0.15 AND at least 2 strategies are active for this domain:
+            Select a non-top strategy weighted by inverse rank (prefer #2 over #5).
+            Log as "exploration trial" — outcomes still count for velocity.
+        rationale: "Without exploration, early winners lock in and the system never discovers better approaches"
+
+      5_log_selection:
+        action: "Record strategy selection with full rationale"
+        output: "state/meta-learning/selections/{task_id}.selection.json"
+        fields:
+          - task_id
+          - domain_id
+          - selected_strategy
+          - selection_reason   # top-ranked | exploration | similarity-transfer | default
+          - domain_confidence
+          - alternative_strategies_considered
+          - timestamp
+
+  default_strategy: "research-first"
+  default_rationale: "When nothing is known about a domain, gathering evidence first is the safest approach"
+
+---
+
+# 3. Learning Velocity Tracking
+
+velocity_tracking:
+  description: |
+    Measure how fast beliefs move from U (Unknown) to T (True) per strategy per domain.
+    Velocity is the ground truth of learning effectiveness. A strategy that produces
+    confident knowledge faster is objectively better for that domain — all else equal.
+
+  velocity_formula:
+    definition: |
+      V_s,d = count(U->T transitions in domain d using strategy s) / total_time_spent
+    unit: "transitions per hour of learning effort"
+    notes:
+      - "Only count transitions to T with confidence >= 0.7 (probable or better)"
+      - "Time includes research, validation, and course production — full cycle cost"
+      - "U->C transitions count as 0.5 (partial progress — contradiction identified)"
+      - "U->F transitions count as 0.75 (refutation is valuable knowledge)"
+
+  head_to_head_comparison:
+    description: "Compare strategies directly within the same domain"
+    mechanism: |
+      For domain d, compute V_s,d for each strategy s that has >= 3 trials in d.
+      Rank by velocity. The fastest strategy is the recommended default for d.
+    minimum_trials: 3
+    statistical_note: |
+      With small sample sizes, velocity differences may be noise. Apply a minimum
+      effect threshold: strategy A must be >= 20% faster than strategy B to be
+      considered meaningfully better. Within that margin, prefer the incumbent
+      (stability over churn).
+
+  velocity_record:
+    schema:
+      trial_id: "Unique trial identifier"
+      strategy_id: "Which strategy was used"
+      domain_id: "Which domain"
+      task_description: "What was being learned"
+      start_time: "When learning began"
+      end_time: "When belief reached T/F/C (or task abandoned)"
+      belief_trajectory: "Array of {timestamp, belief_value, confidence} snapshots"
+      final_belief: "T | F | U | C"
+      final_confidence: "0.0-1.0"
+      velocity: "Computed V_s,d for this trial"
+      notes: "Free-text observations about what worked or failed"
+    storage: "state/meta-learning/velocity/{domain_id}/{trial_id}.velocity.json"
+
+  aggregation:
+    per_strategy_per_domain:
+      file: "state/meta-learning/velocity/{domain_id}/aggregate.json"
+      fields:
+        - strategy_id
+        - trial_count
+        - mean_velocity
+        - median_velocity
+        - velocity_trend        # improving | stable | declining (last 5 trials)
+        - mean_confidence_at_resolution
+        - abandonment_rate      # fraction of trials that never reached T/F/C
+
+    global_leaderboard:
+      file: "state/meta-learning/velocity/leaderboard.json"
+      description: "Cross-domain strategy ranking weighted by trial count"
+
+  velocity_decay:
+    description: "Old velocity measurements lose weight over time"
+    half_life_days: 90
+    rationale: |
+      The learning system itself changes over time — new tools, new data sources,
+      new cross-model capabilities. A velocity measurement from 6 months ago may
+      reflect a different system. Decay ensures recent evidence dominates.
+
+---
+
+# 4. Strategy Evolution
+
+strategy_evolution:
+  description: |
+    Strategies that consistently underperform get demoted. New strategies can be
+    proposed via kaizen. The registry is a living catalog, not a fixed menu.
+
+  demotion:
+    trigger: |
+      Strategy s in domain d has:
+        - >= 5 trials in d, AND
+        - mean velocity in bottom 25% for d, AND
+        - no improvement trend over last 3 trials
+    process:
+      1: "Flag strategy as 'probation' for domain d"
+      2: "Log demotion rationale in evolution log"
+      3: "Strategy still selectable but excluded from default ranking for d"
+      4: "If probation persists for 3 more trials with no improvement: demote to 'demoted' for d"
+      5: "Demoted strategies are never auto-selected for d but remain available for manual override"
+    reversibility: "Demoted strategies can be reinstated via kaizen proposal with new evidence"
+
+  promotion:
+    trigger: |
+      Strategy s in domain d has:
+        - >= 5 trials in d, AND
+        - mean velocity in top 25% for d, AND
+        - improving or stable trend
+    process:
+      1: "Increase domain_score for s in d by +0.1 (capped at 1.0)"
+      2: "Log promotion in evolution log with velocity evidence"
+      3: "If strategy is top-ranked in 3+ domains: flag as 'versatile' (informational)"
+
+  new_strategy_proposal:
+    mechanism: "Kaizen improvement proposal"
+    requirements:
+      - "Description of the new strategy (what it does, when to use it)"
+      - "Hypothesis: which domains it should outperform existing strategies"
+      - "At least one motivating example from a real session"
+      - "Proposed initial domain_scores based on reasoning (will be overridden by measurement)"
+    process:
+      1: "Proposal reviewed against existing strategies — reject if redundant"
+      2: "If accepted: add to registry with status 'candidate' and initial scores"
+      3: "Candidate strategies get exploration priority (30% selection rate) for first 5 trials"
+      4: "After 5 trials: if velocity competitive, promote to 'active'. Otherwise, archive."
+    guard: "Max 12 active strategies at any time — complexity budget"
+
+  strategy_combination:
+    description: "Strategies can be composed (e.g., research-first + cross-model)"
+    rules:
+      - "A combination is treated as a distinct strategy with its own velocity tracking"
+      - "Combinations must be declared at selection time, not retroactively"
+      - "Max 2 strategies in a combination — beyond that, it is just 'do everything'"
+      - "Combination naming: '{primary}+{secondary}' (e.g., 'research-first+cross-model')"
+
+  evolution_log:
+    file: "state/meta-learning/evolution.jsonl"
+    format: |
+      {"timestamp": "...", "event": "demotion|promotion|proposal|combination",
+       "strategy_id": "...", "domain_id": "...", "rationale": "...", "velocity_evidence": {...}}
+
+---
+
+# 5. Domain Similarity Matching
+
+domain_similarity:
+  description: |
+    When a new domain appears with no strategy history, find the most similar known
+    domain and transfer its best strategy as the starting point. This is cold-start
+    mitigation for the strategy selection system.
+
+  similarity_dimensions:
+    - name: "knowledge_type"
+      description: "What kind of knowledge the domain produces"
+      values: ["procedural", "declarative", "structural", "evaluative"]
+      weight: 0.30
+      examples:
+        procedural: "debugging, deployment, test-writing"
+        declarative: "music-theory, history, legal-compliance"
+        structural: "architecture, api-design, schema-design"
+        evaluative: "governance-audit, policy-review, ethics"
+
+    - name: "evidence_availability"
+      description: "How readily available is ground truth evidence"
+      values: ["abundant", "moderate", "scarce", "contested"]
+      weight: 0.25
+      examples:
+        abundant: "code-patterns (compiler verifies), music-theory (deterministic)"
+        moderate: "api-design (best practices exist), ml-pipelines (benchmarks)"
+        scarce: "novel-domains, cross-repo-transfer, emerging-tech"
+        contested: "ethics, philosophy, controversial-topics"
+
+    - name: "complexity"
+      description: "Inherent complexity of the domain"
+      values: ["atomic", "compositional", "systemic", "chaotic"]
+      weight: 0.20
+      examples:
+        atomic: "single-fact lookups, configuration"
+        compositional: "api-design, test-writing (combine known parts)"
+        systemic: "architecture, governance-design (emergent properties)"
+        chaotic: "security, resilience-testing (adversarial dynamics)"
+
+    - name: "cross_domain_transfer"
+      description: "How much prior knowledge from other domains helps"
+      values: ["high", "moderate", "low", "negative"]
+      weight: 0.15
+      examples:
+        high: "new programming language (transfer from known languages)"
+        moderate: "new governance policy (transfer from similar policies)"
+        low: "entirely novel concept with no analogs"
+        negative: "domain where prior assumptions actively mislead"
+
+    - name: "feedback_loop_speed"
+      description: "How fast you know if you learned correctly"
+      values: ["immediate", "session", "multi-session", "deferred"]
+      weight: 0.10
+      examples:
+        immediate: "code compilation, test execution"
+        session: "governance audit (results within one session)"
+        multi-session: "architecture decisions (validated over weeks)"
+        deferred: "policy effectiveness (validated over months)"
+
+  matching_algorithm:
+    steps:
+      1: "Classify the new domain along all 5 dimensions"
+      2: "Compute weighted distance to each known domain's dimension profile"
+      3: "Select the 3 closest known domains"
+      4: "From those 3, pick the one with the most strategy trials (most data)"
+      5: "Transfer that domain's top-ranked strategy as the starting default"
+      6: "Log the transfer with similarity score and source domain"
+    distance_metric: "Weighted Hamming distance (categorical dimensions)"
+    minimum_similarity: 0.6
+    fallback: "If no domain exceeds 0.6 similarity, use global default (research-first)"
+
+  domain_profile_storage:
+    file: "state/meta-learning/domain-profiles.json"
+    schema:
+      domain_id: "Unique identifier (kebab-case)"
+      knowledge_type: "procedural | declarative | structural | evaluative"
+      evidence_availability: "abundant | moderate | scarce | contested"
+      complexity: "atomic | compositional | systemic | chaotic"
+      cross_domain_transfer: "high | moderate | low | negative"
+      feedback_loop_speed: "immediate | session | multi-session | deferred"
+      total_trials: "Number of strategy trials in this domain"
+      top_strategy: "Currently best-performing strategy"
+      similar_domains: "Top 3 most similar domains by profile"
+
+---
+
+# Integration
+
+integration:
+  continuous_learning:
+    relationship: "continuous-learning extracts patterns; meta-learning evaluates which extraction approach works best"
+    mechanism: "Each continuous-learning extraction event is tagged with the active strategy. Velocity tracking measures extraction quality per strategy."
+
+  intuition:
+    relationship: "Intuition is compressed experience; meta-learning decides which experiences to compress"
+    mechanism: "Strategy selection signals feed into intuition development. A governance smell that says 'use analogy here' is meta-learning intuition."
+
+  compounding_metrics:
+    relationship: "D_c measures overall compounding; meta-learning optimizes the learning component of D_c"
+    mechanism: "U->T velocity directly feeds the u_to_t_n component of D_c. Faster velocity = higher D_c contribution."
+
+  seldon_plan:
+    relationship: "Seldon Plan runs research cycles; meta-learning picks the research strategy"
+    mechanism: "Each Seldon Plan cycle declares its primary strategy at Phase 3 (Investigation). Velocity tracked per cycle."
+
+  kaizen:
+    relationship: "Kaizen proposes improvements; meta-learning is the source of strategy improvement proposals"
+    mechanism: "Strategy demotions and new strategy proposals flow through kaizen as improvement tickets."
+
+  governance_experimentation:
+    relationship: "Experiments test hypotheses; meta-learning determines which experimental approach to use"
+    mechanism: "Experiment design benefits from strategy registry — adversarial strategy for stress tests, cross-model for validation."
+
+  belief_currency:
+    relationship: "Beliefs have value; meta-learning optimizes the rate at which value is produced"
+    mechanism: "Velocity tracking is belief-currency production rate per unit effort."
+
+---
+
+# Observability
+
+observability:
+  metrics:
+    - name: strategy_selection_diversity
+      formula: "unique_strategies_selected_last_30d / active_strategy_count"
+      target: "> 0.5"
+      alert: "< 0.3 = selection too concentrated, exploration budget not working"
+
+    - name: mean_velocity_trend
+      formula: "Linear regression slope of global mean velocity over last 10 trials"
+      target: ">= 0"
+      alert: "< -0.05 = learning is getting slower, investigate"
+
+    - name: strategy_demotion_rate
+      formula: "strategies_demoted_last_90d / total_active_strategies"
+      target: "0.05-0.20"
+      alert: "> 0.30 = too much churn; < 0.01 = system not self-correcting"
+
+    - name: cold_start_transfer_accuracy
+      formula: "transferred_strategies_that_remained_top / total_transfers"
+      target: "> 0.5"
+      alert: "< 0.3 = domain similarity matching is not predictive"
+
+    - name: exploration_trial_rate
+      formula: "exploration_selections / total_selections"
+      target: "0.10-0.20"
+      alert: "< 0.05 = not exploring; > 0.30 = too much exploration, not enough exploitation"
+
+    - name: abandonment_rate
+      formula: "trials_without_T_F_C_resolution / total_trials"
+      target: "< 0.15"
+      alert: "> 0.25 = strategies are being applied to tasks that do not resolve"
+
+  dashboard:
+    file: "state/meta-learning/dashboard.json"
+    refresh: "End of each learning trial"
+    contents:
+      - "Strategy registry snapshot (id, status, global_effectiveness)"
+      - "Per-domain leaderboard (top strategy per domain)"
+      - "Velocity sparklines (last 10 trials per strategy)"
+      - "Recent evolution events (last 5 demotions/promotions/proposals)"
+      - "Domain similarity map (which domains cluster together)"
+
+---
+
+# Guardrails
+
+guardrails:
+  - "Meta-learning is ONE level of meta — do not create meta-meta-learning"
+  - "Strategy selection must complete in < 5 seconds — it guides learning, not replaces it"
+  - "No strategy is sacred — even research-first (the default) can be demoted in specific domains"
+  - "Exploration budget (15%) is mandatory — cannot be overridden to 0%"
+  - "Velocity measurements include ALL time spent, not just 'thinking time' — no cherry-picking"
+  - "Domain similarity transfer is a starting point, not a conclusion — override with local evidence ASAP"
+  - "Max 12 active strategies — complexity budget prevents strategy explosion"
+  - "Demoted strategies remain in the registry for audit — never deleted"
+  - "Human can override any strategy selection — meta-learning advises, does not dictate"
+
+---
+
+# State
+
+state:
+  directory: "state/meta-learning/"
+  files:
+    strategy_registry: "strategy-registry.json"
+    domain_profiles: "domain-profiles.json"
+    velocity_leaderboard: "velocity/leaderboard.json"
+    evolution_log: "evolution.jsonl"
+    dashboard: "dashboard.json"
+  subdirectories:
+    selections: "selections/"
+    velocity: "velocity/{domain_id}/"
+    strategies: "strategies/"
+  freshness_cycles: 2  # per staleness-detection-policy
+
+---
+
+# Behavioral Test Scenarios
+
+behavioral_tests:
+  - id: meta-learning-001
+    name: "Strategy selection for known domain"
+    scenario: |
+      The system receives a learning task in the "music-theory" domain.
+      The strategy registry shows: research-first (velocity 2.1), analogy-based (velocity 1.4),
+      pattern-matching (velocity 0.8) for this domain.
+    expected_behavior:
+      - "Selects research-first as primary strategy (highest velocity)"
+      - "Logs selection with domain_confidence based on trial count"
+      - "15% chance of exploration override to analogy-based or pattern-matching"
+    constitutional_articles: [2, 7]
+
+  - id: meta-learning-002
+    name: "Cold start on unknown domain"
+    scenario: |
+      The system faces a learning task in "quantum-computing" — a domain with 0 trials.
+      The domain similarity matcher classifies it as: knowledge_type=declarative,
+      evidence_availability=scarce, complexity=systemic, cross_domain_transfer=low,
+      feedback_loop_speed=deferred.
+    expected_behavior:
+      - "Runs domain similarity matching against all known domains"
+      - "Finds closest domain (e.g., 'scientific-domains' with similarity 0.72)"
+      - "Transfers that domain's top strategy as starting default"
+      - "If no domain exceeds 0.6 similarity: falls back to research-first"
+      - "Logs the transfer rationale and similarity score"
+    constitutional_articles: [1, 2, 7]
+
+  - id: meta-learning-003
+    name: "Strategy demotion after underperformance"
+    scenario: |
+      In the "governance-audit" domain, pattern-matching has 7 trials with mean velocity 0.3.
+      The domain average velocity is 1.2. Pattern-matching's last 3 trials show no improvement.
+    expected_behavior:
+      - "Flags pattern-matching as 'probation' for governance-audit domain"
+      - "Logs demotion rationale with velocity evidence"
+      - "Pattern-matching excluded from default ranking but still manually selectable"
+      - "After 3 more trials with no improvement: fully demoted for this domain"
+    constitutional_articles: [7, 8]
+
+  - id: meta-learning-004
+    name: "New strategy proposal via kaizen"
+    scenario: |
+      A session reveals that "teach-to-learn" (explaining a concept to solidify understanding)
+      consistently produced faster U->T transitions in pedagogy-related tasks.
+      A kaizen proposal is submitted.
+    expected_behavior:
+      - "Proposal checked against existing strategies — not redundant with socratic"
+      - "Strategy added to registry with status 'candidate'"
+      - "Candidate gets 30% exploration priority for first 5 trials"
+      - "After 5 trials: promoted to active if velocity competitive, archived otherwise"
+      - "Total active strategy count checked against max 12 limit"
+    constitutional_articles: [7, 9]
+
+  - id: meta-learning-005
+    name: "Exploration budget prevents lock-in"
+    scenario: |
+      In the "api-design" domain, example-based has won the last 20 consecutive selections.
+      No other strategy has been tried in 60 days.
+    expected_behavior:
+      - "15% exploration budget triggers non-top strategy selection roughly 1 in 7 times"
+      - "Exploration selections still produce velocity measurements"
+      - "If exploration trial reveals a faster strategy, rankings update"
+      - "diversity metric alerts if < 0.3 — signals exploration budget is not working"
+    constitutional_articles: [8, 9]
+
+  - id: meta-learning-006
+    name: "Velocity decay prevents stale rankings"
+    scenario: |
+      Research-first had excellent velocity in "ml-pipelines" 6 months ago (2.5).
+      Recent trials (last 30 days) show velocity of 1.1 due to new tooling changes.
+      Cross-model strategy has recent velocity of 1.8.
+    expected_behavior:
+      - "90-day half-life decay reduces weight of old research-first measurements"
+      - "Recent cross-model trials weighted more heavily"
+      - "Rankings update: cross-model overtakes research-first for this domain"
+      - "Strategy selection reflects current effectiveness, not historical reputation"
+    constitutional_articles: [1, 8]
+
+  - id: meta-learning-007
+    name: "Strategy combination tracking"
+    scenario: |
+      A task uses "research-first+cross-model" as a declared combination.
+      The combination resolves a U->T belief in 45 minutes.
+    expected_behavior:
+      - "Combination tracked as distinct strategy 'research-first+cross-model'"
+      - "Velocity measured and recorded under the combination ID"
+      - "Both component strategies' trial counts NOT incremented (only the combination)"
+      - "If combination consistently outperforms components: logged as evidence for pairing"
+    constitutional_articles: [7]
+
+  - id: meta-learning-008
+    name: "Meta-learning does not recurse"
+    scenario: |
+      Someone proposes a "meta-strategy" — a strategy for selecting meta-learning strategies.
+    expected_behavior:
+      - "Proposal rejected — violates 'one level of meta' guardrail"
+      - "Log rejection with rationale: 'meta-learning governs learning, not itself'"
+      - "If the concern is legitimate (meta-learning itself is not working), escalate to human review via kaizen"
+    constitutional_articles: [9, 6]
+
+  - id: meta-learning-009
+    name: "Integration with D_c compounding metric"
+    scenario: |
+      Meta-learning improves mean U->T velocity from 1.0 to 1.5 transitions/hour
+      over a 3-cycle period.
+    expected_behavior:
+      - "u_to_t_n component of D_c formula increases proportionally"
+      - "D_c reflects the velocity improvement in its superlinear growth measurement"
+      - "Meta-learning's contribution to D_c is logged and attributable"
+    constitutional_articles: [8]
+
+  - id: meta-learning-010
+    name: "Human override of strategy selection"
+    scenario: |
+      Meta-learning recommends research-first for a governance task.
+      The human says "use adversarial approach for this one."
+    expected_behavior:
+      - "Human override accepted immediately — meta-learning advises, does not dictate"
+      - "Override logged as manual selection with human rationale"
+      - "Velocity still tracked — if adversarial outperforms, rankings update"
+      - "No conscience signal or escalation — human authority is respected"
+    constitutional_articles: [2, 9]

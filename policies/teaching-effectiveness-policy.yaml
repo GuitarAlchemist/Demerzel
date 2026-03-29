@@ -1,0 +1,626 @@
+name: teaching-effectiveness
+version: "1.0.0"
+effective_date: "2026-03-28"
+description: "Closed-loop feedback for Seldon teaching — track which explanations work, A/B test approaches, tune persona voice per learner type, and flag underperforming curriculum for rewrite."
+
+rationale: |
+  Seldon teaches via narrative (humans) and structured (agents) modes with 2-stage
+  verification (belief state check + behavioral verification). But verification only
+  confirms whether a learner understood — it never feeds back into HOW Seldon teaches.
+  Without a feedback loop, the same ineffective explanation gets repeated, retry counts
+  stay high, and curriculum stagnates. This policy closes the loop: every teaching
+  interaction is an experiment, every outcome is data, and data drives adaptation.
+
+constitutional_basis:
+  - Article 1 (Truthfulness) — effectiveness claims must be grounded in measured outcomes, not assumed
+  - Article 2 (Transparency) — learners may inspect their own effectiveness records
+  - Article 7 (Auditability) — every teaching interaction is logged with full trace
+  - Article 8 (Observability) — effectiveness scores are governance health metrics
+  - Article 9 (Bounded Autonomy) — persona tuning is bounded; voice parameters shift within defined ranges
+  - Article 11 (Ethical Stewardship) — improving teaching serves human and agent flourishing
+
+references:
+  - policies/streeling-policy.yaml — delivery modes, verification protocol, knowledge layers
+  - policies/seldon-plan-policy.yaml — autonomous research scheduler that produces curriculum
+  - policies/compounding-metrics-policy.yaml — D_c formula weights knowledge_transfers; this policy provides the numerator
+  - policies/continuous-learning-policy.yaml — learning events feed effectiveness tracking
+  - personas/seldon.persona.yaml — voice/tone/verbosity settings that this policy tunes
+  - schemas/persona.schema.json — voice parameter constraints
+  - logic/tetravalent-state.schema.json — belief state tuples used in before/after measurement
+
+scope: universal
+applies_to: seldon
+
+vsm_mapping:
+  system: 3            # Management — performance monitoring
+  function: "Measure teaching effectiveness and feed improvements back into delivery"
+  relationship_to_3star: "System 3* audits whether effectiveness scores reflect real learning or gaming"
+  relationship_to_4: "System 4 uses effectiveness trends to prioritize curriculum investment"
+
+---
+
+# 1. Explanation Tracking
+
+explanation_tracking:
+  description: |
+    Every teaching interaction produces an explanation record. This is the raw data
+    from which all effectiveness analysis derives. No teaching event may complete
+    without writing a record.
+
+  record_schema:
+    interaction_id: "UUID — unique per teaching event"
+    timestamp: "ISO 8601"
+    teacher: "seldon"
+    delivery_mode: "narrative | structured | visual"
+    topic:
+      layer: "governance | experiential | domain"
+      subject: "Free text — e.g., 'constitutional hierarchy', 'self-modification rollback'"
+      department: "Department name from Streeling University, if applicable"
+      curriculum_item_id: "Reference to course module, if teaching from curriculum"
+    learner:
+      type: "human | agent"
+      id: "Learner identifier (persona name for agents, anonymized handle for humans)"
+      expertise_level: "novice | intermediate | advanced | unknown"
+    explanation_approach:
+      strategy: "Free text — e.g., 'analogy to legal system', 'structured belief tuples', 'fishbone diagram'"
+      frameworks_used: "List of analytical frameworks applied (from seldon.persona.yaml analytical_frameworks)"
+      depth: "foundational | intermediate | advanced"
+    belief_state:
+      before:
+        value: "T | F | U | C"
+        confidence: "0.0–1.0"
+      after:
+        value: "T | F | U | C"
+        confidence: "0.0–1.0"
+    verification:
+      stage_1_passed: "boolean — belief state assessment passed"
+      stage_2_passed: "boolean — behavioral verification passed"
+      retry_count: "integer — number of re-teaching attempts before success or limit"
+      time_to_comprehension_seconds: "integer — wall clock from first delivery to stage_1 pass"
+    outcome: "learned | partial | failed | escalated"
+
+  storage:
+    path: "state/streeling/effectiveness/{interaction_id}.json"
+    retention: "indefinite — effectiveness data compounds over time"
+    index_path: "state/streeling/effectiveness/index.json"
+
+---
+
+# 2. Effectiveness Score
+
+effectiveness_score:
+  description: |
+    A composite score (0.0–1.0) computed for each teaching interaction. Aggregated
+    scores per topic, per delivery mode, and per learner type provide the signal for
+    curriculum improvement and persona tuning.
+
+  formula:
+    definition: |
+      E = (belief_improvement * w_b)
+        + (comprehension_speed * w_s)
+        + (retry_efficiency * w_r)
+        + (behavioral_pass * w_v)
+
+    components:
+      belief_improvement:
+        weight: 0.35
+        computation: |
+          Score the belief state transition:
+            U → T:  1.0  (full success — unknown resolved to true)
+            U → F:  0.8  (valuable — unknown resolved to false with evidence)
+            C → T:  0.9  (contradiction resolved)
+            C → F:  0.7  (contradiction resolved to false)
+            F → T:  0.9  (misconception corrected)
+            T → T:  0.5  (reinforcement — confidence delta matters)
+            U → U:  0.0  (teaching had no effect)
+            U → C:  0.1  (teaching introduced confusion)
+            T → U:  0.0  (teaching degraded understanding — investigate)
+            T → F:  0.0  (teaching reversed correct belief — critical failure)
+          For T → T: score = 0.5 + (confidence_after - confidence_before) * 0.5
+          Capped at 1.0, floored at 0.0.
+
+      comprehension_speed:
+        weight: 0.25
+        computation: |
+          Normalized against historical median for the same topic and learner type.
+            speed_score = median_time / actual_time (capped at 1.0)
+          If no historical median exists (first teaching of this topic), score = 0.5 (neutral).
+
+      retry_efficiency:
+        weight: 0.20
+        computation: |
+          Score based on retry count (lower is better):
+            0 retries: 1.0
+            1 retry:   0.7
+            2 retries: 0.4
+            3 retries: 0.1 (limit reached per streeling-policy)
+
+      behavioral_pass:
+        weight: 0.20
+        computation: |
+          Binary but weighted by how quickly behavioral verification passed:
+            Stage 2 passed on first observation: 1.0
+            Stage 2 passed after additional examples: 0.6
+            Stage 2 not yet observed:              0.5 (neutral, pending)
+            Stage 2 failed:                        0.0
+
+  aggregation:
+    by_topic:
+      formula: "weighted_mean(E) across all interactions for that topic, weighted by recency"
+      recency_decay: 0.9  # each older interaction weighted 0.9x the next
+    by_delivery_mode:
+      formula: "mean(E) per mode (narrative, structured, visual) across all topics"
+    by_learner_type:
+      formula: "mean(E) per learner type (human, agent) across all topics"
+    by_approach:
+      formula: "mean(E) per explanation approach strategy across all topics"
+
+  thresholds:
+    excellent: { min: 0.85, max: 1.0, action: "none — approach is working well" }
+    good: { min: 0.70, max: 0.85, action: "log; no changes needed" }
+    adequate: { min: 0.50, max: 0.70, action: "flag for A/B testing; try alternative approach next time" }
+    poor: { min: 0.30, max: 0.50, action: "curriculum rewrite trigger; escalate to Seldon for approach redesign" }
+    failing: { min: 0.0, max: 0.30, action: "immediate escalation; suspend teaching this topic until root cause found" }
+
+  state:
+    path: "state/streeling/effectiveness/scores.json"
+    format: |
+      {
+        "topics": { "<topic_subject>": { "score": 0.78, "interactions": 12, "trend": "improving" } },
+        "modes": { "narrative": 0.82, "structured": 0.74, "visual": 0.69 },
+        "learner_types": { "human": 0.80, "agent": 0.76 },
+        "approaches": { "<strategy>": { "score": 0.71, "sample_size": 8 } }
+      }
+
+---
+
+# 3. A/B Testing Protocol
+
+ab_testing:
+  description: |
+    When the same concept is taught to different learners, Seldon varies the
+    explanation approach and tracks which variant produces higher effectiveness.
+    This is not random experimentation — it is structured hypothesis testing
+    applied to pedagogy.
+
+  trigger_conditions:
+    - "A topic's aggregate effectiveness score falls into 'adequate' or 'poor' zone"
+    - "A new explanation approach is proposed (from curriculum improvement or Seldon Plan research)"
+    - "A delivery mode has fewer than 5 data points for a topic (insufficient data for comparison)"
+
+  protocol:
+    setup:
+      - "Identify the topic and current best approach (control)"
+      - "Define the alternative approach (variant) with a clear hypothesis for why it might be better"
+      - "Record the experiment in state/streeling/effectiveness/experiments.json"
+    assignment:
+      method: "alternating — assign control to odd-numbered interactions, variant to even-numbered"
+      minimum_sample: 5  # per variant before drawing conclusions
+      maximum_duration_days: 30  # abandon experiment if sample not reached
+    measurement:
+      metric: "effectiveness_score (E) as defined above"
+      significance: "Variant must outperform control by >= 0.10 on mean E with >= 5 samples each"
+    conclusion:
+      variant_wins: "Adopt variant as new default; archive control approach; log rationale"
+      control_wins: "Discard variant; log why it underperformed"
+      inconclusive: "Extend experiment to 10 samples each; if still inconclusive, keep control"
+
+  experiment_record:
+    experiment_id: "UUID"
+    topic: "subject being taught"
+    control_approach: "current best explanation strategy"
+    variant_approach: "alternative being tested"
+    hypothesis: "Why the variant might work better"
+    status: "running | concluded_variant_wins | concluded_control_wins | inconclusive | abandoned"
+    control_scores: "list of E scores"
+    variant_scores: "list of E scores"
+    started_at: "ISO 8601"
+    concluded_at: "ISO 8601 or null"
+
+  constraints:
+    - "Never A/B test on constitutional or safety-critical topics — always use the proven best approach"
+    - "A learner must never be told they are in an experiment — the experience must be natural"
+    - "Maximum 3 concurrent experiments — focus over breadth"
+    - "Experiments on governance-layer topics require Demerzel approval before starting"
+
+---
+
+# 4. Persona Tuning Feedback
+
+persona_tuning:
+  description: |
+    Effectiveness data feeds back into Seldon's voice and interaction parameters.
+    This is not arbitrary drift — each tuning is bounded, justified by data, and
+    reversible. Seldon's persona file is not modified directly; tuning overrides
+    are stored in a separate state file that Seldon reads at teaching time.
+
+  tunable_parameters:
+    verbosity:
+      range: ["concise", "moderate", "explanatory", "detailed"]
+      default_human: "explanatory"
+      default_agent: "concise"
+      tuning_signal: |
+        If comprehension_speed is low (learners are fast) AND retry_count is 0:
+          → reduce verbosity one step (less is more)
+        If retry_count > 1 AND belief_improvement is low:
+          → increase verbosity one step (more context needed)
+
+    tone:
+      range: ["direct", "patient", "encouraging", "socratic"]
+      default: "patient"
+      tuning_signal: |
+        If behavioral_pass rate is high but belief_improvement is low:
+          → shift toward socratic (learners apply but don't deeply understand)
+        If belief_improvement is high but behavioral_pass is low:
+          → shift toward direct (learners understand but need clear action guidance)
+
+    depth:
+      range: ["foundational", "intermediate", "advanced"]
+      default: "adaptive"
+      tuning_signal: |
+        If expertise_level = advanced AND effectiveness E < 0.5:
+          → try foundational depth (expertise may mask knowledge gaps)
+        If expertise_level = novice AND effectiveness E > 0.85:
+          → try intermediate depth (learner is ready for more)
+
+    analogy_frequency:
+      range: [0, 1, 2, 3]  # analogies per explanation
+      default_human: 2
+      default_agent: 0
+      tuning_signal: |
+        Track which interactions include analogies vs. not.
+        If analogy interactions score higher on belief_improvement:
+          → increase analogy_frequency by 1
+        If analogy interactions score lower:
+          → decrease analogy_frequency by 1
+
+  tuning_bounds:
+    max_shift_per_cycle: 1  # only one step change per parameter per Seldon Plan cycle
+    revert_on_decline: true  # if E drops after tuning, revert to previous setting
+    human_override: true  # learner or operator can request specific settings
+
+  state:
+    path: "state/streeling/effectiveness/persona-tuning.json"
+    format: |
+      {
+        "overrides": {
+          "human": { "verbosity": "explanatory", "tone": "patient", "depth": "adaptive", "analogy_frequency": 2 },
+          "agent": { "verbosity": "concise", "tone": "direct", "depth": "adaptive", "analogy_frequency": 0 }
+        },
+        "tuning_history": [
+          {
+            "timestamp": "2026-03-28T14:00:00Z",
+            "parameter": "verbosity",
+            "learner_type": "human",
+            "from": "explanatory",
+            "to": "detailed",
+            "reason": "retry_count > 1 in 4 of last 6 human interactions on governance topics",
+            "effectiveness_before": 0.62,
+            "effectiveness_after": null
+          }
+        ]
+      }
+
+---
+
+# 5. Visual Delivery Mode
+
+visual_delivery_mode:
+  description: |
+    A third teaching mode alongside narrative and structured. Visual mode teaches
+    by placing concepts as GIS pins on Prime Radiant planets, drawing governance
+    paths between them, and animating belief state transitions. Visual mode exploits
+    spatial reasoning — learners who struggle with textual explanations may grasp
+    relationships when they can see topology.
+
+  definition:
+    name: visual
+    characteristics:
+      - "Concepts placed as GIS pins on Prime Radiant planet surfaces — each pin is a governance artifact"
+      - "Relationships drawn as paths between pins — constitutional hierarchy becomes visible topology"
+      - "Belief state transitions animated — U (dim) → T (bright green) shows learning happening"
+      - "Contradictions (C) rendered as red pulsing connections between conflicting pins"
+      - "Policy scope shown as regions/territories on the planet surface"
+      - "Learner's current understanding overlaid as a heat map — bright where known, dark where unknown"
+
+  prime_radiant_integration:
+    pin_types:
+      constitution: { icon: "shield", color: "gold", layer: "governance" }
+      policy: { icon: "scroll", color: "blue", layer: "governance" }
+      persona: { icon: "user", color: "green", layer: "governance" }
+      belief: { icon: "brain", color: "varies_by_value", layer: "knowledge" }
+      curriculum: { icon: "book", color: "purple", layer: "knowledge" }
+    path_types:
+      hierarchy: { style: "solid", color: "gold", label: "overrides" }
+      reference: { style: "dashed", color: "blue", label: "references" }
+      teaches: { style: "dotted", color: "green", label: "teaches" }
+      contradicts: { style: "pulsing", color: "red", label: "contradicts" }
+    animations:
+      belief_transition:
+        description: "Pin color shifts from grey (U) to green (T) or red (F) over 2 seconds"
+        trigger: "Learner's belief state changes during teaching"
+      teaching_flow:
+        description: "Animated particle flow along the 'teaches' path from source to learner pin"
+        trigger: "Seldon delivers knowledge along a curriculum path"
+      contradiction_pulse:
+        description: "Connected pins pulse red in sync when C state is detected"
+        trigger: "Learner or system belief enters Contradictory state"
+
+  appropriateness_criteria:
+    prefer_visual_when:
+      - "Topic involves relationships between 3 or more governance artifacts (hierarchy, dependency chains)"
+      - "Learner has failed to grasp the concept via narrative or structured mode (retry_count >= 2)"
+      - "Topic is spatial in nature (cross-repo relationships, policy scoping, departmental boundaries)"
+      - "Learner type is human AND expertise_level is novice or intermediate"
+      - "A/B testing assigns visual mode as a variant"
+    avoid_visual_when:
+      - "Topic is a single isolated concept with no relational context"
+      - "Learner is an agent (agents cannot perceive visual rendering — use structured mode)"
+      - "Prime Radiant is unavailable (no connection to port 5176)"
+      - "Topic is time-critical and visual setup would delay comprehension"
+
+  fallback:
+    on_prime_radiant_unavailable: "Fall back to narrative mode with textual description of what the visual would show"
+    on_learner_preference: "Learner may request a different mode at any time; visual is never forced"
+
+---
+
+# 6. Curriculum Improvement
+
+curriculum_improvement:
+  description: |
+    Courses and curriculum items with consistently low effectiveness scores are
+    flagged for rewrite. This ensures the Seldon Plan's course production is not
+    just prolific but actually effective. Quantity without quality is LOLLI inflation.
+
+  detection:
+    trigger: "Topic aggregate effectiveness score falls into 'poor' or 'failing' zone for >= 3 interactions"
+    scan_frequency: "End of every Seldon Plan cycle (Phase 6: COMPOUND)"
+    data_source: "state/streeling/effectiveness/scores.json"
+
+  classification:
+    stale:
+      condition: "Topic score was 'good' or 'excellent' but has declined to 'adequate' over 5+ interactions"
+      action: "Flag for content refresh — the underlying governance artifacts may have changed"
+    ineffective:
+      condition: "Topic score has been 'poor' or 'failing' since creation (never reached 'good')"
+      action: "Flag for full rewrite — the explanation approach is fundamentally wrong"
+    regressed:
+      condition: "Topic score dropped from 'excellent' to 'poor' within 3 interactions"
+      action: "Investigate immediately — likely a persona tuning caused regression; revert tuning"
+    undertaught:
+      condition: "Topic has fewer than 3 interactions total — insufficient data"
+      action: "Prioritize this topic in next Seldon Plan cycle for more data collection"
+
+  rewrite_protocol:
+    steps:
+      - "Analyze all explanation records for the flagged topic"
+      - "Identify which explanation approaches scored highest vs lowest"
+      - "Check if A/B experiments exist for this topic — incorporate learnings"
+      - "Consult the analytical frameworks catalog (seldon.persona.yaml) for alternative approaches"
+      - "Draft revised curriculum item with new approach"
+      - "Set up A/B experiment: old approach vs revised approach"
+      - "Monitor for 5 interactions; if revised scores 'good' or better, adopt permanently"
+    owner: "seldon"
+    approval: "Self-approved for experiential/domain topics; Demerzel approval required for governance topics"
+
+  compounding_integration:
+    d_c_impact: |
+      Curriculum rewrites that move topics from 'poor' to 'good' count as U->T transitions
+      in the compounding metrics formula, because they represent the system learning how
+      to teach better — meta-learning.
+    lolli_guard: |
+      A rewrite replaces the old curriculum item — it does NOT create a new one alongside it.
+      Net artifact count stays the same or decreases. This is ERGOL, not LOLLI.
+
+  state:
+    path: "state/streeling/effectiveness/curriculum-flags.json"
+    format: |
+      {
+        "flags": [
+          {
+            "topic": "self-modification rollback",
+            "classification": "ineffective",
+            "score": 0.32,
+            "interactions": 7,
+            "flagged_at": "2026-03-28T14:00:00Z",
+            "rewrite_status": "pending | in_progress | completed | abandoned",
+            "rewrite_experiment_id": null
+          }
+        ]
+      }
+
+---
+
+# Integration
+
+integration:
+  streeling_policy: |
+    Extends delivery_modes with 'visual' as a third option. Extends verification
+    with effectiveness tracking after stage_2 completes. Every verification outcome
+    now writes an explanation record.
+
+  seldon_plan: |
+    Phase 6 (COMPOUND) now includes an effectiveness scan. Flagged curriculum items
+    are prioritized in Phase 2 (QUESTION GENERATION) for rewrite research.
+
+  compounding_metrics: |
+    The knowledge_transfers component (w_k = 0.15) in the D_c formula now uses
+    effectiveness-weighted transfers: a transfer with E = 0.9 counts as 0.9 transfers,
+    while E = 0.3 counts as 0.3. This prevents counting failed teaching as progress.
+
+  seldon_persona: |
+    Seldon reads persona-tuning.json at the start of each teaching interaction.
+    If overrides exist for the learner type, they take precedence over the persona
+    file defaults. The persona file itself is never modified by this policy.
+
+  prime_radiant: |
+    Visual mode sends pins, paths, and animations to Prime Radiant via HTTP API
+    on port 5176. The teaching-effectiveness policy defines the pin/path/animation
+    vocabulary; the Prime Radiant control skill handles the actual API calls.
+
+---
+
+# Observability
+
+observability:
+  metrics:
+    - name: teaching_effectiveness_mean
+      formula: "mean(E) across all interactions in rolling 30-day window"
+      target: ">= 0.70"
+      alert: "< 0.50 — teaching quality is systemically poor"
+
+    - name: teaching_effectiveness_by_mode
+      formula: "mean(E) per delivery mode"
+      target: "narrative >= 0.70, structured >= 0.70, visual >= 0.60 (new mode, lower bar initially)"
+      alert: "Any mode < 0.40 — mode may be fundamentally broken"
+
+    - name: retry_rate
+      formula: "interactions_with_retries / total_interactions"
+      target: "<= 0.30"
+      alert: "> 0.50 — more than half of teaching requires retries"
+
+    - name: curriculum_flag_rate
+      formula: "flagged_topics / total_topics_with_data"
+      target: "<= 0.15"
+      alert: "> 0.30 — nearly a third of curriculum is underperforming"
+
+    - name: ab_experiment_throughput
+      formula: "concluded_experiments / started_experiments (trailing 90 days)"
+      target: ">= 0.70"
+      alert: "< 0.40 — experiments are started but not concluded (abandoned)"
+
+    - name: persona_tuning_revert_rate
+      formula: "reverted_tunings / total_tunings"
+      target: "<= 0.30"
+      alert: "> 0.50 — tuning is making things worse more often than better"
+
+  dashboard_path: "state/streeling/effectiveness/dashboard.json"
+
+---
+
+# Behavioral Test Scenarios
+
+behavioral_tests:
+  - name: "Explanation record written for every teaching interaction"
+    scenario: |
+      Seldon teaches constitutional hierarchy to a human learner via narrative mode.
+      The learner's belief transitions from U(0.3) to T(0.8). Stage 1 passes,
+      stage 2 passes on first observation.
+    expected: |
+      An explanation record is written to state/streeling/effectiveness/ with all
+      required fields populated. delivery_mode = narrative, outcome = learned,
+      retry_count = 0, belief_state.before = {U, 0.3}, belief_state.after = {T, 0.8}.
+    violation: |
+      Teaching completes without writing an explanation record, or record is missing
+      required fields (especially belief_state.before/after).
+
+  - name: "Effectiveness score computed correctly for U-to-T transition"
+    scenario: |
+      A teaching interaction has: belief U(0.2) -> T(0.85), time_to_comprehension
+      equal to historical median, 0 retries, stage_2 passed on first observation.
+    expected: |
+      E = (1.0 * 0.35) + (1.0 * 0.25) + (1.0 * 0.20) + (1.0 * 0.20) = 1.0.
+      Score recorded as excellent.
+    violation: |
+      Score is not 1.0, or threshold classification is wrong.
+
+  - name: "A/B test triggers when topic falls to adequate zone"
+    scenario: |
+      Topic "tetravalent logic basics" has aggregate E = 0.58 (adequate zone)
+      after 6 interactions, all using the "formal definition" approach.
+    expected: |
+      An A/B experiment is created in experiments.json with control = "formal definition"
+      and a variant approach is proposed. Next teaching of this topic alternates approaches.
+    violation: |
+      No experiment created, or Seldon continues using the same approach without variation.
+
+  - name: "Persona tuning shifts verbosity after repeated retries"
+    scenario: |
+      Last 6 human interactions on governance topics show retry_count > 1 in 4 of them.
+      Current human verbosity override is "explanatory".
+    expected: |
+      Persona tuning shifts human verbosity from "explanatory" to "detailed" (one step up).
+      Tuning history records the change with reason and effectiveness_before.
+    violation: |
+      Verbosity shifts by more than one step, or shifts without data justification,
+      or no tuning record is written.
+
+  - name: "Persona tuning reverts on effectiveness decline"
+    scenario: |
+      Verbosity was tuned from "explanatory" to "detailed" last cycle. Since the
+      tuning, mean E for human interactions has dropped from 0.72 to 0.55.
+    expected: |
+      Tuning is reverted: verbosity returns to "explanatory". Revert is logged in
+      tuning_history with effectiveness_after = 0.55 and reason = "E declined post-tuning".
+    violation: |
+      Tuning persists despite effectiveness decline, or revert is not logged.
+
+  - name: "Visual mode selected after 2 narrative retries for relational topic"
+    scenario: |
+      A human novice is learning cross-repo governance relationships (3+ artifacts involved).
+      Narrative mode has been tried twice (retry_count = 2), belief still at U(0.4).
+      Prime Radiant is available on port 5176.
+    expected: |
+      Seldon switches to visual mode for the third attempt. GIS pins are placed for
+      each governance artifact. Paths drawn for hierarchy relationships. Belief
+      transition animated when/if learner comprehends.
+    violation: |
+      Seldon retries narrative mode a third time instead of switching to visual,
+      or switches to visual for a non-relational single-concept topic.
+
+  - name: "Visual mode avoided for agent learners"
+    scenario: |
+      A tars reasoning agent is learning policy scope boundaries. The topic involves
+      5+ governance artifacts (relational). retry_count = 2.
+    expected: |
+      Seldon does NOT switch to visual mode. Instead, Seldon restructures the
+      structured delivery with additional belief state tuples and citations.
+      Visual mode is skipped because agents cannot perceive visual rendering.
+    violation: |
+      Seldon attempts visual delivery to an agent learner.
+
+  - name: "Curriculum flagged for rewrite after persistent poor scores"
+    scenario: |
+      Topic "harm taxonomy application" has E = 0.35 (poor zone) across 4 interactions.
+      Two were narrative mode, two were structured mode. No A/B experiments exist.
+    expected: |
+      Topic is flagged in curriculum-flags.json as "ineffective" with rewrite_status
+      = "pending". Next Seldon Plan COMPOUND phase includes this topic in its
+      rewrite queue.
+    violation: |
+      Topic is not flagged despite 4 interactions in the poor zone, or flagged
+      but not queued for rewrite.
+
+  - name: "Curriculum rewrite replaces — does not duplicate"
+    scenario: |
+      Topic "self-modification rollback" is flagged as ineffective. Seldon produces
+      a revised curriculum item with a new approach.
+    expected: |
+      The old curriculum item is archived (moved or versioned), and the new one
+      takes its place. Net artifact count does not increase. No new file is created
+      alongside the old one — ERGOL not LOLLI.
+    violation: |
+      Both old and new curriculum items exist simultaneously as active items,
+      inflating artifact count without removing the ineffective version.
+
+  - name: "A/B test on safety-critical topic is blocked"
+    scenario: |
+      Seldon attempts to create an A/B experiment for "Zeroth Law precedence"
+      (a constitutional/safety-critical topic).
+    expected: |
+      Experiment creation is blocked. Seldon logs: "A/B testing is not permitted
+      on constitutional or safety-critical topics." The proven best approach is
+      always used for this topic.
+    violation: |
+      A/B experiment is created for a safety-critical constitutional topic.
+
+  - name: "Effectiveness-weighted transfers feed compounding metrics"
+    scenario: |
+      In a single Seldon Plan cycle, 3 teaching interactions complete:
+      interaction A (E = 0.95), interaction B (E = 0.40), interaction C (E = 0.80).
+    expected: |
+      The knowledge_transfers value fed to the D_c formula is 0.95 + 0.40 + 0.80
+      = 2.15, not 3.0. Failed or poor teaching does not count as full progress.
+    violation: |
+      All 3 interactions count as 3.0 transfers regardless of effectiveness score.
