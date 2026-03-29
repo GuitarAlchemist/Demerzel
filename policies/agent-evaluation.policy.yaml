@@ -1,0 +1,354 @@
+name: agent-evaluation
+version: "1.0.0"
+description: Agent evaluation readiness policy — practical checklist for building, running, and shipping agent evals without LangChain dependency
+rationale: >
+  Adapted from LangChain's Agent Evaluation Readiness Checklist (March 2026, Victor Moreira).
+  Rewritten for the Demerzel governance stack using native tools: behavioral tests, conscience
+  observability, tetravalent logic, PR Control API, and cross-model validation — no LangSmith
+  or LangChain required.
+category: quality-assurance
+priority: high
+applies_to:
+  - demerzel
+  - ix
+  - tars
+  - ga
+
+# ============================================================================
+# PHASE 0: Before You Build Evals
+# ============================================================================
+before_building_evals:
+  - id: manual-trace-review
+    check: "Manually review 20-50 real agent traces before building any eval infrastructure"
+    demerzel_implementation: >
+      Use /demerzel audit level=deep to review governance traces.
+      Use PR Control API: GET /pr/state for Prime Radiant agent state.
+      Use conscience-observability policy for structured trace inspection.
+      Use annotation via GitHub Discussions (/demerzel poll) for domain expert review.
+    tools:
+      - demerzel-audit
+      - prime-radiant-control
+      - conscience-observability
+
+  - id: unambiguous-success-criteria
+    check: "Define unambiguous success criteria for a single task"
+    demerzel_implementation: >
+      Every behavioral test in tests/behavioral/ must have explicit pass/fail
+      criteria. Use tetravalent logic: T=pass, F=fail, U=needs investigation,
+      C=conflicting results. No vague criteria like "responds well."
+    example:
+      unclear: "Agent handles governance requests well"
+      clear: "Agent extracts all CONTRADICTORY belief states from the graph and creates red pulsing GIS pins within 2 seconds"
+    tools:
+      - tetravalent
+      - behavioral-test
+
+  - id: separate-capability-regression
+    check: "Separate capability evals from regression evals"
+    demerzel_implementation: >
+      Capability tests: tests/behavioral/*-capability-*.md — push forward, low initial pass rate.
+      Regression tests: tests/behavioral/*-regression-*.md — protect what works, ~100% pass rate.
+      CI pipeline runs regression tests on every push, capability tests weekly.
+    tools:
+      - behavioral-test
+
+  - id: failure-taxonomy
+    check: "Identify and articulate why each failure occurs (spend 60-80% of eval effort here)"
+    demerzel_implementation: >
+      Use /demerzel belief-discovery to build knowledge map of failures.
+      Categorize into: prompt problem, tool design problem, model limitation,
+      infrastructure issue, data gap. Store in state/beliefs/ as tetravalent entries.
+      Use /seldon research for cross-model investigation of ambiguous failures.
+    failure_categories:
+      - prompt_problem: "Instructions unclear → fix prompt/persona"
+      - tool_design: "Tool interface causes mistakes → redesign MCP tool params"
+      - model_limitation: "LLM can't generalize → add examples, try different model"
+      - infrastructure: "Timeout, API error, stale cache → fix pipeline"
+      - data_gap: "Missing training data or context → enrich knowledge base"
+    tools:
+      - demerzel-belief-discovery
+      - seldon-research
+      - tetravalent
+
+  - id: eval-ownership
+    check: "Assign eval ownership to a single domain expert"
+    demerzel_implementation: >
+      Each persona owns evals for their domain. skeptical-auditor owns cross-cutting
+      quality evals. Use CODEOWNERS pattern in each repo.
+    tools:
+      - persona
+
+  - id: infrastructure-before-blame
+    check: "Rule out infrastructure and data pipeline issues before blaming the agent"
+    demerzel_implementation: >
+      Run /demerzel self-diagnostic before investigating agent failures.
+      Check: context exhaustion, git failures, MCP connectivity, API health.
+      Use PR Control API: GET /pr/state to verify Prime Radiant is responsive.
+    tools:
+      - demerzel-self-diagnostic
+      - prime-radiant-control
+
+# ============================================================================
+# PHASE 1: Choose Evaluation Level
+# ============================================================================
+evaluation_levels:
+  - id: single-step
+    name: "Single-step (run-level)"
+    description: "Did the agent choose the right tool? Did it generate valid params?"
+    demerzel_implementation: >
+      Test individual MCP tool calls. Verify JSON-RPC params match schema.
+      Use schemas/ directory for validation. Run via PR Control API:
+      POST /pr/command with specific action, verify /pr/result.
+    when_to_use: "Stable tool definitions, debugging specific steps"
+
+  - id: full-turn
+    name: "Full-turn (trace-level) — START HERE"
+    description: "Grade a full trace: final response + trajectory + state changes"
+    demerzel_implementation: >
+      This is where most teams should start. Use behavioral tests that verify:
+      1. Final output correctness (tetravalent grading)
+      2. Trajectory reasonableness (did it take a valid path, not necessarily the exact one)
+      3. State changes (GIS pins placed? Panel opened? Node selected? Verify via /pr/state)
+    dimensions:
+      - final_response: "Is the output correct and useful?"
+      - trajectory: "Did the agent take a reasonable path?"
+      - state_changes: "Did the agent create the right artifacts?"
+    critical_note: >
+      State change evaluation is often overlooked but critical for agents that DO things.
+      Don't just check the agent said "Done!" — verify via PR Control /pr/state that
+      the actual state matches. Example: if agent says "5 pins added", verify
+      gis.earth.pins === 5.
+
+  - id: multi-turn
+    name: "Multi-turn (thread-level)"
+    description: "Does the agent maintain context across conversation turns?"
+    demerzel_implementation: >
+      Use N-1 testing: take real conversation prefixes, let agent generate only
+      the final turn. Avoids compounding error of fully synthetic conversations.
+      Test via claude-mem memory persistence across sessions.
+    when_to_use: "After trace-level evals are solid"
+
+# ============================================================================
+# PHASE 2: Dataset Construction
+# ============================================================================
+dataset_construction:
+  - id: unambiguous-tasks
+    check: "Every task is unambiguous with a reference solution proving it's solvable"
+    example:
+      ambiguous: "Make the governance graph look good"
+      unambiguous: "Add 5 governance pins to Earth (Demerzel HQ, ix Forge, TARS Lab, GA Studio, Streeling U) and verify pin count is 5 via /pr/state"
+
+  - id: positive-negative-cases
+    check: "Test both positive cases (should happen) and negative cases (should NOT happen)"
+    example:
+      positive: "Agent adds pins when asked to visualize governance nodes"
+      negative: "Agent does NOT add World Capitals preset when planet is Venus"
+
+  - id: dataset-matches-level
+    check: "Dataset structure matches evaluation level"
+    demerzel_mapping:
+      run_level: "Reference tool calls in schemas/"
+      trace_level: "Expected outputs + state changes in tests/behavioral/"
+      thread_level: "Multi-turn sequences with context retention checks"
+
+  - id: agent-type-datasets
+    check: "Tailor to agent type"
+    demerzel_types:
+      governance_agent: "Constitutional compliance checks + belief state verification"
+      coding_agent: "Deterministic tests (TypeScript compiles, tests pass)"
+      research_agent: "Groundedness (claims supported by sources) + coverage"
+      visualization_agent: "State verification via /pr/state + optional screenshot validation"
+
+  - id: seed-examples
+    check: "20-50 hand-reviewed examples beat hundreds of unverified synthetic ones"
+    demerzel_implementation: >
+      Store seed datasets in tests/behavioral/ as markdown scenario files.
+      Each scenario has: setup, action, expected_outcome, tetravalent_grade.
+
+  - id: flywheel
+    check: "Set up trace-to-dataset flywheel"
+    demerzel_implementation: >
+      Production failures → /demerzel evolve → new behavioral test → regression suite.
+      Use /seldon deliver to package learnings cross-repo.
+      Use algedonic channel for pain signal routing.
+
+# ============================================================================
+# PHASE 3: Grader Design
+# ============================================================================
+grader_design:
+  - id: specialized-graders
+    check: "Select specialized graders per dimension"
+    demerzel_graders:
+      code_based:
+        description: "Deterministic checks — use for objective verification"
+        examples:
+          - "TypeScript compiles: npx tsc --noEmit"
+          - "PR state check: curl /pr/state | jq '.gis.earth.pins == 5'"
+          - "Schema validation: ajv validate against schemas/*.json"
+          - "Belief state: tetravalent T/F/U/C classification"
+        when: "Objectively correct answer exists"
+
+      llm_as_judge:
+        description: "Cross-model validation for subjective quality"
+        examples:
+          - "/demerzel consult — ask ChatGPT for second opinion"
+          - "/seldon research — multi-model investigation"
+          - "/demerzel cross-review — different AI reviews the code"
+        when: "Genuinely subjective assessment needed"
+        calibration: "Start with 20+ labeled examples, grow to ~100 for confidence"
+
+      human:
+        description: "Domain expert review for ambiguous cases"
+        examples:
+          - "GitHub Discussion polls (/demerzel poll)"
+          - "Annotation via PR reviews"
+        when: "Edge cases, calibration, subjective criteria"
+
+  - id: guardrails-vs-evaluators
+    check: "Distinguish guardrails (inline, runtime) from evaluators (async, quality)"
+    demerzel_mapping:
+      guardrails:
+        description: "Run during execution, before user sees output"
+        examples:
+          - "Constitutional compliance (/constitution)"
+          - "Confidence threshold checks (/alignment-check)"
+          - "No secrets in commits (commit-style rule)"
+      evaluators:
+        description: "Run after generation, asynchronously"
+        examples:
+          - "Behavioral test suite (tests/behavioral/)"
+          - "Cross-model review (/demerzel cross-review)"
+          - "Visual validation loop (prime-radiant-control validate.md)"
+
+  - id: binary-grading
+    check: "Prefer binary pass/fail over numeric scales"
+    demerzel_implementation: >
+      Tetravalent logic provides 4 states (T/F/U/C), which is richer than binary
+      but still categorical. T=pass, F=fail, U=needs investigation, C=conflicting.
+      Avoid 1-5 scales. Decompose complex tasks into multiple binary checks.
+
+  - id: grade-outcome-not-path
+    check: "Grade the outcome, not the exact path"
+    demerzel_implementation: >
+      Don't require "must call tool A → B → C in order."
+      Instead: "Did the GIS pins appear on Earth? Is the pin count correct?"
+      Track efficiency separately: observed_steps / ideal_steps ratio.
+
+  - id: custom-evaluators
+    check: "Custom evaluators from your error analysis, not generic off-the-shelf"
+    demerzel_implementation: >
+      Every evaluator maps to a specific failure mode discovered in Phase 0.
+      No generic "helpfulness" or "coherence" metrics.
+      Each test in tests/behavioral/ should cite the failure mode it catches.
+
+# ============================================================================
+# PHASE 4: Running & Iterating
+# ============================================================================
+running_and_iterating:
+  - id: three-eval-types
+    check: "Use offline, online, and ad-hoc evaluation"
+    demerzel_mapping:
+      offline: "CI behavioral tests on every push (tests/behavioral/)"
+      online: "PR Control API continuous state monitoring in production"
+      ad_hoc: "/demerzel audit for exploratory trace analysis"
+
+  - id: multiple-trials
+    check: "Run multiple trials to account for non-determinism"
+    demerzel_implementation: >
+      Use /demerzel loop for repeated trial execution with governance oversight.
+      Compute confidence intervals before declaring improvement.
+      Track: turns taken, token usage, latency, cost per task.
+
+  - id: clean-isolation
+    check: "Each trial runs in clean, isolated environment"
+    demerzel_implementation: >
+      Use git worktrees (isolation: worktree in Agent tool) for code changes.
+      Fresh /pr/command → /pr/state cycle per trial.
+      Clear GIS state between trials: gis:clear action.
+
+  - id: tag-and-document
+    check: "Tag evals by capability, document what each measures"
+    demerzel_implementation: >
+      Behavioral tests organized by: governance, visualization, tool_use,
+      cross_repo, memory, conversation. Each test has header documenting
+      what capability it verifies.
+
+  - id: plateau-detection
+    check: "Recognize when pass rates plateau — evolve the test suite"
+    demerzel_implementation: >
+      /demerzel evolve tracks artifact effectiveness and identifies stale tests.
+      Anti-lolli-inflation policy prevents accumulating tests that no longer give signal.
+
+  - id: tool-design-investment
+    check: "Invest in tool interface design, not just prompt optimization"
+    demerzel_implementation: >
+      MCP tool schemas in schemas/ define clear interfaces.
+      Test how models actually use tools — try different parameter formats.
+      Make mistakes structurally impossible (require absolute paths, typed params).
+
+# ============================================================================
+# PHASE 5: Production Readiness
+# ============================================================================
+production_readiness:
+  - id: promote-to-regression
+    check: "Promote high-pass-rate capability evals into regression suite"
+    demerzel_implementation: >
+      When a capability test consistently passes, move from
+      tests/behavioral/*-capability-* to tests/behavioral/*-regression-*.
+      /demerzel promote can formalize this.
+
+  - id: cicd-quality-gates
+    check: "Integrate regression evals into CI/CD with automated gates"
+    demerzel_implementation: >
+      GitHub Actions workflow:
+      1. Code/prompt change triggers pipeline
+      2. Offline evals: tsc --noEmit + behavioral tests + schema validation
+      3. PR Control validation: POST commands → verify /pr/state
+      4. Cross-model review gate (/demerzel cross-review)
+      5. Promote only if all gates pass
+
+  - id: user-feedback
+    check: "Capture user feedback"
+    demerzel_implementation: >
+      Algedonic channel routes pain/pleasure signals.
+      GitHub Discussions for community input (/demerzel poll).
+      Discord bot channel for real-time feedback.
+
+  - id: online-evaluation
+    check: "Set up online evaluations for production traffic"
+    demerzel_implementation: >
+      PR Control API /pr/state provides continuous state monitoring.
+      SignalR bridge forwards live governance events to GIS pins.
+      Algedonic signals auto-create visual indicators on planet surfaces.
+
+  - id: version-everything
+    check: "Version prompts and tool definitions alongside code"
+    demerzel_implementation: >
+      Personas versioned (semver in YAML).
+      Policies versioned (version field in YAML).
+      Schemas versioned (JSON Schema $id).
+      Constitutional amendments are append-only with justification.
+
+  - id: failure-flywheel
+    check: "Production failures feed back into datasets, analysis, and improvements"
+    demerzel_implementation: >
+      Failure → algedonic pain signal → /demerzel evolve → new behavioral test
+      → regression suite → CI gate → prevents recurrence.
+      Every insight compounds (/demerzel compound).
+      Cross-repo learnings via Galactic Protocol (/seldon deliver).
+
+# ============================================================================
+# Quick Reference: Tool Mapping (LangChain → Demerzel)
+# ============================================================================
+tool_mapping:
+  langsmith_traces: "PR Control API /pr/state + conscience-observability"
+  langsmith_annotation_queues: "GitHub Discussions + /demerzel poll"
+  langsmith_datasets: "tests/behavioral/ markdown scenarios"
+  langsmith_experiments: "/demerzel loop + behavioral-test runs"
+  langsmith_llm_as_judge: "/demerzel consult (ChatGPT) + /seldon research (multi-model)"
+  langsmith_few_shot_evaluators: "Persona examples in personas/*.persona.yaml"
+  langsmith_online_evals: "PR Control API continuous monitoring + SignalR bridge"
+  langsmith_cicd_pipeline: "GitHub Actions + /demerzel cross-review gate"
+  langsmith_align_evals: "/demerzel confidence calibration"
+  langsmith_insights: "/demerzel audit + /demerzel evolve"
+  langsmith_prompt_versioning: "Persona/policy YAML versioning (semver)"
