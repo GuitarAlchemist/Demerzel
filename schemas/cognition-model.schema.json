@@ -6,7 +6,7 @@
   "type": "object",
   "required": ["schemaVersion", "policy19", "strands", "activeContext"],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "schemaVersion": { "const": "1.1.0" },
     "policy19": {
       "type": "object",
       "description": "Epistemic Self-Awareness configuration",
@@ -103,6 +103,8 @@
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "durability": { "type": "number", "minimum": 0, "maximum": 1, "description": "How long the belief persists under challenge" },
         "viscosity": { "type": "number", "minimum": 0, "description": "Article E-3: resistance to change. High = dangerous." },
+        "metaState": { "$ref": "#/$defs/TruthState", "description": "Article E-7: meta-belief about this belief's state. Forms the epistemic tensor State_MetaState." },
+        "tensorConfig": { "enum": ["T_T", "T_F", "T_U", "T_C", "F_T", "F_F", "F_U", "F_C", "U_T", "U_F", "U_U", "U_C", "C_T", "C_F", "C_U", "C_C"], "description": "Article E-7: the 4x4 epistemic tensor configuration. C_T = wisdom (stable paradox)." },
         "formationMethod": { "enum": ["observation", "inference", "authority", "abductive-ascent", "analogy", "adversarial", "dialogue", "teaching-validation"] },
         "evidence": {
           "type": "array",
@@ -162,7 +164,18 @@
         "successRate": { "type": "number", "minimum": 0, "maximum": 1 },
         "contextsTested": { "type": "integer" },
         "learnerProfilesTested": { "type": "integer" },
-        "promotionStatus": { "enum": ["experimental", "validated", "restricted", "retired"] }
+        "promotionStatus": { "enum": ["experimental", "validated", "restricted", "retired"] },
+        "methylation": {
+          "type": "object",
+          "description": "Article E-8: epigenetic suppression state. Methylated strategies cost more to activate.",
+          "properties": {
+            "methylated": { "type": "boolean", "default": false },
+            "activationCostMultiplier": { "type": "number", "minimum": 1, "default": 1, "description": "1.0 = normal, >1 = suppressed, requires more evidence/approval to invoke" },
+            "methylationTrigger": { "type": "string", "description": "Discomfort signal that caused methylation" },
+            "methylatedAt": { "type": "string", "format": "date-time" },
+            "demethylationCondition": { "type": "string", "description": "What would restore this strategy to full availability" }
+          }
+        }
       }
     },
     "ExplanationRecord": {
