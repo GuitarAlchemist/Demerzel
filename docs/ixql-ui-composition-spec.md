@@ -208,19 +208,41 @@ interface RegistryEntry {
 
 ## Implementation Plan
 
-### Phase 1: AG-Grid proof-of-concept
-1. Extend `IxqlControlParser.ts` with `CREATE PANEL` syntax
-2. Create `WidgetSpec` type and compiler
-3. Create `IxqlGridPanel.tsx` wrapping AG-Grid Community
-4. Register in `PanelRegistry` as dynamic panel
-5. Wire `SOURCE` to governance API via TanStack Query
-6. Wire `LIVE true` to SignalR subscription
-7. Demo: `CREATE PANEL "beliefs" KIND grid SOURCE governance.beliefs`
+### Phase 1: AG-Grid proof-of-concept — IMPLEMENTED (2026-03-29)
+
+**Files created/modified:**
+- `IxqlControlParser.ts` — added `CreateGridPanelCommand` type, `parseCreateGridPanel()`, tokenizer extended for `{}:` structural chars
+- `IxqlWidgetSpec.ts` — **NEW** — `PanelSpec`, `DataBindingSpec`, `ProjectionSpec`, `CompiledProjectionField`, `ResponsiveLayoutSpec` types + `compileGridPanel()` compiler + `applyProjection()` runtime + whitelisted pure functions (DAYS_SINCE, FORMAT_PERCENT, COALESCE, UPPERCASE)
+- `IxqlGridPanel.tsx` — **NEW** — AG-Grid Community wrapper with auto-generated ColDefs, tetravalent cell renderer (T/F/U/C color-coded dots), confidence bar renderer (0.0-1.0), governed-by article badges, PUBLISH row selection, SUBSCRIBE signal reactivity, REFRESH polling
+- `DashboardSignalBus.ts` — **NEW** — cross-widget signal bus with throttled publish (50ms debounce), `useSignal()`, `useSignals()`, `usePublish()` hooks
+- `PanelRegistry.ts` — added 'grid' icon to ICON_CATALOG
+- `ForceRadiant.tsx` — wired `create-grid-panel` command dispatch, `gridPanelSpecsRef` storage, `IxqlGridPanel` rendering in panel switch
+- `index.ts` — exported all new types and components
+
+**Grammar implemented:**
+```ixql
+CREATE PANEL "id" KIND grid
+  TEMPLATE governance.belief-grid     -- optional
+  SOURCE governance.beliefs           -- required
+  WHERE confidence > 0.5              -- optional
+  PROJECT { id, truth_value, confidence, ageDays: DAYS_SINCE(updated_at) }
+  REFRESH 30s
+  LIVE true
+  LAYOUT md:6 lg:4
+  GOVERNED BY article=7
+  PUBLISH selection AS selectedBelief
+  SUBSCRIBE selectedNode
+```
+
+**Deviations from spec:**
+- Used DataFetcher polling instead of TanStack Query (consistent with existing DynamicPanel pattern)
+- LIVE true parsed but SignalR upgrade deferred (flag stored in PanelSpec, ready for wiring)
+- Signal bus uses vanilla store + useSyncExternalStore instead of Zustand (no new dependency)
 
 ### Phase 2: D3 visualizations
 1. Add `CREATE VIZ` to parser
 2. Create `IxqlVizPanel.tsx` with D3 force-graph, timeline, chord renderers
-3. Implement `PUBLISH/SUBSCRIBE` signal bus (Zustand store)
+3. Wire PUBLISH/SUBSCRIBE signal bus (already built in Phase 1)
 4. Demo: linked grid + force-graph
 
 ### Phase 3: MUI forms + governance
