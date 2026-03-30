@@ -51,6 +51,11 @@ All endpoints are on `http://localhost:5176`:
 
 ### Navigation
 - `navigate:node` `{nodeId: "alignment-policy"}`
+- `camera:fly` `{x, y, z, lookAt?: {x, y, z}, durationMs?: 1200}` — fly camera to coordinates
+
+### Demerzel Face Control
+- `demerzel:emotion` `{emotion: "calm"|"concerned"|"thinking"|"pleased"|"alert"}` — set facial expression
+- `demerzel:speaking` `{speaking: true|false}` — toggle speaking jaw animation
 
 ### State
 - `state:report` — returns full state in result
