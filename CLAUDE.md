@@ -9,11 +9,11 @@ Named after R. Daneel Olivaw (later known as Daneel/Demerzel) from Isaac Asimov'
 ```
 constitutions/     11-article constitution + Asimov root constitution + Demerzel mandate + harm taxonomy
 personas/          14 persona archetypes (YAML) defining agent roles and voices
-logic/             Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
-policies/          43 policies: alignment, rollback, self-modification, kaizen, recon, scientific objectivity, streeling, governance audit, autonomous-loop, multi-model orchestration, context management, context-engine, auto-remediation, ml-feedback, belief-currency, proto-conscience, conscience-observability, intuition, governance-experimentation, ai-probes, multilingual, grammar-evolution, staleness-detection, readme-sync, continuous-learning, completeness-instinct, seldon-plan, weakness-prober, compounding-metrics, meta-audit, capability-unity, chaos-test, resilience-metric, algedonic-channel, governance-process, constitutional-compliance, anti-lolli-inflation, visual-critic, adversarial-resilience, meta-learning, agent-evaluation, teaching-effectiveness, recursive-learning-eval
+logic/             Hexavalent logic (T/P/U/D/F/C — extends tetravalent with Probable and Doubtful), PDCA state, knowledge state schemas
+policies/          44 policies: alignment, rollback, self-modification, kaizen, recon, scientific objectivity, streeling, governance audit, autonomous-loop, multi-model orchestration, context management, context-engine, auto-remediation, ml-feedback, belief-currency, proto-conscience, conscience-observability, intuition, governance-experimentation, ai-probes, multilingual, grammar-evolution, staleness-detection, readme-sync, continuous-learning, completeness-instinct, seldon-plan, weakness-prober, compounding-metrics, meta-audit, capability-unity, chaos-test, resilience-metric, algedonic-channel, governance-process, constitutional-compliance, anti-lolli-inflation, visual-critic, adversarial-resilience, meta-learning, agent-evaluation, teaching-effectiveness, recursive-learning-eval
 state/             Demerzel's persistent governance state (beliefs, evolution, pdca, knowledge, snapshots, oversight, conscience, intuition, streeling)
-tests/behavioral/  80 behavioral test suites with 135+ test cases
-schemas/           37 JSON schemas for persona, belief state, reconnaissance, conscience, contracts, context engine, and more
+tests/behavioral/  111 behavioral test suites with 200+ test cases
+schemas/           40 JSON schemas for persona, belief state, reconnaissance, conscience, contracts, context engine, and more
 contracts/         Galactic Protocol specification for cross-repo communication
 examples/          5 scenario walkthroughs + 10 sample data files
 templates/         Integration templates for consumer repos (CLAUDE.md snippet, state directory, agent config)
@@ -60,10 +60,12 @@ asimov.constitution.md        (root — Laws of Robotics, Articles 0-5)
 - >= 0.3: escalate to human
 - < 0.3: do not act
 
-### Tetravalent Logic
+### Hexavalent Logic (extends Tetravalent)
 - **T** (True) -- verified with evidence
-- **F** (False) -- refuted with evidence
+- **P** (Probable) -- evidence leans true, not yet verified
 - **U** (Unknown) -- insufficient evidence, triggers investigation
+- **D** (Doubtful) -- evidence leans false, not yet refuted
+- **F** (False) -- refuted with evidence
 - **C** (Contradictory) -- conflicting evidence, triggers escalation
 
 ### Validation

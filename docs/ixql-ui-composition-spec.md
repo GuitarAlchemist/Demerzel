@@ -239,6 +239,32 @@ CREATE PANEL "id" KIND grid
 - LIVE true parsed but SignalR upgrade deferred (flag stored in PanelSpec, ready for wiring)
 - Signal bus uses vanilla store + useSyncExternalStore instead of Zustand (no new dependency)
 
+### Phase 1b: PIPE Transforms — IMPLEMENTED (2026-03-30)
+
+**Files created/modified:**
+- `IxqlControlParser.ts` — PipeStep union type (7 step kinds), AggregateSpec, parsePipeStep()
+- `IxqlPipeEngine.ts` — **NEW** — executePipeline() with FILTER/SORT/LIMIT/SKIP/DISTINCT/FLATTEN/GROUP BY
+- `IxqlWidgetSpec.ts` — PipelineSpec type, pipeline field on PanelSpec
+- `IxqlGridPanel.tsx` — pipeline execution between fetch and projection, PIPE badge, hexavalent cell rendering
+
+**Grammar:**
+```ixql
+CREATE PANEL "summary" KIND grid
+  SOURCE governance.beliefs
+  PIPE FILTER truth_value = T
+  PIPE GROUP BY evaluated_by COUNT SUM(confidence) AVG(confidence)
+  PIPE SORT count DESC
+  PIPE LIMIT 10
+  PROJECT { evaluated_by, count, avg_confidence }
+```
+
+**Security fixes from architecture review:**
+- Cross-origin URL restriction (same-origin only)
+- `~` operator uses indexOf instead of RegExp (no ReDoS)
+- PipeStep discriminant unified to `type` (was `kind`)
+- useSignals stabilized with timestamp-based change detection
+- graphContext passed to resolve() for graph:// sources
+
 ### Phase 2: D3 visualizations
 1. Add `CREATE VIZ` to parser
 2. Create `IxqlVizPanel.tsx` with D3 force-graph, timeline, chord renderers
@@ -249,7 +275,7 @@ CREATE PANEL "id" KIND grid
 1. Add `CREATE FORM` to parser
 2. Create `IxqlFormPanel.tsx` with MUI form generation
 3. Implement `GOVERNED BY` clause — constitutional validation
-4. Implement `TETRAVALENT validation` — four-state form logic
+4. Implement `HEXAVALENT validation` — six-state form logic (T/P/U/D/F/C)
 5. Demo: belief editor with constitutional constraints
 
 ### Phase 4: Agentic dashboards
