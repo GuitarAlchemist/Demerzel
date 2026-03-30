@@ -265,11 +265,28 @@ CREATE PANEL "summary" KIND grid
 - useSignals stabilized with timestamp-based change detection
 - graphContext passed to resolve() for graph:// sources
 
-### Phase 2: D3 visualizations
-1. Add `CREATE VIZ` to parser
-2. Create `IxqlVizPanel.tsx` with D3 force-graph, timeline, chord renderers
-3. Wire PUBLISH/SUBSCRIBE signal bus (already built in Phase 1)
-4. Demo: linked grid + force-graph
+### Phase 2: D3 Visualizations — IMPLEMENTED (2026-03-30)
+
+**Files created/modified:**
+- `IxqlControlParser.ts` — `CreateVizCommand` type with KIND force-graph|bar|sparkline|timeline, NODES/EDGES/COLOR/SIZE/LABEL clauses
+- `IxqlWidgetSpec.ts` — `VizSpec` type, `compileViz()` compiler
+- `IxqlVizPanel.tsx` — **NEW** — D3 SVG renderers: force-graph (d3-force with zoom/drag), bar chart, sparkline
+- `ForceRadiant.tsx` — vizSpecsRef, CREATE VIZ dispatch, IxqlVizPanel rendering
+
+**Grammar:**
+```ixql
+CREATE VIZ "gov-network" KIND force-graph
+  SOURCE graph://nodes
+  LABEL name
+  COLOR healthStatus
+  SIZE confidence
+  PUBLISH selection AS selectedNode
+```
+
+### Phase 2b: Grammar Metadata API — IMPLEMENTED (2026-03-30)
+
+- `GovernanceController.cs` — `/api/governance/grammar` endpoint: parses EBNF, returns sections/productions/keywords/dataSources
+- `IxqlCommandInput.tsx` — Grammar-driven autocomplete: context-aware suggestions (SOURCE → data sources, KIND → panel types, PIPE → step keywords), Arrow/Tab navigation
 
 ### Phase 3: MUI forms + governance
 1. Add `CREATE FORM` to parser
