@@ -75,6 +75,8 @@ function validate(tokens, filename) {
     fan_outs: 0,
     conclusions: [],
     has_compound: false,
+    assertions: 0,
+    io_tools: [],
   };
 
   for (let i = 0; i < tokens.length; i++) {
@@ -150,6 +152,29 @@ function validate(tokens, filename) {
     }
   }
 
+  // Collect assertions
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (t.type === 'KEYWORD' && t.value === 'assert') {
+      metadata.assertions++;
+    }
+  }
+
+  // Collect ix.io.* tool calls (detect from IDENT sequences: ix . io . name)
+  for (let i = 0; i < tokens.length - 4; i++) {
+    const t0 = tokens[i], t1 = tokens[i+1], t2 = tokens[i+2], t3 = tokens[i+3], t4 = tokens[i+4];
+    if (t0.type === 'IDENT' && t0.value === 'ix' &&
+        t1.type === 'DOT' &&
+        t2.type === 'IDENT' && t2.value === 'io' &&
+        t3.type === 'DOT' &&
+        t4.type === 'IDENT') {
+      const fnName = 'ix.io.' + t4.value;
+      if (!metadata.io_tools.includes(fnName)) {
+        metadata.io_tools.push(fnName);
+      }
+    }
+  }
+
   // Validation rules
   if (metadata.gates.length === 0) {
     issues.push({ severity: 'info', message: 'No governance gates found — consider adding bias_assessment or confidence_calibration' });
@@ -182,7 +207,10 @@ function main() {
     const icon = issues.filter(i => i.severity === 'error').length > 0 ? '✗' : '✓';
     console.log(`\n  ${icon} ${file}`);
     console.log(`    Tokens: ${tokens.length} | Bindings: ${metadata.bindings.length} | Gates: ${metadata.gates.length} | Fan-outs: ${metadata.fan_outs}`);
-    console.log(`    Invocations: ${metadata.invocations.length} | Routes: ${metadata.routes.length} | Compound: ${metadata.has_compound}`);
+    console.log(`    Invocations: ${metadata.invocations.length} | Routes: ${metadata.routes.length} | Compound: ${metadata.has_compound} | Assertions: ${metadata.assertions}`);
+    if (metadata.io_tools.length > 0) {
+      console.log(`    I/O tools: ${metadata.io_tools.join(', ')}`);
+    }
 
     if (issues.length > 0) {
       for (const issue of issues) {
@@ -204,6 +232,63 @@ function main() {
     if (m.invocations.length > 0) {
       const deps = m.invocations.map(i => `${i.target}(${i.level})`).join(', ');
       console.log(`    ${m.file} → ${deps}`);
+    }
+  }
+
+  // Grammar section count validation
+  console.log('\n  Grammar Sync:');
+  const grammarPath = path.join(__dirname, '..', 'grammars', 'sci-ml-pipelines.ebnf');
+  if (fs.existsSync(grammarPath)) {
+    const grammar = fs.readFileSync(grammarPath, 'utf-8');
+    const sectionHeaders = [];
+    const lines = grammar.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // Section headers are preceded by a line of === delimiters
+      // Pattern: (* ===... *) on line i-1, then (* N. Title *) on line i
+      if (i > 0 && lines[i - 1].indexOf('====') >= 0 &&
+          line.indexOf('(*') >= 0 && line.indexOf('*)') >= 0) {
+        const afterOpen = line.substring(line.indexOf('(*') + 2).trim();
+        const dotIdx = afterOpen.indexOf('.');
+        if (dotIdx > 0 && dotIdx <= 3) {
+          const num = parseInt(afterOpen.substring(0, dotIdx), 10);
+          if (!isNaN(num) && num >= 1 && num <= 50) {
+            const title = afterOpen.substring(dotIdx + 1);
+            const endIdx = title.indexOf('*)');
+            const cleaned = (endIdx >= 0 ? title.substring(0, endIdx) : title).trim();
+            sectionHeaders.push({ num, title: cleaned, line: i + 1 });
+          }
+        }
+      }
+    }
+    console.log(`    EBNF sections: ${sectionHeaders.length}`);
+
+    // Check sequential numbering
+    let sequential = true;
+    for (let i = 0; i < sectionHeaders.length; i++) {
+      if (sectionHeaders[i].num !== i + 1) {
+        console.log(`    ⚠ Section numbering gap: expected ${i + 1}, got ${sectionHeaders[i].num} ("${sectionHeaders[i].title}" at line ${sectionHeaders[i].line})`);
+        sequential = false;
+      }
+    }
+    if (sequential) {
+      console.log(`    ✓ Section numbering is sequential (1-${sectionHeaders.length})`);
+    }
+
+    // Collect all io_tools across pipelines and check against grammar
+    const allIoTools = new Set();
+    for (const m of allMetadata) {
+      for (const t of m.io_tools) allIoTools.add(t);
+    }
+    if (allIoTools.size > 0) {
+      console.log(`    I/O tools used across pipelines: ${[...allIoTools].join(', ')}`);
+      for (const tool of allIoTools) {
+        // Check if the grammar defines this tool (look for the function name in the EBNF)
+        const shortName = tool.replace('ix.io.', '');
+        if (grammar.indexOf('"ix.io.' + shortName + '"') < 0 && grammar.indexOf('ix_io_' + shortName) < 0) {
+          console.log(`    ⚠ Tool ${tool} used in pipelines but not defined in grammar`);
+        }
+      }
     }
   }
 

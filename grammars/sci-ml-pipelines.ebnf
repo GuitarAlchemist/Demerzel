@@ -213,6 +213,37 @@ debounce        ::= "debounce" "(" duration ")"
 backoff_strategy ::= "constant" | "linear" | "exponential"
 aggregation      ::= "count" | "sum" | "avg" | "min" | "max" | "collect"
 
+(* ix.io utility functions — file-level I/O used within pipeline stages *)
+ix_io_call ::= ix_io_read | ix_io_write | ix_io_glob | ix_io_move
+             | ix_io_append | ix_io_gh | ix_io_walk | ix_io_count
+             | ix_io_exists | ix_io_archive | ix_io_delete | ix_io_patch
+             | ix_io_update | ix_io_git | ix_io_run_tests | ix_io_check_ci
+             | ix_io_alert | ix_io_watch
+
+ix_io_read       ::= "ix.io.read" "(" path_pattern ")"
+ix_io_write      ::= "ix.io.write" "(" path "," expression ")"
+ix_io_glob       ::= "ix.io.glob" "(" path_pattern ")"
+ix_io_move       ::= "ix.io.move" "(" source_path "," dest_path ")"
+ix_io_append     ::= "ix.io.append" "(" path "," expression ")"
+ix_io_gh         ::= "ix.io.gh" "(" github_command ")"
+ix_io_walk       ::= "ix.io.walk" "(" path_pattern ")"
+ix_io_count      ::= "ix.io.count_artifacts" "(" path_pattern ")"
+ix_io_exists     ::= "ix.io.exists" "(" path ")"
+ix_io_archive    ::= "ix.io.archive" "(" source_path "," dest_path ")"
+ix_io_delete     ::= "ix.io.delete" "(" path ")"
+ix_io_patch      ::= "ix.io.patch" "(" path "," expression ")"
+ix_io_update     ::= "ix.io.update" "(" path "," expression ")"
+ix_io_git        ::= "ix.io.git" "(" git_command ")"
+ix_io_run_tests  ::= "ix.io.run_tests" "(" path_pattern ")"
+ix_io_check_ci   ::= "ix.io.check_ci" "(" identifier ")"
+ix_io_alert      ::= "ix.io.alert" "(" channel "," message_template ")"
+ix_io_watch      ::= "ix.io.watch" "(" path_pattern ")"
+
+source_path    ::= string_literal
+dest_path      ::= string_literal
+github_command ::= string_literal
+git_command    ::= string_literal
+
 (* Reactive pipeline — extends base pipeline with I/O *)
 reactive_pipeline ::= reactive_source "=>" pipeline "=>" output_sink
                     | reactive_source "=>" flow_control
@@ -401,7 +432,7 @@ invoke ::= invoke_exact | invoke_alias | invoke_pattern | route_semantic
 (* ix_pattern_count: are we capturing new patterns from ix? *)
 
 (* ============================================================ *)
-(* 12. Assertions — declarative pipeline correctness            *)
+(* 13. Assertions — declarative pipeline correctness            *)
 (* ============================================================ *)
 
 (* Assertions are first-class IxQL constructs that express expectations *)
@@ -515,7 +546,7 @@ conclusion_binding ::= identifier "<-"
 *)
 
 (* ============================================================ *)
-(* 13. Traceability — Full Stack Audit Trail                     *)
+(* 14. Traceability — Full Stack Audit Trail                     *)
 (* ============================================================ *)
 
 (* Every IxQL execution produces a trace chain from constitutional
@@ -588,7 +619,7 @@ dotnet_namespace ::= identifier ("." identifier)*
 (* Queryable by: handle, date range, conclusion, binding class *)
 
 (* ============================================================ *)
-(* 14. Auto-Distillation & Type Providers                        *)
+(* 15. Auto-Distillation & Type Providers                        *)
 (* ============================================================ *)
 
 (* Pipelines learn from their own execution and generate types *)
@@ -656,7 +687,7 @@ provider_source ::= "schema" "(" path ")"           (* JSON Schema → type *)
    All generated from the same source via type_provider *)
 
 (* ============================================================ *)
-(* 15. Literate Comments                                        *)
+(* 16. Literate Comments                                        *)
 (* ============================================================ *)
 
 (* Markdown-enabled comments for documentation generation.       *)
@@ -688,7 +719,7 @@ markdown_content = { any_char - newline } ;
 *)
 
 (* ============================================================ *)
-(* 16. Algedonic Signals — S1→S5 Emergency Bypass              *)
+(* 17. Algedonic Signals — S1→S5 Emergency Bypass              *)
 (* ============================================================ *)
 
 (* Beer's algedonic channel: pain/pleasure signals that bypass  *)
@@ -729,7 +760,7 @@ severity_level = "critical" | "emergency" | "safety" ;
 *)
 
 (* ============================================================ *)
-(* 17. Fractal Compound Operators                               *)
+(* 18. Fractal Compound Operators                               *)
 (* ============================================================ *)
 
 (* Self-similar compounding: the same execute → harvest → promote → teach

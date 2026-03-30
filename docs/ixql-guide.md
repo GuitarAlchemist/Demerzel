@@ -11,7 +11,7 @@ csv → normalize → random_forest → f1_score
 
 Every IxQL pipeline is a governed artifact — constitutional gates can be inserted at any stage, and conclusions map to tetravalent logic (T/F/U/C).
 
-## Grammar Structure (11 Sections)
+## Grammar Structure (18 Sections)
 
 | Section | What It Covers |
 |---------|---------------|
@@ -23,9 +23,16 @@ Every IxQL pipeline is a governed artifact — constitutional gates can be inser
 | 6. Deployment | Serialization, serving, monitoring, drift detection |
 | 7. Governance Integration | Bias assessment, reversibility, confidence calibration, explanation |
 | 8. ix-Specific Patterns | Karnaugh, memristive Markov, grammar weights, compounding |
-| 9. I/O & Reactive Patterns | WebSocket, file watcher, SSE, webhook, cron, message queues, flow control |
+| 9. I/O & Reactive Patterns | WebSocket, file watcher, SSE, webhook, cron, ix.io.* utilities, flow control |
 | 10. MCP Orchestration | Tool invocation, parallel tools, tetravalent gates, bindings, compound phases |
-| 11. Evolution Hooks | Research cycles, distillation, external grammar consumption |
+| 11. Pipeline Identity & Routing | Handles, aliases, patterns, semantic routing, ambient triggers |
+| 12. Evolution Hooks | Research cycles, distillation, external grammar consumption |
+| 13. Assertions | Declarative pipeline correctness, null/type/range/metric/truth/schema checks |
+| 14. Traceability | Full-stack audit trail, runtime bindings, MCP/CE/native binding records |
+| 15. Auto-Distillation & Type Providers | Trace-to-weight feedback, auto-assertions, type providers |
+| 16. Literate Comments | Markdown-enabled `---` comments for documentation generation |
+| 17. Algedonic Signals | S1-S5 emergency bypass, pain/pleasure signals, severity levels |
+| 18. Fractal Compound Operators | Self-similar compounding (L0-L4), D_c metric, ERGOL/LOLLI checks |
 
 ## Use Cases
 
@@ -248,7 +255,7 @@ pipeline
 
 ## References
 
-- [Full EBNF grammar](../grammars/sci-ml-pipelines.ebnf) — 11 sections, ~300 productions
+- [Full EBNF grammar](../grammars/sci-ml-pipelines.ebnf) — 18 sections, ~400+ productions
 - [ix repo](https://github.com/GuitarAlchemist/ix) — Rust ML forge (runtime)
 - [ix CLI issue](https://github.com/GuitarAlchemist/Demerzel/issues/103) — Parser + executor
 - [LSP issue](https://github.com/GuitarAlchemist/Demerzel/issues/117) — VS Code support
