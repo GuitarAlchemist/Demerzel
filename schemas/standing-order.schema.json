@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://demerzel.governance/schemas/standing-order.schema.json",
+  "title": "Standing Order",
+  "description": "A governance standing order derived from repeated case law resolutions. When 3+ cases with the same pattern are resolved the same way, the resolution becomes a standing order.",
+  "type": "object",
+  "required": [
+    "standing_order_id",
+    "derived_from",
+    "article",
+    "source_pattern",
+    "resolution_ixql",
+    "confidence",
+    "status"
+  ],
+  "properties": {
+    "standing_order_id": {
+      "type": "string",
+      "pattern": "^so-art[0-9]+-[a-z0-9-]+-[0-9]{3}$",
+      "description": "Unique ID: so-{article}-{source}-{seq}"
+    },
+    "derived_from": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 3,
+      "description": "Case IDs that established this standing order"
+    },
+    "article": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 11,
+      "description": "Constitutional article number"
+    },
+    "source_pattern": {
+      "type": "string",
+      "description": "What source/panel type this applies to"
+    },
+    "resolution_ixql": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Standard IXQL remediation commands"
+    },
+    "confidence": {
+      "$ref": "hexavalent-distribution.schema.json",
+      "description": "Confidence distribution — grows with each confirming case"
+    },
+    "activation_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many times this standing order has been applied"
+    },
+    "last_activated": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "effectiveness": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Ratio of successful applications to total"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "suspended", "promoted"],
+      "description": "Current status"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

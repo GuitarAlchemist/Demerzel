@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://demerzel.governance/schemas/constitutional-case.schema.json",
+  "title": "Constitutional Case",
+  "description": "A governance violation packaged as a constitutional case with precedent citations, hexavalent resolution, and standing order linkage.",
+  "type": "object",
+  "required": [
+    "case_id",
+    "timestamp",
+    "source",
+    "panel_type",
+    "violated_articles",
+    "predicates",
+    "severity",
+    "rule_id",
+    "outcome"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^case-art[0-9]+-[a-z0-9-]+-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}$",
+      "description": "Unique case ID: case-{article}-{source}-{date}-{seq}"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the violation was detected"
+    },
+    "source": {
+      "type": "string",
+      "description": "Panel source ID (e.g., 'beliefs', 'health.llm')"
+    },
+    "panel_type": {
+      "type": "string",
+      "enum": ["grid", "viz", "form", "status"],
+      "description": "The IXQL panel kind that produced the data"
+    },
+    "violated_articles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Constitutional articles violated, e.g. 'Article 1 (Truthfulness)'"
+    },
+    "predicates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": { "type": "string" },
+          "operator": { "type": "string" },
+          "value": {}
+        },
+        "required": ["field", "operator", "value"]
+      },
+      "description": "The predicates that triggered the violation"
+    },
+    "data_snapshot": {
+      "type": "object",
+      "description": "Actual data values at moment of violation"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "warning", "critical"],
+      "description": "Violation severity"
+    },
+    "rule_id": {
+      "type": "string",
+      "description": "The ViolationRule.id that fired"
+    },
+    "actions_executed": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IXQL command strings dispatched"
+    },
+    "notify_channel": {
+      "type": ["string", "null"],
+      "description": "Algedonic channel notified"
+    },
+    "confidence": {
+      "$ref": "hexavalent-distribution.schema.json",
+      "description": "Hexavalent confidence of the resolution"
+    },
+    "resolution_type": {
+      "type": "string",
+      "enum": ["auto-resolved", "human-resolved", "standing-order", "escalated", "dismissed", "pending"],
+      "description": "How the case was resolved"
+    },
+    "resolution_ixql": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IXQL commands that fixed the issue"
+    },
+    "resolution_notes": {
+      "type": ["string", "null"],
+      "description": "Explanation of the resolution"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["upheld", "overturned", "modified", "pending"],
+      "description": "Case outcome"
+    },
+    "resolved_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "resolved_by": {
+      "type": ["string", "null"],
+      "description": "'system', persona name, or 'human'"
+    },
+    "precedent_cases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Case IDs of prior cases used as precedent"
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "description": "Case ID this ruling supersedes"
+    },
+    "standing_order_id": {
+      "type": ["string", "null"],
+      "description": "Standing order this case contributed to or was resolved by"
+    },
+    "false_positive": {
+      "type": ["boolean", "null"],
+      "description": "Was this a legitimate violation? Assessed after resolution."
+    },
+    "pattern_tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags for clustering and pattern detection"
+    }
+  }
+}
