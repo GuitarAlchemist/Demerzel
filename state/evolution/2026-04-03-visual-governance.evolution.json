@@ -1,0 +1,51 @@
+{
+  "id": "gel-visual-governance-2026-04-03",
+  "artifact": "prime-radiant/visual-governance",
+  "artifact_type": "capability",
+  "metrics": {
+    "citation_count": 55,
+    "violation_count": 3,
+    "compliance_rate": 0.95,
+    "last_cited": "2026-04-03T00:00:00Z",
+    "last_violated": "2026-04-03T00:00:00Z",
+    "promotion_candidate": true,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "compounding_cycle",
+      "context": "Monster session 2026-04-02/03: 55 commits. 3 multi-AI brainstorms (Codex+Gemini+Claude). Built: TSL infrastructure (6 files), GLSL effects (caustics, dispersion, Moebius), multi-client MCP control, remote QA pipeline (screenshot+video+metrics), IXQL RENDER/NAVIGATE/QA commands, cinematic planet realism (limb darkening, atmospheric scattering), Saturn ring shader, multilingual planet names.",
+      "timestamp": "2026-04-03T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "Float32 catastrophic cancellation pattern: large parent world coords + tiny child offsets = jitter. Fix: camera-parent the orrery. Codex+Gemini identified via multi-AI brainstorm. This pattern applies to ANY Three.js scene with camera-following objects at small scale.",
+      "timestamp": "2026-04-03T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "Observe-before-fix pattern: 5 shader changes wasted because root cause was positional, not shader-level. Frame-diff + position-tracking methodology found the real cause. Promoted to feedback memory.",
+      "timestamp": "2026-04-03T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "TSL/NodeMaterial incompatibility: Three.js r180 NodeMaterial only works with WebGPURenderer, NOT WebGLRenderer from 3d-force-graph. 6 TSL files built but dormant until renderer migration.",
+      "timestamp": "2026-04-02T00:00:00Z"
+    },
+    {
+      "type": "governance_concept_created",
+      "context": "7 named governance visualization concepts: Jurisdictional Pressure (Voronoi), Governance Turbulence (RD), Confidence Topology (circle packing), Governance Viscosity (soft-body), Governance Contagion (CA), Legitimacy Weather (volumetric), Seldon Crisis Patterns (RD parameter shift). + 5 Heckel concepts: Audit Topology (Moebius), The Eclipse (volumetric shadow), Hexavalent Dispersion (6-channel IOR), Constitutional Caustics, Governance Spectroscopy.",
+      "timestamp": "2026-04-02T00:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "Visual governance representation is compounding — each brainstorm produces named concepts that map techniques to governance meaning. The multi-AI approach consistently outperforms solo analysis for creative-technical synthesis.",
+      "truth_value": "T",
+      "confidence": 0.88
+    },
+    "recommendation": "promote"
+  },
+  "created_at": "2026-04-03T00:00:00Z",
+  "last_updated": "2026-04-03T00:00:00Z"
+}
