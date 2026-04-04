@@ -17,6 +17,7 @@
       "$ref": "#/$defs/view_handle"
     }
   ],
+  "$comment": "Related artifacts: contracts/voicing-handle-uri-format.md (URI spec), contracts/ga-orchestrator-architecture.md (architecture), contracts/ga-mcp-tool-bundles.md (consumers), contracts/ui-chord-hydration.md (UI rendering), contracts/socratic-tool-design.md (pattern usage), policies/mcp-context-budget.yaml (budget enforcement), schemas/blackboard-state.schema.json (displayed_artifacts).",
   "$defs": {
     "voicing_handle": {
       "type": "object",
@@ -88,7 +89,7 @@
       "properties": {
         "handle": {
           "type": "string",
-          "pattern": "^ga:view:v[0-9]+:[a-zA-Z0-9-]+\\?fields=[a-z_,]+$",
+          "pattern": "^ga:view:v[0-9]+:[a-zA-Z0-9-]+\\?fields=[a-z][a-z0-9_]*(,[a-z][a-z0-9_]*)*$",
           "examples": ["ga:view:v1:qr-12ab-4?fields=fretspan,bass,topnote"]
         },
         "type": {"const": "view"},

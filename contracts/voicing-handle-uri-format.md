@@ -32,7 +32,7 @@ The GA ecosystem will soon index millions of voicings across 114 instruments and
 
 **Lifecycle:** Permanent. Same voicing always produces same hash. Safe to embed in documentation, URLs, knowledge bases.
 
-**Hash input:** canonical serialization of `{instrument_id, tuning_id, fret_array, chord_dna, optic_k_version}`.
+**Hash input:** canonical serialization of `{instrument_id, tuning_id, fret_array, chord_dna_hash, optic_k_version}` (see Section 4 for exact canonicalization rules).
 
 ### 2.2 Query Result Handle (`qr`)
 

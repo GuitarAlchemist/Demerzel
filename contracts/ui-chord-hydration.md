@@ -39,7 +39,9 @@ This contract specifies the tag syntax, render API, client responsibilities, and
 
 ## 2. Hydration Tag Syntax
 
-The LLM may emit the following self-closing XML-style tags. All tags use the `ga:*` handle URI format defined in `schemas/voicing-handle.schema.json`.
+The LLM may emit the following self-closing XML-style tags. **Handle-backed tags** (`<ChordView>`, `<ProgressionView>`, `<VoiceLeadingView>`) reference content-addressable voicing handles per `schemas/voicing-handle.schema.json`. **Parameterized tags** (`<ScaleView>`, `<FretboardView>`) use descriptive attributes instead of handles because scales and fretboards are views over pitch-class collections, not fixed voicing objects.
+
+In examples below, handles like `ga:vh:v3:sha256-7b91a4c2...` are shortened for readability. Real handles contain a full 64-character hexadecimal SHA-256 digest.
 
 ### 2.1 `<ChordView>`
 

@@ -1,13 +1,15 @@
 # Directive: GA Kinematic Pathfinder Service
 
-**Directive ID:** dir-ga-kinematic-pathfinder-2026-04-04
-**Issuer:** Demerzel
-**Target:** ga (Guitar Alchemist .NET platform)
+**Directive ID:** DIR-2026-04-04-003
+**Type:** feature-requirement
+**From:** Demerzel (Governor)
+**To:** ga
 **Priority:** High
 **Risk:** Medium
-**Status:** Issued
-**Dependencies:** `dir-ga-mcp-integration-2026-03-21-002` (MCP integration must be complete)
-**Related:** `contracts/socratic-tool-design.md`, `schemas/voicing-handle.schema.json`
+**Issued:** 2026-04-04
+**Compliance Deadline:** 2026-Q3 (phased; see Implementation Phases)
+**Dependencies:** `DIR-2026-03-21-002` (MCP integration must be complete)
+**Related:** `contracts/socratic-tool-design.md`, `schemas/voicing-handle.schema.json`, `contracts/ui-chord-hydration.md`
 
 ---
 

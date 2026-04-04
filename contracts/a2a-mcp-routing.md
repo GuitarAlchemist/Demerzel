@@ -1,13 +1,15 @@
 # A2A MCP Routing Contract
 
-Version: 1.0.0
+Version: 1.1.0
 Effective: 2026-04-04
+
+> **⚠ Status Note (2026-04-04):** The hub-and-spoke A2A orchestrator described in this contract was **superseded** by the single-orchestrator + MCP tool-bundle architecture in `contracts/ga-orchestrator-architecture.md` v2.0.0. The **agent-to-tool ownership map** in this document remains authoritative — only the **invocation mechanism** changed (LLM-native tool selection replaces the hub-and-spoke router). For current implementations, consume this document as a tool-ownership reference only; disregard references to `schemas/a2a-protocol.schema.json` (DEPRECATED) and the "A2A orchestrator" routing mechanism. Tool bundle specifications are in `contracts/ga-mcp-tool-bundles.md`.
 
 ## Purpose
 
-This contract defines which MCP (Model Context Protocol) tools each guitar AI agent is permitted to invoke in the GuitarAlchemist music ecosystem. It establishes the affordance-to-tool mapping used by the A2A orchestrator for routing `mcp_tool_invocation` messages (see `schemas/a2a-protocol.schema.json`).
+This contract defines which MCP (Model Context Protocol) tools each guitar AI capability bundle owns in the GuitarAlchemist music ecosystem. It establishes the **tool ownership mapping** consumed by the orchestrator LLM for tool selection.
 
-Tool access is an affordance. Per the Demerzel governance model (Article 9 — Bounded Autonomy), agents may only invoke tools listed in their routing entry below. Invocations of non-listed tools are rejected by the orchestrator and logged as constitutional violations.
+Tool access is an affordance. Per the Demerzel governance model (Article 9 — Bounded Autonomy), agents (tool bundles) only own tools listed in their routing entry below. Tools owned by multiple bundles create ambiguity and should be avoided.
 
 ## Routing Principles
 

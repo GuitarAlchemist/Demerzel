@@ -155,8 +155,12 @@ session_budgets:
     action_on_limit: "reject further enumeration tools; prefer Socratic"
 
   per_tool_call:
-    default_max: 500
+    # Fallback budget used ONLY when a tool has no budget_class declared.
+    # Tools WITH a declared budget_class use their class-specific max_tokens
+    # (see token_budgets.tool_types above) — e.g., search=800, enumeration=600.
+    default_fallback_max: 500
     enforcement: "truncate with 'N more items — use {narrow_tool}' hint"
+    resolution_order: ["budget_class max_tokens", "default_fallback_max"]
 
   budget_reset:
     on: "new session, /clear, context compaction"
