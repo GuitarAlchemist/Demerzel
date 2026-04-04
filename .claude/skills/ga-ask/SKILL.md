@@ -108,6 +108,48 @@ T(0.92) — verified computation, standard music theory
 **User says**: "Does GA have ear training exercises for identifying major 7 chords?"
 → teacher-tools lookup, reference `state/streeling/courses/guitar-alchemist-academy/en/gaa-002-training-your-ear.md`
 
+## Validated Fallback Lookups (no MCP required)
+
+Tested 2026-04-04 — these work in pure-fallback mode without the GA MCP server:
+
+### Chord construction → theory-tools fallback
+- Source: `grammars/music-theory.ebnf` § chord_construction (quality terminal)
+- Grep pattern: `grep -B1 -A3 "<chord-quality>" grammars/music-theory.ebnf`
+- Compute intervals manually: root + semitone offsets (m3=3, M3=4, P5=7, d5=6, m7=10, M7=11, M9=14)
+
+### Voicing lookup → theory + technique fallback
+- Source: `grammars/music-theory.ebnf` § jazz_voicing + `state/streeling/courses/music/en/mus-005-jazz-harmony.md` § Section 3
+- Known voicing shapes (rootless A/B, drop-2 string sets 6-5-4-3, 5-4-3-2, 4-3-2-1)
+
+### Practice routine → coach + teacher fallback
+- Source: `state/streeling/courses/guitar-alchemist-academy/en/gaa-003-improvisation-foundations.md` for improv
+- Source: `state/streeling/courses/guitar-alchemist-academy/en/gaa-002-training-your-ear.md` § Daily Habit framework (10-15 min cycles)
+
+### Out-of-domain decline → constitutional check
+- Article 1 (Truthfulness): do not fabricate
+- Article 9 (Bounded Autonomy): decline politely, suggest in-domain alternatives
+
+## Response Format (from validation)
+
+Structure responses this exact way for consistency:
+
+```markdown
+**Answer**: [direct, concrete — notes/voicing/exercise]
+
+**Reasoning**:
+- [theory/computation shown]
+- [multi-tool explanation if multi-bundle]
+
+**Tools consulted**:
+- [specific grammar file § section] OR
+- [course file § section] OR
+- [FAQ file § question]
+
+**Confidence**: T/P/U/D/F/C(0.NN) — [one-line justification]
+```
+
+Always cite file § section so users can verify.
+
 ## Example Test Scenarios
 
 From `tests/behavioral/ga-orchestrator-cases.md`, these are the scenarios to handle gracefully:
