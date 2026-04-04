@@ -47,6 +47,35 @@ Use ToolSearch with query "ga music theory" to find any available GA MCP tools.
 
 **If MCP server is available**: Call the appropriate tools directly and compose the answer from tool outputs.
 
+### Verified Live Tools (tested 2026-04-04)
+
+These `mcp__ga__*` tools return live computed data when the GA MCP server is registered:
+
+| Tool | Purpose | Example |
+|------|---------|---------|
+| `mcp__ga__Echo` | Connectivity test | Echo("hello") → "Hello from C#: hello" |
+| `mcp__ga__GetAvailableScales` | List all cataloged scales with binary IDs | Returns 100+ scales: Major(2741), MinorPentatonic(1193), etc |
+| `mcp__ga__GaScaleByName` | Lookup scale by name | name="Major" → {id:2741, notes:"C D E F G A B", category:Western, alt_names:["Ionian"]} |
+| `mcp__ga__GaScaleById` | Lookup scale by binary ID | id=2741 → same Major scale result |
+| `mcp__ga__GetMajorKeys` | List all 15 major keys | Cb through C# |
+| `mcp__ga__GetAvailableModes` | List modes | — |
+| `mcp__ga__GetAvailableInstruments` | List instruments | — |
+| `mcp__ga__GetKeyNotes` | Notes in a key | — |
+| `mcp__ga__GetSetClasses` | Forte set classes | — |
+| `mcp__ga__GetModeInfo` | Mode details | — |
+
+**Binary scale IDs match our `grammars/music-scale-catalog.ebnf` design** — Major=2741, MinorPentatonic=1193 confirmed live.
+
+### Tools That Require Parameter Verification
+
+Some tools return "An error occurred" on first attempt and need parameter-name debugging:
+- `GaParseChord`, `GaChordIntervals`, `GaChordToSet` — chord symbol parsing
+- `GaDiatonicChords`, `GetDiatonicChords` — diatonic chord generation
+- `GetKeyByRootAndMode` — key construction
+- `GetAvailableTunings` — tuning list
+
+Workaround: when these fail, fall back to static data from grammars/courses/FAQ, OR try alternate tools (e.g., use `GaScaleByName` to get scale notes, then construct chords from intervals manually).
+
 **If MCP server is NOT available** (fallback mode per directive DIR-2026-03-21-002):
 - Answer from Demerzel governance artifacts: grammars in `grammars/music-*.ebnf`, FAQ in `state/streeling/faq/music-theory-faq.md`, courses in `state/streeling/courses/*/en/*.md`
 - Prefix response with: "Note: Answering from static governance data (MCP server unreachable). Live computation unavailable."
