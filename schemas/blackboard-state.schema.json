@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/blackboard-state",
+  "title": "GA Orchestrator Blackboard State",
+  "description": "Shared conversation state for the single-orchestrator + tool-bundle GA architecture. One document per user session. Read/written by the orchestrator LLM; read-only for tool bundles.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["session_id", "schema_version", "created_at", "updated_at", "user_profile", "conversation_turns"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID v4 identifying this user session."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver of this schema (e.g., '1.0.0')."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of session creation."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last mutation."
+    },
+    "user_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Stable user attributes used to adapt responses.",
+      "required": ["skill_level"],
+      "properties": {
+        "skill_level": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced", "expert"],
+          "description": "Self-declared or inferred guitar skill level."
+        },
+        "tuning": {
+          "type": "string",
+          "description": "Current guitar tuning (e.g., 'standard', 'drop-d', 'dadgad', 'open-g')."
+        },
+        "preferred_genre": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Genre preferences (jazz, blues, metal, classical, folk, fingerstyle, etc.)."
+        },
+        "hand_size": {
+          "type": "string",
+          "enum": ["small", "medium", "large", "unknown"],
+          "description": "Hand-size class for stretch feasibility."
+        },
+        "instrument": {
+          "type": "string",
+          "enum": ["acoustic", "electric", "classical", "bass", "7-string", "8-string", "other"],
+          "description": "Primary instrument."
+        },
+        "years_playing": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Years of playing experience."
+        },
+        "never_suggest": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Patterns the user has explicitly rejected (e.g., 'no barre chords', 'no pinky stretches beyond 4 frets')."
+        }
+      }
+    },
+    "conversation_turns": {
+      "type": "array",
+      "description": "Ordered history of turns in this session.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["turn_id", "turn_index", "user_input", "orchestrator_response", "tools_called", "timestamp"],
+        "properties": {
+          "turn_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID v4 for this turn."
+          },
+          "turn_index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based ordinal within the session."
+          },
+          "user_input": {
+            "type": "string",
+            "description": "Raw user message for this turn."
+          },
+          "orchestrator_response": {
+            "type": "string",
+            "description": "Final assistant response emitted to user (post tool calls)."
+          },
+          "tools_called": {
+            "type": "array",
+            "description": "Tools invoked during this turn, in call order.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["bundle", "tool_name", "status"],
+              "properties": {
+                "bundle": {
+                  "type": "string",
+                  "enum": ["theory-tools", "technique-tools", "tab-tools", "composer-tools", "ga-musician-tools", "teacher-tools", "coach-tools"]
+                },
+                "tool_name": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$"
+                },
+                "arguments": {
+                  "type": "object",
+                  "description": "Arguments passed to the tool.",
+                  "additionalProperties": true
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["success", "error", "partial", "timeout"]
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                },
+                "truth_value": {
+                  "type": "string",
+                  "enum": ["T", "P", "U", "D", "F", "C"]
+                },
+                "duration_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "Orchestrator's overall confidence in this turn's response."
+          },
+          "truth_value": {
+            "type": "string",
+            "enum": ["T", "P", "U", "D", "F", "C"]
+          }
+        }
+      }
+    },
+    "current_focus": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The topic being actively discussed. Used for multi-turn refinement (e.g., 'simpler voicing' references prior chord).",
+      "properties": {
+        "chord": {
+          "type": "string",
+          "description": "Chord symbol (e.g., 'Bbmaj9', 'C7#11')."
+        },
+        "scale": {
+          "type": "string",
+          "description": "Scale name (e.g., 'C lydian', 'A harmonic minor')."
+        },
+        "key": {
+          "type": "string",
+          "description": "Musical key (e.g., 'C major')."
+        },
+        "technique": {
+          "type": "string",
+          "description": "Technique topic (e.g., 'alternate picking', 'barre chords')."
+        },
+        "progression": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Current chord progression under discussion."
+        },
+        "voicing": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(x|\\d+)$"
+          },
+          "description": "Current voicing as per-string tokens, one per guitar string from low to high. Each token is either 'x' (muted string) or a non-negative integer fret number (e.g., ['x','1','3','3','3','1'])."
+        },
+        "last_updated_turn": {
+          "type": "integer",
+          "description": "turn_index where this focus was last set."
+        }
+      }
+    },
+    "learned_context": {
+      "type": "array",
+      "description": "Facts accumulated about the user across turns. Each fact has provenance.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact", "source_turn", "confidence"],
+        "properties": {
+          "fact": {
+            "type": "string",
+            "description": "Natural-language fact (e.g., 'user prefers fingerstyle', 'user struggles with barre chords')."
+          },
+          "category": {
+            "type": "string",
+            "enum": ["preference", "ability", "goal", "constraint", "context"]
+          },
+          "source_turn": {
+            "type": "integer",
+            "description": "turn_index where this fact was learned."
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "truth_value": {
+            "type": "string",
+            "enum": ["T", "P", "U", "D", "F", "C"]
+          }
+        }
+      }
+    },
+    "displayed_artifacts": {
+      "type": "array",
+      "description": "Artifacts actually shown to the user (vs merely computed). Tracks what the user has seen so the orchestrator can avoid duplicates and reference prior output.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "type", "content", "displayed_at_turn"],
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "description": "Stable identifier for the artifact (e.g., UUID or deterministic hash)."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["voicing", "tab", "progression", "scale"]
+          },
+          "content": {
+            "description": "The artifact payload as displayed (structure depends on type).",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "object" },
+              { "type": "array" }
+            ]
+          },
+          "displayed_at_turn": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "turn_index at which this artifact was shown to the user."
+          }
+        }
+      }
+    },
+    "session_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "total_tokens": { "type": "integer", "minimum": 0 },
+        "total_tool_calls": { "type": "integer", "minimum": 0 },
+        "total_duration_ms": { "type": "integer", "minimum": 0 },
+        "orchestrator_model": { "type": "string" },
+        "client": { "type": "string", "description": "UI client identifier (web, mobile, cli)." }
+      }
+    }
+  },
+  "examples": [
+    {
+      "session_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "schema_version": "1.0.0",
+      "created_at": "2026-04-04T12:00:00Z",
+      "updated_at": "2026-04-04T12:05:23Z",
+      "user_profile": {
+        "skill_level": "intermediate",
+        "tuning": "drop-d",
+        "preferred_genre": ["fingerstyle", "folk"],
+        "hand_size": "medium",
+        "instrument": "acoustic",
+        "years_playing": 4,
+        "never_suggest": ["no barre chords"]
+      },
+      "conversation_turns": [
+        {
+          "turn_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+          "turn_index": 0,
+          "user_input": "Show me a comfortable Bbmaj9 voicing with fingering.",
+          "orchestrator_response": "Here's a comfortable Bbmaj9 voicing: x-1-3-3-3-1 (6th string muted). Use a partial barre with your index finger on frets 1, then middle on 3rd string, ring on 4th, pinky on 5th.",
+          "tools_called": [
+            { "bundle": "theory-tools", "tool_name": "chord-analyze", "arguments": {"chord": "Bbmaj9"}, "status": "success", "confidence": 0.95, "truth_value": "T", "duration_ms": 120 },
+            { "bundle": "technique-tools", "tool_name": "chord-voicing-options", "arguments": {"chord": "Bbmaj9", "skill_level": "intermediate", "tuning": "drop-d"}, "status": "success", "confidence": 0.88, "truth_value": "T", "duration_ms": 340 }
+          ],
+          "timestamp": "2026-04-04T12:04:10Z",
+          "confidence": 0.9,
+          "truth_value": "T"
+        }
+      ],
+      "current_focus": {
+        "chord": "Bbmaj9",
+        "voicing": ["x", "1", "3", "3", "3", "1"],
+        "last_updated_turn": 0
+      },
+      "learned_context": [
+        { "fact": "user prefers fingerstyle", "category": "preference", "source_turn": 0, "confidence": 0.85, "truth_value": "P" }
+      ],
+      "displayed_artifacts": [
+        {
+          "artifact_id": "art-001",
+          "type": "voicing",
+          "content": ["x", "1", "3", "3", "3", "1"],
+          "displayed_at_turn": 0
+        }
+      ],
+      "session_metadata": {
+        "total_tokens": 1820,
+        "total_tool_calls": 2,
+        "total_duration_ms": 5230,
+        "orchestrator_model": "claude-opus-4-6",
+        "client": "web"
+      }
+    }
+  ]
+}

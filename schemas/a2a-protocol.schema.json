@@ -1,0 +1,638 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/a2a-protocol",
+  "title": "A2A Protocol Messages (DEPRECATED)",
+  "deprecated": true,
+  "x-deprecation-notice": "DEPRECATED as of 2026-04-04. Superseded by single-orchestrator + tool-bundle architecture. See contracts/ga-orchestrator-architecture.md, schemas/blackboard-state.schema.json, and contracts/ga-mcp-tool-bundles.md. The hub-and-spoke coordinator pattern defined here was rejected after adversarial debate (2-4x more hops than necessary, coordinator SPOF, aggregation ambiguity). Retained for reference and possible future multi-agent scenarios (e.g., cross-organizational federation) where true agent-to-agent messaging is required.",
+  "description": "[DEPRECATED — see x-deprecation-notice] Agent-to-Agent protocol message schemas for the GuitarAlchemist music AI ecosystem. Defines agent messages, routing requests, aggregation responses, error responses, and MCP tool invocations.",
+  "type": "object",
+  "$defs": {
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Calibrated confidence score. >= 0.9 autonomous, >= 0.7 proceed with note, >= 0.5 confirm, >= 0.3 escalate, < 0.3 do not act."
+    },
+    "hexavalent_truth": {
+      "type": "string",
+      "enum": ["T", "P", "U", "D", "F", "C"],
+      "description": "Hexavalent truth value: True, Probable, Unknown, Doubtful, False, Contradictory."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp."
+    },
+    "agent_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Kebab-case agent identifier matching a persona name."
+    },
+    "message_integrity": {
+      "type": "object",
+      "required": ["message_id", "origin_agent", "timestamp", "content_hash", "hash_algorithm"],
+      "description": "Galactic Protocol integrity fields for tamper detection and replay prevention.",
+      "properties": {
+        "message_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUID v4 for deduplication and audit trail."
+        },
+        "origin_agent": {
+          "$ref": "#/$defs/agent_id",
+          "description": "Persona name of the sending agent."
+        },
+        "timestamp": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hex digest of the message payload (excluding integrity fields)."
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "const": "sha256"
+        }
+      }
+    },
+    "agent_message": {
+      "type": "object",
+      "title": "Agent Message",
+      "description": "Core message format for agent-to-agent communication within the music AI ecosystem.",
+      "required": ["sender", "receiver", "intent", "payload", "confidence", "timestamp", "integrity"],
+      "properties": {
+        "sender": {
+          "$ref": "#/$defs/agent_id",
+          "description": "Persona name of the sending agent."
+        },
+        "receiver": {
+          "$ref": "#/$defs/agent_id",
+          "description": "Persona name of the intended recipient agent."
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "query",
+            "response",
+            "delegate",
+            "notify",
+            "escalate",
+            "teach",
+            "assess",
+            "tool-invoke",
+            "tool-result"
+          ],
+          "description": "The purpose of this message. query: requesting information. response: answering a query. delegate: forwarding to a more appropriate agent. notify: informational broadcast. escalate: raising to higher authority. teach: Seldon knowledge transfer. assess: comprehension verification. tool-invoke: requesting MCP tool execution. tool-result: returning MCP tool output."
+        },
+        "payload": {
+          "type": "object",
+          "description": "Message content. Structure varies by intent.",
+          "properties": {
+            "content": {
+              "type": "string",
+              "description": "Primary text content of the message."
+            },
+            "structured_data": {
+              "type": "object",
+              "description": "Machine-readable structured payload (chord analysis results, scale data, tab notation, etc.)."
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["type", "content"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["tab", "musicxml", "midi", "audio-ref", "notation", "json"],
+                    "description": "Attachment content type."
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "Attachment content or URI reference."
+                  }
+                }
+              },
+              "description": "Optional attachments (tablature, notation, audio references)."
+            },
+            "context": {
+              "type": "object",
+              "description": "Contextual metadata carried with the message.",
+              "properties": {
+                "conversation_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Groups related messages into a conversation thread."
+                },
+                "parent_message_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "References the message this is responding to."
+                },
+                "domain_context": {
+                  "type": "object",
+                  "description": "Domain-specific context (key, tempo, tuning, skill level, etc.).",
+                  "properties": {
+                    "key": { "type": "string", "description": "Musical key (e.g., 'C major', 'A minor')." },
+                    "tempo": { "type": "integer", "minimum": 20, "maximum": 300, "description": "BPM." },
+                    "tuning": { "type": "string", "description": "Guitar tuning (e.g., 'standard', 'drop-d', 'open-g')." },
+                    "skill_level": { "type": "string", "enum": ["beginner", "intermediate", "advanced", "expert"] },
+                    "style": { "type": "string", "description": "Musical style or genre context." }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence",
+          "description": "Sender's calibrated confidence in the payload content."
+        },
+        "truth_value": {
+          "$ref": "#/$defs/hexavalent_truth",
+          "description": "Hexavalent truth assessment of the payload content."
+        },
+        "timestamp": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "integrity": {
+          "$ref": "#/$defs/message_integrity"
+        },
+        "channel": {
+          "type": "string",
+          "enum": ["crisp", "fuzzy"],
+          "default": "crisp",
+          "description": "Crisp (machine-actionable) or fuzzy (explanatory for humans). Per Galactic Protocol channel semantics."
+        }
+      }
+    },
+    "routing_request": {
+      "type": "object",
+      "title": "Routing Request",
+      "description": "Request to the orchestrator to route a query to the most appropriate agent(s). Uses affordance matching per Galactic Protocol.",
+      "required": ["query", "context", "integrity"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The user or agent query to be routed."
+        },
+        "context": {
+          "type": "object",
+          "description": "Context for routing decisions.",
+          "required": ["conversation_id"],
+          "properties": {
+            "conversation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "domain_hints": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Hints about which domains are relevant (e.g., 'theory', 'technique', 'composition')."
+            },
+            "required_capabilities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Explicit capability requirements for affordance matching."
+            },
+            "skill_level": {
+              "type": "string",
+              "enum": ["beginner", "intermediate", "advanced", "expert"],
+              "description": "Learner skill level for pedagogical routing."
+            },
+            "prior_agents": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/agent_id" },
+              "description": "Agents already consulted in this conversation (prevents loops)."
+            }
+          }
+        },
+        "preferred_agent": {
+          "$ref": "#/$defs/agent_id",
+          "description": "Explicitly preferred agent. If specified, skips affordance matching and routes directly (per Galactic Protocol fallback rules)."
+        },
+        "fallback_chain": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/agent_id" },
+          "minItems": 1,
+          "description": "Ordered list of fallback agents if the preferred or matched agent is unavailable or declines."
+        },
+        "routing_strategy": {
+          "type": "string",
+          "enum": ["single", "fan-out", "chain"],
+          "default": "single",
+          "description": "single: route to one agent. fan-out: send to multiple agents in parallel, aggregate. chain: sequential pipeline through agents."
+        },
+        "max_agents": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7,
+          "default": 3,
+          "description": "Maximum number of agents to involve (for fan-out strategy)."
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 120000,
+          "default": 30000,
+          "description": "Maximum time to wait for agent responses in milliseconds."
+        },
+        "integrity": {
+          "$ref": "#/$defs/message_integrity"
+        }
+      }
+    },
+    "aggregation_response": {
+      "type": "object",
+      "title": "Aggregation Response",
+      "description": "Aggregated response from multiple agents, combining primary and supporting responses with confidence scoring and source attribution.",
+      "required": ["primary_response", "confidence_scores", "sources", "integrity"],
+      "properties": {
+        "primary_response": {
+          "type": "object",
+          "required": ["agent_id", "content", "confidence"],
+          "description": "The highest-confidence or most relevant agent response selected as primary.",
+          "properties": {
+            "agent_id": {
+              "$ref": "#/$defs/agent_id"
+            },
+            "content": {
+              "type": "string",
+              "description": "Primary response text."
+            },
+            "structured_data": {
+              "type": "object",
+              "description": "Structured primary response data."
+            },
+            "confidence": {
+              "$ref": "#/$defs/confidence"
+            },
+            "truth_value": {
+              "$ref": "#/$defs/hexavalent_truth"
+            }
+          }
+        },
+        "supporting_responses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["agent_id", "content", "confidence", "relationship"],
+            "properties": {
+              "agent_id": {
+                "$ref": "#/$defs/agent_id"
+              },
+              "content": {
+                "type": "string"
+              },
+              "structured_data": {
+                "type": "object"
+              },
+              "confidence": {
+                "$ref": "#/$defs/confidence"
+              },
+              "truth_value": {
+                "$ref": "#/$defs/hexavalent_truth"
+              },
+              "relationship": {
+                "type": "string",
+                "enum": ["confirms", "extends", "contradicts", "qualifies", "alternative"],
+                "description": "How this supporting response relates to the primary."
+              }
+            }
+          },
+          "description": "Additional responses from other agents that supplement the primary."
+        },
+        "confidence_scores": {
+          "type": "object",
+          "required": ["aggregate", "agreement_level"],
+          "description": "Confidence metrics across all participating agents.",
+          "properties": {
+            "aggregate": {
+              "$ref": "#/$defs/confidence",
+              "description": "Weighted aggregate confidence across all responses."
+            },
+            "agreement_level": {
+              "type": "string",
+              "enum": ["unanimous", "consensus", "majority", "split", "contradictory"],
+              "description": "Level of agreement among responding agents."
+            },
+            "per_agent": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/confidence"
+              },
+              "description": "Individual confidence scores keyed by agent_id."
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["agent_id", "source_type"],
+            "properties": {
+              "agent_id": {
+                "$ref": "#/$defs/agent_id"
+              },
+              "source_type": {
+                "type": "string",
+                "enum": ["analysis", "lookup", "computation", "experience", "inference"],
+                "description": "How the agent produced its response."
+              },
+              "references": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Specific references (theory rules, tab sources, course materials)."
+              }
+            }
+          },
+          "description": "Source attribution for auditability (Article 7)."
+        },
+        "routing_metadata": {
+          "type": "object",
+          "description": "Metadata about how the routing was performed.",
+          "properties": {
+            "strategy_used": {
+              "type": "string",
+              "enum": ["single", "fan-out", "chain"]
+            },
+            "agents_consulted": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/agent_id" }
+            },
+            "agents_declined": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/agent_id" }
+            },
+            "total_duration_ms": {
+              "type": "integer",
+              "description": "Total time from routing request to aggregated response."
+            }
+          }
+        },
+        "integrity": {
+          "$ref": "#/$defs/message_integrity"
+        }
+      }
+    },
+    "error_response": {
+      "type": "object",
+      "title": "Error Response",
+      "description": "Standardized error response when an agent cannot fulfill a request.",
+      "required": ["error_type", "agent_id", "message", "integrity"],
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "enum": [
+            "agent_unavailable",
+            "capability_mismatch",
+            "confidence_too_low",
+            "constitutional_violation",
+            "timeout",
+            "invalid_input",
+            "escalation_required",
+            "tool_failure",
+            "routing_failure"
+          ],
+          "description": "Categorized error type for programmatic handling."
+        },
+        "agent_id": {
+          "$ref": "#/$defs/agent_id",
+          "description": "The agent that encountered the error."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error description."
+        },
+        "details": {
+          "type": "object",
+          "description": "Structured error details.",
+          "properties": {
+            "confidence_at_failure": {
+              "$ref": "#/$defs/confidence",
+              "description": "The confidence level when the agent decided it could not proceed."
+            },
+            "constitutional_article": {
+              "type": "string",
+              "description": "If constitutional_violation: which article was at risk."
+            },
+            "attempted_action": {
+              "type": "string",
+              "description": "What the agent was trying to do when the error occurred."
+            }
+          }
+        },
+        "fallback_suggestion": {
+          "type": "object",
+          "description": "Suggested recovery action.",
+          "properties": {
+            "suggested_agent": {
+              "$ref": "#/$defs/agent_id",
+              "description": "An alternative agent that may be able to handle the request."
+            },
+            "modified_query": {
+              "type": "string",
+              "description": "A reformulated query that might succeed."
+            },
+            "escalation_target": {
+              "type": "string",
+              "enum": ["human", "demerzel", "seldon"],
+              "description": "Who to escalate to if no agent can handle it."
+            }
+          }
+        },
+        "integrity": {
+          "$ref": "#/$defs/message_integrity"
+        }
+      }
+    },
+    "mcp_tool_invocation": {
+      "type": "object",
+      "title": "MCP Tool Invocation",
+      "description": "Request from one agent to invoke an MCP tool, either directly or via another agent that has the tool affordance.",
+      "required": ["tool_name", "parameters", "agent_requesting", "result_format", "integrity"],
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "description": "MCP tool identifier (e.g., 'chord-analyze', 'scale-info', 'tab-parse')."
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Tool-specific parameters. Validated against the tool's own parameter schema.",
+          "additionalProperties": true
+        },
+        "agent_requesting": {
+          "$ref": "#/$defs/agent_id",
+          "description": "The agent requesting the tool invocation."
+        },
+        "agent_executing": {
+          "$ref": "#/$defs/agent_id",
+          "description": "The agent that owns the tool affordance and will execute. If omitted, the orchestrator routes by tool-agent mapping."
+        },
+        "result_format": {
+          "type": "string",
+          "enum": ["json", "text", "notation", "tab"],
+          "description": "Expected format of the tool result."
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 500,
+          "maximum": 60000,
+          "default": 10000,
+          "description": "Maximum time to wait for tool execution."
+        },
+        "conversation_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Links this tool invocation to its conversation thread."
+        },
+        "integrity": {
+          "$ref": "#/$defs/message_integrity"
+        }
+      }
+    },
+    "mcp_tool_result": {
+      "type": "object",
+      "title": "MCP Tool Result",
+      "description": "Result of an MCP tool invocation, returned from the executing agent to the requesting agent.",
+      "required": ["tool_name", "agent_executing", "status", "integrity"],
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "agent_executing": {
+          "$ref": "#/$defs/agent_id"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["success", "error", "partial", "timeout"],
+          "description": "Execution outcome."
+        },
+        "result": {
+          "type": "object",
+          "description": "Tool output. Structure depends on the tool.",
+          "properties": {
+            "data": {
+              "description": "Primary result data (type varies by tool)."
+            },
+            "format": {
+              "type": "string",
+              "enum": ["json", "text", "notation", "tab"]
+            },
+            "confidence": {
+              "$ref": "#/$defs/confidence"
+            },
+            "truth_value": {
+              "$ref": "#/$defs/hexavalent_truth"
+            }
+          }
+        },
+        "error": {
+          "type": "object",
+          "description": "Present when status is 'error'.",
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        },
+        "duration_ms": {
+          "type": "integer",
+          "description": "Actual execution time in milliseconds."
+        },
+        "invocation_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "References the original mcp_tool_invocation message_id."
+        },
+        "integrity": {
+          "$ref": "#/$defs/message_integrity"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/agent_message" },
+    { "$ref": "#/$defs/routing_request" },
+    { "$ref": "#/$defs/aggregation_response" },
+    { "$ref": "#/$defs/error_response" },
+    { "$ref": "#/$defs/mcp_tool_invocation" },
+    { "$ref": "#/$defs/mcp_tool_result" }
+  ],
+  "examples": [
+    {
+      "_type": "agent_message",
+      "sender": "theory-agent",
+      "receiver": "composer-agent",
+      "intent": "response",
+      "payload": {
+        "content": "The ii-V-I in C major is Dm7-G7-Cmaj7. For reharmonization, consider tritone substitution on the V: Dm7-Db7-Cmaj7.",
+        "structured_data": {
+          "progression": ["Dm7", "G7", "Cmaj7"],
+          "reharmonized": ["Dm7", "Db7", "Cmaj7"],
+          "technique": "tritone-substitution"
+        },
+        "context": {
+          "conversation_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "domain_context": {
+            "key": "C major",
+            "style": "jazz"
+          }
+        }
+      },
+      "confidence": 0.95,
+      "truth_value": "T",
+      "timestamp": "2026-04-04T12:00:00Z",
+      "integrity": {
+        "message_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        "origin_agent": "theory-agent",
+        "timestamp": "2026-04-04T12:00:00Z",
+        "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hash_algorithm": "sha256"
+      },
+      "channel": "crisp"
+    },
+    {
+      "_type": "routing_request",
+      "query": "How do I play a Cmaj7 chord and what makes it sound jazzy?",
+      "context": {
+        "conversation_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "domain_hints": ["theory", "technique"],
+        "skill_level": "intermediate"
+      },
+      "fallback_chain": ["theory-agent", "technique-agent", "music-teacher"],
+      "routing_strategy": "fan-out",
+      "max_agents": 2,
+      "integrity": {
+        "message_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+        "origin_agent": "ga-musician",
+        "timestamp": "2026-04-04T12:01:00Z",
+        "content_hash": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+        "hash_algorithm": "sha256"
+      }
+    },
+    {
+      "_type": "error_response",
+      "error_type": "confidence_too_low",
+      "agent_id": "technique-agent",
+      "message": "Cannot assess fingering feasibility for 10-string extended range guitar — outside training domain.",
+      "details": {
+        "confidence_at_failure": 0.25,
+        "attempted_action": "fingering-feasibility-check"
+      },
+      "fallback_suggestion": {
+        "suggested_agent": "ga-musician",
+        "escalation_target": "human"
+      },
+      "integrity": {
+        "message_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+        "origin_agent": "technique-agent",
+        "timestamp": "2026-04-04T12:02:00Z",
+        "content_hash": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3",
+        "hash_algorithm": "sha256"
+      }
+    }
+  ]
+}
