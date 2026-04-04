@@ -1,0 +1,509 @@
+(* Scale Catalog Grammar — Streeling University *)
+(* Department: Music / Scale Mathematics *)
+(* Purpose: Algorithmic enumeration and classification of all 4,096 *)
+(*          pitch-class sets from binary encoding; properties, *)
+(*          relationships, Forte classification, Zeitler filtering *)
+(* Consumed by: Seldon research-cycle, ga MCP server, OPTIC-K embeddings *)
+(* Legal basis: all derived from first-principles mathematics *)
+(*   - Forte numbers: Allen Forte, The Structure of Atonal Music (1973) *)
+(*   - Zeitler criteria: configurable heuristics, credited as source *)
+(*   - Traditional names: public-domain music theory *)
+(* Cross-references: harmonic_analysis → music-theory.ebnf *)
+(* Cross-references: chord_construction → music-theory.ebnf *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+
+catalog_query ::= scale_representation
+                | scale_properties
+                | mode_generation
+                | scale_relationships
+                | forte_classification
+                | zeitler_filter
+                | family_enumeration
+                | named_scale_lookup
+                | interval_vector_computation
+                | brightness_ordering
+                | chord_scale_compatibility
+                | optic_k_connection
+                | investigation_pattern
+                | conclude
+
+(* ============================================================ *)
+(* 1. Binary Scale Representation                                *)
+(* ============================================================ *)
+
+(* Every 12-tone scale is a 12-bit integer 0..4095. Bit k = 1 means *)
+(* pitch class k is present. 4096 = 2^12 total pitch-class sets.    *)
+
+scale_representation ::= scale_number
+                       | scale_from_pitches
+                       | scale_from_intervals
+                       | scale_name
+
+(* Decimal 0-4095, binary 12-bit, or hex *)
+scale_number ::= decimal_literal | binary_literal | hex_literal
+
+decimal_literal ::= digit+
+                  (* range: 0 to 4095 inclusive *)
+
+binary_literal ::= "0b" bit bit bit bit bit bit bit bit bit bit bit bit
+                 (* 12 bits, MSB = pitch class 11, LSB = pitch class 0 *)
+
+hex_literal ::= "0x" hex_digit hex_digit hex_digit
+              (* range: 0x000 to 0xFFF *)
+
+bit ::= "0" | "1"
+hex_digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7"
+            | "8" | "9" | "A" | "B" | "C" | "D" | "E" | "F"
+            | "a" | "b" | "c" | "d" | "e" | "f"
+digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+(* Build from explicit pitch classes: e.g., {0, 2, 4, 5, 7, 9, 11} = major *)
+scale_from_pitches ::= "{" pitch_class_list "}"
+pitch_class_list ::= pitch_class | pitch_class "," pitch_class_list
+pitch_class ::= "0" | "1" | "2" | "3" | "4" | "5"
+              | "6" | "7" | "8" | "9" | "10" | "11"
+
+(* Build from interval gaps: e.g., [2,2,1,2,2,2,1] = major *)
+(* Constraint: semitone gaps must sum to exactly 12 *)
+scale_from_intervals ::= "[" semitone_gap_list "]"
+semitone_gap_list ::= semitone_gap | semitone_gap "," semitone_gap_list
+semitone_gap ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11"
+
+(* Named scale lookup (see Section 8) *)
+scale_name ::= named_scale
+
+(* ============================================================ *)
+(* 2. Scale Properties                                           *)
+(* ============================================================ *)
+
+(* Properties computable from the binary representation alone *)
+scale_properties ::= scale_number property_query
+
+property_query ::= cardinality
+                 | interval_structure
+                 | interval_vector_query
+                 | symmetry_type
+                 | chirality
+                 | brightness_value
+                 | imperfection_count
+                 | hemitonia_query
+                 | cohemitonia_query
+                 | is_proper
+
+(* Cardinality = popcount of 12-bit value: number of pitch classes present *)
+cardinality ::= "popcount" "(" scale_number ")"
+              (* result: 0..12 *)
+
+(* Interval structure = ordered list of semitone gaps between adjacent pitches *)
+interval_structure ::= "intervals" "(" scale_number ")"
+                     (* result: semitone_gap_list summing to 12 *)
+
+(* Interval vector [ic1, ic2, ic3, ic4, ic5, ic6] *)
+(* Counts of each interval class among all pairs *)
+interval_vector_query ::= "iv" "(" scale_number ")"
+                        (* result: interval_vector *)
+
+interval_vector ::= "<" ic1 "," ic2 "," ic3 "," ic4 "," ic5 "," ic6 ">"
+ic1 ::= digit+    (* minor seconds / major sevenths *)
+ic2 ::= digit+    (* major seconds / minor sevenths *)
+ic3 ::= digit+    (* minor thirds / major sixths *)
+ic4 ::= digit+    (* major thirds / minor sixths *)
+ic5 ::= digit+    (* perfect fourths / perfect fifths *)
+ic6 ::= digit+    (* tritones *)
+
+(* Symmetry: how the scale relates to its own transpositions/inversions *)
+symmetry_type ::= "asymmetric"              (* no non-trivial symmetry *)
+                | "transpositional"          (* invariant under some T_n, n>0 *)
+                | "inversional"              (* invariant under some T_nI *)
+                | "full"                     (* both transpositional and inversional *)
+
+(* Chirality: chiral scales have distinct inversions; achiral are self-inverse *)
+chirality ::= "chiral" | "achiral"
+
+(* Brightness = sum of pitch-class positions; higher = brighter within family *)
+brightness_value ::= "brightness" "(" scale_number ")"
+                   (* result: integer 0..66 *)
+
+(* Imperfection = count of degrees that lack a perfect fifth above *)
+imperfection_count ::= "imperfection" "(" scale_number ")"
+                     (* result: integer 0..cardinality *)
+
+(* Hemitonia = contains at least one semitone (ic1 > 0) *)
+hemitonia_query ::= "hemitonic" | "anhemitonic"
+
+(* Cohemitonia = contains consecutive semitones (two adjacent ic1) *)
+cohemitonia_query ::= "cohemitonic" | "ancohemitonic"
+
+(* Rothenberg propriety: a scale is proper if no small generic interval *)
+(* exceeds any large generic interval in semitones *)
+is_proper ::= "strictly_proper" | "proper" | "improper"
+
+(* ============================================================ *)
+(* 3. Mode Generation                                            *)
+(* ============================================================ *)
+
+(* Modes are circular rotations of a 12-bit scale number *)
+mode_generation ::= rotate | mode_family | prime_form
+
+(* Rotate = circular left shift of the 12-bit value by n positions *)
+rotate ::= "rotate" "(" scale_number "," rotation_amount ")"
+rotation_amount ::= "0" | "1" | "2" | "3" | "4" | "5"
+                  | "6" | "7" | "8" | "9" | "10" | "11"
+
+(* Mode family = the set of all distinct rotations (up to cardinality modes) *)
+mode_family ::= "modes" "(" scale_number ")"
+              (* result: set of scale_number, one per distinct rotation *)
+
+(* Prime form = the numerically smallest rotation in the mode family *)
+(* Canonical representative for rotation-equivalence classes *)
+prime_form ::= "prime" "(" scale_number ")"
+
+(* ============================================================ *)
+(* 4. Scale Relationships                                        *)
+(* ============================================================ *)
+
+(* Operations relating scales to each other *)
+scale_relationships ::= complement_op
+                      | subset_query
+                      | superset_query
+                      | negation_op
+                      | intersection_op
+                      | union_op
+                      | z_relation_query
+
+(* Complement = bitwise NOT masked to 12 bits: ~s & 0xFFF *)
+complement_op ::= "complement" "(" scale_number ")"
+                (* result: scale_number containing all absent pitch classes *)
+
+(* Subset/superset containment: bitwise (a & b) == a for subset *)
+subset_query ::= scale_number "subset_of" scale_number
+superset_query ::= scale_number "superset_of" scale_number
+
+(* Negation = bit reversal (mirror the 12 bits end-to-end) *)
+negation_op ::= "negate" "(" scale_number ")"
+
+(* Set-theoretic intersection and union *)
+intersection_op ::= "intersect" "(" scale_number "," scale_number ")"
+                  (* result: bitwise AND *)
+union_op ::= "union" "(" scale_number "," scale_number ")"
+           (* result: bitwise OR *)
+
+(* Z-relation: two sets share the same interval vector but are not *)
+(* related by transposition or inversion (distinct Forte classes) *)
+z_relation_query ::= "z_related" "(" scale_number "," scale_number ")"
+                   (* result: boolean *)
+
+(* ============================================================ *)
+(* 5. Forte Number Classification                                *)
+(* ============================================================ *)
+
+(* Allen Forte, The Structure of Atonal Music (1973) *)
+(* 224 T/I equivalence classes (352 if transpositional only) *)
+(* Academic standard for pitch-class set classification *)
+
+forte_classification ::= forte_number_of | forte_lookup
+
+forte_number_of ::= "forte" "(" scale_number ")"
+                  (* result: forte_number *)
+
+forte_number ::= cardinality_digit "-" ordinal
+               (* e.g., "5-35" for the pentatonic/diatonic family *)
+
+cardinality_digit ::= "0" | "1" | "2" | "3" | "4" | "5"
+                    | "6" | "7" | "8" | "9" | "10" | "11" | "12"
+
+ordinal ::= digit+
+           (* ordinal within cardinality class, per Forte's catalog *)
+
+(* Reverse lookup: Forte number → canonical scale number *)
+forte_lookup ::= "forte_to_scale" "(" forte_number ")"
+               (* result: scale_number in prime form *)
+
+(* ============================================================ *)
+(* 6. Zeitler Legitimacy Criteria                                *)
+(* ============================================================ *)
+
+(* William Zeitler's heuristic criteria for "legitimate scales" *)
+(* NOTE: These are configurable heuristics, not absolute rules. *)
+(* Different musical traditions may relax or tighten these. *)
+
+zeitler_filter ::= zeitler_check | legitimacy_verdict
+
+zeitler_check ::= rule_contains_root
+                | rule_no_consecutive_gaps_over_4
+                | rule_min_cardinality_5
+                | rule_max_cardinality_8
+                | rule_no_cluster_over_3
+
+(* Rule 1: Bit 0 must be set (the root/tonic is present) *)
+rule_contains_root ::= "has_root" "(" scale_number ")"
+                     (* result: boolean — bit 0 of scale_number is 1 *)
+
+(* Rule 2: No gap between consecutive pitches exceeds 4 semitones *)
+rule_no_consecutive_gaps_over_4 ::= "max_gap_leq_4" "(" scale_number ")"
+                                  (* result: boolean *)
+
+(* Rule 3: Minimum cardinality of 5 *)
+rule_min_cardinality_5 ::= "card_geq_5" "(" scale_number ")"
+                         (* result: boolean *)
+
+(* Rule 4: Maximum cardinality of 8 *)
+rule_max_cardinality_8 ::= "card_leq_8" "(" scale_number ")"
+                         (* result: boolean *)
+
+(* Rule 5: No cluster of more than 3 consecutive semitones *)
+rule_no_cluster_over_3 ::= "no_cluster_gt_3" "(" scale_number ")"
+                         (* result: boolean — no run of 4+ adjacent bits *)
+
+(* Overall verdict: all rules pass, some fail, or borderline *)
+legitimacy_verdict ::= "legitimate_scale"           (* all Zeitler rules pass *)
+                     | "pitch_collection"            (* fails multiple rules *)
+                     | "borderline"                   (* fails exactly one rule *)
+
+(* ============================================================ *)
+(* 7. Scale Families — by cardinality                            *)
+(* ============================================================ *)
+
+(* Cardinality k → C(12, k) pitch-class sets *)
+family_enumeration ::= family_by_cardinality | enumerate_family
+
+family_by_cardinality ::= monotonic          (* k=1,  C(12,1)  =    12 scales *)
+                        | ditonic             (* k=2,  C(12,2)  =    66 scales *)
+                        | tritonic            (* k=3,  C(12,3)  =   220 scales *)
+                        | tetratonic          (* k=4,  C(12,4)  =   495 scales *)
+                        | pentatonic          (* k=5,  C(12,5)  =   792 scales *)
+                        | hexatonic           (* k=6,  C(12,6)  =   924 scales *)
+                        | heptatonic          (* k=7,  C(12,7)  =   792 scales *)
+                        | octatonic           (* k=8,  C(12,8)  =   495 scales *)
+                        | nonatonic           (* k=9,  C(12,9)  =   220 scales *)
+                        | decatonic           (* k=10, C(12,10) =    66 scales *)
+                        | undecatonic         (* k=11, C(12,11) =    12 scales *)
+                        | chromatic           (* k=12, C(12,12) =     1 scale  *)
+                        | empty               (* k=0,  C(12,0)  =     1 set    *)
+
+(* Enumerate all scale_numbers within a cardinality class *)
+enumerate_family ::= "enumerate" "(" family_by_cardinality ")"
+                   (* result: list of scale_number with popcount = k *)
+
+(* ============================================================ *)
+(* 8. Named Scale Lookup                                         *)
+(* ============================================================ *)
+
+(* Many scales have multiple names across musical traditions *)
+(* e.g., 2741 = major = Ionian = Bilaval (Hindustani) *)
+
+named_scale_lookup ::= name_to_number
+                     | number_to_names
+                     | unnamed_scale_naming
+
+(* Forward lookup: name → scale number *)
+name_to_number ::= "lookup" "(" scale_name_string ")"
+                 (* result: scale_number or "not found" *)
+
+(* Reverse lookup: number → all known names *)
+number_to_names ::= "names" "(" scale_number ")"
+                  (* result: list of scale_name_string across traditions *)
+
+scale_name_string ::= quoted_string
+                    (* e.g., "major", "Ionian", "melodic minor", "Raga Kafi" *)
+
+(* Systematic naming for unnamed scales *)
+unnamed_scale_naming ::= systematic_name | descriptive_name
+
+(* systematic: cardinality prefix + decimal number, e.g., "hepta-2741" *)
+systematic_name ::= cardinality_prefix "-" decimal_literal
+
+cardinality_prefix ::= "mono" | "di" | "tri" | "tetra" | "penta"
+                      | "hexa" | "hepta" | "octa" | "nona"
+                      | "deca" | "undeca" | "dodeca"
+
+(* descriptive: generated from salient properties *)
+descriptive_name ::= property_tag+
+property_tag ::= symmetry_type | hemitonia_query | cohemitonia_query
+               | brightness_rank | is_proper
+
+brightness_rank ::= "brightest" | "darkest" | "neutral"
+
+(* ============================================================ *)
+(* 9. Interval Vector Computation                                *)
+(* ============================================================ *)
+
+(* Algorithm: for each unordered pair {p, q} in the pitch-class set, *)
+(* compute d = |p - q| mod 12, then ic = min(d, 12 - d).           *)
+(* Tally ic values 1..6 to produce the interval vector.            *)
+
+interval_vector_computation ::= compute_iv | compare_iv
+
+compute_iv ::= "compute_iv" "(" scale_number ")"
+             (* 1. Extract pitch classes from set bits *)
+             (* 2. For each pair, d = |p - q| mod 12 *)
+             (* 3. ic = min(d, 12 - d) — maps to range 1..6 *)
+             (* 4. Tally into 6 bins → interval_vector *)
+
+(* Interval class definition: *)
+interval_class ::= "ic" "(" pitch_class "," pitch_class ")"
+                 (* result: min(|p-q| mod 12, 12 - |p-q| mod 12) *)
+                 (* range: 1..6 *)
+
+(* Compare interval vectors for Z-relation detection *)
+compare_iv ::= "compare_iv" "(" scale_number "," scale_number ")"
+             (* result: "identical" | "different" *)
+             (* identical + not T/I-equivalent → Z-related pair *)
+
+(* ============================================================ *)
+(* 10. Brightness Ordering                                       *)
+(* ============================================================ *)
+
+(* Within a mode family, modes are ranked by cumulative pitch height *)
+(* Brighter modes have higher sums of pitch-class positions *)
+
+brightness_ordering ::= rank_modes | cross_family_brightness
+
+(* Rank all modes of a scale from darkest to brightest *)
+rank_modes ::= "rank_brightness" "(" scale_number ")"
+             (* result: ordered list of (rotation_amount, brightness_value) *)
+             (* e.g., major modes: Locrian(darkest)..Lydian(brightest) *)
+
+(* Cross-family normalization: divide brightness by cardinality *)
+(* Allows comparison across families of different sizes *)
+cross_family_brightness ::= "normalized_brightness" "(" scale_number ")"
+                          (* result: brightness_value / cardinality *)
+                          (* range: 0.0 .. 11.0 *)
+
+(* ============================================================ *)
+(* 11. Chord-Scale Compatibility                                 *)
+(* ============================================================ *)
+
+(* A chord is compatible with a scale iff every chord tone is in the scale *)
+(* Both chords and scales are 12-bit sets; compatibility = subset check *)
+
+chord_scale_compatibility ::= chord_scale_check
+                            | compatible_chords_query
+                            | compatible_scales_query
+
+(* Is this chord a subset of this scale? *)
+chord_scale_check ::= "chord_in_scale" "(" chord_number "," scale_number ")"
+                    (* result: boolean — (chord & scale) == chord *)
+
+chord_number ::= scale_number
+               (* chords are pitch-class sets too, typically cardinality 3-5 *)
+
+(* Find all chords whose tones are subsets of the given scale *)
+compatible_chords_query ::= "compatible_chords" "(" scale_number ")"
+                          (* result: list of chord_number where chord subset_of scale *)
+
+(* Find all scales containing a given chord *)
+compatible_scales_query ::= "compatible_scales" "(" chord_number ")"
+                          (* result: list of scale_number where chord subset_of scale *)
+
+(* ============================================================ *)
+(* 12. OPTIC-K Connection                                        *)
+(* ============================================================ *)
+
+(* OPTIC = Octave, Permutation, Transposition, Inversion, Cardinality *)
+(* Each equivalence collapses the space differently *)
+(* Connection to GA's 216-dimensional embedding space *)
+
+optic_k_connection ::= equivalence_class | embedding_projection
+
+equivalence_class ::= octave_equiv
+                    | permutation_equiv
+                    | transposition_equiv
+                    | inversion_equiv
+                    | cardinality_equiv
+
+(* O: Octave equivalence — pitches mod 12 (already assumed throughout) *)
+octave_equiv ::= "O" "(" pitch_sequence ")"
+               (* result: pitch_class_set *)
+
+(* P: Permutation equivalence — unordered set (already assumed for sets) *)
+permutation_equiv ::= "P" "(" pitch_sequence ")"
+                    (* result: pitch_class_set sorted *)
+
+(* T: Transposition equivalence — rotation classes *)
+(* Two sets are T-equivalent iff one is a rotation of the other *)
+transposition_equiv ::= "T_equiv" "(" scale_number "," scale_number ")"
+                      (* result: boolean — same mode_family *)
+
+(* I: Inversion equivalence — Forte's T/I classes *)
+(* Two sets are TI-equivalent iff related by transposition and/or inversion *)
+inversion_equiv ::= "TI_equiv" "(" scale_number "," scale_number ")"
+                  (* result: boolean — same forte_number *)
+
+(* K: Cardinality equivalence — group by popcount *)
+cardinality_equiv ::= "K_equiv" "(" scale_number "," scale_number ")"
+                    (* result: boolean — same cardinality *)
+
+pitch_sequence ::= pitch_class | pitch_class "," pitch_sequence
+
+(* Projection into GA's 216-dim embedding *)
+(* 12 pitch-class bits x 6 interval-class counts x 3 symmetry features = 216 dims *)
+embedding_projection ::= "embed_216" "(" scale_number ")"
+                       (* result: 216-dimensional feature vector *)
+                       (* consumed by: ga OPTIC-K similarity engine *)
+
+(* ============================================================ *)
+(* 13. Investigation Patterns                                    *)
+(* ============================================================ *)
+
+(* Patterns for systematic exploration of the 4096-element space *)
+investigation_pattern ::= enumerate_space | query_by_property
+
+(* Full enumeration: iterate 0..4095 and filter *)
+enumerate_space ::= "enumerate" "(" filter_predicate ")"
+filter_predicate ::= property_query
+                   | filter_predicate "&&" filter_predicate
+                   | filter_predicate "||" filter_predicate
+                   | "!" filter_predicate
+                   | "(" filter_predicate ")"
+
+(* Query by property: find all scales matching criteria *)
+query_by_property ::= "find_scales" "(" query_clause ")"
+
+query_clause ::= "cardinality" "=" cardinality_digit
+               | "symmetry" "=" symmetry_type
+               | "forte" "=" forte_number
+               | "hemitonia" "=" hemitonia_query
+               | "cohemitonia" "=" cohemitonia_query
+               | "propriety" "=" is_proper
+               | "zeitler" "=" legitimacy_verdict
+               | "brightness" comparison_op brightness_value
+               | "has_subset" scale_number
+               | "has_superset" scale_number
+               | query_clause "," query_clause
+
+comparison_op ::= ">" | ">=" | "<" | "<=" | "="
+
+(* ============================================================ *)
+(* 14. Conclusions — maps to hexavalent logic                    *)
+(* ============================================================ *)
+
+(* confirm → T (verified with evidence: mathematical proof or exhaustive check) *)
+(* probable → P (evidence leans true, not yet fully verified) *)
+(* insufficient → U (insufficient evidence, triggers investigation) *)
+(* doubtful → D (evidence leans false, not yet refuted) *)
+(* refute → F (refuted with evidence: counterexample or proof) *)
+(* contradictory → C (conflicting evidence, triggers escalation) *)
+
+conclude ::= confirm
+            | probable
+            | insufficient
+            | doubtful
+            | refute
+            | contradictory
+            | revise_investigation
+
+(* ============================================================ *)
+(* 15. Evolution Hooks                                           *)
+(* ============================================================ *)
+
+(* Grammar freshness: 30 days per staleness-detection-policy *)
+(* New productions proposed by research cycles with gate: T(0.7) && C(<0.1) *)
+(* Weight updates: +0.05 on confirm, -0.03 on refute/insufficient *)
+(* Potential extensions: *)
+(*   - Maximal evenness (ME): scales whose intervals are as uniform as possible *)
+(*   - Well-formedness (WF): scales generated by a single interval chain *)
+(*   - Myhill property: exactly two specific interval sizes per generic interval *)
+(*   - Tuning generalization: extend beyond 12-TET to n-TET and just intonation *)
+(*   - Balzano groups: algebraic structure of generated scales *)
+(*   - Voice-leading geometry: Tymoczko's orbifold distances between scale types *)

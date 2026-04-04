@@ -3,17 +3,26 @@
 (* Weights are learned per department from research cycle outcomes *)
 (* Consumed by: TARS WeightedGrammar, ga theory agents *)
 (* See: docs/superpowers/specs/2026-03-18-probabilistic-research-grammars-design.md *)
+(* Cross-references: rhythmic_analysis → music-rhythm.ebnf *)
+(* Cross-references: form_analysis → defined in Section 6 below *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
 
 analysis ::= harmonic_analysis
            | melodic_analysis
            | rhythmic_analysis
            | form_analysis
+           | post_tonal_analysis
+
+(* ============================================================ *)
+(* 1. Chord Construction                                         *)
+(* ============================================================ *)
 
 (* Chord construction — root + quality + optional extensions/inversions/voicings *)
 chord_construction ::= root quality
                      | root quality extensions
                      | root quality inversions
                      | root quality extensions voicings
+                     | jazz_chord_symbol
 
 quality ::= major | minor | diminished | augmented
            | dominant_7 | major_7 | minor_7 | half_diminished
@@ -24,6 +33,11 @@ extensions ::= ninth | eleventh | thirteenth | add_tone | altered
 inversions ::= root_position | first_inversion | second_inversion | third_inversion
 
 voicings ::= close_voicing | open_voicing | drop_2 | drop_3 | shell | cluster
+           | jazz_voicing
+
+(* ============================================================ *)
+(* 2. Scale Exploration                                          *)
+(* ============================================================ *)
 
 (* Scale exploration — modal and synthetic scales *)
 scale_exploration ::= mode | pentatonic_variant | blues_scale
@@ -34,6 +48,10 @@ mode ::= ionian | dorian | phrygian | lydian | mixolydian | aeolian | locrian
 
 pentatonic_variant ::= major_pentatonic | minor_pentatonic | hirajoshi | kumoi | in_sen
 
+(* ============================================================ *)
+(* 3. Interval Reasoning                                         *)
+(* ============================================================ *)
+
 (* Interval reasoning — quality + size *)
 interval_reasoning ::= interval_quality interval_size
 
@@ -41,21 +59,234 @@ interval_quality ::= perfect | major_interval | minor_interval | augmented_inter
 
 interval_size ::= unison | second | third | fourth | fifth | sixth | seventh | octave | compound
 
-(* Progression patterns — diatonic through chromatic techniques *)
+(* ============================================================ *)
+(* 4. Progression Patterns                                       *)
+(* ============================================================ *)
+
+(* Progression patterns — diatonic through chromatic and jazz techniques *)
 progression_pattern ::= diatonic_progression
                       | chromatic_progression
                       | modal_interchange
                       | secondary_dominant
                       | tritone_substitution
                       | deceptive_resolution
+                      | jazz_substitution
 
 (* Voice leading — motion types and resolution *)
 voice_leading ::= parallel_motion | contrary_motion | oblique_motion | similar_motion
 
-(* Conclusions map to tetravalent logic *)
-(* confirm_theory → T, refute_theory → F, ambiguous → U, conflicting_analyses → C *)
+(* ============================================================ *)
+(* 5. Functional Harmony                                         *)
+(* ============================================================ *)
+
+harmonic_analysis ::= harmonic_function
+                    | cadence
+                    | functional_label
+                    | tonicization
+                    | modulation
+                    | phrase_structure
+                    | harmonic_rhythm
+
+(* Harmonic function classification *)
+harmonic_function ::= tonic_function | predominant_function | dominant_function
+
+tonic_function ::= I | i | iii | III | vi | VI
+
+predominant_function ::= ii | II | iv | IV
+                       | neapolitan | augmented_sixth
+
+dominant_function ::= V | V7 | viio | vii_half_dim
+                    | secondary_dominant
+
+augmented_sixth ::= italian_sixth | french_sixth | german_sixth
+
+(* Cadence taxonomy *)
+cadence ::= authentic_cadence | plagal_cadence | deceptive_cadence
+          | half_cadence | phrygian_half_cadence
+
+authentic_cadence ::= perfect_authentic_cadence | imperfect_authentic_cadence
+
+(* Functional analysis notation: T = tonic, PD = predominant, D = dominant *)
+functional_label ::= function_symbol roman_numeral
+function_symbol ::= "T" | "PD" | "D"
+
+(* Tonicization and modulation *)
+tonicization ::= secondary_dominant target_chord
+               | secondary_leading_tone target_chord
+
+modulation ::= pivot_chord_modulation | direct_modulation
+             | chromatic_modulation | enharmonic_modulation
+
+(* Phrase structure *)
+phrase_structure ::= period | sentence | phrase_group | double_period
+
+period ::= antecedent consequent
+sentence ::= basic_idea basic_idea continuation
+
+(* Harmonic rhythm — rate of chord change *)
+harmonic_rhythm ::= chord_per_measure | chord_per_half | chord_per_beat | irregular_rhythm
+
+(* ============================================================ *)
+(* 6. Form Analysis                                              *)
+(* ============================================================ *)
+
+form_analysis ::= phrase_analysis | small_form | large_form
+                | song_form | variation_form | through_composed
+
+small_form ::= binary_form | ternary_form | strophic_form
+
+binary_form ::= simple_binary | rounded_binary | balanced_binary
+ternary_form ::= aba_form | da_capo_form | minuet_trio
+
+large_form ::= rondo_form | sonata_form | concerto_form | fugal_exposition
+
+rondo_form ::= five_part_rondo | seven_part_rondo | sonata_rondo
+
+sonata_form ::= exposition development recapitulation
+              | exposition development recapitulation coda
+
+variation_form ::= theme_and_variations | passacaglia | chaconne | ground_bass
+
+song_form ::= verse_chorus_form | aaba_form | twelve_bar_blues_form
+            | verse_prechorus_chorus | verse_chorus_bridge
+
+through_composed ::= non_repeating_section+
+
+(* Sectional analysis notation *)
+section ::= section_label section_function key_area cadence
+section_label ::= uppercase_letter | uppercase_letter prime_mark
+section_function ::= expository | developmental | recapitulatory | transitional
+
+(* ============================================================ *)
+(* 7. Jazz Harmony                                               *)
+(* ============================================================ *)
+
+(* Jazz chord symbol parsing — real-book notation *)
+jazz_chord_symbol ::= root jazz_quality jazz_extension_stack jazz_alteration_list? bass_slash?
+
+jazz_quality ::= "maj" | "min" | "dim" | "aug" | "dom"
+               | "m" | "M" | "-" | "+" | "o"
+               | "sus2" | "sus4" | "minmaj"
+
+jazz_extension_stack ::= "6" | "7" | "9" | "11" | "13" | "6/9"
+                       | "add9" | "add11" | "add13"
+
+jazz_alteration_list ::= jazz_alteration+
+jazz_alteration ::= "b5" | "#5" | "b9" | "#9" | "b13" | "#11"
+                  | "alt" | "no3" | "no5"
+
+bass_slash ::= "/" root
+
+(* Jazz voicing types *)
+jazz_voicing ::= drop_2_and_4 | guide_tone_voicing | freddie_green
+               | benson_octave | rootless_voicing | quartal_voicing | spread_voicing
+
+rootless_voicing ::= "rootless_A" | "rootless_B"
+
+(* ii-V-I patterns *)
+ii_V_I ::= ii_V_I_major | ii_V_I_minor | ii_V_I_variant
+
+ii_V_I_major ::= minor_7 dominant_7 major_7
+ii_V_I_minor ::= half_diminished dominant_7_altered minor_chord
+
+ii_V_I_variant ::= backdoor_ii_V | tritone_sub_ii_V | extended_ii_V | deceptive_ii_V
+
+(* Jazz substitution patterns *)
+jazz_substitution ::= tritone_substitution | diminished_substitution
+                    | passing_diminished | backdoor_dominant
+                    | chromatic_approach | related_ii | coltrane_substitution
+
+(* Coltrane changes — symmetric major-third cycle *)
+coltrane_cycle ::= tonic_station+
+coltrane_substitution ::= "coltrane_sub" "(" original_ii_V ")" "->" coltrane_cycle
+
+(* Chord-scale theory *)
+chord_scale_pair ::= jazz_chord_symbol "=>" scale_choice
+
+scale_choice ::= mode | melodic_minor_mode | symmetric_scale
+               | pentatonic_variant | bebop_scale
+
+melodic_minor_mode ::= "melodic_minor" | "dorian_b2" | "lydian_augmented"
+                     | "lydian_dominant" | "mixolydian_b6" | "locrian_nat2"
+                     | "altered_scale"
+
+bebop_scale ::= "bebop_dominant" | "bebop_major" | "bebop_dorian" | "bebop_melodic_minor"
+
+(* Upper structure triads and quartal harmony *)
+upper_structure_triad ::= "US" triad_quality "over" jazz_chord_symbol
+quartal_harmony ::= quartal_voicing+
+
+(* Guide tone lines *)
+guide_tone_line ::= guide_tone_pair+
+guide_tone_pair ::= chord_symbol ":" third_voice seventh_voice
+
+(* ============================================================ *)
+(* 8. Post-Tonal Analysis                                        *)
+(* ============================================================ *)
+
+post_tonal_analysis ::= pitch_class_set_analysis
+                      | twelve_tone_analysis
+                      | free_atonal_analysis
+
+(* Pitch-class sets — integer notation, Forte numbers *)
+pitch_class_set_analysis ::= pitch_class_set set_operation
+                           | pitch_class_set forte_number
+                           | pitch_class_set interval_vector
+
+pitch_class_set ::= "{" pitch_class "," pitch_class_list "}"
+pitch_class ::= "0" | "1" | "2" | "3" | "4" | "5"
+              | "6" | "7" | "8" | "9" | "10" | "11"
+
+set_operation ::= transposition | inversion_op | complement
+                | union | intersection
+
+transposition ::= "T" integer_mod_12
+inversion_op ::= "I" | "T" integer_mod_12 "I"
+integer_mod_12 ::= "0" | "1" | "2" | "3" | "4" | "5"
+                 | "6" | "7" | "8" | "9" | "10" | "11"
+
+forte_number ::= cardinality "-" ordinal
+
+interval_vector ::= "<" ic1 "," ic2 "," ic3 "," ic4 "," ic5 "," ic6 ">"
+
+(* Twelve-tone rows and serial operations *)
+twelve_tone_analysis ::= tone_row row_form | tone_row_matrix
+
+tone_row ::= pitch_class pitch_class pitch_class pitch_class
+             pitch_class pitch_class pitch_class pitch_class
+             pitch_class pitch_class pitch_class pitch_class
+
+row_form ::= prime | retrograde | inversion_form | retrograde_inversion
+prime ::= "P" integer_mod_12
+retrograde ::= "R" integer_mod_12
+inversion_form ::= "I" integer_mod_12
+retrograde_inversion ::= "RI" integer_mod_12
+
+tone_row_matrix ::= "matrix" "(" tone_row ")"
+
+(* Free atonality *)
+free_atonal_analysis ::= pitch_centricity | motivic_cell | set_class_progression
+
+pitch_centricity ::= pitch_class centricity_evidence
+centricity_evidence ::= repetition | registral_emphasis | durational_emphasis
+
+motivic_cell ::= pitch_class_set cell_transformation
+cell_transformation ::= transposition | inversion_op | expansion | contraction | fragmentation
+
+(* ============================================================ *)
+(* 9. Conclusions — maps to hexavalent logic                     *)
+(* ============================================================ *)
+
+(* confirm_theory → T (verified with evidence) *)
+(* probable_theory → P (evidence leans true, not yet verified) *)
+(* ambiguous → U (insufficient evidence, triggers investigation) *)
+(* doubtful_theory → D (evidence leans false, not yet refuted) *)
+(* refute_theory → F (refuted with evidence) *)
+(* conflicting_analyses → C (conflicting evidence, triggers escalation) *)
 conclude ::= confirm_theory
-           | refute_theory
+           | probable_theory
            | ambiguous
+           | doubtful_theory
+           | refute_theory
            | conflicting_analyses
            | revise_analysis

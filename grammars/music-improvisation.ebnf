@@ -1,0 +1,299 @@
+(* Improvisation Grammar — Streeling University *)
+(* Department: Guitar Alchemist Academy / Improvisation *)
+(* Purpose: Melodic, rhythmic, harmonic, and interactive improvisation *)
+(* Consumed by: TARS WeightedGrammar, ga improvisation agents *)
+(* Cross-references: mode, pentatonic_variant → music-theory.ebnf *)
+(* Cross-references: bending, slide, legato → music-guitar-technique.ebnf *)
+
+(* ============================================================ *)
+(* 1. Top-Level Improvisation                                    *)
+(* ============================================================ *)
+
+improvisation ::= melodic_improvisation
+               | rhythmic_improvisation
+               | harmonic_improvisation
+               | motivic_improvisation
+               | interactive_improvisation
+
+melodic_improvisation ::= melodic_device+ phrasing
+harmonic_improvisation ::= chord_tone_soloing | pentatonic_approach | modal_improvisation | blues_language
+rhythmic_improvisation ::= rhythmic_device+ phrasing
+motivic_improvisation ::= motif motivic_operation+ phrasing
+interactive_improvisation ::= interactive_device+ phrasing
+
+(* ============================================================ *)
+(* 2. Melodic Devices                                            *)
+(* ============================================================ *)
+
+melodic_device ::= sequence | enclosure | approach_note target_note
+                 | scalar_run | intervallic_skip | digital_pattern
+
+sequence ::= ascending_sequence | descending_sequence | broken_sequence
+
+enclosure ::= diatonic_enclosure | chromatic_enclosure | double_enclosure
+
+approach_note ::= scale_tone_approach | chromatic_below | chromatic_above | double_chromatic
+
+target_note ::= chord_tone | guide_tone | color_tone
+
+scalar_run ::= scale_fragment direction tempo_feel
+intervallic_skip ::= interval_size direction
+digital_pattern ::= digit_sequence direction
+
+digit_sequence ::= "1235" | "1325" | "3215" | "5321" | custom_digital
+
+(* ============================================================ *)
+(* 3. Motivic Development                                        *)
+(* ============================================================ *)
+
+motif ::= rhythmic_cell | melodic_cell | intervallic_cell
+
+rhythmic_cell ::= duration_pattern accent_pattern?
+melodic_cell ::= pitch_sequence
+intervallic_cell ::= interval_sequence
+
+motivic_operation ::= exact_repetition
+                    | transposition
+                    | augmentation
+                    | diminution
+                    | fragmentation
+                    | inversion
+                    | retrograde
+                    | sequence_extension
+                    | rhythmic_displacement
+                    | embellishment
+                    | truncation
+                    | combination
+
+combination ::= motivic_operation "+" motivic_operation
+
+(* ============================================================ *)
+(* 4. Call and Response                                          *)
+(* ============================================================ *)
+
+call_and_response ::= call response_type
+
+call ::= melodic_device phrasing
+response_type ::= response | variation_response | contrasting_answer | developmental_answer
+
+response ::= call_echo phrasing
+variation_response ::= call_variant motivic_operation phrasing
+contrasting_answer ::= contrasting_material phrasing
+developmental_answer ::= call_fragment motivic_operation+ phrasing
+
+(* ============================================================ *)
+(* 5. Phrasing and Space                                         *)
+(* ============================================================ *)
+
+phrasing ::= phrase_shape breath_point? tension_arc? silence?
+
+phrase_shape ::= ascending_arc | descending_arc | arch | inverted_arch | plateau | ramp
+
+breath_point ::= natural_breath | deliberate_breath | mid_phrase_breath
+
+tension_arc ::= tension_build climax resolution
+              | tension_build resolution
+              | climax resolution
+
+tension_build ::= density_increase | range_expansion | rhythmic_acceleration
+climax ::= peak_note | peak_intensity | peak_density
+resolution ::= target_resolution | fade_resolution | abrupt_resolution
+
+silence ::= deliberate_pause | breathing_space | dramatic_rest
+
+deliberate_pause ::= short_pause | medium_pause | long_pause
+breathing_space ::= natural_rest
+dramatic_rest ::= silence_for_effect
+
+(* ============================================================ *)
+(* 6. Chord-Tone Soloing                                         *)
+(* ============================================================ *)
+
+chord_tone_soloing ::= chord_tone_targeting arpeggio_method?
+                     | non_chord_tone_usage
+                     | superimposition
+
+chord_tone_targeting ::= root_targeting | third_targeting | fifth_targeting
+                       | seventh_targeting | extension_targeting
+
+root_targeting ::= "target_root"
+third_targeting ::= "target_3rd"
+fifth_targeting ::= "target_5th"
+seventh_targeting ::= "target_7th"
+extension_targeting ::= "target_9th" | "target_11th" | "target_13th"
+
+arpeggio_method ::= ascending_arpeggio | descending_arpeggio | broken_arpeggio
+                  | spread_arpeggio | sweep_arpeggio
+
+non_chord_tone_usage ::= non_chord_tone approach_direction resolution_direction
+
+non_chord_tone ::= passing_tone | neighbor_tone | suspension
+                 | anticipation | appoggiatura | escape_tone
+
+superimposition ::= upper_structure_triad | substitution_arpeggio | side_slipping
+
+upper_structure_triad ::= triad_quality "over" chord_symbol
+substitution_arpeggio ::= substitute_chord arpeggio_method
+side_slipping ::= chromatic_shift direction half_step_count
+
+(* ============================================================ *)
+(* 7. Pentatonic Approaches                                      *)
+(* ============================================================ *)
+
+pentatonic_approach ::= box_pattern position_shifting? pentatonic_superimposition?
+
+box_pattern ::= box_1 | box_2 | box_3 | box_4 | box_5
+
+position_shifting ::= slide_shift | jump_shift | linking_shift
+
+slide_shift ::= "slide" direction fret_distance
+jump_shift ::= "jump" direction fret_distance
+linking_shift ::= "link" box_pattern box_pattern
+
+pentatonic_superimposition ::= pentatonic_scale "over" chord_symbol
+                             | pentatonic_scale "over" modal_context
+
+(* ============================================================ *)
+(* 8. Modal Improvisation                                        *)
+(* ============================================================ *)
+
+modal_improvisation ::= mode characteristic_notes avoid_notes? modal_vamp
+
+characteristic_notes ::= dorian_6th | phrygian_b2 | lydian_sharp4
+                       | mixolydian_b7 | aeolian_b6 | locrian_b5_b2
+
+dorian_6th ::= "natural_6" (* major 6th over minor chord *)
+phrygian_b2 ::= "flat_2" (* minor 2nd — defines Phrygian color *)
+lydian_sharp4 ::= "sharp_4" (* raised 4th — defines Lydian color *)
+mixolydian_b7 ::= "flat_7" (* minor 7th — defines Mixolydian color *)
+aeolian_b6 ::= "flat_6" (* minor 6th — distinguishes from Dorian *)
+locrian_b5_b2 ::= "flat_5" "flat_2" (* both define Locrian instability *)
+
+avoid_notes ::= note_list (* notes that clash with modal color *)
+
+modal_vamp ::= one_chord_vamp | two_chord_vamp | pedal_point_vamp
+
+one_chord_vamp ::= chord_symbol "sustained"
+two_chord_vamp ::= chord_symbol chord_symbol "alternating"
+pedal_point_vamp ::= bass_note "pedal" chord_progression_above
+
+(* ============================================================ *)
+(* 9. Blues Language                                              *)
+(* ============================================================ *)
+
+blues_language ::= blue_note+ blues_phrase? blues_form_navigation?
+
+blue_note ::= flat_third | flat_fifth | flat_seventh | quarter_tone_bend
+
+flat_third ::= "b3" bend_amount?
+flat_fifth ::= "b5" bend_amount?
+flat_seventh ::= "b7" bend_amount?
+quarter_tone_bend ::= "quarter_bend" target_pitch
+
+blues_phrase ::= call_response_blues | turnaround_lick | intro_lick
+
+call_response_blues ::= blues_call blues_response
+turnaround_lick ::= "turnaround" turnaround_type
+intro_lick ::= "intro" blues_key
+
+turnaround_type ::= standard_turnaround | jazz_turnaround | chromatic_turnaround
+
+blues_form_navigation ::= twelve_bar_position blues_chord_function
+twelve_bar_position ::= bar_1_4 | bar_5_6 | bar_7_8 | bar_9_10 | bar_11_12
+blues_chord_function ::= "I7" | "IV7" | "V7" | "turnaround"
+
+(* ============================================================ *)
+(* 10. Rhythmic Improvisation                                    *)
+(* ============================================================ *)
+
+rhythmic_device ::= displacement | metric_superimposition
+                  | over_the_barline | double_time | half_time | rubato
+
+displacement ::= beat_displacement | bar_displacement | phrase_displacement
+
+beat_displacement ::= "displace" beat_count direction
+bar_displacement ::= "displace" bar_count direction
+phrase_displacement ::= "displace" phrase_offset direction
+
+metric_superimposition ::= three_over_four | hemiola | cross_rhythm
+
+three_over_four ::= "3:4" accent_pattern
+hemiola ::= "hemiola" duration
+cross_rhythm ::= numerator ":" denominator accent_pattern
+
+over_the_barline ::= phrase_start beat_position (* phrase begins before or after barline *)
+double_time ::= "double_time" duration (* double the rhythmic density *)
+half_time ::= "half_time" duration (* halve the rhythmic density *)
+rubato ::= "rubato" flexibility_degree (* tempo flexibility *)
+
+(* ============================================================ *)
+(* 11. Interactive Improvisation                                 *)
+(* ============================================================ *)
+
+interactive_device ::= comping | trading | collective
+
+comping ::= rhythmic_comping | melodic_comping | textural_comping
+
+rhythmic_comping ::= chord_voicing rhythmic_pattern
+melodic_comping ::= chord_voicing melodic_line
+textural_comping ::= chord_voicing texture_type
+
+trading ::= trading_fours | trading_eights | trading_twos | free_exchange
+
+trading_fours ::= "trade_4" soloist_a soloist_b
+trading_eights ::= "trade_8" soloist_a soloist_b
+trading_twos ::= "trade_2" soloist_a soloist_b
+free_exchange ::= "free_trade" soloist_a soloist_b exchange_cue
+
+collective ::= simultaneous_improv | layered_improv | textural_improv
+
+simultaneous_improv ::= voice_count "voices" "simultaneous"
+layered_improv ::= voice_entry+ "layered"
+textural_improv ::= texture_density texture_type "textural"
+
+(* ============================================================ *)
+(* 12. Guitar-Specific Techniques                                *)
+(* ============================================================ *)
+
+guitar_improv_technique ::= bend_articulation
+                          | slide_connection
+                          | hammer_pull_legato
+                          | string_skipping
+                          | hybrid_picking_improv
+                          | position_shifting_guitar
+                          | octave_displacement
+
+bend_articulation ::= half_bend | whole_bend | overbend | prebend | bend_release
+                    | unison_bend | oblique_bend
+
+slide_connection ::= slide_into | slide_out | legato_slide | shift_slide
+
+hammer_pull_legato ::= hammer_on | pull_off | trill | legato_run
+                     | hammer_from_nowhere
+
+string_skipping ::= skip_count string_pair arpeggio_method?
+
+hybrid_picking_improv ::= pick_finger_pattern string_group
+
+position_shifting_guitar ::= slide_shift | pivot_shift | jump_shift
+
+octave_displacement ::= octave_up | octave_down | wes_montgomery_octaves
+                       | octave_arpeggio
+
+(* ============================================================ *)
+(* 13. Conclusions — maps to hexavalent logic                    *)
+(* ============================================================ *)
+
+(* fluent → T (verified with evidence — improviser demonstrates mastery) *)
+(* probable_fluency → P (evidence leans true, not yet verified across contexts) *)
+(* untested → U (insufficient evidence, triggers investigation) *)
+(* doubtful_fluency → D (evidence leans false, not yet refuted) *)
+(* deficient → F (refuted with evidence — improviser lacks capability) *)
+(* inconsistent_across_contexts → C (conflicting evidence, triggers escalation) *)
+conclude ::= fluent
+           | probable_fluency
+           | untested
+           | doubtful_fluency
+           | deficient
+           | inconsistent_across_contexts
+           | developing

@@ -1,0 +1,353 @@
+(* Rhythm & Meter Grammar — Streeling University *)
+(* Department: Music / Guitar Studies *)
+(* Purpose: Rhythm, meter, groove, and time-domain analysis *)
+(* Consumed by: TARS WeightedGrammar, ga rhythm agents *)
+(* Cross-references: rhythmic_analysis referenced by music-theory.ebnf *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+
+(* ============================================================ *)
+(* 1. Top-Level Rhythmic Analysis                                *)
+(* ============================================================ *)
+
+rhythmic_analysis ::= meter_analysis
+                    | subdivision_analysis
+                    | syncopation_analysis
+                    | polyrhythm_analysis
+                    | metric_modulation_analysis
+                    | feel_analysis
+                    | guitar_rhythm_analysis
+                    | notation_analysis
+
+(* ============================================================ *)
+(* 2. Time Signatures and Meter                                  *)
+(* ============================================================ *)
+
+meter_analysis ::= time_signature beat_grouping
+                 | time_signature beat_grouping tempo_marking
+
+time_signature ::= simple_time | compound_time | asymmetric_time
+                 | additive_time | mixed_meter
+
+simple_time ::= "2/4" | "3/4" | "4/4"
+
+compound_time ::= "6/8" | "9/8" | "12/8"
+
+asymmetric_time ::= "5/4" | "5/8" | "7/8" | "7/4" | "11/8" | "13/8"
+
+additive_time ::= beat_group "+" beat_group
+                | beat_group "+" beat_group "+" beat_group
+
+beat_group ::= "2" | "3" | "4" | "5"
+
+mixed_meter ::= time_signature "|" time_signature
+              | time_signature "|" time_signature "|" time_signature
+
+beat_grouping ::= duple | triple | quadruple | irregular_grouping
+
+duple ::= strong weak
+triple ::= strong weak weak
+quadruple ::= strong weak medium weak
+
+irregular_grouping ::= beat_weight+
+beat_weight ::= strong | medium | weak
+
+(* ============================================================ *)
+(* 3. Note Values and Subdivisions                               *)
+(* ============================================================ *)
+
+subdivision_analysis ::= note_value subdivision_level
+
+note_value ::= base_value | dotted_value | double_dotted_value | tied_value | tuplet_value
+
+base_value ::= whole | half | quarter | eighth | sixteenth | thirty_second | sixty_fourth
+
+dotted_value ::= base_value "."
+double_dotted_value ::= base_value ".."
+
+tied_value ::= note_value "~" note_value
+
+tuplet_value ::= triplet | quintuplet | septuplet | generic_tuplet
+
+triplet ::= "3:2" "(" note_value note_value note_value ")"
+quintuplet ::= "5:4" "(" note_value note_value note_value note_value note_value ")"
+septuplet ::= "7:4" "(" note_value note_value note_value note_value note_value note_value note_value ")"
+generic_tuplet ::= tuplet_ratio "(" note_value+ ")"
+tuplet_ratio ::= integer ":" integer
+
+subdivision_level ::= beat_level | division_level | subdivision_level_deep
+
+beat_level ::= whole | half | quarter
+division_level ::= eighth | triplet_eighth
+subdivision_level_deep ::= sixteenth | triplet_sixteenth | thirty_second
+
+(* ============================================================ *)
+(* 4. Syncopation and Anticipation                               *)
+(* ============================================================ *)
+
+syncopation_analysis ::= syncopation_type beat_position
+
+syncopation_type ::= offbeat_accent | anticipation | delayed_attack
+                   | tied_syncopation | backbeat | push_rhythm
+
+offbeat_accent ::= accent_on_weak_beat | accent_on_weak_subdivision
+
+anticipation ::= early_attack tie_into_beat
+               | early_attack release_before_beat
+
+delayed_attack ::= rest_on_downbeat late_entry
+
+tied_syncopation ::= note_value "~" note_value
+                   | syncopated_tie_chain
+
+syncopated_tie_chain ::= tied_syncopation "~" note_value
+
+backbeat ::= accent_on_2_and_4 | accent_on_3 | one_drop
+
+push_rhythm ::= sixteenth_anticipation | eighth_anticipation
+
+(* Beat position in sixteenth-note grid *)
+beat_position ::= downbeat | e_position | and_position | a_position
+
+downbeat ::= "1" | "2" | "3" | "4"
+e_position ::= "1e" | "2e" | "3e" | "4e"
+and_position ::= "1+" | "2+" | "3+" | "4+"
+a_position ::= "1a" | "2a" | "3a" | "4a"
+
+(* ============================================================ *)
+(* 5. Polyrhythm and Polymetric                                  *)
+(* ============================================================ *)
+
+polyrhythm_analysis ::= polyrhythm_type resultant_rhythm
+
+polyrhythm_type ::= two_against_three | three_against_four
+                  | polymeter | cross_rhythm | hemiola
+                  | grouping_dissonance
+
+two_against_three ::= "2:3" layer_a layer_b
+three_against_four ::= "3:4" layer_a layer_b
+
+layer_a ::= beat_pattern
+layer_b ::= beat_pattern
+beat_pattern ::= beat_position+
+
+polymeter ::= time_signature "||" time_signature
+             | meter_layer meter_layer
+
+meter_layer ::= time_signature beat_pattern
+
+cross_rhythm ::= grouping_over_meter
+               | accent_pattern_over_meter
+
+grouping_over_meter ::= group_size "over" time_signature
+group_size ::= "2" | "3" | "4" | "5" | "7"
+
+accent_pattern_over_meter ::= accent_cycle "within" time_signature
+accent_cycle ::= integer "beats"
+
+hemiola ::= "3x2_as_2x3" | "2x3_as_3x2"
+           | vertical_hemiola | horizontal_hemiola
+
+vertical_hemiola ::= simultaneous_hemiola_layers
+horizontal_hemiola ::= sequential_hemiola_shift
+
+grouping_dissonance ::= displacement_dissonance | grouping_conflict
+
+displacement_dissonance ::= "D" integer "+" integer
+grouping_conflict ::= "G" integer "/" integer
+
+resultant_rhythm ::= beat_pattern
+
+(* ============================================================ *)
+(* 6. Metric Modulation                                          *)
+(* ============================================================ *)
+
+metric_modulation_analysis ::= source_tempo pivot_value target_tempo
+
+source_tempo ::= bpm_value time_signature
+target_tempo ::= bpm_value time_signature
+
+pivot_value ::= note_value "=" note_value
+              | tuplet_value "=" base_value
+              | base_value "=" tuplet_value
+
+bpm_value ::= integer
+            | tempo_word
+
+tempo_word ::= "largo" | "adagio" | "andante" | "moderato"
+             | "allegretto" | "allegro" | "vivace" | "presto"
+
+(* ============================================================ *)
+(* 7. Swing, Shuffle, and Feel                                   *)
+(* ============================================================ *)
+
+feel_analysis ::= feel_type swing_ratio? genre_pattern?
+
+feel_type ::= straight | swing | shuffle | half_time_shuffle
+            | half_time | double_time
+
+straight ::= "50:50"
+
+swing ::= light_swing | medium_swing | hard_swing
+light_swing ::= "55:45"
+medium_swing ::= "60:40"
+hard_swing ::= "67:33" | "75:25"
+
+shuffle ::= eighth_shuffle | sixteenth_shuffle | triplet_shuffle
+
+eighth_shuffle ::= "shuffle_8th" swing_ratio
+sixteenth_shuffle ::= "shuffle_16th" swing_ratio
+triplet_shuffle ::= "shuffle_triplet"
+
+swing_ratio ::= integer ":" integer
+
+half_time_shuffle ::= "half_time_shuffle" ghost_notes
+
+ghost_notes ::= "ghost_2_and_4" | "ghost_e_and_a" | "ghost_sparse" | "ghost_dense"
+
+genre_pattern ::= blues_shuffle | bossa_nova | travis_picking_feel
+                | funk_sixteenth | reggae_skank | new_orleans_second_line
+                | go_go | soca | baiao | tresillo
+
+blues_shuffle ::= "blues_shuffle" shuffle
+bossa_nova ::= "bossa_nova" syncopation_type
+travis_picking_feel ::= "travis_picking" alternating_bass
+funk_sixteenth ::= "funk_16th" ghost_notes
+reggae_skank ::= "reggae_skank" offbeat_accent
+new_orleans_second_line ::= "second_line" syncopation_type
+go_go ::= "go_go" syncopation_type
+soca ::= "soca" beat_pattern
+baiao ::= "baiao" beat_pattern
+tresillo ::= "tresillo" "3+3+2"
+
+(* ============================================================ *)
+(* 8. Guitar-Specific Rhythm Patterns                            *)
+(* ============================================================ *)
+
+guitar_rhythm_analysis ::= strumming_pattern | fingerpicking_pattern
+                         | travis_picking | percussive_technique
+                         | clave_pattern
+
+(* Strumming — directional stroke sequences with muting *)
+strumming_pattern ::= strum_stroke+
+
+strum_stroke ::= down_stroke | up_stroke | muted_stroke | rest_stroke
+               | accented_down | accented_up | palm_muted_stroke
+               | chuck_stroke
+
+down_stroke ::= "D"
+up_stroke ::= "U"
+muted_stroke ::= "X"
+rest_stroke ::= "."
+accented_down ::= "D>"
+accented_up ::= "U>"
+palm_muted_stroke ::= "PM"
+chuck_stroke ::= "CH"
+
+(* Fingerpicking — thumb + finger assignments *)
+fingerpicking_pattern ::= finger_assignment+
+
+finger_assignment ::= thumb | index | middle | ring
+                    | thumb_index | thumb_middle | pinch
+
+thumb ::= "p"
+index ::= "i"
+middle ::= "m"
+ring ::= "a"
+thumb_index ::= "pi"
+thumb_middle ::= "pm"
+pinch ::= "p+" finger_combination
+finger_combination ::= "i" | "m" | "a" | "im" | "ima"
+
+(* Travis picking — alternating bass with melody *)
+travis_picking ::= bass_pattern melody_pattern
+
+bass_pattern ::= alternating_bass | monotonic_bass | walking_bass
+alternating_bass ::= root_bass fifth_bass | root_bass third_bass
+monotonic_bass ::= root_bass root_bass
+walking_bass ::= bass_note bass_note bass_note bass_note
+
+melody_pattern ::= syncopated_melody | on_beat_melody | fill_melody
+
+(* Percussive guitar techniques *)
+percussive_technique ::= slap_body | tap_top | knock_side
+                       | string_slap | golpe | rasgueado
+                       | tambora | deadened_strum
+
+(* Clave patterns — Afro-Cuban and Brazilian *)
+clave_pattern ::= son_clave | rumba_clave | bossa_clave | cascara
+
+son_clave ::= son_clave_3_2 | son_clave_2_3
+son_clave_3_2 ::= "X..X..X...X.X..."
+son_clave_2_3 ::= "...X.X...X..X..X"
+
+rumba_clave ::= rumba_clave_3_2 | rumba_clave_2_3
+rumba_clave_3_2 ::= "X..X...X..X.X..."
+rumba_clave_2_3 ::= "...X.X...X..X..X"
+
+bossa_clave ::= "X..X..X...X..X.."
+
+cascara ::= "X.XX.XX.X.XX.XX."
+
+(* ============================================================ *)
+(* 9. Rhythmic Notation                                          *)
+(* ============================================================ *)
+
+notation_analysis ::= beam_grouping | tie_vs_dot | pickup_measure
+                    | tempo_marking_notation | rubato_marking
+                    | anacrusis
+
+(* Beam grouping — visual rhythmic clarity *)
+beam_grouping ::= beam_by_beat | beam_by_subdivision | cross_beat_beam
+
+beam_by_beat ::= note_value "[" note_value+ "]"
+beam_by_subdivision ::= note_value "[[" note_value+ "]]"
+cross_beat_beam ::= note_value "[" note_value+ "]" "over_barline"
+
+(* Tie vs dot — notational choice *)
+tie_vs_dot ::= prefer_dot | prefer_tie | mandatory_tie
+
+prefer_dot ::= "dot_when" note_value "within_beat"
+prefer_tie ::= "tie_when" note_value "crosses_beat"
+mandatory_tie ::= "tie_when" note_value "crosses_barline"
+
+(* Pickup measures and anacrusis *)
+pickup_measure ::= anacrusis time_signature
+
+anacrusis ::= partial_measure note_value+
+partial_measure ::= "pickup" beat_count
+beat_count ::= integer
+
+(* Tempo markings *)
+tempo_marking_notation ::= metronome_marking | tempo_word | tempo_change
+
+metronome_marking ::= note_value "=" bpm_value
+tempo_change ::= "accel." | "rit." | "a_tempo" | "rubato"
+               | "accelerando" | "ritardando" | "rallentando"
+
+(* Rubato — expressive timing *)
+rubato_marking ::= rubato_type rubato_scope
+
+rubato_type ::= melodic_rubato | structural_rubato | agogic_accent
+melodic_rubato ::= "rubato_melodic"
+structural_rubato ::= "rubato_structural"
+agogic_accent ::= "agogic" note_value
+
+rubato_scope ::= phrase_level | measure_level | section_level
+
+(* ============================================================ *)
+(* 10. Conclusions — maps to hexavalent logic                    *)
+(* ============================================================ *)
+
+(* confirm_rhythm → T (verified with evidence — timing confirmed by analysis) *)
+(* probable_pattern → P (evidence leans true — pattern recognized, not yet verified) *)
+(* untested_feel → U (insufficient evidence — feel not yet analyzed, triggers investigation) *)
+(* doubtful_groove → D (evidence leans false — groove hypothesis weakened, not yet refuted) *)
+(* refute_rhythm → F (refuted with evidence — rhythmic interpretation disproven) *)
+(* conflicting_meters → C (conflicting evidence — simultaneous contradictory meters, triggers escalation) *)
+conclude ::= confirm_rhythm
+           | probable_pattern
+           | untested_feel
+           | doubtful_groove
+           | refute_rhythm
+           | conflicting_meters
+           | revise_analysis

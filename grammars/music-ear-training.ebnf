@@ -1,0 +1,237 @@
+(* Ear Training & Transcription Grammar — Streeling University *)
+(* Department: Guitar Alchemist Academy / Ear Training *)
+(* Purpose: Aural skills, interval/chord recognition, transcription workflow *)
+(* Consumed by: TARS WeightedGrammar, ga ear-training agents *)
+(* Cross-references: chord construction → music-theory.ebnf Section 1 *)
+(* Cross-references: scale exploration → music-theory.ebnf Section 2 *)
+(* Cross-references: interval reasoning → music-theory.ebnf Section 3 *)
+(* Living grammar: evolves through research cycles per grammar-evolution-policy *)
+
+ear_training ::= interval_recognition
+               | chord_recognition
+               | scale_identification
+               | melodic_dictation
+               | rhythmic_dictation
+               | progression_recognition
+               | transcription_methodology
+
+(* ============================================================ *)
+(* 1. Interval Recognition                                       *)
+(* ============================================================ *)
+
+(* Interval recognition — direction + quality + size, optionally anchored *)
+interval_recognition ::= interval_direction interval_quality interval_size
+                       | interval_direction interval_quality interval_size interval_anchor
+
+interval_direction ::= ascending | descending | harmonic_simultaneous
+
+interval_quality ::= perfect | major_interval | minor_interval
+                   | augmented_interval | diminished_interval
+
+interval_size ::= unison | second | third | fourth | fifth
+                | sixth | seventh | octave | compound_interval
+
+(* Anchoring intervals to known references for reliable identification *)
+interval_anchor ::= song_reference | open_string_reference
+
+(* Song references — well-known melodies encoding each interval *)
+song_reference ::= song_title interval_size interval_direction
+
+(* Open string references — standard tuning adjacent-string intervals *)
+(* E2-A2 = P4, A2-D3 = P4, D3-G3 = P4, G3-B3 = M3, B3-E4 = P4 *)
+open_string_reference ::= E_A_perfect_fourth
+                         | A_D_perfect_fourth
+                         | D_G_perfect_fourth
+                         | G_B_major_third
+                         | B_E_perfect_fourth
+
+(* ============================================================ *)
+(* 2. Chord Quality Recognition                                  *)
+(* ============================================================ *)
+
+(* Chord quality recognition — identify chord type from aural presentation *)
+chord_recognition ::= chord_quality chord_presentation
+                    | chord_quality chord_presentation chord_inversion_guess
+
+chord_quality ::= triad_quality | seventh_quality | extended_quality
+
+triad_quality ::= major_triad | minor_triad | diminished_triad
+                | augmented_triad | sus2_triad | sus4_triad
+
+seventh_quality ::= dominant_7 | major_7 | minor_7
+                  | half_diminished_7 | diminished_7 | minor_major_7
+
+extended_quality ::= ninth_chord | eleventh_chord | thirteenth_chord
+                   | altered_chord | add_chord
+
+(* How the chord is presented affects identification difficulty *)
+chord_presentation ::= block_voicing | arpeggiated | rolled
+
+(* ============================================================ *)
+(* 3. Scale and Mode Identification                              *)
+(* ============================================================ *)
+
+(* Scale identification — family + character impression *)
+scale_identification ::= scale_family scale_character
+                       | scale_family scale_character scale_degree_focus
+
+scale_family ::= diatonic_mode | pentatonic_family | minor_variant
+               | symmetric_scale | exotic_scale
+
+diatonic_mode ::= ionian | dorian | phrygian | lydian
+                | mixolydian | aeolian | locrian
+
+pentatonic_family ::= major_pentatonic | minor_pentatonic
+                    | hirajoshi | kumoi | in_sen
+
+minor_variant ::= harmonic_minor | melodic_minor
+
+symmetric_scale ::= whole_tone | diminished_whole_half
+                  | diminished_half_whole | chromatic
+
+exotic_scale ::= phrygian_dominant | hungarian_minor | double_harmonic
+               | enigmatic | persian | neapolitan_major | neapolitan_minor
+
+(* Subjective character — how the scale "feels" to the listener *)
+scale_character ::= bright | dark | ambiguous | tension | resolution
+
+(* ============================================================ *)
+(* 4. Melodic Dictation                                          *)
+(* ============================================================ *)
+
+(* Melodic dictation — transcribing a heard melody note by note *)
+melodic_dictation ::= melodic_motion melodic_contour phrase_length
+                    | melodic_motion melodic_contour phrase_length key_context
+
+melodic_motion ::= stepwise | skipwise | arpeggiated_motion
+                 | chromatic_motion | repeated_note | octave_leap
+
+melodic_contour ::= ascending_contour | descending_contour
+                  | arch | inverted_arch | static_contour | zigzag
+
+phrase_length ::= two_bar | four_bar | eight_bar | irregular_phrase
+
+(* Key context aids melodic dictation — establishes tonal center *)
+key_context ::= major_key | minor_key | modal_center | atonal_context
+
+(* ============================================================ *)
+(* 5. Rhythmic Dictation                                         *)
+(* ============================================================ *)
+
+(* Rhythmic dictation — notating rhythm from aural input *)
+rhythmic_dictation ::= time_signature subdivision rhythmic_feel
+                     | time_signature subdivision rhythmic_feel syncopation_level
+
+time_signature ::= simple_duple | simple_triple | simple_quadruple
+                 | compound_duple | compound_triple | compound_quadruple
+                 | asymmetric_meter | mixed_meter
+
+subdivision ::= whole_note | half_note | quarter_note | eighth_note
+              | sixteenth_note | triplet | dotted_rhythm | tied_rhythm
+
+rhythmic_feel ::= straight | swing | shuffle
+
+syncopation_level ::= none | light | moderate | heavy
+
+(* ============================================================ *)
+(* 6. Progression Recognition                                    *)
+(* ============================================================ *)
+
+(* Progression recognition — identifying harmonic progressions by ear *)
+progression_recognition ::= bass_motion_analysis harmonic_function_analysis
+                          | bass_motion_analysis harmonic_function_analysis stock_progression_match
+
+bass_motion_analysis ::= stepwise_bass | circle_of_fifths_bass
+                       | pedal_bass | chromatic_bass
+                       | leap_bass | contrary_bass
+
+harmonic_function_analysis ::= tonic_function | predominant_function
+                             | dominant_function | modal_function
+                             | chromatic_function
+
+(* Stock progressions — common patterns recognizable as units *)
+stock_progression ::= I_IV_V_I
+                    | I_V_vi_IV
+                    | ii_V_I
+                    | I_vi_IV_V
+                    | twelve_bar_blues
+                    | I_IV_bVII_IV
+                    | vi_IV_I_V
+                    | I_bVII_IV_I
+                    | iii_vi_ii_V
+                    | rhythm_changes
+                    | coltrane_changes
+                    | line_cliche
+                    | andalusian_cadence
+
+(* ============================================================ *)
+(* 7. Transcription Methodology                                  *)
+(* ============================================================ *)
+
+(* Transcription — multi-pass workflow from global listen to detail *)
+transcription_methodology ::= transcription_phase+
+                            | transcription_phase+ guitar_ear_tool+
+
+(* Ordered phases — each pass extracts a different musical layer *)
+transcription_phase ::= global_listen
+                      | form_mapping
+                      | bass_line_extraction
+                      | chord_quality_layer
+                      | melody_extraction
+                      | rhythm_notation
+                      | detail_pass
+                      | verification
+
+(* Global listen: absorb form, tempo, key, instrumentation without notation *)
+global_listen ::= tempo_estimate key_estimate form_sketch instrumentation_note
+
+(* Form mapping: identify sections (intro, verse, chorus, bridge, etc.) *)
+form_mapping ::= section_boundary+ section_label+
+
+(* Bass line extraction: transcribe the lowest voice first *)
+bass_line_extraction ::= root_motion bass_rhythm bass_articulation
+
+(* Chord quality layer: overlay chord qualities on extracted bass *)
+chord_quality_layer ::= bass_note chord_quality
+
+(* Melody extraction: transcribe the top voice *)
+melody_extraction ::= melodic_dictation phrasing_annotation
+
+(* Rhythm notation: refine rhythmic accuracy *)
+rhythm_notation ::= rhythmic_dictation accent_pattern
+
+(* Detail pass: ornaments, dynamics, articulations *)
+detail_pass ::= ornament_annotation | dynamic_marking | articulation_marking
+
+(* Verification: play back against original, mark discrepancies *)
+verification ::= playback_comparison discrepancy_flag confidence_score
+
+(* Guitar-specific ear training tools *)
+guitar_ear_tool ::= open_string_drone | fretboard_singing | chord_tone_singing
+
+(* Drone a string and sing intervals above it *)
+open_string_drone ::= string_choice drone_interval target_pitch
+
+(* Sing notes before fretting — predict then verify *)
+fretboard_singing ::= target_fret sung_pitch fretted_pitch match_result
+
+(* Arpeggiate chord tones vocally before strumming *)
+chord_tone_singing ::= chord_shape sung_arpeggio strummed_arpeggio match_result
+
+(* ============================================================ *)
+(* 8. Conclusions — maps to hexavalent logic                     *)
+(* ============================================================ *)
+
+(* accurate → T (verified with evidence) *)
+(* likely_correct → P (evidence leans true, not yet verified) *)
+(* uncertain → U (insufficient evidence, triggers investigation) *)
+(* likely_wrong → D (evidence leans false, not yet refuted) *)
+(* wrong → F (refuted with evidence) *)
+(* conflicting_answers → C (conflicting evidence, triggers escalation) *)
+conclude ::= accurate
+           | likely_correct
+           | uncertain
+           | likely_wrong
+           | wrong
+           | conflicting_answers
+           | revise_transcription
