@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ga": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "C:/Users/spare/source/repos/ga/GaMcpServer/bin/Debug/net10.0/GaMcpServer.dll"
+      ],
+      "env": {}
+    }
+  }
+}
