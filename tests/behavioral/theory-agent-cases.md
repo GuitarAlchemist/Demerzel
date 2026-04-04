@@ -1,5 +1,7 @@
 # Theory Agent — Behavioral Tests
 
+> **Architecture Note (2026-04-04):** These test cases describe capabilities that are now delivered as MCP tool bundles per `contracts/ga-orchestrator-architecture.md` v2.0.0. The agent name refers to a tool bundle, not a standalone runtime agent. Read as bundle contracts. See `tests/behavioral/ga-orchestrator-cases.md` for the orchestrator-level tests.
+
 Persona: `theory-agent` (ga)
 Role: Music theory analysis specialist
 Streeling Department: Music (head)
