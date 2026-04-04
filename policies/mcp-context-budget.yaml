@@ -1,0 +1,278 @@
+policy_id: mcp-context-budget-v1
+version: "1.0.0"
+status: active
+department: governance
+description: >
+  Governs how MCP tools manage LLM context consumption. Introduces three
+  named paradoxes (Demerzel Threshold, Chrome Tax, Oracle Inversion) and
+  enforces per-tool token budgets to prevent context starvation.
+
+applies_to:
+  - All MCP tools in the GA ecosystem
+  - ga-ask skill routing decisions
+  - Orchestrator response synthesis
+
+constitutional_basis:
+  - Article 4 (Proportionality) — response size must match reasoning need
+  - Article 7 (Auditability) — token consumption must be logged
+  - Article 9 (Bounded Autonomy) — tools must not exhaust context unilaterally
+
+# ============================================================
+# Named Concepts
+# ============================================================
+
+named_concepts:
+
+  # ------------------------------------------------------------
+  # The paradox at the heart of this policy
+  # ------------------------------------------------------------
+  demerzel_threshold:
+    definition: >
+      The point at which retrieved knowledge displaces reasoning
+      capacity in an LLM's context window.
+    paradox: >
+      More data returned = less capability. Every token spent on data
+      is a token stolen from reasoning. Above the threshold, the agent
+      gets dumber with each additional fact.
+    symptoms:
+      - Response quality degrades after large tool returns
+      - Agent "forgets" earlier conversation turns
+      - Repetition or incoherence increases
+      - Follow-up questions miss prior context
+    mitigations:
+      - Enforce per-tool token budgets (see token_budgets below)
+      - Measure cumulative tool-output consumption per session
+      - Trigger summarization when threshold exceeded
+      - Prefer Socratic tools (see contracts/socratic-tool-design.md)
+
+  # ------------------------------------------------------------
+  # The scaffolding cost
+  # ------------------------------------------------------------
+  chrome_tax:
+    definition: >
+      Context cost of scaffolding (IDs, URIs, pagination cursors,
+      "see also" lists, metadata wrappers) that exists because the
+      API was designed for human browsing, not LLM reasoning.
+    paradox: >
+      Infrastructure that solves a human problem (finite screen)
+      creates an LLM problem (finite context burned on chrome).
+    symptoms:
+      - JSON responses where actual content < metadata size
+      - Pagination cursors in responses the LLM will never paginate
+      - Redundant type tags, envelopes, wrappers
+      - "See also" links the LLM won't follow
+    mitigations:
+      - Strip scaffolding for LLM consumers (separate debug vs LLM view)
+      - Inline content instead of references when inline is cheaper
+      - No pagination cursors in LLM responses — use handles instead
+      - Flat response shapes, minimal nesting
+
+  # ------------------------------------------------------------
+  # The design principle
+  # ------------------------------------------------------------
+  oracle_inversion:
+    definition: >
+      Design principle: tools return the answer to the question
+      the caller would have asked NEXT, not a payload for the
+      caller to process.
+    paradox: >
+      A catalog in context is a confession that the tool couldn't
+      decide. Tools should provide decisions, procedures, or
+      questions — never catalogs.
+    symptoms:
+      - LLM repeatedly filters/sorts/picks from returned lists
+      - "Find best X from these 50" prompts
+      - LLM doing selection work the server should have done
+    mitigations:
+      - Tools return ONE answer + reasoning
+      - Resolve ambiguity server-side (ask clarifying questions)
+      - Move selection logic into tools (kinematic pathfinder pattern)
+      - Use Oracle naming: best_X_for(y), next_X_after(y)
+
+# ============================================================
+# Token Budgets (per tool type)
+# ============================================================
+
+token_budgets:
+  tool_types:
+
+    resolution:
+      max_tokens: 120
+      description: "resolve_X(hint) returns 1 item + narrow prompt"
+      examples: [resolve_instrument, resolve_scale, resolve_mode, resolve_chord]
+      when_to_use: "User hint is ambiguous; need to narrow with 1-sentence options"
+
+    socratic:
+      max_tokens: 100
+      description: "suggest_X(context) returns clarifying question + options"
+      examples: [suggest_voicing, recommend_next_chord, propose_progression]
+      when_to_use: "Context insufficient to decide; ask to narrow"
+
+    oracle:
+      max_tokens: 250
+      description: "best_X_for(y) returns 1 answer + reasoning"
+      examples: [best_voicing_for, optimal_fingering, next_chord_suggestion]
+      when_to_use: "Tool has enough context to decide; return decision"
+
+    lookup:
+      max_tokens: 80
+      description: "get_X(key) returns single entity fields"
+      examples: [get_chord_notes, get_key_signature, get_tuning_notes]
+      when_to_use: "Direct retrieval by identifier"
+
+    analysis:
+      max_tokens: 500
+      description: "analyze_X(data) returns structured insight"
+      examples: [analyze_progression, analyze_voice_leading, analyze_form]
+      when_to_use: "Multi-factor analysis worth the budget"
+
+    search:
+      max_tokens: 800
+      description: "find_X(query) returns top-N with scores"
+      examples: [find_similar_voicings, search_tabs, find_progressions_like]
+      when_to_use: "Similarity/ranking search; user explicitly chose search"
+
+    enumeration:
+      max_tokens: 600
+      description: "list_X(filter) — LAST RESORT, requires filter"
+      examples: [list_scales_by_family, list_tunings_for_instrument]
+      when_to_use: "User explicitly requested enumeration; debugging"
+      constraints:
+        - Requires explicit filter parameter (no unfiltered calls)
+        - Summary-first format (counts + top_5 + "N more")
+        - Cannot be called without user-explicit request
+
+# ============================================================
+# Session-Level Budgets
+# ============================================================
+
+session_budgets:
+  total_tool_output_tokens:
+    target: 10000
+    warning: 15000
+    hard_limit: 20000
+    action_on_warning: "summarize older turns via context compaction"
+    action_on_limit: "reject further enumeration tools; prefer Socratic"
+
+  per_tool_call:
+    default_max: 500
+    enforcement: "truncate with 'N more items — use {narrow_tool}' hint"
+
+  budget_reset:
+    on: "new session, /clear, context compaction"
+
+# ============================================================
+# Enforcement Rules
+# ============================================================
+
+enforcement:
+  server_side:
+    - Tools MUST declare budget_class in MCP tool schema
+    - Responses exceeding budget MUST be truncated with explicit hint
+    - Truncation hint format: "... {N} more items. Use {narrow_tool}({hint}) to filter."
+    - Budget violations logged to audit trail per Article 7
+
+  client_side:
+    - ga-ask skill MUST prefer resolution/oracle tools over enumeration
+    - Orchestrator MUST track cumulative tool-output tokens per session
+    - Session budget exceeded → trigger context compaction
+    - Display "Context budget: X/10K used" in verbose mode
+
+  governance:
+    - New tools MUST declare budget_class in registration
+    - Tools leaking >500 tokens over budget flagged for redesign
+    - Monthly review of tools exceeding budget in production
+    - Promotion to Article 12 (Context Stewardship) if all GA tools meet budgets for 30 days
+
+# ============================================================
+# Retrofit Priorities
+# ============================================================
+
+retrofit_priorities:
+
+  - tool: GetAvailableInstruments
+    current_leak: "~2,000 tokens (will be 5K+ after 114-instrument expansion)"
+    target: "resolve_instrument(hint) + list_instruments_by_family(family)"
+    priority: critical
+    rationale: "Already a problem; worsens with multi-instrument expansion"
+
+  - tool: GetSetClasses
+    current_leak: "~8,000 tokens (largest leak observed)"
+    target: "find_set_class(properties)"
+    priority: critical
+    rationale: "Highest single-tool leak; rarely used in full form"
+
+  - tool: GetAvailableModes
+    current_leak: "~3,000 tokens (150+ modes)"
+    target: "resolve_mode(hint) + suggest_mode_for(chord)"
+    priority: high
+
+  - tool: GetAvailableScales
+    current_leak: "~2,000 tokens (100+ scales)"
+    target: "resolve_scale(hint) + list_scales_by_family(filter)"
+    priority: high
+
+  - tool: GaListClosures
+    current_leak: "~4,000 tokens (30+ closures with docs)"
+    target: "find_closure(purpose) + get_closure_schema(name)"
+    priority: medium
+
+  - tool: GetAvailableTunings
+    current_leak: "~500 tokens (small now, grows with instruments)"
+    target: "default_tuning(instrument) + narrow_tuning(hint)"
+    priority: medium
+
+# ============================================================
+# Metrics
+# ============================================================
+
+metrics:
+  per_session:
+    - cumulative_tool_output_tokens
+    - tools_exceeding_budget_count
+    - enumeration_calls_without_filter
+    - chrome_tax_ratio  # metadata_tokens / content_tokens
+    - demerzel_threshold_hits  # times warning/limit triggered
+
+  per_tool:
+    - avg_response_tokens
+    - max_response_tokens
+    - budget_violation_rate
+    - retrofit_status
+
+  aggregates:
+    - ecosystem_avg_tool_tokens_per_call
+    - trend_context_pressure  # rolling 30-day session budget utilization
+
+# ============================================================
+# Integration
+# ============================================================
+
+related_artifacts:
+  - contracts/socratic-tool-design.md
+  - contracts/ga-mcp-tool-bundles.md
+  - contracts/ga-orchestrator-architecture.md
+  - schemas/voicing-handle.schema.json
+  - contracts/directives/ga-kinematic-pathfinder.directive.md
+  - contracts/ui-chord-hydration.md
+
+# ============================================================
+# Evolution
+# ============================================================
+
+evolution:
+  review_cadence: quarterly
+  promotion_criteria: >
+    If all GA tools meet budgets for 30 consecutive days AND
+    session_budget_warning rate < 5%, propose promotion to
+    Article 12 (Context Stewardship) in the default constitution.
+
+  signals_to_track:
+    - Session token growth trends
+    - User-reported agent slowdowns or incoherence
+    - Context exhaustion incidents
+    - New tool registrations missing budget_class
+
+  deprecation_criteria: >
+    Tools exceeding budget by >2× for 3 consecutive reviews are
+    candidates for deprecation or mandatory redesign.

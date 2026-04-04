@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/voicing-handle",
+  "title": "GA Voicing Handle",
+  "description": "Content-addressable handles for guitar/instrument voicings, query results, morphology projections, and field views. Enables ~99% token reduction by letting the LLM operate on deterministic references instead of full voicing objects.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/voicing_handle"
+    },
+    {
+      "$ref": "#/$defs/query_result_handle"
+    },
+    {
+      "$ref": "#/$defs/morphology_handle"
+    },
+    {
+      "$ref": "#/$defs/view_handle"
+    }
+  ],
+  "$defs": {
+    "voicing_handle": {
+      "type": "object",
+      "title": "Voicing Handle (vh)",
+      "description": "Immutable content-addressable reference to a concrete voicing. Deterministic: same voicing always produces same hash. URI: ga:vh:v3:sha256-{64hex}. Input to hash: instrument_id + tuning_id + fret_array + chord_dna.",
+      "required": ["handle", "type", "version", "hash", "semantic_type"],
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "type": "string",
+          "pattern": "^ga:vh:v[0-9]+:sha256-[0-9a-f]{64}$",
+          "examples": ["ga:vh:v3:sha256-7b91a8c4d2e6f1a3b5c7d9e0f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0"]
+        },
+        "type": {"const": "vh"},
+        "version": {"type": "integer", "minimum": 1, "examples": [3]},
+        "hash": {"$ref": "#/$defs/sha256_hex"},
+        "semantic_type": {"const": "immutable_voicing_reference"},
+        "metadata": {"$ref": "#/$defs/handle_metadata"}
+      }
+    },
+    "query_result_handle": {
+      "type": "object",
+      "title": "Query Result Handle (qr)",
+      "description": "Ephemeral session-scoped reference to a ranked candidate set from a specific query. Enables refinement without re-running query. URI: ga:qr:v2:{session_id}:{query_seq}. Default TTL 3600s.",
+      "required": ["handle", "type", "version", "session_id", "query_seq", "semantic_type"],
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "type": "string",
+          "pattern": "^ga:qr:v[0-9]+:[a-z0-9-]{4,32}:[0-9]+$",
+          "examples": ["ga:qr:v2:sess-12ab:4"]
+        },
+        "type": {"const": "qr"},
+        "version": {"type": "integer", "minimum": 1, "examples": [2]},
+        "session_id": {"$ref": "#/$defs/session_id_format"},
+        "query_seq": {"type": "integer", "minimum": 0},
+        "semantic_type": {"const": "ephemeral_query_result_set"},
+        "ttl_seconds": {"type": "integer", "default": 3600, "minimum": 60},
+        "result_count": {"type": "integer", "minimum": 0},
+        "metadata": {"$ref": "#/$defs/handle_metadata"}
+      }
+    },
+    "morphology_handle": {
+      "type": "object",
+      "title": "Morphology Handle (mh)",
+      "description": "Intermediate representation: chord DNA projected into a tuning's fretboard morphology space, BEFORE full voicing realization. URI: ga:mh:v1:{tuning_hash}:{chord_dna_hash}.",
+      "required": ["handle", "type", "version", "tuning_hash", "chord_dna_hash", "semantic_type"],
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "type": "string",
+          "pattern": "^ga:mh:v[0-9]+:tuning-[0-9a-f]{6,}:chorddna-[0-9a-f]{6,}$",
+          "examples": ["ga:mh:v1:tuning-5d2a8f:chorddna-a91f4c"]
+        },
+        "type": {"const": "mh"},
+        "version": {"type": "integer", "minimum": 1, "examples": [1]},
+        "tuning_hash": {"type": "string", "pattern": "^[0-9a-f]{6,}$"},
+        "chord_dna_hash": {"type": "string", "pattern": "^[0-9a-f]{6,}$"},
+        "semantic_type": {"const": "chord_dna_in_tuning_space"},
+        "metadata": {"$ref": "#/$defs/handle_metadata"}
+      }
+    },
+    "view_handle": {
+      "type": "object",
+      "title": "View Handle (view)",
+      "description": "Field projection of an existing handle. Same underlying object, different field mask, no mutation. URI: ga:view:v1:{parent_handle_id}?fields={comma_list}.",
+      "required": ["handle", "type", "version", "parent_handle", "field_projection", "semantic_type"],
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "type": "string",
+          "pattern": "^ga:view:v[0-9]+:[a-zA-Z0-9-]+\\?fields=[a-z_,]+$",
+          "examples": ["ga:view:v1:qr-12ab-4?fields=fretspan,bass,topnote"]
+        },
+        "type": {"const": "view"},
+        "version": {"type": "integer", "minimum": 1, "examples": [1]},
+        "parent_handle": {
+          "type": "string",
+          "description": "The handle being projected over"
+        },
+        "field_projection": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z_][a-z0-9_]*$"},
+          "minItems": 1,
+          "examples": [["fretspan", "bass", "topnote"]]
+        },
+        "semantic_type": {"const": "field_projection"},
+        "metadata": {"$ref": "#/$defs/handle_metadata"}
+      }
+    },
+    "sha256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Lowercase hexadecimal SHA-256 digest"
+    },
+    "session_id_format": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{4,32}$",
+      "description": "Session identifier (alphanumeric + hyphens, 4-32 chars)"
+    },
+    "handle_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "index_version": {"type": "string"},
+        "compat": {"type": "array", "items": {"type": "string"}},
+        "created_at": {"type": "string", "format": "date-time"},
+        "instrument_id": {"type": "string"},
+        "tuning_id": {"type": "string"}
+      }
+    }
+  },
+  "examples": [
+    {
+      "handle": "ga:vh:v3:sha256-7b91a8c4d2e6f1a3b5c7d9e0f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0",
+      "type": "vh",
+      "version": 3,
+      "hash": "7b91a8c4d2e6f1a3b5c7d9e0f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0",
+      "semantic_type": "immutable_voicing_reference",
+      "metadata": {
+        "index_version": "2026.04",
+        "instrument_id": "guitar",
+        "tuning_id": "standard"
+      }
+    },
+    {
+      "handle": "ga:qr:v2:sess-12ab:4",
+      "type": "qr",
+      "version": 2,
+      "session_id": "sess-12ab",
+      "query_seq": 4,
+      "semantic_type": "ephemeral_query_result_set",
+      "ttl_seconds": 3600,
+      "result_count": 42
+    },
+    {
+      "handle": "ga:mh:v1:tuning-5d2a8f:chorddna-a91f4c",
+      "type": "mh",
+      "version": 1,
+      "tuning_hash": "5d2a8f",
+      "chord_dna_hash": "a91f4c",
+      "semantic_type": "chord_dna_in_tuning_space"
+    },
+    {
+      "handle": "ga:view:v1:qr-12ab-4?fields=fretspan,bass,topnote",
+      "type": "view",
+      "version": 1,
+      "parent_handle": "ga:qr:v2:sess-12ab:4",
+      "field_projection": ["fretspan", "bass", "topnote"],
+      "semantic_type": "field_projection"
+    }
+  ]
+}
