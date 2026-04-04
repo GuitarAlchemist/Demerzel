@@ -47,34 +47,112 @@ Use ToolSearch with query "ga music theory" to find any available GA MCP tools.
 
 **If MCP server is available**: Call the appropriate tools directly and compose the answer from tool outputs.
 
-### Verified Live Tools (tested 2026-04-04)
+### Complete Tool Inventory (tested 2026-04-04, all 60 tools)
 
-These `mcp__ga__*` tools return live computed data when the GA MCP server is registered:
+**48 tools work out-of-the-box** (pure in-process, no external deps).
+**12 tools need GA API server running on port 7001** (HTTP-backed endpoints).
 
-| Tool | Purpose | Example |
-|------|---------|---------|
-| `mcp__ga__Echo` | Connectivity test | Echo("hello") → "Hello from C#: hello" |
-| `mcp__ga__GetAvailableScales` | List all cataloged scales with binary IDs | Returns 100+ scales: Major(2741), MinorPentatonic(1193), etc |
-| `mcp__ga__GaScaleByName` | Lookup scale by name | name="Major" → {id:2741, notes:"C D E F G A B", category:Western, alt_names:["Ionian"]} |
-| `mcp__ga__GaScaleById` | Lookup scale by binary ID | id=2741 → same Major scale result |
-| `mcp__ga__GetMajorKeys` | List all 15 major keys | Cb through C# |
-| `mcp__ga__GetAvailableModes` | List modes | — |
-| `mcp__ga__GetAvailableInstruments` | List instruments | — |
-| `mcp__ga__GetKeyNotes` | Notes in a key | — |
-| `mcp__ga__GetSetClasses` | Forte set classes | — |
-| `mcp__ga__GetModeInfo` | Mode details | — |
+#### Working Tools by Category
 
-**Binary scale IDs match our `grammars/music-scale-catalog.ebnf` design** — Major=2741, MinorPentatonic=1193 confirmed live.
+**Diagnostics**:
+- `Echo(message)` → `"Hello from C#: <message>"`
+- `ReverseEcho(message)` → reversed string
+- `ReloadConfig()` → `true`
 
-### Tools That Require Parameter Verification
+**Scales (pure math from binary encoding)**:
+- `GetAvailableScales()` → 100+ scales with binary IDs (Major=2741, MinorPentatonic=1193)
+- `GaScaleByName(name)` → full scale info (notes, category, alt names, usage)
+- `GaScaleById(id)` → lookup by binary ID
+- `GetCardinalities()` → 0 through 12 (Monotonic → Dodecatonic)
+- `GetAvailableModes()` → 150+ modes incl. melodic minor, bebop, exotic
 
-Some tools return "An error occurred" on first attempt and need parameter-name debugging:
-- `GaParseChord`, `GaChordIntervals`, `GaChordToSet` — chord symbol parsing
-- `GaDiatonicChords`, `GetDiatonicChords` — diatonic chord generation
-- `GetKeyByRootAndMode` — key construction
-- `GetAvailableTunings` — tuning list
+**Keys**:
+- `GetAllKeys()`, `GetMajorKeys()`, `GetMinorKeys()` → list keys
+- `GetKeyNotes(keyName="Key of A")` → notes in key
+- `GetKeyAccidentals(keyName)` → "F# C# G#"
+- `GetKeyPitchClasses(keyName)` → "1 2 4 6 8 9 E"
+- `GetKeySignatureInfo(keyName)` → full JSON (mode, root, accidentals, notes)
+- `GetKeySignatures()` → all 15 signatures with related keys
+- `GetKeysByAccidentalCount(count=N)` → keys with N accidentals
+- `GetKeysByAccidentalKind(accidentalKind="Sharp"|"Flat")`
+- `GetKeyByRootAndMode(rootNote="A", mode="Major")` → "Key of A"
+- `GetParallelKey(keyName)`, `GetRelativeKey(keyName)`
+- `GetCircleOfFifthsPosition(keyName)` → integer position
+- `IsNoteInKey(keyName, noteName)` → bool
+- `CompareKeys(keyName1, keyName2)` → common notes + distance
 
-Workaround: when these fail, fall back to static data from grammars/courses/FAQ, OR try alternate tools (e.g., use `GaScaleByName` to get scale notes, then construct chords from intervals manually).
+**Modes**:
+- `GetModeInfo(modeName="Dorian")` → intervals, notes, description
+- `GetModalSetClasses(cardinality=N)` → Forte-ordered set classes
+
+**Chords (DSL closures, fast in-process)**:
+- `GaParseChord(symbol="F#m7b5")` → JSON {root, quality, components, bass}
+- `GaChordIntervals(symbol="Cmaj9#11")` → "P1, M3, P5, M9..."
+- `GaChordToSet(symbol="Dm7")` → pitch set + ICV + Forte + prime form + **OPTIC-K layer**
+- `GaDiatonicChords(root="C", scale="major")` → "C, Dm, Em, F, G, Am, Bdim"
+- `GaTransposeChord(symbol, semitones=7)` → transposed symbol
+- `GaCommonTones(chord1, chord2)` → shared notes with roles
+- `GaChordSubstitutions(symbol="G7", key="C", scale="major")` → ranked subs + tritone sub
+- `GaRelativeKey(root="C", scale="major")` → "A minor"
+- `GaPolychord(chord1="C7", chord2="D")` → merged set with Forte number
+- `GaIcvNeighbors(symbol, maxDistance=1)` → nearby ICV chords
+- `GaSetClassSubs(symbol="Dm7")` → T/I equivalents (all m7 chords)
+- `GaEasierVoicings(chord="Bbmaj9")` → alternatives + substitution hints
+
+**Progressions (in-process)**:
+- `GaAnalyzeProgression(chords="Cmaj7 Am7 Dm7 G7")` → "Key: C major (4/4), I vi ii V"
+
+**Set Theory (atonal)**:
+- `GetSetClasses(cardinality=4)` → all 224 Forte set classes
+- `GetCardinalities()` → cardinality labels
+
+**Instruments**:
+- `GetAvailableInstruments()` → "Guitar"
+- `GetAvailableTunings(instrument="Guitar")` → "Standard, Drop D"
+- `GetTuning(instrument="Guitar", tuningName="Standard")` → "E2,A2,D3,G3,B3,E4"
+
+**DSL & Search**:
+- `GaListClosures()` → 30+ closures (domain.*, agent.*, tab.*, pipeline.*, io.*)
+- `TranspileGaScript(source)` → F# ga{} expression
+- `GaSearchTabs(query)` → web search for tabs
+
+#### Tools Requiring GA API (port 7001)
+
+Start with: `cd C:/Users/spare/source/repos/ga && dotnet run --project Apps/ga-server/GaApi`
+
+These wrap HTTP calls to `https://localhost:7001/api/*`:
+- `GetDiatonicChords(key="C major")` — `/api/contextual-chords/keys/{key}`
+- `GetBorrowedChords(key="C major")` — `/api/contextual-chords/keys/{key}/borrowed`
+- `GetScaleChords(scaleName, rootName)` — `/api/contextual-chords/scales/*`
+- `GetModeChords(modeName, rootName)` — `/api/contextual-chords/modes/*`
+- `GetChordVoicings(chord, maxDifficulty?, minFret?, maxFret?, noOpenStrings?)` — voicing search
+- `AskChatbot(question)` — chatbot endpoint
+
+Other known-failing (possibly FSI/API dependencies):
+- `GaKeyFromProgression(chords=array)`, `GaProgressionCompletion`, `GaArpeggioSuggestions` (GuitaristProblemTools — need investigation)
+- `EvalGaScript`, `GaInvokeClosure(name, inputsJson)`, `GetClosureSchema(name)`, `ListGaClosures` (FSI session)
+- `GetNeighboringKeys` (serialization issue)
+
+**Binary scale IDs confirmed match `grammars/music-scale-catalog.ebnf` design.** `GaChordToSet` output explicitly references "OPTIC-K layer: STRUCTURE (dims 6–29, w=0.45)" matching our architecture contract.
+
+### Parameter Name Quick Reference (gotchas)
+
+| Tool | Parameter | NOT |
+|------|-----------|-----|
+| `GaParseChord`, `GaChordIntervals`, `GaChordToSet`, `GaSetClassSubs` | `symbol` | `chord` |
+| `GaEasierVoicings` | `chord` | `symbol` |
+| `GaPolychord` | `chord1`, `chord2` | `upper`, `lower` |
+| `GaCommonTones` | `chord1`, `chord2` | `symbol1`, `symbol2` |
+| `GetKeyNotes`, `GetKeyAccidentals`, etc | `keyName="Key of A"` | `"A"` or `root` |
+| `GetKeyByRootAndMode` | `rootNote`, `mode` | `root`, `keyMode` |
+| `GetKeysByAccidentalKind` | `accidentalKind` | `kind` |
+| `CompareKeys` | `keyName1`, `keyName2` | `key1`, `key2` |
+| `IsNoteInKey` | `keyName`, `noteName` | `note` |
+| `GetDiatonicChords` (HTTP) | `key="C major"` | `"Key of C"` |
+| `GetScaleChords`, `GetModeChords` (HTTP) | `scaleName/modeName` + `rootName` | `root` |
+| `GetTuning` | `instrument` + `tuningName` | single arg |
+| `GaDiatonicChords` (DSL) | `root="C"`, `scale="major"` | `"C major"` |
+| `GaKeyFromProgression`, `GaProgressionCompletion`, `GaArpeggioSuggestions` | `chords=["Am","F","C","G"]` (array) | space-separated string |
 
 **If MCP server is NOT available** (fallback mode per directive DIR-2026-03-21-002):
 - Answer from Demerzel governance artifacts: grammars in `grammars/music-*.ebnf`, FAQ in `state/streeling/faq/music-theory-faq.md`, courses in `state/streeling/courses/*/en/*.md`
