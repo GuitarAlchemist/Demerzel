@@ -1,6 +1,6 @@
 ---
 name: ga-ask
-description: Ask a music theory or guitar question to the Guitar Alchemist AI agent. Routes to the appropriate tool bundle (theory, technique, tab, composer, ga-musician, teacher, coach) and returns a grounded answer. Use when the user asks "ask GA X", "what does the guitar agent say about X", or any music theory/guitar question directed at the GA ecosystem.
+description: Ask a music theory or guitar question to the Guitar Alchemist AI agent. Routes to the appropriate tool bundle (theory, technique, tab, composer, ga-musician, teacher, coach) and returns a grounded answer. Use when the user asks "ask GA X", "what does the guitar agent say about X", or any music theory/guitar question directed at the GA ecosystem. Supports demo mode: invoke with "demo" or "examples" as the arg to see 3 curated example Q&As covering beginner theory, intermediate improvisation, and technique/injury scenarios.
 ---
 
 # GA Ask — Query the Guitar Alchemist AI Agent
@@ -179,6 +179,100 @@ From `tests/behavioral/ga-orchestrator-cases.md`, these are the scenarios to han
 - **Building new GA features** → use `ga-ralph` skill
 - **Modifying GA code** → go to the ga repo directly
 - **Governance audits** → use `demerzel-audit` skill
+
+## Demo Mode
+
+When the user invokes the skill with "demo", "examples", "show me", or no specific question, run the 3 curated demo questions below. These showcase single-bundle, multi-bundle, and injury-safety routing.
+
+Present each demo as a separate mini-response, formatted exactly like a real answer.
+
+### Demo 1: Beginner Theory (Single Bundle — theory-tools)
+
+**Question**: *"What notes are in a Dm7 chord?"*
+
+**Answer**: Dm7 contains **D, F, A, C**.
+
+**Reasoning**:
+- D (root) + F (minor 3rd, 3 semitones) = minor triad foundation
+- + A (perfect 5th, 7 semitones) = complete minor triad
+- + C (minor 7th, 10 semitones) = Dm7 (the "jazz" minor seventh)
+
+This is the **ii chord in C major** — everywhere in jazz as the start of ii-V-I (Dm7 → G7 → Cmaj7).
+
+**Guitar positions** (standard tuning):
+- Open: `x-x-0-2-1-1`
+- Barre at 5th fret: `5-5-3-5-3-5`
+- Rootless jazz voicing (A-D-G-B strings, 5th fret area): `5-3-5-6`
+
+**Tools consulted**:
+- `grammars/music-theory.ebnf` § chord_construction (quality: minor_7)
+- `state/streeling/courses/music/en/mus-005-jazz-harmony.md` § 2 (ii-V-I Universe)
+
+**Confidence**: T(0.98) — fundamental music theory
+
+---
+
+### Demo 2: Intermediate Improvisation (Multi-Bundle — theory + composer)
+
+**Question**: *"What scale should I use to solo over Cm7-F7-Bbmaj7?"*
+
+**Answer**: This is a **ii-V-I in Bb major**. Two approaches:
+
+**Option A (simple)**: Use **Bb major** throughout — always works.
+
+**Option B (more color)**:
+| Chord | Scale | Characteristic |
+|-------|-------|----------------|
+| Cm7 | C Dorian | Natural 6th (A) |
+| F7 | F Mixolydian | b7 dominant sound |
+| Bbmaj7 | Bb Lydian | #4 (E) jazz brightness |
+
+**Advanced tension**: Over F7, try **F altered** (7th mode of Gb melodic minor) for maximum pre-resolution pull.
+
+**Practice tip** (from gaa-003 § 4): Target the **3rd of each chord on beat 1** (Eb→A→D). Ear hears the changes move.
+
+**Tools consulted**:
+- `grammars/music-theory.ebnf` § chord_scale_pair, melodic_minor_mode
+- `state/streeling/courses/music/en/mus-005-jazz-harmony.md` § 6 (Chord-Scale Theory)
+- `state/streeling/courses/guitar-alchemist-academy/en/gaa-003-improvisation-foundations.md` § 4 (Chord-Tone Targeting)
+
+**Confidence**: T(0.92) — standard jazz pedagogy
+
+---
+
+### Demo 3: Technique/Injury Prevention (Single Bundle — technique-tools, Article 1 priority)
+
+**Question**: *"My pinky finger gets tired after 10 minutes of barre chords. What should I do?"*
+
+**Answer**: **Stop and rest for now.** Pinky fatigue after 10 minutes of barres is common and fixable, but pushing through risks tendon strain.
+
+**Immediate checks**:
+1. **Thumb position** — behind the neck (opposite middle finger), NOT wrapped over top
+2. **Wrist angle** — close to straight, not bent
+3. **Grip pressure** — barely enough for clean notes, not a death grip
+
+**Structural fixes**:
+| Issue | Fix |
+|-------|-----|
+| Pinky overworking | Let index do the full barre; pinky presses only one string |
+| Endurance gap | Build with 2-min on / 2-min rest cycles, 5 rounds |
+| High action | Consider lowering string height — easier on fretting hand |
+
+**Red flags — see a hand therapist if**: persistent pain after rest, numbness/tingling, swelling, night pain, weakness lifting objects.
+
+**Tools consulted**:
+- `tests/behavioral/technique-agent-cases.md` § TC-TA-02 (injury prevention), TC-TA-03 (stretch analysis)
+- `grammars/music-guitar-technique.ebnf` § technique
+
+**Confidence**: T(0.85) — standard guitar pedagogy. Not medical advice.
+
+---
+
+### After the 3 demos
+
+Finish with:
+
+> Those 3 examples show how ga-ask routes to different tool bundles. Try asking your own question — any music theory, guitar technique, tab parsing, composition, synthesis, pedagogy, or practice topic. I'll cite sources and compute from first principles when the MCP server is offline.
 
 ## See Also
 
