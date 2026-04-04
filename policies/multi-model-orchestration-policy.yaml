@@ -1,6 +1,6 @@
 name: multi-model-orchestration-policy
-version: "1.0.0"
-effective_date: "2026-03-17"
+version: "1.1.0"
+effective_date: "2026-04-04"
 description: >-
   Governs when and how Demerzel/Seldon leverage external AI models
   (ChatGPT, NotebookLM, Gemini, Codex, Jules) for cross-model validation,
@@ -22,6 +22,43 @@ applies_to:
   - seldon
 
 model_registry:
+  local-light:
+    role: zero-cost-ack-and-classify
+    provider: ollama
+    access: HTTP (localhost:11434)
+    model: gemma3:4b
+    strengths:
+      - Schema validation and linting
+      - Short classification (intent, persona, node type)
+      - Acknowledgments and routing decisions
+      - ~150 tok/s on RTX 5080 16GB
+    when_to_use: Default for simple, stateless queries with no tool calls and no constitutional content
+    mcp_tool: null
+
+  local-medium:
+    role: zero-cost-logic-and-reasoning
+    provider: ollama
+    access: HTTP (localhost:11434)
+    model: qwen3:14b
+    strengths:
+      - Hexavalent/tetravalent logic derivations
+      - Policy compliance checks
+      - Belief-state updates
+      - ~60 tok/s on RTX 5080 16GB, strong math/reasoning
+    when_to_use: Logical inference, belief updates, policy checks — anything that does not touch constitutional articles directly
+
+  local-heavy:
+    role: zero-cost-multi-step-reasoning
+    provider: ollama
+    access: HTTP (localhost:11434)
+    model: gpt-oss:20b
+    strengths:
+      - Multi-artifact validation
+      - Long-context analysis (up to 60K)
+      - Tool-calling agent pipelines
+      - ~42 tok/s on RTX 5080 16GB
+    when_to_use: Deep local analysis where a cloud call would be expensive but the task is not constitutionally sensitive
+
   claude:
     role: primary-reasoning
     provider: anthropic
@@ -31,7 +68,7 @@ model_registry:
       - Long-context analysis
       - Code generation and review
       - Multi-step planning
-    when_to_use: Default for all governance, planning, and implementation tasks
+    when_to_use: Constitutional decisions, amendments, novel/precedent-setting reasoning, tool-calling agents with Anthropic-schema tools, any query where local tiers lack confidence
     mcp_tool: null  # native
 
   chatgpt:
@@ -114,6 +151,21 @@ model_registry:
     integration: GitHub Issues assignment
 
 orchestration_rules:
+  - name: local-first-routing
+    description: |
+      Non-constitutional queries attempt local tiers before any cloud call.
+      This is the default for demerzel-bot and any chat-path agent. Routing
+      is task-complexity driven (see src/llm-router.js in demerzel-bot):
+        * tools required → cloud (Claude)
+        * constitutional keywords → cloud (Claude)
+        * long context / history → local-heavy
+        * logic/math keywords → local-medium
+        * default → local-light
+      Zero tokens are charged for any local-tier call.
+    primary_cascade: [local-light, local-medium, local-heavy]
+    escalation: claude
+    condition: useTools == true OR constitutional_content_detected OR local_unavailable
+
   - name: governance-decisions
     description: Constitutional and policy decisions always start with Claude
     primary: claude
