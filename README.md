@@ -92,13 +92,52 @@ Full history: [`state/resilience/history.json`](state/resilience/history.json) |
 | Courses | 22 | `state/streeling/courses/**/en/` |
 | IxQL pipelines | 20 | `pipelines/*.ixql` |
 
+## Governance Consumption Map
+
+### Consumption Levels
+
+Not all governance artifacts are equally active. Each artifact in a consumer repo has one of three consumption levels:
+
+| Level | Meaning | Example |
+|-------|---------|---------|
+| **Defined** | Artifact exists in the submodule but is not referenced by runtime code. Available for human reference or future integration. | A policy YAML present in `governance/demerzel/policies/` but not parsed by any consumer code. |
+| **Loaded** | Artifact is read at startup or runtime and injected into agent context (system prompts, config, UI display). Changes to the artifact propagate on next load. | `demerzel-bot` reads `constitutions/default.constitution.md` at startup and injects it as a system prompt. |
+| **Enforced** | Artifact actively blocks, validates, or shapes runtime behavior. Violations are detected and either prevented or flagged. | `ix-governance` parses the constitution and evaluates actions against its articles before execution. |
+
+Most artifacts today are **Defined** (present via submodule) or **Loaded** (read into context). Full **Enforcement** is the aspiration but requires runtime validation code in each consumer.
+
+### Per-Repo Consumption
+
+| Consumer | Integration | Constitutions | Personas | Policies | Schemas | Grammars |
+|----------|-------------|:---:|:---:|:---:|:---:|:---:|
+| **ga** | Submodule at `governance/demerzel/` | Defined | Defined | Defined | Loaded | Loaded |
+| **tars** | Submodule at `governance/demerzel/` | Defined | Defined | Defined | Loaded | Loaded |
+| **ix** | Submodule at `governance/demerzel/` | Loaded+Enforced | Loaded | Loaded | Loaded | Defined |
+| **demerzel-bot** | Sibling path `../Demerzel/` | Loaded | Defined | Loaded | Defined | Loaded |
+
+### Specific Artifact References
+
+**ga** — `Apps/demerzel-agent/src/services/governance.py` reads governance state. `ReactComponents/.../AgentPresence.ts` displays governance status in Prime Radiant.
+
+**tars** — `v2/src/Tars.Core/GovernanceGeneration.fs` generates code from governance schemas. `v2/grammars/governance/` contains EBNF grammars derived from Demerzel specs (belief-snapshot, compliance-report, governance-directive, pdca-state).
+
+**ix** — `crates/ix-governance/src/constitution.rs` parses and evaluates the 11-article constitution (the closest to **Enforced** in the portfolio). `crates/ix-governance/src/persona.rs` loads persona definitions. `crates/ix-agent/` exposes 3 governance MCP tools. `crates/ix-demo/` includes a governance explorer tab.
+
+**demerzel-bot** — Reads 3 constitutions (`default`, `asimov`, `demerzel-mandate`), 1 policy (`streeling-policy`), and 1 grammar (`gov-bs-generators`) at startup. Injects them as system prompts for Discord interactions. Uses `policies/multi-model-orchestration-policy.yaml` for LLM routing configuration.
+
+### Enforcement Gaps
+
+The honest assessment: most governance artifacts are **Defined** or **Loaded**, not **Enforced**. The portfolio's enforcement story is strongest in ix (constitution parsing + persona loading) and weakest in ga/tars (submodule present, artifacts available, but no runtime code blocks actions based on governance state). Closing this gap requires building validation hooks in each consumer — not more governance artifacts in Demerzel.
+
 ## Usage
 
 Artifacts in this repo are consumed by agents via:
 
-1. Direct file reference in `.claude/` agent definitions
-2. MCP tool that loads governance artifacts at runtime
-3. Claude Code hooks that enforce constitutional constraints
+1. **Submodule** — ga, tars, ix include `governance/demerzel/` as a git submodule
+2. **Sibling path** — demerzel-bot reads `../Demerzel/` directly at runtime
+3. **MCP tools** — ix-agent exposes 3 governance tools via JSON-RPC
+4. **Claude Code skills** — 50 skills reference governance artifacts for agent operations
+5. **Claude Code hooks** — enforce constitutional constraints at tool-call time
 
 ## Contributing
 
