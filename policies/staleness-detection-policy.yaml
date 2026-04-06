@@ -1,7 +1,7 @@
 name: staleness-detection-policy
-version: "1.1.0"
-effective_date: "2026-03-23"
-description: Detect stale, unprocessed, or non-iterated state artifacts and prioritize their refresh. Demerzel should never have blind spots about her own staleness.
+version: "1.2.0"
+effective_date: "2026-04-05"
+description: Detect stale, unprocessed, or non-iterated state artifacts and prioritize their refresh. Now includes knowledge-topology lint for Streeling wiki health. Demerzel should never have blind spots about her own staleness.
 
 constitutional_basis:
   - Article 7 (Auditability) — stale state reduces auditability
@@ -91,6 +91,68 @@ artifact_categories:
     refresh_action: "Run research cycles to update grammar weights"
     priority: low
     rationale: "Per grammar-evolution-policy: >30 days = stale grammar"
+
+  - category: source_ingest_queue
+    path: "sources/index.md"
+    max_staleness_days: 7
+    refresh_action: "Run /demerzel-harvest to process pending sources"
+    priority: medium
+    rationale: "Pending sources older than 7 days mean knowledge is sitting uncompiled."
+
+knowledge_topology_lint:
+  description: "Structural health checks for the Streeling knowledge wiki. Inspired by Karpathy's LLM Wiki lint operation — find contradictions, orphans, missing cross-refs, and gaps."
+  trigger: "Every /demerzel audit level 2+ and /demerzel-harvest cycle"
+  constitutional_basis: "Article 8 (Observability) — a knowledge base with invisible gaps misleads"
+
+  checks:
+    - name: orphan_departments
+      description: "Department exists but has zero courses and zero research cycles"
+      detection: "departments/{dept}.department.json exists AND courses/{dept}/ is empty AND research-cycles/ has no entries for {dept}"
+      severity: warning
+      action: "Schedule /seldon research-cycle for the department"
+      rationale: "A department with no output is a label, not knowledge."
+
+    - name: orphan_courses
+      description: "Course exists but is not referenced by any department index or cross-linked by any other course"
+      detection: "courses/{dept}/{course}/en/*.md exists but no inbound references from other courses or department overview"
+      severity: info
+      action: "Add cross-references or merge into parent department overview"
+      rationale: "Unlinked knowledge is unfindable knowledge."
+
+    - name: missing_concept_pages
+      description: "A concept is mentioned in 3+ courses but has no dedicated overview page"
+      detection: "grep across courses/ for repeated concept names that lack a {concept}.md in the department"
+      severity: info
+      action: "Create concept overview page synthesizing mentions"
+      rationale: "Frequently referenced concepts deserve compiled explanations."
+
+    - name: contradiction_between_sources
+      description: "Two sources or course pages make conflicting claims about the same topic"
+      detection: "Cross-reference claims tagged with hexavalent C (Contradictory) in beliefs or course material"
+      severity: warning
+      action: "Flag for human review — resolve or document as open question"
+      rationale: "Contradictions are valuable signals, not bugs — but they must be visible."
+
+    - name: stale_department_coverage
+      description: "Department weights show zero coverage growth in 30+ days"
+      detection: "weights.json last_modified > 30 days AND coverage_ratio unchanged"
+      severity: info
+      action: "Run /seldon-auto-research targeting this department"
+      rationale: "Knowledge that stops growing starts decaying."
+
+    - name: cross_reference_density
+      description: "Wiki pages should have inbound links — pages with zero inbound links are orphans"
+      detection: "For each course .md file, count references to it from other .md files. Zero = orphan."
+      severity: info
+      action: "Add links from related pages or merge into a parent page"
+      metric: "cross_ref_density = total_inbound_links / total_pages (target > 2.0)"
+
+    - name: source_to_page_ratio
+      description: "Each ingested source should touch 3+ Streeling pages on average"
+      detection: "sources/index.md pages_touched column; average < 3 = shallow ingestion"
+      severity: warning
+      action: "Re-ingest sources with deeper cross-referencing"
+      rationale: "Shallow ingestion produces summaries, not compiled knowledge."
 
 detection_process:
   trigger: "Every driver RECON phase + daily harvest + on-demand via /demerzel audit"

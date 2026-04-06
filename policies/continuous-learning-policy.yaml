@@ -1,7 +1,7 @@
 name: continuous-learning-policy
-version: "1.0.0"
-effective_date: "2026-03-22"
-description: Automatic pattern extraction from sessions via hooks. Observations become instincts, instincts become patterns, patterns become policies. The governance framework learns from itself.
+version: "1.1.0"
+effective_date: "2026-04-05"
+description: Automatic pattern extraction from sessions via hooks. Observations become instincts, instincts become patterns, patterns become policies. Now includes compilation stage — patterns compile into persistent Streeling wiki pages, not just logs. The governance framework learns from itself AND remembers what it learned.
 
 constitutional_basis:
   - Article 7 (Auditability) — every learning is logged with evidence
@@ -112,6 +112,48 @@ hook_integration:
   env_var: "DEMERZEL_HOOK_PROFILE"
   default: "standard"
 
+  compilation:
+    description: "Compile validated patterns and session insights into persistent Streeling wiki pages — don't just log, compile"
+    trigger: "After /demerzel-compound cycle OR when a pattern reaches confirmed_pattern level"
+    rationale: "Inspired by Karpathy's LLM Wiki: compile knowledge once, query against compiled form. Session insights that stay in logs are re-derived on every query. Compiled insights are answered from the wiki."
+
+    workflow:
+      - step: "identify_department"
+        action: "Map the pattern/insight to the most relevant Streeling department(s)"
+        example: "A debugging pattern about async race conditions → computer-science department"
+
+      - step: "find_or_create_page"
+        action: "Check if a relevant course page or concept page already exists in that department"
+        if_exists: "Update the page — add the new insight as a section, cross-reference the evidence"
+        if_missing: "Create a new page with the insight as the seed content"
+
+      - step: "cross_reference"
+        action: "Link the new/updated page FROM related pages in other departments"
+        minimum: "At least 2 inbound links from existing pages"
+
+      - step: "update_weights"
+        action: "Bump the department's coverage_ratio and last_compiled timestamp"
+
+      - step: "update_source_index"
+        action: "If the insight came from a source, update sources/index.md pages_touched count"
+
+    what_to_compile:
+      - "Confirmed patterns (confidence > 0.6) → concept pages"
+      - "Anti-patterns (things that broke) → 'pitfalls' sections in relevant course pages"
+      - "Tool chains that work → 'recipes' pages in the relevant department"
+      - "Cross-repo learnings → synthesis pages linking multiple departments"
+      - "Session brainstorm conclusions → department overview updates"
+
+    what_NOT_to_compile:
+      - "Single-occurrence observations (not enough evidence)"
+      - "User-specific preferences (those stay in memory, not the wiki)"
+      - "Ephemeral task details (current session state, not persistent knowledge)"
+
+    quality_gate:
+      - "Compiled page must cite at least 1 source (session, pattern, or external reference)"
+      - "Compiled page must be reachable via at least 2 inbound links"
+      - "Compiled page must not duplicate an existing page (search first)"
+
 connection_to_existing_systems:
   patterns_catalog: "Extracted patterns go to state/patterns/"
   grammar_evolution: "Grammar gap patterns trigger production proposals"
@@ -119,6 +161,8 @@ connection_to_existing_systems:
   metabuild: "Recurring skill-candidate patterns feed /demerzel metabuild"
   staleness_detection: "Observation freshness tracked alongside other state"
   blind_spot_detection: "Unobserved areas (tools never used, departments never researched) are blind spots"
+  source_ingest: "Session insights that become sources are tracked in sources/index.md (see INGEST_PROTOCOL.md)"
+  knowledge_topology: "Compiled pages are subject to knowledge-topology lint in staleness-detection-policy v1.2+"
 
 metrics:
   - name: "observations_per_session"
