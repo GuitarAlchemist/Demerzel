@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/session-event",
+  "title": "Session Event",
+  "description": "A single event in a session log. Events are append-only JSONL records that form the coordination substrate between ix, tars, and Demerzel. See logic/hex-merge.md for how ObservationAdded events combine across sources. See the implementing Rust enum in ix/crates/ix-agent-core/src/event.rs.",
+  "oneOf": [
+    { "$ref": "#/$defs/action_proposed" },
+    { "$ref": "#/$defs/action_blocked" },
+    { "$ref": "#/$defs/action_replaced" },
+    { "$ref": "#/$defs/metadata_mounted" },
+    { "$ref": "#/$defs/action_completed" },
+    { "$ref": "#/$defs/action_failed" },
+    { "$ref": "#/$defs/belief_changed" },
+    { "$ref": "#/$defs/observation_added" }
+  ],
+  "$defs": {
+    "hexavalent_variant": {
+      "type": "string",
+      "enum": ["T", "P", "U", "D", "F", "C"],
+      "description": "Hexavalent truth value: True / Probable / Unknown / Doubtful / False / Contradictory. See logic/hexavalent-logic.md."
+    },
+    "agent_action": {
+      "description": "A structured agent action proposal. Concrete variants defined by ix-agent-core::AgentAction.",
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["invoke_tool", "emit_observation", "request_approval", "return"] }
+      },
+      "additionalProperties": true
+    },
+    "block_code": {
+      "type": "string",
+      "enum": [
+        "loop_detected",
+        "budget_exceeded",
+        "approval_required",
+        "policy_denied",
+        "blast_radius_too_large",
+        "governance_violation"
+      ],
+      "description": "Machine-readable category for middleware blocks. Implementing enum in ix-agent-core::BlockCode."
+    },
+    "action_proposed": {
+      "type": "object",
+      "required": ["kind", "ordinal", "action"],
+      "properties": {
+        "kind": { "const": "action_proposed" },
+        "ordinal": { "type": "integer", "minimum": 0, "description": "Monotone position in the session log." },
+        "action": { "$ref": "#/$defs/agent_action" }
+      },
+      "additionalProperties": false
+    },
+    "action_blocked": {
+      "type": "object",
+      "required": ["kind", "ordinal", "code", "reason", "emitted_by"],
+      "properties": {
+        "kind": { "const": "action_blocked" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "code": { "$ref": "#/$defs/block_code" },
+        "reason": { "type": "string" },
+        "emitted_by": { "type": "string", "description": "Middleware name that emitted the block." }
+      },
+      "additionalProperties": false
+    },
+    "action_replaced": {
+      "type": "object",
+      "required": ["kind", "ordinal", "original", "replacement", "emitted_by"],
+      "properties": {
+        "kind": { "const": "action_replaced" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "original": { "$ref": "#/$defs/agent_action" },
+        "replacement": { "$ref": "#/$defs/agent_action" },
+        "emitted_by": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "metadata_mounted": {
+      "type": "object",
+      "required": ["kind", "ordinal", "path", "value", "emitted_by"],
+      "properties": {
+        "kind": { "const": "metadata_mounted" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "path": { "type": "string", "description": "VFS-style metadata path, e.g. 'approval/verdict' or 'diagnosis/health_score'." },
+        "value": { "description": "Arbitrary JSON payload." },
+        "emitted_by": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "action_completed": {
+      "type": "object",
+      "required": ["kind", "ordinal", "value"],
+      "properties": {
+        "kind": { "const": "action_completed" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "value": { "description": "Handler return value." }
+      },
+      "additionalProperties": false
+    },
+    "action_failed": {
+      "type": "object",
+      "required": ["kind", "ordinal", "error"],
+      "properties": {
+        "kind": { "const": "action_failed" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "error": { "description": "Typed error shape; see ix-agent-core::ActionError." }
+      },
+      "additionalProperties": false
+    },
+    "belief_changed": {
+      "type": "object",
+      "required": ["kind", "ordinal", "proposition", "new", "evidence"],
+      "properties": {
+        "kind": { "const": "belief_changed" },
+        "ordinal": { "type": "integer", "minimum": 0 },
+        "proposition": { "type": "string", "description": "Identifier for the proposition whose truth value changed." },
+        "old": {
+          "oneOf": [
+            { "$ref": "#/$defs/hexavalent_variant" },
+            { "type": "null" }
+          ],
+          "description": "Previous hexavalent value, or null if this is the first observation."
+        },
+        "new": { "$ref": "#/$defs/hexavalent_variant" },
+        "evidence": { "description": "Arbitrary JSON evidence payload." }
+      },
+      "additionalProperties": false
+    },
+    "observation_added": {
+      "type": "object",
+      "description": "A hexavalent observation contributed by one source about a specific claim. Observations form a G-Set CRDT; see logic/hex-merge.md for the merge rules and Belnap-extended contradiction table.",
+      "required": [
+        "kind",
+        "ordinal",
+        "source",
+        "diagnosis_id",
+        "round",
+        "claim_key",
+        "variant",
+        "weight"
+      ],
+      "properties": {
+        "kind": { "const": "observation_added" },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Monotone position in the session log. Serves as the final disambiguation field for G-Set dedup."
+        },
+        "source": {
+          "type": "string",
+          "description": "Emitting agent identifier, e.g. 'tars', 'ix', 'demerzel-merge'.",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "diagnosis_id": {
+          "type": "string",
+          "description": "Content hash of the originating diagnosis. For tars fragments: sha256(fragment_jsonl). For ix traces: sha256 of the relevant trace span.",
+          "pattern": "^[a-f0-9]{64}$|^[a-zA-Z0-9_-]{1,128}$"
+        },
+        "round": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Remediation round number. Used by the staleness budget (see logic/hex-merge.md §Staleness Policy)."
+        },
+        "claim_key": {
+          "type": "string",
+          "description": "The claim this observation takes a position on. Grammar: action_key '::' aspect where action_key = tool_name[':' target_hint] and aspect ∈ {valuable, safe, reversible, timely, reproducible, meta_conflict}. See logic/hex-merge.md §Claim Key Grammar.",
+          "pattern": "^[a-z][a-zA-Z0-9_:]*::[a-z_]+$"
+        },
+        "variant": { "$ref": "#/$defs/hexavalent_variant" },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Confidence weight in (0, 1]. Observations with weight 0 are meaningless and forbidden."
+        },
+        "evidence": {
+          "type": "string",
+          "description": "Optional short human-readable justification. Not used by the merge function."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
