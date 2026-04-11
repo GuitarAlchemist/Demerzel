@@ -95,6 +95,7 @@ aspect      := "valuable"      // will this action advance the goal?
              | "reversible"    // can we roll back if it fails?
              | "timely"        // does it respect current deadlines?
              | "reproducible"  // will it produce the same result next time?
+             | "reliable"      // is this SOURCE itself trustworthy? (harness adapters)
              | "meta_conflict" // reserved for derived cross-aspect conflicts
 ```
 

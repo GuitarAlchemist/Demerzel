@@ -162,7 +162,7 @@
         },
         "claim_key": {
           "type": "string",
-          "description": "The claim this observation takes a position on. Grammar: action_key '::' aspect where action_key = tool_name[':' target_hint] and aspect ∈ {valuable, safe, reversible, timely, reproducible, meta_conflict}. See logic/hex-merge.md §Claim Key Grammar.",
+          "description": "The claim this observation takes a position on. Grammar: action_key '::' aspect where action_key = tool_name[':' target_hint] and aspect ∈ {valuable, safe, reversible, timely, reproducible, reliable, meta_conflict}. See logic/hex-merge.md §Claim Key Grammar.",
           "pattern": "^[a-z][a-zA-Z0-9_:]*::[a-z_]+$"
         },
         "variant": { "$ref": "#/$defs/hexavalent_variant" },
