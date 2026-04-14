@@ -3,13 +3,51 @@
 # Format: one dotted path per line. Lines beginning with `#` are comments.
 # Paths are matched against the `path` field produced by `ix-registry-check`.
 #
-# Example — explicitly allow retiring a replaced tool:
-#
-#   repos.ix.tools.core-math.ix_linear_regression
-#
 # When the `registry-check.yml` workflow finds a breaking change whose path
 # is in this file, it is reported as ALLOWED and CI still passes. Breaking
 # changes NOT listed here cause CI to fail.
 #
-# See `crates/ix-registry-check/` in the ix repo for the checker source
-# and the full list of paths it can emit.
+# See `crates/ix-registry-check/` in the ix repo for the checker source.
+
+# ───────────────────────────────────────────────────────────────
+# 2.0.0 restructure — deliberate retirements
+# ───────────────────────────────────────────────────────────────
+#
+# Guitar Alchemist (ga) — 2.0.0 re-categorisation. The old coarse
+# categories {fretboard, music-theory, trace} were split into finer-
+# grained {atonal, chord-analysis, contextual-chords, guitarist,
+# instruments, keys, modes, scales, search, utility}. The old chat
+# and DSL tools were replaced by AskChatbot, EvalGaScript,
+# GaInvokeClosure, and the closure-registry surface.
+
+repos.ga.tools.fretboard
+repos.ga.tools.music-theory
+repos.ga.tools.trace
+repos.ga.tools.chat.ga_chat
+repos.ga.tools.dsl.ga_dsl
+
+# ix — linear regression was consolidated into the `ix_supervised`
+# umbrella tool in 2.0.0; the standalone `ix_linear_regression` MCP
+# tool still exists in crates/ix-agent but is no longer exposed as
+# its own registry entry. The underlying crate (ix-supervised::
+# linear_regression::LinearRegression) is unchanged.
+
+repos.ix.tools.core-math.ix_linear_regression
+
+# TARS — 2.0.0 grammar + metacognition + workflow restructure. The
+# old `tars_*`-prefixed tools were dropped in favour of unprefixed
+# replacements inside explicit categories:
+#   tars_grammar_evolve       → grammar.grammar_evolve
+#   tars_grammar_weight       → grammar.grammar_weights
+#   tars_belief_update        → metacognition.tars_memory_op
+#   tars_reflect              → metacognition.tars_memory_op (fold-in)
+#   tars_wot_execute          → workflow.tars_{compile,execute,validate,complete}_plan
+# The `promotion` category was absorbed into the new `patterns`
+# category.
+
+repos.tars.tools.promotion
+repos.tars.tools.grammar.tars_grammar_evolve
+repos.tars.tools.grammar.tars_grammar_weight
+repos.tars.tools.metacognition.tars_belief_update
+repos.tars.tools.metacognition.tars_reflect
+repos.tars.tools.workflow.tars_wot_execute
