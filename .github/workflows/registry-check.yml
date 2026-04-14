@@ -1,0 +1,103 @@
+name: registry-check
+
+# R3 — Buf-style breaking-change detector for capability-registry.json.
+#
+# When a PR touches `schemas/capability-registry.json`, this job builds
+# `ix-registry-check` from the ix repo and compares the PR revision of
+# the registry against the base branch. Breaking changes (removed tools,
+# renamed fields, tightened enums, changed required args, etc.) fail CI
+# unless explicitly allowlisted in `schemas/capability-registry.allowlist`.
+#
+# The checker lives at https://github.com/GuitarAlchemist/ix — we clone
+# it at build time rather than publishing a release binary because the
+# checker's contract is small, Rust builds are cached between runs, and
+# release-channel overhead is not yet justified.
+
+on:
+  pull_request:
+    paths:
+      - 'schemas/capability-registry.json'
+      - 'schemas/capability-registry.allowlist'
+      - '.github/workflows/registry-check.yml'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout PR (demerzel)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve base and head revisions
+        id: revs
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          if [ -z "$BASE" ]; then BASE="${{ github.event.before }}"; fi
+          if [ -z "$HEAD" ]; then HEAD="${{ github.sha }}"; fi
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "head=$HEAD" >> "$GITHUB_OUTPUT"
+
+      - name: Dump old registry (base)
+        run: |
+          mkdir -p /tmp/registry
+          git show "${{ steps.revs.outputs.base }}":schemas/capability-registry.json \
+            > /tmp/registry/old.json 2>/dev/null \
+            || echo "{}" > /tmp/registry/old.json
+          git show "${{ steps.revs.outputs.head }}":schemas/capability-registry.json \
+            > /tmp/registry/new.json
+
+      - name: Checkout ix-registry-check source
+        uses: actions/checkout@v4
+        with:
+          repository: GuitarAlchemist/ix
+          ref: main
+          path: ix-src
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ix-src/target
+          key: cargo-ix-registry-check-${{ runner.os }}-${{ hashFiles('ix-src/Cargo.lock') }}
+          restore-keys: |
+            cargo-ix-registry-check-${{ runner.os }}-
+
+      - name: Build ix-registry-check
+        working-directory: ix-src
+        run: cargo build -p ix-registry-check --release --bin ix-registry-check
+
+      - name: Run breaking-change check
+        id: check
+        run: |
+          ALLOW_ARG=""
+          if [ -f schemas/capability-registry.allowlist ]; then
+            ALLOW_ARG="--allowlist schemas/capability-registry.allowlist"
+          fi
+          set +e
+          ix-src/target/release/ix-registry-check \
+            --old /tmp/registry/old.json \
+            --new /tmp/registry/new.json \
+            $ALLOW_ARG \
+            --json > /tmp/registry/report.json
+          RC=$?
+          set -e
+          cat /tmp/registry/report.json
+          echo "rc=$RC" >> "$GITHUB_OUTPUT"
+          exit $RC
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: registry-check-report
+          path: /tmp/registry/report.json

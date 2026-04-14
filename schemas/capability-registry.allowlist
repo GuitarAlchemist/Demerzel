@@ -1,0 +1,15 @@
+# capability-registry breaking-change allowlist
+#
+# Format: one dotted path per line. Lines beginning with `#` are comments.
+# Paths are matched against the `path` field produced by `ix-registry-check`.
+#
+# Example — explicitly allow retiring a replaced tool:
+#
+#   repos.ix.tools.core-math.ix_linear_regression
+#
+# When the `registry-check.yml` workflow finds a breaking change whose path
+# is in this file, it is reported as ALLOWED and CI still passes. Breaking
+# changes NOT listed here cause CI to fail.
+#
+# See `crates/ix-registry-check/` in the ix repo for the checker source
+# and the full list of paths it can emit.
