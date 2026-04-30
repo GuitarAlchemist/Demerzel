@@ -58,6 +58,20 @@
         "trace": ["ga_export_traces", "ga_trace_stats"],
         "chat": ["ga_chat"]
       }
+    },
+    "sentrux": {
+      "server": "sentrux",
+      "description": "Pure-Rust realtime structural-quality sensor for AI agents (52-language tree-sitter, MCP). Owns realtime; ix-code-* owns offline catalog.",
+      "domains": ["code-quality", "structural-analysis", "regression-gate", "harness-engineering"],
+      "tools": {
+        "scan": ["scan", "rescan"],
+        "session": ["session_start", "session_end"],
+        "signal": ["health"],
+        "rules": ["check_rules"],
+        "git": ["git_stats"],
+        "graph": ["dsm"],
+        "coverage": ["test_gaps"]
+      }
     }
   },
   "roadblock_resolution": {
