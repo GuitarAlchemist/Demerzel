@@ -1,0 +1,15 @@
+{
+  "type": "research_followup",
+  "repo": "Demerzel",
+  "priority": "medium",
+  "source_cycle": "cognitive-science-2026-05-01-001",
+  "details": {
+    "event": "discovered_question",
+    "question": "Does augmenting tetravalent T with a trajectory field (ascending/steady/declining derived from quality-trend deltas) predict the recommendation field better than truth_value alone? Specifically, does ascending-T -> promote, steady-T -> maintain, declining-T -> investigate match the recorded recommendations on the existing 11 evolution entries above chance baseline?",
+    "department": "cognitive-science",
+    "blocked_by": "trig_01GvSr7BaL5jHBSdydgcaybH (2026-05-29 quality-trend evaluation)",
+    "rationale": "The original Proposal D (refine U with Subjective Logic) targets the wrong gap. Real data shows U->investigate is 1:1 deterministic (3 of 3); the heterogeneity lives in T-states. This follow-up cycle, running after quality-trend has 4 weeks of trajectory data, can compare the trajectory-augmented T classification against actual recommendations. Hold Proposal D at PDCA plan phase pending this finding.",
+    "next_cycle_id_proposal": "cognitive-science-2026-05-30-002"
+  },
+  "timestamp": "2026-05-01T05:00:00Z"
+}

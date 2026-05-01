@@ -2,26 +2,29 @@
   "department": "cognitive-science",
   "grammar_version": "1.0.0",
   "hypothesis_weights": {
-    "inductive": 0.25,
-    "deductive": 0.20,
-    "abductive": 0.25,
-    "analogical": 0.20,
-    "combinatorial": 0.10
+    "inductive": 0.227,
+    "deductive": 0.206,
+    "abductive": 0.258,
+    "analogical": 0.206,
+    "combinatorial": 0.103
   },
   "test_weights": {
-    "empirical": 0.30,
-    "formal_proof": 0.05,
-    "simulation": 0.20,
-    "thought_experiment": 0.15,
-    "cross_validation": 0.20,
-    "adversarial": 0.10
+    "empirical": 0.309,
+    "formal_proof": 0.052,
+    "simulation": 0.206,
+    "thought_experiment": 0.155,
+    "cross_validation": 0.175,
+    "adversarial": 0.103
   },
   "metadata": {
-    "last_updated": "2026-03-18",
-    "cycle_count": 0,
+    "last_updated": "2026-05-01",
+    "cycle_count": 1,
     "total_T": 0,
     "total_F": 0,
-    "total_U": 0,
-    "total_C": 0
+    "total_U": 1,
+    "total_C": 0,
+    "last_cycle_id": "cognitive-science-2026-05-01-001",
+    "last_conclusion": "insufficient",
+    "weight_adjustment_note": "inductive and cross_validation each decreased by 0.03 per insufficient-conclusion rule, then both weight vectors normalized to sum=1.0. The discovered_question outcome (target reframing) was not rewarded because the spec only adjusts on the conclusion enum, not on discoveries."
   }
 }
