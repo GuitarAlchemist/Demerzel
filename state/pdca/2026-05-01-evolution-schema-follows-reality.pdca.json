@@ -1,0 +1,19 @@
+{
+  "id": "pdca-evolution-schema-follows-reality",
+  "cycle_phase": "plan",
+  "hypothesis": "logic/governance-evolution.schema.json enums for artifact_type and event.type no longer match real entries in state/evolution/. Updating the schema to extend the enums with the in-use values (and continuing to update them as new event types emerge) will let validation succeed on real data and remove a hidden source of cycle-time noise.",
+  "plan": {
+    "description": "Extend artifact_type enum with [meta, capability]. Extend event.type enum with [compounding_cycle, pattern_detected, governance_concept_created, cross_repo_validation, kaizen_proposal, gap_identified, violated]. Add a migration note recording legacy vs new superset. Run a JSON-schema validator against all state/evolution/*.json to confirm.",
+    "success_criteria": "All 12 evolution files validate cleanly under the updated schema. No semantic drift in existing entries (no field renames, only enum extensions).",
+    "risks": [
+      "Cementing accidental vocabulary — review whether event types should consolidate (e.g. is 'gap_identified' really distinct from 'pattern_detected'?) before extending blindly",
+      "Schema drift becomes a habit — pair this with a CI validator so future drifts surface within a day, not 27"
+    ],
+    "target_date": "2026-05-05"
+  },
+  "created_at": "2026-05-01T00:00:00Z",
+  "last_updated": "2026-05-01T00:00:00Z",
+  "evaluated_by": "demerzel",
+  "source_cycle": "gel-compounding-2026-03-18",
+  "kaizen_kind": "proactive"
+}

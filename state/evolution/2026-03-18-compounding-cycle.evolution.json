@@ -3,11 +3,11 @@
   "artifact": "meta/compounding-cycle",
   "artifact_type": "meta",
   "metrics": {
-    "citation_count": 3,
-    "violation_count": 0,
-    "compliance_rate": 1.0,
-    "last_cited": "2026-04-03T00:00:00Z",
-    "last_violated": null,
+    "citation_count": 4,
+    "violation_count": 1,
+    "compliance_rate": 0.75,
+    "last_cited": "2026-04-30T00:00:00Z",
+    "last_violated": "2026-04-30T00:00:00Z",
     "promotion_candidate": false,
     "deprecation_candidate": false
   },
@@ -26,16 +26,36 @@
       "type": "compounding_cycle",
       "context": "Cycle 2026-04-03: Monster visual session (55 commits). 3 multi-AI brainstorms → 12 named governance concepts. PROMOTION CANDIDATES: visual-governance capability (55 citations, pattern→policy ready), observe-before-fix methodology (3 violations proved need). DEPRECATION CANDIDATES: cloud z-fighting workaround (disabled, atmosphere shader sufficient), TSL materials on WebGLRenderer (dormant until renderer migration). PATTERNS PROMOTED TO FEEDBACK: camera-parent for Float32 jitter, observe-before-fix, TSL/WebGL incompatibility, preserveDrawingBuffer for screenshots. NEW CAPABILITIES: multi-client MCP control (desktop+tablet+phone), remote QA pipeline (screenshot+video+metrics+frame-diff), IXQL RENDER/NAVIGATE/QA commands, multilingual planet names. CONFIDENCE CALIBRATION: 3 violations (guessed shader cause when position was root cause) → methodology feedback created. EFFECTIVENESS: T at 0.88 confidence — multi-AI brainstorm consistently finds root causes that solo analysis misses.",
       "timestamp": "2026-04-03T00:00:00Z"
+    },
+    {
+      "type": "violated",
+      "context": "Cycle 2026-04-30 (Discussion #242): the cycle ran but produced static inventory ('5 constitutions, 45 policies, 17 personas, 52 schemas, 112 tests') with only two trivial findings (guitar-coach/music-teacher missing tests; all artifacts at U). FAILURE MODE: the cycle treated state/evolution/ as authoritative without checking freshness — last entry was 2026-04-03, so 27 days of cross-repo evolution (Demerzel 47 commits, ix 60+ commits, hari 24 commits) were invisible to it. The skill operated correctly on stale data; it did not detect that the data was stale. This is itself a governance gap: the compound cycle has no liveness check on its own inputs.",
+      "timestamp": "2026-04-30T00:00:00Z"
+    },
+    {
+      "type": "compounding_cycle",
+      "context": "Cycle 2026-04-30 (corrective): retroactive compound across Demerzel + ix + hari for the 27-day window. KEY FINDINGS: (1) harness-engineering propose→consume loop closed within 12 days (Demerzel spec → ix wired hooks + sentrux as 5th federation peer + regression gate) — strongest cross-repo validation since memristive-markov, promotion candidate. (2) ix-autoresearch (Phases 1-7) is the largest concrete consumer of autonomous-loop-policy to date; introduces evaluator-in-the-loop refinement; honest negative-result reporting on Phase 7 increases policy credibility. (3) hari demoted Lie → RecencyDecay default and promoted Subjective Logic to first-class — three Demerzel implications: tetravalent's 'U' should adopt SL's calibrated uncertainty + base rate; belief states should carry provenance chains (hari Phase 8); trust-weighted multi-agent voting maps to skeptical-auditor pairing. (4) The Sentinel spec landed (a42b19a) but lacks a behavioral test — flagged. (5) Schema drift detected: logic/governance-evolution.schema.json enums (artifact_type, event.type) no longer match real entries — schema is behind reality.",
+      "timestamp": "2026-04-30T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "Methodological lesson from hari: the 'demote Lie' moment is what mature governance looks like. When the exotic primitive (Lie algebra) failed to outperform the simple baseline (RecencyDecay), it was demoted. Demerzel should equally test whether tetravalent (T/F/U/C) earns its complexity vs. plain confidence intervals + uncertainty bands. Apply the same baseline-comparison discipline to governance constructs.",
+      "timestamp": "2026-04-30T00:00:00Z"
+    },
+    {
+      "type": "kaizen_proposal",
+      "context": "Three concrete Kaizen proposals from this cycle: (a) Wire harvest→compound as a cron pair so they cannot drift apart (proactive). (b) Add a freshness check at compound step 1 — if last evolution entry > 7 days old AND git log shows new activity, fall back to git-log + memory scan and emit a 'stale-state' warning (proactive). (c) Update logic/governance-evolution.schema.json enums to match real usage: extend artifact_type with [meta, capability], extend event.type with [compounding_cycle, pattern_detected, governance_concept_created, cross_repo_validation, kaizen_proposal, gap_identified, violated] (proactive — schemas should follow reality, then human approval to lock).",
+      "timestamp": "2026-04-30T00:00:00Z"
     }
   ],
   "assessment": {
     "effectiveness": {
-      "proposition": "The governance framework is compounding effectively — each session produces more governance artifacts, closes more gaps, and generates richer state data for the next cycle",
-      "truth_value": "T",
-      "confidence": 0.88
+      "proposition": "The compounding cycle WORKS when fed fresh data, but has a structural gap: no liveness check on its inputs. Discussion #242 demonstrated the failure mode. The corrective retroactive cycle (this entry) demonstrates the cycle's value when properly fed: 4 new evolution entries, 1 promotion candidate, 1 schema-drift finding, 3 Kaizen proposals, all grounded in evidence. Recommendation downgraded from 'maintain' to 'amend' — needs the freshness check.",
+      "truth_value": "C",
+      "confidence": 0.78
     },
-    "recommendation": "maintain"
+    "recommendation": "investigate"
   },
   "created_at": "2026-03-18T00:00:00Z",
-  "last_updated": "2026-04-03T00:00:00Z"
+  "last_updated": "2026-04-30T00:00:00Z"
 }

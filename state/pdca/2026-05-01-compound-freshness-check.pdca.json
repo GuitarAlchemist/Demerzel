@@ -1,0 +1,20 @@
+{
+  "id": "pdca-compound-freshness-check",
+  "cycle_phase": "plan",
+  "hypothesis": "Adding a Step 0 freshness check to /demerzel compound — comparing the newest evolution-log mtime against git activity in this repo and sibling repos under ~/source/repos/ — will let the cycle self-detect input staleness and fall back to a git-log + memory + sibling-git scan, eliminating Discussion #242's silent failure mode.",
+  "plan": {
+    "description": "Edit .claude/skills/demerzel-compound/SKILL.md to insert Step 0: read newest mtime of state/evolution/*.json; compare to `git log --since=<mtime>` for Demerzel and sibling repos (ix, hari, tars, ga); if any sibling shows new commits with no corresponding evolution entries within 7 days, emit a 'stale-state' warning and trigger the harvest fallback before continuing.",
+    "success_criteria": "A test run on a deliberately stalled state/evolution/ correctly emits the warning and produces non-trivial promotion candidates by reading git log and recent memories.",
+    "risks": [
+      "Cross-repo path assumptions — sibling repos may not be at ~/source/repos on every machine",
+      "Performance — git log against 4 sibling repos may be slow; cache hashes between runs",
+      "Scope creep — keep Step 0 a check, not a replacement for harvest"
+    ],
+    "target_date": "2026-05-08"
+  },
+  "created_at": "2026-05-01T00:00:00Z",
+  "last_updated": "2026-05-01T00:00:00Z",
+  "evaluated_by": "demerzel",
+  "source_cycle": "gel-compounding-2026-03-18",
+  "kaizen_kind": "proactive"
+}

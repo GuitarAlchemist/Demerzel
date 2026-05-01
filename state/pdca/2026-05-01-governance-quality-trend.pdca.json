@@ -1,0 +1,20 @@
+{
+  "id": "pdca-governance-quality-trend",
+  "cycle_phase": "plan",
+  "hypothesis": "Porting the ix-quality-trend pattern (nightly structured health artifact) to Demerzel as a per-artifact effectiveness-delta stream will surface stagnation before it accumulates into the kind of 27-day staleness that produced Discussion #242. Continuous measurement is cheaper than periodic compound runs and complements rather than replaces them.",
+  "plan": {
+    "description": "Create skill .claude/skills/demerzel-quality-trend/SKILL.md that, on each invocation, computes per-artifact deltas (citation_count, compliance_rate, last_cited age) since the previous run and appends a JSONL line to state/quality-trend/YYYY-MM.jsonl. Keep it small — no new schema, just JSONL with {timestamp, artifact, delta_citations, delta_compliance, age_days}. Optionally wire to Friday cron alongside harvest+compound.",
+    "success_criteria": "After 2 weeks of nightly runs, the trend file shows distinguishable trajectories — at least one artifact identified as accelerating and at least one as stagnating that compound runs alone hadn't flagged.",
+    "risks": [
+      "JSONL files growing unbounded — auto-rotate monthly",
+      "Noise vs signal — initial 2 weeks may be too short to distinguish trend from variance; commit to 4 weeks before deciding",
+      "Duplicating compound's job — keep this skill *measurement only*; do not let it propose changes (compound owns proposals)"
+    ],
+    "target_date": "2026-05-15"
+  },
+  "created_at": "2026-05-01T00:00:00Z",
+  "last_updated": "2026-05-01T00:00:00Z",
+  "evaluated_by": "demerzel",
+  "source_cycle": "gel-ix-autoresearch-2026-04-30",
+  "kaizen_kind": "proactive"
+}

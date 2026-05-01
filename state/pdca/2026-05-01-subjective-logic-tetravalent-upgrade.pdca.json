@@ -1,0 +1,21 @@
+{
+  "id": "pdca-subjective-logic-tetravalent-upgrade",
+  "cycle_phase": "plan",
+  "hypothesis": "Adopting Subjective Logic's opinion structure (belief + disbelief + uncertainty + base rate) as an optional refinement of tetravalent's 'U' state will give Demerzel calibrated uncertainty rather than the categorical 'Unknown', and will measurably improve predictive power on which artifacts are worth investing more evidence into. If it does not improve over plain U after 3 cycles, demote it — the same discipline hari applied to its Lie-algebra prior.",
+  "plan": {
+    "description": "Add an optional `subjective_logic` block to logic/tetravalent-state.schema.json with shape {belief: number, disbelief: number, uncertainty: number, base_rate: number} where belief+disbelief+uncertainty=1. Let new evolution entries opt in; do not migrate legacy entries. Track over 3 compound cycles whether SL-augmented assessments are better predictors of artifact effectiveness than plain T/F/U/C.",
+    "success_criteria": "Predictive lift > 0 on at least one of: which 'U' artifacts later become T (correctly anticipated by high SL-belief); which artifacts hit deprecation candidate status (anticipated by high SL-disbelief). After 3 cycles, the comparison is in.",
+    "risks": [
+      "Complexity tax with no signal — apply hari's 'demote Lie' discipline mercilessly if SL adds no measurable lift",
+      "Base-rate calibration is hard — use empirical priors from existing evolution entries rather than inventing them",
+      "Constitutional change required — this is INNOVATIVE Kaizen per the compound-cycle skill, needs explicit human approval before any persona starts emitting SL opinions"
+    ],
+    "target_date": "2026-06-15"
+  },
+  "created_at": "2026-05-01T00:00:00Z",
+  "last_updated": "2026-05-01T00:00:00Z",
+  "evaluated_by": "demerzel",
+  "source_cycle": "gel-hari-subjective-logic-2026-04-30",
+  "kaizen_kind": "innovative",
+  "requires_human_approval": true
+}

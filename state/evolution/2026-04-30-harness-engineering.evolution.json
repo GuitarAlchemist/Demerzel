@@ -1,0 +1,66 @@
+{
+  "id": "gel-harness-engineering-2026-04-30",
+  "artifact": "docs/governance/harness-engineering-direction.md",
+  "artifact_type": "capability",
+  "metrics": {
+    "citation_count": 8,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-04-29T00:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": true,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "governance_concept_created",
+      "context": "Demerzel commit 3ec5110 — 'harness engineering as a first-class direction'. Reframes the Path C end-to-end Phase 1 as the first increment of a Fowler-style harness substrate. Introduces 4-tier trust model and per-producer math-space assignment.",
+      "timestamp": "2026-04-13T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Demerzel commit 7bbe233 — 'harness adapter pattern + tars projection spec'. Specifies how external tooling projects into the harness with explicit adapter contracts.",
+      "timestamp": "2026-04-15T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Demerzel commit 0879f21 — 'cargo harness adapter projection spec'. Concrete adapter spec for Rust workspaces.",
+      "timestamp": "2026-04-17T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Demerzel commit 65fc46c — 'harness signature layer design v0.1'. Adds typed signatures so adapters compose.",
+      "timestamp": "2026-04-19T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Demerzel commit 483cea9 — 'clippy + github-actions + ga adapter projection specs'. Three concrete adapters demonstrating reuse.",
+      "timestamp": "2026-04-21T00:00:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "ix commit 5699d6c — 'wire deterministic control flow (harness engineering)'. ix consumed the spec and wired the first hook substrate. Closes the propose→consume loop. This is the strongest cross-repo validation since memristive-markov.",
+      "timestamp": "2026-04-25T00:00:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "ix commit fbcc247 — 'add sentrux as 5th federation peer (realtime structural sensor)'. Sentrux operationalises the harness signature layer — a structural sensor is a typed adapter producing telemetry into the harness. Pattern proven reusable.",
+      "timestamp": "2026-04-27T00:00:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "ix commit f3d3de3 — 'sentrux: architectural rules + lock current quality as regression gate'. The harness substrate now owns its own quality gate. Self-bracing achieved.",
+      "timestamp": "2026-04-29T00:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "Harness engineering is the right level of abstraction for Demerzel's substrate work — propose-in-Demerzel/validate-in-consumer cycle closed within 12 days, three concrete adapters shipped, ix self-braced with regression gate.",
+      "truth_value": "T",
+      "confidence": 0.86
+    },
+    "recommendation": "promote"
+  },
+  "created_at": "2026-04-30T00:00:00Z",
+  "last_updated": "2026-04-30T00:00:00Z"
+}

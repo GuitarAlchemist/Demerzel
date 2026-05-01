@@ -1,0 +1,36 @@
+{
+  "id": "gel-the-sentinel-2026-04-30",
+  "artifact": "docs/governance/the-sentinel-spec.md",
+  "artifact_type": "persona",
+  "metrics": {
+    "citation_count": 1,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-04-29T00:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "created",
+      "context": "Demerzel commit a42b19a — 'The Sentinel — governed reactive reasoner spec v1.0'. New persona/agent class: a reactive reasoner that watches harness signals and triggers governance responses. Spec-only — no behavioral test, no consumer wired yet. State: U (Unknown) until first concrete invocation.",
+      "timestamp": "2026-04-26T00:00:00Z"
+    },
+    {
+      "type": "gap_identified",
+      "context": "The Sentinel needs: (1) behavioral test in tests/behavioral/the-sentinel-cases.md, (2) schema conformance check against schemas/persona.schema.json, (3) at least one consumer wiring (likely ix sentrux peer or hari swarm bridge). Per CLAUDE.md persona-requirements rule, missing test blocks effectiveness assessment.",
+      "timestamp": "2026-04-30T00:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "Spec landed cleanly but no consumer or test yet — too early to assess. State remains U until first invocation provides evidence.",
+      "truth_value": "U",
+      "confidence": 0.5
+    },
+    "recommendation": "investigate"
+  },
+  "created_at": "2026-04-30T00:00:00Z",
+  "last_updated": "2026-04-30T00:00:00Z"
+}

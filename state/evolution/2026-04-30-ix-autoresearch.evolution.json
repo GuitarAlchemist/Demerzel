@@ -1,0 +1,46 @@
+{
+  "id": "gel-ix-autoresearch-2026-04-30",
+  "artifact": "policies/autonomous-loop-policy.yaml",
+  "artifact_type": "policy",
+  "metrics": {
+    "citation_count": 12,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-04-28T00:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": true,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "cross_repo_validation",
+      "context": "ix commits 3487735→6648fa8 — ix-autoresearch crate Phases 1-7. Kernel + JSONL log + strategies + milestones; Target C grammar adapter; clap CLI + ix_autoresearch_run MCP tool; Targets A and B; end-to-end demo; live RebuildMode::CIReduced + validation harness; production-weights baseline. Phase 7 conclusion: weak signal — autoresearch produced statistically meaningful trend, not yet conclusive. Honest negative-result reporting validates the 'ship + measure' clause of autonomous-loop-policy.",
+      "timestamp": "2026-04-22T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "ix introduced edit-eval-iterate framing (Karpathy-style) in commit 5a2ab4f. Distinct from PDCA in that the *evaluator* is itself part of the loop. Suggests an 'evaluator-in-the-loop' refinement of autonomous-loop-policy worth proposing as v1.2.0.",
+      "timestamp": "2026-04-20T00:00:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "ix commit 652de21 — 'ix-quality-trend: nightly GA quality pipeline + structured health artifact'. Continuous quality measurement substrate. This is the missing dual of the harvest skill — Demerzel could port the pattern as 'governance-quality-trend' to track artifact effectiveness over time instead of one-shot compound runs.",
+      "timestamp": "2026-04-23T00:00:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "ix commit ba79450 — 'ix-embedding-diagnostics: baseline leak-detection + cluster stability tool'. Detects when embeddings collapse or leak between train/eval. Translates directly to belief-state diagnostics for state/beliefs/ — could detect when governance beliefs are degenerate or contradictory in latent space.",
+      "timestamp": "2026-04-24T00:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "autonomous-loop-policy is being validated by the largest concrete consumer to date (ix-autoresearch, 7 phases, MCP-exposed). Three new pattern candidates emerged: evaluator-in-the-loop, quality-trend substrate, embedding diagnostics for beliefs. Honest negative reporting on Phase 7 increases policy credibility.",
+      "truth_value": "T",
+      "confidence": 0.82
+    },
+    "recommendation": "promote"
+  },
+  "created_at": "2026-04-30T00:00:00Z",
+  "last_updated": "2026-04-30T00:00:00Z"
+}

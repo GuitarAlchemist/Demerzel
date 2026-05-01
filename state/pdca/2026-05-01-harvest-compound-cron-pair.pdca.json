@@ -1,0 +1,19 @@
+{
+  "id": "pdca-harvest-compound-cron-pair",
+  "cycle_phase": "plan",
+  "hypothesis": "Wiring /demerzel harvest and /demerzel compound as a single scheduled pair will prevent the input-staleness drift that produced Discussion #242, by guaranteeing the compound cycle never reads state/evolution/ that is older than the most recent harvest pass.",
+  "plan": {
+    "description": "Schedule harvest at 13:17 UTC Friday, compound at 13:47 UTC Friday — 30-minute gap matching the existing skill-doc recommendation. Document the dependency in both skill files so the pair cannot be split inadvertently.",
+    "success_criteria": "After two consecutive Fridays, state/evolution/ has at least one new file or updated entry per cycle; no compound run produces a static-inventory output.",
+    "risks": [
+      "Harvest may itself be incomplete — would mask the drift problem rather than solve it",
+      "Cron permissions — scheduler may not have repo write access on the runner"
+    ],
+    "target_date": "2026-05-08"
+  },
+  "created_at": "2026-05-01T00:00:00Z",
+  "last_updated": "2026-05-01T00:00:00Z",
+  "evaluated_by": "demerzel",
+  "source_cycle": "gel-compounding-2026-03-18",
+  "kaizen_kind": "proactive"
+}

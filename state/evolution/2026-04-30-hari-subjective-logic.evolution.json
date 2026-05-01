@@ -1,0 +1,51 @@
+{
+  "id": "gel-hari-subjective-logic-2026-04-30",
+  "artifact": "logic/tetravalent-state.schema.json",
+  "artifact_type": "schema",
+  "metrics": {
+    "citation_count": 4,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-04-28T00:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "cross_repo_validation",
+      "context": "hari commit 1fa9d73 — 'Subjective Logic baseline + 3-way comparison driver'. Three priority models compared head-to-head: Lie-algebra, RecencyDecay, SubjectiveLogic. Empirical comparison harness in place.",
+      "timestamp": "2026-04-18T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "hari commit e0a8f45 — 'demote Lie — default PriorityModel is now RecencyDecay'. The exotic mathematics didn't earn its place against simpler baseline. Important methodological signal: Demerzel should equally test whether tetravalent (T/F/U/C) earns its complexity vs. plain confidence intervals.",
+      "timestamp": "2026-04-21T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "hari commit 19b314f — 'promote SubjectiveLogic to a first-class PriorityModel variant'. Subjective Logic (opinion = belief + disbelief + uncertainty + base rate) is structurally richer than tetravalent — it carries calibrated uncertainty rather than the categorical 'U'. Strong candidate for upgrading Demerzel's Unknown state.",
+      "timestamp": "2026-04-26T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "hari commit 5c5c231 — 'Phase 8: belief propagation as forward reasoning' + 2609776 'derivation provenance for reasoning'. Belief states now propagate with provenance chains. Demerzel's state/beliefs/ entries should adopt this provenance pattern.",
+      "timestamp": "2026-04-28T00:00:00Z"
+    },
+    {
+      "type": "pattern_detected",
+      "context": "hari commit a703638 + ec2e7e2 — 'AgentVote events bridged through hari-swarm' + 'Phase 4 trust-aware swarm — opt-in'. Multi-agent voting with trust weighting. Maps directly to Demerzel's skeptical-auditor + producer pairing — could formalise as a policy.",
+      "timestamp": "2026-04-27T00:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "hari's evolution surfaces a concrete upgrade path for Demerzel: (1) Subjective Logic as a richer 'Unknown' state with calibrated uncertainty + base rate, (2) belief provenance chains, (3) trust-weighted multi-agent voting. The 'demote Lie / promote simpler baseline' pattern is itself a methodological lesson Demerzel should internalise.",
+      "truth_value": "T",
+      "confidence": 0.78
+    },
+    "recommendation": "investigate"
+  },
+  "created_at": "2026-04-30T00:00:00Z",
+  "last_updated": "2026-04-30T00:00:00Z"
+}
