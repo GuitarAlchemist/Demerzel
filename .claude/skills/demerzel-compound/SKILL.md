@@ -16,6 +16,8 @@ Run a full governance compounding cycle. This is how Demerzel improves her own g
 ## The Compounding Cycle
 
 ```
+0. Liveness check — is the evolution log fresh?
+       ↓ (if stale, harvest first)
 1. Scan evolution log
        ↓
 2. Detect promotion candidates (pattern → policy → constitutional)
@@ -30,6 +32,23 @@ Run a full governance compounding cycle. This is how Demerzel improves her own g
        ↓
 7. Log results back to evolution log (the loop compounds itself)
 ```
+
+## Step 0: Liveness Check (MANDATORY)
+
+Before reading the evolution log, verify it is fresh enough to compound from. Discussion #242 (2026-04-30) demonstrated the failure mode: the cycle ran on 27-day-old state and produced static inventory while 130+ commits across Demerzel + ix + hari were invisible to it.
+
+Procedure:
+
+1. Find the newest mtime across `state/evolution/*.json` — call it `T_log`.
+2. Run `git log --since="$T_log" --oneline` in the current repo. Repeat for sibling repos at `~/source/repos/{ix,hari,tars,ga}` (skip any that are not present).
+3. **Decision:**
+   - If no new commits in any repo → log is fresh, proceed to Step 1.
+   - If new commits exist but `T_log` is < 7 days old → log is current enough, proceed but flag the activity for inclusion.
+   - If `T_log` ≥ 7 days old AND new commits exist → **STALE-STATE WARNING**. Do not produce a normal compound report. Either:
+     - (a) Trigger `/demerzel harvest` first, then re-enter Step 0, OR
+     - (b) If harvest is unavailable, fall back to a manual compound: read the git log + recent session memories from `~/.claude/projects/*/memory/` + sibling-repo git logs, and write the deltas as new evolution entries. The 2026-04-30 corrective cycle (`docs/reports/2026-04-30-compound-corrective.md`) is the reference template for this fallback.
+
+The cycle's own correctness depends on its inputs. Treat input freshness as a first-class precondition, not an assumption.
 
 ## Step 1: Scan Evolution Log
 

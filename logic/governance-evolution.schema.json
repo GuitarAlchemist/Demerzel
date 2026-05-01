@@ -17,8 +17,8 @@
     },
     "artifact_type": {
       "type": "string",
-      "enum": ["constitution", "policy", "persona", "schema", "contract"],
-      "description": "Type of governance artifact"
+      "enum": ["constitution", "policy", "persona", "schema", "contract", "meta", "capability", "skill", "runtime_code"],
+      "description": "Type of governance artifact. 'meta' covers cycles/skills that operate over the framework itself; 'capability' covers cross-cutting features (e.g. visual-governance, harness-engineering) that are not a single file; 'skill' is an authored Claude skill; 'runtime_code' is consumer-owned code (e.g. ix crates) tracked here because Demerzel governs its lifecycle."
     },
     "metrics": {
       "type": "object",
@@ -69,8 +69,21 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["cited", "violated", "amended", "promoted", "demoted", "created"],
-            "description": "Type of governance event"
+            "enum": [
+              "cited",
+              "violated",
+              "amended",
+              "promoted",
+              "demoted",
+              "created",
+              "compounding_cycle",
+              "pattern_detected",
+              "governance_concept_created",
+              "cross_repo_validation",
+              "kaizen_proposal",
+              "gap_identified"
+            ],
+            "description": "Type of governance event. Schema-follows-reality: enums are extended to match actual usage. New event types may be added as governance evolves; pair extensions with a compound-cycle review to avoid accidental vocabulary."
           },
           "context": {
             "type": "string",
