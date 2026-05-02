@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/voicings-payload-v1",
+  "title": "Voicings Payload v1",
+  "description": "Cross-repo contract for delivering the OPTIC-K voicing position cloud from ix to a Three.js consumer (GA Prime Radiant being the first). The payload is a *pointer* — it tells the consumer where to fetch the binary positions buffer + metadata sidecar, plus rendering hints (scene offset, default spread/point-size). The actual position data is served as a Float32Array binary file, never inlined here. Returned by ix MCP tool `ix_voicings_payload`. Plan: ix:docs/plans/2026-05-02-voicings-in-prime-radiant.md.",
+  "type": "object",
+  "required": ["schema", "format", "positions_url", "meta_url", "scene_offset", "default_spread", "default_point_size"],
+  "additionalProperties": false,
+  "$comment": "Producer: ix-agent (handler `voicings_payload`, tool `ix_voicings_payload`). Consumer: GA Prime Radiant `createVoicingCloud` (ReactComponents/ga-react-components/src/components/PrimeRadiant/VoicingCloud.ts). Backing data: ix-voicings serve_viz binary buffer derived from voicing-layout.json. Related: schemas/voicing-handle.schema.json (orthogonal — handles are for individual voicing references, this payload is for bulk-position transport).",
+  "properties": {
+    "schema": {
+      "const": "voicings.payload.v1",
+      "description": "Schema-version literal. Bumping this string is a one-way door — every consumer must coordinate."
+    },
+    "format": {
+      "const": "binary-positions+meta",
+      "description": "Sole supported format in v1. Future versions may add `binary-positions+colors+meta` etc."
+    },
+    "positions_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the raw Float32Array buffer. Length = total * 3 floats * 4 bytes. Per-instrument blocks contiguous in the order given by `meta.instruments`. Server should expose CORS for browser consumers.",
+      "examples": ["http://127.0.0.1:8765/data/voicing-positions.bin"]
+    },
+    "meta_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the JSON sidecar describing the binary layout (see $defs.position_meta).",
+      "examples": ["http://127.0.0.1:8765/data/voicing-positions.meta.json"]
+    },
+    "scene_offset": {
+      "type": "array",
+      "items": {"type": "number"},
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "[x, y, z] world-space translation for the cloud root. Default [200, 0, 0] keeps it clear of the GA governance graph at origin. Changing the default in the producer is a UX one-way door — users learn the cloud lives 'to the right'."
+    },
+    "default_spread": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Initial per-axis triangular-noise jitter the consumer should apply when building geometry. The OPTIC-K precompute packs ~99% of each instrument into sub-1-unit cluster knots; without spread the cloud collapses to ~15 sub-pixel blobs. Suggested default 1.5."
+    },
+    "default_point_size": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Initial Three.js PointsMaterial.size. Suggested default 0.3 with sizeAttenuation enabled."
+    }
+  },
+  "$defs": {
+    "position_meta": {
+      "type": "object",
+      "title": "Position Buffer Metadata Sidecar",
+      "description": "Schema of the JSON file at meta_url. Tells the consumer how to slice the contiguous binary buffer into per-instrument blocks and where the cloud sits in coordinate space.",
+      "required": ["total", "instruments", "bounds"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of voicings in the buffer. Buffer length must equal total * 3 floats."
+        },
+        "instruments": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/instrument_block"},
+          "description": "Ordered list of per-instrument blocks. Sum of counts must equal total."
+        },
+        "bounds": {
+          "type": "object",
+          "required": ["min", "max"],
+          "properties": {
+            "min": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+            "max": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}
+          }
+        }
+      }
+    },
+    "instrument_block": {
+      "type": "object",
+      "required": ["name", "offset", "count"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": ["guitar", "bass", "ukulele"],
+          "description": "v1 fixes the instrument enum at the same three GA recognises. Adding instruments is a v2 concern."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Index of this block's first voicing (units = voicings, not bytes). Multiply by 12 to get the byte offset into the binary."
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of voicings in this block."
+        }
+      }
+    }
+  }
+}

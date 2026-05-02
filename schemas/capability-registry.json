@@ -33,7 +33,11 @@
         "pipeline": ["ix_pipeline"],
         "cache": ["ix_cache"],
         "governance": ["ix_governance_check", "ix_governance_persona", "ix_governance_belief", "ix_governance_policy"],
-        "federation": ["ix_federation_discover"]
+        "federation": ["ix_federation_discover"],
+        "voicings": ["ix_optick_search", "ix_voicings_payload"]
+      },
+      "schemas": {
+        "voicings.payload.v1": "schemas/voicings-payload-v1.schema.json"
       }
     },
     "tars": {
