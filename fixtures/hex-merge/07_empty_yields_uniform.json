@@ -1,0 +1,23 @@
+{
+  "name": "empty_yields_uniform",
+  "description": "Empty input: distribution falls back to uniform 1/6 on each variant. Escalation does NOT trigger (1/6 ≈ 0.1667 < 0.3). This is the spec's well-formed-input fallback.",
+  "input": {
+    "observations": [],
+    "current_round": null,
+    "staleness_k": null
+  },
+  "expected": {
+    "observations_count": 0,
+    "contradictions_count": 0,
+    "contradictions": [],
+    "distribution": {
+      "T": 0.16666666666666666,
+      "P": 0.16666666666666666,
+      "U": 0.16666666666666666,
+      "D": 0.16666666666666666,
+      "F": 0.16666666666666666,
+      "C": 0.16666666666666666
+    },
+    "escalation_triggered": false
+  }
+}

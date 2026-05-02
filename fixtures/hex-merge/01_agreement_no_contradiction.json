@@ -1,0 +1,26 @@
+{
+  "name": "agreement_no_contradiction",
+  "description": "tars T + ix P on the same claim is same-side agreement, not a contradiction. Belnap table: T+P -> None, no synthesis.",
+  "input": {
+    "observations": [
+      {"source": "tars", "diagnosis_id": "d", "round": 0, "ordinal": 0, "claim_key": "ix_stats::valuable", "variant": "T", "weight": 0.9},
+      {"source": "ix",   "diagnosis_id": "d", "round": 0, "ordinal": 1, "claim_key": "ix_stats::valuable", "variant": "P", "weight": 0.7}
+    ],
+    "current_round": null,
+    "staleness_k": null
+  },
+  "expected": {
+    "observations_count": 2,
+    "contradictions_count": 0,
+    "contradictions": [],
+    "distribution": {
+      "T": 0.5625,
+      "P": 0.4375,
+      "U": 0.0,
+      "D": 0.0,
+      "F": 0.0,
+      "C": 0.0
+    },
+    "escalation_triggered": false
+  }
+}
