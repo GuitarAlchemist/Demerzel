@@ -1,0 +1,109 @@
+--- ## QA Architect Cycle — Cross-Repo Senior QA Engineer Pipeline
+--- Phase 0 skeleton: emits a contract-valid hardcoded verdict to state/quality/verdicts/
+--- so downstream consumers can be wired and tested before real producers land.
+--- Source: docs/plans/2026-05-02-arch-qa-architect-tribunal-plan.md (Phase 0)
+--- Contract: docs/contracts/2026-05-02-qa-verdict.contract.md (v0.1.0 draft)
+--- Trigger: pull_request opened/synchronized OR scheduled sweep (Phase 4)
+--- Output: state/quality/verdicts/<repo>/<ref>/<verdict_id>.json
+
+--- ## Phase 0 Boundaries
+--- Phase 0 is "skeletons emitting hardcoded valid verdicts". This pipeline does NOT yet:
+---   - call the real blast-radius analyzer (Phase 1)
+---   - aggregate a tribunal of reviewer roles (Phase 2)
+---   - post a PR comment or open a followup issue (Phase 3)
+---   - drive the algedonic monitor from a derived signal (Phase 4)
+--- Anything created here is reversible. Delete the verdict directory and the file to revert.
+
+--- ## Phase 4 Cron Placeholder (commented — do not enable yet)
+--- schedule:
+---   cron: "0 6 * * *"             -- daily 06:00 UTC sweep
+---   action: scheduled_sweep
+---   target_kind: "quality_snapshot"
+
+--- ## Step 1: Resolve Trigger Context
+--- For Phase 0 we accept either a synthetic PR ref or fall back to a sweep target.
+trigger_context <- ix.io.read("state/qa-architect/trigger.json")
+  → default({
+      kind: "scheduled_sweep",
+      repo: "guitar-alchemist/ga",
+      ref: "skeleton",
+      sha: null,
+      base_sha: null
+    })
+
+--- ## Step 2: No-Op Blast-Radius Assessment
+--- Phase 1 will replace this with a real static analyzer over the diff.
+--- For Phase 0 we emit an empty blast radius, score 0.0 — informational only.
+blast_radius <- {
+    layers_touched: [],
+    one_way_doors_crossed: [],
+    invariants_at_risk: [],
+    components_reached: [],
+    estimated_blast_score: 0.0
+  }
+
+--- ## Step 3: No-Op Tribunal
+--- Phase 2 will fan_out across reviewer roles (semantic_judge, regression_replay,
+--- gap_analysis, contract_audit) and aggregate via SemanticRouter.AggregateAsync.
+--- For Phase 0 the chain has only this pipeline as a contributor.
+reviewer_chain <- [
+    {
+      agent: "demerzel.qa-architect-cycle",
+      role: "architecture",
+      score: null,
+      notes: "Phase 0 skeleton — no tribunal aggregation yet"
+    }
+  ]
+
+--- ## Step 4: Build Skeleton Verdict
+--- Shape MUST match docs/contracts/qa-verdict.schema.json. If a field rename or new
+--- enum value lands in the contract, this pipeline must be updated in the same change.
+--- WHY filename-safe id: verdict_id is used as a path segment and Windows rejects ':'.
+produced_at_iso <- now_utc_iso8601()
+produced_at_safe <- now_utc("yyyy-MM-ddTHH-mm-ssZ")
+verdict_id  <- "{{produced_at_safe}}-{{trigger_context.kind}}-skeleton-qa-architect-cycle"
+
+verdict <- {
+    schema_version: 1,
+    verdict_id: verdict_id,
+    produced_at: produced_at_iso,
+    producer: "qa-architect-cycle",
+    producer_version: "0.1.0",
+    target: trigger_context,
+    risk_tier: "P3",
+    verdict: "informational",
+    blast_radius: blast_radius,
+    evidence: [
+      {
+        kind: "manual_note",
+        name: "phase0.skeleton",
+        outcome: "n/a",
+        drift_summary: "Skeleton emit from Demerzel; no real producers wired yet."
+      }
+    ],
+    followups: [],
+    reviewer_chain: reviewer_chain,
+    narrative: "Phase 0 skeleton from qa-architect-cycle. Pipeline parses, hardcoded verdict matches schema, ready for Phase 1 wiring.",
+    links: {
+      plan: "docs/plans/2026-05-02-arch-qa-architect-tribunal-plan.md",
+      contract: "docs/contracts/2026-05-02-qa-verdict.contract.md"
+    }
+  }
+
+--- ## Step 5: Persist Verdict
+--- Layout per contract §4: state/quality/verdicts/<repo>/<ref>/<verdict_id>.json
+--- WHY a path-encoded layout: lets sweeps replay history by directory walk without an index.
+verdict_path <- "state/quality/verdicts/{{verdict.target.repo}}/{{verdict.target.ref}}/{{verdict_id}}.json"
+
+ix.io.write(verdict_path, verdict)
+  → tars.validate(
+      check: "verdict.schema_version == 1",
+      reject_message: "Schema mismatch — refusing to persist verdict outside v1."
+    )
+
+--- ## Step 6: Compound — Stub
+--- Phase 3 wires Graphiti ingestion of every followup. For Phase 0 there are no followups
+--- and the harvest is a no-op so the compound block parses but does no work.
+  → compound:
+      harvest verdict.followups
+      log qa_architect_cycle to "state/evolution/"
