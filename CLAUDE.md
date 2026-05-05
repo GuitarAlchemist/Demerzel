@@ -32,3 +32,13 @@ The Asimov constitution always takes precedence. Zeroth Law (do not harm humanit
 - Constitutions are **append-only** — removals need explicit justification.
 - Source material in `sources/` must be transformed into canonical formats, never copied raw.
 - All policies include versioning with explicit rationale.
+
+## Cross-repo contracts
+
+Demerzel orchestrates cycles across sibling repos via JSON-on-disk contracts (the canonical handoff pattern across the GuitarAlchemist ecosystem). Sibling clones are typically peers under the same parent directory:
+
+- **ga** (`../ga/`, .NET / C# / F# / React, music theory + RAG): defines `docs/contracts/2026-05-02-qa-verdict.contract.md` (schema: `docs/contracts/qa-verdict.schema.json`) — the QA Architect verdict shape Demerzel emits via `pipelines/qa-architect-cycle.ixql`. Also owns `docs/contracts/2026-05-02-optick-sae-artifact.contract.md` consumed by `qa_score_quality_drift`.
+- **ix** (`../ix/`, Rust ML algorithms): produces `state/voicings/optick.index` and SAE artifacts under `state/quality/optick-sae/` for cross-cycle quality drift evidence.
+- **tars** (`../tars/`, F# grammar + metacognition): cross-model theory validator.
+
+Locked-field changes need cross-repo coordination; the Galactic Protocol and `governance/demerzel/schemas/capability-registry.json` are Demerzel's own equivalents. The `links.supersedes` pattern in `optick-sae-artifact` is how to introduce a non-breaking baseline shift without freezing a schema. Contracts marked v0.1.x in their headers remain drafts until their Phase 4 freeze milestones.
