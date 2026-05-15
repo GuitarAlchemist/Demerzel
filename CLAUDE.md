@@ -42,3 +42,28 @@ Demerzel orchestrates cycles across sibling repos via JSON-on-disk contracts (th
 - **tars** (`../tars/`, F# grammar + metacognition): cross-model theory validator.
 
 Locked-field changes need cross-repo coordination; the Galactic Protocol and `governance/demerzel/schemas/capability-registry.json` are Demerzel's own equivalents. The `links.supersedes` pattern in `optick-sae-artifact` is how to introduce a non-breaking baseline shift without freezing a schema. Contracts marked v0.1.x in their headers remain drafts until their Phase 4 freeze milestones.
+
+## Karpathy 4 Rules — AI coding discipline
+
+These rules apply to every Claude proposal that touches code:
+
+1. **Think before coding.** State your interpretation of the request + assumptions; ask one clarifying question if anything is ambiguous; wait for confirmation before writing code.
+2. **Simplicity first.** Write minimum code that solves the exact problem. No speculative features, no future-proofing.
+3. **Surgical changes only.** Only modify code directly related to the request. Don't refactor adjacent code, don't fix unrelated style issues.
+4. **Goal-driven execution.** Transform every task into verifiable success criteria. Loop until each is demonstrably met. "Task completed" ≠ "goal achieved."
+
+Self-improvement reflex: when the user corrects you, invoke `/correct` so the rule lands in this file's **Session-learned rules** section — Cherny's "most important loop" from the 2026 Sequoia talk.
+
+## Session continuity (Cherny pattern)
+
+- `/digest` — captures meaningful session state (cursor, in-flight, hypotheses, success criteria) to `state/digests/latest.md`. Auto-fallback via `.claude/hooks/precompact-digest.ps1`; auto-injected on next session via `.claude/hooks/sessionstart-digest.ps1`. See `.claude/skills/digest/SKILL.md`.
+- `/learnings` — captures surprises (non-obvious facts worth grep-finding later) into `docs/solutions/<category>/<date>-<topic>.md`.
+- `/correct` — turns user corrections into permanent rules in this CLAUDE.md.
+
+The hooks are validated in CI by `.github/workflows/karpathy-cherny-discipline.yml`.
+
+## Session-learned rules
+
+_Appended by `/correct` when the user corrects an approach. Persists across sessions._
+
+(none yet)
