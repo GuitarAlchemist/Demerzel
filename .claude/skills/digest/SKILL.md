@@ -84,6 +84,26 @@ When a prior digest exists, this section reports the status delta:
 7. Validate: `pwsh -NoProfile -File .claude/hooks/digest-validate.ps1`. Non-zero = fix.
 8. Report: `Digest updated: <branch>@<sha> · next: <one-line> · criteria: <N>`.
 
+## Driving criteria autonomously with `/goal`
+
+After writing the digest, **consider `/goal <condition>` (native Claude
+Code v2.1.139+) for substantial autonomous work**. `/goal` mechanizes
+Karpathy R4: a small fast model evaluates after every turn whether the
+condition holds and either fires another turn or clears the goal.
+
+Use `/goal` when the Next action has:
+
+- A verifiable end state (build green, tests pass, file count under budget)
+- 5+ minutes of expected autonomous work
+- An evaluator-checkable result (checked against the transcript — no
+  tool calls)
+
+Skip `/goal` for short tasks, visual/UX judgement, or ambiguous specs.
+
+When `/goal` lands a "yes," the next `/digest` should mark the
+corresponding `success_criteria` entry as `achieved` with the `/goal`
+evidence.
+
 ## Anti-patterns
 
 - Transcript capture — git log is the transcript.
