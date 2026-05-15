@@ -1,0 +1,18 @@
+{
+  "$comment": "Schema pin declaration for state/quality-trend/** and state/pdca/**-quality-trend.pdca.json artifacts in Demerzel. Phase 0 deliverable #5 of ga/docs/plans/2026-05-14-arch-cherny-adoption-and-tribunal-ci-plan-v2.md.",
+  "schema_version": 1,
+  "applies_to_path": "state/quality-trend/** + state/pdca/*quality-trend*",
+  "pins": {
+    "OPTIC-K": "v1.8",
+    "qa_verdict_schema": "ga/docs/contracts/qa-verdict.schema.json (vendored upstream — Demerzel is the canonical consumer / aggregator)",
+    "ix_optick_sae_artifact_schema": "ga/docs/contracts/optick-sae-artifact.schema.json (vendored upstream)",
+    "demerzel_constitution": "constitutions/asimov.constitution.yaml",
+    "demerzel_capability_registry": "schemas/capability-registry.json"
+  },
+  "policy": {
+    "scope": "Quality-trend JSONL entries appended AFTER this file's git introduction are considered pinned to these versions. Pre-existing entries in 2026-05.jsonl are implicitly draft/v0.",
+    "bump_rule": "Demerzel is the cross-repo coordinator. On OPTIC-K or qa_verdict_schema bump, this file MUST be updated FIRST (before ga / ix / tars sidecars) so the tribunal can refuse to aggregate verdicts that reference outdated pins.",
+    "jsonl_note": "Optional: appending a header line {\"_schema\":{...}} to 2026-05.jsonl is permitted (v2 plan literal text) but not required — consumers reading the JSONL should fall back to this sidecar for the canonical pin set.",
+    "owner": "Demerzel maintainer (cross-repo coordinator role)"
+  }
+}
