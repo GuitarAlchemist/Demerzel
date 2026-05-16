@@ -1,0 +1,6 @@
+# Dependencies for scripts/qa_tribunal_emit.py
+# Pinned versions to close the unpinned-pip supply chain finding from the
+# 2026-05-15 octo security review. Hash-pinning (--require-hashes) is a
+# follow-up — Phase 0 ships with version pins as a first hardening step.
+
+jsonschema==4.21.1
