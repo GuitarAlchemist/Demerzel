@@ -1,0 +1,77 @@
+name: QA Architect Tribunal
+
+# Phase 0 of docs/plans/2026-05-14-arch-cherny-adoption-and-tribunal-ci-plan-v2.md
+# §"Phase 0 deliverable #3". Path B (Python emitter per D-runtime) implementation.
+#
+# Triggers:
+#   - repository_dispatch [sibling-pr-opened] — fired by ga/ix/tars
+#     qa-verdict-dispatch.yml on every pull_request event.
+#   - schedule cron '0 9 * * *' — daily 09:00 UTC sweep (was the original
+#     2026-05-18T09:00Z trigger; D-deadline moved this to 2026-06-01T09:00Z
+#     — the operational reschedule is tracked in the v2 plan §"Operational
+#     follow-ups").
+#
+# Outputs:
+#   - state/quality/verdicts/<repo>/<pr>/<verdict_id>.json (per-PR)
+#   - state/quality/verdicts/sweeps/<date>/<verdict_id>.json (daily sweep)
+#   - Uploaded as a workflow artifact for archaeology.
+#
+# Out of scope for Phase 0 (lands in Phase 3):
+#   - GitHub Check Run posting (needs GitHub App demerzel-tribunal — admin
+#     action per D-auth).
+#   - PR comment posting + followup -> issue automation.
+#   - Branch-protection enforcement.
+
+on:
+  repository_dispatch:
+    types: [sibling-pr-opened]
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  emit-verdict:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install pinned dependencies
+        run: pip install --no-deps -r scripts/requirements-qa-tribunal.txt
+
+      - name: Install jsonschema transitive deps
+        # Allow transitive deps after the top-level pins above to resolve.
+        # Hash-pinning is a follow-up.
+        run: pip install jsonschema==4.21.1
+
+      - name: Authenticate gh CLI (for SHA verification + PR cross-check)
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+        run: gh auth status
+
+      - name: Emit verdict (repository_dispatch path)
+        if: ${{ github.event_name == 'repository_dispatch' }}
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+        run: python scripts/qa_tribunal_emit.py
+
+      - name: Emit verdict (scheduled sweep path)
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+        run: python scripts/qa_tribunal_emit.py --sweep
+
+      - name: Upload verdict artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-tribunal-verdict-${{ github.run_id }}
+          path: state/quality/verdicts/
+          retention-days: 30
