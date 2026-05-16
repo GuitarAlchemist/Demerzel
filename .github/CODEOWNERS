@@ -1,0 +1,34 @@
+# CODEOWNERS — required reviewer rules
+# https://docs.github.com/en/repositories/managing-your-repositories-settings-and-security/customizing-your-repository/about-code-owners
+#
+# Rules below are *additive* to branch protection. GitHub requires a CODEOWNERS
+# reviewer on PRs touching listed paths when branch protection enables it.
+#
+# Maintainer: @spareilleux.
+
+# ============================================================================
+# Vendored cross-repo schemas — canonical source lives in ga/docs/contracts/
+# ============================================================================
+# These are copies of ga/docs/contracts/*.schema.json. The vendored copy
+# MUST NOT drift from canonical; CODEOWNERS enforces human review on every
+# update so a malicious schema widening upstream can't auto-propagate.
+# See `_vendored.drift_policy` field in each schema file for the bump rule.
+
+/schemas/contracts/                                @spareilleux
+/schemas/contracts/qa-verdict.schema.json          @spareilleux
+
+# ============================================================================
+# Demerzel-canonical governance schemas
+# ============================================================================
+# These are schemas Demerzel OWNS (consumed by ga / ix / tars but not
+# vendored from anywhere). Bumping them is a cross-repo coordination event;
+# require human review.
+/schemas/persona.schema.json                       @spareilleux
+/schemas/capability-registry.json                  @spareilleux
+/constitutions/                                    @spareilleux
+/policies/                                         @spareilleux
+
+# ============================================================================
+# IXQL pipelines — load-bearing for the QA Architect Tribunal
+# ============================================================================
+/pipelines/qa-architect-cycle.ixql                 @spareilleux
