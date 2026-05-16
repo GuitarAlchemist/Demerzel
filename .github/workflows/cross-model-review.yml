@@ -250,10 +250,8 @@ jobs:
             EVENT="COMMENT"
           fi
 
-          gh pr review ${{ github.event.pull_request.number }} \
-            --repo ${{ github.repository }} \
-            --"$(echo $EVENT | tr '[:upper:]' '[:lower:]' | tr '_' '-')" \
-            --body "$(cat <<EOF
+          REVIEW_FLAG="$(echo $EVENT | tr '[:upper:]' '[:lower:]' | tr '_' '-')"
+          BODY="$(cat <<EOF
           $REVIEW
 
           ---
@@ -261,3 +259,19 @@ jobs:
           *Policy: [cross-model-review](../blob/master/policies/) | [anti-lolli-inflation](../blob/master/policies/anti-lolli-inflation-policy.yaml)*
           EOF
           )"
+
+          if ! gh pr review ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --"$REVIEW_FLAG" \
+            --body "$BODY"; then
+            if [ "$EVENT" = "REQUEST_CHANGES" ]; then
+              gh pr review ${{ github.event.pull_request.number }} \
+                --repo ${{ github.repository }} \
+                --comment \
+                --body "$BODY
+
+          Note: GitHub rejected a formal request-changes review for this actor, so this was posted as a comment."
+            else
+              exit 1
+            fi
+          fi
