@@ -1,0 +1,9 @@
+{
+  "domain": "demerzel-harness",
+  "emitted_at": "2026-05-16T22:20:00Z",
+  "metric_name": "harness_ready",
+  "metric_value": 1.0,
+  "oracle_status": "ok",
+  "oracle_command": "pwsh scripts/verify.ps1",
+  "summary": "Harness baseline established for Agent Blackbox readiness."
+}
