@@ -1,0 +1,83 @@
+# Demerzel Sentrux architectural constraints — initial baseline
+#
+# Purpose: unblock the Sentrux dashboard's "Rule violations" surface for the
+# governance repo. Demerzel is overwhelmingly markdown + JSON schemas +
+# IXQL grammars, with a small TypeScript tree-sitter parser. Numbers below
+# are derived from the current repo state on 2026-05-24.
+#
+# Tightening strategy: Demerzel is essentially a config / documentation repo,
+# so the import graph is tiny (0 edges, 0 cycles). Layering is conceptual
+# (constitutions → policies → schemas → tests) rather than enforced by code
+# dependencies — the layers below exist so the dashboard renders a meaningful
+# treemap, not because cross-layer imports would be common.
+#
+# Baseline snapshot (sentrux scan on feat/sentrux-rules):
+#   files = 1216, import_edges = 0, lines = 151093,
+#   detected cycles = 0, quality_signal = 6545/10000.
+
+[constraints]
+# Zero cycles in a zero-import repo. Lock it in.
+max_cycles = 0
+
+# Cyclomatic complexity ceiling. Generous on day one because tree-sitter
+# generated parser files contain large dispatch switches.
+# TODO: drop to ~30 once we confirm first-party TS/JS doesn't approach it.
+max_cc = 200
+
+# Function length ceiling. Tree-sitter parser.c / grammar dispatch can
+# generate very long functions.
+# TODO: drop to ~150 once vendored/generated files are excluded.
+max_fn_lines = 500
+
+# God-file detector off until we audit which files are large by necessity
+# (constitutions are intentionally long).
+no_god_files = false
+
+# ─── Layers ────────────────────────────────────────────────────────
+# Conceptual ordering: constitutions are the foundation; policies refine
+# them; schemas formalize the data shapes; tests validate everything.
+
+[[layers]]
+name = "constitutions"
+paths = ["constitutions/*"]
+order = 0
+
+[[layers]]
+name = "policies-and-personas"
+paths = ["policies/*", "personas/*"]
+order = 1
+
+[[layers]]
+name = "schemas-and-contracts"
+paths = ["schemas/*", "contracts/*", "grammars/*"]
+order = 2
+
+[[layers]]
+name = "pipelines-and-tools"
+paths = ["pipelines/*", "tools/*", "scripts/*"]
+order = 3
+
+[[layers]]
+name = "ixql-parser"
+paths = ["tree-sitter-ixql/*", "logic/*"]
+order = 4
+
+[[layers]]
+name = "tests-and-fixtures"
+paths = ["tests/*", "fixtures/*", "examples/*"]
+order = 5
+
+# ─── Boundaries ────────────────────────────────────────────────────
+# Demerzel has no code-import boundaries to enforce yet (import_edges=0).
+# The two prohibitions below describe directional discipline we want as
+# soon as the repo gains any executable wiring.
+
+[[boundaries]]
+from = "constitutions/*"
+to = "tests/*"
+reason = "Constitutions are the foundation — they must not reference test fixtures."
+
+[[boundaries]]
+from = "schemas/*"
+to = "pipelines/*"
+reason = "Schemas describe data; they must not depend on pipeline orchestration code."
