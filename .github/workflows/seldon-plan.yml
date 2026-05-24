@@ -120,12 +120,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SELDON_FORCE_DEPARTMENT: ${{ github.event.inputs.department }}
         run: |
-          echo "Starting Seldon Plan research cycle"
-          echo "Department override: ${SELDON_FORCE_DEPARTMENT:-auto}"
-          # Invoke Claude Code with the seldon-plan skill
-          # claude -p "/seldon plan${SELDON_FORCE_DEPARTMENT:+ $SELDON_FORCE_DEPARTMENT}" --output-format json
-          # Note: actual invocation depends on Claude Code CLI availability in CI
-          echo "Cycle invocation placeholder — see policies/seldon-plan-policy.yaml for full spec"
+          if [ "${SELDON_PLANNER_INTENTIONALLY_DISABLED:-false}" = "true" ]; then
+            echo "::notice::Seldon Plan intentionally disabled via SELDON_PLANNER_INTENTIONALLY_DISABLED=true"
+            echo "Skipping the planner this run by explicit opt-out."
+            exit 0
+          fi
+          echo "::error::Seldon Plan agent invocation is disabled (commented out)." >&2
+          echo "::error::This scheduled workflow was producing ~150 dead-green runs/month." >&2
+          echo "::error::Per ix#63 workflows audit (2026-05-24), green CI on placeholder work is worse than red." >&2
+          echo "::error::" >&2
+          echo "::error::To fix:" >&2
+          echo "::error::  (a) Restore the 'claude --plan ...' invocation in this step, OR" >&2
+          echo "::error::  (b) Delete this workflow if Seldon Plan is no longer needed, OR" >&2
+          echo "::error::  (c) Set SELDON_PLANNER_INTENTIONALLY_DISABLED=true in the workflow env to pause" >&2
+          echo "::error::      explicitly (this still requires re-evaluation before re-enabling)." >&2
+          exit 1
 
       - name: Commit and push state
         if: |
