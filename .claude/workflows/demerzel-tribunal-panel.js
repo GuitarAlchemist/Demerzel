@@ -233,8 +233,9 @@ const result = await agent(
   `   (write your candidate to /tmp/verdict.json first). If it fails, FIX the object and re-validate. Set valid=true only after VALID prints.\n` +
   (DRY_RUN
     ? `5. DRY RUN: do NOT write to ${VERDICT_ROOT}. Return valid + the would-be path + a summary.`
-    : `5. Write the validated object to ${VERDICT_ROOT}/<repo_short>/${ctx.pr}/<verdict_id>.json where <repo_short> is the part of ` +
-      `the repo after the slash (e.g. ga). mkdir -p the dir. Return valid=true, the written_path, and a one-line summary.`),
+    : `5. Write the validated object to ${VERDICT_ROOT}/<owner_repo>/${ctx.pr}/<verdict_id>.json where <owner_repo> is ` +
+      `the FULL repo with '/' replaced by '_' (e.g. GuitarAlchemist_ga) — matching scripts/qa_tribunal_emit.py so ` +
+      `Phase-0 and panel verdicts share one key and */ga repos do not collide. mkdir -p the dir. Return valid=true, the written_path, and a one-line summary.`),
   { label: 'synth:emit-verdict', phase: 'Synthesize', schema: WRITE_SCHEMA },
 )
 
