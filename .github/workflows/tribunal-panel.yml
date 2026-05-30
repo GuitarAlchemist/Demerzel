@@ -1,0 +1,98 @@
+name: QA Tribunal Panel (multi-persona)
+
+# Phase-3 multi-reviewer upgrade to qa-tribunal.yml (Phase-0 emits a single
+# "informational" verdict). This runs the /demerzel-tribunal-panel dynamic
+# workflow on a real PR: fans the diff to N Demerzel personas, reaches a
+# strictest-wins consensus, and emits a verdict that self-validates against
+# the frozen schemas/contracts/qa-verdict.schema.json.
+#
+# Triggers:
+#   - workflow_dispatch  → run on demand against any { repo, pr }.
+#   - repository_dispatch [sibling-pr-opened] → auto-run when ga/ix/tars fire
+#     their qa-verdict-dispatch (same event Phase-0 listens to; this is the
+#     richer multi-persona pass).
+#
+# Requires: secrets.CLAUDE_CODE_OAUTH_TOKEN (same as claude.yml).
+# Output:   state/quality/verdicts/<repo>/<pr>/<verdict_id>.json (committed).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Target repo as owner/name (e.g. GuitarAlchemist/ga)"
+        required: true
+      pr:
+        description: "PR number"
+        required: true
+  repository_dispatch:
+    types: [sibling-pr-opened]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: tribunal-panel-${{ github.event.client_payload.repo || inputs.repo }}-${{ github.event.client_payload.pr || inputs.pr }}
+  cancel-in-progress: false
+
+jobs:
+  tribunal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+
+      - name: Resolve target
+        id: tgt
+        shell: bash
+        run: |
+          REPO="${{ github.event.inputs.repo || github.event.client_payload.repo }}"
+          PR="${{ github.event.inputs.pr || github.event.client_payload.pr }}"
+          if [ -z "$REPO" ] || [ -z "$PR" ]; then
+            echo "::error::Missing repo/pr (inputs or client_payload). Nothing to review."
+            exit 1
+          fi
+          # Normalize short name (e.g. "ga") to owner/name for the schema's repo pattern.
+          case "$REPO" in */*) ;; *) REPO="GuitarAlchemist/$REPO";; esac
+          echo "repo=$REPO" >> "$GITHUB_OUTPUT"
+          echo "pr=$PR"     >> "$GITHUB_OUTPUT"
+          echo "Tribunal target: $REPO#$PR"
+
+      - name: Run tribunal panel (dynamic workflow)
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          additional_permissions: |
+            actions: read
+          # Headless run of the saved workflow. The workflow self-validates its
+          # output against the frozen schema and writes the verdict to disk.
+          prompt: |
+            Run the saved workflow /demerzel-tribunal-panel with args
+            { "repo": "${{ steps.tgt.outputs.repo }}", "pr": ${{ steps.tgt.outputs.pr }} }.
+            It fetches the PR diff via gh, fans it to the persona panel, and writes a
+            schema-valid verdict under state/quality/verdicts/. Do not merge or comment
+            on the PR — only emit the verdict file.
+          claude_args: '--allowed-tools Bash(gh pr:*),Bash(gh api:*),Bash(python:*),Read,Write'
+
+      - name: Commit verdict if produced
+        shell: bash
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain state/quality/verdicts/)" ]; then
+            git add state/quality/verdicts/
+            git commit -m "chore(tribunal): panel verdict for ${{ steps.tgt.outputs.repo }}#${{ steps.tgt.outputs.pr }} [skip ci]"
+            git push
+          else
+            echo "::warning::No verdict file produced — tribunal panel emitted nothing (check the run log)."
+          fi
+
+      - name: Upload verdict artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tribunal-verdict-${{ github.run_id }}
+          path: state/quality/verdicts/
+          retention-days: 90
+          if-no-files-found: ignore
