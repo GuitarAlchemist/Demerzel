@@ -133,8 +133,10 @@ jobs:
           BASE=${{ github.event.pull_request.base.sha }}
           HEAD=${{ github.event.pull_request.head.sha }}
 
-          # Truncate diff to 12000 chars to stay within API limits
-          git diff "$BASE"..."$HEAD" | head -c 12000 > /tmp/pr_diff.txt
+          # Truncate diff to 12000 chars to stay within API limits.
+          # `|| true` guards against SIGPIPE (exit 141) when `head` closes the
+          # pipe early under `set -o pipefail` — same guard as the detect step.
+          git diff "$BASE"..."$HEAD" | head -c 12000 > /tmp/pr_diff.txt || true
           echo "diff_file=/tmp/pr_diff.txt" >> "$GITHUB_OUTPUT"
 
       - name: Build review prompt
