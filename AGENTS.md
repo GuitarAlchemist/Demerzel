@@ -60,3 +60,22 @@ Spawn 4 teammates (Seldon, Auditor, Architect, Integrator).
 Use Sonnet for Seldon/Integrator, Opus for Architect/Auditor.
 Require plan approval for Architect before implementation.
 ```
+
+## Tracer-bullets + vertical slices (aihero delta, 2026-06-14)
+
+Adopted ecosystem-wide from aihero.dev. Counters AI's "build the whole thing at
+once" failure mode:
+
+- **Tracer-bullet first.** For any non-trivial feature, build the smallest
+  **end-to-end** slice that touches *every* layer, test it, get feedback, then
+  expand — never build layers in isolation. "Context-window constraints make the
+  discipline non-negotiable."
+- **Vertical, not horizontal, decomposition.** Each task/PR is a thin slice
+  cutting through all integration layers (surfacing unknowns early), not a
+  horizontal layer.
+
+Prefer existing planning/review/quality tooling over adding new skills — aihero's
+`/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, `/improve-codebase-architecture`
+are already covered by this ecosystem's brainstorming, planning-doc, test, and
+structural-quality machinery. (The `/teach` skill IS adopted — see
+`.claude/skills/teach`.)
