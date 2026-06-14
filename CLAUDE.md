@@ -86,3 +86,19 @@ Prefer existing planning/review/quality tooling over adding new skills — aiher
 are already covered by this ecosystem's brainstorming, planning-doc, test, and
 structural-quality machinery. (The `/teach` skill IS adopted — see
 `.claude/skills/teach`.)
+
+## Agent skills
+
+Per-repo config for the installed aihero/mattpocock engineering skills (`grill-with-docs`, `grill-me`, `to-prd`, `to-issues`, `tdd`, `improve-codebase-architecture`, `teach`), installed project-scoped into `.claude/skills/` via `npx skills@latest add mattpocock/skills --copy` (MIT; Socket/Snyk clean). Configured 2026-06-14 via `/setup-matt-pocock-skills`.
+
+### Issue tracker
+
+GitHub Issues on `GuitarAlchemist/Demerzel`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical defaults (`needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. `/grill-with-docs` grows them lazily. See `docs/agents/domain.md`.
