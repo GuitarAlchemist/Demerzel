@@ -76,7 +76,7 @@ Demerzel/
 | Personas | 17 | `personas/*.persona.yaml` |
 | Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
-| Schemas | 40 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
+| Schemas | 39 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 114 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
