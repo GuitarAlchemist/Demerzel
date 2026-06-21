@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-set -eo pipefail
+# NOTE: intentionally NOT 'set -e'. This script drives its tier-1 -> tier-2 ->
+# tier-3 fallback with `VAR=$(func)` assignments followed by `if [ $? -eq 0 ]`
+# checks and `|| echo` guards. Under `set -e` the script aborts at the
+# assignment when a tier returns non-zero (no API key, MCP unavailable) BEFORE
+# the $? check, so the static fallback is never reached. pipefail is kept.
+set -o pipefail
 
 if [ "$EVENT_NAME" = "discussion" ]; then
   # Triggered by discussion event
