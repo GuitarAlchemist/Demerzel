@@ -38,6 +38,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Gather context
         id: context
         env:
@@ -65,11 +69,12 @@ jobs:
           COUNT=$(echo "$ISSUES" | jq 'length')
           echo "ISSUE_COUNT=$COUNT" >> $GITHUB_OUTPUT
 
-          # Inventory governance artifacts for context
-          PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
-          POLICY_COUNT=$(ls policies/*.yaml 2>/dev/null | wc -l)
-          TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
-          SCHEMA_COUNT=$(find schemas/ -name "*.json" 2>/dev/null | wc -l)
+          # Governance counts harvested from the manifest (ADR-0002); state
+          # counts below are runtime dirs the manifest does not track.
+          PERSONA_COUNT=${{ steps.eco.outputs.count_persona }}
+          POLICY_COUNT=${{ steps.eco.outputs.count_policy }}
+          TEST_COUNT=${{ steps.eco.outputs.count_behavioral_test }}
+          SCHEMA_COUNT=$(( ${{ steps.eco.outputs.count_schema }} + ${{ steps.eco.outputs.count_contract_schema }} ))
           BELIEF_COUNT=$(ls state/beliefs/*.json 2>/dev/null | wc -l)
           SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
           PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
@@ -238,8 +243,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
               title: \"🔧 Auto-Remediation Scan — $DATE\",
               body: $BODY
             }) {

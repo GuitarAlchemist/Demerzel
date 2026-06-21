@@ -37,6 +37,10 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Scan repos for governance gaps
         id: scan
         env:
@@ -99,8 +103,8 @@ jobs:
 
           gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
               title: \"🔍 Cross-Repo Governance Scan — $DATE\",
               body: \"Demerzel scanned consumer repos and created **$COUNT** new governance issues.\n\nCheck:\n- [ix issues](https://github.com/GuitarAlchemist/ix/issues)\n- [tars issues](https://github.com/GuitarAlchemist/tars/issues)\n- [ga issues](https://github.com/GuitarAlchemist/ga/issues)\n\n*Governed by Demerzel under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md)*\"
             }) {

@@ -23,6 +23,10 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Generate showcase content
         id: showcase
         env:
@@ -38,8 +42,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDW\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_show_and_tell }}\",
               title: \"$TITLE\",
               body: $BODY
             }) {

@@ -33,6 +33,10 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Inventory ecosystem capabilities
         id: capabilities
         run: |
@@ -181,8 +185,8 @@ jobs:
 
           gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
               title: \"🚀 Capability Expansion — $DATE\",
               body: $BODY
             }) {

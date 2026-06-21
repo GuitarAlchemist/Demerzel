@@ -35,6 +35,10 @@ jobs:
         with:
           fetch-depth: 20
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Check if ideation already posted today
         id: dedup
         env:
@@ -70,10 +74,11 @@ jobs:
           DATE="${{ steps.dedup.outputs.DATE }}"
           echo "DATE=$DATE" >> $GITHUB_OUTPUT
 
-          # Artifact inventory
-          PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
-          POLICY_COUNT=$(ls policies/*.yaml 2>/dev/null | wc -l)
-          TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+          # Governance counts harvested from the manifest (ADR-0002); the state
+          # counts below are runtime dirs the manifest does not track.
+          PERSONA_COUNT=${{ steps.eco.outputs.count_persona }}
+          POLICY_COUNT=${{ steps.eco.outputs.count_policy }}
+          TEST_COUNT=${{ steps.eco.outputs.count_behavioral_test }}
           DEPT_COUNT=$(ls state/streeling/departments/*.department.json 2>/dev/null | wc -l)
           SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
           PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
@@ -221,8 +226,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDV\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_ideas }}\",
               title: \"🧠 Demerzel Ideation — ${DATE}\",
               body: $BODY
             }) {

@@ -25,6 +25,10 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Harvest knowledge via GitHub API
         id: harvest
         env:
@@ -44,13 +48,14 @@ jobs:
           HEADER
           sed -i "s/DATE_PLACEHOLDER/$DATE/" harvest-report.md
 
-          # Count governance artifacts in Demerzel
-          PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
-          POLICIES=$(ls policies/*.yaml 2>/dev/null | wc -l)
-          SCHEMAS=$(ls schemas/contracts/*.json 2>/dev/null | wc -l)
+          # Governance counts harvested from the manifest (ADR-0002); LOGIC is a
+          # runtime dir the manifest does not track.
+          PERSONAS=${{ steps.eco.outputs.count_persona }}
+          POLICIES=${{ steps.eco.outputs.count_policy }}
+          SCHEMAS=${{ steps.eco.outputs.count_contract_schema }}
           LOGIC=$(ls logic/*.json 2>/dev/null | wc -l)
-          TESTS=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
-          SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null | wc -l)
+          TESTS=${{ steps.eco.outputs.count_behavioral_test }}
+          SKILLS=${{ steps.eco.outputs.count_skill }}
 
           cat >> harvest-report.md << EOF
           ### 📊 Demerzel Governance Inventory
@@ -161,8 +166,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDS\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_announcements }}\",
               title: \"🤖 Demerzel Governance Report — $DATE\",
               body: $BODY
             }) {
@@ -243,8 +248,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
               title: \"📚 Seldon Knowledge Digest — $DATE\",
               body: $BODY
             }) {
@@ -338,8 +343,8 @@ jobs:
 
           URL=$(gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
               title: \"🔄 Meta-Compounding Cycle — $DOW $DATE\",
               body: $BODY
             }) {
