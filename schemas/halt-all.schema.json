@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/halt-all",
+  "title": "HALT-ALL marker",
+  "description": "Single source of structural rules for the cross-repo HALT-ALL marker (~/.demerzel/HALT-ALL). Read by scripts/demerzel_halt.py (Python adapter) and scripts/DomainGate.psm1 (PowerShell adapter via Test-Json -Schema). See docs/adr/0003. Halt is ACTIVE iff this marker exists and has not expired — there is no 'active' field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "halted_at", "reason"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "halted_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})$",
+      "description": "RFC3339 UTC timestamp the halt was written"
+    },
+    "halted_by": { "type": "string" },
+    "reason": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "scope": {
+      "type": "string",
+      "enum": ["loops-only", "loops-and-batch", "global"],
+      "default": "loops-only"
+    },
+    "expires_at": {
+      "type": ["string", "null"],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(Z|[+-]\\d{2}:\\d{2})$",
+      "description": "RFC3339 UTC timestamp after which the halt is no longer active, or null for indefinite"
+    },
+    "exempt_agents": {
+      "type": ["array", "null"],
+      "items": { "type": "string" }
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "incident_url": { "type": "string" },
+        "issue_ref": { "type": "string" }
+      }
+    }
+  }
+}

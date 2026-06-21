@@ -28,6 +28,10 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $root
 
+# Shared domain-gate facts: HALT-ALL read + schema-validate + expiry, and the
+# single source of protected paths (candidate 4 / #352).
+Import-Module (Join-Path $PSScriptRoot 'DomainGate.psm1') -Force
+
 function Emit-Result {
     param(
         [Parameter(Mandatory = $true)][bool]$Ready,
@@ -69,16 +73,12 @@ if (Test-Path -LiteralPath (Join-Path $root $DomainStopPath)) {
 if (Test-Path -LiteralPath (Join-Path $root $GlobalHaltMarkerPath)) {
     Emit-Result -Ready:$false -Reason "global_loop_halted"
 }
-if (Test-Path -LiteralPath $HaltAllPath) {
-    try {
-        $halt = Get-Content -LiteralPath $HaltAllPath -Raw | ConvertFrom-Json
-        if ($halt.active -eq $true) {
-            Emit-Result -Ready:$false -Reason "halt_all_active"
-        }
-    } catch {
-        # If we can't parse it, assume halted to be safe.
-        Emit-Result -Ready:$false -Reason "halt_all_unparseable"
-    }
+# HALT-ALL: presence + non-expiry = active (no 'active' field). Schema-validated;
+# an invalid marker fails safe to active. Single implementation in DomainGate.psm1.
+$haltAll = Test-HaltAll -RepoRoot $root -HaltAllPath $HaltAllPath
+if ($haltAll.Active) {
+    $code = if (-not $haltAll.Valid) { "halt_all_invalid" } else { "halt_all_active" }
+    Emit-Result -Ready:$false -Reason $code
 }
 
 # 4. Overseer freshness + workflowMode.
@@ -100,21 +100,10 @@ if ($ageHours -gt $OverseerMaxAgeHours) {
     Emit-Result -Ready:$false -Reason "overseer_stale_${ageHours}h"
 }
 
-# 5. Worktree must not have edits to protected_paths.
-$protectedPatterns = @(
-    'policies/',
-    'constitutions/',
-    'personas/',
-    '.github/workflows/'
-)
-$dirty = (git status --porcelain=v1 2>$null) -split "`n" | Where-Object { $_ -ne '' }
-foreach ($line in $dirty) {
-    $path = ($line -replace '^...').Trim()
-    foreach ($pat in $protectedPatterns) {
-        if ($path -like "$pat*") {
-            Emit-Result -Ready:$false -Reason "protected_path_dirty_$pat"
-        }
-    }
+# 5. Worktree must not have edits to protected paths (list lives in DomainGate.psm1).
+$protectedDirty = Test-ProtectedDirty -RepoRoot $root
+if ($protectedDirty.Count -gt 0) {
+    Emit-Result -Ready:$false -Reason "protected_path_dirty_$($protectedDirty[0])"
 }
 
 # 6. Rewrite budget (informational; cycle enforces lines_changed).
