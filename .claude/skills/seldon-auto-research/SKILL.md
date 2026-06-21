@@ -24,10 +24,20 @@ with large unexplored research area surfaces rather than stale ones.
 ## Governance Constraints
 
 - Max **6 cycles per day** — halt if `state/seldon-plan/state.json`.`daily_cycle_count >= 6`
+- Active hours: **06:00–22:00 UTC** (skip if outside window) — same policy as seldon-plan
+- Max **12 consecutive auto-cycles** before mandatory human review pause — shares the
+  `consecutive_auto_cycles` counter with seldon-plan, so the limit applies to the *combined*
+  run of both schedulers (Article 9, Bounded Autonomy)
 - Kill switch: check `state/seldon-plan/kill.switch` before any work
 - Knowledge artifacts only — no code changes, no PRs, no directives
 - Course production threshold: **T + confidence >= 0.8** (stricter than seldon-plan's 0.75)
 - Constitutional basis: Asimov Article 4 (no instrumental goals), Default Article 9 (bounded autonomy)
+
+> **Shared-state ownership:** `state/seldon-plan/` (`state.json`, `kill.switch`,
+> `novelty-registry.json`) is owned by seldon-plan; seldon-auto-research operates as a
+> sibling scheduler *under* that state management. Both draw from the same daily cap,
+> consecutive-cycle counter, kill switch, and novelty registry. Auto-research must never
+> reset or re-key these — only increment/read per the steps below.
 
 ---
 
@@ -54,6 +64,12 @@ if exists("state/seldon-plan/kill.switch"):
     log("Kill switch active — halting auto-research")
     exit(0)
 
+# Active hours (06:00–22:00 UTC) — shared policy with seldon-plan
+hour = utcnow().hour
+if hour < 6 or hour >= 22:
+    log(f"Outside active hours ({hour:02d}:00 UTC, window 06–22) — skipping")
+    exit(0)
+
 # Daily cap (shared with seldon-plan — same counter)
 state = read_json("state/seldon-plan/state.json")
 today = date.today().isoformat()
@@ -62,6 +78,11 @@ if state.daily_reset_date != today:
     state.daily_reset_date = today
 if state.daily_cycle_count >= 6:
     log(f"Daily cap reached ({state.daily_cycle_count}/6) — skipping")
+    exit(0)
+
+# Combined consecutive-cycle guard (shared counter with seldon-plan)
+if state.consecutive_auto_cycles >= 12:
+    log("12 consecutive auto-cycles reached — human review pause active, skipping")
     exit(0)
 ```
 
@@ -338,6 +359,7 @@ Append entry to `state/seldon-plan/novelty-registry.json`:
 ```python
 state = read_json("state/seldon-plan/state.json")
 state.daily_cycle_count += 1
+state.consecutive_auto_cycles += 1   # shared counter — keeps combined limit honest
 state.last_question = question
 state.last_department = department
 state.last_cycle_id = cycle_id
@@ -346,6 +368,20 @@ if course_produced:
     state.total_courses_produced += 1
 state.total_novelty_registry_entries += 1
 write_json("state/seldon-plan/state.json", state)
+```
+
+### Pause Check
+
+Identical to seldon-plan — the shared `consecutive_auto_cycles` counter triggers a
+mandatory human-review pause regardless of which scheduler reached the limit:
+
+```python
+if state.consecutive_auto_cycles >= 12:
+    write("state/seldon-plan/kill.switch", "Auto-pause: 12 consecutive cycles — human review needed")
+    gh_create_issue(
+        title="Seldon Auto-Research: 12 autonomous cycles completed — review findings",
+        body=generate_findings_summary()
+    )
 ```
 
 ### Cycle Log
