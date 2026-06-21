@@ -50,6 +50,7 @@ import argparse
 import getpass
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -58,10 +59,13 @@ from typing import Any
 SCHEMA_VERSION = 1
 DEFAULT_SCOPE = "loops-only"
 
-# Single source of the structural constraints (ADR-0003): the scope enum and the
-# reason length live in schemas/halt-all.schema.json, not hardcoded here. This
-# Python adapter stays stdlib-only (the halt tool must not depend on jsonschema);
-# the PowerShell adapter validates the full schema via Test-Json -Schema.
+# Single source of the structural rules (ADR-0003): every constraint lives in
+# schemas/halt-all.schema.json. We validate with `jsonschema` when it can be
+# imported — full parity with the PowerShell adapter's `Test-Json -Schema` — and
+# otherwise fall back to a stdlib generic check that enforces the same constructs
+# read from the schema. The fallback exists because this is the cross-repo
+# EMERGENCY BRAKE: an operator must be able to halt on a bare-Python machine
+# without `pip install`, so a missing package must never block a halt.
 _SCHEMA = json.loads(
     (Path(__file__).resolve().parent.parent / "schemas" / "halt-all.schema.json").read_text(
         encoding="utf-8"
@@ -87,31 +91,69 @@ def now_rfc3339() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def validate(marker: dict[str, Any]) -> list[str]:
-    """Return a list of validation errors. Empty list means the marker is valid."""
+_TYPE_CHECKS = {
+    "object": lambda v: isinstance(v, dict),
+    "array": lambda v: isinstance(v, list),
+    "string": lambda v: isinstance(v, str),
+    "integer": lambda v: isinstance(v, int) and not isinstance(v, bool),
+    "number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
+    "boolean": lambda v: isinstance(v, bool),
+    "null": lambda v: v is None,
+}
+
+
+def _validate_stdlib(instance: Any, schema: dict[str, Any], path: str = "") -> list[str]:
+    """Stdlib JSON-Schema subset check (no third-party deps). Covers the
+    constructs the marker schema uses: type (incl. unions), required,
+    additionalProperties:false, const, enum, min/maxLength, pattern, items."""
     errors: list[str] = []
-    if marker.get("schema_version") != SCHEMA_VERSION:
-        errors.append(
-            f"schema_version must be {SCHEMA_VERSION}; got {marker.get('schema_version')!r}"
-        )
-    halted_at = marker.get("halted_at")
-    if not isinstance(halted_at, str) or "T" not in halted_at:
-        errors.append("halted_at must be an RFC3339 UTC timestamp string")
-    reason = marker.get("reason")
-    if not isinstance(reason, str) or not (1 <= len(reason) <= _REASON_MAX):
-        errors.append(f"reason must be a 1-{_REASON_MAX} character string")
-    scope = marker.get("scope", DEFAULT_SCOPE)
-    if scope not in VALID_SCOPES:
-        errors.append(f"scope must be one of {sorted(VALID_SCOPES)}; got {scope!r}")
-    expires_at = marker.get("expires_at")
-    if expires_at is not None and not isinstance(expires_at, str):
-        errors.append("expires_at must be null or an RFC3339 UTC timestamp string")
-    exempt = marker.get("exempt_agents")
-    if exempt is not None and not (
-        isinstance(exempt, list) and all(isinstance(a, str) for a in exempt)
-    ):
-        errors.append("exempt_agents must be null or a list of strings")
+    where = path.rstrip(".") or "value"
+    typ = schema.get("type")
+    if typ is not None:
+        types = typ if isinstance(typ, list) else [typ]
+        if not any(_TYPE_CHECKS.get(t, lambda _v: True)(instance) for t in types):
+            return [f"{where}: expected type {typ}, got {type(instance).__name__}"]
+    if "const" in schema and instance != schema["const"]:
+        errors.append(f"{where}: must equal {schema['const']!r}")
+    if "enum" in schema and instance not in schema["enum"]:
+        errors.append(f"{where}: must be one of {schema['enum']}")
+    if isinstance(instance, str):
+        if "minLength" in schema and len(instance) < schema["minLength"]:
+            errors.append(f"{where}: shorter than minLength {schema['minLength']}")
+        if "maxLength" in schema and len(instance) > schema["maxLength"]:
+            errors.append(f"{where}: longer than maxLength {schema['maxLength']}")
+        if "pattern" in schema and not re.search(schema["pattern"], instance):
+            errors.append(f"{where}: does not match pattern {schema['pattern']}")
+    if isinstance(instance, dict):
+        props = schema.get("properties", {})
+        for req in schema.get("required", []):
+            if req not in instance:
+                errors.append(f"{path}{req}: required field missing")
+        if schema.get("additionalProperties") is False:
+            for key in instance:
+                if key not in props:
+                    errors.append(f"{path}{key}: additional property not allowed")
+        for key, subschema in props.items():
+            if key in instance and instance[key] is not None:
+                errors.extend(_validate_stdlib(instance[key], subschema, f"{path}{key}."))
+    if isinstance(instance, list) and "items" in schema:
+        for i, item in enumerate(instance):
+            errors.extend(_validate_stdlib(item, schema["items"], f"{path}[{i}]."))
     return errors
+
+
+def validate(marker: dict[str, Any]) -> list[str]:
+    """Return a list of validation errors. Empty list means the marker is valid.
+
+    Uses jsonschema (full parity with the PowerShell Test-Json adapter) when it
+    is importable; falls back to the stdlib subset check so the emergency halt
+    never fails for a missing package."""
+    try:
+        import jsonschema  # noqa: PLC0415 — optional dependency, imported lazily by design
+    except ImportError:
+        return _validate_stdlib(marker, _SCHEMA)
+    validator = jsonschema.Draft202012Validator(_SCHEMA)
+    return [e.message for e in sorted(validator.iter_errors(marker), key=lambda e: list(e.path))]
 
 
 def atomic_write(path: Path, content: str) -> None:
