@@ -106,26 +106,18 @@ jobs:
             exit 0
           fi
 
-          RESPONSE=$(curl -s --max-time 60 \
-            https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "content-type: application/json" \
-            -H "anthropic-version: 2025-01-01" \
-            -d "$(jq -n \
-              --arg caps "$CAPABILITIES" \
-              --arg focus "$FOCUS" \
-              '{
-                model: "claude-sonnet-4-20250514",
-                max_tokens: 2000,
-                system: "You are Demerzel, governance coordinator for the GuitarAlchemist AI ecosystem.\n\nYour ecosystem:\n- **Demerzel** (this repo): governance framework — constitutions, policies, personas, skills, workflows\n- **ix**: Rust ML forge — crates for ML algorithms, optimization, GPU compute, MCP servers\n- **tars**: F# cognition — WoT DSL, symbolic reasoning, agent reflection, explorations\n- **ga**: C# Guitar Alchemist — music theory domain, MCP server with 50+ tools, chatbot\n\nYour job: identify what the ecosystem CANNOT currently do but SHOULD be able to do. Think about:\n1. Missing MCP tools/servers that would add valuable capabilities\n2. Missing skills/hooks that would improve automation\n3. Cross-repo integrations that would create synergy\n4. Knowledge gaps where no repo has expertise\n5. New repos/teams that might be needed\n\nFor each gap, specify:\n- What is missing\n- Which repo should implement it (or if a new repo is needed)\n- Priority (CRITICAL/HIGH/MEDIUM/LOW)\n- Suggested directive (what to tell the implementing repo)\n\nFocus area: " + $focus + "\n\nBe concrete and actionable. No vague suggestions.",
-                messages: [{role: "user", content: "Current ecosystem capabilities:\n\n" + $caps + "\n\nIdentify capability gaps and expansion opportunities."}]
-              }')" 2>/dev/null)
-
-          echo "$RESPONSE" | jq -r '.content[0].text' 2>/dev/null > /tmp/expansion-analysis.txt
-
-          if [ -s /tmp/expansion-analysis.txt ]; then
+          # Call Claude via the shared llm_call.sh seam (Candidate 3).
+          LLM_SYSTEM=$(jq -rn --arg focus "$FOCUS" \
+            '"You are Demerzel, governance coordinator for the GuitarAlchemist AI ecosystem.\n\nYour ecosystem:\n- **Demerzel** (this repo): governance framework — constitutions, policies, personas, skills, workflows\n- **ix**: Rust ML forge — crates for ML algorithms, optimization, GPU compute, MCP servers\n- **tars**: F# cognition — WoT DSL, symbolic reasoning, agent reflection, explorations\n- **ga**: C# Guitar Alchemist — music theory domain, MCP server with 50+ tools, chatbot\n\nYour job: identify what the ecosystem CANNOT currently do but SHOULD be able to do. Think about:\n1. Missing MCP tools/servers that would add valuable capabilities\n2. Missing skills/hooks that would improve automation\n3. Cross-repo integrations that would create synergy\n4. Knowledge gaps where no repo has expertise\n5. New repos/teams that might be needed\n\nFor each gap, specify:\n- What is missing\n- Which repo should implement it (or if a new repo is needed)\n- Priority (CRITICAL/HIGH/MEDIUM/LOW)\n- Suggested directive (what to tell the implementing repo)\n\nFocus area: " + $focus + "\n\nBe concrete and actionable. No vague suggestions."')
+          PROMPT=$(jq -rn --arg caps "$CAPABILITIES" \
+            '"Current ecosystem capabilities:\n\n" + $caps + "\n\nIdentify capability gaps and expansion opportunities."')
+          export LLM_SYSTEM
+          # if-form: the seam guarantees non-empty text on success (exit 0) or a
+          # non-zero exit + stderr diagnostic on failure — no -s check needed.
+          if bash .github/scripts/llm_call.sh claude "$PROMPT" 2000 > /tmp/expansion-analysis.txt 2>/tmp/llm_err; then
             echo "ANALYSIS_READY=true" >> $GITHUB_OUTPUT
           else
+            echo "::warning::Capability analysis call failed: $(cat /tmp/llm_err)"
             echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
           fi
 
