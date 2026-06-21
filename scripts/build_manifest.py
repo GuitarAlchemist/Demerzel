@@ -410,20 +410,52 @@ def populate_readme(counts: dict[str, int]) -> bool:
     return False
 
 
+def populate_health_row(counts: dict[str, int], health: dict[str, Any]) -> bool:
+    """Populate the README 'Governance health' table row from harvested health
+    (ADR-0002 consumer). Ungated — health changes on its own cadence, so this is
+    a populate convenience, never a gated check. Returns True if changed."""
+    res = health.get("resilience") or {}
+    caught, total = res.get("injections_caught"), res.get("injections_total")
+    if res.get("value") is None or caught is None or total is None:
+        return False
+    pct = round(res["value"] * 100)
+    gaps = total - caught
+    new_row = (f"| {pct}% ({gaps} gaps) | L0–L4 + Policy + Schema "
+               f"| {counts['policy']} | {counts['persona']} | {counts['behavioral_test']} |")
+
+    readme_path = REPO / "README.md"
+    lines = readme_path.read_text(encoding="utf-8").splitlines()
+    header = "| Resilience score | LOLLI detection | Policies | Personas | Tests |"
+    changed = False
+    for i, line in enumerate(lines):
+        if line.strip() == header and i + 2 < len(lines) and lines[i + 1].lstrip().startswith("|:"):
+            if lines[i + 2] != new_row:
+                lines[i + 2] = new_row
+                changed = True
+            break
+    if changed:
+        readme_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return changed
+
+
 def main() -> int:
     write_readme = "--write-readme" in sys.argv
 
     manifest, hard, soft = build()
+    health = harvest_health()
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    HEALTH.write_text(json.dumps(harvest_health(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    HEALTH.write_text(json.dumps(health, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Wrote {MANIFEST.relative_to(REPO)} "
           f"({sum(manifest['counts'].values())} artifacts, {len(manifest['edges'])} edges) "
           f"and {HEALTH.relative_to(REPO)}")
 
-    if write_readme and populate_readme(manifest["counts"]):
-        print("Updated README.md count cells from the manifest.")
-        # Re-check after populating so the run reflects the corrected counts.
-        hard = [v for v in hard if not v.startswith("README count drift")]
+    if write_readme:
+        if populate_readme(manifest["counts"]):
+            print("Updated README.md count cells from the manifest.")
+            # Re-check after populating so the run reflects the corrected counts.
+            hard = [v for v in hard if not v.startswith("README count drift")]
+        if populate_health_row(manifest["counts"], health):
+            print("Updated README.md governance-health row from governance-health.json.")
     if soft:
         print(f"\n{len(soft)} unresolved reference(s) [soft — to canonicalise]:")
         for w in soft:

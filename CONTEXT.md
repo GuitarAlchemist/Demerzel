@@ -56,8 +56,8 @@ fact lives in one place and is read out, never restated.
   *inventory* (artifacts on disk), *edges* (read from artifacts' own reference fields),
   and *health snapshots* (resilience/effectiveness values pulled from their emitters with
   `computed_at` provenance — never recomputed). Committed and CI-diffed; the README-SYNC
-  counts and the constitutional-precedence prose are populated from it. Replaces the
-  hand-maintained edges in `context-map.yaml`.
+  counts and the constitutional-precedence prose are populated from it. Replaced the
+  hand-maintained `context-map.yaml` (removed 2026-06-21).
 - **Canonical reference syntax** — every cross-artifact citation is a parseable token
   (`<constitution>#<article>`, `policy:<name>`, `persona:<name>`) followed by a prose gloss
   after `—`. Lives in YAML fields (`constitutional_basis`, `references`) and in a new
