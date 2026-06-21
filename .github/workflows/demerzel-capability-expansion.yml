@@ -163,7 +163,7 @@ jobs:
         run: |
           DATE=$(date -u +%Y-%m-%d)
           ANALYSIS=$(cat /tmp/expansion-analysis.txt)
-          BODY=$(cat <<DISCEOF | jq -Rs .
+          BODY=$(cat <<DISCEOF
           ## 🚀 Capability Expansion Scan — ${DATE}
 
           Demerzel scanned the ecosystem for capability gaps and expansion opportunities.
@@ -174,14 +174,6 @@ jobs:
           *Demerzel knows what she doesn't know. This scan identifies gaps across ix, tars, ga, and the governance framework itself.*
           DISCEOF
           )
-
-          gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-              title: \"🚀 Capability Expansion — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post"
+          REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🚀 Capability Expansion — $DATE" "$BODY"

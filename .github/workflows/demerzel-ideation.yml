@@ -201,18 +201,9 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE="${{ steps.context.outputs.DATE }}"
-          BODY=$(cat ideation-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_ideas }}\",
-              title: \"🧠 Demerzel Ideation — ${DATE}\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post ideas")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_ideas }}" "🧠 Demerzel Ideation — ${DATE}" "$(cat ideation-report.md)")
           echo "Ideas Discussion: $URL"
           echo "DISCUSSION_URL=$URL" >> $GITHUB_OUTPUT
 

@@ -162,18 +162,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
-          BODY=$(cat harvest-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_announcements }}\",
-              title: \"🤖 Demerzel Governance Report — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post to Demerzel Discussions")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_announcements }}" "🤖 Demerzel Governance Report — $DATE" "$(cat harvest-report.md)")
           echo "Demerzel Discussion: $URL"
 
       - name: Generate Seldon academic digest (Fridays only)
@@ -244,18 +235,9 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
-          BODY=$(cat seldon-digest.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-              title: \"📚 Seldon Knowledge Digest — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post Seldon digest")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "📚 Seldon Knowledge Digest — $DATE" "$(cat seldon-digest.md)")
           echo "Seldon Digest: $URL"
 
       - name: Run meta-compounding scan
@@ -339,16 +321,7 @@ jobs:
         run: |
           DATE=$(date -u +%Y-%m-%d)
           DOW=$(date -u +%A)
-          BODY=$(cat compound-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-              title: \"🔄 Meta-Compounding Cycle — $DOW $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post compounding cycle")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🔄 Meta-Compounding Cycle — $DOW $DATE" "$(cat compound-report.md)")
           echo "Compounding Discussion: $URL"

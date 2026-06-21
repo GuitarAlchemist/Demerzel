@@ -224,7 +224,7 @@ jobs:
           ANALYSIS=$(cat /tmp/analysis.txt 2>/dev/null || echo "No AI analysis available")
           GAP_COUNT="${{ steps.gaps.outputs.GAP_COUNT }}"
 
-          BODY=$(cat <<DISCEOF | jq -Rs .
+          BODY=$(cat <<DISCEOF
           ## 🔍 Self-Improvement Scan — ${DATE}
 
           **Gaps detected:** ${GAP_COUNT}
@@ -239,14 +239,6 @@ jobs:
           *Demerzel Self-Improvement Scanner — detecting and addressing governance gaps automatically.*
           DISCEOF
           )
-
-          gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-              title: \"🔍 Self-Improvement Scan — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post"
+          REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🔍 Self-Improvement Scan — $DATE" "$BODY"

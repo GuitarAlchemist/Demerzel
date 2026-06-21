@@ -101,13 +101,15 @@ jobs:
           DATE=$(date -u +%Y-%m-%d)
           COUNT="${{ steps.scan.outputs.ISSUES_CREATED }}"
 
-          gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-              title: \"🔍 Cross-Repo Governance Scan — $DATE\",
-              body: \"Demerzel scanned consumer repos and created **$COUNT** new governance issues.\n\nCheck:\n- [ix issues](https://github.com/GuitarAlchemist/ix/issues)\n- [tars issues](https://github.com/GuitarAlchemist/tars/issues)\n- [ga issues](https://github.com/GuitarAlchemist/ga/issues)\n\n*Governed by Demerzel under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md)*\"
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null
+          BODY=$(printf '%s\n' \
+            "Demerzel scanned consumer repos and created **$COUNT** new governance issues." \
+            "" \
+            "Check:" \
+            "- [ix issues](https://github.com/GuitarAlchemist/ix/issues)" \
+            "- [tars issues](https://github.com/GuitarAlchemist/tars/issues)" \
+            "- [ga issues](https://github.com/GuitarAlchemist/ga/issues)" \
+            "" \
+            "*Governed by Demerzel under the [governance mandate](https://github.com/GuitarAlchemist/Demerzel/blob/master/constitutions/demerzel-mandate.md)*")
+          REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🔍 Cross-Repo Governance Scan — $DATE" "$BODY"

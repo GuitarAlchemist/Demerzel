@@ -164,14 +164,15 @@ jobs:
 
           if [ "$TOPIC_COUNT" -ge 3 ]; then
             echo "PATTERN DETECTED: ${TOPIC} asked 3+ times — promotion candidate for dedicated resource"
-            gh api graphql -f query="mutation {
-              createDiscussion(input: {
-                repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-                categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-                title: \"🔄 Compounding: '${TOPIC}' topic trending in Q&A\",
-                body: \"Seldon has answered **${TOPIC_COUNT}** questions about **${TOPIC}** in the Q&A channel.\n\nPer the governance promotion protocol, frequently-asked topics (3+) are candidates for dedicated teaching resources.\n\n**Proposed action:** Create a pinned discussion or guide for '${TOPIC}' to reduce repetitive Q&A and improve self-service learning.\n\n*Detected by Demerzel meta-compounding cycle from Q&A interaction data.*\"
-              }) {
-                discussion { url }
-              }
-            }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null
+            BODY=$(printf '%s\n' \
+              "Seldon has answered **${TOPIC_COUNT}** questions about **${TOPIC}** in the Q&A channel." \
+              "" \
+              "Per the governance promotion protocol, frequently-asked topics (3+) are candidates for dedicated teaching resources." \
+              "" \
+              "**Proposed action:** Create a pinned discussion or guide for '${TOPIC}' to reduce repetitive Q&A and improve self-service learning." \
+              "" \
+              "*Detected by Demerzel meta-compounding cycle from Q&A interaction data.*")
+            REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+              bash .github/scripts/post_discussion.sh \
+                "${{ steps.eco.outputs.cat_general }}" "🔄 Compounding: '${TOPIC}' topic trending in Q&A" "$BODY"
           fi

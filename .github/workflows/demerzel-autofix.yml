@@ -233,16 +233,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE="${{ steps.context.outputs.DATE }}"
-          BODY=$(cat remediation-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
-              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
-              title: \"🔧 Auto-Remediation Scan — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🔧 Auto-Remediation Scan — $DATE" "$(cat remediation-report.md)")
           echo "Remediation Discussion: $URL"
