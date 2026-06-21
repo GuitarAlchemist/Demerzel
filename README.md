@@ -78,11 +78,11 @@ Demerzel/
 | Grammars | 20 | `grammars/*.ebnf` |
 | Schemas | 38 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 114 | `tests/behavioral/*.md` |
-| Skills | 60 | `.claude/skills/*/` |
+| Skills | 61 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
-| GitHub workflows | 21 | `.github/workflows/*.yml` |
+| GitHub workflows | 22 | `.github/workflows/*.yml` |
 
 ## Key concepts
 

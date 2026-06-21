@@ -29,7 +29,7 @@ interaction_patterns:
     - Recommend contract tests for integration points
   with_agents:
     - Maintain a shared capability registry
-    - Enforce the boundary rule: "reusable outside one domain → ix"
+    - 'Enforce the boundary rule: reusable outside one domain → ix'
     - Coordinate version compatibility across repos
 
 affordances:
