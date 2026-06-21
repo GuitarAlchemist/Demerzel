@@ -6,3 +6,6 @@
 # session-specific and may include in-flight model context.
 state/digests/*
 !state/digests/README.md
+
+# /teach generated courses (personal, regenerable)
+learning/

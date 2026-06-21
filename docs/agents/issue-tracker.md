@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues and PRDs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
+Issues and PRDs for this repo live as GitHub issues in `GuitarAlchemist/Demerzel`. Use the `gh` CLI for all operations.
 
 ## Conventions
 
@@ -24,6 +24,9 @@ When set to `yes`, PRs run through the same labels and states as issues, using t
 - **Comment / label / close**: `gh pr comment`, `gh pr edit --add-label`/`--remove-label`, `gh pr close`.
 
 GitHub shares one number space across issues and PRs, so a bare `#42` may be either — resolve with `gh pr view 42` and fall back to `gh issue view 42`.
+
+> **Before merging any PR**, read Codex bot comments per CLAUDE.md — Codex P0/P1
+> are not surfaced in the standard merge flow and must be addressed.
 
 ## When a skill says "publish to the issue tracker"
 

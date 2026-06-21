@@ -45,7 +45,7 @@ humanity) overrides everything. Constitutions are **append-only**.
   chaos-engineering metric for how well governance detects injected poison (dead
   bindings, orphaned branches, BS descriptions, unconsumed artifacts).
 
-## Architecture seams (designed 2026-06-20 via `/improve-codebase-architecture`; not yet built)
+## Architecture seams (designed 2026-06-20 via `/improve-codebase-architecture`; built 2026-06-21, PR #357)
 
 A single deepening that collapses today's hand-synced indices and scattered validators
 into a few deep modules. The unifying discipline: **harvest, don't declare** — every

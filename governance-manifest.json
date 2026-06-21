@@ -11,7 +11,7 @@
     "pipeline": 23,
     "policy": 45,
     "schema": 39,
-    "skill": 61,
+    "skill": 69,
     "workflow": 22
   },
   "inventory": {
@@ -1453,6 +1453,18 @@
         "path": ".claude/skills/ga-ralph"
       },
       {
+        "name": "grill-me",
+        "path": ".claude/skills/grill-me"
+      },
+      {
+        "name": "grill-with-docs",
+        "path": ".claude/skills/grill-with-docs"
+      },
+      {
+        "name": "improve-codebase-architecture",
+        "path": ".claude/skills/improve-codebase-architecture"
+      },
+      {
         "name": "ix-ml-builder",
         "path": ".claude/skills/ix-ml-builder"
       },
@@ -1509,12 +1521,32 @@
         "path": ".claude/skills/seldon-visual-teach"
       },
       {
+        "name": "setup-matt-pocock-skills",
+        "path": ".claude/skills/setup-matt-pocock-skills"
+      },
+      {
         "name": "supervised-loop",
         "path": ".claude/skills/supervised-loop"
       },
       {
+        "name": "tdd",
+        "path": ".claude/skills/tdd"
+      },
+      {
+        "name": "teach",
+        "path": ".claude/skills/teach"
+      },
+      {
         "name": "tetravalent",
         "path": ".claude/skills/tetravalent"
+      },
+      {
+        "name": "to-issues",
+        "path": ".claude/skills/to-issues"
+      },
+      {
+        "name": "to-prd",
+        "path": ".claude/skills/to-prd"
       }
     ]
   },

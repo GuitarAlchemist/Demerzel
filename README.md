@@ -78,7 +78,7 @@ Demerzel/
 | Grammars | 20 | `grammars/*.ebnf` |
 | Schemas | 39 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 114 | `tests/behavioral/*.md` |
-| Skills | 61 | `.claude/skills/*/` |
+| Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |

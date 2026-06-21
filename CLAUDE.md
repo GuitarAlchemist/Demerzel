@@ -68,13 +68,32 @@ _Appended by `/correct` when the user corrects an approach. Persists across sess
 
 (none yet)
 
+## Tracer-bullets + vertical slices (aihero delta, 2026-06-14)
+
+Adopted ecosystem-wide from aihero.dev. Counters AI's "build the whole thing at
+once" failure mode:
+
+- **Tracer-bullet first.** For any non-trivial feature, build the smallest
+  **end-to-end** slice that touches *every* layer, test it, get feedback, then
+  expand — never build layers in isolation. "Context-window constraints make the
+  discipline non-negotiable."
+- **Vertical, not horizontal, decomposition.** Each task/PR is a thin slice
+  cutting through all integration layers (surfacing unknowns early), not a
+  horizontal layer.
+
+Prefer existing planning/review/quality tooling over adding new skills — aihero's
+`/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, `/improve-codebase-architecture`
+are already covered by this ecosystem's brainstorming, planning-doc, test, and
+structural-quality machinery. (The `/teach` skill IS adopted — see
+`.claude/skills/teach`.)
+
 ## Agent skills
 
-Per-repo config for the mattpocock engineering skills (`to-issues`, `to-prd`, `triage`, `qa`, `tdd`, `improve-codebase-architecture`, etc.).
+Per-repo config for the installed aihero/mattpocock engineering skills (`grill-with-docs`, `grill-me`, `to-prd`, `to-issues`, `tdd`, `improve-codebase-architecture`, `teach`), installed project-scoped into `.claude/skills/` via `npx skills@latest add mattpocock/skills --copy` (MIT; Socket/Snyk clean). Configured 2026-06-14 via `/setup-matt-pocock-skills`.
 
 ### Issue tracker
 
-Issues tracked via GitHub Issues via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+GitHub Issues on `GuitarAlchemist/Demerzel`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
@@ -82,4 +101,4 @@ Canonical defaults (`needs-triage` / `needs-info` / `ready-for-agent` / `ready-f
 
 ### Domain docs
 
-Single-context (`CONTEXT.md` + `docs/adr/`). See `docs/agents/domain.md`.
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. `/grill-with-docs` grows them lazily. See `docs/agents/domain.md`.
