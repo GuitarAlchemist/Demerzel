@@ -399,6 +399,8 @@ def main(argv: list[str]) -> int:
     if not args.dry_run:
         _atomic_write(root / "state" / "oversight" / f"ml-feedback-loop-{date}.json", summary)
     print(f"\nsummary: {json.dumps(summary, indent=2)}")
+    # single-line terminal status (parsed by run_ml_feedback_cycle.py)
+    print(f"RESULT applied={len(applied)} escalated={len(escalated)} rejected={len(rejected)}")
 
     return 2 if rejected else 0
 
