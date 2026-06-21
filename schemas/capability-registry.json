@@ -1,6 +1,18 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "GuitarAlchemist ecosystem capability registry — discovery index for cross-repo MCP federation",
+  "github": {
+    "_comment": "Single source of GitHub plumbing IDs for the Demerzel workflows. Read via .github/actions/ecosystem. Verified against the live repo 2026-06-21.",
+    "repo_node_id": "R_kgDORnMyyQ",
+    "discussion_categories": {
+      "announcements": "DIC_kwDORnMyyc4C4eDS",
+      "general": "DIC_kwDORnMyyc4C4eDT",
+      "ideas": "DIC_kwDORnMyyc4C4eDV",
+      "polls": "DIC_kwDORnMyyc4C4eDX",
+      "q-and-a": "DIC_kwDORnMyyc4C4eDU",
+      "show-and-tell": "DIC_kwDORnMyyc4C4eDW"
+    }
+  },
   "repos": {
     "ix": {
       "server": "ix",

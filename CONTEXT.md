@@ -77,6 +77,19 @@ fact lives in one place and is read out, never restated.
   *agrees* with it. Makes the append-only + precedence [Architecture invariant](#architecture-invariant)
   machine-checkable without generating the headers' human rationale.
 
+## Architecture seams (designed + built 2026-06-21, Candidate 2)
+
+- **Ecosystem facts action** — `.github/actions/ecosystem`, a composite action that is
+  the single parse point for the GuitarAlchemist ecosystem's GitHub plumbing. It reads
+  `schemas/capability-registry.json` (new `github` block: `repo_node_id`,
+  `discussion_categories` name→id) and `governance-manifest.json` (`.counts`) once and
+  exposes them as step outputs (`repo_node_id`, `cat_*`, `count_*`, `consumer_repos` from
+  `.repos | keys`). Workflows stop restating the repo id / category ids (was duplicated
+  ~22× across 9 files) and stop re-deriving counts with `ls | wc -l` (was ~4 workflows) —
+  the latter is **harvest, don't declare** (ADR-0002) finally reaching the CI surface.
+  Reference consumer migrated: `demerzel-self-improvement.yml` (counts + names harvested
+  from the manifest, ids from the action). Remaining workflows follow the same pattern.
+
 ## Conventions
 
 See `CLAUDE.md` / `AGENTS.md` for authoritative validation rules, the constitutional

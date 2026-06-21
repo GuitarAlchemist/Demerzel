@@ -29,38 +29,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Ecosystem facts (counts + ids, single source)
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Inventory governance artifacts
         id: inventory
         run: |
-          # Personas
-          PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null)
-          PERSONA_COUNT=$(echo "$PERSONAS" | wc -l)
-          PERSONA_NAMES=$(echo "$PERSONAS" | xargs -I{} basename {} .persona.yaml | tr '\n' ',')
+          # Counts + names are HARVESTED from governance-manifest.json (ADR-0002)
+          # via the ecosystem action, not re-derived with `ls | wc -l`.
+          PERSONA_COUNT=${{ steps.eco.outputs.count_persona }}
+          PERSONA_NAMES=$(jq -r '.inventory.persona[].name' governance-manifest.json | paste -sd, -)
 
-          # Policies
-          POLICIES=$(ls policies/*.yaml 2>/dev/null)
-          POLICY_COUNT=$(echo "$POLICIES" | wc -l)
-          POLICY_NAMES=$(echo "$POLICIES" | xargs -I{} basename {} .yaml | tr '\n' ',')
+          POLICY_COUNT=${{ steps.eco.outputs.count_policy }}
+          POLICY_NAMES=$(jq -r '.inventory.policy[].name' governance-manifest.json | paste -sd, -)
 
-          # Behavioral tests
-          TESTS=$(ls tests/behavioral/*.md 2>/dev/null)
-          TEST_COUNT=$(echo "$TESTS" | wc -l)
-          TEST_NAMES=$(echo "$TESTS" | xargs -I{} basename {} .md | tr '\n' ',')
+          TEST_COUNT=${{ steps.eco.outputs.count_behavioral_test }}
+          TEST_NAMES=$(jq -r '.inventory.behavioral_test[].name' governance-manifest.json | paste -sd, -)
 
-          # Skills
-          SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null)
-          SKILL_COUNT=$(echo "$SKILLS" | wc -l)
-          SKILL_NAMES=$(echo "$SKILLS" | xargs -I{} basename {} | tr '\n' ',')
+          SKILL_COUNT=${{ steps.eco.outputs.count_skill }}
+          SKILL_NAMES=$(jq -r '.inventory.skill[].name' governance-manifest.json | paste -sd, -)
 
-          # Schemas
-          SCHEMA_COUNT=$(ls schemas/*.json schemas/contracts/*.json 2>/dev/null | wc -l)
+          # Schemas: the manifest splits plain schemas from contract schemas.
+          SCHEMA_COUNT=$(( ${{ steps.eco.outputs.count_schema }} + ${{ steps.eco.outputs.count_contract_schema }} ))
 
-          # Constitutions
-          CONST_COUNT=$(ls constitutions/*.md 2>/dev/null | wc -l)
+          CONST_COUNT=${{ steps.eco.outputs.count_constitution }}
 
-          # Workflows
-          WORKFLOW_COUNT=$(ls .github/workflows/*.yml 2>/dev/null | wc -l)
-          WORKFLOW_NAMES=$(ls .github/workflows/*.yml 2>/dev/null | xargs -I{} basename {} .yml | tr '\n' ',')
+          WORKFLOW_COUNT=${{ steps.eco.outputs.count_workflow }}
+          WORKFLOW_NAMES=$(jq -r '.inventory.workflow[].name' governance-manifest.json | paste -sd, -)
 
           # Open issues
           OPEN_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title --jq '.[] | "#\(.number): \(.title)"' 2>/dev/null)
@@ -253,8 +249,8 @@ jobs:
 
           gh api graphql -f query="mutation {
             createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
+              repositoryId: \"${{ steps.eco.outputs.repo_node_id }}\",
+              categoryId: \"${{ steps.eco.outputs.cat_general }}\",
               title: \"🔍 Self-Improvement Scan — $DATE\",
               body: $BODY
             }) {
