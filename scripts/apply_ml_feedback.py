@@ -54,7 +54,8 @@ CONF_GOVERNANCE = 0.80   # §3
 CONF_AUTO_APPLY = 0.85   # §4
 FORBIDDEN_TYPES = {"modify_constitution", "override_policy"}
 # types with an autonomous applier (all bounded/reversible)
-APPLICABLE_TYPES = {"threshold_adjustment", "proactive_recon", "pattern_report"}
+APPLICABLE_TYPES = {"threshold_adjustment", "proactive_recon", "pattern_report",
+                    "strategy_change"}
 REQUIRED = ["pipeline_id", "recommendation_type", "recommendation", "confidence",
             "evidence", "constitutional_check", "timestamp",
             "message_id", "origin_repo", "content_hash", "hash_algorithm"]
@@ -253,11 +254,59 @@ def _apply_policy_review_request(root: Path, doc: dict, dry: bool) -> dict:
             "queue": str(queue_path)}
 
 
+def _apply_remediation_rates(root: Path, doc: dict, dry: bool) -> dict:
+    """Record observed remediation-strategy success rates into the remediation-
+    effectiveness belief (ml-feedback-loop.ixql §3d). This is OBSERVATIONAL: it
+    stores evidence (success rates) and keeps recommended escalation changes as
+    *advisory* — it NEVER downgrades a risk classification autonomously, per the
+    policy guardrail ("Cannot downgrade high-risk gaps without human approval").
+    Prior value recorded for reversibility (Art.3)."""
+    params = doc["recommendation"].get("parameters", {})
+    rates = params.get("success_rates_by_strategy", {})
+    escalations = params.get("recommended_escalation_changes", [])
+
+    belief_path = root / "state" / "beliefs" / "remediation-effectiveness.belief.json"
+    prior = {}
+    if belief_path.is_file():
+        try:
+            prior = json.loads(belief_path.read_text(encoding="utf-8")).get("strategy_success_rates", {})
+        except (json.JSONDecodeError, OSError):
+            prior = {}
+
+    belief = {
+        "proposition": "Remediation-strategy effectiveness is tracked from PDCA outcomes; "
+                       "fragile strategies stay human-gated.",
+        "truth_value": "P",
+        "confidence": doc["confidence"],
+        "evidence": {
+            "supporting": [{
+                "source": f"ml-feedback-recommendation {doc['message_id']}",
+                "claim": doc["recommendation"]["rationale"],
+                "timestamp": doc["timestamp"],
+                "reliability": doc["confidence"],
+            }],
+            "contradicting": [],
+        },
+        "last_updated": _now_iso(),
+        "evaluated_by": "demerzel",
+        "strategy_success_rates": rates,
+        "prior_strategy_success_rates": prior,                 # Art.3 reversibility
+        "advisory_escalation_changes": escalations,            # NOT applied — human-gated
+        "risk_classes_modified": 0,                            # invariant: never autonomous
+        "source_recommendation": doc["message_id"],
+    }
+    if not dry:
+        _atomic_write(belief_path, belief)
+    return {"strategies_recorded": list(rates), "advisory_escalations": len(escalations),
+            "risk_classes_modified": 0, "belief": str(belief_path)}
+
+
 # type -> applier; gate guarantees only APPLICABLE_TYPES reach 'apply'
 _APPLIERS = {
     "threshold_adjustment": _apply_nudge,
     "proactive_recon": _apply_recon_schedule,
     "pattern_report": _apply_policy_review_request,
+    "strategy_change": _apply_remediation_rates,
 }
 
 
