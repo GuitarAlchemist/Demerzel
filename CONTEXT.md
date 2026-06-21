@@ -77,6 +77,22 @@ fact lives in one place and is read out, never restated.
   *agrees* with it. Makes the append-only + precedence [Architecture invariant](#architecture-invariant)
   machine-checkable without generating the headers' human rationale.
 
+## Architecture seams (designed + built 2026-06-21, Candidate 3)
+
+- **`llm_call.sh` / `post_discussion.sh`** — two deep, unit-tested scripts under
+  `.github/scripts/` that replace inline `run:` ceremony duplicated across workflows.
+  `llm_call.sh <provider> <prompt>` hides per-provider auth/payload/extraction
+  (`.content[0].text` vs `.candidates[]..` vs `.choices[]..`) behind one interface
+  (was re-typed in 8 workflows + 3× in cross-model-review). `post_discussion.sh`
+  owns the createDiscussion GraphQL and **raises on failure** instead of the
+  `|| echo "Failed"` swallow (9 workflows). The network call is the single
+  overridable function (`_http_post` / `_graphql`); bats tests (`tests/bats/`)
+  override it with fixtures so the logic is tested without a live API — the first
+  unit-tested seam for the shell layer (`.github/workflows/script-tests.yml`:
+  bats + shellcheck). Reference consumer migrated: `cross-model-review.yml` (its 3
+  near-identical provider blocks → 3 one-liners). `post_discussion.sh` takes the
+  category id as an arg, composing with the [ecosystem action](#architecture-seams-designed--built-2026-06-21-candidate-2)'s `cat_*` outputs.
+
 ## Conventions
 
 See `CLAUDE.md` / `AGENTS.md` for authoritative validation rules, the constitutional
