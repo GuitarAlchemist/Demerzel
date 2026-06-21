@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 38,
+    "schema": 39,
     "skill": 61,
     "workflow": 22
   },
@@ -435,6 +435,10 @@
       {
         "name": "fuzzy-enum.schema",
         "path": "schemas/fuzzy-enum.schema.json"
+      },
+      {
+        "name": "halt-all.schema",
+        "path": "schemas/halt-all.schema.json"
       },
       {
         "name": "hexavalent-distribution.schema",
