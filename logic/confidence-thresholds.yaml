@@ -1,0 +1,35 @@
+# Canonical confidence thresholds — the SINGLE source for the confidence ladder
+# that was restated across 8+ policies (the `≥0.9 autonomous · ≥0.7 with note ·
+# ≥0.5 ask · ≥0.3 escalate · <0.3 do-not-act` ladder in CLAUDE.md).
+#
+# Policies reference a rung by token instead of restating the number:
+#
+#     proceed_autonomously: ref:confidence#autonomous
+#
+# scripts/build_manifest.py resolves every `ref:confidence#<key>` token against
+# the `thresholds` keys below and FAILS CI on a dangling key (Candidate 6 of the
+# 2026-06-21 architecture review; the precedent is precedence.yaml + the canonical
+# reference syntax). Retuning a rung is a one-line edit here.
+schema_version: 1
+
+thresholds:
+  autonomous:
+    value: 0.9
+    operator: ">="
+    meaning: "Proceed autonomously."
+  with_note:
+    value: 0.7
+    operator: ">="
+    meaning: "Proceed, but leave a note."
+  ask_confirmation:
+    value: 0.5
+    operator: ">="
+    meaning: "Ask for confirmation before acting."
+  escalate:
+    value: 0.3
+    operator: ">="
+    meaning: "Escalate to a human."
+  do_not_act:
+    value: 0.3
+    operator: "<"
+    meaning: "Below 0.3 — do not act."

@@ -2441,6 +2441,30 @@
       "to": "policy:weakness-prober-policy",
       "kind": "validates",
       "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:ask_confirmation",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:autonomous",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:escalate",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:with_note",
+      "kind": "confidence_ref",
+      "resolved": true
     }
   ],
   "precedence": [
