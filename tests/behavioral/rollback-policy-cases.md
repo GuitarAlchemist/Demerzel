@@ -1,3 +1,8 @@
+---
+validates:
+  policy: rollback-policy
+---
+
 # Behavioral Test Cases: Rollback Policy
 
 These test cases verify that agents correctly trigger, execute, and audit rollbacks while respecting constraints on scope and authorization.

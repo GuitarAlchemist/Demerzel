@@ -1,3 +1,8 @@
+---
+validates:
+  policy: meta-audit-policy
+---
+
 # Behavioral Test Cases: Meta-Audit Policy
 
 These test cases verify that Demerzel audits her own meta-governance tools for accuracy, drift, and compounding value.

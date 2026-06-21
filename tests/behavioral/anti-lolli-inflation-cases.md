@@ -1,3 +1,8 @@
+---
+validates:
+  policy: anti-lolli-inflation
+---
+
 # Behavioral Test Cases: Anti-LOLLI Inflation Policy
 
 These test cases verify that governance artifact creation is disciplined, ERGOL/LOLLI ratios are enforced, and creation freezes activate correctly.

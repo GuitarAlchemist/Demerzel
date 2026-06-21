@@ -1,3 +1,8 @@
+---
+validates:
+  policy: completeness-instinct
+---
+
 # Behavioral Tests — Completeness Instinct Policy
 
 **Policy:** completeness-instinct-policy

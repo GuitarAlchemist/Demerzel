@@ -5,17 +5,29 @@ on:
     paths:
       - 'logic/governance-evolution.schema.json'
       - 'state/evolution/**'
+      - 'constitutions/**'
       - 'personas/**'
+      - 'policies/**'
+      - 'schemas/**'
       - 'tests/behavioral/**'
+      - 'README.md'
+      - 'governance-manifest.json'
       - 'scripts/validate_governance.py'
+      - 'scripts/build_manifest.py'
       - '.github/workflows/governance-validate.yml'
   pull_request:
     paths:
       - 'logic/governance-evolution.schema.json'
       - 'state/evolution/**'
+      - 'constitutions/**'
       - 'personas/**'
+      - 'policies/**'
+      - 'schemas/**'
       - 'tests/behavioral/**'
+      - 'README.md'
+      - 'governance-manifest.json'
       - 'scripts/validate_governance.py'
+      - 'scripts/build_manifest.py'
   workflow_dispatch:
 
 permissions:
@@ -34,3 +46,30 @@ jobs:
 
       - name: Run governance validator
         run: python scripts/validate_governance.py
+
+  manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install pyyaml jsonschema
+
+      # Generation validates inside (dangling edges, count drift, schema
+      # violations, precedence disagreement) and exits non-zero on any.
+      - name: Build governance manifest
+        run: python scripts/build_manifest.py
+
+      # The manifest is derived (ADR-0001): if regenerating changes the
+      # committed file, it was stale. Fail and tell the author to regenerate.
+      - name: Manifest must be up to date
+        run: |
+          if ! git diff --exit-code governance-manifest.json; then
+            echo "::error::governance-manifest.json is stale. Run: python scripts/build_manifest.py"
+            exit 1
+          fi

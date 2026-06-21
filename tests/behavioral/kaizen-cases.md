@@ -1,3 +1,8 @@
+---
+validates:
+  policy: kaizen-policy
+---
+
 # Behavioral Test Cases: Kaizen Continuous Improvement
 
 These test cases verify that agents correctly apply the Kaizen methodology, including PDCA cycle discipline, model classification, waste detection, and 5 Whys root cause analysis.

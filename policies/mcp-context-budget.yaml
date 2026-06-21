@@ -1,4 +1,4 @@
-policy_id: mcp-context-budget-v1
+name: mcp-context-budget
 version: "1.0.0"
 status: active
 department: governance
@@ -60,7 +60,7 @@ named_concepts:
       - JSON responses where actual content < metadata size
       - Pagination cursors in responses the LLM will never paginate
       - Redundant type tags, envelopes, wrappers
-      - "See also" links the LLM won't follow
+      - '"See also" links the LLM won''t follow'
     mitigations:
       - Strip scaffolding for LLM consumers (separate debug vs LLM view)
       - Inline content instead of references when inline is cheaper
@@ -81,7 +81,7 @@ named_concepts:
       questions — never catalogs.
     symptoms:
       - LLM repeatedly filters/sorts/picks from returned lists
-      - "Find best X from these 50" prompts
+      - '"Find best X from these 50" prompts'
       - LLM doing selection work the server should have done
     mitigations:
       - Tools return ONE answer + reasoning

@@ -1,3 +1,8 @@
+---
+validates:
+  policy: streeling-policy
+---
+
 # Behavioral Test Cases: Streeling Knowledge Transfer
 
 These test cases verify that the Streeling knowledge transfer framework works correctly, including Seldon's teaching behavior, adaptive delivery, two-stage verification, and escalation.

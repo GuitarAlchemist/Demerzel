@@ -1,3 +1,8 @@
+---
+validates:
+  policy: teaching-effectiveness
+---
+
 # Behavioral Test Cases: Teaching Effectiveness Feedback Loop
 
 These test cases verify that the teaching-effectiveness policy correctly tracks explanation outcomes, computes effectiveness scores, runs A/B experiments, tunes persona parameters, selects visual delivery mode appropriately, and flags underperforming curriculum for rewrite.

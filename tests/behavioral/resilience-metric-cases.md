@@ -1,3 +1,8 @@
+---
+validates:
+  policy: resilience-metric-policy
+---
+
 # Resilience Metric — Behavioral Tests
 
 Tests for the Governance Resilience Score (R = injections_caught / injections_total).

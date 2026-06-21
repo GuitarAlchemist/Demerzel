@@ -1,3 +1,8 @@
+---
+validates:
+  policy: staleness-detection-policy
+---
+
 # Behavioral Test Cases: Staleness Detection Policy
 
 These test cases verify that stale artifacts are detected, prioritized, and scheduled for refresh.

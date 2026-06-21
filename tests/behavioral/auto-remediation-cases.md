@@ -1,3 +1,8 @@
+---
+validates:
+  policy: auto-remediation-policy
+---
+
 # Behavioral Test Cases: Auto-Remediation Policy
 
 These test cases verify that Demerzel correctly detects governance gaps and either auto-remediates or escalates based on risk level and confidence.

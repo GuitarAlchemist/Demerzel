@@ -1,3 +1,8 @@
+---
+validates:
+  policy: seldon-plan
+---
+
 # Behavioral Test Cases: Seldon Plan Policy
 
 These test cases verify that the autonomous research scheduler respects cycle caps, maintains kill switch functionality, and separates understanding from action.

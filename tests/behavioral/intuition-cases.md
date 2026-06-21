@@ -1,3 +1,8 @@
+---
+validates:
+  policy: intuition-policy
+---
+
 # Behavioral Test Cases: Intuition Policy
 
 These test cases verify that governance intuition is labeled as such, never presented as evidence, and escalated appropriately for high-risk decisions.

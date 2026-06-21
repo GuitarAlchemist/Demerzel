@@ -1,3 +1,8 @@
+---
+validates:
+  policy: constitutional-compliance
+---
+
 # Behavioral Test Cases: Constitutional Compliance Policy
 
 These test cases verify that every policy declares constitutional basis and every rule cites a specific constitution article.

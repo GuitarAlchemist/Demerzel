@@ -1,3 +1,8 @@
+---
+validates:
+  policy: context-engine-policy
+---
+
 # Behavioral Tests — Context Engine Policy
 
 **Policy:** context-engine-policy

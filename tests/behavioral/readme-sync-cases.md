@@ -1,3 +1,8 @@
+---
+validates:
+  policy: readme-sync-policy
+---
+
 # Behavioral Test Cases: README Sync Policy
 
 These test cases verify that README files are kept in sync, links are verified, and documentation reflects actual state.

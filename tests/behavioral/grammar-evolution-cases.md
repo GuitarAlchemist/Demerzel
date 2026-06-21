@@ -1,3 +1,8 @@
+---
+validates:
+  policy: grammar-evolution-policy
+---
+
 # Behavioral Test Cases: Grammar Evolution Policy
 
 These test cases verify that grammars evolve through lifecycle stages, weights update via Bayesian inference, and stale grammars are pruned.

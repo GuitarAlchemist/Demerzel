@@ -1,3 +1,8 @@
+---
+validates:
+  policy: autonomous-loop-policy
+---
+
 # Behavioral Test Cases: Autonomous Loop Policy
 
 These test cases verify that autonomous loops correctly apply risk classification, governance modes, iteration limits, convergence checks, and self-merge authority.

@@ -57,7 +57,18 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 DEFAULT_SCOPE = "loops-only"
-VALID_SCOPES = {"loops-only", "loops-and-batch", "global"}
+
+# Single source of the structural constraints (ADR-0003): the scope enum and the
+# reason length live in schemas/halt-all.schema.json, not hardcoded here. This
+# Python adapter stays stdlib-only (the halt tool must not depend on jsonschema);
+# the PowerShell adapter validates the full schema via Test-Json -Schema.
+_SCHEMA = json.loads(
+    (Path(__file__).resolve().parent.parent / "schemas" / "halt-all.schema.json").read_text(
+        encoding="utf-8"
+    )
+)
+VALID_SCOPES = set(_SCHEMA["properties"]["scope"]["enum"])
+_REASON_MAX = _SCHEMA["properties"]["reason"]["maxLength"]
 
 
 def marker_dir() -> Path:
@@ -87,8 +98,8 @@ def validate(marker: dict[str, Any]) -> list[str]:
     if not isinstance(halted_at, str) or "T" not in halted_at:
         errors.append("halted_at must be an RFC3339 UTC timestamp string")
     reason = marker.get("reason")
-    if not isinstance(reason, str) or not (1 <= len(reason) <= 500):
-        errors.append("reason must be a 1-500 character string")
+    if not isinstance(reason, str) or not (1 <= len(reason) <= _REASON_MAX):
+        errors.append(f"reason must be a 1-{_REASON_MAX} character string")
     scope = marker.get("scope", DEFAULT_SCOPE)
     if scope not in VALID_SCOPES:
         errors.append(f"scope must be one of {sorted(VALID_SCOPES)}; got {scope!r}")

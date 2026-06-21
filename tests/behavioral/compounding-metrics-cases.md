@@ -1,3 +1,8 @@
+---
+validates:
+  policy: compounding-metrics
+---
+
 # Behavioral Tests — Compounding Metrics Policy
 
 **Policy:** compounding-metrics-policy

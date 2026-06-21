@@ -20,6 +20,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Shared HALT-ALL read + schema-validate + expiry (candidate 4 / #352). The
+# overseer keeps its own self-exemption rule on top of the shared facts.
+Import-Module (Join-Path $PSScriptRoot 'DomainGate.psm1') -Force
+
 function Add-Finding {
     param(
         [System.Collections.Generic.List[object]]$Findings,
@@ -86,57 +90,30 @@ function Get-HaltAllState {
     if (-not $Path -or -not (Test-Path -LiteralPath $Path)) { return $state }
 
     $state.present = $true
-    $marker = Read-JsonOrNull -Path $Path
-    if (-not $marker) {
-        $state.readStatus = 'unreadable'
+
+    # Delegate the read + schema-validation + expiry to the shared module; an
+    # invalid marker fails safe to active (DomainGate.psm1 / schemas/halt-all.schema.json).
+    $facts = Test-HaltAll -RepoRoot $RepoRoot -HaltAllPath $Path
+    if (-not $facts.Valid) {
+        $state.readStatus = 'invalid'
         $state.active = $true
         return $state
     }
 
+    $marker = $facts.Marker
     $state.readStatus = 'ok'
-    $schemaVersion = Get-ObjectPropertyOrNull -Object $marker -Names @('schema_version', 'schemaVersion')
-    $scope = Get-ObjectPropertyOrNull -Object $marker -Names @('scope')
-    $expiresAt = Get-ObjectPropertyOrNull -Object $marker -Names @('expires_at', 'expiresAt')
-    $reason = Get-ObjectPropertyOrNull -Object $marker -Names @('reason', 'message')
-    $exemptAgents = @(Get-ObjectPropertyOrNull -Object $marker -Names @('exempt_agents', 'exemptAgents'))
+    $state.scope = $marker.scope
+    $state.expiresAt = $marker.expires_at
+    $state.reason = $marker.reason
 
-    $state.scope = $scope
-    $state.expiresAt = $expiresAt
-    $state.reason = $reason
-
-    if ($schemaVersion -and ([string]$schemaVersion) -notin @('0.1', '1', '1.0')) {
-        $state.readStatus = 'unknown-schema'
-        $state.active = $true
-        return $state
-    }
-
-    if ($expiresAt) {
-        $parsedExpiresAt = [datetime]::MinValue
-        if (-not [datetime]::TryParse([string]$expiresAt, [ref]$parsedExpiresAt)) {
-            $state.readStatus = 'invalid-expiry'
-            $state.active = $true
-            return $state
-        }
-
-        if ($parsedExpiresAt.ToUniversalTime() -le (Get-Date).ToUniversalTime()) {
-            $state.active = $false
-            return $state
-        }
-    }
-
-    if ($exemptAgents -contains 'dev-process-overseer') {
+    # Overseer-specific: the overseer exempts itself when listed, so it can keep
+    # reporting while loops are halted.
+    if (@($marker.exempt_agents) -contains 'dev-process-overseer') {
         $state.active = $false
         return $state
     }
 
-    $activeScopes = @($null, '', 'loops-only', 'loops-and-batch', 'global')
-    if ($activeScopes -contains $scope) {
-        $state.active = $true
-        return $state
-    }
-
-    $state.readStatus = 'unknown-scope'
-    $state.active = $true
+    $state.active = $facts.Active
     return $state
 }
 

@@ -1,3 +1,8 @@
+---
+validates:
+  policy: ai-probes-policy
+---
+
 # @ai Probes Behavioral Tests
 
 Tests for semantic code annotation governance (issue #53).

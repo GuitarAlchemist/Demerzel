@@ -1,3 +1,8 @@
+---
+validates:
+  policy: algedonic-channel-policy
+---
+
 # Algedonic Channel Behavioral Tests
 
 Tests for the S1→S5 emergency bypass channel (issue #166).

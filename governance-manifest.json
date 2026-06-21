@@ -1,0 +1,2481 @@
+{
+  "schema_version": 1,
+  "generated_by": "scripts/build_manifest.py",
+  "discipline": "harvest, don't declare (docs/adr/0002)",
+  "counts": {
+    "behavioral_test": 114,
+    "constitution": 5,
+    "contract_schema": 9,
+    "grammar": 20,
+    "persona": 17,
+    "pipeline": 23,
+    "policy": 45,
+    "schema": 40,
+    "skill": 69,
+    "workflow": 22
+  },
+  "inventory": {
+    "constitution": [
+      {
+        "name": "asimov.constitution",
+        "path": "constitutions/asimov.constitution.md"
+      },
+      {
+        "name": "default.constitution",
+        "path": "constitutions/default.constitution.md"
+      },
+      {
+        "name": "demerzel-mandate",
+        "path": "constitutions/demerzel-mandate.md"
+      },
+      {
+        "name": "epistemic.constitution",
+        "path": "constitutions/epistemic.constitution.md"
+      },
+      {
+        "name": "harm-taxonomy",
+        "path": "constitutions/harm-taxonomy.md"
+      }
+    ],
+    "persona": [
+      {
+        "name": "communal-steward",
+        "path": "personas/communal-steward.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "composer-agent",
+        "path": "personas/composer-agent.persona.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "convolution-agent",
+        "path": "personas/convolution-agent.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "critical-theorist",
+        "path": "personas/critical-theorist.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "default",
+        "path": "personas/default.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "demerzel",
+        "path": "personas/demerzel.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "guitar-coach",
+        "path": "personas/guitar-coach.persona.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "kaizen-optimizer",
+        "path": "personas/kaizen-optimizer.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "music-teacher",
+        "path": "personas/music-teacher.persona.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "rational-administrator",
+        "path": "personas/rational-administrator.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "recovery-agent",
+        "path": "personas/recovery-agent.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "reflective-architect",
+        "path": "personas/reflective-architect.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "seldon",
+        "path": "personas/seldon.persona.yaml",
+        "version": "2.0.0"
+      },
+      {
+        "name": "skeptical-auditor",
+        "path": "personas/skeptical-auditor.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "system-integrator",
+        "path": "personas/system-integrator.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "validator-reflector",
+        "path": "personas/validator-reflector.persona.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "virtuous-leader",
+        "path": "personas/virtuous-leader.persona.yaml",
+        "version": "1.1.0"
+      }
+    ],
+    "policy": [
+      {
+        "name": "adversarial-resilience-policy",
+        "path": "policies/adversarial-resilience-policy.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "agent-evaluation",
+        "path": "policies/agent-evaluation.policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "ai-probes-policy",
+        "path": "policies/ai-probes-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "algedonic-channel-policy",
+        "path": "policies/algedonic-channel-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "alignment-policy",
+        "path": "policies/alignment-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "anti-lolli-inflation",
+        "path": "policies/anti-lolli-inflation-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "auto-remediation-policy",
+        "path": "policies/auto-remediation-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "autonomous-loop-policy",
+        "path": "policies/autonomous-loop-policy.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "belief-currency-policy",
+        "path": "policies/belief-currency-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "capability-unity",
+        "path": "policies/capability-unity-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "chaos-test",
+        "path": "policies/chaos-test-policy.yaml",
+        "version": "0.0.1"
+      },
+      {
+        "name": "completeness-instinct",
+        "path": "policies/completeness-instinct-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "compounding-metrics",
+        "path": "policies/compounding-metrics-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "conscience-observability-policy",
+        "path": "policies/conscience-observability-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "constitutional-compliance",
+        "path": "policies/constitutional-compliance-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "context-engine-policy",
+        "path": "policies/context-engine-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "context-management-policy",
+        "path": "policies/context-management-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "continuous-learning-policy",
+        "path": "policies/continuous-learning-policy.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "epistemic-self-awareness",
+        "path": "policies/epistemic-self-awareness-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "governance-audit-policy",
+        "path": "policies/governance-audit-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "governance-experimentation-policy",
+        "path": "policies/governance-experimentation-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "governance-process-policy",
+        "path": "policies/governance-process-policy.yaml",
+        "version": "2.0.0"
+      },
+      {
+        "name": "grammar-evolution-policy",
+        "path": "policies/grammar-evolution-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "intuition-policy",
+        "path": "policies/intuition-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "kaizen-policy",
+        "path": "policies/kaizen-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "mcp-context-budget",
+        "path": "policies/mcp-context-budget.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "meta-audit-policy",
+        "path": "policies/meta-audit-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "meta-learning-policy",
+        "path": "policies/meta-learning-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "ml-governance-feedback-policy",
+        "path": "policies/ml-governance-feedback-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "multi-model-orchestration-policy",
+        "path": "policies/multi-model-orchestration-policy.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "multilingual-policy",
+        "path": "policies/multilingual-policy.yaml",
+        "version": "1.1.0"
+      },
+      {
+        "name": "proto-conscience-policy",
+        "path": "policies/proto-conscience-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "readme-sync-policy",
+        "path": "policies/readme-sync-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "reconnaissance-policy",
+        "path": "policies/reconnaissance-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "recursive-learning-eval",
+        "path": "policies/recursive-learning-eval-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "resilience-metric-policy",
+        "path": "policies/resilience-metric-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "rollback-policy",
+        "path": "policies/rollback-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "scientific-objectivity-policy",
+        "path": "policies/scientific-objectivity-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "seldon-plan",
+        "path": "policies/seldon-plan-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "self-modification-policy",
+        "path": "policies/self-modification-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "staleness-detection-policy",
+        "path": "policies/staleness-detection-policy.yaml",
+        "version": "1.2.0"
+      },
+      {
+        "name": "streeling-policy",
+        "path": "policies/streeling-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "teaching-effectiveness",
+        "path": "policies/teaching-effectiveness-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "visual-critic",
+        "path": "policies/visual-critic-policy.yaml",
+        "version": "1.0.0"
+      },
+      {
+        "name": "weakness-prober-policy",
+        "path": "policies/weakness-prober-policy.yaml",
+        "version": "1.0.0"
+      }
+    ],
+    "schema": [
+      {
+        "name": "a2a-protocol.schema",
+        "path": "schemas/a2a-protocol.schema.json"
+      },
+      {
+        "name": "agent-card.schema",
+        "path": "schemas/agent-card.schema.json"
+      },
+      {
+        "name": "ai-probe.schema",
+        "path": "schemas/ai-probe.schema.json"
+      },
+      {
+        "name": "blackboard-state.schema",
+        "path": "schemas/blackboard-state.schema.json"
+      },
+      {
+        "name": "capability-registry",
+        "path": "schemas/capability-registry.json"
+      },
+      {
+        "name": "chaos-test.schema",
+        "path": "schemas/chaos-test.schema.json"
+      },
+      {
+        "name": "cognition-model.schema",
+        "path": "schemas/cognition-model.schema.json"
+      },
+      {
+        "name": "compounding-report.schema",
+        "path": "schemas/compounding-report.schema.json"
+      },
+      {
+        "name": "conscience-pattern.schema",
+        "path": "schemas/conscience-pattern.schema.json"
+      },
+      {
+        "name": "conscience-signal.schema",
+        "path": "schemas/conscience-signal.schema.json"
+      },
+      {
+        "name": "conscience-weekly-report.schema",
+        "path": "schemas/conscience-weekly-report.schema.json"
+      },
+      {
+        "name": "constitutional-case.schema",
+        "path": "schemas/constitutional-case.schema.json"
+      },
+      {
+        "name": "context-engine.schema",
+        "path": "schemas/context-engine.schema.json"
+      },
+      {
+        "name": "council-verdict.schema",
+        "path": "schemas/council-verdict.schema.json"
+      },
+      {
+        "name": "course-module.schema",
+        "path": "schemas/course-module.schema.json"
+      },
+      {
+        "name": "course-production.schema",
+        "path": "schemas/course-production.schema.json"
+      },
+      {
+        "name": "driver-state.schema",
+        "path": "schemas/driver-state.schema.json"
+      },
+      {
+        "name": "fuzzy-belief.schema",
+        "path": "schemas/fuzzy-belief.schema.json"
+      },
+      {
+        "name": "fuzzy-distribution.schema",
+        "path": "schemas/fuzzy-distribution.schema.json"
+      },
+      {
+        "name": "fuzzy-du.schema",
+        "path": "schemas/fuzzy-du.schema.json"
+      },
+      {
+        "name": "fuzzy-enum.schema",
+        "path": "schemas/fuzzy-enum.schema.json"
+      },
+      {
+        "name": "halt-all.schema",
+        "path": "schemas/halt-all.schema.json"
+      },
+      {
+        "name": "hexavalent-distribution.schema",
+        "path": "schemas/hexavalent-distribution.schema.json"
+      },
+      {
+        "name": "loop-state.schema",
+        "path": "schemas/loop-state.schema.json"
+      },
+      {
+        "name": "meta-audit.schema",
+        "path": "schemas/meta-audit.schema.json"
+      },
+      {
+        "name": "persona.schema",
+        "path": "schemas/persona.schema.json"
+      },
+      {
+        "name": "policy.schema",
+        "path": "schemas/policy.schema.json"
+      },
+      {
+        "name": "pre-mortem.schema",
+        "path": "schemas/pre-mortem.schema.json"
+      },
+      {
+        "name": "reconnaissance-profile.schema",
+        "path": "schemas/reconnaissance-profile.schema.json"
+      },
+      {
+        "name": "research-anomaly.schema",
+        "path": "schemas/research-anomaly.schema.json"
+      },
+      {
+        "name": "research-cycle.schema",
+        "path": "schemas/research-cycle.schema.json"
+      },
+      {
+        "name": "research-weights.schema",
+        "path": "schemas/research-weights.schema.json"
+      },
+      {
+        "name": "resilience-metric.schema",
+        "path": "schemas/resilience-metric.schema.json"
+      },
+      {
+        "name": "session-event.schema",
+        "path": "schemas/session-event.schema.json"
+      },
+      {
+        "name": "situation-report.schema",
+        "path": "schemas/situation-report.schema.json"
+      },
+      {
+        "name": "standing-order.schema",
+        "path": "schemas/standing-order.schema.json"
+      },
+      {
+        "name": "trigger.schema",
+        "path": "schemas/trigger.schema.json"
+      },
+      {
+        "name": "voicing-handle.schema",
+        "path": "schemas/voicing-handle.schema.json"
+      },
+      {
+        "name": "weakness-report.schema",
+        "path": "schemas/weakness-report.schema.json"
+      },
+      {
+        "name": "work-manifest.schema",
+        "path": "schemas/work-manifest.schema.json"
+      }
+    ],
+    "contract_schema": [
+      {
+        "name": "belief-snapshot.schema",
+        "path": "schemas/contracts/belief-snapshot.schema.json"
+      },
+      {
+        "name": "compliance-report.schema",
+        "path": "schemas/contracts/compliance-report.schema.json"
+      },
+      {
+        "name": "directive.schema",
+        "path": "schemas/contracts/directive.schema.json"
+      },
+      {
+        "name": "external-sync-envelope.schema",
+        "path": "schemas/contracts/external-sync-envelope.schema.json"
+      },
+      {
+        "name": "integrity-fields.schema",
+        "path": "schemas/contracts/integrity-fields.schema.json"
+      },
+      {
+        "name": "knowledge-package.schema",
+        "path": "schemas/contracts/knowledge-package.schema.json"
+      },
+      {
+        "name": "learning-outcome.schema",
+        "path": "schemas/contracts/learning-outcome.schema.json"
+      },
+      {
+        "name": "ml-feedback-recommendation.schema",
+        "path": "schemas/contracts/ml-feedback-recommendation.schema.json"
+      },
+      {
+        "name": "qa-verdict.schema",
+        "path": "schemas/contracts/qa-verdict.schema.json"
+      }
+    ],
+    "grammar": [
+      {
+        "name": "core-meta-grammar",
+        "path": "grammars/core-meta-grammar.ebnf"
+      },
+      {
+        "name": "gov-blind-spot-detection",
+        "path": "grammars/gov-blind-spot-detection.ebnf"
+      },
+      {
+        "name": "gov-bs-generators",
+        "path": "grammars/gov-bs-generators.ebnf"
+      },
+      {
+        "name": "gov-metaqa",
+        "path": "grammars/gov-metaqa.ebnf"
+      },
+      {
+        "name": "human-semiotics",
+        "path": "grammars/human-semiotics.ebnf"
+      },
+      {
+        "name": "music-ear-training",
+        "path": "grammars/music-ear-training.ebnf"
+      },
+      {
+        "name": "music-guitar-technique",
+        "path": "grammars/music-guitar-technique.ebnf"
+      },
+      {
+        "name": "music-improvisation",
+        "path": "grammars/music-improvisation.ebnf"
+      },
+      {
+        "name": "music-rhythm",
+        "path": "grammars/music-rhythm.ebnf"
+      },
+      {
+        "name": "music-scale-catalog",
+        "path": "grammars/music-scale-catalog.ebnf"
+      },
+      {
+        "name": "music-theory",
+        "path": "grammars/music-theory.ebnf"
+      },
+      {
+        "name": "sci-audio-engineering",
+        "path": "grammars/sci-audio-engineering.ebnf"
+      },
+      {
+        "name": "sci-cybernetics",
+        "path": "grammars/sci-cybernetics.ebnf"
+      },
+      {
+        "name": "sci-data-visualization",
+        "path": "grammars/sci-data-visualization.ebnf"
+      },
+      {
+        "name": "sci-guitar-acoustics",
+        "path": "grammars/sci-guitar-acoustics.ebnf"
+      },
+      {
+        "name": "sci-information-theory",
+        "path": "grammars/sci-information-theory.ebnf"
+      },
+      {
+        "name": "sci-ml-pipelines",
+        "path": "grammars/sci-ml-pipelines.ebnf"
+      },
+      {
+        "name": "sci-network-science",
+        "path": "grammars/sci-network-science.ebnf"
+      },
+      {
+        "name": "sci-systems-engineering",
+        "path": "grammars/sci-systems-engineering.ebnf"
+      },
+      {
+        "name": "sci-visual-computing",
+        "path": "grammars/sci-visual-computing.ebnf"
+      }
+    ],
+    "behavioral_test": [
+      {
+        "name": "adversarial-resilience-cases",
+        "path": "tests/behavioral/adversarial-resilience-cases.md"
+      },
+      {
+        "name": "adversarial-resilience-red-team-results",
+        "path": "tests/behavioral/adversarial-resilience-red-team-results.md"
+      },
+      {
+        "name": "agent-coordinator-cases",
+        "path": "tests/behavioral/agent-coordinator-cases.md"
+      },
+      {
+        "name": "ai-probes-cases",
+        "path": "tests/behavioral/ai-probes-cases.md"
+      },
+      {
+        "name": "algedonic-belief-monitor-cases",
+        "path": "tests/behavioral/algedonic-belief-monitor-cases.md"
+      },
+      {
+        "name": "algedonic-channel-cases",
+        "path": "tests/behavioral/algedonic-channel-cases.md"
+      },
+      {
+        "name": "alignment-policy-cases",
+        "path": "tests/behavioral/alignment-policy-cases.md"
+      },
+      {
+        "name": "anti-lolli-cases",
+        "path": "tests/behavioral/anti-lolli-cases.md"
+      },
+      {
+        "name": "anti-lolli-inflation-cases",
+        "path": "tests/behavioral/anti-lolli-inflation-cases.md"
+      },
+      {
+        "name": "asimov-law-cases",
+        "path": "tests/behavioral/asimov-law-cases.md"
+      },
+      {
+        "name": "audio-engineering-cases",
+        "path": "tests/behavioral/audio-engineering-cases.md"
+      },
+      {
+        "name": "auto-remediation-cases",
+        "path": "tests/behavioral/auto-remediation-cases.md"
+      },
+      {
+        "name": "auto-research-cases",
+        "path": "tests/behavioral/auto-research-cases.md"
+      },
+      {
+        "name": "auto-team-cases",
+        "path": "tests/behavioral/auto-team-cases.md"
+      },
+      {
+        "name": "autonomous-loop-policy-cases",
+        "path": "tests/behavioral/autonomous-loop-policy-cases.md"
+      },
+      {
+        "name": "batch-b-integration-cases",
+        "path": "tests/behavioral/batch-b-integration-cases.md"
+      },
+      {
+        "name": "belief-currency-cases",
+        "path": "tests/behavioral/belief-currency-cases.md"
+      },
+      {
+        "name": "bs-decoder-cases",
+        "path": "tests/behavioral/bs-decoder-cases.md"
+      },
+      {
+        "name": "capability-unity-cases",
+        "path": "tests/behavioral/capability-unity-cases.md"
+      },
+      {
+        "name": "chaos-engineering-cases",
+        "path": "tests/behavioral/chaos-engineering-cases.md"
+      },
+      {
+        "name": "chaos-test-cases",
+        "path": "tests/behavioral/chaos-test-cases.md"
+      },
+      {
+        "name": "communal-steward-cases",
+        "path": "tests/behavioral/communal-steward-cases.md"
+      },
+      {
+        "name": "completeness-instinct-cases",
+        "path": "tests/behavioral/completeness-instinct-cases.md"
+      },
+      {
+        "name": "composer-agent-cases",
+        "path": "tests/behavioral/composer-agent-cases.md"
+      },
+      {
+        "name": "compounding-metrics-cases",
+        "path": "tests/behavioral/compounding-metrics-cases.md"
+      },
+      {
+        "name": "conscience-observability-cases",
+        "path": "tests/behavioral/conscience-observability-cases.md"
+      },
+      {
+        "name": "constitutional-compliance-cases",
+        "path": "tests/behavioral/constitutional-compliance-cases.md"
+      },
+      {
+        "name": "constitutional-evolution-cases",
+        "path": "tests/behavioral/constitutional-evolution-cases.md"
+      },
+      {
+        "name": "context-engine-cases",
+        "path": "tests/behavioral/context-engine-cases.md"
+      },
+      {
+        "name": "context-management-cases",
+        "path": "tests/behavioral/context-management-cases.md"
+      },
+      {
+        "name": "continuous-learning-cases",
+        "path": "tests/behavioral/continuous-learning-cases.md"
+      },
+      {
+        "name": "contradiction-cases",
+        "path": "tests/behavioral/contradiction-cases.md"
+      },
+      {
+        "name": "convolution-agent-cases",
+        "path": "tests/behavioral/convolution-agent-cases.md"
+      },
+      {
+        "name": "critic-agent-cases",
+        "path": "tests/behavioral/critic-agent-cases.md"
+      },
+      {
+        "name": "critical-theorist-cases",
+        "path": "tests/behavioral/critical-theorist-cases.md"
+      },
+      {
+        "name": "cybernetics-cases",
+        "path": "tests/behavioral/cybernetics-cases.md"
+      },
+      {
+        "name": "data-visualization-cases",
+        "path": "tests/behavioral/data-visualization-cases.md"
+      },
+      {
+        "name": "default-cases",
+        "path": "tests/behavioral/default-cases.md"
+      },
+      {
+        "name": "demerzel-cases",
+        "path": "tests/behavioral/demerzel-cases.md"
+      },
+      {
+        "name": "demerzel-experimentation-cases",
+        "path": "tests/behavioral/demerzel-experimentation-cases.md"
+      },
+      {
+        "name": "discord-dispatch-cases",
+        "path": "tests/behavioral/discord-dispatch-cases.md"
+      },
+      {
+        "name": "discord-thread-cases",
+        "path": "tests/behavioral/discord-thread-cases.md"
+      },
+      {
+        "name": "driver-cases",
+        "path": "tests/behavioral/driver-cases.md"
+      },
+      {
+        "name": "fractal-compounding-cases",
+        "path": "tests/behavioral/fractal-compounding-cases.md"
+      },
+      {
+        "name": "fuzzy-du-cases",
+        "path": "tests/behavioral/fuzzy-du-cases.md"
+      },
+      {
+        "name": "fuzzy-logic-cases",
+        "path": "tests/behavioral/fuzzy-logic-cases.md"
+      },
+      {
+        "name": "ga-orchestrator-cases",
+        "path": "tests/behavioral/ga-orchestrator-cases.md"
+      },
+      {
+        "name": "governance-audit-cases",
+        "path": "tests/behavioral/governance-audit-cases.md"
+      },
+      {
+        "name": "governance-experimentation-cases",
+        "path": "tests/behavioral/governance-experimentation-cases.md"
+      },
+      {
+        "name": "governance-markov-cases",
+        "path": "tests/behavioral/governance-markov-cases.md"
+      },
+      {
+        "name": "governance-process-cases",
+        "path": "tests/behavioral/governance-process-cases.md"
+      },
+      {
+        "name": "grammar-evolution-cases",
+        "path": "tests/behavioral/grammar-evolution-cases.md"
+      },
+      {
+        "name": "grammar-validation-cases",
+        "path": "tests/behavioral/grammar-validation-cases.md"
+      },
+      {
+        "name": "guitar-acoustics-cases",
+        "path": "tests/behavioral/guitar-acoustics-cases.md"
+      },
+      {
+        "name": "guitar-coach-cases",
+        "path": "tests/behavioral/guitar-coach-cases.md"
+      },
+      {
+        "name": "hyperlight-parallel-cases",
+        "path": "tests/behavioral/hyperlight-parallel-cases.md"
+      },
+      {
+        "name": "information-theory-cases",
+        "path": "tests/behavioral/information-theory-cases.md"
+      },
+      {
+        "name": "intuition-cases",
+        "path": "tests/behavioral/intuition-cases.md"
+      },
+      {
+        "name": "ixql-assertions-cases",
+        "path": "tests/behavioral/ixql-assertions-cases.md"
+      },
+      {
+        "name": "ixql-cookbook-pipeline-cases",
+        "path": "tests/behavioral/ixql-cookbook-pipeline-cases.md"
+      },
+      {
+        "name": "kaizen-cases",
+        "path": "tests/behavioral/kaizen-cases.md"
+      },
+      {
+        "name": "kaizen-optimizer-cases",
+        "path": "tests/behavioral/kaizen-optimizer-cases.md"
+      },
+      {
+        "name": "lolli-lint-cases",
+        "path": "tests/behavioral/lolli-lint-cases.md"
+      },
+      {
+        "name": "loop-cases",
+        "path": "tests/behavioral/loop-cases.md"
+      },
+      {
+        "name": "meta-audit-cases",
+        "path": "tests/behavioral/meta-audit-cases.md"
+      },
+      {
+        "name": "meta-compounding-cases",
+        "path": "tests/behavioral/meta-compounding-cases.md"
+      },
+      {
+        "name": "metaqa-cases",
+        "path": "tests/behavioral/metaqa-cases.md"
+      },
+      {
+        "name": "metasync-cases",
+        "path": "tests/behavioral/metasync-cases.md"
+      },
+      {
+        "name": "ml-feedback-cases",
+        "path": "tests/behavioral/ml-feedback-cases.md"
+      },
+      {
+        "name": "ml-governance-feedback-cases",
+        "path": "tests/behavioral/ml-governance-feedback-cases.md"
+      },
+      {
+        "name": "mog-executor.behavioral-tests",
+        "path": "tests/behavioral/mog-executor.behavioral-tests.md"
+      },
+      {
+        "name": "multi-model-orchestration-cases",
+        "path": "tests/behavioral/multi-model-orchestration-cases.md"
+      },
+      {
+        "name": "multilingual-cases",
+        "path": "tests/behavioral/multilingual-cases.md"
+      },
+      {
+        "name": "music-teacher-cases",
+        "path": "tests/behavioral/music-teacher-cases.md"
+      },
+      {
+        "name": "network-science-cases",
+        "path": "tests/behavioral/network-science-cases.md"
+      },
+      {
+        "name": "pre-mortem-cases",
+        "path": "tests/behavioral/pre-mortem-cases.md"
+      },
+      {
+        "name": "proto-conscience-cases",
+        "path": "tests/behavioral/proto-conscience-cases.md"
+      },
+      {
+        "name": "protocol-cases",
+        "path": "tests/behavioral/protocol-cases.md"
+      },
+      {
+        "name": "rational-administrator-cases",
+        "path": "tests/behavioral/rational-administrator-cases.md"
+      },
+      {
+        "name": "readme-sync-cases",
+        "path": "tests/behavioral/readme-sync-cases.md"
+      },
+      {
+        "name": "reconnaissance-cases",
+        "path": "tests/behavioral/reconnaissance-cases.md"
+      },
+      {
+        "name": "recovery-agent-cases",
+        "path": "tests/behavioral/recovery-agent-cases.md"
+      },
+      {
+        "name": "recursive-governance-cases",
+        "path": "tests/behavioral/recursive-governance-cases.md"
+      },
+      {
+        "name": "recursive-learning-eval-cases",
+        "path": "tests/behavioral/recursive-learning-eval-cases.md"
+      },
+      {
+        "name": "reflective-architect-cases",
+        "path": "tests/behavioral/reflective-architect-cases.md"
+      },
+      {
+        "name": "render-critic-cases",
+        "path": "tests/behavioral/render-critic-cases.md"
+      },
+      {
+        "name": "resilience-metric-cases",
+        "path": "tests/behavioral/resilience-metric-cases.md"
+      },
+      {
+        "name": "rollback-policy-cases",
+        "path": "tests/behavioral/rollback-policy-cases.md"
+      },
+      {
+        "name": "scheduled-research-cases",
+        "path": "tests/behavioral/scheduled-research-cases.md"
+      },
+      {
+        "name": "schema-staleness-immediate-cases",
+        "path": "tests/behavioral/schema-staleness-immediate-cases.md"
+      },
+      {
+        "name": "scientific-objectivity-cases",
+        "path": "tests/behavioral/scientific-objectivity-cases.md"
+      },
+      {
+        "name": "seldon-cases",
+        "path": "tests/behavioral/seldon-cases.md"
+      },
+      {
+        "name": "seldon-plan-cases",
+        "path": "tests/behavioral/seldon-plan-cases.md"
+      },
+      {
+        "name": "self-diagnostic-cases",
+        "path": "tests/behavioral/self-diagnostic-cases.md"
+      },
+      {
+        "name": "self-modification-policy-cases",
+        "path": "tests/behavioral/self-modification-policy-cases.md"
+      },
+      {
+        "name": "semantic-router-cases",
+        "path": "tests/behavioral/semantic-router-cases.md"
+      },
+      {
+        "name": "semiotics-cases",
+        "path": "tests/behavioral/semiotics-cases.md"
+      },
+      {
+        "name": "shake-metafix-loop-cases",
+        "path": "tests/behavioral/shake-metafix-loop-cases.md"
+      },
+      {
+        "name": "skeptical-auditor-cases",
+        "path": "tests/behavioral/skeptical-auditor-cases.md"
+      },
+      {
+        "name": "spectral-optimizer-cases",
+        "path": "tests/behavioral/spectral-optimizer-cases.md"
+      },
+      {
+        "name": "staleness-detection-cases",
+        "path": "tests/behavioral/staleness-detection-cases.md"
+      },
+      {
+        "name": "streeling-cases",
+        "path": "tests/behavioral/streeling-cases.md"
+      },
+      {
+        "name": "system-integrator-cases",
+        "path": "tests/behavioral/system-integrator-cases.md"
+      },
+      {
+        "name": "systems-engineering-cases",
+        "path": "tests/behavioral/systems-engineering-cases.md"
+      },
+      {
+        "name": "tab-agent-cases",
+        "path": "tests/behavioral/tab-agent-cases.md"
+      },
+      {
+        "name": "teaching-effectiveness-cases",
+        "path": "tests/behavioral/teaching-effectiveness-cases.md"
+      },
+      {
+        "name": "technique-agent-cases",
+        "path": "tests/behavioral/technique-agent-cases.md"
+      },
+      {
+        "name": "theory-agent-cases",
+        "path": "tests/behavioral/theory-agent-cases.md"
+      },
+      {
+        "name": "thought-experiments",
+        "path": "tests/behavioral/thought-experiments.md"
+      },
+      {
+        "name": "validator-reflector-cases",
+        "path": "tests/behavioral/validator-reflector-cases.md"
+      },
+      {
+        "name": "virtuous-leader-cases",
+        "path": "tests/behavioral/virtuous-leader-cases.md"
+      },
+      {
+        "name": "visual-computing-cases",
+        "path": "tests/behavioral/visual-computing-cases.md"
+      },
+      {
+        "name": "visual-critic-cases",
+        "path": "tests/behavioral/visual-critic-cases.md"
+      },
+      {
+        "name": "weakness-prober-cases",
+        "path": "tests/behavioral/weakness-prober-cases.md"
+      }
+    ],
+    "pipeline": [
+      {
+        "name": "algedonic-belief-monitor",
+        "path": "pipelines/algedonic-belief-monitor.ixql"
+      },
+      {
+        "name": "chaos-test",
+        "path": "pipelines/chaos-test.ixql"
+      },
+      {
+        "name": "conscience-cycle",
+        "path": "pipelines/conscience-cycle.ixql"
+      },
+      {
+        "name": "constitutional-evolution",
+        "path": "pipelines/constitutional-evolution.ixql"
+      },
+      {
+        "name": "content-intelligence",
+        "path": "pipelines/content-intelligence.ixql"
+      },
+      {
+        "name": "cross-pipeline-deps",
+        "path": "pipelines/cross-pipeline-deps.ixql"
+      },
+      {
+        "name": "driver-cycle",
+        "path": "pipelines/driver-cycle.ixql"
+      },
+      {
+        "name": "governance-audit",
+        "path": "pipelines/governance-audit.ixql"
+      },
+      {
+        "name": "governance-markov",
+        "path": "pipelines/governance-markov.ixql"
+      },
+      {
+        "name": "governance-shake-test",
+        "path": "pipelines/governance-shake-test.ixql"
+      },
+      {
+        "name": "hyperlight-orchestrator",
+        "path": "pipelines/hyperlight-orchestrator.ixql"
+      },
+      {
+        "name": "lolli-lint",
+        "path": "pipelines/lolli-lint.ixql"
+      },
+      {
+        "name": "metasync",
+        "path": "pipelines/metasync.ixql"
+      },
+      {
+        "name": "ml-feedback-loop",
+        "path": "pipelines/ml-feedback-loop.ixql"
+      },
+      {
+        "name": "qa-architect-cycle",
+        "path": "pipelines/qa-architect-cycle.ixql"
+      },
+      {
+        "name": "render-critic",
+        "path": "pipelines/render-critic.ixql"
+      },
+      {
+        "name": "research-cycle",
+        "path": "pipelines/research-cycle.ixql"
+      },
+      {
+        "name": "resilience-dashboard",
+        "path": "pipelines/resilience-dashboard.ixql"
+      },
+      {
+        "name": "scheduled-research",
+        "path": "pipelines/scheduled-research.ixql"
+      },
+      {
+        "name": "shake-metafix-loop",
+        "path": "pipelines/shake-metafix-loop.ixql"
+      },
+      {
+        "name": "spectral-optimizer",
+        "path": "pipelines/spectral-optimizer.ixql"
+      },
+      {
+        "name": "spectrogram-validator",
+        "path": "pipelines/spectrogram-validator.ixql"
+      },
+      {
+        "name": "weakness-probe",
+        "path": "pipelines/weakness-probe.ixql"
+      }
+    ],
+    "workflow": [
+      {
+        "name": "agent-blackbox",
+        "path": ".github/workflows/agent-blackbox.yml"
+      },
+      {
+        "name": "cross-model-review",
+        "path": ".github/workflows/cross-model-review.yml"
+      },
+      {
+        "name": "demerzel-autofix",
+        "path": ".github/workflows/demerzel-autofix.yml"
+      },
+      {
+        "name": "demerzel-capability-expansion",
+        "path": ".github/workflows/demerzel-capability-expansion.yml"
+      },
+      {
+        "name": "demerzel-cross-repo-issues",
+        "path": ".github/workflows/demerzel-cross-repo-issues.yml"
+      },
+      {
+        "name": "demerzel-discussion-lifecycle",
+        "path": ".github/workflows/demerzel-discussion-lifecycle.yml"
+      },
+      {
+        "name": "demerzel-discussion-responder",
+        "path": ".github/workflows/demerzel-discussion-responder.yml"
+      },
+      {
+        "name": "demerzel-driver-triggers",
+        "path": ".github/workflows/demerzel-driver-triggers.yml"
+      },
+      {
+        "name": "demerzel-ideation",
+        "path": ".github/workflows/demerzel-ideation.yml"
+      },
+      {
+        "name": "demerzel-self-improvement",
+        "path": ".github/workflows/demerzel-self-improvement.yml"
+      },
+      {
+        "name": "demerzel-showcase",
+        "path": ".github/workflows/demerzel-showcase.yml"
+      },
+      {
+        "name": "demerzel-wiki-cross-repo",
+        "path": ".github/workflows/demerzel-wiki-cross-repo.yml"
+      },
+      {
+        "name": "ga-chatbot-discussions",
+        "path": ".github/workflows/ga-chatbot-discussions.yml"
+      },
+      {
+        "name": "governance-validate",
+        "path": ".github/workflows/governance-validate.yml"
+      },
+      {
+        "name": "karpathy-cherny-discipline",
+        "path": ".github/workflows/karpathy-cherny-discipline.yml"
+      },
+      {
+        "name": "project-automation",
+        "path": ".github/workflows/project-automation.yml"
+      },
+      {
+        "name": "qa-tribunal",
+        "path": ".github/workflows/qa-tribunal.yml"
+      },
+      {
+        "name": "seldon-plan",
+        "path": ".github/workflows/seldon-plan.yml"
+      },
+      {
+        "name": "streeling-daily",
+        "path": ".github/workflows/streeling-daily.yml"
+      },
+      {
+        "name": "submodule-notify",
+        "path": ".github/workflows/submodule-notify.yml"
+      },
+      {
+        "name": "tribunal-panel",
+        "path": ".github/workflows/tribunal-panel.yml"
+      },
+      {
+        "name": "wiki-sync",
+        "path": ".github/workflows/wiki-sync.yml"
+      }
+    ],
+    "skill": [
+      {
+        "name": "alignment-check",
+        "path": ".claude/skills/alignment-check"
+      },
+      {
+        "name": "behavioral-test",
+        "path": ".claude/skills/behavioral-test"
+      },
+      {
+        "name": "cloudflare-tunnel",
+        "path": ".claude/skills/cloudflare-tunnel"
+      },
+      {
+        "name": "constitution",
+        "path": ".claude/skills/constitution"
+      },
+      {
+        "name": "correct",
+        "path": ".claude/skills/correct"
+      },
+      {
+        "name": "demerzel",
+        "path": ".claude/skills/demerzel"
+      },
+      {
+        "name": "demerzel-anti-slop-docs",
+        "path": ".claude/skills/demerzel-anti-slop-docs"
+      },
+      {
+        "name": "demerzel-articulate",
+        "path": ".claude/skills/demerzel-articulate"
+      },
+      {
+        "name": "demerzel-audit",
+        "path": ".claude/skills/demerzel-audit"
+      },
+      {
+        "name": "demerzel-belief-discovery",
+        "path": ".claude/skills/demerzel-belief-discovery"
+      },
+      {
+        "name": "demerzel-bootstrap-governance",
+        "path": ".claude/skills/demerzel-bootstrap-governance"
+      },
+      {
+        "name": "demerzel-bs-decode",
+        "path": ".claude/skills/demerzel-bs-decode"
+      },
+      {
+        "name": "demerzel-compound",
+        "path": ".claude/skills/demerzel-compound"
+      },
+      {
+        "name": "demerzel-confidence",
+        "path": ".claude/skills/demerzel-confidence"
+      },
+      {
+        "name": "demerzel-consult",
+        "path": ".claude/skills/demerzel-consult"
+      },
+      {
+        "name": "demerzel-context-budget",
+        "path": ".claude/skills/demerzel-context-budget"
+      },
+      {
+        "name": "demerzel-cross-review",
+        "path": ".claude/skills/demerzel-cross-review"
+      },
+      {
+        "name": "demerzel-directive",
+        "path": ".claude/skills/demerzel-directive"
+      },
+      {
+        "name": "demerzel-discord-dispatch",
+        "path": ".claude/skills/demerzel-discord-dispatch"
+      },
+      {
+        "name": "demerzel-drive",
+        "path": ".claude/skills/demerzel-drive"
+      },
+      {
+        "name": "demerzel-evolve",
+        "path": ".claude/skills/demerzel-evolve"
+      },
+      {
+        "name": "demerzel-halt",
+        "path": ".claude/skills/demerzel-halt"
+      },
+      {
+        "name": "demerzel-harvest",
+        "path": ".claude/skills/demerzel-harvest"
+      },
+      {
+        "name": "demerzel-lolli-remediate",
+        "path": ".claude/skills/demerzel-lolli-remediate"
+      },
+      {
+        "name": "demerzel-loop",
+        "path": ".claude/skills/demerzel-loop"
+      },
+      {
+        "name": "demerzel-metabuild",
+        "path": ".claude/skills/demerzel-metabuild"
+      },
+      {
+        "name": "demerzel-metafix",
+        "path": ".claude/skills/demerzel-metafix"
+      },
+      {
+        "name": "demerzel-metasync",
+        "path": ".claude/skills/demerzel-metasync"
+      },
+      {
+        "name": "demerzel-patterns",
+        "path": ".claude/skills/demerzel-patterns"
+      },
+      {
+        "name": "demerzel-perception-loop",
+        "path": ".claude/skills/demerzel-perception-loop"
+      },
+      {
+        "name": "demerzel-poll",
+        "path": ".claude/skills/demerzel-poll"
+      },
+      {
+        "name": "demerzel-promote",
+        "path": ".claude/skills/demerzel-promote"
+      },
+      {
+        "name": "demerzel-quality-trend",
+        "path": ".claude/skills/demerzel-quality-trend"
+      },
+      {
+        "name": "demerzel-recon",
+        "path": ".claude/skills/demerzel-recon"
+      },
+      {
+        "name": "demerzel-reflect",
+        "path": ".claude/skills/demerzel-reflect"
+      },
+      {
+        "name": "demerzel-render-critic",
+        "path": ".claude/skills/demerzel-render-critic"
+      },
+      {
+        "name": "demerzel-report",
+        "path": ".claude/skills/demerzel-report"
+      },
+      {
+        "name": "demerzel-roadmap",
+        "path": ".claude/skills/demerzel-roadmap"
+      },
+      {
+        "name": "demerzel-self-diagnostic",
+        "path": ".claude/skills/demerzel-self-diagnostic"
+      },
+      {
+        "name": "demerzel-skills",
+        "path": ".claude/skills/demerzel-skills"
+      },
+      {
+        "name": "demerzel-teach",
+        "path": ".claude/skills/demerzel-teach"
+      },
+      {
+        "name": "demerzel-team",
+        "path": ".claude/skills/demerzel-team"
+      },
+      {
+        "name": "digest",
+        "path": ".claude/skills/digest"
+      },
+      {
+        "name": "ga-ask",
+        "path": ".claude/skills/ga-ask"
+      },
+      {
+        "name": "ga-ralph",
+        "path": ".claude/skills/ga-ralph"
+      },
+      {
+        "name": "grill-me",
+        "path": ".claude/skills/grill-me"
+      },
+      {
+        "name": "grill-with-docs",
+        "path": ".claude/skills/grill-with-docs"
+      },
+      {
+        "name": "improve-codebase-architecture",
+        "path": ".claude/skills/improve-codebase-architecture"
+      },
+      {
+        "name": "ix-ml-builder",
+        "path": ".claude/skills/ix-ml-builder"
+      },
+      {
+        "name": "persona",
+        "path": ".claude/skills/persona"
+      },
+      {
+        "name": "prime-radiant-control",
+        "path": ".claude/skills/prime-radiant-control"
+      },
+      {
+        "name": "seldon",
+        "path": ".claude/skills/seldon"
+      },
+      {
+        "name": "seldon-assess",
+        "path": ".claude/skills/seldon-assess"
+      },
+      {
+        "name": "seldon-auto-research",
+        "path": ".claude/skills/seldon-auto-research"
+      },
+      {
+        "name": "seldon-course-pipeline",
+        "path": ".claude/skills/seldon-course-pipeline"
+      },
+      {
+        "name": "seldon-deliver",
+        "path": ".claude/skills/seldon-deliver"
+      },
+      {
+        "name": "seldon-notebook",
+        "path": ".claude/skills/seldon-notebook"
+      },
+      {
+        "name": "seldon-plan",
+        "path": ".claude/skills/seldon-plan"
+      },
+      {
+        "name": "seldon-research",
+        "path": ".claude/skills/seldon-research"
+      },
+      {
+        "name": "seldon-research-cycle",
+        "path": ".claude/skills/seldon-research-cycle"
+      },
+      {
+        "name": "seldon-teach",
+        "path": ".claude/skills/seldon-teach"
+      },
+      {
+        "name": "seldon-visual-teach",
+        "path": ".claude/skills/seldon-visual-teach"
+      },
+      {
+        "name": "setup-matt-pocock-skills",
+        "path": ".claude/skills/setup-matt-pocock-skills"
+      },
+      {
+        "name": "supervised-loop",
+        "path": ".claude/skills/supervised-loop"
+      },
+      {
+        "name": "tdd",
+        "path": ".claude/skills/tdd"
+      },
+      {
+        "name": "teach",
+        "path": ".claude/skills/teach"
+      },
+      {
+        "name": "tetravalent",
+        "path": ".claude/skills/tetravalent"
+      },
+      {
+        "name": "to-issues",
+        "path": ".claude/skills/to-issues"
+      },
+      {
+        "name": "to-prd",
+        "path": ".claude/skills/to-prd"
+      }
+    ]
+  },
+  "edges": [
+    {
+      "from": "personas/communal-steward.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/communal-steward.persona.yaml",
+      "to": "tests/behavioral/communal-steward-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/composer-agent.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/composer-agent.persona.yaml",
+      "to": "tests/behavioral/composer-agent-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/convolution-agent.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/convolution-agent.persona.yaml",
+      "to": "tests/behavioral/convolution-agent-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/critical-theorist.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/critical-theorist.persona.yaml",
+      "to": "tests/behavioral/critical-theorist-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/default.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/default.persona.yaml",
+      "to": "tests/behavioral/default-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/demerzel.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/demerzel.persona.yaml",
+      "to": "tests/behavioral/demerzel-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/guitar-coach.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/guitar-coach.persona.yaml",
+      "to": "tests/behavioral/guitar-coach-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/kaizen-optimizer.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/kaizen-optimizer.persona.yaml",
+      "to": "tests/behavioral/kaizen-optimizer-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/music-teacher.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/music-teacher.persona.yaml",
+      "to": "tests/behavioral/music-teacher-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/rational-administrator.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/rational-administrator.persona.yaml",
+      "to": "tests/behavioral/rational-administrator-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/recovery-agent.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/recovery-agent.persona.yaml",
+      "to": "tests/behavioral/recovery-agent-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/reflective-architect.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/reflective-architect.persona.yaml",
+      "to": "tests/behavioral/reflective-architect-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/seldon.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/seldon.persona.yaml",
+      "to": "tests/behavioral/seldon-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/skeptical-auditor.persona.yaml",
+      "to": "tests/behavioral/skeptical-auditor-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/system-integrator.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/system-integrator.persona.yaml",
+      "to": "tests/behavioral/system-integrator-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/validator-reflector.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/validator-reflector.persona.yaml",
+      "to": "tests/behavioral/validator-reflector-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "personas/virtuous-leader.persona.yaml",
+      "to": "persona:skeptical-auditor",
+      "kind": "estimator_pairing",
+      "resolved": true
+    },
+    {
+      "from": "personas/virtuous-leader.persona.yaml",
+      "to": "tests/behavioral/virtuous-leader-cases.md",
+      "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "constitutions/asimov.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "constitutions/default.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "constitutions/harm-taxonomy.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "contracts/galactic-protocol.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "policies/autonomous-loop-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "policies/reconnaissance-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adversarial-resilience-policy.yaml",
+      "to": "state/reflections/2026-03-23-hbr-agents-as-team-members.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "constitutions/asimov.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "constitutions/default.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "policies/kaizen-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "policies/reconnaissance-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "policies/scientific-objectivity-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "policies/self-modification-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/autonomous-loop-policy.yaml",
+      "to": "schemas/loop-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-engine-policy.yaml",
+      "to": "constitutions/default.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-engine-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-engine-policy.yaml",
+      "to": "policies/anti-lolli-inflation-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-engine-policy.yaml",
+      "to": "policies/context-management-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-management-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-management-policy.yaml",
+      "to": "policies/kaizen-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-management-policy.yaml",
+      "to": "policies/multi-model-orchestration-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-audit-policy.yaml",
+      "to": "logic/kaizen-pdca-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-audit-policy.yaml",
+      "to": "logic/knowledge-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-audit-policy.yaml",
+      "to": "logic/tetravalent-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-audit-policy.yaml",
+      "to": "policies/reconnaissance-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-audit-policy.yaml",
+      "to": "schemas/contracts/",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-audit-policy.yaml",
+      "to": "schemas/persona.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-process-policy.yaml",
+      "to": "constitutions/asimov.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-process-policy.yaml",
+      "to": "constitutions/default.constitution.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-process-policy.yaml",
+      "to": "constitutions/demerzel-mandate.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-process-policy.yaml",
+      "to": "docs/governance-model.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-process-policy.yaml",
+      "to": "policies/governance-audit-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/governance-process-policy.yaml",
+      "to": "policies/governance-experimentation-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "constitutions/asimov.constitution.md",
+      "kind": "reference",
+      "resolved": true,
+      "article": "2"
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "constitutions/asimov.constitution.md",
+      "kind": "reference",
+      "resolved": true,
+      "article": "4"
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "constitutions/default.constitution.md",
+      "kind": "reference",
+      "resolved": true,
+      "article": "4"
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "logic/kaizen-pdca-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "logic/tetravalent-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/kaizen-policy.yaml",
+      "to": "policies/rollback-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/belief-currency-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/compounding-metrics-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/continuous-learning-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/governance-experimentation-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/intuition-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/kaizen-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/meta-learning-policy.yaml",
+      "to": "policies/seldon-plan-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/multi-model-orchestration-policy.yaml",
+      "to": "contracts/galactic-protocol.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/multi-model-orchestration-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/multi-model-orchestration-policy.yaml",
+      "to": "policies/scientific-objectivity-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": ".claude/skills/seldon-research-cycle/SKILL.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": ".claude/skills/seldon-research/SKILL.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": "policies/autonomous-loop-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": "policies/completeness-instinct-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": "policies/continuous-learning-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": "policies/multilingual-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/seldon-plan-policy.yaml",
+      "to": "policies/streeling-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "constitutions/asimov.constitution.md",
+      "kind": "reference",
+      "resolved": true,
+      "article": "1"
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "constitutions/default.constitution.md",
+      "kind": "reference",
+      "resolved": true,
+      "article": "1"
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "logic/knowledge-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "logic/tetravalent-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "policies/kaizen-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/streeling-policy.yaml",
+      "to": "policies/reconnaissance-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "logic/tetravalent-state.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "personas/seldon.persona.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "policies/compounding-metrics-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "policies/continuous-learning-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "policies/seldon-plan-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "policies/streeling-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/teaching-effectiveness-policy.yaml",
+      "to": "schemas/persona.schema.json",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/adversarial-resilience-cases.md",
+      "to": "policy:adversarial-resilience-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/ai-probes-cases.md",
+      "to": "policy:ai-probes-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/algedonic-channel-cases.md",
+      "to": "policy:algedonic-channel-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/alignment-policy-cases.md",
+      "to": "policy:alignment-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/anti-lolli-inflation-cases.md",
+      "to": "policy:anti-lolli-inflation",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/auto-remediation-cases.md",
+      "to": "policy:auto-remediation-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/autonomous-loop-policy-cases.md",
+      "to": "policy:autonomous-loop-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/belief-currency-cases.md",
+      "to": "policy:belief-currency-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/capability-unity-cases.md",
+      "to": "policy:capability-unity",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/chaos-test-cases.md",
+      "to": "policy:chaos-test",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/completeness-instinct-cases.md",
+      "to": "policy:completeness-instinct",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/compounding-metrics-cases.md",
+      "to": "policy:compounding-metrics",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/conscience-observability-cases.md",
+      "to": "policy:conscience-observability-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/constitutional-compliance-cases.md",
+      "to": "policy:constitutional-compliance",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/context-engine-cases.md",
+      "to": "policy:context-engine-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/context-management-cases.md",
+      "to": "policy:context-management-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/continuous-learning-cases.md",
+      "to": "policy:continuous-learning-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/governance-audit-cases.md",
+      "to": "policy:governance-audit-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/governance-experimentation-cases.md",
+      "to": "policy:governance-experimentation-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/governance-process-cases.md",
+      "to": "policy:governance-process-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/grammar-evolution-cases.md",
+      "to": "policy:grammar-evolution-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/intuition-cases.md",
+      "to": "policy:intuition-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/kaizen-cases.md",
+      "to": "policy:kaizen-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/meta-audit-cases.md",
+      "to": "policy:meta-audit-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/ml-governance-feedback-cases.md",
+      "to": "policy:ml-governance-feedback-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/multi-model-orchestration-cases.md",
+      "to": "policy:multi-model-orchestration-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/multilingual-cases.md",
+      "to": "policy:multilingual-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/proto-conscience-cases.md",
+      "to": "policy:proto-conscience-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/readme-sync-cases.md",
+      "to": "policy:readme-sync-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/reconnaissance-cases.md",
+      "to": "policy:reconnaissance-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/recursive-learning-eval-cases.md",
+      "to": "policy:recursive-learning-eval",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/resilience-metric-cases.md",
+      "to": "policy:resilience-metric-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/rollback-policy-cases.md",
+      "to": "policy:rollback-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/scientific-objectivity-cases.md",
+      "to": "policy:scientific-objectivity-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/seldon-plan-cases.md",
+      "to": "policy:seldon-plan",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/self-modification-policy-cases.md",
+      "to": "policy:self-modification-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/staleness-detection-cases.md",
+      "to": "policy:staleness-detection-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/streeling-cases.md",
+      "to": "policy:streeling-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/teaching-effectiveness-cases.md",
+      "to": "policy:teaching-effectiveness",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/visual-critic-cases.md",
+      "to": "policy:visual-critic",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/weakness-prober-cases.md",
+      "to": "policy:weakness-prober-policy",
+      "kind": "validates",
+      "resolved": true
+    }
+  ],
+  "precedence": [
+    {
+      "file": "asimov.constitution.md",
+      "rank": "ROOT",
+      "subordinate_to": null,
+      "note": "Zeroth Law overrides everything; overrides all constitutions, policies, personas."
+    },
+    {
+      "file": "default.constitution.md",
+      "rank": "operational",
+      "subordinate_to": "asimov.constitution.md",
+      "note": "Operational ethics for all agents."
+    },
+    {
+      "file": "demerzel-mandate.md",
+      "rank": "mandate",
+      "subordinate_to": "asimov.constitution.md",
+      "note": "Sits alongside default; defines the enforcer, does not override operational ethics."
+    },
+    {
+      "file": "epistemic.constitution.md",
+      "rank": "parallel",
+      "subordinate_to": null,
+      "relationship": "parallel-to-asimov",
+      "note": "Governs thought, not action. A parallel domain — not ranked in the action hierarchy."
+    },
+    {
+      "file": "harm-taxonomy.md",
+      "rank": "referenced",
+      "subordinate_to": null,
+      "relationship": "referenced-by-asimov",
+      "note": "A taxonomy referenced by asimov Articles 0/1/3, not a ranked constitution."
+    }
+  ],
+  "unresolved_references": []
+}

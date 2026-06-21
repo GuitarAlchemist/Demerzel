@@ -1,3 +1,8 @@
+---
+validates:
+  policy: governance-audit-policy
+---
+
 # Behavioral Test Cases: Governance Audit Policy
 
 These test cases verify that governance artifacts are audited for schema validity, cross-reference integrity, and architectural consistency.
