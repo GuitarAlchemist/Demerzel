@@ -9,3 +9,9 @@ state/digests/*
 
 # /teach generated courses (personal, regenerable)
 learning/
+
+# Build artifacts and tooling output (regenerable, never committed)
+node_modules/
+__pycache__/
+*.pyc
+*.stackdump
