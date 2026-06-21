@@ -1,90 +1,35 @@
-# PostToolUse hook (matcher: Edit|Write|Bash) — increments mutation counter.
-# /digest skill resets the counter on invocation. Karpathy R4.
-#
-# Enhancement 1 (Cherny periodic mid-session digest): when activity threshold OR
-# time threshold is hit, write a mid-session metadata digest so we survive
-# crashes/network drops without waiting for Stop or PreCompact.
+# PostToolUse hook (matcher: Edit|Write|Bash) — increments mutation counters and
+# writes a mid-session digest when an activity/time threshold is hit, so we
+# survive crashes/network drops without waiting for Stop or PreCompact (Cherny).
+# Thin decider over DigestState.psm1 (counters, git facts, validated write, and
+# the mid-counter reset all live in the module).
 
 $ErrorActionPreference = 'SilentlyContinue'
 
 $repoRoot = & git rev-parse --show-toplevel 2>$null
 if (-not $repoRoot) { exit 0 }
 
-$digestDir      = Join-Path $repoRoot 'state/digests'
-$archDir        = Join-Path $digestDir 'archive'
-$counterPath    = Join-Path $digestDir '.activity-counter'
-$midCounterPath = Join-Path $digestDir '.activity-count'
-$latest         = Join-Path $digestDir 'latest.md'
+Import-Module (Join-Path $PSScriptRoot 'DigestState.psm1') -Force
 
-if (-not (Test-Path $digestDir)) { New-Item -ItemType Directory -Path $digestDir -Force | Out-Null }
-if (-not (Test-Path $archDir))   { New-Item -ItemType Directory -Path $archDir -Force | Out-Null }
+# Staleness-nudge counter (reset only by a real /digest) + mid-session gate counter.
+$null     = Step-Counter -Name activity -RepoRoot $repoRoot
+$midCount = Step-Counter -Name mid -RepoRoot $repoRoot
 
-# Existing mutation counter (drives staleness nudge)
-$count = 0
-if (Test-Path $counterPath) {
-    $raw = (Get-Content $counterPath -Raw).Trim()
-    if ($raw -match '^\d+$') { $count = [int]$raw }
-}
-$count++
-Set-Content -Path $counterPath -Value $count -Encoding UTF8
-
-# Enhancement 1: independent counter for mid-session digest gating
-$midCount = 0
-if (Test-Path $midCounterPath) {
-    $raw = (Get-Content $midCounterPath -Raw).Trim()
-    if ($raw -match '^\d+$') { $midCount = [int]$raw }
-}
-$midCount++
-Set-Content -Path $midCounterPath -Value $midCount -Encoding UTF8
-
-# Thresholds: N=20 mutations OR M=30 minutes since last digest
+# Thresholds: N=20 mutations OR M=30 minutes since last digest (with >=3 mutations).
 $thresholdCount = 20
 $thresholdMin   = 30
 if ($env:DEMERZEL_DIGEST_MID_COUNT -and $env:DEMERZEL_DIGEST_MID_COUNT -match '^\d+$') { $thresholdCount = [int]$env:DEMERZEL_DIGEST_MID_COUNT }
 if ($env:DEMERZEL_DIGEST_MID_MIN   -and $env:DEMERZEL_DIGEST_MID_MIN   -match '^\d+$') { $thresholdMin   = [int]$env:DEMERZEL_DIGEST_MID_MIN }
 
+$latest = (Get-DigestPaths -RepoRoot $repoRoot).Latest
 $ageMin = 99999
-if (Test-Path $latest) {
-    $ageMin = [int]((Get-Date) - (Get-Item $latest).LastWriteTime).TotalMinutes
-}
+if (Test-Path $latest) { $ageMin = [int]((Get-Date) - (Get-Item $latest).LastWriteTime).TotalMinutes }
 
-$shouldWrite = $false
-if ($midCount -ge $thresholdCount) { $shouldWrite = $true }
-elseif ($ageMin -ge $thresholdMin -and $midCount -ge 3) { $shouldWrite = $true }
-
+$shouldWrite = ($midCount -ge $thresholdCount) -or ($ageMin -ge $thresholdMin -and $midCount -ge 3)
 if (-not $shouldWrite) { exit 0 }
 
-# Reset mid-session counter
-Set-Content -Path $midCounterPath -Value 0 -Encoding UTF8
-
-$tsIso  = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
-$tsFile = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH-mm-ssZ')
-
-$branch   = & git -C $repoRoot rev-parse --abbrev-ref HEAD 2>$null
-$headSha  = & git -C $repoRoot rev-parse --short HEAD 2>$null
-$headSubj = & git -C $repoRoot log -1 --format='%s' 2>$null
-
-# Rotate existing latest into archive
-if (Test-Path $latest) {
-    Copy-Item $latest (Join-Path $archDir "$tsFile-pre-mid.md") -Force
-}
-
-$midPath = Join-Path $digestDir "mid-$tsFile.md"
-$md = @"
----
-schema_version: 1
-session_id: mid-session-auto
-written_at: $tsIso
-trigger: activity-tracker-mid-session
-branch: $branch
-head_sha: $headSha
-head_subject: $headSubj
-mutations_since_last: $midCount
----
-
+$body = @"
 # Session digest (mid-session auto — activity threshold reached)
-
-**Branch:** $branch @ $headSha — $headSubj
 
 ## Model-driven sections
 
@@ -94,6 +39,8 @@ Invoke ``/digest`` at your next natural breakpoint to populate **Next action**,
 and **Success criteria**._
 "@
 
-Set-Content -Path $midPath -Value $md -Encoding UTF8
-Copy-Item $midPath $latest -Force
+# Write-Digest rotates the prior latest and resets the mid counter on this trigger.
+$null = Write-Digest -Kind digest -RepoRoot $repoRoot `
+    -Trigger 'activity-tracker-mid-session' -SessionId 'mid-session-auto' `
+    -MutationsSinceLast $midCount -ArchiveLabel 'pre-mid' -Body $body
 exit 0

@@ -12,12 +12,13 @@
     "written_at": { "type": "string", "format": "date-time" },
     "trigger": {
       "type": "string",
-      "enum": ["digest-skill", "precompact-hook-fallback", "stop-hook-finalize", "auto-write-routine"]
+      "enum": ["digest-skill", "precompact-hook-fallback", "stop-hook-finalize", "auto-write-routine", "activity-tracker-mid-session"]
     },
     "branch": { "type": "string" },
     "head_sha": { "type": "string" },
     "head_subject": { "type": "string" },
     "open_pr": { "type": ["string", "null"] },
+    "mutations_since_last": { "type": "integer", "minimum": 0, "description": "Mutations counted since the last digest; emitted by the activity-tracker mid-session auto-write." },
     "last_model_update": { "type": ["string", "null"], "format": "date-time" },
     "success_criteria": {
       "type": "array",

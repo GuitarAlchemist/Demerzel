@@ -1,12 +1,14 @@
 # SessionStart hook — emits state/digests/latest.md to stdout for additionalContext
-# injection. Skips silently if missing or >24h stale.
+# injection. Skips silently if missing or >24h stale. Thin reader over DigestState.
 
 $ErrorActionPreference = 'SilentlyContinue'
 
 $repoRoot = & git rev-parse --show-toplevel 2>$null
 if (-not $repoRoot) { exit 0 }
 
-$latest = Join-Path $repoRoot 'state/digests/latest.md'
+Import-Module (Join-Path $PSScriptRoot 'DigestState.psm1') -Force
+
+$latest = (Get-DigestPaths -RepoRoot $repoRoot).Latest
 if (-not (Test-Path $latest)) { exit 0 }
 
 $age = (Get-Date) - (Get-Item $latest).LastWriteTime

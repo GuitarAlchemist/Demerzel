@@ -1,5 +1,7 @@
-# Validates state/digests/latest.md frontmatter against docs/contracts/digest-schema.json.
-# Karpathy R11: every AI step declares an output schema; runtime rejects mismatches.
+# Validates a digest/rationale file's frontmatter against its schema.
+# Thin wrapper over DigestState's Test-Digest — the rules (required fields,
+# trigger enum, types) come from docs/contracts/*-schema.json, not hand-coded
+# here (ADR-0003: schema is the single source of structural validation).
 
 param([string]$DigestPath)
 
@@ -8,45 +10,16 @@ $ErrorActionPreference = 'SilentlyContinue'
 $repoRoot = & git rev-parse --show-toplevel 2>$null
 if (-not $repoRoot) { exit 0 }
 
+Import-Module (Join-Path $PSScriptRoot 'DigestState.psm1') -Force
+
 if (-not $DigestPath) {
-    $DigestPath = Join-Path $repoRoot 'state/digests/latest.md'
+    $DigestPath = (Get-DigestPaths -RepoRoot $repoRoot).Latest
 }
 if (-not (Test-Path $DigestPath)) { exit 0 }
 
-$content = Get-Content $DigestPath -Raw
-if ($content -notmatch '(?s)^---\r?\n(.*?)\r?\n---') {
-    Write-Error "digest-validate: missing or malformed YAML frontmatter in $DigestPath"
+$result = Test-Digest -Path $DigestPath -RepoRoot $repoRoot
+if (-not $result.Valid) {
+    Write-Error "digest-validate: $($result.Errors)"
     exit 1
 }
-
-$fmRaw = $matches[1]
-$fm = @{}
-foreach ($line in ($fmRaw -split "`r?`n")) {
-    if ($line -match '^\s*([\w_]+)\s*:\s*(.*?)\s*$') {
-        $key = $matches[1]
-        $val = $matches[2]
-        if ($val -eq 'null' -or $val -eq '') { $val = $null }
-        $fm[$key] = $val
-    }
-}
-
-$required = @('schema_version', 'session_id', 'written_at', 'trigger', 'branch', 'head_sha', 'head_subject')
-foreach ($k in $required) {
-    if (-not $fm.ContainsKey($k) -or $null -eq $fm[$k]) {
-        Write-Error "digest-validate: required field '$k' missing or null"
-        exit 1
-    }
-}
-
-if ($fm['schema_version'] -ne '1') {
-    Write-Error "digest-validate: schema_version must be 1 (got '$($fm['schema_version'])')"
-    exit 1
-}
-
-$validTriggers = @('digest-skill', 'precompact-hook-fallback', 'stop-hook-finalize', 'auto-write-routine')
-if ($fm['trigger'] -notin $validTriggers) {
-    Write-Error "digest-validate: trigger '$($fm['trigger'])' not in $($validTriggers -join ', ')"
-    exit 1
-}
-
 exit 0
