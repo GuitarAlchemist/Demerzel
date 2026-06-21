@@ -102,3 +102,10 @@ Canonical defaults (`needs-triage` / `needs-info` / `ready-for-agent` / `ready-f
 ### Domain docs
 
 Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. `/grill-with-docs` grows them lazily. See `docs/agents/domain.md`.
+
+## AI-coding vocabulary (shared ecosystem reference)
+
+<https://github.com/mattpocock/dictionary-of-ai-coding> — the plain-English
+glossary behind the aihero methodology adopted across the GuitarAlchemist
+ecosystem (smart-zone, tracer-bullets, context windows, handoffs, failure
+modes). Referenced, not vendored, so it tracks upstream.
