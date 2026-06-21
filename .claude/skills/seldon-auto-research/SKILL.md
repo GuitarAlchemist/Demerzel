@@ -79,12 +79,13 @@ if state.daily_reset_date != today:
 if state.daily_cycle_count >= 6:
     log(f"Daily cap reached ({state.daily_cycle_count}/6) — skipping")
     exit(0)
-
-# Combined consecutive-cycle guard (shared counter with seldon-plan)
-if state.consecutive_auto_cycles >= 12:
-    log("12 consecutive auto-cycles reached — human review pause active, skipping")
-    exit(0)
 ```
+
+> The 12-consecutive-cycle limit is **not** re-checked here. Like seldon-plan, the
+> pause is enforced solely through the shared `kill.switch` (written by either
+> scheduler's Pause Check at 12) and checked above. Gating WAKE directly on the
+> counter would wedge auto-research permanently, because `/seldon plan resume`
+> clears the kill switch without resetting `consecutive_auto_cycles`.
 
 ---
 
