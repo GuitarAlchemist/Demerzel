@@ -53,7 +53,8 @@ CONF_PROCEED = 0.70      # §2
 CONF_GOVERNANCE = 0.80   # §3
 CONF_AUTO_APPLY = 0.85   # §4
 FORBIDDEN_TYPES = {"modify_constitution", "override_policy"}
-APPLICABLE_TYPES = {"threshold_adjustment", "proactive_recon"}  # types with an applier
+# types with an autonomous applier (all bounded/reversible)
+APPLICABLE_TYPES = {"threshold_adjustment", "proactive_recon", "pattern_report"}
 REQUIRED = ["pipeline_id", "recommendation_type", "recommendation", "confidence",
             "evidence", "constitutional_check", "timestamp",
             "message_id", "origin_repo", "content_hash", "hash_algorithm"]
@@ -207,10 +208,56 @@ def _apply_recon_schedule(root: Path, doc: dict, dry: bool) -> dict:
             "queue": str(queue_path), "day_total": len(queue["recons"])}
 
 
+def _apply_policy_review_request(root: Path, doc: dict, dry: bool) -> dict:
+    """File NON-BINDING policy-review requests for systemic patterns. Per the
+    violation_pattern_detector policy guardrail ("Cannot auto-create policies —
+    only recommends"), this NEVER edits a file under policies/ — it only queues a
+    request for a human to review. That makes it bounded + reversible, so it is
+    eligible for autonomous apply. Note: ml-feedback-loop.ixql §3c uses a stricter
+    `systemic_patterns.count >= 2` trigger; the policy text ("systemic patterns
+    trigger policy review") sets no count, so we file for >= 1 and record the
+    count for the operator — flagged in the PR as a threshold to reconcile."""
+    params = doc["recommendation"].get("parameters", {})
+    systemic = params.get("systemic_patterns", [])
+    emerging = params.get("emerging_risks", [])
+
+    queue_path = root / "state" / "oversight" / "policy-review-requests.json"
+    queue = {"requests": []}
+    if queue_path.is_file():
+        try:
+            queue = json.loads(queue_path.read_text(encoding="utf-8"))
+            queue.setdefault("requests", [])
+        except (json.JSONDecodeError, OSError):
+            pass
+    existing = {r.get("pattern_type") for r in queue["requests"] if r.get("status") == "review-requested"}
+    filed = []
+    for pat in systemic:
+        key = pat.get("type")
+        if key in existing:
+            continue
+        queue["requests"].append({
+            "pattern_type": key,
+            "repos": pat.get("repos", []),
+            "max_severity": pat.get("max_severity"),
+            "root_cause_hypothesis": pat.get("root_cause_hypothesis"),
+            "status": "review-requested",          # advisory — NOT an applied policy change
+            "binding": False,
+            "source_recommendation": doc["message_id"],
+            "filed_at": _now_iso(),
+        })
+        filed.append(key)
+    if not dry:
+        _atomic_write(queue_path, queue)
+    return {"filed_review_requests": filed, "systemic_count": len(systemic),
+            "emerging_risks": len(emerging), "policies_modified": 0,  # invariant: never
+            "queue": str(queue_path)}
+
+
 # type -> applier; gate guarantees only APPLICABLE_TYPES reach 'apply'
 _APPLIERS = {
     "threshold_adjustment": _apply_nudge,
     "proactive_recon": _apply_recon_schedule,
+    "pattern_report": _apply_policy_review_request,
 }
 
 
