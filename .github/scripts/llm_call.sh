@@ -3,6 +3,8 @@
 #
 # Usage:   llm_call.sh <provider> <prompt> [max_tokens]
 #          provider ∈ claude | gemini | codex   (codex == openai)
+#          LLM_SYSTEM (env, optional) — system prompt, carried per-provider.
+#          LLM_<PROVIDER>_MODEL (env, optional) — override the default model.
 # Output:  the model's text on stdout.
 #
 # Collapses the curl + auth-header + payload-escaping + response-extraction that
@@ -33,8 +35,9 @@ _http_post() {
 
 _call_claude() {
   local prompt="$1" max="$2"
-  jq -n --arg m "$CLAUDE_MODEL" --argjson mx "$max" --arg p "$prompt" \
-      '{model:$m, max_tokens:$mx, messages:[{role:"user", content:$p}]}' \
+  jq -n --arg m "$CLAUDE_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
+      '{model:$m, max_tokens:$mx, messages:[{role:"user", content:$p}]}
+       + (if $s == "" then {} else {system:$s} end)' \
     | _http_post "$CLAUDE_URL" \
         -H "x-api-key: ${ANTHROPIC_API_KEY:-}" \
         -H "anthropic-version: 2023-06-01" \
@@ -44,8 +47,9 @@ _call_claude() {
 
 _call_gemini() {
   local prompt="$1" max="$2"
-  jq -n --argjson mx "$max" --arg p "$prompt" \
-      '{contents:[{parts:[{text:$p}]}], generationConfig:{maxOutputTokens:$mx}}' \
+  jq -n --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
+      '{contents:[{parts:[{text:$p}]}], generationConfig:{maxOutputTokens:$mx}}
+       + (if $s == "" then {} else {systemInstruction:{parts:[{text:$s}]}} end)' \
     | _http_post "${GEMINI_URL}/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY:-}" \
         -H "content-type: application/json" \
     | jq -r '.candidates[0].content.parts[0].text'
@@ -53,8 +57,9 @@ _call_gemini() {
 
 _call_openai() {
   local prompt="$1" max="$2"
-  jq -n --arg m "$OPENAI_MODEL" --argjson mx "$max" --arg p "$prompt" \
-      '{model:$m, max_completion_tokens:$mx, messages:[{role:"user", content:$p}]}' \
+  jq -n --arg m "$OPENAI_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
+      '{model:$m, max_completion_tokens:$mx,
+        messages: ((if $s == "" then [] else [{role:"system", content:$s}] end) + [{role:"user", content:$p}])}' \
     | _http_post "$OPENAI_URL" \
         -H "authorization: Bearer ${OPENAI_API_KEY:-}" \
         -H "content-type: application/json" \

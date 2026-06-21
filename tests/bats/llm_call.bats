@@ -44,3 +44,17 @@ setup() {
   run main claude
   [ "$status" -ne 0 ]
 }
+
+@test "LLM_SYSTEM adds a system field to the claude payload" {
+  _http_post() { cat > "$BATS_TEST_TMPDIR/p.json"; cat "$FIX/claude.json"; }
+  LLM_SYSTEM="be terse" _call_claude "hi" 100
+  run jq -er '.system == "be terse"' "$BATS_TEST_TMPDIR/p.json"
+  [ "$status" -eq 0 ]
+}
+
+@test "no LLM_SYSTEM omits the system field" {
+  _http_post() { cat > "$BATS_TEST_TMPDIR/p.json"; cat "$FIX/claude.json"; }
+  _call_claude "hi" 100
+  run jq -er 'has("system") | not' "$BATS_TEST_TMPDIR/p.json"
+  [ "$status" -eq 0 ]
+}
