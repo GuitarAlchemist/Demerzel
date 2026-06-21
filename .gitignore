@@ -28,3 +28,15 @@ state/governance/dev-process-overseer.json
 .claude/session-intent.md
 .claude/session-plan.md
 .zed/
+
+# ML-feedback loop runtime I/O — produced fresh each run by ix confidence_calibrator
+# (producer) and scripts/apply_ml_feedback.py (governor); reproducible, not canonical
+# governance state. The seam README is tracked; the recommendation/run docs are not.
+state/oversight/ml-recommendations/*.json
+state/oversight/ml-recommendations/processed/
+state/oversight/ml-feedback-loop-*.json
+state/oversight/pending-human-review.json
+state/oversight/scheduled-recons-*.json
+state/oversight/compliance-reports/*.json
+state/oversight/policy-review-requests.json
+state/oversight/ml-feedback-cycle-*.json
