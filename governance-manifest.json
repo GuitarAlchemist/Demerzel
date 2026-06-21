@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 39,
+    "schema": 40,
     "skill": 69,
     "workflow": 22
   },
@@ -206,9 +206,9 @@
         "version": "1.0.0"
       },
       {
-        "name": null,
+        "name": "context-management-policy",
         "path": "policies/context-management-policy.yaml",
-        "version": null
+        "version": "1.0.0"
       },
       {
         "name": "continuous-learning-policy",
@@ -251,9 +251,9 @@
         "version": "1.0.0"
       },
       {
-        "name": null,
+        "name": "mcp-context-budget",
         "path": "policies/mcp-context-budget.yaml",
-        "version": null
+        "version": "1.0.0"
       },
       {
         "name": "meta-audit-policy",
@@ -455,6 +455,10 @@
       {
         "name": "persona.schema",
         "path": "schemas/persona.schema.json"
+      },
+      {
+        "name": "policy.schema",
+        "path": "schemas/policy.schema.json"
       },
       {
         "name": "pre-mortem.schema",
@@ -1866,6 +1870,24 @@
     {
       "from": "policies/context-engine-policy.yaml",
       "to": "policies/context-management-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-management-policy.yaml",
+      "to": "policies/alignment-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-management-policy.yaml",
+      "to": "policies/kaizen-policy.yaml",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/context-management-policy.yaml",
+      "to": "policies/multi-model-orchestration-policy.yaml",
       "kind": "reference",
       "resolved": true
     },

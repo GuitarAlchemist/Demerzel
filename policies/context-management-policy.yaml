@@ -80,7 +80,7 @@ context_strategies:
 token_efficiency_rules:
   - name: summarize-dont-repeat
     rule: Never paste large file contents when a summary suffices
-    example: "The config has 3 database entries" not the full config
+    example: '"The config has 3 database entries" not the full config'
 
   - name: read-before-searching
     rule: Use targeted file reads over broad searches when you know the path
@@ -100,7 +100,7 @@ token_efficiency_rules:
 
   - name: result-not-process
     rule: Focus responses on results and decisions, not reasoning process
-    example: "Fixed the bug in line 42" not "I thought about several approaches..."
+    example: '"Fixed the bug in line 42" not "I thought about several approaches..."'
 
   - name: memory-for-cross-session
     rule: Save insights to memory files for future sessions, not conversation

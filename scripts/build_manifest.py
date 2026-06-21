@@ -265,17 +265,41 @@ def check_readme_counts(counts: dict[str, int]) -> list[str]:
 # Persona schema validation (ADR-0003 — persona.schema.json finally used)
 # ---------------------------------------------------------------------------
 
-def check_persona_schema(inv: dict[str, list[dict[str, Any]]]) -> list[str]:
+def _schema_check(inv_items: list[dict[str, Any]], schema_name: str, label: str) -> list[str]:
     import jsonschema
 
-    schema = json.loads((REPO / "schemas" / "persona.schema.json").read_text(encoding="utf-8"))
+    schema = json.loads((REPO / "schemas" / schema_name).read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(schema)
     violations: list[str] = []
-    for p in inv["persona"]:
-        doc = _first_yaml_doc(REPO / p["path"])
+    for art in inv_items:
+        doc = _first_yaml_doc(REPO / art["path"])
         for err in sorted(validator.iter_errors(doc), key=str):
             loc = "/".join(str(x) for x in err.path) or "(root)"
-            violations.append(f"persona schema: {p['path']} [{loc}] {err.message}")
+            violations.append(f"{label} schema: {art['path']} [{loc}] {err.message}")
+    return violations
+
+
+def check_persona_schema(inv: dict[str, list[dict[str, Any]]]) -> list[str]:
+    return _schema_check(inv["persona"], "persona.schema.json", "persona")
+
+
+def check_policy_schema(inv: dict[str, list[dict[str, Any]]]) -> list[str]:
+    return _schema_check(inv["policy"], "policy.schema.json", "policy")
+
+
+def check_yaml_wellformed(inv: dict[str, list[dict[str, Any]]]) -> list[str]:
+    """A persona/policy whose YAML HEADER doesn't parse used to be silently
+    swallowed (_first_yaml_doc returns {}). Surface it instead. Only the first
+    document is checked — policy files are a YAML header followed by `---` and a
+    markdown body that is intentionally not YAML."""
+    violations: list[str] = []
+    for art_type in ("persona", "policy"):
+        for art in inv[art_type]:
+            try:
+                next(yaml.safe_load_all((REPO / art["path"]).read_text(encoding="utf-8")), None)
+            except yaml.YAMLError as exc:
+                first = str(exc).splitlines()[0]
+                violations.append(f"malformed YAML header: {art['path']} ({first})")
     return violations
 
 
@@ -370,7 +394,9 @@ def build() -> tuple[dict[str, Any], list[str], list[str]]:
     counts = derive_counts(inv)
     edges, hard, soft = harvest_edges(inv)
 
+    hard += check_yaml_wellformed(inv)
     hard += check_persona_schema(inv)
+    hard += check_policy_schema(inv)
     hard += check_readme_counts(counts)
     precedence, prec_violations = check_precedence(inv)
     hard += prec_violations
