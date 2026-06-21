@@ -279,6 +279,39 @@ def check_persona_schema(inv: dict[str, list[dict[str, Any]]]) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# Constitutional precedence (ADR-0003 / #353) — assert each constitution's
+# header AGREES with the single authored precedence.yaml. Never generate headers.
+# ---------------------------------------------------------------------------
+
+def check_precedence(inv: dict[str, list[dict[str, Any]]]) -> tuple[dict[str, Any], list[str]]:
+    prec_path = REPO / "constitutions" / "precedence.yaml"
+    prec = _first_yaml_doc(prec_path)
+    violations: list[str] = []
+
+    declared = {e["file"]: e for e in prec.get("order", []) if isinstance(e, dict)}
+    on_disk = {Path(c["path"]).name for c in inv["constitution"]}
+
+    for missing in sorted(on_disk - set(declared)):
+        violations.append(f"precedence: constitution {missing} on disk but not declared in precedence.yaml")
+    for ghost in sorted(set(declared) - on_disk):
+        violations.append(f"precedence: precedence.yaml declares {ghost} but no such constitution on disk")
+
+    for fname, entry in sorted(declared.items()):
+        path = REPO / "constitutions" / fname
+        if not path.exists():
+            continue
+        header = "\n".join(path.read_text(encoding="utf-8").splitlines()[:14])
+        if entry.get("rank") == "ROOT":
+            if "Precedence: ROOT" not in header:
+                violations.append(f"precedence: {fname} is ROOT but header lacks 'Precedence: ROOT'")
+        sub = entry.get("subordinate_to")
+        if sub and f"Subordinate to: `{sub}`" not in header and f"Subordinate to: {sub}" not in header:
+            violations.append(f"precedence: {fname} should declare 'Subordinate to: {sub}' in its header")
+
+    return prec, violations
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -289,6 +322,8 @@ def build() -> tuple[dict[str, Any], list[str], list[str]]:
 
     hard += check_persona_schema(inv)
     hard += check_readme_counts(counts)
+    precedence, prec_violations = check_precedence(inv)
+    hard += prec_violations
 
     manifest = {
         "schema_version": SCHEMA_VERSION,
@@ -297,6 +332,7 @@ def build() -> tuple[dict[str, Any], list[str], list[str]]:
         "counts": counts,
         "inventory": inv,
         "edges": edges,
+        "precedence": precedence.get("order", []),
         "unresolved_references": sorted(set(soft)),
     }
     return manifest, sorted(set(hard)), sorted(set(soft))

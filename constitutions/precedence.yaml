@@ -1,0 +1,42 @@
+# Constitutional precedence — the single authored source of the hierarchy.
+#
+# Demerzel's stated architecture invariant (CONTEXT.md) lives here as data, once.
+# scripts/build_manifest.py asserts that each constitution's prose header AGREES
+# with this file; it does NOT generate those headers — their rationale (epistemic's
+# "parallel domain", changelogs) carries meaning precedence alone can't express.
+# See docs/adr/0003 and issue #353 (candidate 5).
+#
+# Append-only: constitutions are never removed; precedence entries are never deleted,
+# only added. A new constitution MUST be declared here or the manifest fails.
+
+schema_version: 1
+append_only: true
+root: asimov.constitution.md
+
+order:
+  - file: asimov.constitution.md
+    rank: ROOT
+    subordinate_to: null
+    note: Zeroth Law overrides everything; overrides all constitutions, policies, personas.
+
+  - file: default.constitution.md
+    rank: operational
+    subordinate_to: asimov.constitution.md
+    note: Operational ethics for all agents.
+
+  - file: demerzel-mandate.md
+    rank: mandate
+    subordinate_to: asimov.constitution.md
+    note: Sits alongside default; defines the enforcer, does not override operational ethics.
+
+  - file: epistemic.constitution.md
+    rank: parallel
+    subordinate_to: null
+    relationship: parallel-to-asimov
+    note: Governs thought, not action. A parallel domain — not ranked in the action hierarchy.
+
+  - file: harm-taxonomy.md
+    rank: referenced
+    subordinate_to: null
+    relationship: referenced-by-asimov
+    note: A taxonomy referenced by asimov Articles 0/1/3, not a ranked constitution.

@@ -2139,5 +2139,39 @@
       "resolved": true
     }
   ],
+  "precedence": [
+    {
+      "file": "asimov.constitution.md",
+      "rank": "ROOT",
+      "subordinate_to": null,
+      "note": "Zeroth Law overrides everything; overrides all constitutions, policies, personas."
+    },
+    {
+      "file": "default.constitution.md",
+      "rank": "operational",
+      "subordinate_to": "asimov.constitution.md",
+      "note": "Operational ethics for all agents."
+    },
+    {
+      "file": "demerzel-mandate.md",
+      "rank": "mandate",
+      "subordinate_to": "asimov.constitution.md",
+      "note": "Sits alongside default; defines the enforcer, does not override operational ethics."
+    },
+    {
+      "file": "epistemic.constitution.md",
+      "rank": "parallel",
+      "subordinate_to": null,
+      "relationship": "parallel-to-asimov",
+      "note": "Governs thought, not action. A parallel domain — not ranked in the action hierarchy."
+    },
+    {
+      "file": "harm-taxonomy.md",
+      "rank": "referenced",
+      "subordinate_to": null,
+      "relationship": "referenced-by-asimov",
+      "note": "A taxonomy referenced by asimov Articles 0/1/3, not a ranked constitution."
+    }
+  ],
   "unresolved_references": []
 }
