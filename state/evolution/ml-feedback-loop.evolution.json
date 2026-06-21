@@ -1,0 +1,16 @@
+{
+  "artifact": "ml-feedback-loop",
+  "events": [
+    {
+      "event": "ml_recommendation_applied",
+      "timestamp": "2026-06-21T18:07:02Z",
+      "message_id": "52bdf85d-2960-40d7-b846-953cabc85027",
+      "metrics": {
+        "prior_nudge": 0.0,
+        "new_nudge": -0.1,
+        "applied_delta": -0.1,
+        "belief": "C:\\Users\\spare\\source\\repos\\Demerzel\\state\\beliefs\\confidence-calibration.belief.json"
+      }
+    }
+  ]
+}
