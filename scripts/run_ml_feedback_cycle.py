@@ -30,6 +30,11 @@ Usage:
   python scripts/run_ml_feedback_cycle.py                 # run one cycle
   python scripts/run_ml_feedback_cycle.py --dry-run       # plan only, no writes
   python scripts/run_ml_feedback_cycle.py --repos ix tars # limit consumer harvest
+  python scripts/run_ml_feedback_cycle.py --producer-source worktree  # use ix working tree
+
+Producers default to ix origin/main (branch-independent), materialized into
+state/.cache/ix-producers/, so a scheduled cycle is unaffected by which branch
+ix's working tree is on. Use --producer-source worktree to run local edits.
 
 Exit codes:
   0  cycle ran (any mix of applied/escalated/no-op)
@@ -85,19 +90,64 @@ def _run(label: str, cmd: list[str], dry: bool) -> dict:
     return out
 
 
+PRODUCERS = ["confidence_calibrator", "staleness_predictor",
+             "violation_pattern_detector", "remediation_optimizer"]
+
+
+def _resolve_producers(ix_root: Path, cache_dir: Path, source: str) -> dict:
+    """Resolve each producer to a runnable path. Default source 'main' materializes
+    the canonical ix origin/main version into cache_dir, so a scheduled cycle is
+    independent of whatever branch ix's working tree happens to be on (it must not
+    break when ix is mid-feature, nor pick up uncommitted producer edits). Falls
+    back to the working tree only if git / origin-main is unavailable (offline)."""
+    paths, notes = {}, {}
+    if source == "main":
+        try:  # best-effort refresh; stale-but-present origin/main still works offline
+            subprocess.run(["git", "-C", str(ix_root), "fetch", "origin", "main"],
+                           capture_output=True, timeout=60)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    for name in PRODUCERS:
+        path = None
+        if source == "main":
+            try:
+                p = subprocess.run(
+                    ["git", "-C", str(ix_root), "show", f"origin/main:scripts/{name}.py"],
+                    capture_output=True, text=True, timeout=30)
+                if p.returncode == 0 and p.stdout:
+                    cache_dir.mkdir(parents=True, exist_ok=True)
+                    dest = cache_dir / f"{name}.py"
+                    dest.write_text(p.stdout, encoding="utf-8")
+                    path, notes[name] = dest, "origin/main"
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+        if path is None:  # fallback: ix working tree
+            wt = ix_root / "scripts" / f"{name}.py"
+            if wt.is_file():
+                path, notes[name] = wt, "working-tree fallback"
+        paths[name] = path
+    return {"paths": paths, "notes": notes}
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Demerzel ML-feedback cycle orchestrator")
     root = Path(__file__).resolve().parents[1]          # repos/Demerzel
     ap.add_argument("--repos", nargs="+", default=["ix", "tars", "ga"],
                     choices=["ix", "tars", "ga"], help="consumer repos to harvest")
     ap.add_argument("--repos-root", type=Path, default=root.parent)
+    ap.add_argument("--producer-source", choices=["main", "worktree"], default="main",
+                    help="source ix producers from origin/main (default, branch-independent) "
+                         "or the ix working tree")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
 
     py = sys.executable
-    ix_scripts = (args.repos_root / "ix" / "scripts").resolve()
-    if not args.dry_run and not (ix_scripts / "confidence_calibrator.py").is_file():
-        print(f"error: ix producers not found at {ix_scripts}", file=sys.stderr)
+    ix_root = (args.repos_root / "ix").resolve()
+    cache_dir = root / "state" / ".cache" / "ix-producers"
+    resolved = _resolve_producers(ix_root, cache_dir, args.producer_source)
+    if not any(resolved["paths"].values()) and not args.dry_run:
+        print(f"error: could not resolve any ix producers (source={args.producer_source}, "
+              f"ix={ix_root})", file=sys.stderr)
         return 1
 
     # 0. HALT kill switch
@@ -112,12 +162,18 @@ def main(argv: list[str]) -> int:
         steps.append(_run(f"harvest:{repo}",
                           [py, str(root / "scripts" / "compliance_report.py"), "--repo", repo]
                           + (["--dry-run"] if args.dry_run else []), args.dry_run))
-    # 2. Analyze — the four ix producers
-    for prod in ["confidence_calibrator", "staleness_predictor",
-                 "violation_pattern_detector", "remediation_optimizer"]:
-        steps.append(_run(f"produce:{prod}",
-                          [py, str(ix_scripts / f"{prod}.py"), "--demerzel-root", str(root)]
-                          + (["--dry-run"] if args.dry_run else []), args.dry_run))
+    # 2. Analyze — the four ix producers (sourced per --producer-source)
+    for prod in PRODUCERS:
+        ppath = resolved["paths"].get(prod)
+        if ppath is None:
+            steps.append({"step": f"produce:{prod}", "status": "error",
+                          "note": f"unresolved (source={args.producer_source})"})
+            continue
+        step = _run(f"produce:{prod}",
+                    [py, str(ppath), "--demerzel-root", str(root)]
+                    + (["--dry-run"] if args.dry_run else []), args.dry_run)
+        step["source"] = resolved["notes"].get(prod, "?")
+        steps.append(step)
     # 3. Govern
     gov = _run("govern", [py, str(root / "scripts" / "apply_ml_feedback.py")]
                + (["--dry-run"] if args.dry_run else []), args.dry_run)

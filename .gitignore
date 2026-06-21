@@ -40,3 +40,5 @@ state/oversight/scheduled-recons-*.json
 state/oversight/compliance-reports/*.json
 state/oversight/policy-review-requests.json
 state/oversight/ml-feedback-cycle-*.json
+state/oversight/ml-feedback-audit.json
+state/.cache/

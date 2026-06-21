@@ -310,8 +310,12 @@ _APPLIERS = {
 }
 
 
-def _append_evolution(root: Path, event: dict, dry: bool) -> None:
-    path = root / "state" / "evolution" / "ml-feedback-loop.evolution.json"
+def _append_audit(root: Path, event: dict, dry: bool) -> None:
+    # Runtime audit trail of loop decisions. Lives under state/oversight/ (with the
+    # loop's other runtime outputs), NOT state/evolution/ — the latter holds
+    # artifact-evolution records validated against governance-evolution.schema.json
+    # (enum event.type, artifact_type); this run-log is a different kind of artifact.
+    path = root / "state" / "oversight" / "ml-feedback-audit.json"
     log = {"artifact": "ml-feedback-loop", "events": []}
     if path.is_file():
         try:
@@ -370,7 +374,7 @@ def main(argv: list[str]) -> int:
             evt = {"event": "ml_recommendation_applied", "timestamp": _now_iso(),
                    "message_id": doc["message_id"],
                    "recommendation_type": doc["recommendation_type"], "metrics": delta}
-        _append_evolution(root, evt, args.dry_run)
+        _append_audit(root, evt, args.dry_run)
 
         # §step: mark processed by moving out of the inbox (no 'status' field in schema)
         if not args.dry_run and decision != "reject":
