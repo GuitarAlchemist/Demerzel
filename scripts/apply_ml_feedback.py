@@ -48,10 +48,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 NUDGE_CAP = 0.10
+MAX_RECONS_PER_DAY = 3   # §3b / policy guardrail
 CONF_PROCEED = 0.70      # §2
 CONF_GOVERNANCE = 0.80   # §3
 CONF_AUTO_APPLY = 0.85   # §4
 FORBIDDEN_TYPES = {"modify_constitution", "override_policy"}
+APPLICABLE_TYPES = {"threshold_adjustment", "proactive_recon"}  # types with an applier
 REQUIRED = ["pipeline_id", "recommendation_type", "recommendation", "confidence",
             "evidence", "constitutional_check", "timestamp",
             "message_id", "origin_repo", "content_hash", "hash_algorithm"]
@@ -101,10 +103,12 @@ def _gate(doc: dict) -> tuple[str, str]:
     if conf < CONF_GOVERNANCE:
         return "escalate", f"confidence {conf} < governance gate {CONF_GOVERNANCE}"
 
-    # §4 bounded autonomous apply (calibration threshold nudge = low risk)
+    # §4 bounded autonomous apply (calibration nudge / proactive recon = low risk)
+    if rtype not in APPLICABLE_TYPES:
+        return "escalate", f"no autonomous applier for type {rtype} — defer to human"
     if conf < CONF_AUTO_APPLY:
         return "escalate", f"confidence {conf} < auto-apply {CONF_AUTO_APPLY}"
-    return "apply", f"confidence {conf} >= {CONF_AUTO_APPLY}, low-risk threshold_adjustment"
+    return "apply", f"confidence {conf} >= {CONF_AUTO_APPLY}, low-risk {rtype}"
 
 
 def _atomic_write(path: Path, data: dict) -> None:
@@ -164,6 +168,52 @@ def _apply_nudge(root: Path, doc: dict, dry: bool) -> dict:
             "applied_delta": round(new_total - prior, 4), "belief": str(belief_path)}
 
 
+def _apply_recon_schedule(root: Path, doc: dict, dry: bool) -> dict:
+    """Schedule proactive reconnaissance for the recommendation's targets, capped
+    at MAX_RECONS_PER_DAY (Article 9 bound). Recon is a read/investigate action —
+    inherently reversible — so the bounded apply is appropriate. Appends to a
+    dated queue rather than overwriting, so multiple cycles accumulate safely."""
+    params = doc["recommendation"].get("parameters", {})
+    targets = list(params.get("recon_targets", []))[:MAX_RECONS_PER_DAY]  # hard cap
+
+    date = _now_iso()[:10]
+    queue_path = root / "state" / "oversight" / f"scheduled-recons-{date}.json"
+    queue = {"date": date, "max_per_day": MAX_RECONS_PER_DAY, "recons": []}
+    if queue_path.is_file():
+        try:
+            queue = json.loads(queue_path.read_text(encoding="utf-8"))
+            queue.setdefault("recons", [])
+        except (json.JSONDecodeError, OSError):
+            pass
+    already = {r.get("target") for r in queue["recons"]}
+    remaining = max(0, MAX_RECONS_PER_DAY - len(queue["recons"]))
+    scheduled = []
+    for t in targets:
+        if remaining <= 0:
+            break
+        if t in already:
+            continue
+        queue["recons"].append({
+            "target": t, "status": "scheduled",
+            "source_recommendation": doc["message_id"],
+            "rationale": doc["recommendation"]["rationale"],  # Art.2 self-explaining
+            "scheduled_at": _now_iso(),
+        })
+        scheduled.append(t)
+        remaining -= 1
+    if not dry:
+        _atomic_write(queue_path, queue)
+    return {"scheduled": scheduled, "skipped_over_cap": targets[len(scheduled):],
+            "queue": str(queue_path), "day_total": len(queue["recons"])}
+
+
+# type -> applier; gate guarantees only APPLICABLE_TYPES reach 'apply'
+_APPLIERS = {
+    "threshold_adjustment": _apply_nudge,
+    "proactive_recon": _apply_recon_schedule,
+}
+
+
 def _append_evolution(root: Path, event: dict, dry: bool) -> None:
     path = root / "state" / "evolution" / "ml-feedback-loop.evolution.json"
     log = {"artifact": "ml-feedback-loop", "events": []}
@@ -217,11 +267,13 @@ def main(argv: list[str]) -> int:
                               "recommendation": doc["recommendation"]})
             evt = {"event": "ml_recommendation_escalated", "timestamp": _now_iso(),
                    "message_id": doc["message_id"], "reason": reason}
-        else:  # apply
-            delta = _apply_nudge(root, doc, args.dry_run)
-            applied.append({"message_id": doc["message_id"], **delta})
+        else:  # apply — dispatch on type (gate ensures an applier exists)
+            delta = _APPLIERS[doc["recommendation_type"]](root, doc, args.dry_run)
+            applied.append({"message_id": doc["message_id"],
+                            "type": doc["recommendation_type"], **delta})
             evt = {"event": "ml_recommendation_applied", "timestamp": _now_iso(),
-                   "message_id": doc["message_id"], "metrics": delta}
+                   "message_id": doc["message_id"],
+                   "recommendation_type": doc["recommendation_type"], "metrics": delta}
         _append_evolution(root, evt, args.dry_run)
 
         # §step: mark processed by moving out of the inbox (no 'status' field in schema)
