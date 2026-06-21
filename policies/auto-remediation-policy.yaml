@@ -163,21 +163,22 @@ auto_remediation_actions:
 confidence_gating:
   description: "Align auto-remediation decisions with alignment-policy.yaml thresholds"
   reference: "alignment-policy.yaml confidence_thresholds"
+  # Values single-sourced in logic/confidence-thresholds.yaml via ref:confidence#<key>.
   thresholds:
     silent_auto_remediate:
-      minimum: 0.9
+      minimum: ref:confidence#autonomous
       behavior: "Auto-remediate without notification"
       applies_to: [low]
     notified_auto_remediate:
-      minimum: 0.7
+      minimum: ref:confidence#with_note
       behavior: "Auto-remediate and post notification via GitHub Discussion"
       applies_to: [low, medium]
     propose_and_wait:
-      minimum: 0.5
+      minimum: ref:confidence#ask_confirmation
       behavior: "Propose remediation in GitHub Issue, wait for human confirmation before acting"
       applies_to: [low, medium, high]
     escalate_no_action:
-      below: 0.5
+      below: ref:confidence#ask_confirmation
       behavior: "Escalate to human via GitHub Issue; do not take any remediation action"
       applies_to: [low, medium, high]
 

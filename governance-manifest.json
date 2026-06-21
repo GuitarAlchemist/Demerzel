@@ -2465,6 +2465,24 @@
       "to": "confidence:with_note",
       "kind": "confidence_ref",
       "resolved": true
+    },
+    {
+      "from": "policies/auto-remediation-policy.yaml",
+      "to": "confidence:ask_confirmation",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/auto-remediation-policy.yaml",
+      "to": "confidence:autonomous",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/auto-remediation-policy.yaml",
+      "to": "confidence:with_note",
+      "kind": "confidence_ref",
+      "resolved": true
     }
   ],
   "precedence": [
