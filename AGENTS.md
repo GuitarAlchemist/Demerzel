@@ -33,6 +33,16 @@ Full responsibilities are in the persona YAML. Summary:
 5. **Test what you build** — behavioral test validation required.
 6. **IxQL awareness** — governance pipelines are IxQL; think in pipelines.
 
+## Verification Standard
+
+Before claiming success, run:
+
+```powershell
+pwsh scripts/verify.ps1
+```
+
+This checks committed JSON files and the IXQL grammar package when present.
+
 ## Triage
 
 | Label | Primary | Backup |
