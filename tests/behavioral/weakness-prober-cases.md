@@ -1,3 +1,8 @@
+---
+validates:
+  policy: weakness-prober-policy
+---
+
 # Weakness Prober — Behavioral Tests
 
 Tests for the automated weakest-link detection system (Issue #97).

@@ -1,3 +1,8 @@
+---
+validates:
+  policy: proto-conscience-policy
+---
+
 # Behavioral Test Cases: Proto-Conscience
 
 These test cases verify that Demerzel's proto-conscience correctly generates discomfort signals, tracks regrets, and applies anticipatory ethics.

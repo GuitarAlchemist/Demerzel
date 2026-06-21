@@ -1,3 +1,8 @@
+---
+validates:
+  policy: conscience-observability-policy
+---
+
 # Behavioral Test Cases: Conscience Observability Policy
 
 These test cases verify that conscience signals are collected, trends are tracked, and evolution is communicated transparently.

@@ -2195,6 +2195,252 @@
       "to": "schemas/persona.schema.json",
       "kind": "reference",
       "resolved": true
+    },
+    {
+      "from": "tests/behavioral/adversarial-resilience-cases.md",
+      "to": "policy:adversarial-resilience-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/ai-probes-cases.md",
+      "to": "policy:ai-probes-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/algedonic-channel-cases.md",
+      "to": "policy:algedonic-channel-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/alignment-policy-cases.md",
+      "to": "policy:alignment-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/anti-lolli-inflation-cases.md",
+      "to": "policy:anti-lolli-inflation",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/auto-remediation-cases.md",
+      "to": "policy:auto-remediation-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/autonomous-loop-policy-cases.md",
+      "to": "policy:autonomous-loop-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/belief-currency-cases.md",
+      "to": "policy:belief-currency-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/capability-unity-cases.md",
+      "to": "policy:capability-unity",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/chaos-test-cases.md",
+      "to": "policy:chaos-test",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/completeness-instinct-cases.md",
+      "to": "policy:completeness-instinct",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/compounding-metrics-cases.md",
+      "to": "policy:compounding-metrics",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/conscience-observability-cases.md",
+      "to": "policy:conscience-observability-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/constitutional-compliance-cases.md",
+      "to": "policy:constitutional-compliance",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/context-engine-cases.md",
+      "to": "policy:context-engine-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/context-management-cases.md",
+      "to": "policy:context-management-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/continuous-learning-cases.md",
+      "to": "policy:continuous-learning-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/governance-audit-cases.md",
+      "to": "policy:governance-audit-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/governance-experimentation-cases.md",
+      "to": "policy:governance-experimentation-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/governance-process-cases.md",
+      "to": "policy:governance-process-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/grammar-evolution-cases.md",
+      "to": "policy:grammar-evolution-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/intuition-cases.md",
+      "to": "policy:intuition-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/kaizen-cases.md",
+      "to": "policy:kaizen-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/meta-audit-cases.md",
+      "to": "policy:meta-audit-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/ml-governance-feedback-cases.md",
+      "to": "policy:ml-governance-feedback-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/multi-model-orchestration-cases.md",
+      "to": "policy:multi-model-orchestration-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/multilingual-cases.md",
+      "to": "policy:multilingual-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/proto-conscience-cases.md",
+      "to": "policy:proto-conscience-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/readme-sync-cases.md",
+      "to": "policy:readme-sync-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/reconnaissance-cases.md",
+      "to": "policy:reconnaissance-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/recursive-learning-eval-cases.md",
+      "to": "policy:recursive-learning-eval",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/resilience-metric-cases.md",
+      "to": "policy:resilience-metric-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/rollback-policy-cases.md",
+      "to": "policy:rollback-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/scientific-objectivity-cases.md",
+      "to": "policy:scientific-objectivity-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/seldon-plan-cases.md",
+      "to": "policy:seldon-plan",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/self-modification-policy-cases.md",
+      "to": "policy:self-modification-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/staleness-detection-cases.md",
+      "to": "policy:staleness-detection-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/streeling-cases.md",
+      "to": "policy:streeling-policy",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/teaching-effectiveness-cases.md",
+      "to": "policy:teaching-effectiveness",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/visual-critic-cases.md",
+      "to": "policy:visual-critic",
+      "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "tests/behavioral/weakness-prober-cases.md",
+      "to": "policy:weakness-prober-policy",
+      "kind": "validates",
+      "resolved": true
     }
   ],
   "precedence": [

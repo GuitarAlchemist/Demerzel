@@ -1,3 +1,8 @@
+---
+validates:
+  policy: visual-critic
+---
+
 # Behavioral Test Cases: Visual Critic Policy
 
 These test cases verify the render-critic perception loop: code is rendered, perceived, scored, and iteratively fixed.

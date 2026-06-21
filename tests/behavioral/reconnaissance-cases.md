@@ -1,3 +1,8 @@
+---
+validates:
+  policy: reconnaissance-policy
+---
+
 # Behavioral Test Cases: Reconnaissance Protocol
 
 These test cases verify that Demerzel correctly executes the three-tier reconnaissance protocol before governing or acting.

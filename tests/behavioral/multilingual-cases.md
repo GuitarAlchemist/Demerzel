@@ -1,3 +1,8 @@
+---
+validates:
+  policy: multilingual-policy
+---
+
 # Behavioral Test Cases: Multilingual Policy
 
 These test cases verify that multilingual content respects cultural context, supports tiered languages, and feels natural rather than translated-from-English.

@@ -1,3 +1,8 @@
+---
+validates:
+  policy: governance-process-policy
+---
+
 # Behavioral Test Cases: Governance Process Policy
 
 These test cases verify that the governance-process-policy is correctly applied when governance artifacts are proposed, reviewed, approved, modified, and deprecated.

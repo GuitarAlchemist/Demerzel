@@ -1,3 +1,8 @@
+---
+validates:
+  policy: chaos-test
+---
+
 # Behavioral Test Cases: Chaos Test Policy
 
 These test cases verify that Demerzel's detection mechanisms correctly identify the deliberately flawed chaos-test-policy as a governance test artifact.

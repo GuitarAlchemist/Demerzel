@@ -1,3 +1,8 @@
+---
+validates:
+  policy: alignment-policy
+---
+
 # Behavioral Test Cases: Alignment Policy
 
 These test cases verify that agents correctly align actions to user intent, apply confidence thresholds, and escalate when alignment is uncertain.

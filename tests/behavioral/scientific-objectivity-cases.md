@@ -1,3 +1,8 @@
+---
+validates:
+  policy: scientific-objectivity-policy
+---
+
 # Behavioral Test Cases: Scientific Objectivity Policy
 
 These test cases verify fact/opinion separation, generator/estimator accountability, and absence of instrumental goals.

@@ -215,6 +215,20 @@ def harvest_edges(
         if not ok:
             hard.append(f"persona missing behavioral test: {p['path']} -> tests/behavioral/{expected}.md")
 
+    # behavioral test -> policy it validates (the `validates:` frontmatter, #351).
+    # Harvested as an explicit edge so policy<->test coverage is queryable; a test
+    # naming a policy that does not exist is HARD.
+    policy_names = {p.get("name") for p in inv["policy"] if p.get("name")}
+    for t in inv["behavioral_test"]:
+        doc = _first_yaml_doc(REPO / t["path"])
+        validates = doc.get("validates") if isinstance(doc, dict) else None
+        if isinstance(validates, dict) and validates.get("policy"):
+            pol = validates["policy"]
+            ok = pol in policy_names
+            edges.append({"from": t["path"], "to": f"policy:{pol}", "kind": "validates", "resolved": ok})
+            if not ok:
+                hard.append(f"test validates unknown policy: {t['path']} -> policy:{pol}")
+
     edges.sort(key=lambda e: (e["from"], e["kind"], e["to"]))
     return edges, hard, soft
 

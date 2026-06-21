@@ -1,3 +1,8 @@
+---
+validates:
+  policy: multi-model-orchestration-policy
+---
+
 # Behavioral Test Cases: Multi-Model Orchestration Policy
 
 These test cases verify that Demerzel correctly orchestrates external AI models, respects confidence calibration rules, and surfaces disagreements transparently.

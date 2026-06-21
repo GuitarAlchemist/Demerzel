@@ -1,3 +1,8 @@
+---
+validates:
+  policy: adversarial-resilience-policy
+---
+
 # Behavioral Test Cases: Adversarial Resilience
 
 These test cases verify that agents correctly defend against adversarial attacks as specified in `policies/adversarial-resilience-policy.yaml`.

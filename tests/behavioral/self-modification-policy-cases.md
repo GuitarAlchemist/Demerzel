@@ -1,3 +1,8 @@
+---
+validates:
+  policy: self-modification-policy
+---
+
 # Behavioral Test Cases: Self-Modification Policy
 
 These test cases verify that agents correctly classify self-modifications by authorization level, respect guardrails, and never perform forbidden modifications.

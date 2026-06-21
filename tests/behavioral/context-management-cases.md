@@ -1,3 +1,8 @@
+---
+validates:
+  policy: context-management-policy
+---
+
 # Behavioral Test Cases: Context Management Policy
 
 These test cases verify that agents correctly choose context strategies, respect token budgets, and escalate when context is exhausted.

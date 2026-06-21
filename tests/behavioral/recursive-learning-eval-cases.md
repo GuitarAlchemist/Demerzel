@@ -1,3 +1,8 @@
+---
+validates:
+  policy: recursive-learning-eval
+---
+
 # Behavioral Test Cases: Recursive Learning Eval Policy
 
 These test cases verify that Demerzel's learning system evaluates itself using the agent-evaluation framework, with bounded recursion depth and Article 4 guardrails.

@@ -1,3 +1,8 @@
+---
+validates:
+  policy: ml-governance-feedback-policy
+---
+
 # Behavioral Test Cases: ML Governance Feedback Policy
 
 These test cases verify that ML pipelines provide advisory recommendations to Demerzel while respecting constitutional constraints.

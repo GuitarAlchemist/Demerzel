@@ -1,3 +1,8 @@
+---
+validates:
+  policy: governance-experimentation-policy
+---
+
 # Behavioral Test Cases: Governance Experimentation Policy
 
 These test cases verify that Demerzel can experiment with governance styles while respecting inviolable constitutional boundaries.

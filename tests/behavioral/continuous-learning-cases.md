@@ -1,3 +1,8 @@
+---
+validates:
+  policy: continuous-learning-policy
+---
+
 # Behavioral Test Cases: Continuous Learning Policy
 
 These test cases verify that governance sessions produce extractable patterns, patterns earn confidence through evidence, and auto-learned knowledge is bounded by validation gates.

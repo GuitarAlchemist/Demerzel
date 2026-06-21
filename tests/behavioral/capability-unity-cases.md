@@ -1,3 +1,8 @@
+---
+validates:
+  policy: capability-unity
+---
+
 # Capability Unity — Behavioral Test Cases
 
 Tests for the capability-unity-policy: no capability fragmentation across agent surfaces.

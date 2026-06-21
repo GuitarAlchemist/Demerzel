@@ -1,3 +1,8 @@
+---
+validates:
+  policy: belief-currency-policy
+---
+
 # Behavioral Test Cases: Belief Currency Policy
 
 These test cases verify that Demerzel correctly applies belief decay, staleness detection, refresh triggers, and never acts on expired beliefs.
