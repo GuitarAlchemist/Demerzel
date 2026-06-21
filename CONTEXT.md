@@ -45,6 +45,38 @@ humanity) overrides everything. Constitutions are **append-only**.
   chaos-engineering metric for how well governance detects injected poison (dead
   bindings, orphaned branches, BS descriptions, unconsumed artifacts).
 
+## Architecture seams (designed 2026-06-20 via `/improve-codebase-architecture`; not yet built)
+
+A single deepening that collapses today's hand-synced indices and scattered validators
+into a few deep modules. The unifying discipline: **harvest, don't declare** — every
+fact lives in one place and is read out, never restated.
+
+- **Governance manifest** — `governance-manifest.json`, *derived* by `scripts/build_manifest.py`
+  from the filesystem. Exposes one small interface over three harvested concerns:
+  *inventory* (artifacts on disk), *edges* (read from artifacts' own reference fields),
+  and *health snapshots* (resilience/effectiveness values pulled from their emitters with
+  `computed_at` provenance — never recomputed). Committed and CI-diffed; the README-SYNC
+  counts and the constitutional-precedence prose are populated from it. Replaces the
+  hand-maintained edges in `context-map.yaml`.
+- **Canonical reference syntax** — every cross-artifact citation is a parseable token
+  (`<constitution>#<article>`, `policy:<name>`, `persona:<name>`) followed by a prose gloss
+  after `—`. Lives in YAML fields (`constitutional_basis`, `references`) and in a new
+  `validates:` frontmatter block on behavioral tests (making persona↔test bidirectional,
+  not filename-only). The manifest harvests these into resolvable edges; dangling ones fail CI.
+- **Schema-as-single-source validation** — structural rules live once in `*.schema.json`,
+  read by two thin adapters: `jsonschema` (Python) and `Test-Json -Schema` (PowerShell).
+  Kills the halt-marker and digest duplication; `persona.schema.json` finally gets used.
+  *Relational* checks (citations resolve) fold into the manifest; *temporal* checks
+  (`expires_at` in the future, freshness) stay at point-of-use.
+- **`Get-DomainGateState`** — a dot-sourced PowerShell deep module that reads loop state
+  once (HALT-ALL + schema-validate + expiry, protected paths, lock age, git dirty) and
+  returns *facts*. `dev-process-overseer.ps1` and `supervised-loop-preflight.ps1` become
+  thin deciders that weigh those facts themselves.
+- **Precedence declaration** — `precedence.yaml` authors the constitutional hierarchy once;
+  the manifest validates that each constitution's `Precedence:` / `Subordinate to:` header
+  *agrees* with it. Makes the append-only + precedence [Architecture invariant](#architecture-invariant)
+  machine-checkable without generating the headers' human rationale.
+
 ## Conventions
 
 See `CLAUDE.md` / `AGENTS.md` for authoritative validation rules, the constitutional
