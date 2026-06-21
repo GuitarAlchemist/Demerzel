@@ -68,29 +68,24 @@ jobs:
 
           # Use Claude to assess if this discussion contains actionable work
           if [ -n "$ANTHROPIC_API_KEY" ]; then
-            ASSESSMENT=$(curl -s --max-time 30 \
-              https://api.anthropic.com/v1/messages \
-              -H "x-api-key: $ANTHROPIC_API_KEY" \
-              -H "content-type: application/json" \
-              -H "anthropic-version: 2025-01-01" \
-              -d "$(jq -n \
-                --arg title "$DISCUSSION_TITLE" \
-                --arg body "${DISCUSSION_BODY:0:3000}" \
-                --arg category "$DISCUSSION_CATEGORY" \
-                '{
-                  model: "claude-sonnet-4-20250514",
-                  max_tokens: 500,
-                  system: "You are Demerzel, a governance coordinator. Analyze this GitHub Discussion and determine:\n1. Does it contain actionable work that should become a GitHub Issue? (human directives, bug reports, feature requests, improvement suggestions)\n2. If yes, what should the issue title and body be?\n\nRespond in this exact JSON format:\n{\"needs_issue\": true/false, \"reason\": \"why\", \"issue_title\": \"title if needed\", \"issue_body\": \"body if needed\", \"labels\": [\"enhancement\" or \"bug\" or \"documentation\"]}",
-                  messages: [{role: "user", content: "Discussion #" + $title + " (category: " + $category + "):\n\n" + $body}]
-                }')" 2>/dev/null)
-
-            NEEDS_ISSUE=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.needs_issue // false' 2>/dev/null)
-            ISSUE_TITLE=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.issue_title // empty' 2>/dev/null)
-            ISSUE_BODY=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.issue_body // empty' 2>/dev/null)
-            ISSUE_LABELS=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.labels // ["enhancement"] | join(",")' 2>/dev/null)
-            REASON=$(echo "$ASSESSMENT" | jq -r '.content[0].text' 2>/dev/null | jq -r '.reason // empty' 2>/dev/null)
-
-            echo "Assessment: needs_issue=$NEEDS_ISSUE, reason=$REASON"
+            # Call Claude via the shared llm_call.sh seam (Candidate 3). ASSESSMENT
+            # is now the model's text directly (the seam extracted it), so it is
+            # parsed as JSON in one step. A non-zero seam exit -> safe NEEDS_ISSUE=false.
+            LLM_SYSTEM=$(jq -rn '"You are Demerzel, a governance coordinator. Analyze this GitHub Discussion and determine:\n1. Does it contain actionable work that should become a GitHub Issue? (human directives, bug reports, feature requests, improvement suggestions)\n2. If yes, what should the issue title and body be?\n\nRespond in this exact JSON format:\n{\"needs_issue\": true/false, \"reason\": \"why\", \"issue_title\": \"title if needed\", \"issue_body\": \"body if needed\", \"labels\": [\"enhancement\" or \"bug\" or \"documentation\"]}"')
+            PROMPT=$(jq -rn --arg title "$DISCUSSION_TITLE" --arg body "${DISCUSSION_BODY:0:3000}" --arg category "$DISCUSSION_CATEGORY" \
+              '"Discussion #" + $title + " (category: " + $category + "):\n\n" + $body')
+            export LLM_SYSTEM
+            if ASSESSMENT=$(bash .github/scripts/llm_call.sh claude "$PROMPT" 500 2>/tmp/llm_err); then
+              NEEDS_ISSUE=$(echo "$ASSESSMENT" | jq -r '.needs_issue // false' 2>/dev/null)
+              ISSUE_TITLE=$(echo "$ASSESSMENT" | jq -r '.issue_title // empty' 2>/dev/null)
+              ISSUE_BODY=$(echo "$ASSESSMENT" | jq -r '.issue_body // empty' 2>/dev/null)
+              ISSUE_LABELS=$(echo "$ASSESSMENT" | jq -r '.labels // ["enhancement"] | join(",")' 2>/dev/null)
+              REASON=$(echo "$ASSESSMENT" | jq -r '.reason // empty' 2>/dev/null)
+              echo "Assessment: needs_issue=$NEEDS_ISSUE, reason=$REASON"
+            else
+              echo "::warning::Discussion assessment failed: $(cat /tmp/llm_err)"
+              NEEDS_ISSUE="false"
+            fi
           else
             # Fallback: only promote Ideas category discussions
             if [ "$DISCUSSION_CATEGORY" = "Ideas" ]; then

@@ -108,11 +108,12 @@ jobs:
           PROMPT=$(jq -rn --arg caps "$CAPABILITIES" \
             '"Current ecosystem capabilities:\n\n" + $caps + "\n\nIdentify capability gaps and expansion opportunities."')
           export LLM_SYSTEM
-          bash .github/scripts/llm_call.sh claude "$PROMPT" 2000 > /tmp/expansion-analysis.txt
-
-          if [ -s /tmp/expansion-analysis.txt ]; then
+          # if-form: the seam guarantees non-empty text on success (exit 0) or a
+          # non-zero exit + stderr diagnostic on failure — no -s check needed.
+          if bash .github/scripts/llm_call.sh claude "$PROMPT" 2000 > /tmp/expansion-analysis.txt 2>/tmp/llm_err; then
             echo "ANALYSIS_READY=true" >> $GITHUB_OUTPUT
           else
+            echo "::warning::Capability analysis call failed: $(cat /tmp/llm_err)"
             echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
           fi
 

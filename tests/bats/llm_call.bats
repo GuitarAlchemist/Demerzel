@@ -45,6 +45,27 @@ setup() {
   [ "$status" -ne 0 ]
 }
 
+@test "API error response -> exit 3 with stderr diagnostic" {
+  _http_post() { cat >/dev/null; cat "$FIX/error.json"; }
+  run _call_claude "hi" 100
+  [ "$status" -eq 3 ]
+  [[ "$output" == *"API error"* ]]
+  [[ "$output" == *"Overloaded"* ]]
+}
+
+@test "empty/blocked response -> exit 4" {
+  _http_post() { cat >/dev/null; cat "$FIX/empty.json"; }
+  run _call_claude "hi" 100
+  [ "$status" -eq 4 ]
+  [[ "$output" == *"no text in response"* ]]
+}
+
+@test "transport failure (empty body) -> exit 3" {
+  _http_post() { cat >/dev/null; printf ''; }
+  run _call_claude "hi" 100
+  [ "$status" -eq 3 ]
+}
+
 @test "LLM_SYSTEM adds a system field to the claude payload" {
   _http_post() { cat > "$BATS_TEST_TMPDIR/p.json"; cat "$FIX/claude.json"; }
   LLM_SYSTEM="be terse" _call_claude "hi" 100

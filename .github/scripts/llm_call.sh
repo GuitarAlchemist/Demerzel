@@ -5,18 +5,24 @@
 #          provider ∈ claude | gemini | codex   (codex == openai)
 #          LLM_SYSTEM (env, optional) — system prompt, carried per-provider.
 #          LLM_<PROVIDER>_MODEL (env, optional) — override the default model.
-# Output:  the model's text on stdout.
+#
+# Contract (so callers never parse the raw JSON themselves):
+#   stdout      — the model's text (only on success)
+#   stderr      — a human diagnostic (only on failure)
+#   exit code   — 0 ok · 2 usage · 3 API/transport error · 4 empty/blocked response
+#
+# Use the if-form, which is set -e safe (GitHub runs run: blocks with -eo pipefail):
+#   if TEXT=$(llm_call.sh claude "$p" 2>/tmp/err); then ... ; else <fallback>; fi
 #
 # Collapses the curl + auth-header + payload-escaping + response-extraction that
 # was re-typed across 8 workflows (and 3x in cross-model-review.yml). The
-# per-provider response shape (.content[0].text vs .candidates[].. vs
-# .choices[]..) is the only real difference and it lives here, once.
+# per-provider request/response shapes are the only real difference; they live
+# here, once.
 #
 # Testability (Candidate 3): the network call is the single function _http_post.
-# bats sources this file and overrides _http_post with a fixture, so the auth +
-# extraction logic is unit-tested without a live API. Endpoints + models are
-# env-overridable for the same reason. main() runs only when executed, not when
-# sourced.
+# bats sources this file and overrides _http_post with a fixture, so the auth,
+# extraction, AND error-classification logic are unit-tested without a live API.
+# Endpoints + models are env-overridable. main() runs only when executed.
 set -euo pipefail
 
 CLAUDE_URL="${LLM_CLAUDE_URL:-https://api.anthropic.com/v1/messages}"
@@ -33,37 +39,61 @@ _http_post() {
   curl -sS -X POST "$url" "$@" --data @-
 }
 
+# _emit <raw> <text_filter> <error_filter> — classify a raw response into the
+# contract. stdout+return 0 on success; stderr+return 3/4 on failure. All three
+# providers route through here so the error contract is identical.
+_emit() {
+  local raw="$1" text_filter="$2" error_filter="$3"
+  if [ -z "$raw" ]; then
+    echo "llm_call: transport failure (no response body)" >&2
+    return 3
+  fi
+  local apierr
+  apierr=$(printf '%s' "$raw" | jq -r "$error_filter" 2>/dev/null || true)
+  if [ -n "$apierr" ] && [ "$apierr" != "null" ]; then
+    echo "llm_call: API error: $apierr" >&2
+    return 3
+  fi
+  local text
+  text=$(printf '%s' "$raw" | jq -r "$text_filter" 2>/dev/null || true)
+  if [ -z "$text" ] || [ "$text" = "null" ]; then
+    echo "llm_call: no text in response: $(printf '%s' "$raw" | tr -d '\n' | head -c 300)" >&2
+    return 4
+  fi
+  printf '%s\n' "$text"
+}
+
 _call_claude() {
-  local prompt="$1" max="$2"
-  jq -n --arg m "$CLAUDE_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
+  local prompt="$1" max="$2" raw
+  raw=$(jq -n --arg m "$CLAUDE_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
       '{model:$m, max_tokens:$mx, messages:[{role:"user", content:$p}]}
        + (if $s == "" then {} else {system:$s} end)' \
     | _http_post "$CLAUDE_URL" \
         -H "x-api-key: ${ANTHROPIC_API_KEY:-}" \
         -H "anthropic-version: 2023-06-01" \
-        -H "content-type: application/json" \
-    | jq -r '.content[0].text'
+        -H "content-type: application/json") || true
+  _emit "$raw" '.content[0].text' '.error.message // empty'
 }
 
 _call_gemini() {
-  local prompt="$1" max="$2"
-  jq -n --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
+  local prompt="$1" max="$2" raw
+  raw=$(jq -n --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
       '{contents:[{parts:[{text:$p}]}], generationConfig:{maxOutputTokens:$mx}}
        + (if $s == "" then {} else {systemInstruction:{parts:[{text:$s}]}} end)' \
     | _http_post "${GEMINI_URL}/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY:-}" \
-        -H "content-type: application/json" \
-    | jq -r '.candidates[0].content.parts[0].text'
+        -H "content-type: application/json") || true
+  _emit "$raw" '.candidates[0].content.parts[0].text' '.error.message // empty'
 }
 
 _call_openai() {
-  local prompt="$1" max="$2"
-  jq -n --arg m "$OPENAI_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
+  local prompt="$1" max="$2" raw
+  raw=$(jq -n --arg m "$OPENAI_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
       '{model:$m, max_completion_tokens:$mx,
         messages: ((if $s == "" then [] else [{role:"system", content:$s}] end) + [{role:"user", content:$p}])}' \
     | _http_post "$OPENAI_URL" \
         -H "authorization: Bearer ${OPENAI_API_KEY:-}" \
-        -H "content-type: application/json" \
-    | jq -r '.choices[0].message.content'
+        -H "content-type: application/json") || true
+  _emit "$raw" '.choices[0].message.content' '.error.message // empty'
 }
 
 main() {

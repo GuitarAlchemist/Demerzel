@@ -169,22 +169,15 @@ jobs:
           INVENTORY=$(cat /tmp/inventory.json)
 
           if [ -n "$ANTHROPIC_API_KEY" ]; then
-            ANALYSIS=$(curl -s --max-time 30 \
-              https://api.anthropic.com/v1/messages \
-              -H "x-api-key: $ANTHROPIC_API_KEY" \
-              -H "content-type: application/json" \
-              -H "anthropic-version: 2025-01-01" \
-              -d "$(jq -n \
-                --arg gaps "$GAPS" \
-                --arg inventory "$INVENTORY" \
-                '{
-                  model: "claude-sonnet-4-20250514",
-                  max_tokens: 1000,
-                  system: "You are Demerzel, governance coordinator. Given detected gaps in the governance framework, prioritize them by impact and suggest concrete fixes. For each gap, classify as: CRITICAL (blocks governance), HIGH (reduces effectiveness), MEDIUM (quality gap), LOW (nice-to-have). Suggest which gaps should become GitHub Issues. Be concise — bullet points, not paragraphs.",
-                  messages: [{role: "user", content: "Inventory:\n" + $inventory + "\n\nDetected gaps:\n" + $gaps + "\n\nPrioritize these gaps and suggest which should become issues."}]
-                }')" 2>/dev/null)
-
-            echo "$ANALYSIS" | jq -r '.content[0].text' 2>/dev/null > /tmp/analysis.txt
+            # Call Claude via the shared llm_call.sh seam (Candidate 3); on a
+            # non-zero seam exit, fall back to the raw gaps instead of "null".
+            LLM_SYSTEM=$(jq -rn '"You are Demerzel, governance coordinator. Given detected gaps in the governance framework, prioritize them by impact and suggest concrete fixes. For each gap, classify as: CRITICAL (blocks governance), HIGH (reduces effectiveness), MEDIUM (quality gap), LOW (nice-to-have). Suggest which gaps should become GitHub Issues. Be concise — bullet points, not paragraphs."')
+            PROMPT=$(jq -rn --arg gaps "$GAPS" --arg inventory "$INVENTORY" '"Inventory:\n" + $inventory + "\n\nDetected gaps:\n" + $gaps + "\n\nPrioritize these gaps and suggest which should become issues."')
+            export LLM_SYSTEM
+            if ! bash .github/scripts/llm_call.sh claude "$PROMPT" 1000 > /tmp/analysis.txt 2>/tmp/llm_err; then
+              echo "::warning::Gap analysis call failed: $(cat /tmp/llm_err)"
+              echo "$GAPS" > /tmp/analysis.txt
+            fi
           else
             echo "$GAPS" > /tmp/analysis.txt
           fi
