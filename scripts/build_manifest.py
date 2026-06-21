@@ -37,6 +37,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parent.parent
 MANIFEST = REPO / "governance-manifest.json"
+HEALTH = REPO / "governance-health.json"
 SCHEMA_VERSION = 1
 
 if hasattr(sys.stdout, "reconfigure"):  # Windows consoles default to cp1252.
@@ -279,6 +280,55 @@ def check_persona_schema(inv: dict[str, list[dict[str, Any]]]) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# Health harvest (ADR-0002) — pull the LATEST emitter output with provenance.
+# Never recompute the formula; just record value + source + computed_at. Health
+# changes on a different cadence than structure, so it is written to a separate
+# governance-health.json that is NOT diff-gated (the structural manifest is).
+# ---------------------------------------------------------------------------
+
+def harvest_health() -> dict[str, Any]:
+    health: dict[str, Any] = {}
+
+    rp = REPO / "state" / "resilience" / "history.json"
+    if rp.exists():
+        try:
+            data = json.loads(rp.read_text(encoding="utf-8"))
+            records = data.get("records") if isinstance(data, dict) else data
+            if records:
+                last = records[-1]
+                health["resilience"] = {
+                    "value": last.get("overall_score"),
+                    "injections_caught": last.get("injections_caught"),
+                    "injections_total": last.get("injections_total"),
+                    "source": "state/resilience/history.json",
+                    "computed_at": last.get("timestamp"),
+                }
+        except (json.JSONDecodeError, AttributeError, IndexError):
+            pass
+
+    qt_dir = REPO / "state" / "quality-trend"
+    if qt_dir.exists():
+        latest: tuple[Path, str] | None = None
+        for f in sorted(qt_dir.glob("*.jsonl")):
+            lines = [ln for ln in f.read_text(encoding="utf-8").splitlines() if ln.strip()]
+            if lines:
+                latest = (f, lines[-1])
+        if latest:
+            f, line = latest
+            try:
+                rec = json.loads(line)
+                health["quality_trend"] = {
+                    "latest_artifact": rec.get("artifact"),
+                    "source": f.relative_to(REPO).as_posix(),
+                    "computed_at": rec.get("timestamp"),
+                }
+            except json.JSONDecodeError:
+                pass
+
+    return health
+
+
+# ---------------------------------------------------------------------------
 # Constitutional precedence (ADR-0003 / #353) — assert each constitution's
 # header AGREES with the single authored precedence.yaml. Never generate headers.
 # ---------------------------------------------------------------------------
@@ -338,11 +388,42 @@ def build() -> tuple[dict[str, Any], list[str], list[str]]:
     return manifest, sorted(set(hard)), sorted(set(soft))
 
 
+def populate_readme(counts: dict[str, int]) -> bool:
+    """Update the leading integer of each README-SYNC count cell from derived
+    counts, preserving the rest of the cell (ADR-0001: README reads from the
+    manifest). Returns True if the file changed."""
+    readme_path = REPO / "README.md"
+    original = readme_path.read_text(encoding="utf-8")
+    out_lines: list[str] = []
+    for line in original.splitlines():
+        new = line
+        if line.startswith("|"):
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) >= 2 and cells[0] in README_LABELS:
+                key = README_LABELS[cells[0]]
+                new = re.sub(r"\d+", str(counts[key]), line, count=1)
+        out_lines.append(new)
+    updated = "\n".join(out_lines) + ("\n" if original.endswith("\n") else "")
+    if updated != original:
+        readme_path.write_text(updated, encoding="utf-8")
+        return True
+    return False
+
+
 def main() -> int:
+    write_readme = "--write-readme" in sys.argv
+
     manifest, hard, soft = build()
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    HEALTH.write_text(json.dumps(harvest_health(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Wrote {MANIFEST.relative_to(REPO)} "
-          f"({sum(manifest['counts'].values())} artifacts, {len(manifest['edges'])} edges)")
+          f"({sum(manifest['counts'].values())} artifacts, {len(manifest['edges'])} edges) "
+          f"and {HEALTH.relative_to(REPO)}")
+
+    if write_readme and populate_readme(manifest["counts"]):
+        print("Updated README.md count cells from the manifest.")
+        # Re-check after populating so the run reflects the corrected counts.
+        hard = [v for v in hard if not v.startswith("README count drift")]
     if soft:
         print(f"\n{len(soft)} unresolved reference(s) [soft — to canonicalise]:")
         for w in soft:

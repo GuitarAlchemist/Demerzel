@@ -1,0 +1,14 @@
+{
+  "resilience": {
+    "value": 0.82,
+    "injections_caught": 9,
+    "injections_total": 11,
+    "source": "state/resilience/history.json",
+    "computed_at": "2026-03-23T18:00:00Z"
+  },
+  "quality_trend": {
+    "latest_artifact": "docs/governance/the-sentinel-spec.md",
+    "source": "state/quality-trend/2026-05.jsonl",
+    "computed_at": "2026-05-01T00:00:00Z"
+  }
+}
