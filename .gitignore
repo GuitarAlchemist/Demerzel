@@ -20,3 +20,11 @@ __pycache__/
 # paths + stale head), regenerated each preflight. Like state/digests/, this is
 # the tracked-state exception, not canonical governance state.
 state/governance/dev-process-overseer.json
+
+# Local tooling / editor / per-session scratch (machine-specific, not repo content)
+.claude-octopus/
+.claude/*.local.md
+.claude/scheduled_tasks.lock
+.claude/session-intent.md
+.claude/session-plan.md
+.zed/
