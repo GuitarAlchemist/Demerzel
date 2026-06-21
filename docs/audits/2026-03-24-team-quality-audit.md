@@ -185,6 +185,13 @@ Both skills implement autonomous Streeling University research cycles. They shar
 2. Clarify active hours policy for `seldon-auto-research`
 3. Document state ownership — rename to `state/seldon/` or add a comment in both skills
 
+> **RESOLVED 2026-06-21:** All 3 recommendations addressed in `seldon-auto-research/SKILL.md`
+> without merging the schedulers (the PASS / intentionally-differentiated verdict stands).
+> (1) auto-research now increments and checks the **shared** `consecutive_auto_cycles` counter
+> and triggers the same 12-cycle human-review pause; (2) active hours (06:00–22:00 UTC) enforced
+> in WAKE; (3) shared-state ownership documented via option (b) — explicit note that
+> `state/seldon-plan/` is owned by seldon-plan and auto-research operates under it.
+
 ---
 
 ## Summary
