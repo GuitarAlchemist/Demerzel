@@ -15,3 +15,8 @@ node_modules/
 __pycache__/
 *.pyc
 *.stackdump
+
+# dev-process-overseer preflight report — transient, machine-specific (absolute
+# paths + stale head), regenerated each preflight. Like state/digests/, this is
+# the tracked-state exception, not canonical governance state.
+state/governance/dev-process-overseer.json
