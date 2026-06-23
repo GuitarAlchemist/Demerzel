@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 39,
+    "schema": 40,
     "skill": 69,
     "workflow": 22
   },
@@ -439,6 +439,10 @@
       {
         "name": "halt-all.schema",
         "path": "schemas/halt-all.schema.json"
+      },
+      {
+        "name": "hexavalent-distribution.schema",
+        "path": "schemas/hexavalent-distribution.schema.json"
       },
       {
         "name": "loop-state.schema",

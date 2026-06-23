@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/hexavalent-distribution",
+  "title": "Hexavalent Distribution (deprecated alias)",
+  "description": "DEPRECATED: collapsed into fuzzy-distribution (#364). Kept as a compatibility shim so existing references to the hexavalent-distribution $id keep resolving for cross-repo consumers (ix/tars/ga). The canonical rules live only in fuzzy-distribution.schema.json.",
+  "$ref": "fuzzy-distribution.schema.json"
+}
