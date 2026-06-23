@@ -58,5 +58,18 @@ class TestLoopState(unittest.TestCase):
         self.assertIn("#42", st["goal"])
 
 
+class TestDryRunNoLiveCalls(unittest.TestCase):
+    def test_dry_run_does_not_invoke_harness(self):
+        import unittest.mock as mock
+        with mock.patch.object(g, "_gh_queue", return_value=[
+                 {"number": 7, "title": "fix docs typo", "body": "x", "labels": []}]), \
+             mock.patch.object(g, "_invoke_harness") as inv, \
+             mock.patch.object(g, "_open_pr") as pr:
+            rc = g.main(["--dry-run"])
+        self.assertEqual(rc, 0)
+        inv.assert_not_called()
+        pr.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()

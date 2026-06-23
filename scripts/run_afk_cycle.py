@@ -107,6 +107,59 @@ def build_loop_state(issue: dict, seq: int, risk: str, mode: str, today: str) ->
     }
 
 
+def _invoke_harness(issue: dict) -> dict:
+    """Run the sandcastle harness for one issue. Returns {branch,commits,blocked}."""
+    cmd = ["npx", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
+           "--repo", str(ROOT), "--issue", str(issue.get("number")),
+           "--title", issue.get("title", ""), "--body", issue.get("body", "")]
+    p = subprocess.run(cmd, cwd=str(HARNESS_DIR), capture_output=True, text=True, timeout=1800)
+    if p.returncode != 0:
+        return {"branch": None, "commits": [], "blocked": f"harness exit {p.returncode}: {p.stderr.strip()[:200]}"}
+    last = [l for l in p.stdout.strip().splitlines() if l.strip().startswith("{")]
+    if not last:
+        return {"branch": None, "commits": [], "blocked": "harness produced no JSON result"}
+    return json.loads(last[-1])
+
+
+def _ensure_podman() -> tuple[bool, str]:
+    """Restart-robustness: make sure the Podman machine is up before sandboxing.
+    Idempotent — 'already running' is success. Returns (ok, note)."""
+    try:
+        chk = subprocess.run(["podman", "machine", "list", "--format", "{{.Running}}"],
+                             capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return False, f"podman not available: {exc}"
+    if chk.returncode == 0 and "true" in chk.stdout.lower():
+        return True, "podman machine already running"
+    start = subprocess.run(["podman", "machine", "start"],
+                           capture_output=True, text=True, timeout=180)
+    if start.returncode == 0 or "already running" in (start.stderr + start.stdout).lower():
+        return True, "podman machine started"
+    return False, f"podman machine start failed: {start.stderr.strip()[:160]}"
+
+
+def _open_pr(issue: dict, branch: str) -> str:
+    """Push the branch and open a PR linked to the issue. Returns the PR URL."""
+    num = issue.get("number")
+    subprocess.run(["git", "-C", str(ROOT), "push", "-u", "origin", branch],
+                   capture_output=True, text=True, timeout=120, check=True)
+    p = subprocess.run(
+        ["gh", "pr", "create", "--repo", REPO_SLUG, "--head", branch,
+         "--title", f"AFK: {issue.get('title', '')} (#{num})",
+         "--body", f"Implements #{num} via the AFK agent.\n\nReview gates: agent-blackbox + cross-model-review.\nCloses #{num}"],
+        capture_output=True, text=True, timeout=120)
+    return p.stdout.strip() if p.returncode == 0 else f"pr-create-failed: {p.stderr.strip()[:160]}"
+
+
+def _comment_needs_preapproval(issue: dict) -> None:
+    subprocess.run(
+        ["gh", "issue", "comment", str(issue.get("number")), "--repo", REPO_SLUG,
+         "--body", "🤖 AFK agent: this issue classifies as **critical** "
+                   "(touches constitutions/policies) and will not be auto-implemented. "
+                   "It needs human pre-approval per autonomous-loop-policy."],
+        capture_output=True, text=True, timeout=60)
+
+
 def _gh_queue(dry: bool) -> list[dict]:
     """Fetch open agent-implement issues via gh. Returns [] on any failure."""
     try:
@@ -148,6 +201,33 @@ def main(argv: list[str]) -> int:
         if not args.dry_run:
             loops_dir = ROOT / "state" / "loops"
             loops_dir.mkdir(parents=True, exist_ok=True)
+            if eligible:
+                ok, pnote = _ensure_podman()   # restart-robustness preflight (idempotent)
+                if not ok:
+                    decision["action"] = f"blocked:{pnote}"
+                    state["status"] = "halted"
+                    state["halt_reason"] = pnote
+                    (loops_dir / f"{state['loop_id']}.loop.json").write_text(
+                        json.dumps(state, indent=2) + "\n", encoding="utf-8")
+                    decisions.append(decision)
+                    continue
+                hr = _invoke_harness(issue)
+                if hr.get("blocked"):
+                    decision["action"] = f"blocked:{hr['blocked']}"
+                    state["status"] = "halted"
+                    state["halt_reason"] = str(hr["blocked"])
+                elif hr.get("branch"):
+                    decision["pr"] = _open_pr(issue, hr["branch"])
+                    decision["branch"] = hr["branch"]
+                    state["iterations"].append({
+                        "iteration": 1, "timestamp": _now_iso(),
+                        "action": f"opened PR for #{issue.get('number')}",
+                        "outcome": "progress", "governance_decision": None})
+                    state["status"] = "completed"
+            else:
+                _comment_needs_preapproval(issue)
+                state["status"] = "halted"
+                state["halt_reason"] = "critical: needs human pre-approval"
             (loops_dir / f"{state['loop_id']}.loop.json").write_text(
                 json.dumps(state, indent=2) + "\n", encoding="utf-8")
         decisions.append(decision)
