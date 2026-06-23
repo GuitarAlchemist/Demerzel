@@ -1,0 +1,46 @@
+{
+  "id": "gel-ml-feedback-loop-2026-06-21",
+  "artifact": "ml-feedback-loop",
+  "artifact_type": "capability",
+  "metrics": {
+    "citation_count": 1,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-06-21T00:00:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "created",
+      "context": "ML-feedback self-improvement loop went from 0% live to a working bounded cycle. 4 of 5 §3 legs implemented end-to-end on real data: confidence_calibrator (§3a), staleness_predictor (§3b), violation_pattern_detector (§3c), remediation_optimizer (§3d). Producers in ix (scripts/, on main); one Article-9 governor in Demerzel (scripts/apply_ml_feedback.py); orchestrator (scripts/run_ml_feedback_cycle.py). No IxQL executor exists — these scripts stand in for it. PRs ix#168, Demerzel#373, Demerzel#375.",
+      "timestamp": "2026-06-21T20:40:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "Verified end-to-end: one unattended cycle = harvest×3 (compliance reports for ix/tars/ga) + produce×4 + govern -> applied=3, escalated=1, 0 errors. Both bounded-apply and escalation paths exercised on real data. Orchestrator sources producers from ix origin/main (branch-independent); honors ~/.demerzel/HALT-ALL kill switch. Scheduled daily 09:00 + at-logon via Windows Task Scheduler.",
+      "timestamp": "2026-06-21T20:40:00Z"
+    },
+    {
+      "type": "gap_identified",
+      "context": "Systemic governance finding surfaced BY the loop: belief staleness across all three consumer repos (ix/tars/ga, 12/12 beliefs stale past the 7-day threshold). Root-cause hypothesis: no enforced belief-refresh cadence ecosystem-wide. Filed as a non-binding policy-review request. §3c compliance checker required verify-before-harvest discipline (first pass ~64% false positives from YAML+markdown hybrid policies and documented persona waivers).",
+      "timestamp": "2026-06-21T20:40:00Z"
+    },
+    {
+      "type": "compounding_cycle",
+      "context": "Manual-compound fallback per demerzel-compound Step 0: evolution log was ~50 days stale (T_log 2026-05-02) with 143 commits since, triggering the STALE-STATE path. Recorded the ml-feedback-loop capability as the dominant session delta. Still RED (the real full-autonomy keystones): §3e anomaly detector, the IxQL executor, TARS validation, optick-sae artifacts, the retrain return-path to ix.",
+      "timestamp": "2026-06-21T20:40:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "A bounded, Article-9-gated self-improvement loop is the right increment toward autonomous governance: it runs unattended, produced a real systemic finding on its first runs, and stays within constitutional limits (full autonomy forbidden by Asimov Art.4 + Default Art.9). Operational value across cycles is not yet established.",
+      "truth_value": "P",
+      "confidence": 0.8
+    },
+    "recommendation": "investigate"
+  },
+  "created_at": "2026-06-21T20:40:00Z",
+  "last_updated": "2026-06-21T20:40:00Z"
+}
