@@ -12,7 +12,7 @@
     "policy": 45,
     "schema": 40,
     "skill": 69,
-    "workflow": 22
+    "workflow": 23
   },
   "inventory": {
     "constitution": [
@@ -1253,6 +1253,10 @@
       {
         "name": "qa-tribunal",
         "path": ".github/workflows/qa-tribunal.yml"
+      },
+      {
+        "name": "script-tests",
+        "path": ".github/workflows/script-tests.yml"
       },
       {
         "name": "seldon-plan",
