@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # llm_call.sh — one place for "call an LLM and get its text back".
 #
-# Usage:   llm_call.sh <provider> <prompt> [max_tokens]
+# Usage:   llm_call.sh <provider> <prompt|-> [max_tokens]
+#          '-' as <prompt> reads the prompt from stdin (ARG_MAX-safe for large
+#          prompts: `llm_call.sh claude - < big-prompt.txt`).
+#          LLM_HTTP_TIMEOUT (env, optional) — curl --max-time seconds (default 60).
 #          provider ∈ claude | gemini | codex   (codex == openai)
 #          LLM_SYSTEM (env, optional) — system prompt, carried per-provider.
 #          LLM_<PROVIDER>_MODEL (env, optional) — override the default model.
@@ -36,7 +39,9 @@ OPENAI_MODEL="${LLM_OPENAI_MODEL:-gpt-4o}"
 # prints the raw response on stdout. Overridden by tests.
 _http_post() {
   local url="$1"; shift
-  curl -sS -X POST "$url" "$@" --data @-
+  # --max-time so a hung provider fails fast instead of blocking the whole job
+  # until GitHub's much larger step timeout (octo review finding). Env-overridable.
+  curl -sS --max-time "${LLM_HTTP_TIMEOUT:-60}" -X POST "$url" "$@" --data @-
 }
 
 # _emit <raw> <text_filter> <error_filter> — classify a raw response into the
@@ -72,7 +77,9 @@ _call_claude() {
         -H "x-api-key: ${ANTHROPIC_API_KEY:-}" \
         -H "anthropic-version: 2023-06-01" \
         -H "content-type: application/json") || true
-  _emit "$raw" '.content[0].text' '.error.message // empty'
+  # Join ALL text blocks — Anthropic may return several; .content[0] alone
+  # silently truncated multi-block answers (octo review finding).
+  _emit "$raw" '[.content[] | select(.type=="text") | .text] | join("")' '.error.message // empty'
 }
 
 _call_gemini() {
@@ -97,9 +104,13 @@ _call_openai() {
 }
 
 main() {
-  local provider="${1:?usage: llm_call.sh <provider> <prompt> [max_tokens]}"
-  local prompt="${2:?prompt required}"
+  local provider="${1:?usage: llm_call.sh <provider> <prompt|-> [max_tokens]}"
+  local prompt="${2:?prompt required (use - to read the prompt from stdin)}"
   local max="${3:-1024}"
+  # ARG_MAX safety: large prompts (review diffs, inventories) must not ride in
+  # argv or the shell fails with "Argument list too long" before we even run
+  # (octo review finding). Callers pass '-' and pipe the prompt on stdin.
+  if [ "$prompt" = "-" ]; then prompt=$(cat); fi
   case "$provider" in
     claude)       _call_claude "$prompt" "$max" ;;
     gemini)       _call_gemini "$prompt" "$max" ;;
