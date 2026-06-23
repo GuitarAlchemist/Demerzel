@@ -10,13 +10,25 @@ pushes the branch, opens a PR linked to the issue, and records loop-state + audi
 Critical issues (constitution/policy) are skipped with a "needs human pre-approval"
 comment. Merge is left to existing review gates (self-merge automation deferred).
 
+Parallelism (--max-parallel, default 3): issues are processed concurrently, each
+in its OWN ephemeral clone of the repo so there are no git races on the shared
+.git (worktree/index/ref contention). Each agent's branch pushes to the shared
+origin; PRs are independent. The whole queue is always processed — concurrency is
+a throughput cap, not a truncation (waves of --max-parallel at a time).
+
+Backends (--backend):
+  local   — per-agent ephemeral clone + Podman sandbox (default; runs on this box)
+  remote  — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
+
 Usage:
-  python scripts/run_afk_cycle.py --dry-run     # classify + plan, no sandbox/push/PR
-  python scripts/run_afk_cycle.py               # run one cycle (live)
+  python scripts/run_afk_cycle.py --dry-run            # classify + plan, no side effects
+  python scripts/run_afk_cycle.py                      # run one cycle, up to 3 in parallel
+  python scripts/run_afk_cycle.py --max-parallel 1     # force sequential
+  python scripts/run_afk_cycle.py --max-parallel 5     # heavier local fan-out
 
 Exit codes:
-  0  cycle ran (any mix of implemented/skipped/no-op)
-  1  usage / environment error
+  0  cycle ran (any mix of implemented/skipped/stalled/no-op)
+  1  usage / environment error (e.g. Podman unavailable, bad --max-parallel)
   3  aborted: HALT-ALL marker in effect
 """
 from __future__ import annotations
@@ -24,8 +36,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -107,8 +122,31 @@ def build_loop_state(issue: dict, seq: int, risk: str, mode: str, today: str) ->
     }
 
 
-def _invoke_harness(issue: dict) -> dict:
-    """Run the sandcastle harness for one issue. Returns {branch,commits,blocked}.
+def _github_origin_url() -> str:
+    """The GitHub URL of ROOT's origin, so per-agent clones push to the real remote."""
+    p = subprocess.run(["git", "-C", str(ROOT), "remote", "get-url", "origin"],
+                       capture_output=True, text=True, timeout=30)
+    return p.stdout.strip() if p.returncode == 0 else ""
+
+
+def _prepare_clone(issue: dict) -> str:
+    """Make an isolated ephemeral clone of ROOT so a parallel agent never contends
+    on the shared .git. Returns the clone path (caller deletes it). origin is
+    repointed at GitHub so the agent's branch pushes to the shared remote, not the
+    local source clone. --no-hardlinks keeps the clone fully independent."""
+    clone = tempfile.mkdtemp(prefix=f"afk-{issue.get('number')}-")
+    subprocess.run(["git", "clone", "--no-hardlinks", str(ROOT), clone],
+                   capture_output=True, text=True, timeout=300, check=True)
+    url = _github_origin_url()
+    if url:
+        subprocess.run(["git", "-C", clone, "remote", "set-url", "origin", url],
+                       capture_output=True, text=True, timeout=30, check=True)
+    return clone
+
+
+def _invoke_harness(issue: dict, repo_path: str) -> dict:
+    """Run the sandcastle harness for one issue against repo_path. Returns
+    {branch,commits,blocked}.
 
     Invokes node with the tsx loader directly rather than `npx tsx`: on Windows
     `npx` is `npx.cmd` (no .exe) and Python's subprocess cannot CreateProcess it
@@ -116,7 +154,7 @@ def _invoke_harness(issue: dict) -> dict:
     injection. `node` is a real executable and args pass straight through as argv.
     """
     cmd = ["node", "--import", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
-           "--repo", str(ROOT), "--issue", str(issue.get("number")),
+           "--repo", str(repo_path), "--issue", str(issue.get("number")),
            "--title", issue.get("title", ""), "--body", issue.get("body", "")]
     p = subprocess.run(cmd, cwd=str(HARNESS_DIR), capture_output=True, text=True, timeout=1800)
     if p.returncode != 0:
@@ -125,6 +163,14 @@ def _invoke_harness(issue: dict) -> dict:
     if not last:
         return {"branch": None, "commits": [], "blocked": "harness produced no JSON result"}
     return json.loads(last[-1])
+
+
+def _invoke_harness_remote(issue: dict) -> dict:
+    """Backend seam for Vercel isolated sandboxes (Approach C). Not yet
+    implemented — returns a clean blocked result so --backend remote is a no-op
+    rather than a crash until the remote provider lands."""
+    return {"branch": None, "commits": [],
+            "blocked": "remote backend (Vercel isolated sandboxes) not implemented yet — use --backend local"}
 
 
 def _ensure_podman() -> tuple[bool, str]:
@@ -144,10 +190,11 @@ def _ensure_podman() -> tuple[bool, str]:
     return False, f"podman machine start failed: {start.stderr.strip()[:160]}"
 
 
-def _open_pr(issue: dict, branch: str) -> str:
-    """Push the branch and open a PR linked to the issue. Returns the PR URL."""
+def _open_pr(issue: dict, branch: str, repo_path: str) -> str:
+    """Push the branch from repo_path and open a PR linked to the issue. Returns
+    the PR URL (or a 'pr-create-failed: ...' sentinel)."""
     num = issue.get("number")
-    subprocess.run(["git", "-C", str(ROOT), "push", "-u", "origin", branch],
+    subprocess.run(["git", "-C", str(repo_path), "push", "origin", branch],
                    capture_output=True, text=True, timeout=120, check=True)
     p = subprocess.run(
         ["gh", "pr", "create", "--repo", REPO_SLUG, "--head", branch,
@@ -182,12 +229,125 @@ def _gh_queue(dry: bool) -> list[dict]:
         return []
 
 
+def _write_loop_state(state: dict) -> None:
+    """Persist one loop-state file. Distinct filename per issue → thread-safe."""
+    loops_dir = ROOT / "state" / "loops"
+    loops_dir.mkdir(parents=True, exist_ok=True)
+    (loops_dir / f"{state['loop_id']}.loop.json").write_text(
+        json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
+def _write_audit(summary: dict, today: str) -> None:
+    """Persist the combined cycle audit atomically to state/oversight/."""
+    out = ROOT / "state" / "oversight" / f"afk-cycle-{today}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp, out)
+
+
+def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dict, dict]:
+    """Live processing of ONE issue end-to-end (runs inside the thread pool).
+    Each call is independent: its own clone, its own branch, its own PR, its own
+    loop-state file. Returns (decision, state)."""
+    risk, mode = classify_risk(issue)
+    eligible = is_eligible(issue)
+    state = build_loop_state(issue, seq, risk, mode, today)
+    decision = {"issue": issue.get("number"), "title": issue.get("title"),
+                "risk": risk, "mode": mode, "eligible": eligible,
+                "action": "implement" if eligible else "skip:needs-human-preapproval"}
+
+    if not eligible:
+        _comment_needs_preapproval(issue)
+        state["status"] = "halted"
+        state["halt_reason"] = "critical: needs human pre-approval"
+        _write_loop_state(state)
+        return decision, state
+
+    clone = None
+    try:
+        if backend == "remote":
+            hr = _invoke_harness_remote(issue)
+            repo_for_push = None
+        else:
+            clone = _prepare_clone(issue)
+            hr = _invoke_harness(issue, clone)
+            repo_for_push = clone
+
+        if hr.get("blocked"):
+            decision["action"] = f"blocked:{hr['blocked']}"
+            state["status"] = "halted"
+            state["halt_reason"] = str(hr["blocked"])
+        elif hr.get("branch"):
+            pr = _open_pr(issue, hr["branch"], repo_for_push)
+            decision["pr"] = pr
+            decision["branch"] = hr["branch"]
+            if pr.startswith("pr-create-failed"):
+                # A failed PR must NOT be reported as completed.
+                decision["action"] = "stalled:pr-create-failed"
+                state["status"] = "stalled"
+                state["halt_reason"] = pr
+            else:
+                state["iterations"].append({
+                    "iteration": 1, "timestamp": _now_iso(),
+                    "action": f"opened PR for #{issue.get('number')}",
+                    "outcome": "progress", "governance_decision": None})
+                state["status"] = "completed"
+        else:
+            # Harness returned neither a branch nor a blocked reason (e.g. agent
+            # made no commits). Do not leave status pinned at 'running'.
+            decision["action"] = "stalled:no-branch-no-blocked"
+            state["status"] = "stalled"
+            state["halt_reason"] = "harness returned neither branch nor blocked"
+    except Exception as exc:  # one bad issue must not abort the rest of the cycle
+        decision["action"] = f"error:{type(exc).__name__}"
+        state["status"] = "stalled"
+        state["halt_reason"] = str(exc)[:200]
+    finally:
+        if clone:
+            shutil.rmtree(clone, ignore_errors=True)
+
+    _write_loop_state(state)
+    return decision, state
+
+
+def _print_summary(decisions: list[dict], queue_size: int, dry_run: bool,
+                   workers: int, backend: str, today: str) -> dict:
+    def _tally(prefix: str) -> int:
+        return sum(1 for d in decisions if str(d.get("action", "")).startswith(prefix))
+    summary = {
+        "cycle_at": _now_iso(), "dry_run": dry_run, "halted": False,
+        "backend": backend, "max_parallel": workers, "queue_size": queue_size,
+        "decisions": decisions,
+        "tally": {
+            "implement": _tally("implement"),
+            "skipped": _tally("skip"),
+            "stalled": _tally("stalled"),
+            "blocked": _tally("blocked"),
+            "error": _tally("error"),
+        },
+    }
+    if not dry_run:
+        _write_audit(summary, today)
+    print(json.dumps(summary, indent=2))
+    return summary
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Demerzel AFK implement-lane governor")
     ap.add_argument("--dry-run", action="store_true",
-                    help="classify + plan + write loop-state, but do not invoke the "
-                         "sandbox, push, or open PRs")
+                    help="classify + plan only; no clone, sandbox, push, PR, or file writes")
+    ap.add_argument("--max-parallel", type=int, default=3,
+                    help="max concurrent AFK agents (default 3); the whole queue is "
+                         "still processed in waves of this size")
+    ap.add_argument("--backend", choices=["local", "remote"], default="local",
+                    help="local = per-agent clone + Podman (default); "
+                         "remote = Vercel isolated sandboxes (not yet implemented)")
     args = ap.parse_args(argv)
+
+    if args.max_parallel < 1:
+        print("error: --max-parallel must be >= 1", file=sys.stderr)
+        return 1
 
     halted, why = halt_active()
     if halted:
@@ -196,73 +356,46 @@ def main(argv: list[str]) -> int:
 
     today = _now_iso()[:10]
     issues = _gh_queue(args.dry_run)
-    decisions = []
-    for seq, issue in enumerate(issues, start=1):
-        risk, mode = classify_risk(issue)
-        eligible = is_eligible(issue)
-        state = build_loop_state(issue, seq, risk, mode, today)
-        decision = {"issue": issue.get("number"), "title": issue.get("title"),
-                    "risk": risk, "mode": mode, "eligible": eligible,
-                    "action": "implement" if eligible else "skip:needs-human-preapproval"}
-        if not args.dry_run:
-            loops_dir = ROOT / "state" / "loops"
-            loops_dir.mkdir(parents=True, exist_ok=True)
-            if eligible:
-                ok, pnote = _ensure_podman()   # restart-robustness preflight (idempotent)
-                if not ok:
-                    decision["action"] = f"blocked:{pnote}"
-                    state["status"] = "halted"
-                    state["halt_reason"] = pnote
-                    (loops_dir / f"{state['loop_id']}.loop.json").write_text(
-                        json.dumps(state, indent=2) + "\n", encoding="utf-8")
-                    decisions.append(decision)
-                    continue
-                hr = _invoke_harness(issue)
-                if hr.get("blocked"):
-                    decision["action"] = f"blocked:{hr['blocked']}"
-                    state["status"] = "halted"
-                    state["halt_reason"] = str(hr["blocked"])
-                elif hr.get("branch"):
-                    pr = _open_pr(issue, hr["branch"])
-                    decision["pr"] = pr
-                    decision["branch"] = hr["branch"]
-                    if pr.startswith("pr-create-failed"):
-                        # T6-M3: a failed PR must NOT be reported as completed
-                        decision["action"] = "stalled:pr-create-failed"
-                        state["status"] = "stalled"
-                        state["halt_reason"] = pr
-                    else:
-                        state["iterations"].append({
-                            "iteration": 1, "timestamp": _now_iso(),
-                            "action": f"opened PR for #{issue.get('number')}",
-                            "outcome": "progress", "governance_decision": None})
-                        state["status"] = "completed"
-                else:
-                    # T6-M1: harness returned neither a branch nor a blocked reason
-                    # (e.g. agent made no commits). Do not leave status pinned at 'running'.
-                    decision["action"] = "stalled:no-branch-no-blocked"
-                    state["status"] = "stalled"
-                    state["halt_reason"] = "harness returned neither branch nor blocked"
-            else:
-                _comment_needs_preapproval(issue)
-                state["status"] = "halted"
-                state["halt_reason"] = "critical: needs human pre-approval"
-            (loops_dir / f"{state['loop_id']}.loop.json").write_text(
-                json.dumps(state, indent=2) + "\n", encoding="utf-8")
-        decisions.append(decision)
 
-    summary = {"cycle_at": _now_iso(), "dry_run": args.dry_run, "halted": False,
-               "queue_size": len(issues), "decisions": decisions,
-               "tally": {"implement": sum(1 for d in decisions if d["action"] == "implement"),
-                         "skipped": sum(1 for d in decisions if d["action"].startswith("skip"))}}
-    if not args.dry_run:
-        out = ROOT / "state" / "oversight" / f"afk-cycle-{today}.json"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        tmp = out.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-        os.replace(tmp, out)
+    # Dry-run: plan only, strictly no side effects (no clone/podman/files).
+    if args.dry_run:
+        decisions = []
+        for seq, issue in enumerate(issues, start=1):
+            risk, mode = classify_risk(issue)
+            eligible = is_eligible(issue)
+            decisions.append({"issue": issue.get("number"), "title": issue.get("title"),
+                              "risk": risk, "mode": mode, "eligible": eligible,
+                              "action": "implement" if eligible else "skip:needs-human-preapproval"})
+        _print_summary(decisions, len(issues), True, args.max_parallel, args.backend, today)
+        return 0
 
-    print(json.dumps(summary, indent=2))
+    # Live: ensure the sandbox backend is ready once, up front.
+    if args.backend == "local" and issues:
+        ok, pnote = _ensure_podman()
+        if not ok:
+            print(f"ABORT: {pnote}", file=sys.stderr)
+            return 1
+
+    workers = max(1, min(args.max_parallel, len(issues))) if issues else 1
+    if issues:
+        print(f"AFK: processing {len(issues)} issue(s), up to {workers} concurrent "
+              f"({args.backend} backend)", file=sys.stderr)
+
+    decisions_by_seq: dict[int, dict] = {}
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(_process_issue, issue, seq, today, args.backend): seq
+                for seq, issue in enumerate(issues, start=1)}
+        for fut in as_completed(futs):
+            seq = futs[fut]
+            try:
+                decision, _state = fut.result()
+            except Exception as exc:  # backstop; _process_issue catches its own
+                decision = {"issue": None, "action": f"error:{type(exc).__name__}",
+                            "detail": str(exc)[:160]}
+            decisions_by_seq[seq] = decision
+
+    decisions = [decisions_by_seq[s] for s in sorted(decisions_by_seq)]
+    _print_summary(decisions, len(issues), False, workers, args.backend, today)
     return 0
 
 

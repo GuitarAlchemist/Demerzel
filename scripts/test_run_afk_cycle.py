@@ -1,4 +1,5 @@
 import unittest
+import unittest.mock as mock
 from pathlib import Path
 import sys
 
@@ -59,16 +60,47 @@ class TestLoopState(unittest.TestCase):
 
 
 class TestDryRunNoLiveCalls(unittest.TestCase):
-    def test_dry_run_does_not_invoke_harness(self):
-        import unittest.mock as mock
+    def test_dry_run_makes_no_live_calls(self):
         with mock.patch.object(g, "_gh_queue", return_value=[
                  {"number": 7, "title": "fix docs typo", "body": "x", "labels": []}]), \
-             mock.patch.object(g, "_invoke_harness") as inv, \
-             mock.patch.object(g, "_open_pr") as pr:
+             mock.patch.object(g, "_process_issue") as proc, \
+             mock.patch.object(g, "_ensure_podman") as podman, \
+             mock.patch.object(g, "_write_audit") as audit:
             rc = g.main(["--dry-run"])
         self.assertEqual(rc, 0)
-        inv.assert_not_called()
-        pr.assert_not_called()
+        proc.assert_not_called()      # no clone / sandbox / push / PR
+        podman.assert_not_called()    # no machine start
+        audit.assert_not_called()     # dry-run writes nothing
+
+
+class TestParallelDispatch(unittest.TestCase):
+    def test_live_processes_every_issue_once(self):
+        issues = [{"number": n, "title": f"fix docs typo {n}", "body": "x", "labels": []}
+                  for n in (1, 2, 3)]
+        with mock.patch.object(g, "_gh_queue", return_value=issues), \
+             mock.patch.object(g, "_ensure_podman", return_value=(True, "ok")), \
+             mock.patch.object(g, "_process_issue",
+                               side_effect=lambda issue, seq, today, backend:
+                                   ({"issue": issue["number"], "action": "implement"}, {})) as proc, \
+             mock.patch.object(g, "_write_audit") as audit:
+            rc = g.main(["--max-parallel", "2"])
+        self.assertEqual(rc, 0)
+        self.assertEqual(proc.call_count, 3)            # whole queue processed, not capped at 2
+        self.assertEqual(audit.call_count, 1)           # one combined audit written
+
+
+class TestBackend(unittest.TestCase):
+    def test_remote_backend_is_blocked_stub(self):
+        hr = g._invoke_harness_remote({"number": 1, "title": "x", "body": "y"})
+        self.assertIsNone(hr["branch"])
+        self.assertIn("remote", hr["blocked"].lower())
+
+
+class TestArgValidation(unittest.TestCase):
+    def test_zero_parallel_rejected(self):
+        with mock.patch.object(g, "_gh_queue", return_value=[]):
+            rc = g.main(["--max-parallel", "0"])
+        self.assertEqual(rc, 1)
 
 
 if __name__ == "__main__":

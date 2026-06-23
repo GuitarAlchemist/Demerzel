@@ -27,6 +27,15 @@ gates.
 - HALT (`~/.demerzel/HALT-ALL`) honored before any work.
 - Every action traces to the issue number (audit).
 
+## Parallelism
+The governor processes the queue concurrently (`--max-parallel`, default 3),
+each agent in its own ephemeral clone of the repo so there are no git races on
+the shared `.git`. The whole queue is always processed (waves of `--max-parallel`),
+never truncated. `--backend local` (per-agent clone + Podman) is the default;
+`--backend remote` (Vercel isolated sandboxes) is a reserved seam, not yet
+implemented.
+
 ## Deferred (graduation steps)
-Self-hosted Actions runner (event-driven), parallel sandboxes, self-merge
-automation, ga/ix/tars rollout, video+TTS PR walkthroughs.
+Self-hosted Actions runner (event-driven), `--backend remote` Vercel sandboxes
+(scale beyond one machine), self-merge automation, ga/ix/tars rollout, video+TTS
+PR walkthroughs.
