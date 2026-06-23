@@ -13,6 +13,9 @@ learning/
 # Build artifacts and tooling output (regenerable, never committed)
 node_modules/
 __pycache__/
+# AFK harness runtime artifacts (sandcastle creates these in the target repo
+# when an AFK agent runs against Demerzel — logs/worktrees, never committed)
+.sandcastle/
 *.pyc
 *.stackdump
 

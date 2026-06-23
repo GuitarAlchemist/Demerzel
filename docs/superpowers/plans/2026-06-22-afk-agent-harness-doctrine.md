@@ -758,7 +758,7 @@ In `scripts/run_afk_cycle.py`, add these functions above `main`:
 ```python
 def _invoke_harness(issue: dict) -> dict:
     """Run the sandcastle harness for one issue. Returns {branch,commits,blocked}."""
-    cmd = ["npx", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.ts"),
+    cmd = ["npx", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
            "--repo", str(ROOT), "--issue", str(issue.get("number")),
            "--title", issue.get("title", ""), "--body", issue.get("body", "")]
     p = subprocess.run(cmd, cwd=str(HARNESS_DIR), capture_output=True, text=True, timeout=1800)
