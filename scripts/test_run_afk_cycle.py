@@ -103,5 +103,98 @@ class TestArgValidation(unittest.TestCase):
         self.assertEqual(rc, 1)
 
 
+def _council(verdict="APPROVE", conf=0.75, n_reviews=2, aligned=True):
+    reviews = []
+    align = "pass" if aligned else "fail"
+    for i in range(n_reviews):
+        reviews.append({"reviewer": f"reviewer_{'ab'[i % 2]}", "correctness_score": conf,
+                        "risk_assessment": "low", "constitutional_alignment": align,
+                        "rationale": "x"})
+    return {"verdict": verdict, "post_council_confidence": conf, "reviews": reviews}
+
+
+class TestAuthorizationTrace(unittest.TestCase):
+    def test_closes(self):
+        self.assertEqual(g.parse_authorization_trace("Implements #381 via AFK.\nCloses #381"),
+                         "github_issue:#381")
+
+    def test_implements_lowercase(self):
+        self.assertEqual(g.parse_authorization_trace("implements #42"), "github_issue:#42")
+
+    def test_none_when_absent(self):
+        self.assertIsNone(g.parse_authorization_trace("no linkage here"))
+        self.assertIsNone(g.parse_authorization_trace(""))
+
+
+class TestSelfMergeDecision(unittest.TestCase):
+    OK = dict(risk="low", checks_green=True, authz_trace="github_issue:#1",
+              conscience_max_weight=0.0)
+
+    def _decide(self, **over):
+        kw = dict(self.OK); kw.update(over)
+        cv = kw.pop("council_verdict", _council())
+        return g.self_merge_decision(kw["risk"], kw["checks_green"], kw["authz_trace"],
+                                     kw["conscience_max_weight"], cv)
+
+    def test_happy_path_merges(self):
+        merge, reason = self._decide()
+        self.assertTrue(merge, reason)
+
+    def test_medium_also_ok(self):
+        self.assertTrue(self._decide(risk="medium")[0])
+
+    def test_high_never(self):
+        merge, reason = self._decide(risk="high")
+        self.assertFalse(merge)
+        self.assertIn("only low/medium", reason)
+
+    def test_critical_never(self):
+        self.assertFalse(self._decide(risk="critical")[0])
+
+    def test_ci_red_blocks(self):
+        self.assertFalse(self._decide(checks_green=False)[0])
+
+    def test_missing_authz_blocks(self):
+        self.assertFalse(self._decide(authz_trace=None)[0])
+
+    def test_conscience_block(self):
+        merge, reason = self._decide(conscience_max_weight=0.85)
+        self.assertFalse(merge)
+        self.assertIn("conscience", reason)
+
+    def test_conscience_below_threshold_ok(self):
+        self.assertTrue(self._decide(conscience_max_weight=0.79)[0])
+
+    def test_single_reviewer_blocks(self):
+        merge, reason = self._decide(council_verdict=_council(n_reviews=1))
+        self.assertFalse(merge)
+        self.assertIn("need 2", reason)
+
+    def test_request_changes_verdict_blocks(self):
+        self.assertFalse(self._decide(council_verdict=_council(verdict="REQUEST_CHANGES"))[0])
+
+    def test_low_confidence_blocks(self):
+        self.assertFalse(self._decide(council_verdict=_council(conf=0.65))[0])
+
+    def test_constitutional_fail_blocks(self):
+        self.assertFalse(self._decide(council_verdict=_council(aligned=False))[0])
+
+    def test_no_council_blocks(self):
+        self.assertFalse(self._decide(council_verdict=None)[0])
+
+
+class TestHarvestDryRun(unittest.TestCase):
+    def test_dry_run_no_council_no_merge(self):
+        prs = [{"number": 9, "title": "fix docs typo", "body": "Closes #9", "labels": []}]
+        with mock.patch.object(g, "_gh_open_afk_prs", return_value=prs), \
+             mock.patch.object(g, "active_conscience_max_weight", return_value=0.0), \
+             mock.patch.object(g.council_emit, "convene") as convene, \
+             mock.patch.object(g, "_merge_pr") as merge:
+            rc = g.main(["--harvest", "--dry-run"])
+        self.assertEqual(rc, 0)
+        convene.assert_not_called()   # dry-run convenes no council
+        merge.assert_not_called()     # and merges nothing
+
+
 if __name__ == "__main__":
     unittest.main()
