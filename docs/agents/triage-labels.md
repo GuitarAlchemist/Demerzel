@@ -13,3 +13,11 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
 
 Canonical defaults are used verbatim; `gh issue edit --add-label` creates them on first use. Edit the right-hand column to match any labels you adopt.
+
+## AFK execution labels
+
+- **`agent-implement`** — Authorizes the AFK agent (`scripts/run_afk_cycle.py`)
+  to implement this issue away-from-keyboard inside a Docker sandbox and open a
+  PR. Apply only to issues that are well-scoped and non-critical. The agent
+  refuses (and comments) if implementing would require editing
+  `constitutions/` or `policies/`.
