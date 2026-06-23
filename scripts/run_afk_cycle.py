@@ -108,8 +108,14 @@ def build_loop_state(issue: dict, seq: int, risk: str, mode: str, today: str) ->
 
 
 def _invoke_harness(issue: dict) -> dict:
-    """Run the sandcastle harness for one issue. Returns {branch,commits,blocked}."""
-    cmd = ["npx", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
+    """Run the sandcastle harness for one issue. Returns {branch,commits,blocked}.
+
+    Invokes node with the tsx loader directly rather than `npx tsx`: on Windows
+    `npx` is `npx.cmd` (no .exe) and Python's subprocess cannot CreateProcess it
+    without a shell — and a shell would expose the issue body to command
+    injection. `node` is a real executable and args pass straight through as argv.
+    """
+    cmd = ["node", "--import", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
            "--repo", str(ROOT), "--issue", str(issue.get("number")),
            "--title", issue.get("title", ""), "--body", issue.get("body", "")]
     p = subprocess.run(cmd, cwd=str(HARNESS_DIR), capture_output=True, text=True, timeout=1800)
