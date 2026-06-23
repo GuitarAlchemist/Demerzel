@@ -75,16 +75,18 @@ so future readers see the reconciliation, not a silent overwrite.
 `no-runtime-code.md` keeps Demerzel spec-only. Therefore:
 
 1. **Harness — `../afk-harness/` (sibling repo dir, agent-agnostic).**
-   A `sandcastle` (`@ai-hero/sandcastle`, TypeScript) project with the **Docker**
-   bind-mount provider (Docker 29.2.1 already installed). Entry point takes
-   `(repo, issue#, prompt)`, runs Claude Code **headless** inside a Docker
-   sandbox against a checkout of the target repo, produces a branch + commits,
-   pushes, and opens a PR. Reusable later by ga/ix/tars (Matt: keep the harness
-   agent-agnostic).
+   A `sandcastle` (`@ai-hero/sandcastle`, TypeScript) project with the **Podman**
+   bind-mount provider (rootless, daemonless — no Docker Desktop app to babysit).
+   Entry point takes `(repo, issue#, prompt)`, runs Claude Code **headless**
+   inside a Podman sandbox against a checkout of the target repo, produces a
+   branch + commits, pushes, and opens a PR. Reusable later by ga/ix/tars
+   (Matt: keep the harness agent-agnostic).
 
 2. **Governor — `Demerzel/scripts/run_afk_cycle.py`.**
    Modeled on `run_ml_feedback_cycle.py`. Responsibilities:
    - Check the HALT marker first (no-op if halted).
+   - Ensure the Podman machine is running (`podman machine start`, idempotent) so a
+     host reboot needs no manual step — the restart-robustness fix.
    - `gh issue list --label agent-implement --state open` → candidate queue.
    - Classify risk per `autonomous-loop-policy.yaml` (low/medium/high/critical).
    - Verify authorization trace (the issue itself = pre-authorized domain work;
@@ -113,7 +115,7 @@ so future readers see the reconciliation, not a silent overwrite.
 ```
 GitHub issue [label: agent-implement]
   → scripts/run_afk_cycle.py        (HALT check · risk classify · auth trace)
-  → ../afk-harness  sandcastle.run() (Claude Code headless + afk-implement skill, in Docker)
+  → ../afk-harness  sandcastle.run() (Claude Code headless + afk-implement skill, in Podman)
   → branch + commits + PR
   → agent-blackbox.yml + cross-model-review.yml   (existing gates)
   → self-merge  (governance work, low/medium risk, CI pass, confidence ≥ 0.7)
@@ -123,8 +125,9 @@ GitHub issue [label: agent-implement]
 
 ### 4.3 Safety & policy compliance (all from `autonomous-loop-policy.yaml`)
 
-- **Sandbox isolation:** Docker — agent cannot delete host files or exfiltrate env
-  vars (Matt's stated reason for sandboxing).
+- **Sandbox isolation:** Podman (rootless, daemonless) — agent cannot delete host
+  files or exfiltrate env vars (Matt's stated reason for sandboxing). No Docker
+  Desktop dependency; governor preflight starts the Podman machine idempotently.
 - **HALT:** honored as the first action of every cycle.
 - **Risk gates:** constitution/policy edits = critical → never self-merged, human
   pre-approval required. Schema migrations / cross-repo = high → per-iteration.
@@ -152,7 +155,7 @@ GitHub issue [label: agent-implement]
 - Parallel multi-sandbox fan-out.
 - Rollout to ga / ix / tars (the harness is built agent-agnostic to enable this).
 - Video + TTS PR walkthroughs (Matt's "make review seamless" idea).
-- Podman / WSL backends (Docker only for the tracer bullet).
+- Docker / WSL backends (Podman is the tracer-bullet backend).
 
 ## 5. Out of scope
 
@@ -162,9 +165,10 @@ GitHub issue [label: agent-implement]
 
 ## 6. Open risks
 
-- **Headless Claude Code in Docker:** running the agent non-interactively with a
+- **Headless Claude Code in Podman:** running the agent non-interactively with a
   bounded, allow-listed tool set inside the container needs validation; this is the
-  riskiest unknown and is surfaced first by the tracer bullet.
+  riskiest unknown and is surfaced first by the tracer bullet. Includes verifying
+  sandcastle's Podman provider and `podman machine` lifecycle on Windows/WSL2.
 - **Secrets in the sandbox:** the container needs a scoped token to push + open PRs;
   must be least-privilege and never the user's full PAT.
 - **`no-runtime-code` perception:** the harness lives outside Demerzel to avoid the

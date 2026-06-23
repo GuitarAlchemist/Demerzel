@@ -12,7 +12,7 @@
 
 - Governor and its tests are **Python stdlib-only** (no pip deps) — mirrors `scripts/demerzel_halt.py`. Tests use `unittest`, run via `python -m unittest`.
 - The sandcastle harness lives **outside Demerzel** at `../afk-harness/` (sibling of the repo) — Demerzel stays spec-only per `.claude/rules/no-runtime-code.md`. Never add `package.json`/`node_modules` inside Demerzel.
-- Sandbox backend = **Docker only** for this plan (Docker 29.2.1 already installed). Podman/WSL are deferred.
+- Sandbox backend = **Podman** (rootless, daemonless — no Docker Desktop app). The governor preflight runs `podman machine start` idempotently so a host reboot needs no manual step. Docker/WSL backends are deferred.
 - Agent model = `claude-opus-4-8`, effort `medium` (matches current ecosystem default; agent-agnostic — no model-specific tuning).
 - **HALT** (`~/.demerzel/HALT-ALL`) is honored as the first action of every cycle; halted → exit 3, no work.
 - **No edits to `constitutions/` or `policies/`.** Issues that would touch them classify as `critical` → the agent never implements them; it comments "needs human pre-approval" and skips.
@@ -576,7 +576,18 @@ The runtime that runs headless Claude Code in a Docker sandbox. Integration-test
 - Consumes: `prompts/afk-implement.prompt.md` (copied/mounted at run time), env `ANTHROPIC_API_KEY`, env `GH_TOKEN` (least-privilege).
 - Produces: a CLI `npx tsx .sandcastle/main.ts --repo <path> --issue <n> --title <t> --body <b>` that prints one JSON line `{"branch": "...", "commits": [...], "blocked": false|"<reason>"}` to stdout. Task 7's live path parses this.
 
-- [ ] **Step 1: Scaffold the project**
+- [ ] **Step 1a: Ensure Podman is installed and the machine is running**
+
+Podman is the sandbox backend (daemonless; no Docker Desktop). If `podman --version`
+fails, install it once (Windows, winget): `winget install -e --id RedHat.Podman --accept-source-agreements --accept-package-agreements` (may require a new shell for PATH, and the machine init needs WSL2). Then initialize and start the VM:
+```bash
+podman machine init    # one-time; downloads a CoreOS image (skip if a machine already exists)
+podman machine start   # idempotent-ish: errors with "already running" if up — that's fine
+podman run --rm hello-world   # smoke: confirms the sandbox can run a container
+```
+Expected: `hello-world` runs and exits cleanly. If install needs admin elevation, run the winget command in an elevated shell (the controller will hand it to the human via `! <cmd>` if it cannot self-install).
+
+- [ ] **Step 1b: Scaffold the project**
 
 Run (from the parent of Demerzel):
 ```bash
@@ -587,10 +598,10 @@ npx @ai-hero/sandcastle init
 ```
 Expected: `.sandcastle/` directory created with a `main.ts`, a `Dockerfile`, and a sample prompt.
 
-- [ ] **Step 2: Build the Docker sandbox image**
+- [ ] **Step 2: Build the Podman sandbox image**
 
-Run: `npx @ai-hero/sandcastle docker build-image`
-Expected: a local image (default tag per the generated Dockerfile, e.g. `sandcastle:local`) builds successfully. Confirm with `docker images | grep sandcastle`.
+Run: `npx @ai-hero/sandcastle podman build-image`
+Expected: a local image (default tag per the generated Dockerfile/Containerfile, e.g. `sandcastle:local`) builds successfully. Confirm with `podman images | grep sandcastle`. (Podman reads the same `Dockerfile` sandcastle's `init` generates.)
 
 - [ ] **Step 3: Replace `.sandcastle/main.ts` with the CLI wrapper**
 
@@ -598,7 +609,7 @@ Overwrite `.sandcastle/main.ts`:
 
 ```typescript
 import { run, claudeCode } from "@ai-hero/sandcastle";
-import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
+import { podman } from "@ai-hero/sandcastle/sandboxes/podman";
 import { parseArgs } from "node:util";
 
 const { values } = parseArgs({
@@ -619,7 +630,7 @@ const promptFile = `${values.repo}/prompts/afk-implement.prompt.md`;
 
 const result = await run({
   agent: claudeCode("claude-opus-4-8", { effort: "medium" }),
-  sandbox: docker({ imageName: "sandcastle:local" }),
+  sandbox: podman({ imageName: "sandcastle:local" }),
   cwd: values.repo,
   promptFile,
   promptArgs: {
@@ -661,7 +672,7 @@ Driven by Demerzel's `scripts/run_afk_cycle.py` governor. Reusable by ga/ix/tars
 
 ## Setup
     npm install
-    npx @ai-hero/sandcastle docker build-image   # builds sandcastle:local
+    npx @ai-hero/sandcastle podman build-image   # builds sandcastle:local
 
 ## Run (one issue)
     ANTHROPIC_API_KEY=... npx tsx .sandcastle/main.ts \
@@ -759,6 +770,23 @@ def _invoke_harness(issue: dict) -> dict:
     return json.loads(last[-1])
 
 
+def _ensure_podman() -> tuple[bool, str]:
+    """Restart-robustness: make sure the Podman machine is up before sandboxing.
+    Idempotent — 'already running' is success. Returns (ok, note)."""
+    try:
+        chk = subprocess.run(["podman", "machine", "list", "--format", "{{.Running}}"],
+                             capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return False, f"podman not available: {exc}"
+    if chk.returncode == 0 and "true" in chk.stdout.lower():
+        return True, "podman machine already running"
+    start = subprocess.run(["podman", "machine", "start"],
+                           capture_output=True, text=True, timeout=180)
+    if start.returncode == 0 or "already running" in (start.stderr + start.stdout).lower():
+        return True, "podman machine started"
+    return False, f"podman machine start failed: {start.stderr.strip()[:160]}"
+
+
 def _open_pr(issue: dict, branch: str) -> str:
     """Push the branch and open a PR linked to the issue. Returns the PR URL."""
     num = issue.get("number")
@@ -779,6 +807,15 @@ Then, inside `main`'s loop, replace the `if not args.dry_run:` block with:
             loops_dir = ROOT / "state" / "loops"
             loops_dir.mkdir(parents=True, exist_ok=True)
             if eligible:
+                ok, pnote = _ensure_podman()   # restart-robustness preflight (idempotent)
+                if not ok:
+                    decision["action"] = f"blocked:{pnote}"
+                    state["status"] = "halted"
+                    state["halt_reason"] = pnote
+                    (loops_dir / f"{state['loop_id']}.loop.json").write_text(
+                        json.dumps(state, indent=2) + "\n", encoding="utf-8")
+                    decisions.append(decision)
+                    continue
                 hr = _invoke_harness(issue)
                 if hr.get("blocked"):
                     decision["action"] = f"blocked:{hr['blocked']}"
