@@ -62,6 +62,17 @@ Self-improvement reflex: when the user corrects you, invoke `/correct` so the ru
 
 The hooks are validated in CI by `.github/workflows/karpathy-cherny-discipline.yml`.
 
+## Harness doctrine (Pocock delta, 2026-06-22)
+
+From the Matt Pocock × David Ondrej transcript (`sources/chats/matt-pocock-david-ondrej-agentic-workflow.md`). Reconciles with the Karpathy 4 Rules and Cherny patterns above — **agree = keep, diverge = adjust**.
+
+- **Harness ≈ model (50/50), stay agent-agnostic.** Optimize the harness (prompts, skills, codebase, sandbox) as much as the model, and don't over-fit to one model. A codebase that's *easy to change* lets a *cheaper* model do the same work. Optimize **AX (Agent Experience)** the way you optimize DX. *(New — extends `project_harness_engineering_direction`.)*
+- **Queue, not loop.** A backlog of scoped tasks with human-in-the-loop checkpoints pushed as far right as safe beats an infinite Ralph loop. Our queue already exists: `demerzel-driver-triggers.yml` → `state/triggers/*.trigger.json`. *(Adjusts the Ralph-loop framing in `policies/autonomous-loop-policy.yaml`, which already models this via triggers.)*
+- **Procedures over abilities.** Skills the user/governor invokes ("procedures") keep their descriptions out of the context window; model-invoked "abilities" leak a description each. Prefer procedures; keep user-only skills from auto-loading. *(Tension with superpowers' "model-in-control" — we document the tension rather than remove superpowers.)*
+- **Delete → observe → layer back.** Periodically strip skills/MCP/instructions to a blank slate, watch the bare agent, then re-add only procedures you choose. `demerzel-context-budget` is the tool for this.
+- **Review the system, not just the code.** "If someone keeps stealing your bike, buy a lock." Reinforces our existing `metafix` + ml-feedback loop — no change, cited for convergence.
+- **Strategic > tactical (Ousterhout).** AI ate tactical programming; be the strategic delegator. Converges with Karpathy R1 (think first) + R4 (goal-driven) — keep.
+
 ## Session-learned rules
 
 _Appended by `/correct` when the user corrects an approach. Persists across sessions._
