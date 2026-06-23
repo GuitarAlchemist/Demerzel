@@ -174,8 +174,16 @@ function Test-SchemaObject {
     }
     $json = $Fields | ConvertTo-Json -Depth 6
     try {
-        $null = Test-Json -Json $json -SchemaFile $schemaFile -ErrorAction Stop
-        [pscustomobject]@{ Valid = $true; Errors = $null }
+        # Test-Json signals schema failure two ways: a $false return AND/OR a
+        # non-terminating error. -ErrorAction Stop promotes the error to a throw,
+        # but some mismatches only flip the boolean — so honor BOTH. The discarded
+        # boolean was reporting bad digests as Valid=$true (octo review finding).
+        $ok = Test-Json -Json $json -SchemaFile $schemaFile -ErrorAction Stop
+        if ($ok) {
+            [pscustomobject]@{ Valid = $true; Errors = $null }
+        } else {
+            [pscustomobject]@{ Valid = $false; Errors = 'schema validation failed (Test-Json returned $false)' }
+        }
     } catch {
         [pscustomobject]@{ Valid = $false; Errors = $_.Exception.Message }
     }
@@ -243,7 +251,16 @@ function Write-Digest {
     New-Item -ItemType Directory -Path $paths.DigestDir, $paths.ArchiveDir -Force | Out-Null
 
     if (-not $RepoFacts) { $RepoFacts = Get-RepoFacts -RepoRoot $root }
-    if ($BodyFile -and (Test-Path $BodyFile)) { $Body = Get-Content $BodyFile -Raw }
+    if ($BodyFile) {
+        # A caller that passed -BodyFile but whose path does not resolve (e.g. a
+        # relative path from a non-root working dir) must fail loudly — silently
+        # proceeding would overwrite the digest with an empty body. Fail-open
+        # covers validation quirks, NOT a missing input file (octo review finding).
+        if (-not (Test-Path $BodyFile)) {
+            throw "BodyFile not found: $BodyFile (cwd: $((Get-Location).Path)). Refusing to write a digest with an empty body."
+        }
+        $Body = Get-Content $BodyFile -Raw
+    }
 
     $tsIso  = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
     $tsFile = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH-mm-ssZ')
@@ -261,7 +278,11 @@ function Write-Digest {
         if ($LastModelUpdate) { $fields['last_model_update'] = $LastModelUpdate }
         if ($null -ne $MutationsSinceLast) { $fields['mutations_since_last'] = [int]$MutationsSinceLast }
         if ($SuccessCriteriaJson) {
-            try { $fields['success_criteria'] = @($SuccessCriteriaJson | ConvertFrom-Json) } catch {}
+            # Surface parse failures instead of swallowing them — an empty catch
+            # silently dropped the whole success_criteria block on any quoting slip
+            # (octo review finding). Fail-open: warn but still write the digest.
+            try { $fields['success_criteria'] = @($SuccessCriteriaJson | ConvertFrom-Json) }
+            catch { Write-Warning "success_criteria JSON invalid — block dropped: $($_.Exception.Message)" }
         }
         $target = $paths.Latest
         if (Test-Path $target) {
