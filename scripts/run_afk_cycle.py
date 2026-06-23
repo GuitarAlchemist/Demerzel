@@ -5,7 +5,7 @@ Demerzel run_afk_cycle — the AFK implement-lane governor.
 Reads the `agent-implement` GitHub issue queue, honors HALT, classifies risk per
 policies/autonomous-loop-policy.yaml, and for each eligible (non-critical) issue
 invokes the agent-agnostic sandcastle harness (../afk-harness) which runs headless
-Claude Code in a Docker sandbox to produce a branch + commits. The governor then
+Claude Code in a Podman sandbox to produce a branch + commits. The governor then
 pushes the branch, opens a PR linked to the issue, and records loop-state + audit.
 Critical issues (constitution/policy) are skipped with a "needs human pre-approval"
 comment. Merge is left to existing review gates (self-merge automation deferred).
@@ -217,13 +217,26 @@ def main(argv: list[str]) -> int:
                     state["status"] = "halted"
                     state["halt_reason"] = str(hr["blocked"])
                 elif hr.get("branch"):
-                    decision["pr"] = _open_pr(issue, hr["branch"])
+                    pr = _open_pr(issue, hr["branch"])
+                    decision["pr"] = pr
                     decision["branch"] = hr["branch"]
-                    state["iterations"].append({
-                        "iteration": 1, "timestamp": _now_iso(),
-                        "action": f"opened PR for #{issue.get('number')}",
-                        "outcome": "progress", "governance_decision": None})
-                    state["status"] = "completed"
+                    if pr.startswith("pr-create-failed"):
+                        # T6-M3: a failed PR must NOT be reported as completed
+                        decision["action"] = "stalled:pr-create-failed"
+                        state["status"] = "stalled"
+                        state["halt_reason"] = pr
+                    else:
+                        state["iterations"].append({
+                            "iteration": 1, "timestamp": _now_iso(),
+                            "action": f"opened PR for #{issue.get('number')}",
+                            "outcome": "progress", "governance_decision": None})
+                        state["status"] = "completed"
+                else:
+                    # T6-M1: harness returned neither a branch nor a blocked reason
+                    # (e.g. agent made no commits). Do not leave status pinned at 'running'.
+                    decision["action"] = "stalled:no-branch-no-blocked"
+                    state["status"] = "stalled"
+                    state["halt_reason"] = "harness returned neither branch nor blocked"
             else:
                 _comment_needs_preapproval(issue)
                 state["status"] = "halted"

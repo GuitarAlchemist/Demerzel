@@ -10,7 +10,7 @@ gates.
   `policies/autonomous-loop-policy.yaml` → `github_issue`). Governance edits are
   always-pre-authorized governance work.
 - **Execution:** `scripts/run_afk_cycle.py` (governor) → `../afk-harness`
-  (sandcastle + Docker) runs headless Claude Code with
+  (sandcastle + Podman) runs headless Claude Code with
   `prompts/afk-implement.prompt.md`.
 - **Output:** a branch `agent/issue-<n>` + a PR linked to the issue.
 - **Review:** the existing `agent-blackbox.yml` + `cross-model-review.yml`
@@ -22,7 +22,7 @@ gates.
 - `high`/`medium`/`low`: implemented; PR opened for review.
 
 ## Safety
-- Docker sandbox: no host file damage / env exfiltration.
+- Podman sandbox: no host file damage / env exfiltration.
 - HALT (`~/.demerzel/HALT-ALL`) honored before any work.
 - Every action traces to the issue number (audit).
 

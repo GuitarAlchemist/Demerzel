@@ -17,7 +17,7 @@ Canonical defaults are used verbatim; `gh issue edit --add-label` creates them o
 ## AFK execution labels
 
 - **`agent-implement`** — Authorizes the AFK agent (`scripts/run_afk_cycle.py`)
-  to implement this issue away-from-keyboard inside a Docker sandbox and open a
+  to implement this issue away-from-keyboard inside a Podman sandbox and open a
   PR. Apply only to issues that are well-scoped and non-critical. The agent
   refuses (and comments) if implementing would require editing
   `constitutions/` or `policies/`.
