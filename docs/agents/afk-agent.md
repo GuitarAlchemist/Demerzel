@@ -40,5 +40,4 @@ implemented.
 
 ## Deferred (graduation steps)
 Self-hosted Actions runner (event-driven), `--backend remote` Vercel sandboxes
-(scale beyond one machine), self-merge automation, ga/ix/tars rollout, video+TTS
-PR walkthroughs.
+(scale beyond one machine), ga/ix/tars rollout, video+TTS PR walkthroughs.
