@@ -14,8 +14,11 @@ gates.
   `prompts/afk-implement.prompt.md`.
 - **Output:** a branch `agent/issue-<n>` + a PR linked to the issue.
 - **Review:** the existing `agent-blackbox.yml` + `cross-model-review.yml`
-  workflows. Merge is human/gate-decided (self-merge automation deferred).
+  workflows. Merge is council-gated: low/medium PRs may self-merge once the
+  LLM council approves (see below); anything else requires a human merge.
 - **First proven:** the AFK agent was first proven end-to-end on 2026-06-22.
+- **Self-merge proven:** graduated council-gated self-merge went live on
+  2026-06-24 (PR #388).
 
 ## Risk gating (from autonomous-loop-policy.yaml)
 - `critical` (touches constitutions/policies): never implemented; agent comments
@@ -37,5 +40,4 @@ implemented.
 
 ## Deferred (graduation steps)
 Self-hosted Actions runner (event-driven), `--backend remote` Vercel sandboxes
-(scale beyond one machine), self-merge automation, ga/ix/tars rollout, video+TTS
-PR walkthroughs.
+(scale beyond one machine), ga/ix/tars rollout, video+TTS PR walkthroughs.
