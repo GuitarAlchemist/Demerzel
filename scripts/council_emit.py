@@ -272,7 +272,9 @@ def _call_anthropic(prompt: str) -> str | None:
     body = _http_post_json(
         "https://api.anthropic.com/v1/messages",
         {"x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01"},
-        {"model": "claude-sonnet-4-20250514", "max_tokens": 1024,
+        # claude-opus-4-8 is the current model id; the old cross-model-review.yml
+        # used a retired snapshot string that now 404s (not_found_error).
+        {"model": "claude-opus-4-8", "max_tokens": 1024,
          "messages": [{"role": "user", "content": prompt}]},
     )
     try:
