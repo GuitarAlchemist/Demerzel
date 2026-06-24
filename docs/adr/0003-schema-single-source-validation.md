@@ -61,3 +61,17 @@ follow-on), not by the schema.
 - **Keep per-language hand-coded validators, accept the duplication.** Rejected: the halt
   marker is the proof the duplication drifts; the schema is readable by both runtimes, so the
   shared seam costs little.
+
+## Update (2026-06-21)
+
+The original `demerzel_halt.py` adapter was deliberately **stdlib-only** and re-implemented
+the field checks in Python (harvesting only the enum/length values from the schema). That
+left it a *looser* subset than the PowerShell `Test-Json` adapter — no `pattern`,
+`additionalProperties`, or `required`-list enforcement — so the two adapters could still
+diverge. We now validate with **`jsonschema` when it is importable** (full parity with
+`Test-Json`) and fall back to a **stdlib generic schema-subset check** only when the package
+is absent. The fallback is retained because the halt tool is the cross-repo emergency brake
+and must run on a bare-Python machine without `pip install`. `scripts/requirements-halt.txt`
+declares `jsonschema` so CI always takes the strong path. This refines — does not reverse —
+the "schema is the single source" decision: the rules still live only in the schema; both
+runtimes now enforce all of them.

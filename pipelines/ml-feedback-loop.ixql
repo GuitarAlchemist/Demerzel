@@ -36,7 +36,7 @@ processed <- fan_out(
     --- and underconfidence (low-confidence beliefs that were correct → nudge threshold up).
     --- Capped at +/- 0.1 per cycle per policy.
     safe_results
-      → filter(recommendation_type == "calibration_report")
+      → filter(recommendation_type == "threshold_adjustment")   -- schema enum (pipeline_id: confidence_calibrator)
       → fan_out(
           r → filter(r.overconfidence_rate > 0.15)
             → ix.ml.compute(
@@ -63,7 +63,7 @@ processed <- fan_out(
     --- ### 3b: Staleness Prediction
     --- Schedule proactive recons for beliefs at risk of going stale.
     safe_results
-      → filter(recommendation_type == "staleness_forecast")
+      → filter(recommendation_type == "proactive_recon")        -- schema enum (pipeline_id: staleness_predictor)
       → filter(at_risk_beliefs.count > 0)
       → ix.ml.rank(by: "staleness_velocity", order: "descending")
       → head(3)                                  -- max 3 proactive recons/day
@@ -76,7 +76,7 @@ processed <- fan_out(
     --- ### 3c: Drift Detection — Retrain Trigger
     --- If violation patterns shift significantly, flag for policy review.
     safe_results
-      → filter(recommendation_type == "pattern_analysis")
+      → filter(recommendation_type == "pattern_report")         -- schema enum (pipeline_id: violation_pattern_detector)
       → fan_out(
           r → filter(r.systemic_patterns.count >= 2)
             → tars.classify(signal: "systemic_governance_drift", severity: "high")
@@ -95,7 +95,7 @@ processed <- fan_out(
     --- ### 3d: Remediation Strategy Optimization
     --- Update strategy success rates based on ML optimizer data.
     safe_results
-      → filter(recommendation_type == "strategy_report")
+      → filter(recommendation_type == "strategy_change")        -- schema enum (pipeline_id: remediation_optimizer)
       → filter(success_rates_by_strategy is not empty)
       → tars.propose_belief_update(
           target: "state/beliefs/remediation-effectiveness.belief.json",

@@ -1,0 +1,26 @@
+{
+  "verdict_id": "council-2026-06-24-003",
+  "task_id": "github_pr:#391",
+  "timestamp": "2026-06-24T00:35:28Z",
+  "trigger_condition": "borderline_confidence",
+  "change_summary": "AFK: AFK smoke #2: add a dated 'self-merge proven' line to docs/agents/afk-agent.md (#389)",
+  "reviews": [
+    {
+      "reviewer": "reviewer_a",
+      "correctness_score": 0.75,
+      "risk_assessment": "low",
+      "constitutional_alignment": "pass",
+      "rationale": "Agent Blackbox risk-report check is green: change sits in the policy pass band (risk <= 0.25) and violates no blocked-path constraint."
+    },
+    {
+      "reviewer": "reviewer_b",
+      "correctness_score": 0.3,
+      "risk_assessment": "low",
+      "constitutional_alignment": "fail",
+      "rationale": "Cross-model reviewer (claude) verdict: REQUEST_CHANGES."
+    }
+  ],
+  "chairman_synthesis": "2 reviewer(s); strictest-wins confidence 0.30 (min of 0.75, 0.30). Constitutional alignment: at least one fail. Verdict: REJECT.",
+  "verdict": "REJECT",
+  "post_council_confidence": 0.3
+}
