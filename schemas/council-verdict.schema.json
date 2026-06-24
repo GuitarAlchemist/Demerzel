@@ -15,6 +15,11 @@
       "type": "string",
       "description": "The task that triggered this council review"
     },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the council reached this verdict"
+    },
     "trigger_condition": {
       "type": "string",
       "enum": ["high_risk_self_merge", "borderline_confidence"],

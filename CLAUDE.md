@@ -38,7 +38,7 @@ The Asimov constitution always takes precedence. Zeroth Law (do not harm humanit
 Demerzel orchestrates cycles across sibling repos via JSON-on-disk contracts (the canonical handoff pattern across the GuitarAlchemist ecosystem). Sibling clones are typically peers under the same parent directory:
 
 - **ga** (`../ga/`, .NET / C# / F# / React, music theory + RAG): defines `docs/contracts/2026-05-02-qa-verdict.contract.md` (schema: `docs/contracts/qa-verdict.schema.json`) — the QA Architect verdict shape Demerzel emits via `pipelines/qa-architect-cycle.ixql`. Also owns `docs/contracts/2026-05-02-optick-sae-artifact.contract.md` consumed by `qa_score_quality_drift`.
-- **ix** (`../ix/`, Rust ML algorithms): produces `state/voicings/optick.index` and SAE artifacts under `state/quality/optick-sae/` for cross-cycle quality drift evidence.
+- **ix** (`../ix/`, Rust ML algorithms): the `ix-optick-sae` crate is intended to produce `state/voicings/optick.index` and SAE artifacts under `state/quality/optick-sae/` for cross-cycle quality drift evidence. **Not yet emitted as of 2026-06-21** — the crate exists but these runtime artifacts have not been generated, so `qa_score_quality_drift` has no live input. Treat this seam as declared-but-unfulfilled: any consumer must degrade explicitly when the artifacts are absent.
 - **tars** (`../tars/`, F# grammar + metacognition): cross-model theory validator.
 
 Locked-field changes need cross-repo coordination; the Galactic Protocol and `governance/demerzel/schemas/capability-registry.json` are Demerzel's own equivalents. The `links.supersedes` pattern in `optick-sae-artifact` is how to introduce a non-breaking baseline shift without freezing a schema. Contracts marked v0.1.x in their headers remain drafts until their Phase 4 freeze milestones.
@@ -61,6 +61,17 @@ Self-improvement reflex: when the user corrects you, invoke `/correct` so the ru
 - `/correct` — turns user corrections into permanent rules in this CLAUDE.md.
 
 The hooks are validated in CI by `.github/workflows/karpathy-cherny-discipline.yml`.
+
+## Harness doctrine (Pocock delta, 2026-06-22)
+
+From the Matt Pocock × David Ondrej transcript (`sources/chats/matt-pocock-david-ondrej-agentic-workflow.md`). Reconciles with the Karpathy 4 Rules and Cherny patterns above — **agree = keep, diverge = adjust**.
+
+- **Harness ≈ model (50/50), stay agent-agnostic.** Optimize the harness (prompts, skills, codebase, sandbox) as much as the model, and don't over-fit to one model. A codebase that's *easy to change* lets a *cheaper* model do the same work. Optimize **AX (Agent Experience)** the way you optimize DX. *(New — extends `project_harness_engineering_direction`.)*
+- **Queue, not loop.** A backlog of scoped tasks with human-in-the-loop checkpoints pushed as far right as safe beats an infinite Ralph loop. Our queue already exists: `demerzel-driver-triggers.yml` → `state/triggers/*.trigger.json`. *(Adjusts the Ralph-loop framing in `policies/autonomous-loop-policy.yaml`, which already models this via triggers.)*
+- **Procedures over abilities.** Skills the user/governor invokes ("procedures") keep their descriptions out of the context window; model-invoked "abilities" leak a description each. Prefer procedures; keep user-only skills from auto-loading. *(Tension with superpowers' "model-in-control" — we document the tension rather than remove superpowers.)*
+- **Delete → observe → layer back.** Periodically strip skills/MCP/instructions to a blank slate, watch the bare agent, then re-add only procedures you choose. `demerzel-context-budget` is the tool for this.
+- **Review the system, not just the code.** "If someone keeps stealing your bike, buy a lock." Reinforces our existing `metafix` + ml-feedback loop — no change, cited for convergence.
+- **Strategic > tactical (Ousterhout).** AI ate tactical programming; be the strategic delegator. Converges with Karpathy R1 (think first) + R4 (goal-driven) — keep.
 
 ## Session-learned rules
 
@@ -102,3 +113,10 @@ Canonical defaults (`needs-triage` / `needs-info` / `ready-for-agent` / `ready-f
 ### Domain docs
 
 Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. `/grill-with-docs` grows them lazily. See `docs/agents/domain.md`.
+
+## AI-coding vocabulary (shared ecosystem reference)
+
+<https://github.com/mattpocock/dictionary-of-ai-coding> — the plain-English
+glossary behind the aihero methodology adopted across the GuitarAlchemist
+ecosystem (smart-zone, tracer-bullets, context windows, handoffs, failure
+modes). Referenced, not vendored, so it tracks upstream.
