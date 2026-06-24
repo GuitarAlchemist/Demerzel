@@ -1,0 +1,28 @@
+{
+  "id": "pdca-council-reviewer-context",
+  "cycle_phase": "act",
+  "hypothesis": "An LLM self-merge reviewer's correctness is bounded by the context it receives: a truncated git diff makes it over-reject (it cannot verify internal consistency or intent, so it defaults to REQUEST_CHANGES on anything unverifiable), while the full post-change file content + the linked-issue intent makes it both fair AND able to catch real internal contradictions.",
+  "plan": {
+    "description": "Feed reviewer_b (council_emit.py) the linked-issue title/body (authorized intent) + the full post-change content of each changed file (<=10) + the diff, instead of only a truncated diff. Calibrate the prompt to judge the change itself (pre-authorized by the issue) and NOT block on facts unverifiable from the provided material (e.g. whether a referenced PR exists). Make verdict parsing read the explicit final 'Verdict:' line rather than a loose substring.",
+    "success_criteria": "On a clean, internally-consistent low-risk change the council reaches APPROVE stably (>=4/5 samples); on a change with a real internal contradiction the council REJECTs and names the contradiction.",
+    "risks": ["A single LLM sample is non-deterministic on borderline changes", "Full-file context costs more tokens per review", "gh api --jq .content returns raw base64, not JSON"],
+    "target_date": "2026-06-24"
+  },
+  "do": {
+    "action_taken": "Shipped in PR #392: build_review_context (issue body + full changed-file content via fetch_file_at_ref reading raw base64 directly + diff), prompt calibration (judge the change; don't block on unverifiable repo-external facts; explicit INTERNAL CONSISTENCY check), and parse_verdict reading the final Verdict line.",
+    "completed_at": "2026-06-24T01:35:00Z"
+  },
+  "check": {
+    "success_criteria_met": true,
+    "evidence": "With full-file context the council caught THREE genuine internal contradictions in the dogfood doc (#391) and withheld merge each time; once the doc was actually consistent reviewer_b was 5/5 APPROVE and the self-merge fired (master 9c04482). The diff-only version had over-rejected the same clean change.",
+    "checked_at": "2026-06-24T01:35:00Z"
+  },
+  "act": {
+    "decision": "standardize",
+    "rationale": "Full-file + intent context is now the council default on master. OPEN FOLLOW-UP (next PDCA if borderline flakiness appears operationally): a single LLM reviewer was stable on clean changes here, but the gate is a hard binary veto on one sample. If borderline PRs prove flaky across cycles, upgrade reviewer_b to an N-sample majority (or treat it as advisory below a confidence band) so non-determinism cannot block a correct change or pass a bad one. Monitor via state/oversight/afk-harvest-*.json and state/council/ verdicts.",
+    "acted_at": "2026-06-24T01:35:00Z"
+  },
+  "created_at": "2026-06-24T01:35:00Z",
+  "last_updated": "2026-06-24T01:35:00Z",
+  "evaluated_by": "demerzel"
+}

@@ -1,0 +1,27 @@
+{
+  "cycle_at": "2026-06-24T00:30:22Z",
+  "dry_run": false,
+  "halted": false,
+  "backend": "local",
+  "max_parallel": 1,
+  "queue_size": 1,
+  "decisions": [
+    {
+      "issue": 389,
+      "title": "AFK smoke #2: add a dated 'self-merge proven' line to docs/agents/afk-agent.md",
+      "risk": "low",
+      "mode": "boundary-only",
+      "eligible": true,
+      "action": "implement",
+      "pr": "https://github.com/GuitarAlchemist/Demerzel/pull/391",
+      "branch": "agent/issue-389"
+    }
+  ],
+  "tally": {
+    "implement": 1,
+    "skipped": 0,
+    "stalled": 0,
+    "blocked": 0,
+    "error": 0
+  }
+}
