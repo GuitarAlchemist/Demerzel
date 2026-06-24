@@ -110,13 +110,29 @@ def review_from_blackbox(check_state: str | None) -> dict | None:
     return None  # pending / neutral / skipped — not conclusive
 
 
+def parse_verdict(verdict_text: str) -> bool:
+    """Return True (approve) / False (request changes) from a review's text.
+    Reads the LAST line that starts with 'verdict:' (the reviewer is told to end
+    with exactly one such line) so prose that merely mentions 'REQUEST_CHANGES'
+    while explaining the options doesn't flip an approval. Falls back to a whole-
+    text scan only when no explicit verdict line is present."""
+    verdict_line = None
+    for line in verdict_text.splitlines():
+        stripped = line.strip().lower()
+        if stripped.startswith("verdict:") or stripped.startswith("**verdict:"):
+            verdict_line = line.upper()
+    if verdict_line is not None:
+        return "REQUEST_CHANGES" not in verdict_line and "REJECT" not in verdict_line
+    return "REQUEST_CHANGES" not in verdict_text.upper()
+
+
 def review_from_cross_model(verdict_text: str | None, model: str | None,
                             classified_risk: str) -> dict | None:
     """Build reviewer_b from a cross-model review's APPROVE/REQUEST_CHANGES text.
     Returns None when no model ran (no API key/response)."""
     if verdict_text is None:
         return None
-    approve = "REQUEST_CHANGES" not in verdict_text.upper()
+    approve = parse_verdict(verdict_text)
     return {
         "reviewer": "reviewer_b",
         "correctness_score": SCORE_XMODEL_APPROVE if approve else SCORE_XMODEL_REQUEST_CHANGES,
@@ -214,7 +230,7 @@ def fetch_blackbox_check_state(pr: int) -> str | None:
     return None
 
 
-def fetch_diff(pr: int, limit: int = 12000) -> str:
+def fetch_diff(pr: int, limit: int = 30000) -> str:
     try:
         p = subprocess.run(["gh", "pr", "diff", str(pr), "--repo", REPO_SLUG],
                            capture_output=True, text=True, timeout=60)
@@ -223,29 +239,112 @@ def fetch_diff(pr: int, limit: int = 12000) -> str:
         return ""
 
 
-def _review_prompt(diff: str) -> str:
+def fetch_changed_files(pr: int) -> list[str]:
+    """Changed file paths for the PR (via `gh pr diff --name-only`)."""
+    try:
+        p = subprocess.run(["gh", "pr", "diff", str(pr), "--repo", REPO_SLUG, "--name-only"],
+                           capture_output=True, text=True, timeout=60)
+        return [ln.strip() for ln in p.stdout.splitlines() if ln.strip()] if p.returncode == 0 else []
+    except (OSError, subprocess.TimeoutExpired):
+        return []
+
+
+def fetch_file_at_ref(path: str, ref: str) -> str | None:
+    """Full content of `path` at commit `ref` (the PR head), via the contents API.
+    Lets reviewer_b verify the WHOLE changed file for internal consistency, not
+    just the diff hunk (which can't reveal a contradicting line elsewhere).
+    `gh api --jq .content` returns raw (multi-line) base64, NOT JSON — capture it
+    directly and decode rather than routing through the json-parsing helper."""
+    import base64
+    try:
+        p = subprocess.run(
+            ["gh", "api", f"repos/{REPO_SLUG}/contents/{path}?ref={ref}", "--jq", ".content"],
+            capture_output=True, text=True, timeout=60)
+        if p.returncode != 0 or not p.stdout.strip():
+            return None
+        return base64.b64decode(p.stdout.replace("\n", "")).decode("utf-8", errors="replace")
+    except (OSError, subprocess.TimeoutExpired, ValueError, UnicodeDecodeError):
+        return None
+
+
+def fetch_issue_body(issue_num: str) -> str:
+    """The linked issue's title+body, so reviewer_b knows the authorized intent."""
+    obj = _gh_json(["issue", "view", issue_num, "--repo", REPO_SLUG, "--json", "title,body"])
+    if isinstance(obj, dict):
+        return f"#{issue_num}: {obj.get('title', '')}\n\n{obj.get('body', '')}"
+    return ""
+
+
+def build_review_context(pr: int, meta: dict, max_chars: int = 60000) -> str:
+    """Assemble the reviewer_b context: linked-issue intent + full content of each
+    changed file + the diff. Richer than the diff alone so the reviewer can verify
+    internal consistency and intent rather than over-rejecting on unverifiable
+    cross-file claims."""
+    head = meta.get("headRefOid", "")
+    parts: list[str] = []
+
+    trace = ""
+    body = meta.get("body", "") or ""
+    for kw in ("closes #", "implements #", "fixes #", "resolves #"):
+        idx = body.lower().find(kw)
+        if idx != -1:
+            tail = body[idx + len(kw):]
+            num = ""
+            for ch in tail:
+                if ch.isdigit():
+                    num += ch
+                else:
+                    break
+            if num:
+                trace = num
+                break
+    if trace:
+        issue = fetch_issue_body(trace)
+        if issue:
+            parts.append(f"=== LINKED ISSUE (authorized intent) ===\n{issue}")
+
+    for path in fetch_changed_files(pr)[:10]:
+        content = fetch_file_at_ref(path, head) if head else None
+        if content is not None:
+            parts.append(f"=== FULL FILE AFTER CHANGE: {path} ===\n{content}")
+
+    parts.append(f"=== DIFF ===\n{fetch_diff(pr)}")
+    return "\n\n".join(parts)[:max_chars]
+
+
+def _review_prompt(context: str) -> str:
     return (
         "You are a cross-model code reviewer for the Demerzel governance framework.\n"
-        "Review this pull request diff for:\n"
+        "You are reviewing an AFK-agent-produced pull request. The change is "
+        "pre-authorized by the linked issue shown below; your job is to judge the "
+        "CHANGE ITSELF, not to re-litigate whether it should have been requested.\n\n"
+        "Review for:\n"
         "1. CORRECTNESS: Logic errors, off-by-one, missing edge cases\n"
         "2. SECURITY (OWASP): Injection risks, secrets exposure, insecure defaults\n"
         "3. ANTI-SLOP: Vague names, cargo-cult patterns, unnecessary complexity\n"
         "4. LOLLI: Artifacts without named consumers? Governance weight without value?\n"
-        "5. CONSTITUTIONAL: Article 4 (Proportionality), 3 (Reversibility), 9 (Bounded Autonomy)\n\n"
+        "5. CONSTITUTIONAL: Article 4 (Proportionality), 3 (Reversibility), 9 (Bounded Autonomy)\n"
+        "6. INTERNAL CONSISTENCY: The full post-change file content is provided — "
+        "flag contradictions within the changed files.\n\n"
+        "Calibration: do NOT block (REQUEST_CHANGES) on facts you cannot verify "
+        "from the material provided — e.g. whether a referenced PR number exists, "
+        "or whether unshown files are consistent. Only request changes for a "
+        "concrete defect you can point to in the provided content. A correct, "
+        "internally-consistent, low-risk change should be APPROVED.\n\n"
         "End your response with exactly one line: 'Verdict: APPROVE' or "
         "'Verdict: REQUEST_CHANGES' with a one-line rationale. Be direct; no filler praise.\n\n"
-        f"DIFF:\n{diff}"
+        f"{context}"
     )
 
 
-def run_cross_model(diff: str) -> tuple[str | None, str | None]:
+def run_cross_model(context: str) -> tuple[str | None, str | None]:
     """Run one cross-model review using whichever API key is present.
     Returns (verdict_text, model_name) or (None, None) if no key / call failed.
     Preference order mirrors cross-model-review.yml: Claude, then Gemini, then
     Codex. Uses urllib (stdlib) so no extra deps are needed."""
-    if not diff:
+    if not context:
         return None, None
-    prompt = _review_prompt(diff)
+    prompt = _review_prompt(context)
     if os.environ.get("ANTHROPIC_API_KEY"):
         return _call_anthropic(prompt), "claude"
     if os.environ.get("GOOGLE_AI_KEY"):
@@ -344,8 +443,8 @@ def convene(pr: int, classified_risk: str = "medium",
     if ra:
         reviews.append(ra)
 
-    diff = fetch_diff(pr)
-    xtext, xmodel = run_cross_model(diff)
+    context = build_review_context(pr, meta)
+    xtext, xmodel = run_cross_model(context)
     rb = review_from_cross_model(xtext, xmodel, classified_risk)
     if rb:
         reviews.append(rb)
