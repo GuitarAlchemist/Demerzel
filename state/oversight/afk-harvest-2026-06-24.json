@@ -1,0 +1,26 @@
+{
+  "harvest_at": "2026-06-24T01:19:56Z",
+  "dry_run": false,
+  "halted": false,
+  "conscience_max_weight": 0.0,
+  "queue_size": 1,
+  "decisions": [
+    {
+      "pr": 391,
+      "title": "AFK: AFK smoke #2: add a dated 'self-merge proven' line to docs/agents/afk-agent.md (#389)",
+      "risk": "low",
+      "authorization_trace": "github_issue:#389",
+      "council_verdict": "APPROVE",
+      "post_council_confidence": 0.75,
+      "reviewers": 2,
+      "gate": "self-merge OK (post_council_confidence=0.75, 2 reviewers)",
+      "action": "self-merge",
+      "merge_result": "merged"
+    }
+  ],
+  "tally": {
+    "self_merge": 1,
+    "held": 0,
+    "skipped": 0
+  }
+}

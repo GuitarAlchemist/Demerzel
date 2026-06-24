@@ -1,0 +1,21 @@
+{
+  "loop_id": "loop-2026-06-23-001",
+  "goal": "AFK-implement issue #381: AFK smoke: add a one-line 'first proven' note to docs/agents/afk-agent.md",
+  "repo": "demerzel",
+  "risk": "low",
+  "governance_mode": "boundary-only",
+  "status": "completed",
+  "iterations": [
+    {
+      "iteration": 1,
+      "timestamp": "2026-06-23T01:58:53Z",
+      "action": "opened PR for #381",
+      "outcome": "progress",
+      "governance_decision": null
+    }
+  ],
+  "stall_count": 0,
+  "authorization_artifact": "github_issue:#381",
+  "started_at": "2026-06-23T01:57:24Z",
+  "max_iterations": 10
+}

@@ -9,3 +9,39 @@ state/digests/*
 
 # /teach generated courses (personal, regenerable)
 learning/
+
+# Build artifacts and tooling output (regenerable, never committed)
+node_modules/
+__pycache__/
+# AFK harness runtime artifacts (sandcastle creates these in the target repo
+# when an AFK agent runs against Demerzel — logs/worktrees, never committed)
+.sandcastle/
+*.pyc
+*.stackdump
+
+# dev-process-overseer preflight report — transient, machine-specific (absolute
+# paths + stale head), regenerated each preflight. Like state/digests/, this is
+# the tracked-state exception, not canonical governance state.
+state/governance/dev-process-overseer.json
+
+# Local tooling / editor / per-session scratch (machine-specific, not repo content)
+.claude-octopus/
+.claude/*.local.md
+.claude/scheduled_tasks.lock
+.claude/session-intent.md
+.claude/session-plan.md
+.zed/
+
+# ML-feedback loop runtime I/O — produced fresh each run by ix confidence_calibrator
+# (producer) and scripts/apply_ml_feedback.py (governor); reproducible, not canonical
+# governance state. The seam README is tracked; the recommendation/run docs are not.
+state/oversight/ml-recommendations/*.json
+state/oversight/ml-recommendations/processed/
+state/oversight/ml-feedback-loop-*.json
+state/oversight/pending-human-review.json
+state/oversight/scheduled-recons-*.json
+state/oversight/compliance-reports/*.json
+state/oversight/policy-review-requests.json
+state/oversight/ml-feedback-cycle-*.json
+state/oversight/ml-feedback-audit.json
+state/.cache/
