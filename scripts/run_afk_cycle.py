@@ -206,6 +206,10 @@ def _open_pr(issue: dict, branch: str, repo_path: str) -> str:
                    capture_output=True, text=True, timeout=120, check=True)
     p = subprocess.run(
         ["gh", "pr", "create", "--repo", REPO_SLUG, "--head", branch,
+         # The PR carries the agent-implement label so the --harvest self-merge
+         # pass (which filters PRs on that label) can find it. Without this the
+         # implement and harvest lanes are disconnected.
+         "--label", LABEL,
          "--title", f"AFK: {issue.get('title', '')} (#{num})",
          "--body", f"Implements #{num} via the AFK agent.\n\nReview gates: agent-blackbox + cross-model-review.\nCloses #{num}"],
         capture_output=True, text=True, timeout=120)

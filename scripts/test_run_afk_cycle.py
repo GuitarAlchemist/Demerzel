@@ -183,6 +183,23 @@ class TestSelfMergeDecision(unittest.TestCase):
         self.assertFalse(self._decide(council_verdict=None)[0])
 
 
+class TestOpenPrLabelsForHarvest(unittest.TestCase):
+    def test_open_pr_applies_agent_implement_label(self):
+        """The implement lane must label the PR so the harvest lane finds it."""
+        calls = []
+
+        def fake_run(cmd, *a, **k):
+            calls.append(cmd)
+            return mock.Mock(returncode=0, stdout="https://github.com/x/y/pull/1", stderr="")
+
+        with mock.patch.object(g.subprocess, "run", side_effect=fake_run):
+            url = g._open_pr({"number": 42, "title": "fix typo"}, "agent/issue-42", "/tmp/clone")
+        self.assertTrue(url.endswith("/pull/1"))
+        create = next(c for c in calls if "pr" in c and "create" in c)
+        self.assertIn("--label", create)
+        self.assertEqual(create[create.index("--label") + 1], g.LABEL)
+
+
 class TestHarvestDryRun(unittest.TestCase):
     def test_dry_run_no_council_no_merge(self):
         prs = [{"number": 9, "title": "fix docs typo", "body": "Closes #9", "labels": []}]

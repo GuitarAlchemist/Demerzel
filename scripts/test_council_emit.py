@@ -46,6 +46,17 @@ class TestReviewBuilders(unittest.TestCase):
     def test_cross_model_none(self):
         self.assertIsNone(c.review_from_cross_model(None, None, "low"))
 
+    def test_parse_verdict_reads_final_line_not_prose(self):
+        # Prose mentions REQUEST_CHANGES while explaining options; final line approves.
+        text = ("I considered whether to REQUEST_CHANGES but the change is clean.\n"
+                "Verdict: APPROVE - internally consistent, low risk.")
+        self.assertTrue(c.parse_verdict(text))
+        self.assertEqual(c.review_from_cross_model(text, "claude", "low")["constitutional_alignment"], "pass")
+
+    def test_parse_verdict_request_changes_line(self):
+        text = "Looks fine overall.\nVerdict: REQUEST_CHANGES - missing edge case."
+        self.assertFalse(c.parse_verdict(text))
+
 
 class TestSynthesize(unittest.TestCase):
     def test_two_approvals_approve_strictest_wins(self):
