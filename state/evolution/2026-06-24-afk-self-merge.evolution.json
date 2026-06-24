@@ -1,0 +1,46 @@
+{
+  "id": "gel-afk-self-merge-2026-06-24",
+  "artifact": "afk-graduated-self-merge",
+  "artifact_type": "capability",
+  "metrics": {
+    "citation_count": 1,
+    "violation_count": 0,
+    "compliance_rate": 1.0,
+    "last_cited": "2026-06-24T01:20:00Z",
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "created",
+      "context": "Graduated self-merge built for the AFK implement-lane governor — the deferred merge automation from project_afk_agent. New `scripts/run_afk_cycle.py --harvest` pass (CI gates settle async after the implement pass) self-merges open agent-implement PRs only if: risk in {low,medium}, all CI green, authorization trace, no active conscience signal weight>=0.8, AND an LLM-council APPROVE with post_council_confidence>=0.7 from >=2 reviewers. critical/high never self-merge; agent-blackbox `risk-report` never overridden. Confidence source = new `scripts/council_emit.py`: reviewer_a is the agent-blackbox risk-report CHECK conclusion (green->0.75, red->0.2; reads the check, not the un-vendored risk-report.json), reviewer_b is a live cross-model API review. Strictest-wins: post_council_confidence = min(scores). Implements policies/autonomous-loop-policy.yaml Section Self-Merge Authority. PRs #388 (system), #392 (live-proof fixes), #393 (provenance). Also fixed an unsatisfiable schema bug (council-verdict.schema.json required `timestamp` but never defined it under properties + additionalProperties:false).",
+      "timestamp": "2026-06-24T01:20:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "PROVEN LIVE end-to-end on real data: issue #389 -> AFK sandbox (Podman) implements -> PR #391 -> --harvest -> council convenes 2 real reviewers (agent-blackbox check + live claude-opus-4-8) -> APPROVE (conf 0.75) -> `gh pr merge` fired -> master commit 9c04482 + #389 auto-closed. First autonomous, council-gated self-merge in the ecosystem. Provenance trail committed under state/council/council-2026-06-24-00{1..5}.json + state/oversight/afk-harvest-2026-06-24.json (PR #393).",
+      "timestamp": "2026-06-24T01:20:00Z"
+    },
+    {
+      "type": "gap_identified",
+      "context": "Three latent bugs surfaced by the live run, each caught before any incorrect merge: (1) implement->harvest seam was disconnected — _open_pr never labeled the PR agent-implement, so harvest (which filters on that label) found zero PRs; (2) reviewer_b called a retired model snapshot (claude-sonnet-4-20250514) -> 404 -> 1 reviewer -> gate correctly withheld (needs >=2); (3) reviewer_b saw only a truncated git diff, so it could not verify internal consistency and over-rejected. KEY GOVERNANCE FINDING: the council's review quality is bounded by the context it is given. With diff-only context it over-rejected a clean change; with the full post-change file + linked-issue intent it caught THREE genuine internal contradictions in the dogfood doc (a new 'self-merge live' line vs two stale 'deferred' lines) and withheld merge each time, then went 5/5 APPROVE once the doc was actually consistent. A single LLM reviewer is stable on clean changes; the gate is only as good as the evidence fed to it.",
+      "timestamp": "2026-06-24T01:20:00Z"
+    },
+    {
+      "type": "compounding_cycle",
+      "context": "Liveness check passed (T_log 2026-06-21, 3 days < 7-day threshold; AFK self-merge commits flagged for inclusion). Recorded graduated council-gated self-merge as the dominant session delta — a sibling Article-9 bounded-autonomy capability to [[ml-feedback-loop]]: both run unattended within constitutional limits and refuse to exceed their bound. Open follow-up logged as PDCA (council-reviewer-context).",
+      "timestamp": "2026-06-24T01:20:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "The council-gated self-merge pipeline works end-to-end and the gate is sound: it fired on a clean low-risk change AND withheld merge on three genuine internal contradictions, never overriding agent-blackbox and never self-merging critical/high. The mechanism is verified (one live firing + an audited reject trail); operational effectiveness across many PRs is not yet established, and reviewer_b quality is context-bound.",
+      "truth_value": "T",
+      "confidence": 0.85
+    },
+    "recommendation": "maintain"
+  },
+  "created_at": "2026-06-24T01:20:00Z",
+  "last_updated": "2026-06-24T01:20:00Z"
+}
