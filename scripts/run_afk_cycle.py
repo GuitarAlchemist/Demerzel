@@ -44,6 +44,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
+
 ROOT = Path(__file__).resolve().parents[1]            # repos/Demerzel
 HARNESS_DIR = ROOT.parent / "afk-harness"             # sibling, outside Demerzel
 PROMPT_FILE = ROOT / "prompts" / "afk-implement.prompt.md"
@@ -54,6 +57,11 @@ CRITICAL_PATHS = ("constitution", "policies/", "policy")
 HIGH_KEYWORDS = ("schema migration", "migrate schema", "cross-repo", "infrastructure")
 MEDIUM_KEYWORDS = ("persona", "refactor", "schema")
 LOW_KEYWORDS = ("doc", "documentation", "typo", "comment", "test", "config")
+
+# Self-merge gate constants (policies/autonomous-loop-policy.yaml §Self-Merge Authority)
+CONSCIENCE_SIGNALS_DIR = ROOT / "state" / "conscience" / "signals"
+CONSCIENCE_BLOCK_WEIGHT = 0.8         # an active signal at/above this blocks self-merge
+SELF_MERGE_MIN_CONFIDENCE = 0.7       # minimum post_council_confidence
 
 
 def _now_iso() -> str:
@@ -246,6 +254,210 @@ def _write_audit(summary: dict, today: str) -> None:
     os.replace(tmp, out)
 
 
+# --------------------------------------------------------------------------- #
+# Graduated self-merge (the --harvest pass)
+#
+# A SEPARATE pass from the implement queue: agent-blackbox runs asynchronously in
+# CI, so a PR's gates are not settled when _process_issue opens it. Harvest
+# re-examines already-open agent-implement PRs whose checks have settled and
+# self-merges only those that clear the council + policy gate. This NEVER applies
+# the `agent-blackbox-reviewed` override — it merges only PRs that already PASS
+# their gates. Critical/high never self-merge.
+# --------------------------------------------------------------------------- #
+def parse_authorization_trace(pr_body: str) -> str | None:
+    """Extract the authorization artifact a PR traces to. AFK PRs carry
+    'Closes #N' / 'Implements #N' / 'Fixes #N'. Returns 'github_issue:#N' or None.
+    String-based (no regex) per repo convention."""
+    if not pr_body:
+        return None
+    for kw in ("closes #", "implements #", "fixes #", "resolves #"):
+        idx = pr_body.lower().find(kw)
+        if idx == -1:
+            continue
+        tail = pr_body[idx + len(kw):]
+        num = ""
+        for ch in tail:
+            if ch.isdigit():
+                num += ch
+            else:
+                break
+        if num:
+            return f"github_issue:#{num}"
+    return None
+
+
+def active_conscience_max_weight() -> float:
+    """Max `weight` among ACTIVE conscience signals (state/conscience/signals/).
+    A signal is active unless resolved (resolved_at present, or outcome begins
+    'RESOLVED') or marked false_positive. Returns 0.0 when none or dir absent.
+    Note: the policy prose says 'severity'; the schema field is `weight`."""
+    if not CONSCIENCE_SIGNALS_DIR.is_dir():
+        return 0.0
+    mx = 0.0
+    for p in CONSCIENCE_SIGNALS_DIR.glob("*.signal.json"):
+        try:
+            d = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if d.get("false_positive") is True or d.get("resolved_at"):
+            continue
+        outcome = d.get("outcome") or ""
+        if isinstance(outcome, str) and outcome.strip().upper().startswith("RESOLVED"):
+            continue
+        w = d.get("weight")
+        if isinstance(w, (int, float)):
+            mx = max(mx, float(w))
+    return mx
+
+
+def self_merge_decision(risk: str, checks_green: bool, authz_trace: str | None,
+                        conscience_max_weight: float,
+                        council_verdict: dict | None) -> tuple[bool, str]:
+    """Pure gate predicate for graduated self-merge. Returns (merge?, reason).
+    Mirrors policies/autonomous-loop-policy.yaml §Self-Merge Authority:
+    CI pass · confidence >= 0.7 · no conscience >= 0.8 · authorization trace ·
+    critical/high never · genuine multi-model council (>= 2 reviews)."""
+    if risk not in ("low", "medium"):
+        return False, f"risk={risk}: only low/medium self-merge (critical/high never)"
+    if not checks_green:
+        return False, "CI not all green"
+    if not authz_trace:
+        return False, "no authorization trace (PR not linked to an issue)"
+    if conscience_max_weight >= CONSCIENCE_BLOCK_WEIGHT:
+        return False, (f"active conscience signal weight {conscience_max_weight:.2f} "
+                       f">= {CONSCIENCE_BLOCK_WEIGHT}")
+    if not council_verdict:
+        return False, "no council verdict"
+    reviews = council_verdict.get("reviews", [])
+    if len(reviews) < 2:
+        return False, f"council incomplete: {len(reviews)} reviewer(s), need 2 (multi-model)"
+    if council_verdict.get("verdict") != "APPROVE":
+        return False, f"council verdict {council_verdict.get('verdict')}"
+    conf = council_verdict.get("post_council_confidence", 0.0)
+    if conf < SELF_MERGE_MIN_CONFIDENCE:
+        return False, f"post_council_confidence {conf:.2f} < {SELF_MERGE_MIN_CONFIDENCE}"
+    if any(r.get("constitutional_alignment") != "pass" for r in reviews):
+        return False, "constitutional alignment not all pass"
+    return True, f"self-merge OK (post_council_confidence={conf:.2f}, {len(reviews)} reviewers)"
+
+
+def _checks_all_green(pr: int) -> bool:
+    """True iff `gh pr checks` shows at least one check and none are failing or
+    pending. pass/success/skipping/neutral count as OK; fail/pending block."""
+    try:
+        p = subprocess.run(["gh", "pr", "checks", str(pr), "--repo", REPO_SLUG],
+                           capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    saw_any = False
+    for line in p.stdout.splitlines():
+        parts = line.split("\t")
+        if len(parts) < 2:
+            continue
+        saw_any = True
+        state = parts[1].strip().lower()
+        if state not in ("pass", "success", "skipping", "neutral"):
+            return False
+    return saw_any
+
+
+def _gh_open_afk_prs() -> list[dict]:
+    """Open agent-implement PRs as dicts with number/title/body/labels."""
+    try:
+        p = subprocess.run(
+            ["gh", "pr", "list", "--repo", REPO_SLUG, "--label", LABEL,
+             "--state", "open", "--json", "number,title,body,labels", "--limit", "20"],
+            capture_output=True, text=True, timeout=60)
+        if p.returncode != 0:
+            print(f"warn: gh pr list failed: {p.stderr.strip()[:160]}", file=sys.stderr)
+            return []
+        return json.loads(p.stdout or "[]")
+    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as exc:
+        print(f"warn: gh pr list unavailable: {exc}", file=sys.stderr)
+        return []
+
+
+def _merge_pr(pr: int) -> str:
+    """Squash-merge a gate-cleared PR. Returns 'merged' or a failure sentinel."""
+    p = subprocess.run(["gh", "pr", "merge", str(pr), "--repo", REPO_SLUG, "--squash"],
+                       capture_output=True, text=True, timeout=120)
+    return "merged" if p.returncode == 0 else f"merge-failed: {p.stderr.strip()[:160]}"
+
+
+def _harvest_pr(pr: dict, conscience_w: float) -> dict:
+    """Gate ONE open AFK PR through cheap pre-checks, then the council, then the
+    self-merge predicate. The council call (a model request) is spent only on
+    PRs that already pass the cheap gates."""
+    num = pr.get("number")
+    risk, _mode = classify_risk(pr)          # classify_risk reads title/body/labels — works on a PR dict
+    authz = parse_authorization_trace(pr.get("body", ""))
+    decision = {"pr": num, "title": pr.get("title"), "risk": risk,
+                "authorization_trace": authz}
+
+    if risk not in ("low", "medium"):
+        decision["action"] = f"skip:risk-{risk}"
+        return decision
+    if not authz:
+        decision["action"] = "skip:no-authorization-trace"
+        return decision
+    if not _checks_all_green(num):
+        decision["action"] = "hold:ci-not-green"
+        return decision
+
+    verdict = council_emit.convene(num, classified_risk=risk, write=True)
+    decision["council_verdict"] = verdict.get("verdict")
+    decision["post_council_confidence"] = verdict.get("post_council_confidence")
+    decision["reviewers"] = len(verdict.get("reviews", []))
+
+    merge, reason = self_merge_decision(risk, True, authz, conscience_w, verdict)
+    decision["gate"] = reason
+    if not merge:
+        decision["action"] = "hold:gate-not-met"
+        return decision
+    decision["action"] = "self-merge"
+    decision["merge_result"] = _merge_pr(num)
+    return decision
+
+
+def _run_harvest(dry: bool, today: str) -> int:
+    """The self-merge pass over open AFK PRs."""
+    prs = _gh_open_afk_prs()
+    conscience_w = active_conscience_max_weight()
+    if prs:
+        print(f"AFK harvest: {len(prs)} open agent-implement PR(s); "
+              f"active conscience weight {conscience_w:.2f}", file=sys.stderr)
+
+    decisions: list[dict] = []
+    for pr in prs:
+        if dry:
+            risk, _ = classify_risk(pr)
+            authz = parse_authorization_trace(pr.get("body", ""))
+            decisions.append({
+                "pr": pr.get("number"), "title": pr.get("title"), "risk": risk,
+                "authorization_trace": authz,
+                "action": "plan:would-gate" if risk in ("low", "medium") else f"skip:risk-{risk}"})
+        else:
+            decisions.append(_harvest_pr(pr, conscience_w))
+
+    def _tally(prefix: str) -> int:
+        return sum(1 for d in decisions if str(d.get("action", "")).startswith(prefix))
+    summary = {
+        "harvest_at": _now_iso(), "dry_run": dry, "halted": False,
+        "conscience_max_weight": conscience_w, "queue_size": len(prs),
+        "decisions": decisions,
+        "tally": {"self_merge": _tally("self-merge"), "held": _tally("hold"),
+                  "skipped": _tally("skip")},
+    }
+    if not dry:
+        out = ROOT / "state" / "oversight" / f"afk-harvest-{today}.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        tmp = out.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        os.replace(tmp, out)
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
 def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dict, dict]:
     """Live processing of ONE issue end-to-end (runs inside the thread pool).
     Each call is independent: its own clone, its own branch, its own PR, its own
@@ -343,6 +555,10 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--backend", choices=["local", "remote"], default="local",
                     help="local = per-agent clone + Podman (default); "
                          "remote = Vercel isolated sandboxes (not yet implemented)")
+    ap.add_argument("--harvest", action="store_true",
+                    help="self-merge pass: gate already-open AFK PRs through the "
+                         "council + policy thresholds and merge qualifiers, instead "
+                         "of processing the issue queue")
     args = ap.parse_args(argv)
 
     if args.max_parallel < 1:
@@ -355,6 +571,12 @@ def main(argv: list[str]) -> int:
         return 3
 
     today = _now_iso()[:10]
+
+    # Self-merge harvest is a distinct pass (CI gates settle asynchronously after
+    # the implement pass opens a PR), so it has its own queue and audit.
+    if args.harvest:
+        return _run_harvest(args.dry_run, today)
+
     issues = _gh_queue(args.dry_run)
 
     # Dry-run: plan only, strictly no side effects (no clone/podman/files).
