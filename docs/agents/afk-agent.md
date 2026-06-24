@@ -14,7 +14,8 @@ gates.
   `prompts/afk-implement.prompt.md`.
 - **Output:** a branch `agent/issue-<n>` + a PR linked to the issue.
 - **Review:** the existing `agent-blackbox.yml` + `cross-model-review.yml`
-  workflows. Merge is human/gate-decided (self-merge automation deferred).
+  workflows. Merge is council-gated: low/medium PRs may self-merge once the
+  LLM council approves (see below); high/critical always require a human.
 - **First proven:** the AFK agent was first proven end-to-end on 2026-06-22.
 - **Self-merge proven:** graduated council-gated self-merge went live on
   2026-06-24 (PR #388).
