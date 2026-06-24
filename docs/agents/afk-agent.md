@@ -16,6 +16,8 @@ gates.
 - **Review:** the existing `agent-blackbox.yml` + `cross-model-review.yml`
   workflows. Merge is human/gate-decided (self-merge automation deferred).
 - **First proven:** the AFK agent was first proven end-to-end on 2026-06-22.
+- **Self-merge proven:** graduated council-gated self-merge went live on
+  2026-06-24 (PR #388).
 
 ## Risk gating (from autonomous-loop-policy.yaml)
 - `critical` (touches constitutions/policies): never implemented; agent comments
