@@ -1,0 +1,22 @@
+{
+  "cycle_at": "2026-06-23T01:58:53Z",
+  "dry_run": false,
+  "halted": false,
+  "queue_size": 1,
+  "decisions": [
+    {
+      "issue": 381,
+      "title": "AFK smoke: add a one-line 'first proven' note to docs/agents/afk-agent.md",
+      "risk": "low",
+      "mode": "boundary-only",
+      "eligible": true,
+      "action": "implement",
+      "pr": "https://github.com/GuitarAlchemist/Demerzel/pull/383",
+      "branch": "agent/issue-381"
+    }
+  ],
+  "tally": {
+    "implement": 1,
+    "skipped": 0
+  }
+}

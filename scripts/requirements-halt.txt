@@ -1,0 +1,10 @@
+# Optional dependency for scripts/demerzel_halt.py.
+#
+# The halt tool is the cross-repo EMERGENCY BRAKE and runs on stdlib alone — it
+# falls back to a built-in schema check if jsonschema is absent, so an operator
+# can always halt without `pip install`. Installing this gives the STRONG path:
+# full parity with the PowerShell Test-Json adapter (ADR-0003). CI installs it so
+# tests exercise the jsonschema path; operators may skip it.
+#
+# Pinned to match scripts/requirements-qa-tribunal.txt.
+jsonschema==4.21.1
