@@ -17,8 +17,10 @@ origin; PRs are independent. The whole queue is always processed — concurrency
 a throughput cap, not a truncation (waves of --max-parallel at a time).
 
 Backends (--backend):
-  local   — per-agent ephemeral clone + Podman sandbox (default; runs on this box)
-  remote  — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
+  local        — per-agent ephemeral clone + Podman sandbox (default; runs on this box)
+  claude-code  — per-agent ephemeral clone + headless `claude -p` (no container;
+                 bills the interactive subscription, not the spend-capped API key)
+  remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
 
 Usage:
   python scripts/run_afk_cycle.py --dry-run            # classify + plan, no side effects
@@ -35,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -175,6 +178,83 @@ def _invoke_harness_remote(issue: dict) -> dict:
     rather than a crash until the remote provider lands."""
     return {"branch": None, "commits": [],
             "blocked": "remote backend (Vercel isolated sandboxes) not implemented yet — use --backend local"}
+
+
+CLAUDE_CODE_TIMEOUT = 1800  # seconds for one headless `claude -p` agent run
+
+
+def _claude_code_prompt(issue: dict) -> str:
+    """The instruction handed to the headless Claude Code agent. The issue body
+    already carries the full implementation spec (pattern + success criteria), so
+    this only frames the autonomy contract: implement, test, commit — no push/PR
+    (the governor owns those)."""
+    num = issue.get("number")
+    return (
+        "You are an autonomous AFK engineer working in a fresh clone of the "
+        "Demerzel governance repo, on a dedicated branch. Implement the issue "
+        "below end-to-end, then COMMIT your work on the current branch with a "
+        "conventional-commit message (feat/refactor/test). Be surgical — change "
+        "only what the issue requires. After editing, run "
+        "`python -m unittest discover -s scripts -p \"test_*.py\"` and make sure it "
+        "passes before committing. Do NOT push and do NOT open a pull request; "
+        "just commit locally.\n\n"
+        f"=== ISSUE #{num}: {issue.get('title', '')} ===\n\n"
+        f"{issue.get('body', '')}"
+    )
+
+
+def _invoke_harness_claude_code(issue: dict, repo_path: str) -> dict:
+    """Backend: delegate one issue to a headless Claude Code agent (`claude -p`)
+    in repo_path instead of the Podman sandbox. Returns {branch,commits,blocked} —
+    the same contract as the other backends, so the governor's push/PR/council
+    wrappers are unchanged.
+
+    Three deliberate choices:
+      * ANTHROPIC_API_KEY is stripped from the child env so `claude` bills the
+        interactive subscription, not the spend-capped API key — the reason this
+        backend exists (the Podman backend's claude-code hits that cap).
+      * The agent runs under a SCOPED tool allowlist (not skip-permissions): it may
+        edit/read files and run only `python`/`git` — enough to migrate, test, and
+        commit, but not arbitrary commands. A non-listed tool is denied rather than
+        prompting (headless), so the blast radius is the allowlist, not the host.
+      * Isolation is also the ephemeral clone (a git boundary). Even so this is a
+        weaker boundary than the container backend; use for trusted, mechanical
+        issues — the risk classifier keeps critical/high out of the auto lane.
+    """
+    num = issue.get("number")
+    branch = f"agent/issue-{num}"
+    try:
+        subprocess.run(["git", "-C", repo_path, "checkout", "-b", branch],
+                       capture_output=True, text=True, timeout=30, check=True)
+        base = subprocess.run(["git", "-C", repo_path, "rev-parse", "HEAD"],
+                              capture_output=True, text=True, timeout=30).stdout.strip()
+        env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
+        cmd = ["claude", "-p", _claude_code_prompt(issue),
+               "--output-format", "json",
+               "--allowedTools", "Edit", "Write", "Read", "Grep", "Glob",
+               "Bash(python *)", "Bash(python3 *)", "Bash(git *)"]
+        p = subprocess.run(cmd, cwd=repo_path, capture_output=True, text=True,
+                           timeout=CLAUDE_CODE_TIMEOUT, env=env)
+    except (OSError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as exc:
+        return {"branch": None, "commits": [], "blocked": f"claude-code invoke failed: {exc}"}
+
+    # The agent is told to commit; if it left changes uncommitted, capture them so a
+    # real implementation isn't lost to a missing commit step.
+    dirty = subprocess.run(["git", "-C", repo_path, "status", "--porcelain"],
+                           capture_output=True, text=True, timeout=30).stdout.strip()
+    if dirty:
+        subprocess.run(["git", "-C", repo_path, "add", "-A"],
+                       capture_output=True, text=True, timeout=60)
+        subprocess.run(["git", "-C", repo_path, "commit", "-m",
+                        f"feat: implement #{num} via AFK claude-code backend"],
+                       capture_output=True, text=True, timeout=60)
+    commits = subprocess.run(["git", "-C", repo_path, "log", "--format=%s", f"{base}..HEAD"],
+                             capture_output=True, text=True, timeout=30).stdout.strip()
+    if not commits:
+        tail = (p.stderr or p.stdout or "").strip()[-200:]
+        return {"branch": None, "commits": [],
+                "blocked": f"claude-code made no commits (exit {p.returncode}): {tail}"}
+    return {"branch": branch, "commits": commits.splitlines(), "blocked": None}
 
 
 def _ensure_podman() -> tuple[bool, str]:
@@ -458,6 +538,10 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
         if backend == "remote":
             hr = _invoke_harness_remote(issue)
             repo_for_push = None
+        elif backend == "claude-code":
+            clone = _prepare_clone(issue)
+            hr = _invoke_harness_claude_code(issue, clone)
+            repo_for_push = clone
         else:
             clone = _prepare_clone(issue)
             hr = _invoke_harness(issue, clone)
@@ -529,8 +613,10 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--max-parallel", type=int, default=3,
                     help="max concurrent AFK agents (default 3); the whole queue is "
                          "still processed in waves of this size")
-    ap.add_argument("--backend", choices=["local", "remote"], default="local",
+    ap.add_argument("--backend", choices=["local", "remote", "claude-code"], default="local",
                     help="local = per-agent clone + Podman (default); "
+                         "claude-code = per-agent clone + headless `claude -p` (no container, "
+                         "bills the subscription not the spend-capped API key); "
                          "remote = Vercel isolated sandboxes (not yet implemented)")
     ap.add_argument("--harvest", action="store_true",
                     help="self-merge pass: gate already-open AFK PRs through the "

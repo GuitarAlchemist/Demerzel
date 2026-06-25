@@ -279,5 +279,82 @@ class TestHarvestSeam(unittest.TestCase):
         self.assertEqual(summary["decisions"][0]["merge_result"], "merged")
 
 
+class TestClaudeCodeBackend(unittest.TestCase):
+    """The --backend claude-code seam: delegate an issue to headless `claude -p`
+    instead of a Podman sandbox, returning the same {branch,commits,blocked}."""
+
+    def test_prompt_carries_issue_and_commit_contract(self):
+        p = g._claude_code_prompt({"number": 410, "title": "Migrate X onto kit", "body": "do the thing"})
+        self.assertIn("#410", p)
+        self.assertIn("Migrate X onto kit", p)
+        self.assertIn("do the thing", p)
+        self.assertIn("COMMIT", p)
+        self.assertIn("unittest discover", p)
+        self.assertIn("do not open a pull request", p.lower())
+
+    def _fake_run(self, log_out):
+        """A subprocess.run stand-in for the backend's git+claude calls."""
+        def run(cmd, **kw):
+            ns = type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+            if "rev-parse" in cmd:
+                ns.stdout = "BASE_SHA"
+            elif "status" in cmd:
+                ns.stdout = ""            # clean working tree after the agent
+            elif cmd[:4] == ["git", "-C", cmd[2], "log"] or "log" in cmd:
+                ns.stdout = log_out
+            return ns
+        return run
+
+    def test_no_commits_returns_blocked(self):
+        with mock.patch.object(g.subprocess, "run", side_effect=self._fake_run("")):
+            out = g._invoke_harness_claude_code({"number": 410, "title": "t", "body": "b"}, "/tmp/x")
+        self.assertIsNone(out["branch"])
+        self.assertIn("no commits", out["blocked"])
+
+    def test_commits_return_branch(self):
+        with mock.patch.object(g.subprocess, "run", side_effect=self._fake_run("feat: migrate\n")):
+            out = g._invoke_harness_claude_code({"number": 410, "title": "t", "body": "b"}, "/tmp/x")
+        self.assertEqual(out["branch"], "agent/issue-410")
+        self.assertEqual(out["commits"], ["feat: migrate"])
+        self.assertIsNone(out["blocked"])
+
+    def test_api_key_stripped_from_child_env(self):
+        seen = {}
+        def run(cmd, **kw):
+            ns = type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+            if cmd[0] == "claude":
+                seen["env"] = kw.get("env", {})
+            if "rev-parse" in cmd:
+                ns.stdout = "BASE"
+            elif "log" in cmd:
+                ns.stdout = "feat: x\n"
+            return ns
+        with mock.patch.dict(g.os.environ, {"ANTHROPIC_API_KEY": "sk-should-be-stripped"}), \
+             mock.patch.object(g.subprocess, "run", side_effect=run):
+            g._invoke_harness_claude_code({"number": 1, "title": "t", "body": "b"}, "/tmp/x")
+        self.assertNotIn("ANTHROPIC_API_KEY", seen["env"],
+                         "claude must run on the subscription, not the capped API key")
+
+    def test_uses_scoped_allowlist_not_skip_permissions(self):
+        seen = {}
+        def run(cmd, **kw):
+            ns = type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+            if cmd and cmd[0] == "claude":
+                seen["cmd"] = cmd
+            if "rev-parse" in cmd:
+                ns.stdout = "BASE"
+            elif "log" in cmd:
+                ns.stdout = "feat: x\n"
+            return ns
+        with mock.patch.object(g.subprocess, "run", side_effect=run):
+            g._invoke_harness_claude_code({"number": 1, "title": "t", "body": "b"}, "/tmp/x")
+        cmd = seen["cmd"]
+        self.assertNotIn("--dangerously-skip-permissions", cmd,
+                         "backend must not bypass all permissions")
+        self.assertIn("--allowedTools", cmd)
+        self.assertIn("Bash(git *)", cmd)
+        self.assertIn("Bash(python *)", cmd)
+
+
 if __name__ == "__main__":
     unittest.main()
