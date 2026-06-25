@@ -75,14 +75,32 @@ When a prior digest exists, this section reports the status delta:
 
 ## How to run
 
+The frontmatter is **generated** by `DigestState`'s `Write-Digest` (paths, git
+facts, escaping, schema validation, and counter reset all live there). You author
+only the **body** sections and the `success_criteria` — do not hand-write the
+`---` frontmatter block.
+
 1. Read existing `state/digests/latest.md` if present — preserve current sections.
 2. Karpathy R4 — review/mark prior success criteria.
-3. Capture git state via Bash (`git rev-parse`, `git log -1`, `gh pr view`).
-4. Synthesize content; derive 1–3 testable `success_criteria` from Next action.
-5. Write to `state/digests/latest.md`. Set `trigger: digest-skill` + `last_model_update`.
-6. `rm -f state/digests/.activity-counter` to reset the staleness nudge.
-7. Validate: `pwsh -NoProfile -File .claude/hooks/digest-validate.ps1`. Non-zero = fix.
-8. Report: `Digest updated: <branch>@<sha> · next: <one-line> · criteria: <N>`.
+3. Synthesize the body (the `#`/`##` sections below) and write it to a temp file,
+   e.g. `state/digests/.body.tmp.md`.
+4. Derive 1–3 testable `success_criteria` from the Next action as a JSON array:
+   `[{"criterion":"…","status":"pending","evidence":null}]`.
+5. Route through the module (it sets `trigger: digest-skill`, validates against
+   `docs/contracts/digest-schema.json`, writes `latest.md`, and resets the
+   staleness + mid counters):
+
+   ```pwsh
+   pwsh -NoProfile -Command "Import-Module .claude/hooks/DigestState.psm1 -Force; \
+     Write-Digest -Kind digest -Trigger digest-skill \
+       -BodyFile state/digests/.body.tmp.md \
+       -SuccessCriteriaJson '<json array>' \
+       -LastModelUpdate (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')"
+   ```
+
+   A non-`Valid` result prints a warning naming the schema error — fix and re-run.
+6. `rm -f state/digests/.body.tmp.md`.
+7. Report: `Digest updated: <branch>@<sha> · next: <one-line> · criteria: <N>`.
 
 ## Driving criteria autonomously with `/goal`
 

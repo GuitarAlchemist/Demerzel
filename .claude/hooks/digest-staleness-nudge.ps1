@@ -1,24 +1,22 @@
 # UserPromptSubmit hook — emits an additionalContext nudge when state has drifted
 # from the last /digest. Karpathy R1+R4. Silent when digest is fresh.
+# Thin decider over DigestState.psm1 (latest path + activity counter).
 
 $ErrorActionPreference = 'SilentlyContinue'
 
 $repoRoot = & git rev-parse --show-toplevel 2>$null
 if (-not $repoRoot) { exit 0 }
 
-$latest  = Join-Path $repoRoot 'state/digests/latest.md'
-$counter = Join-Path $repoRoot 'state/digests/.activity-counter'
+Import-Module (Join-Path $PSScriptRoot 'DigestState.psm1') -Force
+
+$latest = (Get-DigestPaths -RepoRoot $repoRoot).Latest
 
 $digestAgeMin = $null
 if (Test-Path $latest) {
     $digestAgeMin = [int]((Get-Date) - (Get-Item $latest).LastWriteTime).TotalMinutes
 }
 
-$mutationCount = 0
-if (Test-Path $counter) {
-    $raw = (Get-Content $counter -Raw).Trim()
-    if ($raw -match '^\d+$') { $mutationCount = [int]$raw }
-}
+$mutationCount = Get-Counter -Name activity -RepoRoot $repoRoot
 
 $shouldNudge = $false
 $reason = ''

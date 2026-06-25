@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guitar-alchemist/contracts/pr-rationale-v1.json",
+  "title": "PR Rationale Snapshot",
+  "description": "Frontmatter schema for state/digests/pr-<num>-<slug>.md, written by .claude/hooks/pr-rationale-capture.ps1 via DigestState's Write-Digest -Kind rationale. Snapshots a PR's title/body/diff stats so the rationale survives later edits. Distinct from the session-digest schema (docs/contracts/digest-schema.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "trigger", "captured_at", "branch", "pr_number"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "trigger": { "type": "string", "const": "pr-rationale-capture" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "branch": { "type": "string" },
+    "pr_number": { "type": "string", "description": "PR number as a string, or 'unknown' when not parseable from the gh output." },
+    "diff_shortstat": { "type": "string", "description": "Output of git diff --shortstat, or empty." }
+  }
+}

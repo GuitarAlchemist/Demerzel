@@ -1,18 +1,14 @@
 # UserPromptSubmit hook — Enhancement 2 (Cherny auto /correct trigger).
 # If the user's prompt matches correction language, nudge Claude to invoke
 # /correct so the rule lands in CLAUDE.md. Throttled: fires once per N=5 prompts.
+# Thin decider over DigestState.psm1 (correction counter).
 
 $ErrorActionPreference = 'SilentlyContinue'
 
 $repoRoot = & git rev-parse --show-toplevel 2>$null
 if (-not $repoRoot) { exit 0 }
 
-$digestDir   = Join-Path $repoRoot 'state/digests'
-$counterPath = Join-Path $digestDir '.correction-counter'
-
-if (-not (Test-Path $digestDir)) {
-    New-Item -ItemType Directory -Path $digestDir -Force | Out-Null
-}
+Import-Module (Join-Path $PSScriptRoot 'DigestState.psm1') -Force
 
 # Read JSON payload from stdin (UserPromptSubmit format: {prompt, session_id, ...})
 $prompt = ''
@@ -39,14 +35,7 @@ if ($env:DEMERZEL_CORRECTION_THROTTLE -and $env:DEMERZEL_CORRECTION_THROTTLE -ma
     $throttle = [int]$env:DEMERZEL_CORRECTION_THROTTLE
 }
 
-$count = 0
-if (Test-Path $counterPath) {
-    $raw = (Get-Content $counterPath -Raw).Trim()
-    if ($raw -match '^\d+$') { $count = [int]$raw }
-}
-$count++
-Set-Content -Path $counterPath -Value $count -Encoding UTF8
-
+$count = Step-Counter -Name correction -RepoRoot $repoRoot
 if ($count -ne 1 -and ($count % $throttle) -ne 0) { exit 0 }
 
 $msg = 'Detected correction language. Consider invoking /correct to formalize this into CLAUDE.md so the rule persists across sessions (Cherny self-improvement loop).'

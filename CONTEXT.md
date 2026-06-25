@@ -85,6 +85,21 @@ fact lives in one place and is read out, never restated.
   *agrees* with it. Makes the append-only + precedence [Architecture invariant](#architecture-invariant)
   machine-checkable without generating the headers' human rationale.
 
+## Architecture seams (designed + built 2026-06-21, Candidate 1)
+
+- **`DigestState`** — `.claude/hooks/DigestState.psm1`, a dot-sourced PowerShell deep
+  module mirroring [`Get-DomainGateState`](#architecture-seams-designed-2026-06-20-via-improve-codebase-architecture-built-2026-06-21-pr-357).
+  The eight session-digest hooks were each re-deriving the same primitives — the
+  `state/digests` path, YAML escaping, git facts, counter I/O, and a late-bound
+  validation call. Those now live here once, behind a small interface
+  (`Write-Digest`/`Get-DigestPaths`/`Format-Yaml`/`Get-RepoFacts`/`{Get,Step,Reset}-Counter`/`Test-Digest`);
+  the hooks became thin *deciders*. `Write-Digest -Kind digest|rationale` resolves
+  paths, fetches/accepts repo facts, rotates `latest`→`archive`, **validates the
+  constructed object against the schema** (`docs/contracts/{digest,pr-rationale}-schema.json`),
+  writes, and auto-resets counters by trigger. `Test-Digest` replaced
+  `digest-validate.ps1`'s hand-coded rules with a schema read (ADR-0003). First
+  unit-testable seam in the hook layer (`tests/powershell/DigestState.Tests.ps1`, Pester).
+
 ## Architecture seams (designed + built 2026-06-21, Candidate 2)
 
 - **Ecosystem facts action** — `.github/actions/ecosystem`, a composite action that is

@@ -4,13 +4,18 @@ on:
   pull_request:
     paths:
       - 'docs/contracts/digest-schema.json'
+      - 'docs/contracts/pr-rationale-schema.json'
       - 'state/digests/**'
       - '.claude/settings.json'
       - '.claude/skills/digest/**'
       - '.claude/skills/correct/**'
       - '.claude/hooks/digest-*'
+      - '.claude/hooks/DigestState.psm1'
       - '.claude/hooks/precompact-digest*'
       - '.claude/hooks/sessionstart-digest*'
+      - '.claude/hooks/pr-rationale-capture*'
+      - '.claude/hooks/correction-detector*'
+      - 'tests/powershell/**'
       - 'CLAUDE.md'
       - '.github/workflows/karpathy-cherny-discipline.yml'
 
@@ -46,6 +51,7 @@ jobs:
         run: |
           missing=0
           for f in \
+            ".claude/hooks/DigestState.psm1" \
             ".claude/hooks/precompact-digest.ps1" \
             ".claude/hooks/sessionstart-digest.ps1" \
             ".claude/hooks/digest-validate.ps1" \
@@ -101,3 +107,19 @@ jobs:
               sys.exit(1)
           print('All committed digests valid (or none committed).')
           PYEOF
+
+  pester:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run DigestState Pester tests
+        shell: pwsh
+        run: |
+          Install-Module Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck -Scope CurrentUser
+          Import-Module Pester -MinimumVersion 5.0.0 -Force
+          $cfg = New-PesterConfiguration
+          $cfg.Run.Path = 'tests/powershell'
+          $cfg.Run.Exit = $true
+          $cfg.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $cfg
