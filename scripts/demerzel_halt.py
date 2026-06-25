@@ -49,12 +49,13 @@ from __future__ import annotations
 import argparse
 import getpass
 import json
-import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+import demerzel_kit as kit
 
 SCHEMA_VERSION = 1
 DEFAULT_SCOPE = "loops-only"
@@ -85,10 +86,6 @@ def marker_path() -> Path:
 
 def archive_dir() -> Path:
     return marker_dir() / "halts"
-
-
-def now_rfc3339() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 _TYPE_CHECKS = {
@@ -156,18 +153,10 @@ def validate(marker: dict[str, Any]) -> list[str]:
     return [e.message for e in sorted(validator.iter_errors(marker), key=lambda e: list(e.path))]
 
 
-def atomic_write(path: Path, content: str) -> None:
-    """Write content atomically: temp file + os.replace. Avoids torn reads."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(content, encoding="utf-8")
-    os.replace(tmp, path)
-
-
 def cmd_halt(args: argparse.Namespace) -> int:
     marker: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
-        "halted_at": now_rfc3339(),
+        "halted_at": kit.now_iso(),
         "halted_by": args.halted_by or f"demerzel-cli:{getpass.getuser()}",
         "reason": args.reason,
         "scope": args.scope,
@@ -189,7 +178,7 @@ def cmd_halt(args: argparse.Namespace) -> int:
         return 2
 
     try:
-        atomic_write(marker_path(), json.dumps(marker, indent=2))
+        kit.atomic_write(marker_path(), json.dumps(marker, indent=2))
     except OSError as exc:
         print(f"[FAIL] Could not write marker: {exc}", file=sys.stderr)
         return 3
