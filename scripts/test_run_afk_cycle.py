@@ -1,3 +1,5 @@
+import json
+import tempfile
 import unittest
 import unittest.mock as mock
 from pathlib import Path
@@ -211,6 +213,70 @@ class TestHarvestDryRun(unittest.TestCase):
         self.assertEqual(rc, 0)
         convene.assert_not_called()   # dry-run convenes no council
         merge.assert_not_called()     # and merges nothing
+
+
+class TestLoopStateWriteSeam(unittest.TestCase):
+    """The loop-state write now goes through kit.write_artifact, which validates
+    against schemas/loop-state.schema.json before atomic-writing — so an invalid
+    state never lands on disk (it had no validation before this migration)."""
+
+    def test_write_loop_state_validates_and_writes(self):
+        issue = {"number": 42, "title": "Fix docs typo", "body": "x", "labels": []}
+        st = g.build_loop_state(issue, seq=1, risk="low", mode="boundary-only",
+                                today="2026-06-25")
+        with tempfile.TemporaryDirectory() as d, \
+             mock.patch.object(g, "ROOT", Path(d)):
+            g._write_loop_state(st)
+            written = Path(d) / "state" / "loops" / f"{st['loop_id']}.loop.json"
+            self.assertTrue(written.exists(), "loop-state must be written to disk")
+            on_disk = json.loads(written.read_text(encoding="utf-8"))
+            self.assertEqual(on_disk["loop_id"], st["loop_id"])
+            try:
+                import jsonschema
+            except ImportError:
+                self.skipTest("jsonschema not installed")
+            schema_path = (Path(g.__file__).resolve().parents[1] / "schemas"
+                           / "loop-state.schema.json")
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+            jsonschema.validate(on_disk, schema)  # write_artifact already did; double-check
+
+
+class TestHarvestSeam(unittest.TestCase):
+    """End-to-end through the demerzel_kit seam: a live --harvest pass with the gh
+    reads (gh_json/gh_text) injected, proving the harvest path gates a PR and writes
+    its audit to disk without touching the network. This is the test the un-seamed
+    gh calls made impossible before the kit migration."""
+
+    def _fake_gh_json(self, args, **kwargs):
+        if args[:2] == ["pr", "list"]:
+            return [{"number": 9, "title": "fix docs typo", "body": "Closes #9",
+                     "labels": []}]
+        return None
+
+    def _fake_gh_text(self, args, **kwargs):
+        if args[:2] == ["pr", "checks"]:
+            return "ci\tpass\thttps://example/checks"
+        return ""
+
+    def test_harvest_self_merges_and_writes_audit(self):
+        verdict = _council(verdict="APPROVE", conf=0.75, n_reviews=2)
+        with tempfile.TemporaryDirectory() as d, \
+             mock.patch.object(g.kit, "gh_json", self._fake_gh_json), \
+             mock.patch.object(g.kit, "gh_text", self._fake_gh_text), \
+             mock.patch.object(g, "active_conscience_max_weight", return_value=0.0), \
+             mock.patch.object(g.council_emit, "convene", return_value=verdict), \
+             mock.patch.object(g, "_merge_pr", return_value="merged") as merge, \
+             mock.patch.object(g, "ROOT", Path(d)):
+            rc = g.main(["--harvest"])
+            self.assertEqual(rc, 0)
+            merge.assert_called_once_with(9)
+            audit = Path(d) / "state" / "oversight"
+            files = list(audit.glob("afk-harvest-*.json"))
+            self.assertEqual(len(files), 1, "one harvest audit must be written")
+            summary = json.loads(files[0].read_text(encoding="utf-8"))
+        self.assertEqual(summary["tally"]["self_merge"], 1)
+        self.assertEqual(summary["decisions"][0]["action"], "self-merge")
+        self.assertEqual(summary["decisions"][0]["merge_result"], "merged")
 
 
 if __name__ == "__main__":

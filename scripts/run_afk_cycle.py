@@ -35,7 +35,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -46,6 +45,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
+import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
 
 ROOT = Path(__file__).resolve().parents[1]            # repos/Demerzel
 HARNESS_DIR = ROOT.parent / "afk-harness"             # sibling, outside Demerzel
@@ -62,10 +62,6 @@ LOW_KEYWORDS = ("doc", "documentation", "typo", "comment", "test", "config")
 CONSCIENCE_SIGNALS_DIR = ROOT / "state" / "conscience" / "signals"
 CONSCIENCE_BLOCK_WEIGHT = 0.8         # an active signal at/above this blocks self-merge
 SELF_MERGE_MIN_CONFIDENCE = 0.7       # minimum post_council_confidence
-
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def halt_active() -> tuple[bool, str]:
@@ -125,7 +121,7 @@ def build_loop_state(issue: dict, seq: int, risk: str, mode: str, today: str) ->
         "iterations": [],
         "stall_count": 0,
         "authorization_artifact": f"github_issue:#{issue.get('number')}",
-        "started_at": _now_iso(),
+        "started_at": kit.now_iso(),
         "max_iterations": 10,
     }
 
@@ -227,35 +223,23 @@ def _comment_needs_preapproval(issue: dict) -> None:
 
 def _gh_queue(dry: bool) -> list[dict]:
     """Fetch open agent-implement issues via gh. Returns [] on any failure."""
-    try:
-        p = subprocess.run(
-            ["gh", "issue", "list", "--repo", REPO_SLUG, "--label", LABEL,
-             "--state", "open", "--json", "number,title,body,labels", "--limit", "20"],
-            capture_output=True, text=True, timeout=60)
-        if p.returncode != 0:
-            print(f"warn: gh issue list failed: {p.stderr.strip()[:160]}", file=sys.stderr)
-            return []
-        return json.loads(p.stdout or "[]")
-    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as exc:
-        print(f"warn: gh queue unavailable: {exc}", file=sys.stderr)
-        return []
+    out = kit.gh_json(
+        ["issue", "list", "--repo", REPO_SLUG, "--label", LABEL,
+         "--state", "open", "--json", "number,title,body,labels", "--limit", "20"])
+    return out if isinstance(out, list) else []
 
 
 def _write_loop_state(state: dict) -> None:
-    """Persist one loop-state file. Distinct filename per issue → thread-safe."""
-    loops_dir = ROOT / "state" / "loops"
-    loops_dir.mkdir(parents=True, exist_ok=True)
-    (loops_dir / f"{state['loop_id']}.loop.json").write_text(
-        json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    """Persist one loop-state file (schema-validated). Distinct filename per issue
+    → thread-safe."""
+    out = ROOT / "state" / "loops" / f"{state['loop_id']}.loop.json"
+    kit.write_artifact(out, state, schema="loop-state")
 
 
 def _write_audit(summary: dict, today: str) -> None:
     """Persist the combined cycle audit atomically to state/oversight/."""
     out = ROOT / "state" / "oversight" / f"afk-cycle-{today}.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    tmp = out.with_suffix(".json.tmp")
-    tmp.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-    os.replace(tmp, out)
+    kit.write_artifact(out, summary)
 
 
 # --------------------------------------------------------------------------- #
@@ -347,14 +331,14 @@ def self_merge_decision(risk: str, checks_green: bool, authz_trace: str | None,
 
 def _checks_all_green(pr: int) -> bool:
     """True iff `gh pr checks` shows at least one check and none are failing or
-    pending. pass/success/skipping/neutral count as OK; fail/pending block."""
-    try:
-        p = subprocess.run(["gh", "pr", "checks", str(pr), "--repo", REPO_SLUG],
-                           capture_output=True, text=True, timeout=60)
-    except (OSError, subprocess.TimeoutExpired):
+    pending. pass/success/skipping/neutral count as OK; fail/pending block.
+    `gh pr checks` exits non-zero when any check failed but the table is still
+    valid output, so the read uses ok_nonzero=True."""
+    out = kit.gh_text(["pr", "checks", str(pr), "--repo", REPO_SLUG], ok_nonzero=True)
+    if out is None:
         return False
     saw_any = False
-    for line in p.stdout.splitlines():
+    for line in out.splitlines():
         parts = line.split("\t")
         if len(parts) < 2:
             continue
@@ -367,18 +351,10 @@ def _checks_all_green(pr: int) -> bool:
 
 def _gh_open_afk_prs() -> list[dict]:
     """Open agent-implement PRs as dicts with number/title/body/labels."""
-    try:
-        p = subprocess.run(
-            ["gh", "pr", "list", "--repo", REPO_SLUG, "--label", LABEL,
-             "--state", "open", "--json", "number,title,body,labels", "--limit", "20"],
-            capture_output=True, text=True, timeout=60)
-        if p.returncode != 0:
-            print(f"warn: gh pr list failed: {p.stderr.strip()[:160]}", file=sys.stderr)
-            return []
-        return json.loads(p.stdout or "[]")
-    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as exc:
-        print(f"warn: gh pr list unavailable: {exc}", file=sys.stderr)
-        return []
+    out = kit.gh_json(
+        ["pr", "list", "--repo", REPO_SLUG, "--label", LABEL,
+         "--state", "open", "--json", "number,title,body,labels", "--limit", "20"])
+    return out if isinstance(out, list) else []
 
 
 def _merge_pr(pr: int) -> str:
@@ -446,7 +422,7 @@ def _run_harvest(dry: bool, today: str) -> int:
     def _tally(prefix: str) -> int:
         return sum(1 for d in decisions if str(d.get("action", "")).startswith(prefix))
     summary = {
-        "harvest_at": _now_iso(), "dry_run": dry, "halted": False,
+        "harvest_at": kit.now_iso(), "dry_run": dry, "halted": False,
         "conscience_max_weight": conscience_w, "queue_size": len(prs),
         "decisions": decisions,
         "tally": {"self_merge": _tally("self-merge"), "held": _tally("hold"),
@@ -454,10 +430,7 @@ def _run_harvest(dry: bool, today: str) -> int:
     }
     if not dry:
         out = ROOT / "state" / "oversight" / f"afk-harvest-{today}.json"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        tmp = out.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-        os.replace(tmp, out)
+        kit.write_artifact(out, summary)
     print(json.dumps(summary, indent=2))
     return 0
 
@@ -505,7 +478,7 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
                 state["halt_reason"] = pr
             else:
                 state["iterations"].append({
-                    "iteration": 1, "timestamp": _now_iso(),
+                    "iteration": 1, "timestamp": kit.now_iso(),
                     "action": f"opened PR for #{issue.get('number')}",
                     "outcome": "progress", "governance_decision": None})
                 state["status"] = "completed"
@@ -532,7 +505,7 @@ def _print_summary(decisions: list[dict], queue_size: int, dry_run: bool,
     def _tally(prefix: str) -> int:
         return sum(1 for d in decisions if str(d.get("action", "")).startswith(prefix))
     summary = {
-        "cycle_at": _now_iso(), "dry_run": dry_run, "halted": False,
+        "cycle_at": kit.now_iso(), "dry_run": dry_run, "halted": False,
         "backend": backend, "max_parallel": workers, "queue_size": queue_size,
         "decisions": decisions,
         "tally": {
@@ -574,7 +547,7 @@ def main(argv: list[str]) -> int:
         print(f"ABORT: {why}", file=sys.stderr)
         return 3
 
-    today = _now_iso()[:10]
+    today = kit.now_iso()[:10]
 
     # Self-merge harvest is a distinct pass (CI gates settle asynchronously after
     # the implement pass opens a PR), so it has its own queue and audit.
