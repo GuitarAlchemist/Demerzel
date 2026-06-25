@@ -38,6 +38,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Gather context
         id: context
         env:
@@ -65,11 +69,12 @@ jobs:
           COUNT=$(echo "$ISSUES" | jq 'length')
           echo "ISSUE_COUNT=$COUNT" >> $GITHUB_OUTPUT
 
-          # Inventory governance artifacts for context
-          PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
-          POLICY_COUNT=$(ls policies/*.yaml 2>/dev/null | wc -l)
-          TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
-          SCHEMA_COUNT=$(find schemas/ -name "*.json" 2>/dev/null | wc -l)
+          # Governance counts harvested from the manifest (ADR-0002); state
+          # counts below are runtime dirs the manifest does not track.
+          PERSONA_COUNT=${{ steps.eco.outputs.count_persona }}
+          POLICY_COUNT=${{ steps.eco.outputs.count_policy }}
+          TEST_COUNT=${{ steps.eco.outputs.count_behavioral_test }}
+          SCHEMA_COUNT=$(( ${{ steps.eco.outputs.count_schema }} + ${{ steps.eco.outputs.count_contract_schema }} ))
           BELIEF_COUNT=$(ls state/beliefs/*.json 2>/dev/null | wc -l)
           SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
           PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
@@ -117,25 +122,19 @@ jobs:
           ISSUES=$(cat /tmp/issues.json)
           CONTEXT=$(cat /tmp/context.md)
 
-          # Call Claude API for intelligent triage
-          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "anthropic-version: 2023-06-01" \
-            -H "content-type: application/json" \
-            -d "$(jq -n \
-              --arg ctx "$CONTEXT" \
-              --arg issues "$ISSUES" \
-              '{
-                model: "claude-sonnet-4-20250514",
-                max_tokens: 4000,
-                messages: [{
-                  role: "user",
-                  content: ("You are Demerzel, an AI governance coordinator. Triage these open GitHub issues.\n\nGovernance context:\n" + $ctx + "\n\nOpen issues (JSON):\n" + $issues + "\n\nFor each issue, respond in this exact JSON format (array of objects):\n```json\n[\n  {\n    \"number\": 42,\n    \"title\": \"issue title\",\n    \"classification\": \"governance-gap | feature | bug | documentation | maintenance | research\",\n    \"priority\": \"P0 | P1 | P2 | P3\",\n    \"auto_fixable\": true or false,\n    \"fix_description\": \"what would fix this issue\",\n    \"evidence_of_completion\": [\"file or condition that proves completion\"],\n    \"is_complete\": true or false,\n    \"completion_evidence\": \"why you think it is complete, or null\",\n    \"blocked_by\": \"what blocks this, or null\",\n    \"recommended_action\": \"close | fix-now | needs-human | defer\"\n  }\n]\n```\n\nBe precise. Check if issues are already resolved by recent commits. Only mark as complete if you have concrete evidence.")
-                }]
-              }')" 2>/dev/null)
-
-          # Extract the JSON array from the response
-          TRIAGE=$(echo "$RESPONSE" | jq -r '.content[0].text' | sed -n '/```json/,/```/p' | sed '1d;$d')
+          # Call Claude via the shared llm_call.sh seam (Candidate 3).
+          PROMPT=$(jq -rn \
+            --arg ctx "$CONTEXT" \
+            --arg issues "$ISSUES" \
+            '("You are Demerzel, an AI governance coordinator. Triage these open GitHub issues.\n\nGovernance context:\n" + $ctx + "\n\nOpen issues (JSON):\n" + $issues + "\n\nFor each issue, respond in this exact JSON format (array of objects):\n```json\n[\n  {\n    \"number\": 42,\n    \"title\": \"issue title\",\n    \"classification\": \"governance-gap | feature | bug | documentation | maintenance | research\",\n    \"priority\": \"P0 | P1 | P2 | P3\",\n    \"auto_fixable\": true or false,\n    \"fix_description\": \"what would fix this issue\",\n    \"evidence_of_completion\": [\"file or condition that proves completion\"],\n    \"is_complete\": true or false,\n    \"completion_evidence\": \"why you think it is complete, or null\",\n    \"blocked_by\": \"what blocks this, or null\",\n    \"recommended_action\": \"close | fix-now | needs-human | defer\"\n  }\n]\n```\n\nBe precise. Check if issues are already resolved by recent commits. Only mark as complete if you have concrete evidence.")')
+          # if-form: a non-zero llm_call (API/transport error) falls through to
+          # the basic-scan fallback instead of aborting the step under -e.
+          if RESPONSE=$(bash .github/scripts/llm_call.sh claude "$PROMPT" 4000 2>/tmp/llm_err); then
+            TRIAGE=$(echo "$RESPONSE" | sed -n '/```json/,/```/p' | sed '1d;$d')
+          else
+            echo "::warning::AI triage call failed: $(cat /tmp/llm_err)"
+            TRIAGE=""
+          fi
 
           if [ -z "$TRIAGE" ] || [ "$TRIAGE" = "null" ]; then
             echo "AI triage failed, falling back to basic scan"
@@ -234,16 +233,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE="${{ steps.context.outputs.DATE }}"
-          BODY=$(cat remediation-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
-              title: \"🔧 Auto-Remediation Scan — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🔧 Auto-Remediation Scan — $DATE" "$(cat remediation-report.md)")
           echo "Remediation Discussion: $URL"

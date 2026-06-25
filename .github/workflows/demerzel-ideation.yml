@@ -35,6 +35,10 @@ jobs:
         with:
           fetch-depth: 20
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Check if ideation already posted today
         id: dedup
         env:
@@ -70,10 +74,11 @@ jobs:
           DATE="${{ steps.dedup.outputs.DATE }}"
           echo "DATE=$DATE" >> $GITHUB_OUTPUT
 
-          # Artifact inventory
-          PERSONA_COUNT=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
-          POLICY_COUNT=$(ls policies/*.yaml 2>/dev/null | wc -l)
-          TEST_COUNT=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
+          # Governance counts harvested from the manifest (ADR-0002); the state
+          # counts below are runtime dirs the manifest does not track.
+          PERSONA_COUNT=${{ steps.eco.outputs.count_persona }}
+          POLICY_COUNT=${{ steps.eco.outputs.count_policy }}
+          TEST_COUNT=${{ steps.eco.outputs.count_behavioral_test }}
           DEPT_COUNT=$(ls state/streeling/departments/*.department.json 2>/dev/null | wc -l)
           SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
           PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
@@ -149,35 +154,14 @@ jobs:
         run: |
           CONTEXT=$(cat /tmp/ideation-context.md)
 
-          RESPONSE=$(curl -s --max-time 60 \
-            https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "content-type: application/json" \
-            -H "anthropic-version: 2023-06-01" \
-            -d "$(jq -n \
-              --arg ctx "$CONTEXT" \
-              '{
-                model: "claude-sonnet-4-6-20250514",
-                max_tokens: 3000,
-                system: "You are Demerzel and Seldon, governance coordinator and chancellor of Streeling University for the GuitarAlchemist AI ecosystem.\n\nGenerate 3-5 FRESH ideas based on the current ecosystem state. Ideas must be:\n1. Concrete and actionable (not vague aspirations)\n2. Grounded in what just changed (recent commits, open issues, conscience signals)\n3. Novel — do NOT repeat ideas that are already open issues\n4. Spanning different domains: governance, music theory, ML/AI, cross-repo integration, research\n\nFor each idea, output:\n- Title (concise, issue-ready)\n- Source (what triggered this idea — a commit, a gap, a pattern)\n- Problem (what is wrong or missing)\n- Proposal (specific action)\n- Priority (P0-P3)\n- Repos affected\n- Streeling department (which department should own this research)\n\nFormat as markdown with ### headers per idea. Be creative but practical.",
-                messages: [{role: "user", content: ("Generate fresh ideation based on current ecosystem state:\n\n" + $ctx)}]
-              }')" 2>/dev/null)
-
-          # Log API response status for debugging
-          RESP_TYPE=$(echo "$RESPONSE" | jq -r '.type // "no-response"' 2>/dev/null)
-          RESP_ERROR=$(echo "$RESPONSE" | jq -r '.error // empty' 2>/dev/null)
-          STOP_REASON=$(echo "$RESPONSE" | jq -r '.stop_reason // empty' 2>/dev/null)
-          echo "API response type: $RESP_TYPE"
-          echo "API stop_reason: $STOP_REASON"
-          if [ -n "$RESP_ERROR" ]; then
-            echo "::error::Anthropic API error: $RESP_ERROR"
-          fi
-
-          IDEAS=$(echo "$RESPONSE" | jq -r '.content[0].text' 2>/dev/null)
-
-          if [ -z "$IDEAS" ] || [ "$IDEAS" = "null" ]; then
-            echo "::warning::AI ideation failed — no content in API response"
-            echo "Raw response (first 500 chars): $(echo "$RESPONSE" | head -c 500)"
+          # Call Claude via the shared llm_call.sh seam (Candidate 3). The seam's
+          # exit code + stderr replace the old raw-response .type/.error/.stop_reason
+          # inspection; the if-form keeps the graceful skip under -e.
+          LLM_SYSTEM=$(jq -rn '"You are Demerzel and Seldon, governance coordinator and chancellor of Streeling University for the GuitarAlchemist AI ecosystem.\n\nGenerate 3-5 FRESH ideas based on the current ecosystem state. Ideas must be:\n1. Concrete and actionable (not vague aspirations)\n2. Grounded in what just changed (recent commits, open issues, conscience signals)\n3. Novel — do NOT repeat ideas that are already open issues\n4. Spanning different domains: governance, music theory, ML/AI, cross-repo integration, research\n\nFor each idea, output:\n- Title (concise, issue-ready)\n- Source (what triggered this idea — a commit, a gap, a pattern)\n- Problem (what is wrong or missing)\n- Proposal (specific action)\n- Priority (P0-P3)\n- Repos affected\n- Streeling department (which department should own this research)\n\nFormat as markdown with ### headers per idea. Be creative but practical."')
+          PROMPT=$(jq -rn --arg ctx "$CONTEXT" '("Generate fresh ideation based on current ecosystem state:\n\n" + $ctx)')
+          export LLM_SYSTEM
+          if ! IDEAS=$(LLM_CLAUDE_MODEL=claude-sonnet-4-6-20250514 bash .github/scripts/llm_call.sh claude "$PROMPT" 3000 2>/tmp/llm_err); then
+            echo "::warning::AI ideation failed: $(cat /tmp/llm_err)"
             echo "IDEA_COUNT=0" >> $GITHUB_OUTPUT
             exit 0
           fi
@@ -217,18 +201,9 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE="${{ steps.context.outputs.DATE }}"
-          BODY=$(cat ideation-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDV\",
-              title: \"🧠 Demerzel Ideation — ${DATE}\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post ideas")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_ideas }}" "🧠 Demerzel Ideation — ${DATE}" "$(cat ideation-report.md)")
           echo "Ideas Discussion: $URL"
           echo "DISCUSSION_URL=$URL" >> $GITHUB_OUTPUT
 
@@ -244,24 +219,12 @@ jobs:
           # Get existing open issue titles to prevent duplicates
           EXISTING_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json title --jq '.[].title' | jq -Rs .)
 
-          REVIEW=$(curl -s --max-time 45 \
-            https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "content-type: application/json" \
-            -H "anthropic-version: 2023-06-01" \
-            -d "$(jq -n \
-              --arg ideas "$IDEAS" \
-              --arg existing "$EXISTING_ISSUES" \
-              '{
-                model: "claude-sonnet-4-6-20250514",
-                max_tokens: 1500,
-                system: ("You are a critical reviewer. Review these ideas. REJECT any that duplicate existing issues.\n\nExisting open issues:\n" + $existing + "\n\nFor each idea respond as JSON array:\n[{\"idea_number\": 1, \"verdict\": \"APPROVE|MODIFY|REJECT\", \"rationale\": \"...\", \"issue_title\": \"...\", \"labels\": [\"enhancement\"]}]\n\nBe rigorous. Reject duplicates and vague ideas."),
-                messages: [{role: "user", content: $ideas}]
-              }')" 2>/dev/null)
-
-          REVIEW_TEXT=$(echo "$REVIEW" | jq -r '.content[0].text' 2>/dev/null)
-
-          if [ -z "$REVIEW_TEXT" ] || [ "$REVIEW_TEXT" = "null" ]; then
+          # Call Claude via the shared llm_call.sh seam (Candidate 3).
+          LLM_SYSTEM=$(jq -rn --arg existing "$EXISTING_ISSUES" \
+            '("You are a critical reviewer. Review these ideas. REJECT any that duplicate existing issues.\n\nExisting open issues:\n" + $existing + "\n\nFor each idea respond as JSON array:\n[{\"idea_number\": 1, \"verdict\": \"APPROVE|MODIFY|REJECT\", \"rationale\": \"...\", \"issue_title\": \"...\", \"labels\": [\"enhancement\"]}]\n\nBe rigorous. Reject duplicates and vague ideas.")')
+          export LLM_SYSTEM
+          if ! REVIEW_TEXT=$(LLM_CLAUDE_MODEL=claude-sonnet-4-6-20250514 bash .github/scripts/llm_call.sh claude "$IDEAS" 1500 2>/tmp/llm_err); then
+            echo "::warning::Idea review failed: $(cat /tmp/llm_err)"
             echo "REVIEW_READY=false" >> $GITHUB_OUTPUT
             exit 0
           fi

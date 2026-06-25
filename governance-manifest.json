@@ -12,7 +12,7 @@
     "policy": 45,
     "schema": 40,
     "skill": 69,
-    "workflow": 22
+    "workflow": 23
   },
   "inventory": {
     "constitution": [
@@ -1255,6 +1255,10 @@
         "path": ".github/workflows/qa-tribunal.yml"
       },
       {
+        "name": "script-tests",
+        "path": ".github/workflows/script-tests.yml"
+      },
+      {
         "name": "seldon-plan",
         "path": ".github/workflows/seldon-plan.yml"
       },
@@ -2440,6 +2444,48 @@
       "from": "tests/behavioral/weakness-prober-cases.md",
       "to": "policy:weakness-prober-policy",
       "kind": "validates",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:ask_confirmation",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:autonomous",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:escalate",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/alignment-policy.yaml",
+      "to": "confidence:with_note",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/auto-remediation-policy.yaml",
+      "to": "confidence:ask_confirmation",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/auto-remediation-policy.yaml",
+      "to": "confidence:autonomous",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "policies/auto-remediation-policy.yaml",
+      "to": "confidence:with_note",
+      "kind": "confidence_ref",
       "resolved": true
     }
   ],

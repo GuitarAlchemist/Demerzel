@@ -31,7 +31,11 @@ humanity) overrides everything. Constitutions are **append-only**.
 - **Hexavalent logic (T/P/U/D/F/C)** — truth values: True, Probable, Unknown,
   Doubtful, False, Contradictory. `U` triggers investigation; `C` triggers
   escalation. (The README's older "tetravalent" T/F/U/C is the same lattice's
-  4-value subset.)
+  4-value subset.) The probability-distribution shape over these values lives in
+  **one** schema, `schemas/fuzzy-distribution.schema.json` — the byte-identical
+  `hexavalent-distribution` duplicate was collapsed into it 2026-06-21 (its
+  `$id`, `https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution`,
+  is the cross-repo-stable reference target).
 - **IxQL** — the declarative EBNF-grammared language (`grammars/`) for composing
   governed ML pipelines (`pipelines/*.ixql`); every step maps to a hexavalent
   conclusion + constitutional gates. Executed by the **ix** forge.
@@ -59,10 +63,14 @@ fact lives in one place and is read out, never restated.
   counts and the constitutional-precedence prose are populated from it. Replaced the
   hand-maintained `context-map.yaml` (removed 2026-06-21).
 - **Canonical reference syntax** — every cross-artifact citation is a parseable token
-  (`<constitution>#<article>`, `policy:<name>`, `persona:<name>`) followed by a prose gloss
-  after `—`. Lives in YAML fields (`constitutional_basis`, `references`) and in a new
-  `validates:` frontmatter block on behavioral tests (making persona↔test bidirectional,
-  not filename-only). The manifest harvests these into resolvable edges; dangling ones fail CI.
+  (`<constitution>#<article>`, `policy:<name>`, `persona:<name>`, and `ref:confidence#<key>`
+  for the confidence ladder — added 2026-06-21, Candidate 6) followed by a prose gloss
+  after `—`. Lives in YAML fields (`constitutional_basis`, `references`, threshold values)
+  and in a new `validates:` frontmatter block on behavioral tests (making persona↔test
+  bidirectional, not filename-only). The manifest harvests these into resolvable edges;
+  dangling ones fail CI. The confidence rungs are single-sourced in
+  `logic/confidence-thresholds.yaml`; policies reference a rung
+  (`proceed_autonomously: ref:confidence#autonomous`) instead of restating `0.9`.
 - **Schema-as-single-source validation** — structural rules live once in `*.schema.json`,
   read by two thin adapters: `jsonschema` (Python) and `Test-Json -Schema` (PowerShell).
   Kills the halt-marker and digest duplication; `persona.schema.json` finally gets used.
@@ -91,6 +99,34 @@ fact lives in one place and is read out, never restated.
   writes, and auto-resets counters by trigger. `Test-Digest` replaced
   `digest-validate.ps1`'s hand-coded rules with a schema read (ADR-0003). First
   unit-testable seam in the hook layer (`tests/powershell/DigestState.Tests.ps1`, Pester).
+
+## Architecture seams (designed + built 2026-06-21, Candidate 2)
+
+- **Ecosystem facts action** — `.github/actions/ecosystem`, a composite action that is
+  the single parse point for the GuitarAlchemist ecosystem's GitHub plumbing. It reads
+  `schemas/capability-registry.json` (new `github` block: `repo_node_id`,
+  `discussion_categories` name→id) and `governance-manifest.json` (`.counts`) once and
+  exposes them as step outputs (`repo_node_id`, `cat_*`, `count_*`, `consumer_repos` from
+  `.repos | keys`). Workflows stop restating the repo id / category ids (was duplicated
+  ~22× across 9 files) and stop re-deriving counts with `ls | wc -l` (was ~4 workflows) —
+  the latter is **harvest, don't declare** (ADR-0002) finally reaching the CI surface.
+  Every discussion-creating workflow now resolves ids from the action and posts via
+  `post_discussion.sh` (Candidate 3).
+
+## Architecture seams (designed + built 2026-06-21, Candidate 3)
+
+- **`llm_call.sh` / `post_discussion.sh`** — two deep, unit-tested scripts under
+  `.github/scripts/` that replace inline `run:` ceremony duplicated across workflows.
+  `llm_call.sh <provider> <prompt>` hides per-provider auth/payload/extraction
+  (`.content[0].text` vs `.candidates[]..` vs `.choices[]..`) behind one interface
+  with an explicit error contract (stdout=text · stderr=diagnostic · exit 0/2/3/4).
+  `post_discussion.sh` owns the createDiscussion GraphQL and **raises on failure**
+  instead of the `|| echo "Failed"` swallow (9 workflows). The network call is the single
+  overridable function (`_http_post` / `_graphql`); bats tests (`tests/bats/`)
+  override it with fixtures so the logic is tested without a live API — the first
+  unit-tested seam for the shell layer (`.github/workflows/script-tests.yml`:
+  bats + shellcheck). `post_discussion.sh` takes the category id as an arg, composing
+  with the ecosystem action's `cat_*` outputs.
 
 ## Conventions
 

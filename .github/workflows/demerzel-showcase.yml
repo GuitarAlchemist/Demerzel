@@ -23,6 +23,10 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Generate showcase content
         id: showcase
         env:
@@ -34,16 +38,8 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           TITLE="${{ steps.showcase.outputs.SHOWCASE_TITLE }}"
-          BODY=$(cat showcase.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDW\",
-              title: \"$TITLE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post showcase")
+          # post_discussion.sh raises on failure (no silent "Failed" swallow).
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_show_and_tell }}" "$TITLE" "$(cat showcase.md)")
           echo "Showcase: $URL"
