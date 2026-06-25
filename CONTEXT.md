@@ -63,10 +63,14 @@ fact lives in one place and is read out, never restated.
   counts and the constitutional-precedence prose are populated from it. Replaced the
   hand-maintained `context-map.yaml` (removed 2026-06-21).
 - **Canonical reference syntax** — every cross-artifact citation is a parseable token
-  (`<constitution>#<article>`, `policy:<name>`, `persona:<name>`) followed by a prose gloss
-  after `—`. Lives in YAML fields (`constitutional_basis`, `references`) and in a new
-  `validates:` frontmatter block on behavioral tests (making persona↔test bidirectional,
-  not filename-only). The manifest harvests these into resolvable edges; dangling ones fail CI.
+  (`<constitution>#<article>`, `policy:<name>`, `persona:<name>`, and `ref:confidence#<key>`
+  for the confidence ladder — added 2026-06-21, Candidate 6) followed by a prose gloss
+  after `—`. Lives in YAML fields (`constitutional_basis`, `references`, threshold values)
+  and in a new `validates:` frontmatter block on behavioral tests (making persona↔test
+  bidirectional, not filename-only). The manifest harvests these into resolvable edges;
+  dangling ones fail CI. The confidence rungs are single-sourced in
+  `logic/confidence-thresholds.yaml`; policies reference a rung
+  (`proceed_autonomously: ref:confidence#autonomous`) instead of restating `0.9`.
 - **Schema-as-single-source validation** — structural rules live once in `*.schema.json`,
   read by two thin adapters: `jsonschema` (Python) and `Test-Json -Schema` (PowerShell).
   Kills the halt-marker and digest duplication; `persona.schema.json` finally gets used.

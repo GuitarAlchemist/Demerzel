@@ -27,11 +27,13 @@ verification_methods:
     - Report any deviations from the original plan
     - Log the action with rationale
 
+# Values single-sourced in logic/confidence-thresholds.yaml; build_manifest
+# resolves these ref:confidence#<key> tokens and fails CI on a dangling key.
 confidence_thresholds:
-  proceed_autonomously: 0.9
-  proceed_with_note: 0.7
-  ask_for_confirmation: 0.5
-  escalate_to_human: 0.3
+  proceed_autonomously: ref:confidence#autonomous
+  proceed_with_note: ref:confidence#with_note
+  ask_for_confirmation: ref:confidence#ask_confirmation
+  escalate_to_human: ref:confidence#escalate
 
 escalation_triggers:
   - Confidence below escalation threshold

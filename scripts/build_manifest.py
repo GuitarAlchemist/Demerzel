@@ -38,7 +38,10 @@ import yaml
 REPO = Path(__file__).resolve().parent.parent
 MANIFEST = REPO / "governance-manifest.json"
 HEALTH = REPO / "governance-health.json"
+CONFIDENCE = REPO / "logic" / "confidence-thresholds.yaml"
 SCHEMA_VERSION = 1
+
+_CONFIDENCE_REF = re.compile(r"ref:confidence#([\w-]+)")
 
 if hasattr(sys.stdout, "reconfigure"):  # Windows consoles default to cp1252.
     sys.stdout.reconfigure(encoding="utf-8")
@@ -399,6 +402,29 @@ def check_precedence(inv: dict[str, list[dict[str, Any]]]) -> tuple[dict[str, An
     return prec, violations
 
 
+def check_confidence_refs(inv: dict[str, list[dict[str, Any]]]) -> tuple[list[dict[str, Any]], list[str]]:
+    """Resolve every `ref:confidence#<key>` token against the canonical thresholds
+    (logic/confidence-thresholds.yaml). Returns (edges, violations); a token that
+    names no such rung is a hard violation. ADR-0002 / Candidate 6 — the values
+    are single-sourced; policies reference a rung instead of restating the number."""
+    edges: list[dict[str, Any]] = []
+    violations: list[str] = []
+    if not CONFIDENCE.exists():
+        return edges, ["confidence: logic/confidence-thresholds.yaml is missing"]
+    thresholds = (yaml.safe_load(CONFIDENCE.read_text(encoding="utf-8")) or {}).get("thresholds", {})
+    valid = set(thresholds)
+    for art in inv.get("policy", []):
+        text = (REPO / art["path"]).read_text(encoding="utf-8")
+        for key in sorted(set(_CONFIDENCE_REF.findall(text))):
+            ok = key in valid
+            edges.append({"from": art["path"], "to": f"confidence:{key}", "kind": "confidence_ref", "resolved": ok})
+            if not ok:
+                violations.append(
+                    f"dangling confidence ref: {art['path']} -> ref:confidence#{key} (valid: {sorted(valid)})"
+                )
+    return edges, violations
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -414,6 +440,10 @@ def build() -> tuple[dict[str, Any], list[str], list[str]]:
     hard += check_readme_counts(counts)
     precedence, prec_violations = check_precedence(inv)
     hard += prec_violations
+
+    conf_edges, conf_violations = check_confidence_refs(inv)
+    edges += conf_edges
+    hard += conf_violations
 
     manifest = {
         "schema_version": SCHEMA_VERSION,
