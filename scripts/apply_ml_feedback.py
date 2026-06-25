@@ -44,8 +44,9 @@ import hashlib
 import json
 import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
+
+import demerzel_kit as kit
 
 NUDGE_CAP = 0.10
 MAX_RECONS_PER_DAY = 3   # §3b / policy guardrail
@@ -59,10 +60,6 @@ APPLICABLE_TYPES = {"threshold_adjustment", "proactive_recon", "pattern_report",
 REQUIRED = ["pipeline_id", "recommendation_type", "recommendation", "confidence",
             "evidence", "constitutional_check", "timestamp",
             "message_id", "origin_repo", "content_hash", "hash_algorithm"]
-
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _verify_integrity(doc: dict) -> tuple[bool, str]:
@@ -113,15 +110,6 @@ def _gate(doc: dict) -> tuple[str, str]:
     return "apply", f"confidence {conf} >= {CONF_AUTO_APPLY}, low-risk {rtype}"
 
 
-def _atomic_write(path: Path, data: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with tmp.open("w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=2)
-        fh.write("\n")
-    os.replace(tmp, path)
-
-
 def _apply_nudge(root: Path, doc: dict, dry: bool) -> dict:
     """Write the bounded threshold nudge into the calibration belief. Returns the
     applied delta record (prior -> new) for the evolution log / reversibility."""
@@ -153,7 +141,7 @@ def _apply_nudge(root: Path, doc: dict, dry: bool) -> dict:
             }],
             "contradicting": [],
         },
-        "last_updated": _now_iso(),
+        "last_updated": kit.now_iso(),
         "evaluated_by": "demerzel",
         "calibration": {
             "threshold_nudge": new_total,
@@ -165,7 +153,7 @@ def _apply_nudge(root: Path, doc: dict, dry: bool) -> dict:
         },
     }
     if not dry:
-        _atomic_write(belief_path, belief)
+        kit.write_artifact(belief_path, belief)
     return {"prior_nudge": prior, "new_nudge": new_total,
             "applied_delta": round(new_total - prior, 4), "belief": str(belief_path)}
 
@@ -178,7 +166,7 @@ def _apply_recon_schedule(root: Path, doc: dict, dry: bool) -> dict:
     params = doc["recommendation"].get("parameters", {})
     targets = list(params.get("recon_targets", []))[:MAX_RECONS_PER_DAY]  # hard cap
 
-    date = _now_iso()[:10]
+    date = kit.now_iso()[:10]
     queue_path = root / "state" / "oversight" / f"scheduled-recons-{date}.json"
     queue = {"date": date, "max_per_day": MAX_RECONS_PER_DAY, "recons": []}
     if queue_path.is_file():
@@ -199,12 +187,12 @@ def _apply_recon_schedule(root: Path, doc: dict, dry: bool) -> dict:
             "target": t, "status": "scheduled",
             "source_recommendation": doc["message_id"],
             "rationale": doc["recommendation"]["rationale"],  # Art.2 self-explaining
-            "scheduled_at": _now_iso(),
+            "scheduled_at": kit.now_iso(),
         })
         scheduled.append(t)
         remaining -= 1
     if not dry:
-        _atomic_write(queue_path, queue)
+        kit.write_artifact(queue_path, queue)
     return {"scheduled": scheduled, "skipped_over_cap": targets[len(scheduled):],
             "queue": str(queue_path), "day_total": len(queue["recons"])}
 
@@ -244,11 +232,11 @@ def _apply_policy_review_request(root: Path, doc: dict, dry: bool) -> dict:
             "status": "review-requested",          # advisory — NOT an applied policy change
             "binding": False,
             "source_recommendation": doc["message_id"],
-            "filed_at": _now_iso(),
+            "filed_at": kit.now_iso(),
         })
         filed.append(key)
     if not dry:
-        _atomic_write(queue_path, queue)
+        kit.write_artifact(queue_path, queue)
     return {"filed_review_requests": filed, "systemic_count": len(systemic),
             "emerging_risks": len(emerging), "policies_modified": 0,  # invariant: never
             "queue": str(queue_path)}
@@ -287,7 +275,7 @@ def _apply_remediation_rates(root: Path, doc: dict, dry: bool) -> dict:
             }],
             "contradicting": [],
         },
-        "last_updated": _now_iso(),
+        "last_updated": kit.now_iso(),
         "evaluated_by": "demerzel",
         "strategy_success_rates": rates,
         "prior_strategy_success_rates": prior,                 # Art.3 reversibility
@@ -296,7 +284,7 @@ def _apply_remediation_rates(root: Path, doc: dict, dry: bool) -> dict:
         "source_recommendation": doc["message_id"],
     }
     if not dry:
-        _atomic_write(belief_path, belief)
+        kit.write_artifact(belief_path, belief)
     return {"strategies_recorded": list(rates), "advisory_escalations": len(escalations),
             "risk_classes_modified": 0, "belief": str(belief_path)}
 
@@ -325,14 +313,17 @@ def _append_audit(root: Path, event: dict, dry: bool) -> None:
             pass
     log["events"].append(event)
     if not dry:
-        _atomic_write(path, log)
+        kit.write_artifact(path, log)
 
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Demerzel ML-feedback applier (governor)")
-    root = Path(__file__).resolve().parents[1]  # repos/Demerzel
+    demerzel_root = Path(__file__).resolve().parents[1]  # repos/Demerzel
+    ap.add_argument("--demerzel-root", type=Path, default=demerzel_root,
+                    help="repo root holding state/ (default: this script's repo); set for testability")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
+    root = args.demerzel_root
 
     inbox = root / "state" / "oversight" / "ml-recommendations"
     pending = sorted(p for p in inbox.glob("*.json")) if inbox.is_dir() else []
@@ -360,18 +351,18 @@ def main(argv: list[str]) -> int:
 
         if decision == "reject":
             rejected.append({"message_id": doc["message_id"], "reason": reason})
-            evt = {"event": "ml_recommendation_rejected", "timestamp": _now_iso(),
+            evt = {"event": "ml_recommendation_rejected", "timestamp": kit.now_iso(),
                    "message_id": doc["message_id"], "reason": reason}
         elif decision == "escalate":
             escalated.append({"message_id": doc["message_id"], "reason": reason,
                               "recommendation": doc["recommendation"]})
-            evt = {"event": "ml_recommendation_escalated", "timestamp": _now_iso(),
+            evt = {"event": "ml_recommendation_escalated", "timestamp": kit.now_iso(),
                    "message_id": doc["message_id"], "reason": reason}
         else:  # apply — dispatch on type (gate ensures an applier exists)
             delta = _APPLIERS[doc["recommendation_type"]](root, doc, args.dry_run)
             applied.append({"message_id": doc["message_id"],
                             "type": doc["recommendation_type"], **delta})
-            evt = {"event": "ml_recommendation_applied", "timestamp": _now_iso(),
+            evt = {"event": "ml_recommendation_applied", "timestamp": kit.now_iso(),
                    "message_id": doc["message_id"],
                    "recommendation_type": doc["recommendation_type"], "metrics": delta}
         _append_audit(root, evt, args.dry_run)
@@ -385,23 +376,23 @@ def main(argv: list[str]) -> int:
     # §4 escalations -> human review queue
     if escalated:
         q = root / "state" / "oversight" / "pending-human-review.json"
-        payload = {"updated_at": _now_iso(), "queued": escalated}
+        payload = {"updated_at": kit.now_iso(), "queued": escalated}
         if not args.dry_run:
-            _atomic_write(q, payload)
+            kit.write_artifact(q, payload)
         print(f"queued {len(escalated)} for human review -> {q}")
 
     # §6 run summary
     summary = {
-        "run_at": _now_iso(),
+        "run_at": kit.now_iso(),
         "results_in": len(pending),
         "applied": len(applied),
         "escalated": len(escalated),
         "rejected": len(rejected),
         "applied_detail": applied,
     }
-    date = _now_iso()[:10]
+    date = kit.now_iso()[:10]
     if not args.dry_run:
-        _atomic_write(root / "state" / "oversight" / f"ml-feedback-loop-{date}.json", summary)
+        kit.write_artifact(root / "state" / "oversight" / f"ml-feedback-loop-{date}.json", summary)
     print(f"\nsummary: {json.dumps(summary, indent=2)}")
     # single-line terminal status (parsed by run_ml_feedback_cycle.py)
     print(f"RESULT applied={len(applied)} escalated={len(escalated)} rejected={len(rejected)}")
