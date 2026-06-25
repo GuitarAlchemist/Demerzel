@@ -31,7 +31,11 @@ humanity) overrides everything. Constitutions are **append-only**.
 - **Hexavalent logic (T/P/U/D/F/C)** — truth values: True, Probable, Unknown,
   Doubtful, False, Contradictory. `U` triggers investigation; `C` triggers
   escalation. (The README's older "tetravalent" T/F/U/C is the same lattice's
-  4-value subset.)
+  4-value subset.) The probability-distribution shape over these values lives in
+  **one** schema, `schemas/fuzzy-distribution.schema.json` — the byte-identical
+  `hexavalent-distribution` duplicate was collapsed into it 2026-06-21 (its
+  `$id`, `https://github.com/GuitarAlchemist/Demerzel/schemas/fuzzy-distribution`,
+  is the cross-repo-stable reference target).
 - **IxQL** — the declarative EBNF-grammared language (`grammars/`) for composing
   governed ML pipelines (`pipelines/*.ixql`); every step maps to a hexavalent
   conclusion + constitutional gates. Executed by the **ix** forge.

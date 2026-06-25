@@ -77,7 +77,7 @@
       "description": "Algedonic channel notified"
     },
     "confidence": {
-      "$ref": "hexavalent-distribution.schema.json",
+      "$ref": "fuzzy-distribution.schema.json",
       "description": "Hexavalent confidence of the resolution"
     },
     "resolution_type": {

@@ -41,7 +41,7 @@
       "description": "Standard IXQL remediation commands"
     },
     "confidence": {
-      "$ref": "hexavalent-distribution.schema.json",
+      "$ref": "fuzzy-distribution.schema.json",
       "description": "Confidence distribution — grows with each confirming case"
     },
     "activation_count": {
