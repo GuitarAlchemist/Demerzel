@@ -44,20 +44,22 @@ Exit codes:
   0  verdict emitted (any verdict value — APPROVE/REQUEST_CHANGES/REJECT)
   1  usage / environment error (e.g. PR not found)
 
-Stdlib only (urllib for the model call) — no third-party deps, mirroring
-run_afk_cycle.py so the governor can call this in the same environment.
+Stdlib only at import (urllib for the model call); GitHub reads and the
+schema-validated write go through demerzel_kit, which uses jsonschema when
+present and degrades otherwise, so the governor can still call this in a
+minimal environment.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import subprocess
 import sys
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
 from pathlib import Path
+
+import demerzel_kit as kit
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO_SLUG = "GuitarAlchemist/Demerzel"
@@ -72,10 +74,6 @@ SCORE_XMODEL_APPROVE = 0.85
 SCORE_XMODEL_REQUEST_CHANGES = 0.3
 
 SELF_MERGE_MIN_CONFIDENCE = 0.7   # policies/autonomous-loop-policy.yaml
-
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 # --------------------------------------------------------------------------- #
@@ -183,7 +181,7 @@ def build_verdict(pr: int, change_summary: str, reviews: list[dict],
     return {
         "verdict_id": f"council-{today}-{seq:03d}",
         "task_id": f"github_pr:#{pr}",
-        "timestamp": _now_iso(),
+        "timestamp": kit.now_iso(),
         "trigger_condition": "borderline_confidence",
         "change_summary": change_summary[:500] if change_summary else f"PR #{pr}",
         "reviews": reviews,
@@ -194,36 +192,22 @@ def build_verdict(pr: int, change_summary: str, reviews: list[dict],
 
 
 # --------------------------------------------------------------------------- #
-# IO (thin wrappers around gh + model APIs)
+# IO — GitHub reads via the demerzel_kit gh seam; model APIs via urllib below.
 # --------------------------------------------------------------------------- #
-def _gh_json(args: list[str]) -> dict | list | None:
-    try:
-        p = subprocess.run(["gh", *args], capture_output=True, text=True, timeout=60)
-        if p.returncode != 0:
-            print(f"warn: gh {' '.join(args)} failed: {p.stderr.strip()[:160]}", file=sys.stderr)
-            return None
-        return json.loads(p.stdout or "null")
-    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as exc:
-        print(f"warn: gh {' '.join(args)} unavailable: {exc}", file=sys.stderr)
-        return None
-
-
 def fetch_pr_meta(pr: int) -> dict | None:
-    return _gh_json(["pr", "view", str(pr), "--repo", REPO_SLUG,
-                     "--json", "number,title,body,headRefOid,labels"])  # type: ignore[return-value]
+    return kit.gh_json(["pr", "view", str(pr), "--repo", REPO_SLUG,
+                        "--json", "number,title,body,headRefOid,labels"])  # type: ignore[return-value]
 
 
 def fetch_blackbox_check_state(pr: int) -> str | None:
     """Return the `risk-report` check state ('pass'/'fail'/...) or None if absent.
-    Parses `gh pr checks` tab-separated output (name<TAB>state<TAB>...)."""
-    try:
-        p = subprocess.run(["gh", "pr", "checks", str(pr), "--repo", REPO_SLUG],
-                           capture_output=True, text=True, timeout=60)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        print(f"warn: gh pr checks failed: {exc}", file=sys.stderr)
+    Parses `gh pr checks` tab-separated output (name<TAB>state<TAB>...). `gh pr
+    checks` exits non-zero when any check failed but the table is still valid, so
+    the read uses ok_nonzero=True."""
+    out = kit.gh_text(["pr", "checks", str(pr), "--repo", REPO_SLUG], ok_nonzero=True)
+    if out is None:
         return None
-    # gh pr checks exits non-zero when any check failed; output is still on stdout.
-    for line in p.stdout.splitlines():
+    for line in out.splitlines():
         parts = line.split("\t")
         if parts and parts[0].strip() == BLACKBOX_CHECK and len(parts) > 1:
             return parts[1].strip()
@@ -231,45 +215,35 @@ def fetch_blackbox_check_state(pr: int) -> str | None:
 
 
 def fetch_diff(pr: int, limit: int = 30000) -> str:
-    try:
-        p = subprocess.run(["gh", "pr", "diff", str(pr), "--repo", REPO_SLUG],
-                           capture_output=True, text=True, timeout=60)
-        return (p.stdout or "")[:limit] if p.returncode == 0 else ""
-    except (OSError, subprocess.TimeoutExpired):
-        return ""
+    out = kit.gh_text(["pr", "diff", str(pr), "--repo", REPO_SLUG])
+    return (out or "")[:limit]
 
 
 def fetch_changed_files(pr: int) -> list[str]:
     """Changed file paths for the PR (via `gh pr diff --name-only`)."""
-    try:
-        p = subprocess.run(["gh", "pr", "diff", str(pr), "--repo", REPO_SLUG, "--name-only"],
-                           capture_output=True, text=True, timeout=60)
-        return [ln.strip() for ln in p.stdout.splitlines() if ln.strip()] if p.returncode == 0 else []
-    except (OSError, subprocess.TimeoutExpired):
-        return []
+    out = kit.gh_text(["pr", "diff", str(pr), "--repo", REPO_SLUG, "--name-only"])
+    return [ln.strip() for ln in out.splitlines() if ln.strip()] if out else []
 
 
 def fetch_file_at_ref(path: str, ref: str) -> str | None:
     """Full content of `path` at commit `ref` (the PR head), via the contents API.
     Lets reviewer_b verify the WHOLE changed file for internal consistency, not
     just the diff hunk (which can't reveal a contradicting line elsewhere).
-    `gh api --jq .content` returns raw (multi-line) base64, NOT JSON — capture it
-    directly and decode rather than routing through the json-parsing helper."""
+    `gh api --jq .content` returns raw (multi-line) base64, NOT JSON — fetch it as
+    text and decode rather than routing through gh_json."""
     import base64
+    out = kit.gh_text(["api", f"repos/{REPO_SLUG}/contents/{path}?ref={ref}", "--jq", ".content"])
+    if not out or not out.strip():
+        return None
     try:
-        p = subprocess.run(
-            ["gh", "api", f"repos/{REPO_SLUG}/contents/{path}?ref={ref}", "--jq", ".content"],
-            capture_output=True, text=True, timeout=60)
-        if p.returncode != 0 or not p.stdout.strip():
-            return None
-        return base64.b64decode(p.stdout.replace("\n", "")).decode("utf-8", errors="replace")
-    except (OSError, subprocess.TimeoutExpired, ValueError, UnicodeDecodeError):
+        return base64.b64decode(out.replace("\n", "")).decode("utf-8", errors="replace")
+    except (ValueError, UnicodeDecodeError):
         return None
 
 
 def fetch_issue_body(issue_num: str) -> str:
     """The linked issue's title+body, so reviewer_b knows the authorized intent."""
-    obj = _gh_json(["issue", "view", issue_num, "--repo", REPO_SLUG, "--json", "title,body"])
+    obj = kit.gh_json(["issue", "view", issue_num, "--repo", REPO_SLUG, "--json", "title,body"])
     if isinstance(obj, dict):
         return f"#{issue_num}: {obj.get('title', '')}\n\n{obj.get('body', '')}"
     return ""
@@ -423,10 +397,11 @@ def _next_seq(today: str) -> int:
 
 
 def _write_verdict(verdict: dict) -> Path:
-    COUNCIL_DIR.mkdir(parents=True, exist_ok=True)
+    """Validate against schemas/council-verdict.schema.json, then atomic-write —
+    both via demerzel_kit.write_artifact, so an invalid verdict never reaches
+    state/council/ for a downstream reader to choke on."""
     out = COUNCIL_DIR / f"{verdict['verdict_id']}.json"
-    out.write_text(json.dumps(verdict, indent=2) + "\n", encoding="utf-8")
-    return out
+    return kit.write_artifact(out, verdict, schema="council-verdict")
 
 
 def convene(pr: int, classified_risk: str = "medium",
@@ -449,7 +424,7 @@ def convene(pr: int, classified_risk: str = "medium",
     if rb:
         reviews.append(rb)
 
-    today = _now_iso()[:10]
+    today = kit.now_iso()[:10]
     seq = _next_seq(today)
     verdict = build_verdict(pr, change_summary, reviews, today, seq)
     if write:
