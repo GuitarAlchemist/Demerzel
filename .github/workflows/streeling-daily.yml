@@ -25,6 +25,10 @@ jobs:
       - name: Checkout Demerzel
         uses: actions/checkout@v4
 
+      - name: Ecosystem facts
+        id: eco
+        uses: ./.github/actions/ecosystem
+
       - name: Harvest knowledge via GitHub API
         id: harvest
         env:
@@ -44,13 +48,14 @@ jobs:
           HEADER
           sed -i "s/DATE_PLACEHOLDER/$DATE/" harvest-report.md
 
-          # Count governance artifacts in Demerzel
-          PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | wc -l)
-          POLICIES=$(ls policies/*.yaml 2>/dev/null | wc -l)
-          SCHEMAS=$(ls schemas/contracts/*.json 2>/dev/null | wc -l)
+          # Governance counts harvested from the manifest (ADR-0002); LOGIC is a
+          # runtime dir the manifest does not track.
+          PERSONAS=${{ steps.eco.outputs.count_persona }}
+          POLICIES=${{ steps.eco.outputs.count_policy }}
+          SCHEMAS=${{ steps.eco.outputs.count_contract_schema }}
           LOGIC=$(ls logic/*.json 2>/dev/null | wc -l)
-          TESTS=$(ls tests/behavioral/*.md 2>/dev/null | wc -l)
-          SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null | wc -l)
+          TESTS=${{ steps.eco.outputs.count_behavioral_test }}
+          SKILLS=${{ steps.eco.outputs.count_skill }}
 
           cat >> harvest-report.md << EOF
           ### 📊 Demerzel Governance Inventory
@@ -157,18 +162,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
-          BODY=$(cat harvest-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDS\",
-              title: \"🤖 Demerzel Governance Report — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post to Demerzel Discussions")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_announcements }}" "🤖 Demerzel Governance Report — $DATE" "$(cat harvest-report.md)")
           echo "Demerzel Discussion: $URL"
 
       - name: Generate Seldon academic digest (Fridays only)
@@ -239,18 +235,9 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           DATE=$(date -u +%Y-%m-%d)
-          BODY=$(cat seldon-digest.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
-              title: \"📚 Seldon Knowledge Digest — $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post Seldon digest")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "📚 Seldon Knowledge Digest — $DATE" "$(cat seldon-digest.md)")
           echo "Seldon Digest: $URL"
 
       - name: Run meta-compounding scan
@@ -334,16 +321,7 @@ jobs:
         run: |
           DATE=$(date -u +%Y-%m-%d)
           DOW=$(date -u +%A)
-          BODY=$(cat compound-report.md | jq -Rs .)
-
-          URL=$(gh api graphql -f query="mutation {
-            createDiscussion(input: {
-              repositoryId: \"R_kgDORnMyyQ\",
-              categoryId: \"DIC_kwDORnMyyc4C4eDT\",
-              title: \"🔄 Meta-Compounding Cycle — $DOW $DATE\",
-              body: $BODY
-            }) {
-              discussion { url }
-            }
-          }" --jq '.data.createDiscussion.discussion.url' 2>/dev/null || echo "Failed to post compounding cycle")
+          URL=$(REPO_NODE_ID="${{ steps.eco.outputs.repo_node_id }}" \
+            bash .github/scripts/post_discussion.sh \
+              "${{ steps.eco.outputs.cat_general }}" "🔄 Meta-Compounding Cycle — $DOW $DATE" "$(cat compound-report.md)")
           echo "Compounding Discussion: $URL"

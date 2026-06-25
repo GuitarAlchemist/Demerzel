@@ -1,0 +1,84 @@
+name: 'Ecosystem facts'
+description: >
+  Single source of GuitarAlchemist ecosystem identity (repo node id, discussion
+  category ids, consumer repos) and governance counts. Reads them once from
+  schemas/capability-registry.json + governance-manifest.json and exposes them as
+  outputs, so no workflow restates a category id or re-runs `ls | wc -l`.
+  Requires the repo to be checked out first (actions/checkout).
+
+outputs:
+  repo_node_id:
+    description: 'GraphQL node id of the Demerzel repo'
+    value: ${{ steps.eco.outputs.repo_node_id }}
+  consumer_repos:
+    description: 'Space-separated consumer repo keys (ix tars ga), from .repos'
+    value: ${{ steps.eco.outputs.consumer_repos }}
+  cat_announcements:
+    description: 'Discussion category id: Announcements'
+    value: ${{ steps.eco.outputs.cat_announcements }}
+  cat_general:
+    description: 'Discussion category id: General'
+    value: ${{ steps.eco.outputs.cat_general }}
+  cat_ideas:
+    description: 'Discussion category id: Ideas'
+    value: ${{ steps.eco.outputs.cat_ideas }}
+  cat_polls:
+    description: 'Discussion category id: Polls'
+    value: ${{ steps.eco.outputs.cat_polls }}
+  cat_q_and_a:
+    description: 'Discussion category id: Q&A'
+    value: ${{ steps.eco.outputs.cat_q_and_a }}
+  cat_show_and_tell:
+    description: 'Discussion category id: Show and tell'
+    value: ${{ steps.eco.outputs.cat_show_and_tell }}
+  count_persona:
+    description: 'Number of personas'
+    value: ${{ steps.eco.outputs.count_persona }}
+  count_policy:
+    description: 'Number of policies'
+    value: ${{ steps.eco.outputs.count_policy }}
+  count_constitution:
+    description: 'Number of constitutions'
+    value: ${{ steps.eco.outputs.count_constitution }}
+  count_behavioral_test:
+    description: 'Number of behavioral tests'
+    value: ${{ steps.eco.outputs.count_behavioral_test }}
+  count_schema:
+    description: 'Number of schemas'
+    value: ${{ steps.eco.outputs.count_schema }}
+  count_workflow:
+    description: 'Number of workflows'
+    value: ${{ steps.eco.outputs.count_workflow }}
+  count_skill:
+    description: 'Number of skills'
+    value: ${{ steps.eco.outputs.count_skill }}
+  count_pipeline:
+    description: 'Number of pipelines'
+    value: ${{ steps.eco.outputs.count_pipeline }}
+  count_grammar:
+    description: 'Number of grammars'
+    value: ${{ steps.eco.outputs.count_grammar }}
+  count_contract_schema:
+    description: 'Number of contract schemas'
+    value: ${{ steps.eco.outputs.count_contract_schema }}
+
+runs:
+  using: composite
+  steps:
+    - id: eco
+      shell: bash
+      run: |
+        set -euo pipefail
+        reg=schemas/capability-registry.json
+        man=governance-manifest.json
+        {
+          echo "repo_node_id=$(jq -r '.github.repo_node_id' "$reg")"
+          echo "consumer_repos=$(jq -r '.repos | keys | join(" ")' "$reg")"
+          for c in announcements general ideas polls q-and-a show-and-tell; do
+            key=$(echo "$c" | tr '-' '_')
+            echo "cat_${key}=$(jq -r --arg c "$c" '.github.discussion_categories[$c]' "$reg")"
+          done
+          for k in persona policy constitution behavioral_test schema workflow skill pipeline grammar contract_schema; do
+            echo "count_${k}=$(jq -r --arg k "$k" '.counts[$k]' "$man")"
+          done
+        } >> "$GITHUB_OUTPUT"

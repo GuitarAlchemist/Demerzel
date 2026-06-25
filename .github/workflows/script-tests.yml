@@ -1,0 +1,28 @@
+name: Script Tests
+
+on:
+  pull_request:
+    paths:
+      - '.github/scripts/**'
+      - 'tests/bats/**'
+      - '.github/workflows/script-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  bats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install bats + shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats shellcheck
+
+      - name: Shellcheck the extracted scripts
+        run: shellcheck .github/scripts/llm_call.sh .github/scripts/post_discussion.sh
+
+      - name: Run bats tests
+        run: bats tests/bats

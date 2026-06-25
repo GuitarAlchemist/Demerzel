@@ -100,42 +100,18 @@ jobs:
           7. Use Demerzel's voice: authoritative but warm, precise but not pedantic, always deferential to human authority
           8. Format as GitHub-flavored markdown"
 
-          # Call Claude API
-          RESPONSE=$(curl -s --max-time 30 \
-            https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "content-type: application/json" \
-            -H "anthropic-version: 2025-01-01" \
-            -d "$(jq -n \
-              --arg model "$CLAUDE_MODEL" \
-              --argjson max_tokens "$CLAUDE_MAX_TOKENS" \
-              --arg system "$SYSTEM_PROMPT" \
-              --arg discussion_title "$DISCUSSION_TITLE" \
-              --arg discussion_body "${DISCUSSION_BODY:0:2000}" \
-              --arg comment "$COMMENT_BODY" \
-              --arg author "$COMMENT_AUTHOR" \
-              '{
-                model: $model,
-                max_tokens: $max_tokens,
-                system: $system,
-                messages: [{
-                  role: "user",
-                  content: "Discussion: \($discussion_title)\n\nOriginal post (truncated):\n\($discussion_body)\n\n---\n\nComment from \($author):\n\($comment)\n\nRespond as Demerzel."
-                }]
-              }')" 2>/dev/null)
-
-          if [ $? -ne 0 ] || [ -z "$RESPONSE" ]; then
+          # Call Claude via the shared llm_call.sh seam (Candidate 3). The seam's
+          # exit code + stderr replace the old $?/empty/no-text inspection.
+          PROMPT=$(jq -rn \
+            --arg discussion_title "$DISCUSSION_TITLE" \
+            --arg discussion_body "${DISCUSSION_BODY:0:2000}" \
+            --arg comment "$COMMENT_BODY" \
+            --arg author "$COMMENT_AUTHOR" \
+            '"Discussion: \($discussion_title)\n\nOriginal post (truncated):\n\($discussion_body)\n\n---\n\nComment from \($author):\n\($comment)\n\nRespond as Demerzel."')
+          export LLM_SYSTEM="$SYSTEM_PROMPT"
+          if ! ANSWER=$(LLM_CLAUDE_MODEL="$CLAUDE_MODEL" bash .github/scripts/llm_call.sh claude "$PROMPT" "$CLAUDE_MAX_TOKENS" 2>/tmp/llm_err); then
             echo "RESPONSE_READY=false" >> $GITHUB_OUTPUT
-            echo "Claude API call failed"
-            exit 0
-          fi
-
-          # Extract text
-          ANSWER=$(echo "$RESPONSE" | jq -r '[.content[] | select(.type == "text") | .text] | join("\n")' 2>/dev/null)
-
-          if [ -z "$ANSWER" ] || [ "$ANSWER" = "null" ]; then
-            echo "RESPONSE_READY=false" >> $GITHUB_OUTPUT
-            echo "No text in response"
+            echo "::warning::Claude API call failed: $(cat /tmp/llm_err)"
             exit 0
           fi
 
