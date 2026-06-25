@@ -128,6 +128,28 @@ fact lives in one place and is read out, never restated.
   bats + shellcheck). `post_discussion.sh` takes the category id as an arg, composing
   with the ecosystem action's `cat_*` outputs.
 
+## Architecture seams (designed + built 2026-06-25 via `/improve-codebase-architecture`, Python emitter kit)
+
+- **`demerzel_kit`** — `scripts/demerzel_kit.py`, the Python sibling of
+  `DigestState.psm1` and the `llm_call.sh` shell seams: one small interface the
+  `scripts/` **emitters** share, owning the four primitives each was re-deriving
+  (`now_iso` — copy-pasted ×7; `atomic_write` — ×6; schema `validate`; and the `gh`
+  subprocess wrapper — ×3, with three different error contracts). `write_artifact(
+  path, data, schema=…)` validates **then** atomic-writes, so an invalid governance
+  artifact never reaches disk for a read-time consumer to choke on — the gap that
+  let `council_emit._write_verdict` write unvalidated verdicts despite its docstring.
+  `gh_json` / `gh_text` take an injectable `run=` seam, which is what finally makes
+  the emitters testable through their interface: `council_emit.convene()` now runs
+  end-to-end offline in `scripts/test_council_emit.py`, the test the un-seamed `gh`
+  calls used to make impossible. `validate` lazily imports `jsonschema` and degrades
+  when absent (matching `demerzel_halt`), so an emitter still runs stdlib-only. Wired
+  into CI via `governance-validate.yml` (`python -m unittest discover -s scripts`).
+  `council_emit` is the first migrated emitter (tracer bullet); the other six
+  (`qa_tribunal_emit`, `run_afk_cycle`, `apply_ml_feedback`, `compliance_report`,
+  `run_ml_feedback_cycle`, `demerzel_halt`) follow. Does **not** auto-stamp a
+  timestamp — domain artifacts carry their own (`timestamp`, `halted_at`) and several
+  schemas set `additionalProperties: false`, so callers stamp with `now_iso()`.
+
 ## Conventions
 
 See `CLAUDE.md` / `AGENTS.md` for authoritative validation rules, the constitutional

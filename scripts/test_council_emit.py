@@ -1,5 +1,7 @@
 import json
+import tempfile
 import unittest
+import unittest.mock as mock
 from pathlib import Path
 import sys
 
@@ -106,6 +108,62 @@ class TestBuildVerdictSchema(unittest.TestCase):
             self.skipTest("jsonschema not installed")
         v = c.build_verdict(365, "Some change", [_green_a(), _approve_b()], "2026-06-23", 2)
         jsonschema.validate(v, self._schema())
+
+
+class TestConveneSeam(unittest.TestCase):
+    """End-to-end through the demerzel_kit seam: convene() with the gh reads and the
+    cross-model review injected, proving the council writes a schema-valid verdict to
+    disk without touching the network. This is the test the un-seamed gh calls made
+    impossible before the kit migration."""
+
+    def _fake_gh_json(self, args, **kwargs):
+        if args[:2] == ["pr", "view"]:
+            return {"number": 365, "title": "Add a thing", "body": "Closes #1",
+                    "headRefOid": "", "labels": []}
+        if args[:2] == ["issue", "view"]:
+            return {"title": "Issue 1", "body": "Do the thing"}
+        return None
+
+    def _fake_gh_text(self, args, **kwargs):
+        if args[:2] == ["pr", "checks"]:
+            return "risk-report\tpass\thttps://example/checks"
+        return ""  # diff / changed-files / api-content empty -> no file fetches
+
+    def _convene_in(self, tmp, xmodel=("Clean.\nVerdict: APPROVE", "claude")):
+        with mock.patch.object(c.kit, "gh_json", self._fake_gh_json), \
+             mock.patch.object(c.kit, "gh_text", self._fake_gh_text), \
+             mock.patch.object(c, "run_cross_model", return_value=xmodel), \
+             mock.patch.object(c, "COUNCIL_DIR", Path(tmp)):
+            return c.convene(365, classified_risk="low", write=True)
+
+    def test_convene_writes_schema_valid_verdict_to_disk(self):
+        with tempfile.TemporaryDirectory() as d:
+            verdict = self._convene_in(d)
+            written = Path(d) / f"{verdict['verdict_id']}.json"
+            self.assertTrue(written.exists(), "verdict must be written to disk")
+            on_disk = json.loads(written.read_text(encoding="utf-8"))
+            self.assertEqual(on_disk["verdict_id"], verdict["verdict_id"])
+            try:
+                import jsonschema
+            except ImportError:
+                self.skipTest("jsonschema not installed")
+            schema = json.loads((ROOT / "schemas" / "council-verdict.schema.json")
+                                .read_text(encoding="utf-8"))
+            jsonschema.validate(on_disk, schema)  # write_artifact already did; double-check
+
+    def test_convene_two_green_reviews_approve_strictest_wins(self):
+        with tempfile.TemporaryDirectory() as d:
+            verdict = self._convene_in(d)
+            # reviewer_a green (0.75) + reviewer_b approve (0.85) -> APPROVE, conf min=0.75
+            self.assertEqual(verdict["verdict"], "APPROVE")
+            self.assertEqual(len(verdict["reviews"]), 2)
+            self.assertAlmostEqual(verdict["post_council_confidence"], 0.75)
+
+    def test_convene_request_changes_when_cross_model_rejects(self):
+        with tempfile.TemporaryDirectory() as d:
+            verdict = self._convene_in(d, xmodel=("Bug.\nVerdict: REQUEST_CHANGES", "claude"))
+            # reviewer_b constitutional fail -> REJECT under strictest-wins
+            self.assertEqual(verdict["verdict"], "REJECT")
 
 
 if __name__ == "__main__":

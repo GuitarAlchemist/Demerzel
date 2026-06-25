@@ -12,8 +12,7 @@ on:
       - 'tests/behavioral/**'
       - 'README.md'
       - 'governance-manifest.json'
-      - 'scripts/validate_governance.py'
-      - 'scripts/build_manifest.py'
+      - 'scripts/**'
       - '.github/workflows/governance-validate.yml'
   pull_request:
     paths:
@@ -26,8 +25,7 @@ on:
       - 'tests/behavioral/**'
       - 'README.md'
       - 'governance-manifest.json'
-      - 'scripts/validate_governance.py'
-      - 'scripts/build_manifest.py'
+      - 'scripts/**'
   workflow_dispatch:
 
 permissions:
@@ -73,3 +71,24 @@ jobs:
             echo "::error::governance-manifest.json is stale. Run: python scripts/build_manifest.py"
             exit 1
           fi
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # jsonschema enables the validate()/write_artifact() seam in demerzel_kit;
+      # without it those tests skip rather than fail (graceful degradation).
+      - name: Install deps
+        run: pip install jsonschema
+
+      # The scripts/ emitters are the operational code; demerzel_kit makes their
+      # gh/filesystem calls an injectable seam so convene() et al. are testable
+      # without the network. Run the whole unittest suite.
+      - name: Run scripts/ unit tests
+        run: python -m unittest discover -s scripts -p 'test_*.py'
