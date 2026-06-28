@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/routing-recommendation",
+  "title": "Routing Recommendation",
+  "description": "An advisory recommendation from Seldon to Demerzel regarding task routing.",
+  "type": "object",
+  "required": [
+    "issue_or_pr",
+    "required_capability",
+    "recommended_worker",
+    "confidence",
+    "rationale"
+  ],
+  "properties": {
+    "issue_or_pr": {
+      "type": "string",
+      "description": "The identifier of the issue or pull request (e.g., 'ga#123')."
+    },
+    "required_capability": {
+      "type": "string",
+      "enum": [
+        "implementation",
+        "research",
+        "adversarial_review",
+        "repository_navigation",
+        "bug_hunting",
+        "security_review"
+      ],
+      "description": "The primary capability required for the task."
+    },
+    "recommended_worker": {
+      "type": "string",
+      "description": "The identifier of the recommended worker (agent persona or human)."
+    },
+    "backup_workers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Alternative workers if the recommended one is unavailable or rejected."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Seldon's confidence in this recommendation based on historical data."
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Detailed explanation for why this worker was recommended."
+    },
+    "cost_notes": {
+      "type": "string",
+      "description": "Estimated cost or efficiency considerations for this recommendation."
+    },
+    "risk_notes": {
+      "type": "string",
+      "description": "Identified risks (e.g., worker's low reliability in this domain)."
+    },
+    "human_review_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether Seldon advises that the output of this task MUST be reviewed by a human."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the recommendation was generated."
+    }
+  },
+  "additionalProperties": false
+}
