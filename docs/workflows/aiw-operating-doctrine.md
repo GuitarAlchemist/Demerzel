@@ -169,9 +169,18 @@ aiw_principles:
 
 Exploration output is not canonical until shaped (Pocock lane) and validated (Cherny lane with Demerzel gates).
 
+## Stop Conditions / Escalation
+
+Agents and orchestrators must halt and escalate to a human (Demerzel lane) when:
+- **Contradiction (C)** or **Unknown (U)** belief states are detected during lane classification.
+- Budget ceilings are reached or would be exceeded by the next loop.
+- A task touches more than one file without a pre-existing Pocock-lane shaping artifact.
+- Constitutional articles (especially Asimov laws) are potentially violated.
+- A "HALT-ALL" marker is present in the ecosystem.
+
 ## Follow-up Implementation
 
 The following implementation issues are required to turn this doctrine into executable workflow rules:
-- Lane classification: automate the identification of which lane a task belongs to.
-- Matt-before-AFK gating: implement the requirement that Pocock-style shaping occurs before AFK autonomy is granted.
-- Loop/budget routing: implement Cherny-style budget-aware agent loops and routing.
+- **Lane classification (#465):** automate the identification of which lane a task belongs to.
+- **Matt-before-AFK gating (#467):** implement the requirement that Pocock-style shaping occurs before AFK autonomy is granted.
+- **Loop/budget routing (#459, #461, #471):** implement Cherny-style budget-aware agent loops and routing.
