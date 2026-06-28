@@ -23,7 +23,8 @@ name: Auto-delegate ready-for-agent issues to Jules
 # Safety:
 # - no auto-merge;
 # - respects governance/state/afk-halt.json when present;
-# - requires JULES_API_KEY;
+# - requires JULES_API_KEY for API delegation;
+# - if JULES_API_KEY is absent, logs to Actions only and does not comment/spam issues;
 # - keeps GitHub as the canonical control plane.
 
 on:
@@ -160,8 +161,7 @@ jobs:
           fi
 
           if [ "$HAS_KEY" != "true" ]; then
-            gh issue comment "$issue" --repo "$REPO" --body "⚠️ AFK delegation is configured but the \`JULES_API_KEY\` secret is not set, so Jules was not invoked. Add the secret (Settings → Secrets and variables → Actions) and re-run this workflow or re-apply \`ready-for-agent\`/\`worker:jules\`."
-            echo "::warning::JULES_API_KEY not configured — skipping issue #$issue"
+            echo "::notice::JULES_API_KEY not configured for $REPO — skipping API delegation for issue #$issue without commenting. Manual human-applied 'jules' label remains the fallback."
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
