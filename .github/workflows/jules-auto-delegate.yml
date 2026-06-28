@@ -1,0 +1,193 @@
+name: Auto-delegate ready-for-agent issues to Jules
+
+# Review-gated AFK automation for Demerzel.
+#
+# This workflow intentionally invokes Jules through the Jules API action instead
+# of relying on the native `jules` label. Bot/API-applied labels are not a
+# reliable trigger for Jules itself, while GitHub Actions can still build a
+# governed prompt and call google-labs-code/jules-action directly.
+#
+# Triggers:
+# - issues:labeled: immediate path when a maintainer applies `ready-for-agent`.
+# - workflow_dispatch: manual backstop for an exact issue number.
+# - schedule: listener backstop for labels applied by bots/API or labels that
+#   existed before this workflow was added. The scheduled run delegates at most
+#   one non-delegated open issue per run to avoid fan-out/backpressure.
+#
+# Safety:
+# - no auto-merge;
+# - respects governance/state/afk-halt.json when present;
+# - requires JULES_API_KEY;
+# - writes a marker comment before delegation to avoid duplicate scheduled runs;
+# - keeps GitHub as the canonical control plane.
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to delegate"
+        required: true
+        type: number
+      force:
+        description: "Delegate even if a Jules delegation marker already exists"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: jules-auto-delegate-${{ github.repository }}-${{ github.event.issue.number || inputs.issue_number || 'scheduled' }}
+  cancel-in-progress: false
+
+jobs:
+  delegate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout governance state
+        uses: actions/checkout@v4
+
+      - name: Select eligible issue + governance preflight
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_LABEL: ${{ github.event.label.name || '' }}
+          EVENT_ISSUE: ${{ github.event.issue.number || '' }}
+          INPUT_ISSUE: ${{ inputs.issue_number || '' }}
+          FORCE: ${{ inputs.force || false }}
+          HAS_KEY: ${{ secrets.JULES_API_KEY != '' }}
+        run: |
+          set -euo pipefail
+
+          marker='<!-- jules-delegated -->'
+          issue=''
+
+          has_delegation_marker() {
+            local n="$1"
+            gh issue view "$n" --repo "$REPO" --json comments \
+              --jq '[.comments[].body] | join("\n")' | grep -Fq "$marker"
+          }
+
+          if [ "$EVENT_NAME" = "issues" ]; then
+            if [ "$EVENT_LABEL" != "ready-for-agent" ]; then
+              echo "::notice::label is '$EVENT_LABEL', not ready-for-agent — skipping"
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            issue="$EVENT_ISSUE"
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            issue="$INPUT_ISSUE"
+          else
+            # Scheduled backstop: pick one ready issue that has not already been delegated.
+            for n in $(gh issue list --repo "$REPO" --state open --label ready-for-agent --limit 50 --json number --jq '.[].number'); do
+              if ! has_delegation_marker "$n"; then
+                issue="$n"
+                break
+              fi
+            done
+          fi
+
+          if [ -z "$issue" ]; then
+            echo "::notice::no eligible ready-for-agent issue found"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          labels=$(gh issue view "$issue" --repo "$REPO" --json labels --jq '.labels[].name')
+          if ! printf '%s\n' "$labels" | grep -Fxq 'ready-for-agent'; then
+            echo "::notice::issue #$issue is not labeled ready-for-agent — skipping"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$FORCE" != "true" ] && has_delegation_marker "$issue"; then
+            echo "::notice::issue #$issue already has a Jules delegation marker — skipping"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          halt_marker="governance/state/afk-halt.json"
+          if [ -f "$halt_marker" ]; then
+            expires=$(jq -r '.expires_at // empty' "$halt_marker" 2>/dev/null || true)
+            halted=true
+            if [ -n "$expires" ]; then
+              now=$(date -u +%s)
+              exp=$(date -u -d "$expires" +%s 2>/dev/null || echo 0)
+              if [ "$exp" -gt 0 ] && [ "$now" -ge "$exp" ]; then
+                halted=false
+                echo "::notice::afk-halt marker present but expired ($expires) — proceeding"
+              fi
+            fi
+            if [ "$halted" = "true" ]; then
+              reason=$(jq -r '.reason // "no reason given"' "$halt_marker" 2>/dev/null || echo "no reason given")
+              by=$(jq -r '.halted_by // "Demerzel"' "$halt_marker" 2>/dev/null || echo "Demerzel")
+              gh issue comment "$issue" --repo "$REPO" --body "⏸️ AFK delegation is **halted by governance** (\`$halt_marker\`, by $by): $reason. The \`ready-for-agent\` label is kept; re-run this workflow after resume to delegate."
+              echo "::notice::AFK delegation halted by governance marker — skipping issue #$issue"
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          if [ "$HAS_KEY" != "true" ]; then
+            gh issue comment "$issue" --repo "$REPO" --body "⚠️ AFK delegation is configured but the \`JULES_API_KEY\` secret is not set, so Jules was not invoked. Add the secret (Settings → Secrets and variables → Actions) and re-run this workflow or re-apply the \`ready-for-agent\` label."
+            echo "::warning::JULES_API_KEY not configured — skipping issue #$issue"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`main\`. Human/Demerzel review is still required before merge."
+
+          echo "issue=$issue" >> "$GITHUB_OUTPUT"
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build Jules prompt from the issue
+        if: steps.gate.outputs.proceed == 'true'
+        id: prompt
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+        run: |
+          set -euo pipefail
+          title=$(gh issue view "$ISSUE" --repo "$REPO" --json title --jq '.title')
+          body=$(gh issue view "$ISSUE" --repo "$REPO" --json body --jq '.body')
+          labels=$(gh issue view "$ISSUE" --repo "$REPO" --json labels --jq '[.labels[].name] | join(", ")')
+          {
+            echo "text<<JULES_EOF"
+            echo "Implement GitHub issue #${ISSUE}: ${title}"
+            echo ""
+            echo "Repository: ${REPO}"
+            echo "Labels: ${labels}"
+            echo ""
+            echo "$body"
+            echo ""
+            echo "Demerzel project conventions:"
+            echo "- This repo is the AI governance framework for the GuitarAlchemist ecosystem."
+            echo "- Follow CLAUDE.md and existing docs before editing."
+            echo "- Preserve Asimov/constitution/governance priority; do not weaken policy gates."
+            echo "- Keep changes minimal, reviewable, and scoped to the issue."
+            echo "- Prefer docs, schemas, examples, and tests when the issue is architecture/governance work."
+            echo "- Do not auto-merge, do not change secrets, and do not bypass human/Demerzel review."
+            echo "- If the issue is broad, produce the smallest safe first PR and document follow-ups."
+            echo ""
+            echo "Open a pull request targeting main. Include a concise summary, evidence, tests/validation performed, risk notes, and any follow-up issues needed."
+            echo "JULES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Delegate to Jules
+        if: steps.gate.outputs.proceed == 'true'
+        uses: google-labs-code/jules-action@v1.0.0
+        with:
+          prompt: ${{ steps.prompt.outputs.text }}
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: main
