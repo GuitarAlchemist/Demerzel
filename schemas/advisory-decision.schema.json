@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/advisory-decision.schema.json",
+  "title": "Advisory Decision",
+  "description": "An advisory decision emitted by Demerzel based on Streeling events and Seldon facts.",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "entity",
+    "required_capability",
+    "decision",
+    "confidence",
+    "reasons",
+    "evidence_refs",
+    "human_review_required",
+    "created_at"
+  ],
+  "properties": {
+    "decision_id": { "type": "string", "description": "Unique UUID for the decision." },
+    "entity": {
+      "type": "string",
+      "description": "The entity the decision pertains to (e.g., 'owner/repo#number').",
+      "pattern": "^[^/]+/[^/]+#\\d+$"
+    },
+    "required_capability": {
+      "type": "string",
+      "enum": [
+        "implementation",
+        "research",
+        "adversarial_review",
+        "repository_navigation",
+        "bug_hunting",
+        "security_review",
+        "orchestration",
+        "unknown"
+      ]
+    },
+    "recommended_worker": { "type": ["string", "null"] },
+    "backup_workers": { "type": "array", "items": { "type": "string" } },
+    "decision": {
+      "type": "string",
+      "enum": ["route", "hold", "request_review", "escalate", "recommend_merge", "no_action"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "References to Streeling event IDs or Seldon fact IDs."
+    },
+    "human_review_required": { "type": "boolean" },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/streeling/engineering-event.schema.json",
+  "title": "Engineering Event",
+  "description": "A normalized event capturing GitHub activity for the Streeling intelligence pipeline.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "delivery_id",
+    "occurred_at",
+    "observed_at",
+    "source_system",
+    "source_kind",
+    "org",
+    "repo",
+    "entity_type",
+    "entity_id",
+    "actor_login",
+    "actor_type",
+    "action",
+    "status",
+    "severity",
+    "durability_class",
+    "schema_version"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "description": "Unique UUID for the normalized event." },
+    "delivery_id": { "type": "string", "description": "Original delivery ID from the source system (e.g., X-GitHub-Delivery)." },
+    "occurred_at": { "type": "string", "format": "date-time", "description": "Timestamp when the event happened in the source system." },
+    "observed_at": { "type": "string", "format": "date-time", "description": "Timestamp when the event was ingested by Streeling." },
+    "source_system": { "type": "string", "const": "github" },
+    "source_kind": { "type": "string", "enum": ["webhook", "rest", "graphql", "workflow_artifact", "manual"] },
+    "org": { "type": "string", "const": "GuitarAlchemist" },
+    "repo": { "type": "string" },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "issue",
+        "pull_request",
+        "comment",
+        "review",
+        "workflow_run",
+        "job",
+        "check_run",
+        "status",
+        "cost",
+        "collision",
+        "discussion"
+      ]
+    },
+    "entity_id": { "type": "string", "description": "Unique identifier for the entity (e.g., node ID)." },
+    "issue_number": { "type": ["integer", "null"] },
+    "pr_number": { "type": ["integer", "null"] },
+    "actor_login": { "type": "string" },
+    "actor_type": { "type": "string", "enum": ["human", "bot", "app"] },
+    "worker": {
+      "type": "string",
+      "enum": ["claude", "jules", "gemini", "codex", "augment", "github-actions", "human", "unknown"]
+    },
+    "provider": {
+      "type": "string",
+      "enum": ["anthropic", "google", "github", "openai", "unknown"]
+    },
+    "capability": {
+      "type": "string",
+      "enum": [
+        "implementation",
+        "research",
+        "adversarial_review",
+        "repository_navigation",
+        "bug_hunting",
+        "security_review",
+        "orchestration",
+        "unknown"
+      ]
+    },
+    "action": { "type": "string", "description": "The specific action performed (e.g., 'opened', 'labeled', 'submitted')." },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "in_progress", "completed", "success", "failure", "neutral", "unknown"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "action_needed", "blocked", "risk", "success"]
+    },
+    "durability_class": {
+      "type": "string",
+      "enum": ["ephemeral", "persistent", "versioned"]
+    },
+    "durable_url": { "type": ["string", "null"], "format": "uri" },
+    "external_url": { "type": ["string", "null"], "format": "uri" },
+    "external_access": {
+      "type": ["string", "null"],
+      "enum": ["public", "auth_required", "unknown"]
+    },
+    "summary": { "type": "string" },
+    "labels": { "type": "array", "items": { "type": "string" } },
+    "file_paths": { "type": "array", "items": { "type": "string" } },
+    "path_cluster": { "type": "array", "items": { "type": "string" } },
+    "metrics": { "type": "object", "additionalProperties": true },
+    "raw_ref": { "type": "string", "description": "Reference to the raw payload storage (e.g., S3 key or file path)." },
+    "schema_version": { "type": "integer", "const": 1 }
+  }
+}
