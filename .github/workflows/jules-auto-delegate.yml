@@ -8,17 +8,22 @@ name: Auto-delegate ready-for-agent issues to Jules
 # governed prompt and call google-labs-code/jules-action directly.
 #
 # Triggers:
-# - issues:labeled: immediate path when a maintainer applies `ready-for-agent`.
+# - issues:labeled: immediate path when a maintainer applies `ready-for-agent`
+#   or `worker:jules`.
 # - workflow_dispatch: manual backstop for an exact issue number.
 # - schedule: listener backstop for labels applied by bots/API or labels that
 #   existed before this workflow was added. The scheduled run delegates at most
 #   one non-delegated open issue per run to avoid fan-out/backpressure.
 #
+# Eligibility:
+# - open issue must have BOTH `ready-for-agent` and `worker:jules`.
+# - the workflow writes a `<!-- jules-delegated -->` marker before invoking Jules.
+# - repeated scheduled runs skip issues already carrying that marker.
+#
 # Safety:
 # - no auto-merge;
 # - respects governance/state/afk-halt.json when present;
 # - requires JULES_API_KEY;
-# - writes a marker comment before delegation to avoid duplicate scheduled runs;
 # - keeps GitHub as the canonical control plane.
 
 on:
@@ -78,19 +83,30 @@ jobs:
               --jq '[.comments[].body] | join("\n")' | grep -Fq "$marker"
           }
 
+          issue_has_label() {
+            local labels="$1"
+            local label="$2"
+            printf '%s\n' "$labels" | grep -Fxq "$label"
+          }
+
           if [ "$EVENT_NAME" = "issues" ]; then
-            if [ "$EVENT_LABEL" != "ready-for-agent" ]; then
-              echo "::notice::label is '$EVENT_LABEL', not ready-for-agent — skipping"
-              echo "proceed=false" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            issue="$EVENT_ISSUE"
+            case "$EVENT_LABEL" in
+              ready-for-agent|worker:jules)
+                issue="$EVENT_ISSUE"
+                ;;
+              *)
+                echo "::notice::label is '$EVENT_LABEL', not ready-for-agent/worker:jules — skipping"
+                echo "proceed=false" >> "$GITHUB_OUTPUT"
+                exit 0
+                ;;
+            esac
           elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             issue="$INPUT_ISSUE"
           else
-            # Scheduled backstop: pick one ready issue that has not already been delegated.
+            # Scheduled backstop: pick one Jules-routed ready issue that has not already been delegated.
             for n in $(gh issue list --repo "$REPO" --state open --label ready-for-agent --limit 50 --json number --jq '.[].number'); do
-              if ! has_delegation_marker "$n"; then
+              labels=$(gh issue view "$n" --repo "$REPO" --json labels --jq '.labels[].name')
+              if issue_has_label "$labels" 'worker:jules' && ! has_delegation_marker "$n"; then
                 issue="$n"
                 break
               fi
@@ -98,14 +114,19 @@ jobs:
           fi
 
           if [ -z "$issue" ]; then
-            echo "::notice::no eligible ready-for-agent issue found"
+            echo "::notice::no eligible ready-for-agent + worker:jules issue found"
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           labels=$(gh issue view "$issue" --repo "$REPO" --json labels --jq '.labels[].name')
-          if ! printf '%s\n' "$labels" | grep -Fxq 'ready-for-agent'; then
+          if ! issue_has_label "$labels" 'ready-for-agent'; then
             echo "::notice::issue #$issue is not labeled ready-for-agent — skipping"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! issue_has_label "$labels" 'worker:jules'; then
+            echo "::notice::issue #$issue is not labeled worker:jules — skipping"
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -131,7 +152,7 @@ jobs:
             if [ "$halted" = "true" ]; then
               reason=$(jq -r '.reason // "no reason given"' "$halt_marker" 2>/dev/null || echo "no reason given")
               by=$(jq -r '.halted_by // "Demerzel"' "$halt_marker" 2>/dev/null || echo "Demerzel")
-              gh issue comment "$issue" --repo "$REPO" --body "⏸️ AFK delegation is **halted by governance** (\`$halt_marker\`, by $by): $reason. The \`ready-for-agent\` label is kept; re-run this workflow after resume to delegate."
+              gh issue comment "$issue" --repo "$REPO" --body "⏸️ AFK delegation is **halted by governance** (\`$halt_marker\`, by $by): $reason. The \`ready-for-agent\` and \`worker:jules\` labels are kept; re-run this workflow after resume to delegate."
               echo "::notice::AFK delegation halted by governance marker — skipping issue #$issue"
               echo "proceed=false" >> "$GITHUB_OUTPUT"
               exit 0
@@ -139,13 +160,13 @@ jobs:
           fi
 
           if [ "$HAS_KEY" != "true" ]; then
-            gh issue comment "$issue" --repo "$REPO" --body "⚠️ AFK delegation is configured but the \`JULES_API_KEY\` secret is not set, so Jules was not invoked. Add the secret (Settings → Secrets and variables → Actions) and re-run this workflow or re-apply the \`ready-for-agent\` label."
+            gh issue comment "$issue" --repo "$REPO" --body "⚠️ AFK delegation is configured but the \`JULES_API_KEY\` secret is not set, so Jules was not invoked. Add the secret (Settings → Secrets and variables → Actions) and re-run this workflow or re-apply \`ready-for-agent\`/\`worker:jules\`."
             echo "::warning::JULES_API_KEY not configured — skipping issue #$issue"
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`main\`. Human/Demerzel review is still required before merge."
+          gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` + \`worker:jules\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`main\`. Human/Demerzel review is still required before merge."
 
           echo "issue=$issue" >> "$GITHUB_OUTPUT"
           echo "proceed=true" >> "$GITHUB_OUTPUT"
