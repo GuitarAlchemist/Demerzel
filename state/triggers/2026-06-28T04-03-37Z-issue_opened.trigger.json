@@ -1,0 +1,12 @@
+{
+"type": "issue_opened",
+"repo": "Demerzel",
+"ref": "refs/heads/master",
+"priority": "medium",
+"details": {
+  "event": "issues",
+  "sender": "spareilleux",
+  "run_id": "28310799059"
+},
+"timestamp": "2026-06-28T04:03:37Z"
+}
