@@ -50,7 +50,7 @@ Demerzel/
 ├── policies/              # 45 governance policies (alignment, rollback, kaizen, conscience, …)
 ├── logic/                 # Tetravalent logic (T/F/U/C), PDCA state, knowledge state schemas
 ├── grammars/              # 20 EBNF grammars including IxQL (ML pipelines + MCP orchestration)
-├── schemas/               # 38 JSON schemas + 9 contract schemas (incl. qa-verdict, halt-marker)
+├── schemas/               # 41 JSON schemas + 1 streeling + 9 contracts (incl. qa-verdict, halt-marker)
 ├── contracts/             # Galactic Protocol + voicing-handle URI + MCP routing
 ├── pipelines/             # 23 IxQL pipelines (qa-architect-cycle, governance-shake-test, …)
 ├── state/
@@ -76,7 +76,7 @@ Demerzel/
 | Personas | 17 | `personas/*.persona.yaml` |
 | Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
-| Schemas | 40 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
+| Schemas | 41 + 1 streeling + 9 contracts | `schemas/*.json` + `schemas/streeling/` + `schemas/contracts/` |
 | Behavioral tests | 114 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
