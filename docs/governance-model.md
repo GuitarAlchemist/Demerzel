@@ -7,6 +7,8 @@ Effective: 2026-03-22
 
 This document defines how governance works in the GuitarAlchemist ecosystem — who makes decisions, how changes are proposed and approved, how conflicts are resolved, and how governance itself evolves. It is the definitive operational guide for anyone participating in Demerzel governance.
 
+See [Harness-Driven Development (HDD)](methodology/harness-driven-development.md) for the overarching engineering methodology that these governance processes support.
+
 Inspired by the [Hyperlight Project Governance](https://github.com/hyperlight-dev/hyperlight/blob/main/GOVERNANCE.md) model — adapted from open-source project governance to AI agent governance.
 
 ## 1. Constitutional Hierarchy

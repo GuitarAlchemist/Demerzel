@@ -1,6 +1,6 @@
 # Demerzel Agent Team
 
-Team definition for Claude Code agent teams.
+Team definition for Claude Code agent teams, following the [Harness-Driven Development (HDD)](docs/methodology/harness-driven-development.md) methodology.
 
 ## Structure
 
