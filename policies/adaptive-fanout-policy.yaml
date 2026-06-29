@@ -1,0 +1,49 @@
+name: adaptive-fanout-policy
+version: "1.0.0"
+effective_date: "2026-06-30"
+description: >
+  Governance framework for adaptive fan-out backpressure.
+  Regulates fan-out throughput to prevent overloading fan-in review.
+
+references:
+  - docs/architecture/adaptive-fanout.md
+  - docs/workflows/jules-delegation-operations.md
+  - policies/autonomous-loop-policy.yaml
+  - policies/seldon-plan-policy.yaml
+
+---
+## Adaptive Fan-out Modes
+
+adaptive_fanout:
+  normal:
+    max_open_prs: 3
+    allowed_work:
+      - docs
+      - schema
+      - low_risk_code
+  constrained:
+    max_open_prs: 5
+    allowed_work:
+      - grooming
+      - review
+      - docs_only
+      - dependency_analysis
+  draining:
+    when:
+      open_prs_at_or_above: 5
+    allowed_work:
+      - fan_in_review
+      - draft_to_ready
+      - conflict_analysis
+      - issue_grooming
+    blocked_work:
+      - new_feature_prs
+      - workflow_changes
+      - broad_architecture_prs
+  halted:
+    when:
+      - workflow_policy_block
+      - human_halt_marker
+      - repeated_failed_checks
+    allowed_work:
+      - human_review_only
