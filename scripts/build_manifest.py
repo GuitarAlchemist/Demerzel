@@ -74,7 +74,7 @@ ARTIFACT_CLASSES: dict[str, tuple[str, Any]] = {
     "constitution": ("constitutions/*.md", None),
     "persona": ("personas/*.persona.yaml", _name_version),
     "policy": ("policies/*.yaml", _name_version),
-    "schema": ("schemas/*.json", None),
+    "schema": (("schemas/*.json", "schemas/seldon/*.json"), None),
     "contract_schema": ("schemas/contracts/*.json", None),
     "grammar": ("grammars/*.ebnf", None),
     "behavioral_test": ("tests/behavioral/*.md", None),
@@ -85,16 +85,19 @@ ARTIFACT_CLASSES: dict[str, tuple[str, Any]] = {
 
 def harvest_inventory() -> dict[str, list[dict[str, Any]]]:
     inv: dict[str, list[dict[str, Any]]] = {}
-    for art_type, (pattern, reader) in ARTIFACT_CLASSES.items():
+    for art_type, (patterns, reader) in ARTIFACT_CLASSES.items():
+        if isinstance(patterns, str):
+            patterns = (patterns,)
         items: list[dict[str, Any]] = []
-        for path in sorted(REPO.glob(pattern)):
-            if art_type == "workflow" and path.suffix not in (".yml", ".yaml"):
-                continue
-            rel = path.relative_to(REPO).as_posix()
-            entry: dict[str, Any] = {"name": path.stem, "path": rel}
-            if reader:
-                entry.update(reader(path))
-            items.append(entry)
+        for pattern in patterns:
+            for path in sorted(REPO.glob(pattern)):
+                if art_type == "workflow" and path.suffix not in (".yml", ".yaml"):
+                    continue
+                rel = path.relative_to(REPO).as_posix()
+                entry: dict[str, Any] = {"name": path.stem, "path": rel}
+                if reader:
+                    entry.update(reader(path))
+                items.append(entry)
         inv[art_type] = items
     # Skills are directories, not files.
     skills = sorted(p for p in (REPO / ".claude" / "skills").glob("*/") if p.is_dir())

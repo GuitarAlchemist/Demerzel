@@ -143,7 +143,7 @@ Artifacts are consumed by agents via:
 
 ## CI workflows
 
-23 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
+24 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
 
 - [`qa-tribunal.yml`](./.github/workflows/qa-tribunal.yml) — repository-dispatch emitter (Phase 0).
 - [`governance-validate.yml`](./.github/workflows/governance-validate.yml) — schema + grammar validation.

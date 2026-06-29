@@ -10,9 +10,9 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 40,
+    "schema": 45,
     "skill": 69,
-    "workflow": 23
+    "workflow": 24
   },
   "inventory": {
     "constitution": [
@@ -511,6 +511,26 @@
       {
         "name": "work-manifest.schema",
         "path": "schemas/work-manifest.schema.json"
+      },
+      {
+        "name": "conversation_hygiene_fact.schema",
+        "path": "schemas/seldon/conversation_hygiene_fact.schema.json"
+      },
+      {
+        "name": "pr_fact.schema",
+        "path": "schemas/seldon/pr_fact.schema.json"
+      },
+      {
+        "name": "review_fact.schema",
+        "path": "schemas/seldon/review_fact.schema.json"
+      },
+      {
+        "name": "review_finding_fact.schema",
+        "path": "schemas/seldon/review_finding_fact.schema.json"
+      },
+      {
+        "name": "worker_capability_fact.schema",
+        "path": "schemas/seldon/worker_capability_fact.schema.json"
       }
     ],
     "contract_schema": [
@@ -1241,6 +1261,10 @@
       {
         "name": "governance-validate",
         "path": ".github/workflows/governance-validate.yml"
+      },
+      {
+        "name": "jules-auto-delegate",
+        "path": ".github/workflows/jules-auto-delegate.yml"
       },
       {
         "name": "karpathy-cherny-discipline",
