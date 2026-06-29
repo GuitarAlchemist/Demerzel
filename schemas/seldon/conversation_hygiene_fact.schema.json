@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/seldon/conversation_hygiene_fact.schema.json",
+  "title": "Conversation Hygiene Fact",
+  "description": "Fact evaluating the hygiene of an agent conversation session.",
+  "type": "object",
+  "required": ["session_id", "actor", "hygiene_score"],
+  "properties": {
+    "session_id": { "type": "string" },
+    "actor": { "type": "string" },
+    "hygiene_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "repetitive_comments_count": { "type": "integer" },
+    "oversized_comments_count": { "type": "integer" },
+    "actionless_turns_count": { "type": "integer" },
+    "evidence_links_count": { "type": "integer" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

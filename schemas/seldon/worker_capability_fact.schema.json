@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/seldon/worker_capability_fact.schema.json",
+  "title": "Worker Capability Fact",
+  "description": "Historical performance fact for a worker and a specific capability.",
+  "type": "object",
+  "required": ["worker_id", "capability", "total_uses", "success_rate"],
+  "properties": {
+    "worker_id": { "type": "string" },
+    "capability": { "type": "string" },
+    "total_uses": { "type": "integer" },
+    "success_count": { "type": "integer" },
+    "failure_count": { "type": "integer" },
+    "success_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "avg_duration_seconds": { "type": "number" },
+    "avg_cost_usd": { "type": "number" },
+    "last_used_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
