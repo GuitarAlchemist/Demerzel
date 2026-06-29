@@ -9,7 +9,7 @@ Issue body:
 {{ISSUE_BODY}}
 
 ## AIW Operating Doctrine
-You are operating in the **Cherny lane** (agentic loop), executing a task that has been shaped in the **Pocock lane** (discipline/shaping). You must adhere to the **Karpathy lane** rules for implementation (exploration/speed without canonizing waste).
+You are operating in the **Cherny lane** (agentic loop), executing a task that has already been shaped in the **Pocock lane** (discipline/shaping). Use Karpathy-style minimalism only as an implementation constraint: keep the patch small, surgical, and disposable until validated.
 
 ## Rules (non-negotiable)
 1. SCOPE: change only what this issue asks for. No refactoring of adjacent code,
