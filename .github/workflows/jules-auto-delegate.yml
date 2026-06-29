@@ -166,7 +166,7 @@ jobs:
             exit 0
           fi
 
-          gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` + \`worker:jules\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`main\`. Human/Demerzel review is still required before merge."
+          gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` + \`worker:jules\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`master\`. Human/Demerzel review is still required before merge."
 
           echo "issue=$issue" >> "$GITHUB_OUTPUT"
           echo "proceed=true" >> "$GITHUB_OUTPUT"
@@ -201,7 +201,7 @@ jobs:
             echo "- Do not auto-merge, do not change secrets, and do not bypass human/Demerzel review."
             echo "- If the issue is broad, produce the smallest safe first PR and document follow-ups."
             echo ""
-            echo "Open a pull request targeting main. Include a concise summary, evidence, tests/validation performed, risk notes, and any follow-up issues needed."
+            echo "Open a pull request targeting master. Include a concise summary, evidence, tests/validation performed, risk notes, and any follow-up issues needed."
             echo "JULES_EOF"
           } >> "$GITHUB_OUTPUT"
 
@@ -211,4 +211,4 @@ jobs:
         with:
           prompt: ${{ steps.prompt.outputs.text }}
           jules_api_key: ${{ secrets.JULES_API_KEY }}
-          starting_branch: main
+          starting_branch: master
