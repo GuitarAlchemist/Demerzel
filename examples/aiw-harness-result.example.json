@@ -16,7 +16,13 @@
     "max_cost_usd": 0.0,
     "approval_required_above_usd": 1.0
   },
-  "commands_run": [],
+  "commands_run": [
+    {
+      "command": "pwsh scripts/verify.ps1",
+      "status": "passed",
+      "log": "verification completed successfully"
+    }
+  ],
   "changed_files": [
     "docs/workflows/aiw-prompt-harness-engineering.md",
     "prompts/aiw/provider-task.prompt.md",
@@ -26,15 +32,16 @@
     "branch": "aiw-prompt-harness-461",
     "pr": null,
     "diff_summary": "docs-only AIW prompt and harness engineering contract",
-    "validation_log": "docs-only change; no runtime validation required"
+    "validation_log": "pwsh scripts/verify.ps1 passed"
   },
   "observations": [
     "task stayed within draft autonomy",
     "no runtime code was changed",
+    "standard verification evidence was collected",
     "no secrets or policy authority were requested"
   ],
   "decision": "complete_draft_ready_for_review",
-  "stop_reason": "bounded_docs_patch_complete",
+  "stop_reason": "bounded_docs_patch_validated",
   "risk_notes": [
     "no provider invocation authority added",
     "no merge authority changed",
