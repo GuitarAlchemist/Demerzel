@@ -1,0 +1,54 @@
+{
+  "job_id": "aiw-0001",
+  "issue": 459,
+  "lane": "loop",
+  "autonomy_mode": "draft",
+  "providers_considered": [
+    "ollama-local",
+    "notebooklm",
+    "gemini-cli",
+    "codex"
+  ],
+  "providers_used": [
+    "ollama-local",
+    "notebooklm"
+  ],
+  "budget": {
+    "tier": "free-local",
+    "max_input_tokens": 150000,
+    "max_output_tokens": 30000,
+    "max_total_tokens": 200000,
+    "max_model_calls": 6,
+    "max_retries": 1,
+    "max_runner_minutes": 30,
+    "max_cost_usd": 2.0,
+    "approval_required_above_usd": 5.0,
+    "context_bundle_sha": "sha256:example-context-bundle",
+    "cache_policy": "reuse-summaries-first",
+    "stop_on": [
+      "repeated_test_failure",
+      "context_missing",
+      "risk_escalation",
+      "budget_exceeded"
+    ]
+  },
+  "estimated_input_tokens": 120000,
+  "estimated_output_tokens": 15000,
+  "actual_input_tokens": null,
+  "actual_output_tokens": null,
+  "estimated_cost_usd": 0.25,
+  "actual_cost_usd": null,
+  "runner_minutes": 0,
+  "cache_hits": 2,
+  "escalations": [],
+  "stop_reason": "completed_with_research_summary",
+  "value_artifacts": [
+    "issue-comment",
+    "docs/workflows/aiw-budget-router.md"
+  ],
+  "evidence": {
+    "diff_summary": "docs-only router and budget ledger design",
+    "risk_notes": "no provider invocation, no secrets, no merge authority change",
+    "notebooklm_export": null
+  }
+}
