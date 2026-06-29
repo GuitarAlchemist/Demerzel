@@ -21,6 +21,7 @@ matt_readiness:
     - no broad refactor
   test_commands:
     - python scripts/validate_governance.py
+  budget_cap: free-local-docs-only
   tdd_required: false
   evidence_required:
     - diff_summary
@@ -69,6 +70,7 @@ AFK `patch` and `pr` modes are blocked when:
 - no test or validation command is present;
 - allowed paths are missing;
 - non-goals are missing;
+- no budget cap or explicit low-cost constraint is present;
 - stop conditions are missing;
 - the issue touches policy, constitution, secrets, HALT, merge authority, or high/critical risk;
 - the issue is classified as `explore`, `shape`, `verify`, or `govern` instead of `loop`.
@@ -88,6 +90,7 @@ matt_readiness:
     - no runtime code
   test_commands:
     - python scripts/validate_governance.py
+  budget_cap: free-local-docs-only
   evidence_required:
     - diff_summary
     - validation_log
