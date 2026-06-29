@@ -38,6 +38,7 @@ Allowed operations:
 
 - `read`
 - `write-doc`
+- `run-command`
 
 ## Non-goals
 
@@ -63,21 +64,24 @@ budget:
 ```
 
 Network: `blocked`.
-Commands: no commands required for docs-only work.
+Commands:
+
+- `pwsh scripts/verify.ps1`
 
 ## Required process
 
 1. Confirm the requested change is docs-only.
 2. Edit only the allowed paths.
 3. Keep the patch small.
-4. Produce a diff summary and risk notes.
-5. Stop if the change requires runtime code or governance authority.
+4. Run `pwsh scripts/verify.ps1` or stop with a clear reason if the harness cannot run it.
+5. Produce a diff summary, validation evidence, and risk notes.
+6. Stop if the change requires runtime code or governance authority.
 
 ## Required outputs
 
 - diff summary;
 - changed files;
-- validation note;
+- validation command and result;
 - risk notes;
 - stop reason.
 
@@ -88,5 +92,6 @@ Stop if:
 - the issue asks for runtime implementation;
 - policy or HALT changes are needed;
 - files outside allowed paths are required;
+- validation cannot be run or explained;
 - a secret or credential is needed;
 - budget would exceed the cap.
