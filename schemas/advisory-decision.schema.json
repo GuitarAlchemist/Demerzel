@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/advisory-decision",
+  "title": "Advisory Decision",
+  "description": "JSON schema for advisory governance decisions emitted by the Demerzel Policy Engine.",
+  "type": "object",
+  "required": ["decision_id", "subject", "decision", "reason_codes", "transition_result"],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "description": "Unique identifier for the decision event."
+    },
+    "subject": {
+      "type": "string",
+      "description": "The entity or action being evaluated (e.g., issue URL, PR, transition attempt)."
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["allow", "block", "escalate", "recommend"],
+      "description": "The policy engine's verdict."
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of reason codes (e.g., RISK_001, DOR_001) justifying the decision."
+    },
+    "transition_result": {
+      "type": "object",
+      "description": "Details about the requested lifecycle state transition.",
+      "required": ["from_state", "to_state", "allowed"],
+      "properties": {
+        "from_state": {
+          "type": "string",
+          "description": "The current state before the transition."
+        },
+        "to_state": {
+          "type": "string",
+          "description": "The requested target state."
+        },
+        "allowed": {
+          "type": "boolean",
+          "description": "Whether the transition is permitted according to the state machine."
+        },
+        "required_rules": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Rules evaluated for this transition."
+        },
+        "blocking_reasons": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Reasons why the transition is blocked, if applicable."
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "References to logs, diffs, or artifacts used as evidence."
+        }
+      }
+    }
+  }
+}
