@@ -12,7 +12,7 @@
     "policy": 45,
     "schema": 42,
     "skill": 69,
-    "workflow": 23
+    "workflow": 24
   },
   "inventory": {
     "constitution": [
@@ -1251,6 +1251,10 @@
       {
         "name": "governance-validate",
         "path": ".github/workflows/governance-validate.yml"
+      },
+      {
+        "name": "jules-auto-delegate",
+        "path": ".github/workflows/jules-auto-delegate.yml"
       },
       {
         "name": "karpathy-cherny-discipline",
