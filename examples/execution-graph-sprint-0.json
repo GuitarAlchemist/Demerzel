@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "graph_id": "sprint-0-execution-graph",
+  "nodes": [
+    {
+      "node_id": "#517",
+      "type": "code",
+      "description": "Infrastructure bootstrap - ga-react-components",
+      "repo": "ga",
+      "status": "pending"
+    },
+    {
+      "node_id": "#519",
+      "type": "code",
+      "description": "API Integration layer - tars to ga",
+      "repo": "tars",
+      "status": "pending"
+    },
+    {
+      "node_id": "#520",
+      "type": "code",
+      "description": "Core ML pipelines - ix",
+      "repo": "ix",
+      "status": "pending"
+    },
+    {
+      "node_id": "#523",
+      "type": "test",
+      "description": "E2E Integration tests for ML pipelines",
+      "repo": "ix",
+      "status": "pending"
+    },
+    {
+      "node_id": "#525",
+      "type": "doc",
+      "description": "Sprint 0 completion report",
+      "repo": "demerzel",
+      "status": "pending"
+    },
+    {
+      "node_id": "#527",
+      "type": "review",
+      "description": "Final governance review for Sprint 0",
+      "repo": "demerzel",
+      "status": "pending"
+    }
+  ],
+  "edges": [
+    {
+      "from": "#517",
+      "to": "#519",
+      "type": "blocks"
+    },
+    {
+      "from": "#520",
+      "to": "#523",
+      "type": "depends_on"
+    },
+    {
+      "from": "#523",
+      "to": "#525",
+      "type": "blocks"
+    },
+    {
+      "from": "#525",
+      "to": "#527",
+      "type": "reviews"
+    },
+    {
+      "from": "#519",
+      "to": "#527",
+      "type": "should_merge_after"
+    }
+  ],
+  "review_stages": [
+    {
+      "stage_id": "governance-final-review",
+      "target_nodes": ["#527"],
+      "reviewers": ["Demerzel", "Skeptical-Auditor"],
+      "verdict": "pending"
+    }
+  ],
+  "merge_stages": [
+    {
+      "stage_id": "sprint-0-master-merge",
+      "order": 1,
+      "target_nodes": ["#517", "#519", "#520", "#523"],
+      "target_branch": "master"
+    }
+  ],
+  "metadata": {
+    "sprint": "Sprint 0",
+    "owner": "Jules",
+    "created_at": "2026-06-22T12:00:00Z"
+  }
+}
