@@ -9,7 +9,7 @@
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,
-    "policy": 46,
+    "policy": 45,
     "schema": 40,
     "skill": 69,
     "workflow": 24
@@ -125,11 +125,6 @@
       }
     ],
     "policy": [
-      {
-        "name": "adaptive-fanout-policy",
-        "path": "policies/adaptive-fanout-policy.yaml",
-        "version": "1.0.0"
-      },
       {
         "name": "adversarial-resilience-policy",
         "path": "policies/adversarial-resilience-policy.yaml",
@@ -1764,30 +1759,6 @@
       "from": "personas/virtuous-leader.persona.yaml",
       "to": "tests/behavioral/virtuous-leader-cases.md",
       "kind": "has_test",
-      "resolved": true
-    },
-    {
-      "from": "policies/adaptive-fanout-policy.yaml",
-      "to": "docs/architecture/adaptive-fanout.md",
-      "kind": "reference",
-      "resolved": true
-    },
-    {
-      "from": "policies/adaptive-fanout-policy.yaml",
-      "to": "docs/workflows/jules-delegation-operations.md",
-      "kind": "reference",
-      "resolved": true
-    },
-    {
-      "from": "policies/adaptive-fanout-policy.yaml",
-      "to": "policies/autonomous-loop-policy.yaml",
-      "kind": "reference",
-      "resolved": true
-    },
-    {
-      "from": "policies/adaptive-fanout-policy.yaml",
-      "to": "policies/seldon-plan-policy.yaml",
-      "kind": "reference",
       "resolved": true
     },
     {

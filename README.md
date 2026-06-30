@@ -74,7 +74,7 @@ Demerzel/
 | Constitutions | 5 (incl. epistemic + harm taxonomy) | `constitutions/` |
 | Constitutional articles | 14 (default) + 10 (epistemic) + 3 (Asimov root) | `constitutions/*.md` |
 | Personas | 17 | `personas/*.persona.yaml` |
-| Policies | 46 | `policies/*.yaml` |
+| Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
 | Schemas | 40 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 114 | `tests/behavioral/*.md` |
