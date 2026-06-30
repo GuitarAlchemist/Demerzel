@@ -1,0 +1,27 @@
+{
+  "job_id": "aiw-0001",
+  "issue": 457,
+  "lane": "loop",
+  "autonomy_mode": "patch",
+  "provider": "claude-code-local",
+  "workspace": "podman-worktree",
+  "context_bundle_sha": "sha256:...",
+  "prompt_pack_version": "aiw-provider-task-v1",
+  "budget": {
+    "max_total_tokens": 200000,
+    "max_cost_usd": 2.0,
+    "max_runner_minutes": 30
+  },
+  "observations": [
+    "tests failed: scripts/test_x.py::test_y",
+    "retry generated localized fix"
+  ],
+  "outputs": {
+    "branch": "aiw/issue-457-provider",
+    "pr": null,
+    "test_log": "artifacts/test.log",
+    "diff_summary": "artifacts/diff.md"
+  },
+  "decision": "complete_patch_no_pr",
+  "stop_reason": "tests_green_pr_requires_human_review"
+}
