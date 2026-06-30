@@ -77,12 +77,12 @@ Demerzel/
 | Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
 | Schemas | 40 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
-| Behavioral tests | 114 | `tests/behavioral/*.md` |
+| Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
-| GitHub workflows | 23 | `.github/workflows/*.yml` |
+| GitHub workflows | 24 | `.github/workflows/*.yml` |
 
 ## Key concepts
 
@@ -143,7 +143,7 @@ Artifacts are consumed by agents via:
 
 ## CI workflows
 
-23 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
+24 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
 
 - [`qa-tribunal.yml`](./.github/workflows/qa-tribunal.yml) — repository-dispatch emitter (Phase 0).
 - [`governance-validate.yml`](./.github/workflows/governance-validate.yml) — schema + grammar validation.

@@ -138,8 +138,7 @@
         },
         "target_branch": {
           "type": "string",
-          "default": "master",
-          "description": "Target branch for the repository-specific merge stage. Demerzel examples use master."
+          "default": "main"
         },
         "status": {
           "type": "string",
