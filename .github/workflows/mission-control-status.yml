@@ -2,11 +2,9 @@ name: Mission Control Status
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "17 * * * *"
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
 
 jobs:
@@ -23,14 +21,8 @@ jobs:
         run: |
           mkdir -p docs/status
           python tools/demerzel_mission_control.py --repo GuitarAlchemist/Demerzel --format json > docs/status/mission-control.json
-      - name: Commit status snapshot
-        run: |
-          if git diff --quiet -- docs/status/mission-control.json; then
-            echo "No status change"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/status/mission-control.json
-          git commit -m "Update Mission Control status"
-          git push
+      - name: Upload status snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: mission-control-status
+          path: docs/status/mission-control.json
