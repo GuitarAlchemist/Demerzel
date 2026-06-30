@@ -74,7 +74,7 @@ ARTIFACT_CLASSES: dict[str, tuple[str, Any]] = {
     "constitution": ("constitutions/*.md", None),
     "persona": ("personas/*.persona.yaml", _name_version),
     "policy": ("policies/*.yaml", _name_version),
-    "schema": (("schemas/*.json", "schemas/seldon/*.json"), None),
+    "schema": ("schemas/**/*.json", None),
     "contract_schema": ("schemas/contracts/*.json", None),
     "grammar": ("grammars/*.ebnf", None),
     "behavioral_test": ("tests/behavioral/*.md", None),
@@ -94,6 +94,8 @@ def harvest_inventory() -> dict[str, list[dict[str, Any]]]:
                 if art_type == "workflow" and path.suffix not in (".yml", ".yaml"):
                     continue
                 rel = path.relative_to(REPO).as_posix()
+                if art_type == "schema" and "schemas/contracts/" in rel:
+                    continue
                 entry: dict[str, Any] = {"name": path.stem, "path": rel}
                 if reader:
                     entry.update(reader(path))

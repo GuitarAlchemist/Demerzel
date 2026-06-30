@@ -485,6 +485,26 @@
         "path": "schemas/resilience-metric.schema.json"
       },
       {
+        "name": "conversation_hygiene_fact.schema",
+        "path": "schemas/seldon/conversation_hygiene_fact.schema.json"
+      },
+      {
+        "name": "pr_fact.schema",
+        "path": "schemas/seldon/pr_fact.schema.json"
+      },
+      {
+        "name": "review_fact.schema",
+        "path": "schemas/seldon/review_fact.schema.json"
+      },
+      {
+        "name": "review_finding_fact.schema",
+        "path": "schemas/seldon/review_finding_fact.schema.json"
+      },
+      {
+        "name": "worker_capability_fact.schema",
+        "path": "schemas/seldon/worker_capability_fact.schema.json"
+      },
+      {
         "name": "session-event.schema",
         "path": "schemas/session-event.schema.json"
       },
@@ -511,26 +531,6 @@
       {
         "name": "work-manifest.schema",
         "path": "schemas/work-manifest.schema.json"
-      },
-      {
-        "name": "conversation_hygiene_fact.schema",
-        "path": "schemas/seldon/conversation_hygiene_fact.schema.json"
-      },
-      {
-        "name": "pr_fact.schema",
-        "path": "schemas/seldon/pr_fact.schema.json"
-      },
-      {
-        "name": "review_fact.schema",
-        "path": "schemas/seldon/review_fact.schema.json"
-      },
-      {
-        "name": "review_finding_fact.schema",
-        "path": "schemas/seldon/review_finding_fact.schema.json"
-      },
-      {
-        "name": "worker_capability_fact.schema",
-        "path": "schemas/seldon/worker_capability_fact.schema.json"
       }
     ],
     "contract_schema": [
