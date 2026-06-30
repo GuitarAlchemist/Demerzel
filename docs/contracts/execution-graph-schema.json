@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "execution-graph.schema.json",
+  "title": "Planner Execution Graph",
+  "description": "A representation of work packages, dependencies, review stages, and merge order for the Planner",
+  "type": "object",
+  "required": ["version", "graph_id", "nodes", "edges"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version"
+    },
+    "graph_id": {
+      "type": "string",
+      "description": "Unique identifier for this execution graph"
+    },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/WorkNode" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/DependencyEdge" }
+    },
+    "review_stages": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ReviewStage" }
+    },
+    "merge_stages": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/MergeStage" }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "definitions": {
+    "WorkNode": {
+      "type": "object",
+      "required": ["node_id", "type", "description", "repo"],
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "description": "Unique identifier for the node (e.g., #517)"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["doc", "code", "test", "review", "merge"],
+          "description": "The kind of work represented by this node"
+        },
+        "description": {
+          "type": "string"
+        },
+        "repo": {
+          "type": "string",
+          "enum": ["demerzel", "ix", "tars", "ga"],
+          "description": "Target repository"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "failed", "blocked"],
+          "default": "pending"
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceRef" }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "DependencyEdge": {
+      "type": "object",
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Source node ID"
+        },
+        "to": {
+          "type": "string",
+          "description": "Target node ID"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["blocks", "depends_on", "reviews", "should_merge_after"],
+          "description": "Nature of the dependency"
+        }
+      }
+    },
+    "ReviewStage": {
+      "type": "object",
+      "required": ["stage_id", "target_nodes"],
+      "properties": {
+        "stage_id": {
+          "type": "string"
+        },
+        "target_nodes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Nodes being reviewed in this stage"
+        },
+        "reviewers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Personas or IDs of assigned reviewers"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceRef" }
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["T", "F", "U", "C", "pass", "fail", "pending"],
+          "default": "pending"
+        }
+      }
+    },
+    "MergeStage": {
+      "type": "object",
+      "required": ["stage_id", "order", "target_nodes"],
+      "properties": {
+        "stage_id": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "target_nodes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Nodes to be merged in this stage"
+        },
+        "target_branch": {
+          "type": "string",
+          "default": "master",
+          "description": "Target branch for the repository-specific merge stage. Demerzel examples use master."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "completed", "failed"],
+          "default": "pending"
+        }
+      }
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["link", "sha", "path", "issue"],
+          "description": "The kind of evidence"
+        },
+        "value": {
+          "type": "string",
+          "description": "The URL, SHA, or filesystem path"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
