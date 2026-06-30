@@ -75,6 +75,7 @@ ARTIFACT_CLASSES: dict[str, tuple[str, Any]] = {
     "persona": ("personas/*.persona.yaml", _name_version),
     "policy": ("policies/*.yaml", _name_version),
     "schema": ("schemas/*.json", None),
+    "seldon_schema": ("schemas/seldon/*.json", None),
     "contract_schema": ("schemas/contracts/*.json", None),
     "grammar": ("grammars/*.ebnf", None),
     "behavioral_test": ("tests/behavioral/*.md", None),
@@ -103,7 +104,10 @@ def harvest_inventory() -> dict[str, list[dict[str, Any]]]:
 
 
 def derive_counts(inv: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
-    return {k: len(v) for k, v in sorted(inv.items())}
+    counts = {k: len(v) for k, v in sorted(inv.items())}
+    if "seldon_schema" in counts:
+        counts["schema"] += counts.pop("seldon_schema")
+    return counts
 
 
 # ---------------------------------------------------------------------------
@@ -122,7 +126,7 @@ def _basename_index() -> dict[str, list[str]]:
     index: dict[str, list[str]] = {}
     patterns = [
         "policies/*.yaml", "constitutions/*", "schemas/*.json", "schemas/contracts/*.json",
-        "logic/*.json", "personas/*.yaml", "grammars/*.ebnf", "pipelines/*.ixql",
+        "schemas/seldon/*.json", "logic/*.json", "personas/*.yaml", "grammars/*.ebnf", "pipelines/*.ixql",
         "tests/behavioral/*.md", "docs/*.md", ".claude/skills/*/SKILL.md",
     ]
     for pat in patterns:

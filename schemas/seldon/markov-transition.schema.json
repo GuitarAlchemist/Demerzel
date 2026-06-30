@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://demerzel.guitaralchemist.com/schemas/seldon/markov-transition.schema.json",
+  "title": "Seldon Markov Transition",
+  "description": "Schema for a Markov transition probability between two lifecycle states.",
+  "type": "object",
+  "properties": {
+    "from_state": {
+      "type": "string",
+      "enum": [
+        "issue.grooming",
+        "issue.ready",
+        "issue.delegated",
+        "pr.draft",
+        "pr.ready_for_review",
+        "pr.merge_candidate",
+        "pr.merged",
+        "pr.rejected",
+        "issue.stuck"
+      ],
+      "description": "The starting state of the transition."
+    },
+    "to_state": {
+      "type": "string",
+      "enum": [
+        "issue.grooming",
+        "issue.ready",
+        "issue.delegated",
+        "pr.draft",
+        "pr.ready_for_review",
+        "pr.merge_candidate",
+        "pr.merged",
+        "pr.rejected",
+        "issue.stuck"
+      ],
+      "description": "The destination state of the transition."
+    },
+    "probability": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "The probability of this transition occurring."
+    },
+    "median_duration_hours": {
+      "type": "number",
+      "minimum": 0,
+      "description": "The median duration in hours it takes to complete this transition."
+    },
+    "worker": {
+      "type": "string",
+      "description": "The AI worker or persona associated with this transition (e.g., 'jules', 'claude')."
+    },
+    "capability_stream": {
+      "type": "string",
+      "description": "The specific capability stream being utilized (e.g., 'docs_schema')."
+    },
+    "sample_size": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The number of historical samples used to compute this transition probability."
+    }
+  },
+  "required": [
+    "from_state",
+    "to_state",
+    "probability",
+    "sample_size"
+  ],
+  "additionalProperties": false
+}

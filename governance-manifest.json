@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 40,
+    "schema": 42,
     "skill": 69,
     "workflow": 23
   },
@@ -511,6 +511,16 @@
       {
         "name": "work-manifest.schema",
         "path": "schemas/work-manifest.schema.json"
+      }
+    ],
+    "seldon_schema": [
+      {
+        "name": "markov-transition.schema",
+        "path": "schemas/seldon/markov-transition.schema.json"
+      },
+      {
+        "name": "state-space-vector.schema",
+        "path": "schemas/seldon/state-space-vector.schema.json"
       }
     ],
     "contract_schema": [
