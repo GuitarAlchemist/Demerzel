@@ -138,7 +138,8 @@
         },
         "target_branch": {
           "type": "string",
-          "default": "main"
+          "default": "master",
+          "description": "Repository-specific target branch. Demerzel examples use master."
         },
         "status": {
           "type": "string",
