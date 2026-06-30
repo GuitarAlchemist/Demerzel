@@ -3,7 +3,7 @@
   "generated_by": "scripts/build_manifest.py",
   "discipline": "harvest, don't declare (docs/adr/0002)",
   "counts": {
-    "behavioral_test": 114,
+    "behavioral_test": 115,
     "constitution": 5,
     "contract_schema": 9,
     "grammar": 20,
@@ -933,6 +933,10 @@
       {
         "name": "network-science-cases",
         "path": "tests/behavioral/network-science-cases.md"
+      },
+      {
+        "name": "planner-execution-graph-cases",
+        "path": "tests/behavioral/planner-execution-graph-cases.md"
       },
       {
         "name": "pre-mortem-cases",

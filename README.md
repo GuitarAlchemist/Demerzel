@@ -77,7 +77,7 @@ Demerzel/
 | Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
 | Schemas | 40 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
-| Behavioral tests | 114 | `tests/behavioral/*.md` |
+| Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
