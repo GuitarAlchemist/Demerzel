@@ -10,9 +10,9 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 40,
+    "schema": 41,
     "skill": 69,
-    "workflow": 23
+    "workflow": 24
   },
   "inventory": {
     "constitution": [
@@ -355,6 +355,10 @@
       {
         "name": "a2a-protocol.schema",
         "path": "schemas/a2a-protocol.schema.json"
+      },
+      {
+        "name": "advisory-decision.schema",
+        "path": "schemas/advisory-decision.schema.json"
       },
       {
         "name": "agent-card.schema",
@@ -1241,6 +1245,10 @@
       {
         "name": "governance-validate",
         "path": ".github/workflows/governance-validate.yml"
+      },
+      {
+        "name": "jules-auto-delegate",
+        "path": ".github/workflows/jules-auto-delegate.yml"
       },
       {
         "name": "karpathy-cherny-discipline",
