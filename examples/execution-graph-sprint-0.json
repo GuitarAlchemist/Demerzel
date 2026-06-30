@@ -82,10 +82,10 @@
   ],
   "merge_stages": [
     {
-      "stage_id": "sprint-0-master-merge",
+      "stage_id": "sprint-0-main-merge",
       "order": 1,
       "target_nodes": ["#517", "#519", "#520", "#523"],
-      "target_branch": "master"
+      "target_branch": "main"
     }
   ],
   "metadata": {
