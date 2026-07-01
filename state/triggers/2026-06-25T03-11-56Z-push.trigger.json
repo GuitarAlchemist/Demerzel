@@ -1,0 +1,12 @@
+{
+"type": "push",
+"repo": "Demerzel",
+"ref": "refs/heads/master",
+"priority": "medium",
+"details": {
+  "event": "push",
+  "sender": "spareilleux",
+  "run_id": "28144295230"
+},
+"timestamp": "2026-06-25T03:11:56Z"
+}
