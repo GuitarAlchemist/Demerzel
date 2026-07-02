@@ -30,6 +30,12 @@ on:
 permissions:
   contents: write
   pull-requests: read
+  # claude-code-action@v1 exchanges an OIDC token for its GitHub token;
+  # without this the action dies with "Unable to get
+  # ACTIONS_ID_TOKEN_REQUEST_URL" before the panel even starts — observed
+  # failing on every sibling-pr-opened dispatch (qa-tribunal.yml passes,
+  # this lane silently never produced a verdict).
+  id-token: write
 
 concurrency:
   group: tribunal-panel-${{ github.event.client_payload.repo || inputs.repo }}-${{ github.event.client_payload.pr || inputs.pr }}
