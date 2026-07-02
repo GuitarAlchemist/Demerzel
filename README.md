@@ -77,12 +77,12 @@ Demerzel/
 | Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
 | Schemas | 40 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
-| Behavioral tests | 114 | `tests/behavioral/*.md` |
+| Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
-| GitHub workflows | 23 | `.github/workflows/*.yml` |
+| GitHub workflows | 24 | `.github/workflows/*.yml` |
 
 ## Key concepts
 
@@ -100,6 +100,7 @@ Demerzel/
 | **ga** | Submodule at `governance/demerzel/` | Schemas + grammars (Loaded). Reads `~/.demerzel/HALT-ALL` at `/auto-optimize` Step 0. |
 | **tars** | Submodule at `governance/demerzel/` | Governance schemas → EBNF generation in `v2/grammars/governance/`. |
 | **ix** | Submodule at `governance/demerzel/` | `crates/ix-governance/` parses + **enforces** the 11-article constitution; `crates/ix-agent/` exposes 3 governance MCP tools. |
+| **streeling** | `state/streeling/` | Engineering observability platform — normalizes GitHub, workflow, and agent signals. |
 | **demerzel-bot** | Sibling path `../Demerzel/` | 3 constitutions + streeling-policy + gov-bs-generators injected as system prompts; multi-model-orchestration-policy drives LLM routing. |
 
 Most artifacts today are **Defined** or **Loaded**. Full **Enforcement** (constitution actively blocking actions) is shipped only in `ix-governance` — closing the gap in ga / tars requires runtime validation hooks in each consumer, not more Demerzel artifacts.
@@ -143,7 +144,7 @@ Artifacts are consumed by agents via:
 
 ## CI workflows
 
-23 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
+24 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
 
 - [`qa-tribunal.yml`](./.github/workflows/qa-tribunal.yml) — repository-dispatch emitter (Phase 0).
 - [`governance-validate.yml`](./.github/workflows/governance-validate.yml) — schema + grammar validation.
