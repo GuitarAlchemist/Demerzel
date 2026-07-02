@@ -12,6 +12,7 @@
     "policy": 45,
     "schema": 40,
     "skill": 69,
+    "streeling_schema": 1,
     "workflow": 24
   },
   "inventory": {
@@ -511,6 +512,12 @@
       {
         "name": "work-manifest.schema",
         "path": "schemas/work-manifest.schema.json"
+      }
+    ],
+    "streeling_schema": [
+      {
+        "name": "engineering-event.schema",
+        "path": "schemas/streeling/engineering-event.schema.json"
       }
     ],
     "contract_schema": [
