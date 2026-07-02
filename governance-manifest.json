@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 41,
+    "schema": 42,
     "skill": 69,
     "streeling_schema": 1,
     "workflow": 24
@@ -356,6 +356,10 @@
       {
         "name": "a2a-protocol.schema",
         "path": "schemas/a2a-protocol.schema.json"
+      },
+      {
+        "name": "advisory-decision.schema",
+        "path": "schemas/advisory-decision.schema.json"
       },
       {
         "name": "agent-card.schema",
