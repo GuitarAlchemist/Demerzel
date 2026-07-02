@@ -1,0 +1,50 @@
+{
+  "job_id": "aiw-0461-example",
+  "issue": 461,
+  "lane": "loop",
+  "autonomy_mode": "draft",
+  "provider": "docs-worker",
+  "workspace": "github-worktree",
+  "context_bundle_sha": "sha256:example-context-bundle",
+  "prompt_pack_version": "aiw-provider-task-v1",
+  "budget": {
+    "tier": "free-local",
+    "max_total_tokens": 50000,
+    "max_model_calls": 2,
+    "max_retries": 0,
+    "max_runner_minutes": 10,
+    "max_cost_usd": 0.0,
+    "approval_required_above_usd": 1.0
+  },
+  "commands_run": [
+    {
+      "command": "pwsh scripts/verify.ps1",
+      "status": "passed",
+      "log": "verification completed successfully"
+    }
+  ],
+  "changed_files": [
+    "docs/workflows/aiw-prompt-harness-engineering.md",
+    "prompts/aiw/provider-task.prompt.md",
+    "examples/aiw-provider-prompt.example.md"
+  ],
+  "outputs": {
+    "branch": "aiw-prompt-harness-461",
+    "pr": null,
+    "diff_summary": "docs-only AIW prompt and harness engineering contract",
+    "validation_log": "pwsh scripts/verify.ps1 passed"
+  },
+  "observations": [
+    "task stayed within draft autonomy",
+    "no runtime code was changed",
+    "standard verification evidence was collected",
+    "no secrets or policy authority were requested"
+  ],
+  "decision": "complete_draft_ready_for_review",
+  "stop_reason": "bounded_docs_patch_validated",
+  "risk_notes": [
+    "no provider invocation authority added",
+    "no merge authority changed",
+    "no HALT behavior changed"
+  ]
+}
