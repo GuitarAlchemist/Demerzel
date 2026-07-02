@@ -64,6 +64,8 @@ The hooks are validated in CI by `.github/workflows/karpathy-cherny-discipline.y
 
 ## Harness doctrine (Pocock delta, 2026-06-22)
 
+See: [Harness-Driven Development (HDD)](docs/methodology/harness-driven-development.md) for the full engineering methodology.
+
 From the Matt Pocock × David Ondrej transcript (`sources/chats/matt-pocock-david-ondrej-agentic-workflow.md`). Reconciles with the Karpathy 4 Rules and Cherny patterns above — **agree = keep, diverge = adjust**.
 
 - **Harness ≈ model (50/50), stay agent-agnostic.** Optimize the harness (prompts, skills, codebase, sandbox) as much as the model, and don't over-fit to one model. A codebase that's *easy to change* lets a *cheaper* model do the same work. Optimize **AX (Agent Experience)** the way you optimize DX. *(New — extends `project_harness_engineering_direction`.)*

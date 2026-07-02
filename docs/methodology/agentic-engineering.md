@@ -1,5 +1,7 @@
 # Agentic Engineering — the harness is the work
 
+See also: [Harness-Driven Development (HDD)](harness-driven-development.md) for the operational methodology.
+
 > A read-on-demand reference, **not** an always-loaded instruction block. Distilled from Matt
 > Pocock's "Agentic Engineering Workflow" (aihero.dev) + Ousterhout's *A Philosophy of Software
 > Design*, and mapped to **this repo's** existing machinery. Read it when you're deciding *how* to
