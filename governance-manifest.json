@@ -3,15 +3,16 @@
   "generated_by": "scripts/build_manifest.py",
   "discipline": "harvest, don't declare (docs/adr/0002)",
   "counts": {
-    "behavioral_test": 114,
+    "behavioral_test": 115,
     "constitution": 5,
     "contract_schema": 9,
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 41,
+    "schema": 42,
     "skill": 69,
+    "streeling_schema": 1,
     "workflow": 24
   },
   "inventory": {
@@ -489,6 +490,10 @@
         "path": "schemas/resilience-metric.schema.json"
       },
       {
+        "name": "routing-recommendation.schema",
+        "path": "schemas/routing-recommendation.schema.json"
+      },
+      {
         "name": "session-event.schema",
         "path": "schemas/session-event.schema.json"
       },
@@ -515,6 +520,12 @@
       {
         "name": "work-manifest.schema",
         "path": "schemas/work-manifest.schema.json"
+      }
+    ],
+    "streeling_schema": [
+      {
+        "name": "engineering-event.schema",
+        "path": "schemas/streeling/engineering-event.schema.json"
       }
     ],
     "contract_schema": [
@@ -937,6 +948,10 @@
       {
         "name": "network-science-cases",
         "path": "tests/behavioral/network-science-cases.md"
+      },
+      {
+        "name": "planner-execution-graph-cases",
+        "path": "tests/behavioral/planner-execution-graph-cases.md"
       },
       {
         "name": "pre-mortem-cases",

@@ -167,6 +167,14 @@ Demerzel (governance)
             Uses: reconnaissance profiles for capability boundary checks
 ```
 
+### Streeling (Observability)
+
+Streeling is the Engineering Observability platform for the Harness. It captures, normalizes, and exposes engineering signals to Demerzel and Seldon.
+
+- **Observe**: Capture normalized signals from GitHub, CI workflows, and agent activity.
+- **Normalize**: Use the `engineering-event` schema to ensure consistency across sources.
+- **Expose**: Provide a Supervisor event feed for real-time governance decisions.
+
 ## Versioning Strategy
 
 - Personas: semver, breaking changes require new version
