@@ -178,6 +178,115 @@ Agents and orchestrators must halt and escalate to a human (Demerzel lane) when:
 - Constitutional articles (especially Asimov laws) are potentially violated.
 - A "HALT-ALL" marker is present in the ecosystem.
 
+## Cherny-style loop lifecycle
+
+Each AIW execution episode should follow a bounded loop. This loop must be explicit, not hidden inside provider prompts.
+
+```text
+job_spec
+  -> materialize_context
+  -> select_provider
+  -> prepare_workspace
+  -> generate_prompt
+  -> invoke_worker
+  -> observe_result
+  -> run_checks
+  -> collect_evidence
+  -> decide: complete | retry | escalate | stop
+```
+
+### Router responsibilities
+
+The AIW router chooses how an already-shaped issue becomes an agent execution episode and should own:
+
+1. **Provider selection**
+   - choose from Claude Code, Codex, Jules, Gemini, Ollama, NotebookLM, Augment/Antigravity, etc.;
+   - prefer local/free providers first when adequate;
+   - escalate only when evidence justifies it.
+2. **Budget control**
+   - read budget caps from the job spec;
+   - estimate context/token cost before invocation;
+   - stop before exceeding budget;
+   - require approval above configured threshold;
+   - write budget ledger after each episode.
+3. **Workspace selection**
+   - disposable worktree;
+   - Podman container;
+   - WSL worktree;
+   - Windows VM;
+   - GitHub-hosted runner;
+   - cloud worker.
+4. **Autonomy enforcement**
+   - `observe`: no repo changes;
+   - `draft`: docs/spec/comments only;
+   - `patch`: local branch/patch with tests;
+   - `pr`: open PR with evidence;
+   - `harvest`: only through existing Demerzel gates.
+5. **Evidence collection**
+   - branch/PR link;
+   - diff summary;
+   - test logs;
+   - failed commands;
+   - harness result JSON;
+   - cost/budget ledger;
+   - provider trace;
+   - escalation/stop reason.
+
+### Loop stop conditions
+
+The loop must stop when:
+- budget cap is reached;
+- max retries reached;
+- issue scope expands;
+- risk class escalates;
+- required context is missing;
+- tests repeatedly fail without new information;
+- provider asks for broader permissions;
+- files outside allowed paths are touched;
+- HALT is active;
+- human/council review is required.
+
+### Retry policy
+
+Retries should be evidence-based.
+
+Allowed retry reasons:
+- transient provider failure;
+- missing dependency that can be installed within allowed commands;
+- test failure with clear localized fix;
+- formatting/lint failure;
+- incomplete output shape.
+
+Not allowed retry reasons:
+- vague failure without new diagnosis;
+- repeated test failure after same patch strategy;
+- scope expansion;
+- policy or HALT conflict;
+- cost threshold exceeded;
+- provider requests new secrets or broad filesystem access.
+
+### Provider adapter contract
+
+Each provider adapter should expose the same conceptual operations. Adapters execute jobs; they do not own policy.
+
+```yaml
+adapter:
+  name: claude-code-local
+  capabilities:
+    can_read_repo: true
+    can_write_branch: true
+    can_open_pr: true
+    supports_structured_output: true
+    supports_remote_execution: false
+  operations:
+    - prepare
+    - invoke
+    - observe
+    - collect
+    - cancel
+    - estimate_cost
+```
+
 ## Follow-up Implementation
 
 The following implementation issues are required to turn this doctrine into executable workflow rules:

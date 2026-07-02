@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/seldon/review_finding_fact.schema.json",
+  "title": "Review Finding Fact",
+  "description": "Granular fact about a specific finding in a code review.",
+  "type": "object",
+  "required": ["finding_id", "review_id", "category", "severity"],
+  "properties": {
+    "finding_id": { "type": "string" },
+    "review_id": { "type": "string" },
+    "file_path": { "type": "string" },
+    "line_number": { "type": "integer" },
+    "category": { "type": "string", "enum": ["style", "logic", "security", "performance", "governance"] },
+    "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "message_summary": { "type": "string" }
+  },
+  "additionalProperties": false
+}

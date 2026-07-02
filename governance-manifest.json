@@ -3,7 +3,7 @@
   "generated_by": "scripts/build_manifest.py",
   "discipline": "harvest, don't declare (docs/adr/0002)",
   "counts": {
-    "behavioral_test": 114,
+    "behavioral_test": 115,
     "constitution": 5,
     "contract_schema": 9,
     "grammar": 20,
@@ -11,7 +11,9 @@
     "pipeline": 23,
     "policy": 45,
     "schema": 42,
+    "seldon_schema": 7,
     "skill": 69,
+    "streeling_schema": 1,
     "workflow": 24
   },
   "inventory": {
@@ -357,6 +359,10 @@
         "path": "schemas/a2a-protocol.schema.json"
       },
       {
+        "name": "advisory-decision.schema",
+        "path": "schemas/advisory-decision.schema.json"
+      },
+      {
         "name": "agent-card.schema",
         "path": "schemas/agent-card.schema.json"
       },
@@ -485,6 +491,10 @@
         "path": "schemas/resilience-metric.schema.json"
       },
       {
+        "name": "routing-recommendation.schema",
+        "path": "schemas/routing-recommendation.schema.json"
+      },
+      {
         "name": "session-event.schema",
         "path": "schemas/session-event.schema.json"
       },
@@ -513,14 +523,40 @@
         "path": "schemas/work-manifest.schema.json"
       }
     ],
+    "streeling_schema": [
+      {
+        "name": "engineering-event.schema",
+        "path": "schemas/streeling/engineering-event.schema.json"
+      }
+    ],
     "seldon_schema": [
+      {
+        "name": "conversation_hygiene_fact.schema",
+        "path": "schemas/seldon/conversation_hygiene_fact.schema.json"
+      },
       {
         "name": "markov-transition.schema",
         "path": "schemas/seldon/markov-transition.schema.json"
       },
       {
+        "name": "pr_fact.schema",
+        "path": "schemas/seldon/pr_fact.schema.json"
+      },
+      {
+        "name": "review_fact.schema",
+        "path": "schemas/seldon/review_fact.schema.json"
+      },
+      {
+        "name": "review_finding_fact.schema",
+        "path": "schemas/seldon/review_finding_fact.schema.json"
+      },
+      {
         "name": "state-space-vector.schema",
         "path": "schemas/seldon/state-space-vector.schema.json"
+      },
+      {
+        "name": "worker_capability_fact.schema",
+        "path": "schemas/seldon/worker_capability_fact.schema.json"
       }
     ],
     "contract_schema": [
@@ -943,6 +979,10 @@
       {
         "name": "network-science-cases",
         "path": "tests/behavioral/network-science-cases.md"
+      },
+      {
+        "name": "planner-execution-graph-cases",
+        "path": "tests/behavioral/planner-execution-graph-cases.md"
       },
       {
         "name": "pre-mortem-cases",

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/seldon/review_fact.schema.json",
+  "title": "Review Fact",
+  "description": "Derived fact about a Pull Request Review, computed from immutable Streeling events.",
+  "type": "object",
+  "required": ["review_id", "pr_number", "repo", "reviewer", "submitted_at", "state"],
+  "properties": {
+    "review_id": { "type": "string" },
+    "pr_number": { "type": "integer" },
+    "repo": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "state": { "type": "string", "enum": ["approved", "changes_requested", "commented"] },
+    "finding_count": { "type": "integer", "default": 0 },
+    "is_agent_review": { "type": "boolean" },
+    "time_to_review_seconds": {
+      "type": "number",
+      "description": "Seconds from PR creation/assignment to review submission"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/seldon/pr_fact.schema.json",
+  "title": "PR Fact",
+  "description": "Derived fact about a Pull Request, computed from immutable Streeling events.",
+  "type": "object",
+  "required": ["pr_number", "repo", "author", "created_at", "state"],
+  "properties": {
+    "pr_number": { "type": "integer", "description": "PR number from GitHub" },
+    "repo": { "type": "string", "description": "Full repository name, e.g. 'GuitarAlchemist/ga'" },
+    "author": { "type": "string", "description": "GitHub username or agent ID" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "merged_at": { "type": ["string", "null"], "format": "date-time" },
+    "closed_at": { "type": ["string", "null"], "format": "date-time" },
+    "state": { "type": "string", "enum": ["open", "merged", "closed"] },
+    "cycle_time_seconds": {
+      "type": ["number", "null"],
+      "description": "Seconds from creation to merge/close"
+    },
+    "review_count": { "type": "integer", "default": 0 },
+    "comment_count": { "type": "integer", "default": 0 },
+    "ci_status": {
+      "type": "string",
+      "enum": ["success", "failure", "pending", "unknown"],
+      "default": "unknown"
+    },
+    "lines_added": { "type": "integer" },
+    "lines_removed": { "type": "integer" },
+    "is_agent_pr": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}
