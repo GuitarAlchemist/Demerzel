@@ -58,7 +58,7 @@ Canonical state should live in GitHub:
 
 Add or design a dispatcher layer that reads eligible GitHub issues and emits a normalized job spec.
 
-Example job spec (see `schemas/aiw-job.schema.json`):
+Example job spec (see `examples/aiw-job.example.yaml`):
 
 ```yaml
 job_id: aiw-0001
