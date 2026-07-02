@@ -2,7 +2,7 @@
 
 Governance framework for AI agents: constitutions, personas, hexavalent logic, alignment policies, and behavioral tests. Named after R. Daneel Olivaw from Asimov's Foundation. Consumed by **ix**, **tars**, **ga** via the Galactic Protocol.
 
-Full directory listing: see `README.md`. Source of truth for Asimov laws, Default constitution articles, and all 45 policies: `constitutions/` and `policies/`.
+Full directory listing: see `README.md`. Source of truth for Asimov laws, Default constitution articles, and all 46 policies: `constitutions/` and `policies/`.
 
 ## Key Principle
 
