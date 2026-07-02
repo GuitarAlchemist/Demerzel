@@ -3,7 +3,7 @@
   "generated_by": "scripts/build_manifest.py",
   "discipline": "harvest, don't declare (docs/adr/0002)",
   "counts": {
-    "behavioral_test": 114,
+    "behavioral_test": 115,
     "constitution": 5,
     "contract_schema": 9,
     "grammar": 20,
@@ -13,7 +13,7 @@
     "schema": 40,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 23
+    "workflow": 24
   },
   "inventory": {
     "constitution": [
@@ -942,6 +942,10 @@
         "path": "tests/behavioral/network-science-cases.md"
       },
       {
+        "name": "planner-execution-graph-cases",
+        "path": "tests/behavioral/planner-execution-graph-cases.md"
+      },
+      {
         "name": "pre-mortem-cases",
         "path": "tests/behavioral/pre-mortem-cases.md"
       },
@@ -1248,6 +1252,10 @@
       {
         "name": "governance-validate",
         "path": ".github/workflows/governance-validate.yml"
+      },
+      {
+        "name": "jules-auto-delegate",
+        "path": ".github/workflows/jules-auto-delegate.yml"
       },
       {
         "name": "karpathy-cherny-discipline",
