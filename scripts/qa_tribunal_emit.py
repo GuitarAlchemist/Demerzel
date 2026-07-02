@@ -44,15 +44,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import json
 import os
 import re
-import subprocess
 import sys
 from pathlib import Path
 
-import jsonschema  # type: ignore[import-not-found]
+import demerzel_kit as kit
 
 
 # ---------------------------------------------------------------------------
@@ -68,8 +66,6 @@ REPO_ALLOWLIST = {
 
 PRODUCER_SLUG = "qa-architect-cycle"
 PRODUCER_VERSION = "0.1.0"
-
-SCHEMA_PATH = Path("schemas/contracts/qa-verdict.schema.json")
 
 VERDICT_ROOT = Path("state/quality/verdicts")
 SWEEP_ROOT = VERDICT_ROOT / "sweeps"
@@ -113,26 +109,6 @@ class PayloadError(ValueError):
     """Dispatch payload failed validation."""
 
 
-def _gh_api(path: str) -> dict | None:
-    """Call `gh api <path>`. Returns parsed JSON or None on non-200."""
-    try:
-        result = subprocess.run(
-            ["gh", "api", path],
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=30,
-        )
-    except (subprocess.TimeoutExpired, FileNotFoundError):
-        return None
-    if result.returncode != 0:
-        return None
-    try:
-        return json.loads(result.stdout)
-    except json.JSONDecodeError:
-        return None
-
-
 def validate_dispatch_payload(payload: dict) -> dict:
     """Validate the client_payload from a repository_dispatch event.
 
@@ -167,12 +143,12 @@ def validate_dispatch_payload(payload: dict) -> dict:
 
     # SHA-existence verification — closes the SHA-confusion attack from the
     # 2026-05-15 octo security review.
-    commit = _gh_api(f"repos/{repo}/commits/{head_sha}")
+    commit = kit.gh_json(["api", f"repos/{repo}/commits/{head_sha}"])
     if not commit:
         raise PayloadError(f"head_sha {head_sha} not found in {repo}")
 
     # PR cross-check — the PR's head.sha must match the dispatched head_sha.
-    pr_info = _gh_api(f"repos/{repo}/pulls/{pr}")
+    pr_info = kit.gh_json(["api", f"repos/{repo}/pulls/{pr}"])
     if not pr_info:
         raise PayloadError(f"PR #{pr} not found in {repo}")
     actual_head = pr_info.get("head", {}).get("sha", "")
@@ -205,19 +181,10 @@ def validate_dispatch_payload(payload: dict) -> dict:
 
 def changed_files(repo: str, pr: int) -> list[str]:
     """Return list of changed file paths via `gh pr diff --name-only`."""
-    try:
-        result = subprocess.run(
-            ["gh", "pr", "diff", str(pr), "--repo", repo, "--name-only"],
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=60,
-        )
-    except (subprocess.TimeoutExpired, FileNotFoundError):
+    result = kit.gh_text(["pr", "diff", str(pr), "--repo", repo, "--name-only"])
+    if not result:
         return []
-    if result.returncode != 0:
-        return []
-    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    return [line.strip() for line in result.splitlines() if line.strip()]
 
 
 def derive_blast_radius(paths: list[str]) -> dict:
@@ -255,17 +222,10 @@ def derive_blast_radius(paths: list[str]) -> dict:
 # Verdict construction
 # ---------------------------------------------------------------------------
 
-def _iso_now() -> tuple[str, str]:
-    """Return (iso_rfc3339, iso_filename_safe) for the current UTC time."""
-    now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
-    iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-    file_safe = now.strftime("%Y-%m-%dT%H-%M-%SZ")
-    return iso, file_safe
-
-
 def build_pr_verdict(payload: dict, paths: list[str]) -> dict:
     """Build a contract-conforming verdict for a pull_request target."""
-    iso, file_safe = _iso_now()
+    iso = kit.now_iso()
+    file_safe = iso.replace(":", "-")
     blast = derive_blast_radius(paths)
 
     return {
@@ -317,7 +277,8 @@ def build_pr_verdict(payload: dict, paths: list[str]) -> dict:
 
 def build_sweep_verdict() -> dict:
     """Build a scheduled-sweep informational verdict."""
-    iso, file_safe = _iso_now()
+    iso = kit.now_iso()
+    file_safe = iso.replace(":", "-")
     return {
         "schema_version": 1,
         "verdict_id": f"{file_safe}-sweep-{PRODUCER_SLUG}",
@@ -363,14 +324,6 @@ def build_sweep_verdict() -> dict:
 
 def emit_verdict(verdict: dict, payload: dict | None) -> Path:
     """Validate against schema + write to verdict path. Returns the output path."""
-    with open(SCHEMA_PATH, "r", encoding="utf-8") as f:
-        schema = json.load(f)
-
-    try:
-        jsonschema.validate(instance=verdict, schema=schema)
-    except jsonschema.ValidationError as exc:
-        raise PayloadError(f"emitter produced schema-invalid verdict: {exc.message}") from exc
-
     if payload is not None:
         # Per-PR verdict path
         repo_slug = payload["repo"].replace("/", "_")
@@ -378,11 +331,21 @@ def emit_verdict(verdict: dict, payload: dict | None) -> Path:
     else:
         # Sweep path
         out_dir = SWEEP_ROOT / verdict["target"]["ref"]
+
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{verdict['verdict_id']}.json"
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(verdict, f, indent=2)
-        f.write("\n")
+
+    try:
+        kit.write_artifact(out_path, verdict, schema="contracts/qa-verdict")
+    except Exception as exc:
+        # demerzel_kit's validate raises jsonschema.ValidationError which we need to wrap
+        # if it occurs. demerzel_kit doesn't expose ValidationError natively unless imported.
+        # So we catch Exception and convert to PayloadError if it's a validation error.
+        err_name = type(exc).__name__
+        if "ValidationError" in err_name:
+            raise PayloadError(f"emitter produced schema-invalid verdict: {exc}") from exc
+        raise
+
     return out_path
 
 
