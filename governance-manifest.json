@@ -11,6 +11,7 @@
     "pipeline": 23,
     "policy": 45,
     "schema": 42,
+    "seldon_schema": 5,
     "skill": 69,
     "streeling_schema": 1,
     "workflow": 24
@@ -526,6 +527,28 @@
       {
         "name": "engineering-event.schema",
         "path": "schemas/streeling/engineering-event.schema.json"
+      }
+    ],
+    "seldon_schema": [
+      {
+        "name": "conversation_hygiene_fact.schema",
+        "path": "schemas/seldon/conversation_hygiene_fact.schema.json"
+      },
+      {
+        "name": "pr_fact.schema",
+        "path": "schemas/seldon/pr_fact.schema.json"
+      },
+      {
+        "name": "review_fact.schema",
+        "path": "schemas/seldon/review_fact.schema.json"
+      },
+      {
+        "name": "review_finding_fact.schema",
+        "path": "schemas/seldon/review_finding_fact.schema.json"
+      },
+      {
+        "name": "worker_capability_fact.schema",
+        "path": "schemas/seldon/worker_capability_fact.schema.json"
       }
     ],
     "contract_schema": [
