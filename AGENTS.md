@@ -83,9 +83,6 @@ once" failure mode:
 - **Vertical, not horizontal, decomposition.** Each task/PR is a thin slice
   cutting through all integration layers (surfacing unknowns early), not a
   horizontal layer.
-- **AIW Operating Doctrine.** Adhere to the Karpathy (exploration), Pocock
-  (discipline), Cherny (loops), and Demerzel (governance) lanes. See
-  `docs/workflows/aiw-operating-doctrine.md` for details.
 
 Prefer existing planning/review/quality tooling over adding new skills — aihero's
 `/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, `/improve-codebase-architecture`

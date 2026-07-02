@@ -75,7 +75,6 @@ ARTIFACT_CLASSES: dict[str, tuple[str, Any]] = {
     "persona": ("personas/*.persona.yaml", _name_version),
     "policy": ("policies/*.yaml", _name_version),
     "schema": ("schemas/*.json", None),
-    "streeling_schema": ("schemas/streeling/*.json", None),
     "contract_schema": ("schemas/contracts/*.json", None),
     "grammar": ("grammars/*.ebnf", None),
     "behavioral_test": ("tests/behavioral/*.md", None),

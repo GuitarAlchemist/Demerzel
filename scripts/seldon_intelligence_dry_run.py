@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 def load_events(filepath):
     events = []
@@ -36,10 +36,10 @@ def compute_kpis(events):
             if issue_id in issue_created:
                 latency = (ts - issue_created[issue_id]).total_seconds() / 60
                 total_latency_issue_pr += latency
-                kpis['merged_prs'] += 1 # Rough count for now
 
         elif e['event'] == 'pr_merged':
             pr_id = e['pr_id']
+            kpis['merged_prs'] += 1
             if pr_id in pr_created:
                 latency = (ts - pr_created[pr_id]).total_seconds() / 60
                 total_latency_pr_merge += latency
@@ -67,7 +67,7 @@ def generate_recommendation(events):
         "recommended_worker": "jules",
         "confidence": 0.95,
         "rationale": "Historical data shows Jules has a 100% success rate on implementation tasks with low latency.",
-        "timestamp": datetime.utcnow().isoformat() + "Z"
+        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     }
 
 def main():

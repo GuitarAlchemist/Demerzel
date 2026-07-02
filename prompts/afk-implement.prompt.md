@@ -8,20 +8,14 @@ Implement GitHub issue #{{ISSUE_NUMBER}}: "{{ISSUE_TITLE}}"
 Issue body:
 {{ISSUE_BODY}}
 
-## AIW Operating Doctrine
-You are operating in the **Cherny lane** (agentic loop), executing a task that has been shaped in the **Pocock lane** (discipline/shaping). You must adhere to the **Karpathy lane** rules for implementation (exploration/speed without canonizing waste).
-
 ## Rules (non-negotiable)
 1. SCOPE: change only what this issue asks for. No refactoring of adjacent code,
    no unrelated style fixes (Karpathy R3 — surgical changes).
 2. SIMPLICITY: the minimum change that satisfies the issue (Karpathy R2).
-3. DOCTRINE: Respect the Pocock-before-AFK gating; if the issue is vague or
-   lacks clear acceptance criteria, STOP, make no commits, and write a single
-   line to stdout: `BLOCKED: vague issue / lacks acceptance criteria`.
-4. FORBIDDEN: do NOT edit anything under `constitutions/` or `policies/`. If the
+3. FORBIDDEN: do NOT edit anything under `constitutions/` or `policies/`. If the
    issue requires that, STOP, make no commits, and write a single line to stdout:
    `BLOCKED: requires constitution/policy change — needs human pre-approval`.
-5. NO RUNTIME CODE: Demerzel holds only governance artifacts (YAML/MD/JSON/schemas/
+4. NO RUNTIME CODE: Demerzel holds only governance artifacts (YAML/MD/JSON/schemas/
    tests). Do not add executable application code.
 
 ## Definition of done
