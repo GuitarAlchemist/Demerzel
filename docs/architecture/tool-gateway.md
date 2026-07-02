@@ -1,5 +1,10 @@
 # Tool Gateway
 
+**Status:** Proposed / DRAFT / ARCHITECTURAL CONCEPT
+**Version:** 0.1.0
+**Date:** 2026-07-02
+**Owner:** Seldon (Chancellor of Streeling)
+
 ## Concept
 
 The Tool Gateway is a future architectural component designed to decouple Demerzel and her planners from specific, hard-coded tool implementations. Instead of requesting a specific tool (e.g., `ix_search`), agents request a **capability** (e.g., `search`).

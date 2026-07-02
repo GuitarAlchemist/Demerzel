@@ -1,12 +1,18 @@
 # Cost-Aware Routing
 
+**Status:** Proposed / DRAFT
+**Version:** 0.1.0
+**Date:** 2026-07-02
+**Owner:** Seldon (Chancellor of Streeling)
+**Related:** docs/workflows/aiw-budget-router.md
+
 ## Overview
 
-Cost-aware routing is the mechanism by which the GuitarAlchemist ecosystem selects the most appropriate and cost-effective tool or model for a given task. This is an advisory function performed by Seldon, providing recommendations to Demerzel.
+Cost-aware routing is the advisory mechanism by which the GuitarAlchemist ecosystem selects the most appropriate and cost-effective tool or model for a given task. This is an advisory function performed by Seldon, providing recommendations to Demerzel.
 
 ## Routing Hierarchy
 
-The router follows a strict hierarchy when selecting tools:
+The router follows a strict hierarchy when selecting tools, prioritizing deterministic efficiency over probabilistic judgment:
 
 1.  **Deterministic Tools First**: If a task can be performed by a deterministic tool (e.g., `ripgrep`, `duckdb`, custom scripts), that tool is selected.
 2.  **Local Models Second**: If a deterministic tool is insufficient, but the task is low-risk (e.g., summarization, classification, triage), a local model (via Ollama) is preferred.
@@ -39,7 +45,7 @@ Seldon observes the stream of engineering events from Streeling and generates ro
 -   **Estimated Cost**: Based on historical usage and prompt complexity.
 -   **Confidence Score**: Seldon's confidence that the suggested tool can complete the task.
 
-Demerzel uses these signals to make the final routing decision, ensuring that the project stays within its token budget while maintaining high engineering standards.
+Demerzel uses these signals to provide final routing advice to the execution engines, ensuring that the project stays within its token budget while maintaining high engineering standards.
 
 ## Reference
 

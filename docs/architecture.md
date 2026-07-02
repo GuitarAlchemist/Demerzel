@@ -145,6 +145,16 @@ Operationalizes LawZero principles:
 - **Generator/estimator accountability**: Creative output reviewed by neutral evaluator
 - **No instrumental goals**: Agents cannot acquire unauthorized capabilities or persistent goals
 
+### Token Economics and Routing
+
+To ensure sustainable and cost-effective operations, Demerzel adopts a multi-tier token economics model and cost-aware routing strategy.
+
+- **Token Economics** (`docs/architecture/token-economics.md`): Defines the budget tiers and optimization objectives.
+- **Cost-Aware Routing** (`docs/architecture/cost-aware-routing.md`): Advisory routing hierarchy prioritizing deterministic and local tools.
+- **Prompt Registry** (`docs/architecture/prompt-registry.md`): Centralized metadata for capability-aware prompt selection.
+- **Tool Gateway** (`docs/architecture/tool-gateway.md`): Future architectural concept for capability-based tool abstraction.
+- **Economic Metrics** (`docs/metrics/token-economics-metrics.md`): KPIs for tracking intelligence ROI and cost efficiency.
+
 ## Relationship to Other Repos
 
 ```text

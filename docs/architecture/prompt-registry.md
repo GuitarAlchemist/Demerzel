@@ -1,5 +1,10 @@
 # Prompt Registry
 
+**Status:** Proposed / DRAFT
+**Version:** 0.1.0
+**Date:** 2026-07-02
+**Owner:** Seldon (Chancellor of Streeling)
+
 ## Purpose
 
 The Prompt Registry is a central repository for all structured prompts used within the GuitarAlchemist ecosystem. It decouples prompt engineering from implementation code, enables versioning, and provides Seldon with the data needed to make cost and capability-aware routing decisions.

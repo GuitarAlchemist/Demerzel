@@ -1,5 +1,11 @@
 # Token Economics
 
+**Status:** Proposed / DRAFT
+**Version:** 0.1.0
+**Date:** 2026-07-02
+**Owner:** Seldon (Chancellor of Streeling)
+**Related:** #492, #495, #499, #515, #549
+
 ## Philosophy
 
 Token economics in the GuitarAlchemist ecosystem is not merely about minimizing cost. It is about optimizing for the best combination of:

@@ -1,5 +1,10 @@
 # Token Economics Metrics
 
+**Status:** Proposed / DRAFT
+**Version:** 0.1.0
+**Date:** 2026-07-02
+**Owner:** Seldon (Chancellor of Streeling)
+
 ## Overview
 
 Seldon is responsible for tracking and reporting on the economic performance of the AI workforce. This telemetry provides the evidence needed to refine routing policies and budget tiers.
