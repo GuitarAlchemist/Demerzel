@@ -1,62 +1,82 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/advisory-decision.schema.json",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/advisory-decision",
   "title": "Advisory Decision",
-  "description": "An advisory decision emitted by Demerzel based on Streeling events and Seldon facts.",
+  "description": "Rule output contract for the Demerzel Policy Engine AIW decisions (#589). Emits an advisory, dry-run decision based on the rule evaluation.",
   "type": "object",
   "required": [
-    "decision_id",
-    "entity",
-    "required_capability",
-    "decision",
-    "confidence",
-    "reasons",
-    "evidence_refs",
-    "human_review_required",
-    "created_at"
+    "rule_result"
   ],
   "properties": {
-    "decision_id": { "type": "string", "description": "Unique UUID for the decision." },
-    "entity": {
-      "type": "string",
-      "description": "The entity the decision pertains to (e.g., 'owner/repo#number').",
-      "pattern": "^[^/]+/[^/]+#\\d+$"
-    },
-    "required_capability": {
-      "type": "string",
-      "enum": [
-        "implementation",
-        "research",
-        "adversarial_review",
-        "repository_navigation",
-        "bug_hunting",
-        "security_review",
-        "orchestration",
-        "unknown"
-      ]
-    },
-    "recommended_worker": { "type": ["string", "null"] },
-    "backup_workers": { "type": "array", "items": { "type": "string" } },
-    "decision": {
-      "type": "string",
-      "enum": ["route", "hold", "request_review", "escalate", "recommend_merge", "no_action"]
-    },
-    "confidence": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
-    },
-    "reasons": {
-      "type": "array",
-      "items": { "type": "string" },
-      "minItems": 1
-    },
-    "evidence_refs": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "References to Streeling event IDs or Seldon fact IDs."
-    },
-    "human_review_required": { "type": "boolean" },
-    "created_at": { "type": "string", "format": "date-time" }
+    "rule_result": {
+      "type": "object",
+      "required": [
+        "rule_id",
+        "subject",
+        "decision",
+        "reason_codes",
+        "evidence_refs",
+        "next_actions",
+        "confidence"
+      ],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "description": "The unique identifier of the rule that was evaluated."
+        },
+        "subject": {
+          "type": "string",
+          "enum": [
+            "issue",
+            "pull_request",
+            "batch",
+            "worker_task",
+            "execution_episode"
+          ],
+          "description": "The entity the rule was evaluated against."
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "allow",
+            "block",
+            "warn",
+            "escalate",
+            "recommend"
+          ],
+          "description": "The advisory outcome of the rule evaluation. Mutation is prohibited."
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of structured reason codes justifying the decision."
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "References to artifacts, logs, or metrics supporting the decision."
+        },
+        "next_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Recommended actions for the human or agent to take."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "description": "The confidence level of the decision."
+        }
+      }
+    }
   }
 }

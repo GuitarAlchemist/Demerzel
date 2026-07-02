@@ -1,104 +1,110 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/streeling/engineering-event.schema.json",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/streeling/engineering-event",
   "title": "Engineering Event",
-  "description": "A normalized event capturing GitHub activity for the Streeling intelligence pipeline.",
+  "description": "A normalized engineering event captured by Streeling for the Supervisor event feed.",
   "type": "object",
   "required": [
-    "event_id",
-    "delivery_id",
-    "occurred_at",
+    "id",
     "observed_at",
-    "source_system",
-    "source_kind",
-    "org",
+    "source",
     "repo",
-    "entity_type",
-    "entity_id",
-    "actor_login",
-    "actor_type",
-    "action",
-    "status",
+    "actor",
+    "worker",
+    "capability",
+    "event_type",
     "severity",
-    "durability_class",
-    "schema_version"
+    "summary"
   ],
   "properties": {
-    "event_id": { "type": "string", "description": "Unique UUID for the normalized event." },
-    "delivery_id": { "type": "string", "description": "Original delivery ID from the source system (e.g., X-GitHub-Delivery)." },
-    "occurred_at": { "type": "string", "format": "date-time", "description": "Timestamp when the event happened in the source system." },
-    "observed_at": { "type": "string", "format": "date-time", "description": "Timestamp when the event was ingested by Streeling." },
-    "source_system": { "type": "string", "const": "github" },
-    "source_kind": { "type": "string", "enum": ["webhook", "rest", "graphql", "workflow_artifact", "manual"] },
-    "org": { "type": "string", "const": "GuitarAlchemist" },
-    "repo": { "type": "string" },
-    "entity_type": {
+    "id": {
       "type": "string",
-      "enum": [
-        "issue",
-        "pull_request",
-        "comment",
-        "review",
-        "workflow_run",
-        "job",
-        "check_run",
-        "status",
-        "cost",
-        "collision",
-        "discussion"
-      ]
+      "description": "Unique identifier for the event."
     },
-    "entity_id": { "type": "string", "description": "Unique identifier for the entity (e.g., node ID)." },
-    "issue_number": { "type": ["integer", "null"] },
-    "pr_number": { "type": ["integer", "null"] },
-    "actor_login": { "type": "string" },
-    "actor_type": { "type": "string", "enum": ["human", "bot", "app"] },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the event was observed."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["github", "workflow", "agent", "manual"],
+      "description": "The origin of the event."
+    },
+    "repo": {
+      "type": "string",
+      "description": "The repository where the event occurred."
+    },
+    "issue_or_pr": {
+      "type": "string",
+      "description": "Reference to the issue or PR number."
+    },
+    "actor": {
+      "type": "string",
+      "description": "The identity of the entity that triggered the event."
+    },
     "worker": {
       "type": "string",
-      "enum": ["claude", "jules", "gemini", "codex", "augment", "github-actions", "human", "unknown"]
-    },
-    "provider": {
-      "type": "string",
-      "enum": ["anthropic", "google", "github", "openai", "unknown"]
+      "enum": [
+        "claude",
+        "jules",
+        "gemini",
+        "codex",
+        "augment",
+        "github-actions",
+        "human",
+        "unknown"
+      ],
+      "description": "The specific worker type if applicable."
     },
     "capability": {
       "type": "string",
       "enum": [
         "implementation",
         "research",
-        "adversarial_review",
-        "repository_navigation",
-        "bug_hunting",
-        "security_review",
-        "orchestration",
+        "review",
+        "observability",
         "unknown"
-      ]
+      ],
+      "description": "The capability associated with the event."
     },
-    "action": { "type": "string", "description": "The specific action performed (e.g., 'opened', 'labeled', 'submitted')." },
-    "status": {
+    "event_type": {
       "type": "string",
-      "enum": ["queued", "in_progress", "completed", "success", "failure", "neutral", "unknown"]
+      "enum": [
+        "issue",
+        "pr",
+        "comment",
+        "review",
+        "workflow",
+        "status",
+        "cost",
+        "collision"
+      ],
+      "description": "The type of event."
     },
     "severity": {
       "type": "string",
-      "enum": ["info", "action_needed", "blocked", "risk", "success"]
+      "enum": ["info", "action_needed", "blocked", "risk", "success"],
+      "description": "The severity level of the event."
     },
-    "durability_class": {
+    "durable_url": {
       "type": "string",
-      "enum": ["ephemeral", "persistent", "versioned"]
+      "format": "uri",
+      "description": "A durable link to the original event source."
     },
-    "durable_url": { "type": ["string", "null"], "format": "uri" },
-    "external_url": { "type": ["string", "null"], "format": "uri" },
-    "external_access": {
-      "type": ["string", "null"],
-      "enum": ["public", "auth_required", "unknown"]
+    "summary": {
+      "type": "string",
+      "description": "A human-readable summary of the event."
     },
-    "summary": { "type": "string" },
-    "labels": { "type": "array", "items": { "type": "string" } },
-    "file_paths": { "type": "array", "items": { "type": "string" } },
-    "path_cluster": { "type": "array", "items": { "type": "string" } },
-    "metrics": { "type": "object", "additionalProperties": true },
-    "raw_ref": { "type": "string", "description": "Reference to the raw payload storage (e.g., S3 key or file path)." },
-    "schema_version": { "type": "integer", "const": 1 }
-  }
+    "raw_ref": {
+      "type": "string",
+      "description": "A reference to the raw event data."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional event-specific metadata (e.g., cost details, workflow IDs).",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
 }

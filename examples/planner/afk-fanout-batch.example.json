@@ -1,0 +1,28 @@
+{
+  "afk_batch": {
+    "batch_id": "sprint0-seldon-planner-001",
+    "max_active_jules": 3,
+    "max_active_claude": 2,
+    "max_open_prs_before_pause": 5,
+    "allowed_issue_labels": [
+      "ready-for-agent",
+      "worker:jules"
+    ],
+    "blocked_paths": [
+      ".github/workflows/**"
+    ],
+    "stop_conditions": [
+      "failed_required_check",
+      "workflow_policy_block",
+      "merge_conflict",
+      "duplicate_pr_detected",
+      "stale_delegation_marker",
+      "human_halt_marker"
+    ],
+    "fan_in": {
+      "review_order": "critical_path_then_lowest_risk",
+      "merge_order": "dependency_order",
+      "require_human_override_for_workflows": true
+    }
+  }
+}

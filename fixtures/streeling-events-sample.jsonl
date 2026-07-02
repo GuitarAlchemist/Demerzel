@@ -1,0 +1,12 @@
+{"event": "issue_opened", "repo": "ga", "issue_id": 482, "timestamp": "2026-06-25T10:00:00Z", "labels": ["implementation", "P0"]}
+{"event": "task_assigned", "worker": "jules", "issue_id": 482, "capability": "implementation", "timestamp": "2026-06-25T10:05:00Z"}
+{"event": "pr_opened", "worker": "jules", "pr_id": 483, "issue_id": 482, "timestamp": "2026-06-25T10:20:00Z"}
+{"event": "ci_run", "pr_id": 483, "status": "success", "duration": 300, "timestamp": "2026-06-25T10:25:00Z"}
+{"event": "review_requested", "reviewer": "claude", "pr_id": 483, "timestamp": "2026-06-25T10:26:00Z"}
+{"event": "review_submitted", "reviewer": "claude", "pr_id": 483, "verdict": "approve", "comments": 2, "timestamp": "2026-06-25T10:45:00Z"}
+{"event": "pr_merged", "pr_id": 483, "timestamp": "2026-06-25T11:00:00Z", "cost_usd": 0.15}
+{"event": "issue_opened", "repo": "ga", "issue_id": 484, "timestamp": "2026-06-25T12:00:00Z", "labels": ["bug", "P1"]}
+{"event": "task_assigned", "worker": "gemini", "issue_id": 484, "capability": "bug_hunting", "timestamp": "2026-06-25T12:05:00Z"}
+{"event": "pr_opened", "worker": "gemini", "pr_id": 485, "issue_id": 484, "timestamp": "2026-06-25T13:00:00Z"}
+{"event": "ci_run", "pr_id": 485, "status": "failure", "duration": 200, "timestamp": "2026-06-25T13:05:00Z"}
+{"event": "pr_merged", "pr_id": 485, "timestamp": "2026-06-25T15:00:00Z", "cost_usd": 0.25}
