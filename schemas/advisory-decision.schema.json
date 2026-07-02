@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/advisory-decision",
+  "title": "Advisory Decision",
+  "description": "Rule output contract for the Demerzel Policy Engine AIW decisions (#589). Emits an advisory, dry-run decision based on the rule evaluation.",
+  "type": "object",
+  "required": [
+    "rule_result"
+  ],
+  "properties": {
+    "rule_result": {
+      "type": "object",
+      "required": [
+        "rule_id",
+        "subject",
+        "decision",
+        "reason_codes",
+        "evidence_refs",
+        "next_actions",
+        "confidence"
+      ],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "description": "The unique identifier of the rule that was evaluated."
+        },
+        "subject": {
+          "type": "string",
+          "enum": [
+            "issue",
+            "pull_request",
+            "batch",
+            "worker_task",
+            "execution_episode"
+          ],
+          "description": "The entity the rule was evaluated against."
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "allow",
+            "block",
+            "warn",
+            "escalate",
+            "recommend"
+          ],
+          "description": "The advisory outcome of the rule evaluation. Mutation is prohibited."
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of structured reason codes justifying the decision."
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "References to artifacts, logs, or metrics supporting the decision."
+        },
+        "next_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Recommended actions for the human or agent to take."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "description": "The confidence level of the decision."
+        }
+      }
+    }
+  }
+}

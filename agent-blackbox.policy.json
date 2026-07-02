@@ -8,8 +8,7 @@
     ".github/workflows/**",
     "constitutions/**",
     "policies/**",
-    "schemas/*.json",
-    "schemas/contracts/*.json",
+    "schemas/**",
     "logic/*.schema.json",
     "scripts/qa_tribunal_emit.py",
     "scripts/validate_governance.py"
