@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://demerzel.guitaralchemist.com/schemas/seldon/state-space-vector.schema.json",
+  "title": "Seldon State-Space Vector",
+  "description": "Schema for the delivery system state vector and control inputs.",
+  "type": "object",
+  "properties": {
+    "state_vector": {
+      "type": "object",
+      "properties": {
+        "open_agent_prs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of agent-generated PRs currently open."
+        },
+        "draft_agent_prs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of agent-generated PRs in draft state."
+        },
+        "review_queue_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of PRs awaiting human or adversarial review."
+        },
+        "active_jules_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of active assignments for worker 'jules'."
+        },
+        "active_claude_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of active assignments for worker 'claude'."
+        },
+        "blocked_issues": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of issues with stale markers or failed checks."
+        },
+        "stale_markers": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of stale delegation or review markers."
+        },
+        "failed_checks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of recent CI or governance check failures."
+        },
+        "fanout_mode": {
+          "type": "string",
+          "enum": [
+            "NORMAL",
+            "CONSTRAINED",
+            "DRAINING",
+            "HALTED",
+            "normal",
+            "constrained",
+            "draining",
+            "halted"
+          ],
+          "description": "Current Adaptive Fan-out Backpressure mode."
+        }
+      },
+      "required": [
+        "open_agent_prs",
+        "draft_agent_prs",
+        "review_queue_depth",
+        "fanout_mode"
+      ],
+      "additionalProperties": true
+    },
+    "control_inputs": {
+      "type": "object",
+      "properties": {
+        "pause_new_feature_fanout": {
+          "type": "boolean",
+          "description": "Stops assigning new feature work to agents."
+        },
+        "assign_claude_draft_to_ready": {
+          "type": "boolean",
+          "description": "Promotes draft PRs using Claude."
+        },
+        "request_gemini_read_only_review": {
+          "type": "boolean",
+          "description": "Requests adversarial review without write permissions."
+        },
+        "run_duckdb_probe": {
+          "type": "string",
+          "description": "Triggers a specific analytical query."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "state_vector"
+  ],
+  "additionalProperties": false
+}

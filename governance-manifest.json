@@ -11,7 +11,7 @@
     "pipeline": 23,
     "policy": 45,
     "schema": 42,
-    "seldon_schema": 5,
+    "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
     "workflow": 24
@@ -535,6 +535,10 @@
         "path": "schemas/seldon/conversation_hygiene_fact.schema.json"
       },
       {
+        "name": "markov-transition.schema",
+        "path": "schemas/seldon/markov-transition.schema.json"
+      },
+      {
         "name": "pr_fact.schema",
         "path": "schemas/seldon/pr_fact.schema.json"
       },
@@ -545,6 +549,10 @@
       {
         "name": "review_finding_fact.schema",
         "path": "schemas/seldon/review_finding_fact.schema.json"
+      },
+      {
+        "name": "state-space-vector.schema",
+        "path": "schemas/seldon/state-space-vector.schema.json"
       },
       {
         "name": "worker_capability_fact.schema",
