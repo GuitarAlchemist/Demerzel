@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 42,
+    "schema": 43,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
@@ -369,6 +369,10 @@
       {
         "name": "ai-probe.schema",
         "path": "schemas/ai-probe.schema.json"
+      },
+      {
+        "name": "aiw-harness-result.schema",
+        "path": "schemas/aiw-harness-result.schema.json"
       },
       {
         "name": "blackboard-state.schema",
