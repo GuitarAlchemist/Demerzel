@@ -113,6 +113,69 @@ Demerzel owns:
 
 Demerzel must not delegate these to provider prompts alone.
 
+## Expert Synthesis
+
+This operating doctrine inherits from broader expert practices, which influence budget routing (#459) and prompt/harness design (#461).
+
+### 1. Andrew Ng / agentic workflow lens
+- represent each AIW job as a workflow, not a single prompt;
+- allow reflection only as bounded review/failure-minimization, not endless self-talk;
+- tool use must be declared by the harness;
+- multi-agent collaboration must go through the dispatcher/router, not ad-hoc agent spawning.
+
+### 2. Simon Willison / Tobi Lütke / Philipp Schmid / context engineering lens
+- AIW should version context bundles;
+- every agent run should record which context was supplied;
+- context compression should be explicit and auditable;
+- prompt packs should be treated as code/config, not chat text;
+- avoid context rot by assigning narrow context to specialized workers.
+
+### 3. SWE-agent / agent-computer interface lens
+- provider adapters need a stable ACI contract;
+- commands should expose observations in structured form;
+- harnesses should provide file maps, test summaries, and failure reports;
+- agent output should be compared as an episode package, not just final diff.
+
+### 4. SWE-bench / SWE-Explore / GitTaskBench benchmark lens
+- split jobs into explore/localize/shape/patch/verify stages;
+- do not burn premium tokens before localization and context selection are done;
+- track cost per successful artifact;
+- measure failed setup separately from failed reasoning.
+
+### 5. Shreya Shankar / MLOps production lens
+- every AIW run should be visible and versioned;
+- prompts, context bundles, outputs, and decisions should be traceable;
+- AIW should monitor drift in agent performance, not assume fixed provider quality.
+
+### 6. Chip Huyen / AI engineering lens
+- do not treat frontier models as the whole system;
+- use smaller local models, scorers, and deterministic checks where possible;
+- treat AIW as production software, not a pile of prompts.
+
+### 7. Lilian Weng / classic agent architecture lens
+- memory should be explicit: issue state, context bundle, prior attempts, budget ledger;
+- planning should be short-horizon and checked at milestones;
+- tool permission should be part of the job spec.
+
+### 8. LLM-as-judge / evaluation expert lens
+- use LLM judges as advisory evidence, not final authority;
+- prefer cheap/static checks first;
+- use independent model families for non-trivial review;
+- record judge model, rubric, prompt version, and cost;
+- calibrate LLM judge outputs against human/council decisions over time.
+
+### 9. Simon Willison / security lens
+- never give one worker all three risky capabilities by default (private data + untrusted content + external communication);
+- separate readers, writers, and external communicators when possible;
+- require provenance for NotebookLM/source bundles;
+- treat MCP/tools as untrusted integration surfaces unless scoped.
+
+### 10. Human collaboration lens
+- use AIW to amplify human judgment, not hide it;
+- keep review decisions human-readable;
+- preserve pair-review/council-style moments for high leverage changes;
+- optimize for maintainability, not percent-of-code-written-by-AI.
+
 ## AIW Principles
 
 ```yaml
@@ -163,6 +226,44 @@ aiw_principles:
       - audit
       - review
       - merge_gates
+
+  cross_cutting_disciplines:
+    context_engineering:
+      owns:
+        - context_bundles
+        - prompt_packs
+        - provenance
+        - compression
+        - context_budget
+
+    agent_computer_interface:
+      owns:
+        - workspace_contract
+        - tool_surface
+        - command_observations
+        - test_execution
+
+    evals_and_harnesses:
+      owns:
+        - deterministic_checks
+        - llm_judge_rubrics
+        - episode_packages
+        - regression_tracking
+
+    security:
+      owns:
+        - prompt_injection_boundaries
+        - tool_permissions
+        - secret_isolation
+        - external_communication_controls
+
+    human_collaboration:
+      owns:
+        - review_readability
+        - escalation_points
+        - council_decisions
+        - maintainability_judgment
+
 ```
 
 ## Exploration Output Canonization
@@ -183,16 +284,16 @@ Agents and orchestrators must halt and escalate to a human (Demerzel lane) when:
 Each AIW execution episode should follow a bounded loop. This loop must be explicit, not hidden inside provider prompts.
 
 ```text
-job_spec
-  -> materialize_context
+job_spec (explore/shape)
+  -> materialize_context (context bundle)
   -> select_provider
-  -> prepare_workspace
+  -> prepare_workspace (ACI contract)
   -> generate_prompt
-  -> invoke_worker
+  -> invoke_worker (loop)
   -> observe_result
-  -> run_checks
+  -> run_checks (eval harness)
   -> collect_evidence
-  -> decide: complete | retry | escalate | stop
+  -> decide: complete | retry | escalate | stop (verify/govern)
 ```
 
 ### Router responsibilities
@@ -244,7 +345,8 @@ The loop must stop when:
 - provider asks for broader permissions;
 - files outside allowed paths are touched;
 - HALT is active;
-- human/council review is required.
+- human/council review is required;
+- escalation to a premium or remote agent is requested (must stop and consult a human first).
 
 ### Retry policy
 

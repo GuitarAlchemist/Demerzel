@@ -21,13 +21,13 @@ Every provider task prompt should contain:
 1. **Role** — which provider role is being used.
 2. **Task** — one bounded task.
 3. **Source of truth** — issue, PR, doc, or job spec.
-4. **Context bundle** — relevant files, summaries, links, prior attempts.
-5. **Allowed scope** — paths and operations allowed.
+4. **Context bundle** — relevant files, summaries, links, prior attempts (must record which versioned bundle was supplied).
+5. **Allowed scope** — paths and operations allowed (defines the strict security boundaries).
 6. **Non-goals** — explicit exclusions.
-7. **Constraints** — budget, sandbox, secrets, network, style, risk.
+7. **Constraints** — budget, sandbox (ACI contract), secrets, network, style, risk.
 8. **Required process** — small steps, tests first where applicable, no broad rewrites.
-9. **Required outputs** — patch, branch, PR, summary, tests, risk notes, ledger.
-10. **Stop conditions** — missing context, failing tests, budget exceeded, risk escalation, HALT.
+9. **Required outputs** — patch, branch, PR, summary, tests, risk notes, ledger (packaged for the eval harness).
+10. **Stop conditions** — missing context, failing tests, budget exceeded, risk escalation, HALT (explicit human escalation points).
 
 See `prompts/aiw/provider-task.prompt.md`.
 
