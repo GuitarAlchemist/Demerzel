@@ -1,0 +1,12 @@
+{
+"type": "discussion_created",
+"repo": "Demerzel",
+"ref": "refs/heads/master",
+"priority": "low",
+"details": {
+  "event": "discussion",
+  "sender": "spareilleux",
+  "run_id": "28599583879"
+},
+"timestamp": "2026-07-02T14:54:30Z"
+}
