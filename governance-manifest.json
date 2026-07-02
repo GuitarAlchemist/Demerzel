@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 40,
+    "schema": 41,
     "skill": 69,
     "streeling_schema": 1,
     "workflow": 24
@@ -484,6 +484,10 @@
       {
         "name": "resilience-metric.schema",
         "path": "schemas/resilience-metric.schema.json"
+      },
+      {
+        "name": "routing-recommendation.schema",
+        "path": "schemas/routing-recommendation.schema.json"
       },
       {
         "name": "session-event.schema",
