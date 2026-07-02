@@ -79,7 +79,7 @@ jobs:
             It fetches the PR diff via gh, fans it to the persona panel, and writes a
             schema-valid verdict under state/quality/verdicts/. Do not merge or comment
             on the PR — only emit the verdict file.
-          claude_args: '--allowed-tools Bash(gh pr:*),Bash(gh api:*),Bash(python:*),Read,Write'
+          claude_args: '--model claude-sonnet-5 --allowed-tools Bash(gh pr:*),Bash(gh api:*),Bash(python:*),Read,Write'
 
       - name: Commit verdict if produced
         shell: bash
