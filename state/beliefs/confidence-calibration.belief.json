@@ -5,22 +5,22 @@
   "evidence": {
     "supporting": [
       {
-        "source": "ml-feedback-recommendation 52bdf85d-2960-40d7-b846-953cabc85027",
-        "claim": "2 of 4 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.5). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy.",
-        "timestamp": "2026-06-21T18:06:43Z",
+        "source": "ml-feedback-recommendation 222e1f07-719a-4d2d-97c0-3f423e374159",
+        "claim": "2 of 6 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.3333). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy.",
+        "timestamp": "2026-07-16T15:55:21Z",
         "reliability": 0.92
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-06-21T18:07:02Z",
+  "last_updated": "2026-07-16T15:55:22Z",
   "evaluated_by": "demerzel",
   "calibration": {
     "threshold_nudge": -0.1,
-    "applied_delta": -0.1,
-    "prior_nudge": 0.0,
+    "applied_delta": 0.0,
+    "prior_nudge": -0.1,
     "cap": 0.1,
-    "source_recommendation": "52bdf85d-2960-40d7-b846-953cabc85027",
-    "rationale": "2 of 4 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.5). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy."
+    "source_recommendation": "222e1f07-719a-4d2d-97c0-3f423e374159",
+    "rationale": "2 of 6 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.3333). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy."
   }
 }
