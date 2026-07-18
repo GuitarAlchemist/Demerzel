@@ -90,21 +90,19 @@ loops:
       adapter: workflow_run
       max_stale_days: 3
 
-  # This workflow is actually scheduled five times per day. It is therefore
-  # active, not "intentionally disabled". Its current failed scheduled run is
-  # deliberately red. A future bounded disable must remove the cron schedule
-  # and declare disabled.verification: schedule_absent.
+  # Bounded disable: repeated scheduled runs failed and issue #705 gates the
+  # 2026-10-16 revive-or-retire decision on fresh evidence and an explicit cap.
   - workflow: seldon-plan.yml
-    schedule:
-      - '0 6 * * *'
-      - '0 10 * * *'
-      - '0 14 * * *'
-      - '0 18 * * *'
-      - '0 22 * * *'
-    status: active
-    proof:
-      adapter: workflow_run
-      max_stale_days: 1
+    status: disabled
+    disabled:
+      reason: >-
+        Autonomous research scheduler paused after repeated failed scheduled
+        runs; issue #705 requires a revive-or-retire decision with fresh value
+        evidence and an explicit cost cap.
+      by: issue-705 (GuitarAlchemist governance)
+      since: '2026-07-18'
+      until: '2026-10-16'
+      verification: schedule_absent
 
   - workflow: streeling-daily.yml
     schedule:

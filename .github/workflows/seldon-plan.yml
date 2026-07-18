@@ -1,14 +1,6 @@
 name: Seldon Plan — Autonomous Research
 
 on:
-  schedule:
-    # Every 4 hours during active window: 06, 10, 14, 18, 22 UTC
-    # Max 5 scheduled runs/day — daily cap of 6 enforced by scheduler itself
-    - cron: '0 6 * * *'
-    - cron: '0 10 * * *'
-    - cron: '0 14 * * *'
-    - cron: '0 18 * * *'
-    - cron: '0 22 * * *'
   workflow_dispatch:
     inputs:
       department:
