@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 46,
-    "schema": 47,
+    "schema": 48,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
@@ -378,6 +378,10 @@
       {
         "name": "aiw-harness-result.schema",
         "path": "schemas/aiw-harness-result.schema.json"
+      },
+      {
+        "name": "asset-provenance.schema",
+        "path": "schemas/asset-provenance.schema.json"
       },
       {
         "name": "blackboard-state.schema",

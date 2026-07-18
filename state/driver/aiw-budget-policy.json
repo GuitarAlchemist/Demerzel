@@ -38,6 +38,13 @@
       "requires_manual_approval": false
     },
     {
+      "id": "comfyui-local",
+      "tier": "local-seat",
+      "cost_model": "local-gpu",
+      "lane": "asset-generation",
+      "requires_manual_approval": false
+    },
+    {
       "id": "gemini-cli",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
@@ -64,6 +71,7 @@
     "codex-cli",
     "antigravity",
     "augment-code",
+    "comfyui-local",
     "gemini-cli",
     "jules",
     "notebooklm"

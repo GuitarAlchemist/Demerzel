@@ -76,7 +76,7 @@ Demerzel/
 | Personas | 17 | `personas/*.persona.yaml` |
 | Policies | 46 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
-| Schemas | 47 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
+| Schemas | 48 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
@@ -111,7 +111,7 @@ Most artifacts today are **Defined** or **Loaded**. Full **Enforcement** (consti
 
 | Resilience score | LOLLI detection | Policies | Personas | Tests |
 |:---:|:---:|:---:|:---:|:---:|
-| 82% (2 gaps) | L0–L4 + Policy + Schema | 45 | 17 | 115 |
+| 82% (2 gaps) | L0–L4 + Policy + Schema | 46 | 17 | 115 |
 
 **Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, dead computations. Inspired by [Netflix's Chaos Monkey](https://netflix.github.io/chaosmonkey/) (2011) and [Chaos Engineering](https://www.oreilly.com/library/view/chaos-engineering/9781492043850/) (Rosenthal et al., O'Reilly 2020): if Demerzel can't catch deliberate poison, she can't catch accidental LOLLI.
 
