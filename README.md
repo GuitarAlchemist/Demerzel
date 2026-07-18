@@ -76,13 +76,13 @@ Demerzel/
 | Personas | 17 | `personas/*.persona.yaml` |
 | Policies | 45 | `policies/*.yaml` |
 | Grammars | 20 | `grammars/*.ebnf` |
-| Schemas | 42 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
+| Schemas | 43 + 9 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
-| GitHub workflows | 26 | `.github/workflows/*.yml` |
+| GitHub workflows | 27 | `.github/workflows/*.yml` |
 
 ## Key concepts
 

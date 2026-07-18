@@ -10,11 +10,11 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 42,
+    "schema": 43,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 26
+    "workflow": 27
   },
   "inventory": {
     "constitution": [
@@ -449,6 +449,10 @@
       {
         "name": "hexavalent-distribution.schema",
         "path": "schemas/hexavalent-distribution.schema.json"
+      },
+      {
+        "name": "loop-health.schema",
+        "path": "schemas/loop-health.schema.json"
       },
       {
         "name": "loop-state.schema",
@@ -1291,6 +1295,10 @@
       {
         "name": "demerzel-wiki-cross-repo",
         "path": ".github/workflows/demerzel-wiki-cross-repo.yml"
+      },
+      {
+        "name": "ecosystem-freshness",
+        "path": ".github/workflows/ecosystem-freshness.yml"
       },
       {
         "name": "ga-chatbot-discussions",
