@@ -8,10 +8,6 @@
     {
       "kind": "failed_run",
       "workflow": "demerzel-self-improvement.yml"
-    },
-    {
-      "kind": "failed_run",
-      "workflow": "seldon-plan.yml"
     }
   ]
 }
