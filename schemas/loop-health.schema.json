@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "loop-health.schema.json",
+  "title": "Loop Health Registry",
+  "description": "Universal ecosystem-freshness registry: every scheduled producer must prove liveness or be deliberately disabled for a bounded, mechanically verified window. The monitor turns the board red for dead, failed, stale, activation-mismatched, or unregistered loops.",
+  "type": "object",
+  "required": ["version", "loops"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Registry schema version."
+    },
+    "default_branch": {
+      "type": "string",
+      "description": "Branch whose commit history is authoritative for git_log proof adapters (default-branch evidence). Defaults to 'master' when omitted.",
+      "minLength": 1
+    },
+    "monitors": {
+      "type": "array",
+      "description": "Approved freshness monitors, not producers. Runtime validation constrains this list to the two known guard workflows so arbitrary producers cannot exempt themselves.",
+      "items": {
+        "enum": [
+          "ecosystem-freshness.yml",
+          "demerzel-quality-trend-freshness.yml"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "loops": {
+      "type": "array",
+      "description": "One entry per scheduled producer workflow. Each entry declares exactly one of proof or bounded disabled state.",
+      "items": { "$ref": "#/definitions/loop" }
+    }
+  },
+  "definitions": {
+    "workflowFile": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+\\.ya?ml$",
+      "description": "Bare workflow filename under .github/workflows/, e.g. demerzel-ideation.yml."
+    },
+    "loop": {
+      "type": "object",
+      "required": ["workflow", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "workflow": { "$ref": "#/definitions/workflowFile" },
+        "schedule": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Exact cron expressions expected in the workflow. Runtime validation rejects drift between declaration and live YAML."
+        },
+        "status": {
+          "enum": ["active", "disabled"],
+          "description": "Active loops must carry proof and matching cron declarations; disabled loops must carry a bounded block and have no live cron schedule."
+        },
+        "proof": { "$ref": "#/definitions/proof" },
+        "disabled": { "$ref": "#/definitions/disabled" },
+        "note": {
+          "type": "string",
+          "description": "Free-form note (e.g. the remediation that would let a silent-green loop graduate to a proof adapter)."
+        }
+      },
+      "oneOf": [
+        {
+          "properties": { "status": { "const": "active" } },
+          "required": ["schedule", "proof"],
+          "not": { "required": ["disabled"] }
+        },
+        {
+          "properties": { "status": { "const": "disabled" } },
+          "required": ["disabled"],
+          "not": {
+            "anyOf": [
+              { "required": ["schedule"] },
+              { "required": ["proof"] }
+            ]
+          }
+        }
+      ]
+    },
+    "proof": {
+      "type": "object",
+      "required": ["adapter", "max_stale_days"],
+      "additionalProperties": false,
+      "description": "How the loop proves it is alive from default-branch repository evidence.",
+      "properties": {
+        "adapter": {
+          "enum": ["state_glob", "git_log", "workflow_run"],
+          "description": "state_glob: newest timestamp in committed JSON/JSONL. git_log: last default-branch commit touching a path. workflow_run: latest completed scheduled GitHub Actions run must be recent and successful."
+        },
+        "glob": {
+          "type": "string",
+          "description": "state_glob only: repo-relative glob of committed state files."
+        },
+        "timestamp_field": {
+          "type": "string",
+          "description": "state_glob only: the field carrying an ISO-8601 timestamp in each record (top-level object, array element, or JSONL line)."
+        },
+        "path": {
+          "type": "string",
+          "description": "git_log only: repo-relative path whose last commit dates the loop."
+        },
+        "max_stale_days": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Freshness threshold. Age strictly greater than this many days is stale."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "adapter": { "const": "state_glob" } } },
+          "then": { "required": ["glob", "timestamp_field"] }
+        },
+        {
+          "if": { "properties": { "adapter": { "const": "git_log" } } },
+          "then": { "required": ["path"] }
+        }
+      ]
+    },
+    "disabled": {
+      "type": "object",
+      "required": ["reason", "until", "verification"],
+      "additionalProperties": false,
+      "description": "Time-bounded intentional-disable allowlist. Past 'until' the entry is expired and the board turns red so the pause cannot be forgotten.",
+      "properties": {
+        "reason": { "type": "string", "minLength": 1 },
+        "verification": {
+          "const": "schedule_absent",
+          "description": "Mechanical proof that the workflow has no cron schedule while disabled."
+        },
+        "by": { "type": "string", "description": "Who authorized the disable." },
+        "since": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "until": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Date (inclusive) the disable remains valid through. After this date the entry is an expired disable (red)."
+        }
+      }
+    }
+  }
+}
