@@ -727,11 +727,21 @@ class EcosystemFreshnessTest(unittest.TestCase):
         scheduled = set(ef.scheduled_workflows(
             repo / ef.DEFAULT_WORKFLOWS_DIR
         ))
+        active_loops = {
+            loop["workflow"] for loop in registry["loops"]
+            if loop.get("status") == "active"
+        }
+        disabled_loops = {
+            loop["workflow"] for loop in registry["loops"]
+            if loop.get("status") == "disabled"
+        }
         self.assertEqual(
             scheduled,
             set(registry["monitors"]) |
-            {loop["workflow"] for loop in registry["loops"]},
+            active_loops,
         )
+        self.assertTrue(disabled_loops)
+        self.assertTrue(disabled_loops.isdisjoint(scheduled))
 
     def test_production_workflows_enforce_daily_always_and_ci_paths(self):
         repo = Path(ef.REPO)
