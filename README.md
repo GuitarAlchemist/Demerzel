@@ -82,7 +82,7 @@ Demerzel/
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
-| GitHub workflows | 24 | `.github/workflows/*.yml` |
+| GitHub workflows | 26 | `.github/workflows/*.yml` |
 
 ## Key concepts
 
@@ -111,7 +111,7 @@ Most artifacts today are **Defined** or **Loaded**. Full **Enforcement** (consti
 
 | Resilience score | LOLLI detection | Policies | Personas | Tests |
 |:---:|:---:|:---:|:---:|:---:|
-| 82% (2 gaps) | L0–L4 + Policy + Schema | 45 | 17 | 114 |
+| 82% (2 gaps) | L0–L4 + Policy + Schema | 45 | 17 | 115 |
 
 **Governance Resilience Score (R)** measures how well the system detects injected poisons — dead bindings, orphaned branches, BS descriptions, unconsumed artifacts, dead computations. Inspired by [Netflix's Chaos Monkey](https://netflix.github.io/chaosmonkey/) (2011) and [Chaos Engineering](https://www.oreilly.com/library/view/chaos-engineering/9781492043850/) (Rosenthal et al., O'Reilly 2020): if Demerzel can't catch deliberate poison, she can't catch accidental LOLLI.
 
@@ -144,7 +144,7 @@ Artifacts are consumed by agents via:
 
 ## CI workflows
 
-24 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
+26 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
 
 - [`qa-tribunal.yml`](./.github/workflows/qa-tribunal.yml) — repository-dispatch emitter (Phase 0).
 - [`governance-validate.yml`](./.github/workflows/governance-validate.yml) — schema + grammar validation.

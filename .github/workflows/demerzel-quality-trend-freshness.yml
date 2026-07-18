@@ -36,10 +36,11 @@ jobs:
           python-version: '3.12'
 
       - name: Assert quality-trend freshness
+        id: freshness
         run: |
           python - <<'PY'
           import glob, json, os
-          from datetime import datetime, timezone
+          from datetime import datetime, timedelta, timezone
 
           max_stale = int(os.environ["MAX_STALE_DAYS"])
           files = sorted(glob.glob("state/quality-trend/*.jsonl"))
@@ -67,8 +68,9 @@ jobs:
               stale = True
               reason = "no quality-trend data found at all"
           else:
-              age = (now - newest_ts).days
-              stale = age > max_stale
+              elapsed = now - newest_ts
+              age = elapsed.days
+              stale = elapsed > timedelta(days=max_stale)
               reason = (f"newest quality-trend row is {age}d old "
                         f"(threshold {max_stale}d) from {newest_src}")
 
@@ -103,14 +105,19 @@ jobs:
           raise SystemExit(1)
           PY
 
-      - name: Commit diagnostic on stale
-        if: failure()
+      - name: Persist freshness alert state
+        if: steps.freshness.outcome == 'success' || steps.freshness.outcome == 'failure'
         run: |
           git config user.name "Demerzel"
           git config user.email "demerzel@guitaralchemist.com"
-          git add state/quality-trend/.freshness-alert.json || true
+          git add -A state/quality-trend/.freshness-alert.json || true
           git diff --cached --quiet || {
-            git commit -m "alert(quality-trend): feeder stale — freshness guard tripped"
+            if [[ -f state/quality-trend/.freshness-alert.json ]]; then
+              message="alert(quality-trend): feeder stale — freshness guard tripped"
+            else
+              message="chore(quality-trend): clear recovered freshness alert"
+            fi
+            git commit -m "$message"
             git pull --rebase || true
             git push
           }
