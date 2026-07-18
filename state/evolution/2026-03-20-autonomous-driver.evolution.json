@@ -9,7 +9,7 @@
     "last_cited": "2026-03-20T05:20:00Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": true
   },
   "events": [
     {
@@ -21,16 +21,21 @@
       "type": "cited",
       "context": "Cycle 001 completed: 4/4 tasks (100%), 0 failures. Submodule staleness resolved across ix, tars, ga. Health scores improved. Effectiveness: U (n=1, need 3+ cycles).",
       "timestamp": "2026-03-20T05:20:00Z"
+    },
+    {
+      "type": "demoted",
+      "context": "Retired 2026-07-18. Ran 3 manual cycles (001-003, all 2026-03-20/21) and was never scheduled; superseded by the human-gated supervised loop (skills/supervised-loop, gated on state/governance/dev-process-overseer.json loop-eligibility, live since 2026-05-16). The autonomous un-gated model was deliberately replaced by bounded single-cycle supervised runs. The trigger-producer workflow (demerzel-driver-triggers.yml) had continued firing without a consumer, orphaning 594 triggers (2026-03-20..2026-07-16); those are archived under state/triggers/archived/ and the producer is gated to workflow_dispatch-only. Do NOT revive without an explicit decision to reverse the supervised-loop migration.",
+      "timestamp": "2026-07-18T00:00:00Z"
     }
   ],
   "assessment": {
     "effectiveness": {
-      "proposition": "The autonomous driver skill effectively manages compounding cycles",
-      "truth_value": "U",
-      "confidence": 0.6
+      "proposition": "The autonomous driver effectively serves as the current compounding-cycle mechanism",
+      "truth_value": "F",
+      "confidence": 0.85
     },
-    "recommendation": "investigate"
+    "recommendation": "deprecate"
   },
   "created_at": "2026-03-20T00:00:00Z",
-  "last_updated": "2026-03-20T05:20:00Z"
+  "last_updated": "2026-07-18T00:00:00Z"
 }

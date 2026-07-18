@@ -1,0 +1,60 @@
+name: Demerzel Quality Trend Freshness
+
+# Green != dead guard for the quality-trend feeder (demerzel-quality-trend.yml).
+# A silent "no news" feeder is indistinguishable from a dead one — that is exactly
+# how state/quality-trend/ died unnoticed for 64 days in 2026. This runs
+# INDEPENDENTLY of the feeder: if the feeder stops, the newest data goes stale and
+# this check turns RED, so a dead loop can no longer hide behind silence.
+# Silent on green; diagnostic + RED on stale; never remediates.
+
+on:
+  schedule:
+    # Daily at 13:00 UTC. Feeder is daily, so >3 days stale => the feeder died.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      MAX_STALE_DAYS: '3'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Assert quality-trend freshness
+        id: freshness
+        run: >-
+          python scripts/quality_trend_freshness.py
+          --out-dir state/quality-trend
+          --max-stale-days "$MAX_STALE_DAYS"
+
+      - name: Persist freshness alert state
+        if: always() && (steps.freshness.outcome == 'success' || steps.freshness.outcome == 'failure')
+        run: |
+          git config user.name "Demerzel"
+          git config user.email "demerzel@guitaralchemist.com"
+          git add -A state/quality-trend/.freshness-alert.json || true
+          git diff --cached --quiet || {
+            if [[ -f state/quality-trend/.freshness-alert.json ]]; then
+              message="alert(quality-trend): feeder stale — freshness guard tripped"
+            else
+              message="chore(quality-trend): clear recovered freshness alert"
+            fi
+            git commit -m "$message"
+            git pull --rebase || true
+            git push
+          }

@@ -14,7 +14,7 @@
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 24
+    "workflow": 26
   },
   "inventory": {
     "constitution": [
@@ -1271,6 +1271,14 @@
       {
         "name": "demerzel-ideation",
         "path": ".github/workflows/demerzel-ideation.yml"
+      },
+      {
+        "name": "demerzel-quality-trend-freshness",
+        "path": ".github/workflows/demerzel-quality-trend-freshness.yml"
+      },
+      {
+        "name": "demerzel-quality-trend",
+        "path": ".github/workflows/demerzel-quality-trend.yml"
       },
       {
         "name": "demerzel-self-improvement",

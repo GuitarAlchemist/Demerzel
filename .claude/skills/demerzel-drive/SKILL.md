@@ -5,6 +5,15 @@ description: Run Demerzel's autonomous driver — full cycle or individual phase
 
 # Demerzel Autonomous Driver
 
+> **⚠️ RETIRED 2026-07-18 — superseded by [`supervised-loop`](../supervised-loop/SKILL.md).**
+> This un-gated autonomous driver ran 3 manual cycles in March 2026 and was never
+> scheduled. It was deliberately replaced by the human-gated supervised loop (bounded
+> single-cycle runs gated on `state/governance/dev-process-overseer.json` loop-eligibility).
+> Its trigger-producer (`.github/workflows/demerzel-driver-triggers.yml`) is disabled and
+> its 594 orphaned triggers archived under `state/triggers/archived/`. Kept for reference
+> and reversibility; do not invoke without an explicit decision to reverse the migration.
+> See `state/evolution/2026-03-20-autonomous-driver.evolution.json`.
+
 Drive all repos autonomously. Monitors, initiates, plans, and executes work across
 Demerzel, ix, tars, and ga — governed by the constitution, confidence thresholds,
 and conscience signals.
