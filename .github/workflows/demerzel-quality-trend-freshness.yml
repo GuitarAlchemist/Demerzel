@@ -43,7 +43,7 @@ jobs:
           --max-stale-days "$MAX_STALE_DAYS"
 
       - name: Persist freshness alert state
-        if: steps.freshness.outcome == 'success' || steps.freshness.outcome == 'failure'
+        if: always() && (steps.freshness.outcome == 'success' || steps.freshness.outcome == 'failure')
         run: |
           git config user.name "Demerzel"
           git config user.email "demerzel@guitaralchemist.com"
