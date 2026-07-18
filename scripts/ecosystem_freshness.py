@@ -10,20 +10,16 @@ loop — and stays green (and silent) when they are all healthy.
 The registry (.github/loop-health.yml, schema schemas/loop-health.schema.json)
 declares, per loop, exactly one of:
 
-  * proof            — how the loop proves liveness from default-branch evidence
-                       (state_glob = newest timestamp in committed JSON/JSONL;
-                        git_log    = last commit touching a path on the default
-                        branch, for commit-only-on-change loops).
-  * allowed_silence  — the loop legitimately leaves no committed evidence (it
-                       delivers value externally, e.g. posting a Discussion);
-                       its silence is neutral, not a failure.
+  * proof            — how the loop proves liveness (committed state, default-
+                       branch git history, or the latest completed scheduled
+                       GitHub Actions run and its conclusion).
   * disabled         — intentionally paused for a bounded window (`until`).
 
 Findings and exit codes (a producer with a real problem must fail CI):
 
-  0  every active loop is healthy or allowed-silent; disabled entries valid.
+  0  every active loop is healthy; disabled entries are bounded and verified.
   1  at least one: stale, silent_green, unregistered, malformed_proof,
-     expired_disable.
+     expired_disable, failed_run, activation_mismatch.
   2  configuration or evidence-adapter failure (registry unreadable / invalid /
      internally inconsistent; a proof adapter's machinery — e.g. git — failed).
 
@@ -45,6 +41,9 @@ import os
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote, urlencode
+from urllib.request import Request, urlopen
 
 import yaml
 
@@ -53,6 +52,10 @@ DEFAULT_REGISTRY = ".github/loop-health.yml"
 DEFAULT_WORKFLOWS_DIR = ".github/workflows"
 DEFAULT_SCHEMA = "schemas/loop-health.schema.json"
 DEFAULT_BRANCH = "master"
+ALLOWED_MONITORS = {
+    "ecosystem-freshness.yml",
+    "demerzel-quality-trend-freshness.yml",
+}
 
 for _stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252.
     if hasattr(_stream, "reconfigure"):
@@ -66,8 +69,10 @@ _EXIT1_KINDS = (
     "unregistered",
     "malformed_proof",
     "expired_disable",
+    "failed_run",
+    "activation_mismatch",
 )
-# Everything else (healthy, allowed_silence, disabled) is exit 0.
+# Everything else (healthy, disabled) is exit 0.
 
 
 class ConfigError(Exception):
@@ -98,6 +103,59 @@ def default_git_runner(args: list[str], cwd: Path) -> str:
             f"{proc.stderr.strip() or proc.stdout.strip()}"
         )
     return proc.stdout
+
+
+def default_actions_runner(
+    workflow: str,
+    repository: str,
+    default_branch: str,
+    token: str,
+) -> dict | None:
+    """Return the latest completed scheduled run for a workflow.
+
+    The seam is injectable in tests. The production request is read-only and
+    authenticates only with the workflow's existing GITHUB_TOKEN.
+    """
+    if not repository or "/" not in repository:
+        raise AdapterError(
+            "workflow_run proof requires GITHUB_REPOSITORY (owner/repo)"
+        )
+    if not token:
+        raise AdapterError("workflow_run proof requires the existing GITHUB_TOKEN")
+    params = urlencode({
+        "event": "schedule",
+        "branch": default_branch,
+        "status": "completed",
+        "per_page": 1,
+    })
+    endpoint = (
+        "https://api.github.com/repos/"
+        f"{quote(repository, safe='/')}/actions/workflows/"
+        f"{quote(workflow, safe='')}/runs?{params}"
+    )
+    request = Request(endpoint, headers={
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "demerzel-ecosystem-freshness",
+    })
+    try:
+        with urlopen(request, timeout=20) as response:
+            payload = json.load(response)
+    except HTTPError as exc:
+        raise AdapterError(
+            f"GitHub Actions API returned HTTP {exc.code} for {workflow}"
+        ) from exc
+    except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+        raise AdapterError(
+            f"GitHub Actions API failed for {workflow}: {type(exc).__name__}"
+        ) from exc
+    runs = payload.get("workflow_runs") if isinstance(payload, dict) else None
+    if not isinstance(runs, list):
+        raise AdapterError(
+            f"GitHub Actions API returned malformed run data for {workflow}"
+        )
+    return runs[0] if runs else None
 
 
 # ---------------------------------------------------------------------------
@@ -152,6 +210,25 @@ def scheduled_workflows(workflows_dir: Path) -> list[str]:
         ):
             found.append(path.name)
     return sorted(found)
+
+
+def workflow_crons(workflows_dir: Path, workflow: str) -> list[str] | None:
+    """Return configured cron expressions, or None when the file is absent."""
+    path = workflows_dir / workflow
+    if not path.exists():
+        return None
+    try:
+        doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"{workflow}: workflow YAML is invalid: {exc}") from exc
+    sched = _schedule_block(doc)
+    if not isinstance(sched, list):
+        return []
+    return sorted(
+        entry["cron"]
+        for entry in sched
+        if isinstance(entry, dict) and isinstance(entry.get("cron"), str)
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -266,6 +343,52 @@ def _eval_git_log(
             f"(threshold {max_days:g}d)")
 
 
+def _eval_workflow_run(
+    proof: dict,
+    workflow: str,
+    now: datetime,
+    repository: str,
+    default_branch: str,
+    token: str,
+    actions_runner,
+) -> tuple[str, str]:
+    """Prove a scheduled loop through its latest completed Actions run."""
+    max_days = float(proof["max_stale_days"])
+    run = actions_runner(workflow, repository, default_branch, token)
+    if run is None:
+        return (
+            "silent_green",
+            "no completed scheduled GitHub Actions run exists on the default branch",
+        )
+    if not isinstance(run, dict):
+        raise AdapterError(f"workflow-run adapter returned invalid data for {workflow}")
+    conclusion = run.get("conclusion")
+    url = run.get("html_url") or "(no run URL)"
+    if conclusion != "success":
+        return (
+            "failed_run",
+            f"latest completed scheduled run concluded {conclusion!r}: {url}",
+        )
+    newest = _parse_iso(run.get("run_started_at") or run.get("created_at"))
+    if newest is None:
+        return (
+            "malformed_proof",
+            "latest completed scheduled run has no parseable start timestamp",
+        )
+    age = _age_days(newest, now)
+    if age > max_days:
+        return (
+            "stale",
+            f"latest successful scheduled run is {age:.1f}d old "
+            f"(threshold {max_days:g}d): {url}",
+        )
+    return (
+        "healthy",
+        f"latest scheduled run succeeded {age:.1f}d ago "
+        f"(threshold {max_days:g}d): {url}",
+    )
+
+
 # ---------------------------------------------------------------------------
 # per-loop evaluation
 # ---------------------------------------------------------------------------
@@ -276,16 +399,20 @@ def _evaluate_loop(
     repo_root: Path,
     default_branch: str,
     git_runner,
+    actions_runner,
+    repository: str,
+    token: str,
+    actual_crons: list[str] | None,
 ) -> tuple[str, str]:
     wf = loop.get("workflow", "<unknown>")
     status = loop.get("status")
     declarations = [
-        k for k in ("proof", "allowed_silence", "disabled")
+        k for k in ("proof", "disabled")
         if (loop.get(k) is True or isinstance(loop.get(k), dict))
     ]
     if len(declarations) != 1:
         raise ConfigError(
-            f"{wf}: must declare exactly one of proof/allowed_silence/disabled, "
+            f"{wf}: must declare exactly one of proof/disabled, "
             f"found {declarations or 'none'}"
         )
     declared = declarations[0]
@@ -293,6 +420,19 @@ def _evaluate_loop(
     if declared == "disabled":
         if status != "disabled":
             raise ConfigError(f"{wf}: has a disabled block but status is {status!r}")
+        if actual_crons is None:
+            return ("activation_mismatch", "disabled workflow file is missing")
+        verification = loop["disabled"].get("verification")
+        if verification != "schedule_absent":
+            raise ConfigError(
+                f"{wf}: disabled.verification must be 'schedule_absent'"
+            )
+        if actual_crons:
+            return (
+                "activation_mismatch",
+                "registry says disabled but workflow still has cron schedule(s): "
+                + ", ".join(actual_crons),
+            )
         until_raw = loop["disabled"].get("until")
         try:
             until = date.fromisoformat(until_raw)
@@ -309,10 +449,20 @@ def _evaluate_loop(
             f"{wf}: status must be 'active' for a {declared} loop, got {status!r}"
         )
 
-    if declared == "allowed_silence":
-        if not loop.get("reason"):
-            raise ConfigError(f"{wf}: allowed_silence requires a 'reason'")
-        return ("allowed_silence", f"silence accepted: {loop['reason']}")
+    if actual_crons is None:
+        return ("activation_mismatch", "active workflow file is missing")
+    expected_crons = sorted(loop.get("schedule") or [])
+    if not actual_crons:
+        return (
+            "activation_mismatch",
+            "registry says active but workflow has no cron schedule",
+        )
+    if expected_crons != actual_crons:
+        return (
+            "activation_mismatch",
+            f"registry crons {expected_crons!r} do not match workflow crons "
+            f"{actual_crons!r}",
+        )
 
     # proof
     proof = loop["proof"]
@@ -321,6 +471,16 @@ def _evaluate_loop(
         return _eval_state_glob(proof, now, repo_root)
     if adapter == "git_log":
         return _eval_git_log(proof, now, repo_root, default_branch, git_runner)
+    if adapter == "workflow_run":
+        return _eval_workflow_run(
+            proof,
+            wf,
+            now,
+            repository,
+            default_branch,
+            token,
+            actions_runner,
+        )
     raise ConfigError(f"{wf}: unknown proof adapter {adapter!r}")
 
 
@@ -335,6 +495,9 @@ def evaluate(
     workflows_dir: Path,
     repo_root: Path,
     git_runner=default_git_runner,
+    actions_runner=default_actions_runner,
+    repository: str = "",
+    token: str = "",
 ) -> list[dict]:
     """Return findings (one per producer/loop), sorted by workflow name.
 
@@ -348,8 +511,39 @@ def evaluate(
 
     registered: dict[str, dict] = {}
     findings: list[dict] = []
+    for wf in sorted(monitors):
+        if wf not in ALLOWED_MONITORS:
+            findings.append({
+                "workflow": wf,
+                "kind": "config_error",
+                "detail": "workflow is not an approved freshness monitor and "
+                          "cannot be excluded from producer coverage",
+            })
+            continue
+        try:
+            crons = workflow_crons(workflows_dir, wf)
+        except ConfigError as exc:
+            findings.append({
+                "workflow": wf,
+                "kind": "config_error",
+                "detail": str(exc),
+            })
+            continue
+        if not crons:
+            findings.append({
+                "workflow": wf,
+                "kind": "activation_mismatch",
+                "detail": "registered monitor is missing or has no cron schedule",
+            })
     for loop in loops:
         wf = loop.get("workflow", "<unknown>")
+        if wf in monitors:
+            findings.append({
+                "workflow": wf,
+                "kind": "config_error",
+                "detail": "workflow cannot be both a monitor and a producer",
+            })
+            continue
         if wf in registered:
             findings.append({
                 "workflow": wf,
@@ -359,8 +553,17 @@ def evaluate(
             continue
         registered[wf] = loop
         try:
+            crons = workflow_crons(workflows_dir, wf)
             kind, detail = _evaluate_loop(
-                loop, now, repo_root, default_branch, git_runner
+                loop,
+                now,
+                repo_root,
+                default_branch,
+                git_runner,
+                actions_runner,
+                repository,
+                token,
+                crons,
             )
         except AdapterError as exc:
             kind, detail = "adapter_error", str(exc)
@@ -376,7 +579,7 @@ def evaluate(
             "workflow": wf,
             "kind": "unregistered",
             "detail": "scheduled producer workflow is not in the loop-health "
-                      "registry (add a proof/allowed_silence/disabled entry)",
+                      "registry (add a proof or bounded disabled entry)",
         })
 
     findings.sort(key=lambda f: (f["workflow"], f["kind"]))
@@ -402,6 +605,20 @@ def stable_alert(findings: list[dict]) -> list[dict]:
     ]
     problems.sort(key=lambda f: (f["workflow"], f["kind"]))
     return problems
+
+
+def sync_alert(alert_path: Path, findings: list[dict]) -> None:
+    """Persist stable red state, or remove it after verified recovery."""
+    problems = stable_alert(findings)
+    if problems:
+        alert_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {"alert": "ecosystem-freshness", "problems": problems}
+        alert_path.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+    elif alert_path.exists():
+        alert_path.unlink()
 
 
 # ---------------------------------------------------------------------------
@@ -443,7 +660,10 @@ def _render_summary(findings: list[dict], code: int) -> str:
     lines = []
     problems = [f for f in findings if f["kind"] in _EXIT1_KINDS + _EXIT2_KINDS]
     if code == 0:
-        lines.append(f"ecosystem-freshness: OK — {len(findings)} loops healthy/neutral")
+        lines.append(
+            f"ecosystem-freshness: OK — {len(findings)} loops healthy or "
+            "bounded-disabled"
+        )
     else:
         lines.append(f"### 🔴 ecosystem-freshness: {len(problems)} problem loop(s)")
         for f in problems:
@@ -485,7 +705,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.default_branch:
             registry = {**registry, "default_branch": args.default_branch}
         findings = evaluate(
-            registry, now=now, workflows_dir=workflows_dir, repo_root=repo_root
+            registry,
+            now=now,
+            workflows_dir=workflows_dir,
+            repo_root=repo_root,
+            repository=os.environ.get("GITHUB_REPOSITORY", ""),
+            token=os.environ.get("GITHUB_TOKEN", ""),
         )
     except ConfigError as exc:
         print(f"ecosystem-freshness: CONFIG ERROR — {exc}", file=sys.stderr)
@@ -504,17 +729,7 @@ def main(argv: list[str] | None = None) -> int:
             fh.write(summary + "\n")
 
     if args.alert_file:
-        alert_path = Path(args.alert_file)
-        problems = stable_alert(findings)
-        if problems:
-            alert_path.parent.mkdir(parents=True, exist_ok=True)
-            payload = {"alert": "ecosystem-freshness", "problems": problems}
-            alert_path.write_text(
-                json.dumps(payload, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
-            )
-        elif alert_path.exists():
-            alert_path.unlink()
+        sync_alert(Path(args.alert_file), findings)
 
     return code
 

@@ -16,8 +16,15 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
+from unittest.mock import patch
 
-import ecosystem_freshness as ef
+import yaml
+
+try:
+    from scripts import ecosystem_freshness as ef
+except ModuleNotFoundError:
+    import ecosystem_freshness as ef
 
 NOW = datetime(2026, 7, 18, 12, 0, 0, tzinfo=timezone.utc)
 
@@ -43,12 +50,18 @@ class _Repo:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding="utf-8")
 
-    def write_workflow(self, name: str) -> None:
+    def write_workflow(self, name: str, crons=None) -> None:
+        crons = ["0 0 * * *"] if crons is None else crons
+        schedule = ""
+        if crons:
+            schedule = "  schedule:\n" + "".join(
+                f"    - cron: '{cron}'\n" for cron in crons
+            )
         (self.workflows / name).write_text(
             "name: stub\n"
             "on:\n"
-            "  schedule:\n"
-            "    - cron: '0 0 * * *'\n"
+            f"{schedule}"
+            "  workflow_dispatch:\n"
             "jobs: {}\n",
             encoding="utf-8",
         )
@@ -59,10 +72,30 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.repo = _Repo()
         self.addCleanup(self.repo.close)
 
-    def _evaluate(self, registry: dict, *, git_runner=None) -> list[dict]:
-        kwargs = {}
+    def _evaluate(self, registry: dict, *, git_runner=None,
+                  actions_runner=None, auto_workflows=True) -> list[dict]:
+        # Most unit tests exercise an adapter, not activation declarations. Give
+        # them a matching scheduled stub; activation tests opt out explicitly.
+        registry = json.loads(json.dumps(registry))
+        if auto_workflows:
+            for loop in registry.get("loops", []):
+                wf = loop.get("workflow")
+                if loop.get("status") != "disabled":
+                    loop.setdefault("schedule", ["0 0 * * *"])
+                if not wf or (self.repo.workflows / wf).exists():
+                    continue
+                if loop.get("status") == "disabled":
+                    self.repo.write_workflow(wf, crons=[])
+                else:
+                    self.repo.write_workflow(wf, crons=loop["schedule"])
+        kwargs = {
+            "repository": "GuitarAlchemist/Demerzel",
+            "token": "test-token",
+        }
         if git_runner is not None:
             kwargs["git_runner"] = git_runner
+        if actions_runner is not None:
+            kwargs["actions_runner"] = actions_runner
         return ef.evaluate(
             registry,
             now=NOW,
@@ -124,7 +157,8 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "loops": [{
                 "workflow": "seldon-plan.yml",
                 "status": "disabled",
-                "disabled": {"reason": "paused", "until": "2026-10-16"},
+                "disabled": {"reason": "paused", "until": "2026-10-16",
+                             "verification": "schedule_absent"},
             }],
         }
         findings = self._evaluate(registry)
@@ -137,7 +171,8 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "loops": [{
                 "workflow": "seldon-plan.yml",
                 "status": "disabled",
-                "disabled": {"reason": "paused", "until": "2026-07-17"},
+                "disabled": {"reason": "paused", "until": "2026-07-17",
+                             "verification": "schedule_absent"},
             }],
         }
         findings = self._evaluate(registry)
@@ -152,7 +187,8 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "loops": [{
                 "workflow": "seldon-plan.yml",
                 "status": "disabled",
-                "disabled": {"reason": "paused", "until": _iso(NOW)[:10]},
+                "disabled": {"reason": "paused", "until": _iso(NOW)[:10],
+                             "verification": "schedule_absent"},
             }],
         }
         findings = self._evaluate(registry)
@@ -254,22 +290,190 @@ class EcosystemFreshnessTest(unittest.TestCase):
         findings = self._evaluate(registry, git_runner=lambda args, cwd: "\n")
         self.assertEqual(self._one(findings, "producer.yml")["kind"], "silent_green")
 
+    # ── live GitHub Actions proof adapter ─────────────────────────────────
+
+    def _workflow_run_registry(self, workflow="producer.yml", max_days=3):
+        return {
+            "version": 1,
+            "loops": [{
+                "workflow": workflow,
+                "status": "active",
+                "proof": {
+                    "adapter": "workflow_run",
+                    "max_stale_days": max_days,
+                },
+            }],
+        }
+
+    def test_workflow_run_success_is_live_proof(self):
+        seen = {}
+
+        def runner(workflow, repository, branch, token):
+            seen.update(workflow=workflow, repository=repository,
+                        branch=branch, token=token)
+            return {
+                "conclusion": "success",
+                "run_started_at": _iso(NOW - timedelta(hours=2)),
+                "html_url": "https://example.test/runs/1",
+            }
+
+        findings = self._evaluate(
+            self._workflow_run_registry(), actions_runner=runner
+        )
+        self.assertEqual(self._one(findings, "producer.yml")["kind"], "healthy")
+        self.assertEqual(seen, {
+            "workflow": "producer.yml",
+            "repository": "GuitarAlchemist/Demerzel",
+            "branch": "master",
+            "token": "test-token",
+        })
+
+    def test_known_failed_loop_turns_red(self):
+        findings = self._evaluate(
+            self._workflow_run_registry("demerzel-capability-expansion.yml", 10),
+            actions_runner=lambda *args: {
+                "conclusion": "failure",
+                "run_started_at": _iso(NOW - timedelta(days=5)),
+                "html_url": "https://example.test/runs/failed",
+            },
+        )
+        finding = self._one(findings, "demerzel-capability-expansion.yml")
+        self.assertEqual(finding["kind"], "failed_run")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_workflow_run_missing_or_stale_turns_red(self):
+        registry = self._workflow_run_registry(max_days=3)
+        missing = self._evaluate(registry, actions_runner=lambda *args: None)
+        self.assertEqual(self._one(missing, "producer.yml")["kind"],
+                         "silent_green")
+        stale = self._evaluate(registry, actions_runner=lambda *args: {
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=3, seconds=1)),
+        })
+        self.assertEqual(self._one(stale, "producer.yml")["kind"], "stale")
+
+    def test_workflow_run_adapter_failure_is_exit_2(self):
+        def boom(*args):
+            raise ef.AdapterError("Actions API unavailable")
+
+        findings = self._evaluate(
+            self._workflow_run_registry(), actions_runner=boom
+        )
+        self.assertEqual(self._one(findings, "producer.yml")["kind"],
+                         "adapter_error")
+        self.assertEqual(ef.exit_code(findings), 2)
+
+    def test_default_actions_adapter_queries_completed_scheduled_run(self):
+        seen = {}
+
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps({"workflow_runs": [{"id": 42}]}).encode()
+
+        def fake_urlopen(request, timeout):
+            seen["request"] = request
+            seen["timeout"] = timeout
+            return Response()
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            run = ef.default_actions_runner(
+                "qa-tribunal.yml", "GuitarAlchemist/Demerzel", "master", "secret"
+            )
+        self.assertEqual(run, {"id": 42})
+        parsed = urlparse(seen["request"].full_url)
+        self.assertEqual(parse_qs(parsed.query), {
+            "event": ["schedule"], "branch": ["master"],
+            "status": ["completed"], "per_page": ["1"],
+        })
+        self.assertNotIn("secret", seen["request"].full_url)
+        self.assertEqual(seen["request"].get_header("Authorization"),
+                         "Bearer secret")
+
+    # ── registry activation must match actual workflow YAML ───────────────
+
+    def test_active_schedule_mismatch_turns_red_before_adapter(self):
+        self.repo.write_workflow("producer.yml", crons=["0 1 * * *"])
+        registry = self._workflow_run_registry()
+        registry["loops"][0]["schedule"] = ["0 2 * * *"]
+        findings = self._evaluate(
+            registry, actions_runner=lambda *args: self.fail("must not call API"),
+            auto_workflows=False,
+        )
+        self.assertEqual(self._one(findings, "producer.yml")["kind"],
+                         "activation_mismatch")
+
+    def test_disabled_but_still_scheduled_turns_red(self):
+        self.repo.write_workflow("seldon-plan.yml", crons=["0 6 * * *"])
+        registry = {
+            "version": 1,
+            "loops": [{
+                "workflow": "seldon-plan.yml",
+                "status": "disabled",
+                "disabled": {
+                    "reason": "paused",
+                    "until": "2026-10-16",
+                    "verification": "schedule_absent",
+                },
+            }],
+        }
+        findings = self._evaluate(registry, auto_workflows=False)
+        self.assertEqual(self._one(findings, "seldon-plan.yml")["kind"],
+                         "activation_mismatch")
+
+    def test_monitor_exclusion_is_constrained(self):
+        self.repo.write_workflow("producer.yml")
+        findings = self._evaluate({
+            "version": 1, "monitors": ["producer.yml"], "loops": [],
+        })
+        self.assertEqual(self._one(findings, "producer.yml")["kind"],
+                         "config_error")
+
+    def test_monitor_cannot_also_be_registered_as_producer(self):
+        self.repo.write_workflow("ecosystem-freshness.yml")
+        findings = self._evaluate({
+            "version": 1,
+            "monitors": ["ecosystem-freshness.yml"],
+            "loops": [{
+                "workflow": "ecosystem-freshness.yml",
+                "status": "active",
+                "schedule": ["0 0 * * *"],
+                "proof": {"adapter": "workflow_run", "max_stale_days": 1},
+            }],
+        })
+        self.assertTrue(any(
+            f["kind"] == "config_error" and "both" in f["detail"]
+            for f in findings
+        ))
+
     # ── deterministic ordering ────────────────────────────────────────────
 
     def test_deterministic_ordering(self):
+        proof = {"adapter": "workflow_run", "max_stale_days": 2}
         registry = {
             "version": 1,
             "loops": [
                 {"workflow": "z.yml", "status": "active",
-                 "allowed_silence": True, "reason": "external"},
+                 "proof": proof},
                 {"workflow": "a.yml", "status": "active",
-                 "allowed_silence": True, "reason": "external"},
+                 "proof": proof},
                 {"workflow": "m.yml", "status": "active",
-                 "allowed_silence": True, "reason": "external"},
+                 "proof": proof},
             ],
         }
-        order1 = [f["workflow"] for f in self._evaluate(registry)]
-        order2 = [f["workflow"] for f in self._evaluate(registry)]
+        good = lambda *args: {
+            "conclusion": "success", "run_started_at": _iso(NOW),
+            "html_url": "https://example.test/run",
+        }
+        order1 = [f["workflow"] for f in self._evaluate(
+            registry, actions_runner=good)]
+        order2 = [f["workflow"] for f in self._evaluate(
+            registry, actions_runner=good)]
         self.assertEqual(order1, ["a.yml", "m.yml", "z.yml"])
         self.assertEqual(order1, order2)
 
@@ -300,10 +504,14 @@ class EcosystemFreshnessTest(unittest.TestCase):
         registry = {
             "version": 1,
             "loops": [{"workflow": "known.yml", "status": "active",
-                       "allowed_silence": True, "reason": "external"}],
+                       "schedule": ["0 0 * * *"],
+                       "proof": {"adapter": "workflow_run",
+                                 "max_stale_days": 1}}],
         }
-        findings = self._evaluate(registry)
-        self.assertEqual(self._one(findings, "known.yml")["kind"], "allowed_silence")
+        findings = self._evaluate(registry, actions_runner=lambda *args: {
+            "conclusion": "success", "run_started_at": _iso(NOW),
+        })
+        self.assertEqual(self._one(findings, "known.yml")["kind"], "healthy")
         self.assertEqual(ef.exit_code(findings), 0)
 
     # ── malformed proof (exit 1) vs config error (exit 2) ─────────────────
@@ -381,23 +589,24 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "loops": [{
                 "workflow": "bad.yml",
                 "status": "active",
-                "allowed_silence": True,
-                "reason": "external",
                 "proof": {"adapter": "state_glob", "glob": "state/x/*.json",
                           "timestamp_field": "timestamp", "max_stale_days": 1},
+                "disabled": {"reason": "also paused", "until": "2026-10-16",
+                             "verification": "schedule_absent"},
             }],
         }
         findings = self._evaluate(registry)
         self.assertEqual(self._one(findings, "bad.yml")["kind"], "config_error")
         self.assertEqual(ef.exit_code(findings), 2)
 
-    def test_allowed_silence_requires_reason(self):
+    def test_unbounded_allowed_silence_is_rejected(self):
         registry = {
             "version": 1,
             "loops": [{
                 "workflow": "bad.yml",
                 "status": "active",
                 "allowed_silence": True,
+                "reason": "external output is not evidence",
             }],
         }
         findings = self._evaluate(registry)
@@ -409,20 +618,23 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "loops": [{
                 "workflow": "bad.yml",
                 "status": "active",
-                "disabled": {"reason": "paused", "until": "2026-10-16"},
+                "disabled": {"reason": "paused", "until": "2026-10-16",
+                             "verification": "schedule_absent"},
             }],
         }
         findings = self._evaluate(registry)
         self.assertEqual(self._one(findings, "bad.yml")["kind"], "config_error")
 
     def test_duplicate_registry_entry_is_config_error(self):
+        proof = {"adapter": "state_glob", "glob": "state/x/*.json",
+                 "timestamp_field": "timestamp", "max_stale_days": 1}
         registry = {
             "version": 1,
             "loops": [
                 {"workflow": "dup.yml", "status": "active",
-                 "allowed_silence": True, "reason": "external"},
+                 "proof": proof},
                 {"workflow": "dup.yml", "status": "active",
-                 "allowed_silence": True, "reason": "external"},
+                 "proof": proof},
             ],
         }
         findings = self._evaluate(registry)
@@ -444,6 +656,22 @@ class EcosystemFreshnessTest(unittest.TestCase):
         ])
         # No ages/timestamps leak into the committable payload.
         self.assertNotIn("detail", alert[0])
+
+    def test_fail_persist_idempotence_and_recovery(self):
+        alert_path = self.repo.root / "state/loop-health/.freshness-alert.json"
+        failed = [{
+            "workflow": "dead.yml", "kind": "failed_run", "detail": "run 1",
+        }]
+        ef.sync_alert(alert_path, failed)
+        first = alert_path.read_text(encoding="utf-8")
+        ef.sync_alert(alert_path, [{
+            "workflow": "dead.yml", "kind": "failed_run", "detail": "run 2",
+        }])
+        self.assertEqual(alert_path.read_text(encoding="utf-8"), first)
+        ef.sync_alert(alert_path, [{
+            "workflow": "dead.yml", "kind": "healthy", "detail": "recovered",
+        }])
+        self.assertFalse(alert_path.exists())
 
     # ── registry schema validation (config failure -> exit 2) ─────────────
 
@@ -481,6 +709,13 @@ class EcosystemFreshnessTest(unittest.TestCase):
             workflows_dir=repo / ef.DEFAULT_WORKFLOWS_DIR,
             repo_root=repo,
             git_runner=lambda args, cwd: _iso(NOW) + "\n",
+            actions_runner=lambda *args: {
+                "conclusion": "success",
+                "run_started_at": _iso(NOW),
+                "html_url": "https://example.test/production-proof",
+            },
+            repository="GuitarAlchemist/Demerzel",
+            token="test-token",
         )
         # No unregistered producers and no config/adapter errors: coverage is
         # complete and the registry is internally consistent.
@@ -488,6 +723,38 @@ class EcosystemFreshnessTest(unittest.TestCase):
                          "every scheduled producer must be registered")
         self.assertFalse([f for f in findings
                           if f["kind"] in ("config_error", "adapter_error")])
+        self.assertNotIn("allowed_silence", json.dumps(registry))
+        scheduled = set(ef.scheduled_workflows(
+            repo / ef.DEFAULT_WORKFLOWS_DIR
+        ))
+        self.assertEqual(
+            scheduled,
+            set(registry["monitors"]) |
+            {loop["workflow"] for loop in registry["loops"]},
+        )
+
+    def test_production_workflows_enforce_daily_always_and_ci_paths(self):
+        repo = Path(ef.REPO)
+        guard = yaml.safe_load((
+            repo / ".github/workflows/ecosystem-freshness.yml"
+        ).read_text(encoding="utf-8"))
+        on = guard.get("on") or guard.get(True)
+        self.assertEqual(on["schedule"], [{"cron": "15 13 * * *"}])
+        self.assertEqual(guard["jobs"]["persist"]["if"], "always()")
+        persist_steps = guard["jobs"]["persist"]["steps"]
+        self.assertTrue(any(step.get("if") == "always()" for step in persist_steps))
+        self.assertEqual(guard["jobs"]["evaluate"]["permissions"], {
+            "actions": "read", "contents": "read",
+        })
+        self.assertEqual(guard["jobs"]["persist"]["permissions"], {
+            "contents": "write",
+        })
+
+        ci_text = (repo / ".github/workflows/governance-validate.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertGreaterEqual(ci_text.count(".github/loop-health.yml"), 2)
+        self.assertGreaterEqual(ci_text.count(".github/workflows/*.yml"), 2)
 
 
 if __name__ == "__main__":

@@ -1,37 +1,21 @@
-# Loop-health registry — the single source of truth for the universal
-# ecosystem-freshness monitor (scripts/ecosystem_freshness.py, schema
-# schemas/loop-health.schema.json).
-#
-# Every SCHEDULED workflow must be accounted for here: either as a producer
-# `loop` (declaring a proof adapter, allowed_silence, or a bounded disable) or
-# as a `monitor` (a freshness guard, not a producer — self-excluded). A new
-# scheduled workflow that appears in neither is reported as `unregistered` and
-# turns the board red, so liveness coverage can never silently regress.
-#
-# Classification was harvested from repository evidence on 2026-07-18, not
-# declared by fiat:
-#   - quality-trend: state/quality-trend/*.jsonl committed daily -> proof (fresh).
-#   - ideation: reads governance state to generate ideas but commits NO trace ->
-#     silent_green (its liveness is unprovable — the exact failure mode this
-#     monitor exists to surface; see note).
-#   - seldon-plan: committed state dead since 2026-03-23 (117d) -> intentional,
-#     bounded disable.
-#   - the remaining loops deliver value externally (Discussions / Issues /
-#     Discord / CI artifacts / Jules delegation) and by design leave no committed
-#     repo evidence -> allowed_silence, with the accepted gap recorded per entry.
+# Universal loop-health registry. Every scheduled producer must prove that it
+# ran successfully; there is no unbounded "allowed silence" state. Producers
+# whose value lands outside git use the read-only GitHub Actions workflow-run
+# adapter, which verifies the latest completed scheduled run and conclusion.
 version: 1
 default_branch: master
 
-# Freshness/health monitors — scheduled, but NOT producers. Self-excluded from
-# coverage so the monitor never flags itself (or its sibling guard).
+# Exclusion is deliberately constrained in scripts/ecosystem_freshness.py and
+# the schema to these two freshness guards. A producer cannot self-exempt merely
+# by adding its filename here.
 monitors:
   - ecosystem-freshness.yml
   - demerzel-quality-trend-freshness.yml
 
 loops:
-  # ── Proven-fresh: committed state carries a timestamp we can age ──────────
   - workflow: demerzel-quality-trend.yml
-    schedule: '0 12 * * *'
+    schedule:
+      - '0 12 * * *'
     status: active
     proof:
       adapter: state_glob
@@ -39,103 +23,94 @@ loops:
       timestamp_field: timestamp
       max_stale_days: 3
     note: >-
-      Deterministic per-artifact deltas committed nightly by scripts/quality_trend.py.
-      Feeder is daily, so >3d stale means the feeder died.
+      Deterministic evidence is committed daily. More than three days without
+      state proves the feeder has died even if its workflow looked green.
 
-  # ── Silent-green: registered & active, but leaves no discoverable evidence ─
-  - workflow: demerzel-ideation.yml
-    schedule: '47 13 * * 1,3,5'
+  - workflow: demerzel-capability-expansion.yml
+    schedule:
+      - '37 15 * * 1'
     status: active
     proof:
-      adapter: state_glob
-      glob: state/ideation/*.json
-      timestamp_field: created_at
-      max_stale_days: 7
-    note: >-
-      Ideation reads governance state to generate ideas but currently commits no
-      trace, so we cannot tell a live run from a dead one. Remediation: have the
-      workflow commit its ideation digest to state/ideation/<date>.json, OR make
-      a conscious decision to reclassify this as allowed_silence.
-
-  # ── Intentionally disabled: bounded allowlist (expiry forces re-evaluation) ─
-  - workflow: seldon-plan.yml
-    schedule: '0 6 * * *'
-    status: disabled
-    disabled:
-      reason: >-
-        Autonomous research scheduler paused; committed state
-        (state/seldon-plan/) has been dead since 2026-03-23 (verified 2026-07-18).
-      by: codex-handoff (state/handoffs/codex-option-1.md)
-      since: '2026-07-18'
-      until: '2026-10-16'
-    note: >-
-      Time-bounded allowlist. At `until`, either revive the loop (restore a proof
-      adapter) or re-authorize the pause with a fresh window.
-
-  # ── Allowed silence: value delivered externally; no committed evidence by design
-  - workflow: demerzel-capability-expansion.yml
-    schedule: '37 15 * * 1'
-    status: active
-    allowed_silence: true
-    reason: >-
-      Posts a capability-expansion Issue + Discussion; leaves no committed repo
-      evidence. Notification loop — silence is by design.
+      adapter: workflow_run
+      max_stale_days: 10
 
   - workflow: demerzel-discussion-lifecycle.yml
-    schedule: '47 14 * * 1-5'
+    schedule:
+      - '47 14 * * 1-5'
     status: active
-    allowed_silence: true
-    reason: >-
-      Event-driven (discussion / discussion_comment); the weekday cron only scans
-      for stale discussions and promotes actionable ones to Issues. No committed
-      state.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3
+
+  - workflow: demerzel-ideation.yml
+    schedule:
+      - '47 13 * * 1,3,5'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 4
 
   - workflow: demerzel-self-improvement.yml
-    schedule: '17 15 * * 0'
+    schedule:
+      - '17 15 * * 0'
     status: active
-    allowed_silence: true
-    reason: >-
-      Posts a self-improvement Issue + Discussion harvested from the manifest;
-      leaves no committed repo evidence.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 10
 
   - workflow: demerzel-showcase.yml
-    schedule: '7 14 1-7,15-21 * 1'
+    schedule:
+      - '7 14 1-7,15-21 * 1'
     status: active
-    allowed_silence: true
-    reason: >-
-      Posts a governance showcase Discussion; notification-only, no committed
-      state.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 14
 
   - workflow: ga-chatbot-discussions.yml
-    schedule: '*/15 * * * *'
+    schedule:
+      - '*/15 * * * *'
     status: active
-    allowed_silence: true
-    reason: >-
-      Answers user Discussions (event-driven); the 15-min cron posts occasional
-      compounding notes. Output is external comments, not committed state.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 1
 
   - workflow: jules-auto-delegate.yml
-    schedule: '*/30 * * * *'
+    schedule:
+      - '*/30 * * * *'
     status: active
-    allowed_silence: true
-    reason: >-
-      Delegates labelled work to the Jules external agent (respects
-      governance/state/afk-halt.json); its product is off-repo delegation, not
-      committed state.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 1
 
   - workflow: qa-tribunal.yml
-    schedule: '0 9 * * *'
+    schedule:
+      - '0 9 * * *'
     status: active
-    allowed_silence: true
-    reason: >-
-      Emits QA verdicts as CI upload-artifacts + per-PR files; the daily sweep is
-      not committed to the default branch, so there is no committed evidence to
-      age.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3
+
+  # This workflow is actually scheduled five times per day. It is therefore
+  # active, not "intentionally disabled". Its current failed scheduled run is
+  # deliberately red. A future bounded disable must remove the cron schedule
+  # and declare disabled.verification: schedule_absent.
+  - workflow: seldon-plan.yml
+    schedule:
+      - '0 6 * * *'
+      - '0 10 * * *'
+      - '0 14 * * *'
+      - '0 18 * * *'
+      - '0 22 * * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 1
 
   - workflow: streeling-daily.yml
-    schedule: '17 13 * * 5'
+    schedule:
+      - '17 13 * * 1-4'
+      - '17 13 * * 5'
     status: active
-    allowed_silence: true
-    reason: >-
-      Posts a weekly cross-repo harvest report Discussion; report is external, no
-      committed state.
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3

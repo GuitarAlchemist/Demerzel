@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft-07/schema#",
   "$id": "loop-health.schema.json",
   "title": "Loop Health Registry",
-  "description": "Universal ecosystem-freshness registry: declares, per scheduled producer workflow, how its liveness is proven (proof adapter), that its silence is intentional (allowed_silence), or that it is deliberately disabled for a bounded window (disabled). The ecosystem-freshness monitor reads this to turn the board red for any dead or silent-green loop. See scripts/ecosystem_freshness.py.",
+  "description": "Universal ecosystem-freshness registry: every scheduled producer must prove liveness or be deliberately disabled for a bounded, mechanically verified window. The monitor turns the board red for dead, failed, stale, activation-mismatched, or unregistered loops.",
   "type": "object",
   "required": ["version", "loops"],
   "additionalProperties": false,
@@ -18,13 +18,18 @@
     },
     "monitors": {
       "type": "array",
-      "description": "Scheduled workflows that are freshness/health MONITORS, not producers. Self-excluded from producer coverage so the monitor never flags itself as unregistered.",
-      "items": { "$ref": "#/definitions/workflowFile" },
+      "description": "Approved freshness monitors, not producers. Runtime validation constrains this list to the two known guard workflows so arbitrary producers cannot exempt themselves.",
+      "items": {
+        "enum": [
+          "ecosystem-freshness.yml",
+          "demerzel-quality-trend-freshness.yml"
+        ]
+      },
       "uniqueItems": true
     },
     "loops": {
       "type": "array",
-      "description": "One entry per scheduled producer workflow. Each entry declares exactly one of: proof, allowed_silence, or disabled.",
+      "description": "One entry per scheduled producer workflow. Each entry declares exactly one of proof or bounded disabled state.",
       "items": { "$ref": "#/definitions/loop" }
     }
   },
@@ -41,28 +46,40 @@
       "properties": {
         "workflow": { "$ref": "#/definitions/workflowFile" },
         "schedule": {
-          "type": "string",
-          "description": "Harvested cron expression (documentation/identity; not re-derived by the monitor)."
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Exact cron expressions expected in the workflow. Runtime validation rejects drift between declaration and live YAML."
         },
         "status": {
           "enum": ["active", "disabled"],
-          "description": "active loops must carry proof or allowed_silence; disabled loops must carry a disabled block."
+          "description": "Active loops must carry proof and matching cron declarations; disabled loops must carry a bounded block and have no live cron schedule."
         },
         "proof": { "$ref": "#/definitions/proof" },
-        "allowed_silence": {
-          "type": "boolean",
-          "description": "When true, the loop legitimately leaves no committed repo evidence (it delivers value externally, e.g. posting a Discussion). Its silence is neutral, not silent-green. Requires a reason."
-        },
         "disabled": { "$ref": "#/definitions/disabled" },
-        "reason": {
-          "type": "string",
-          "description": "Human justification (required for allowed_silence entries; greppable acceptance of the monitoring gap)."
-        },
         "note": {
           "type": "string",
           "description": "Free-form note (e.g. the remediation that would let a silent-green loop graduate to a proof adapter)."
         }
-      }
+      },
+      "oneOf": [
+        {
+          "properties": { "status": { "const": "active" } },
+          "required": ["schedule", "proof"],
+          "not": { "required": ["disabled"] }
+        },
+        {
+          "properties": { "status": { "const": "disabled" } },
+          "required": ["disabled"],
+          "not": {
+            "anyOf": [
+              { "required": ["schedule"] },
+              { "required": ["proof"] }
+            ]
+          }
+        }
+      ]
     },
     "proof": {
       "type": "object",
@@ -71,8 +88,8 @@
       "description": "How the loop proves it is alive from default-branch repository evidence.",
       "properties": {
         "adapter": {
-          "enum": ["state_glob", "git_log"],
-          "description": "state_glob: newest timestamp inside committed JSON/JSONL state files. git_log: last commit touching a path on the default branch (for commit-only-on-change loops)."
+          "enum": ["state_glob", "git_log", "workflow_run"],
+          "description": "state_glob: newest timestamp in committed JSON/JSONL. git_log: last default-branch commit touching a path. workflow_run: latest completed scheduled GitHub Actions run must be recent and successful."
         },
         "glob": {
           "type": "string",
@@ -91,15 +108,29 @@
           "minimum": 0,
           "description": "Freshness threshold. Age strictly greater than this many days is stale."
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "adapter": { "const": "state_glob" } } },
+          "then": { "required": ["glob", "timestamp_field"] }
+        },
+        {
+          "if": { "properties": { "adapter": { "const": "git_log" } } },
+          "then": { "required": ["path"] }
+        }
+      ]
     },
     "disabled": {
       "type": "object",
-      "required": ["reason", "until"],
+      "required": ["reason", "until", "verification"],
       "additionalProperties": false,
       "description": "Time-bounded intentional-disable allowlist. Past 'until' the entry is expired and the board turns red so the pause cannot be forgotten.",
       "properties": {
         "reason": { "type": "string", "minLength": 1 },
+        "verification": {
+          "const": "schedule_absent",
+          "description": "Mechanical proof that the workflow has no cron schedule while disabled."
+        },
         "by": { "type": "string", "description": "Who authorized the disable." },
         "since": {
           "type": "string",

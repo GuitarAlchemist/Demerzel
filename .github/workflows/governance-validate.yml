@@ -13,6 +13,9 @@ on:
       - 'README.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      - '.github/loop-health.yml'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
       - '.github/workflows/governance-validate.yml'
   pull_request:
     paths:
@@ -26,6 +29,9 @@ on:
       - 'README.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      - '.github/loop-health.yml'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
   workflow_dispatch:
 
 permissions:
