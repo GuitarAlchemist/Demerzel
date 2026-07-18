@@ -68,6 +68,33 @@ class BudgetGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cannot exceed policy default"):
             evaluate(POLICY, request(max_cost_usd=200))
 
+    def test_nan_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "non-negative number"):
+            evaluate(POLICY, request(estimated_cost_usd=float("nan")))
+
+    def test_cycle_reservation_blocks_aggregate_overrun(self):
+        from aiw_budget_gate import reserve
+        policy = json.loads(json.dumps(POLICY))
+        policy["cycle"]["max_cost_usd"] = 2
+        with tempfile.TemporaryDirectory() as directory:
+            cycle = Path(directory) / "cycle.json"
+            first = reserve(policy, request(job_id="one", estimated_cost_usd=2), cycle)
+            second = reserve(policy, request(job_id="two", estimated_cost_usd=1), cycle)
+            self.assertEqual("allow", first["decision"])
+            self.assertEqual("block", second["decision"])
+            self.assertIn("cycle_cost_cap_exceeded", second["reasons"])
+
+    def test_release_records_actual_cost_and_frees_capacity(self):
+        from aiw_budget_gate import release, reserve
+        with tempfile.TemporaryDirectory() as directory:
+            cycle = Path(directory) / "cycle.json"
+            reserve(POLICY, request(job_id="one"), cycle)
+            result = release(cycle, "one", 0.25)
+            self.assertEqual("released", result["decision"])
+            state = json.loads(cycle.read_text())
+            self.assertEqual(0, state["active_packets"])
+            self.assertEqual(0.25, state["actual_cost_usd"])
+
     def test_cli_ledger_shape_is_json_serializable(self):
         result = evaluate(POLICY, request())
         with tempfile.TemporaryDirectory() as directory:

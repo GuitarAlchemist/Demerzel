@@ -5,8 +5,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
+import os
 from pathlib import Path
 import sys
+import time
 from typing import Any
 
 
@@ -20,7 +23,8 @@ def _load(path: Path) -> dict[str, Any]:
 
 def _number(request: dict[str, Any], name: str) -> float:
     value = request.get(name, 0)
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
+    if (isinstance(value, bool) or not isinstance(value, (int, float))
+            or not math.isfinite(value) or value < 0):
         raise ValueError(f"{name} must be a non-negative number")
     return float(value)
 
@@ -34,6 +38,85 @@ def _cap(request: dict[str, Any], name: str, policy_default: Any) -> float:
     if value > default:
         raise ValueError(f"{name} cannot exceed policy default")
     return value
+
+
+def _lock(path: Path):
+    """Acquire a short-lived cross-process lock; fail closed if contended."""
+    lock_path = Path(f"{path}.lock")
+    for _ in range(40):
+        try:
+            descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(descriptor)
+            return lock_path
+        except FileExistsError:
+            time.sleep(0.05)
+    raise ValueError("cycle ledger is busy")
+
+
+def _read_cycle(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {"reserved_cost_usd": 0.0, "active_packets": 0, "reservations": {}}
+    value = _load(path)
+    for name in ("reserved_cost_usd", "active_packets"):
+        _number(value, name)
+    reservations = value.get("reservations", {})
+    if not isinstance(reservations, dict):
+        raise ValueError("cycle ledger reservations must be an object")
+    return value
+
+
+def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path) -> dict[str, Any]:
+    """Atomically reserve cycle capacity before the provider is invoked."""
+    job_id = request.get("job_id")
+    if not isinstance(job_id, str) or not job_id:
+        raise ValueError("job_id is required for a cycle reservation")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        reservations = cycle["reservations"]
+        if job_id in reservations:
+            result = evaluate(policy, {**request,
+                                       "cycle_spend_usd": cycle["reserved_cost_usd"],
+                                       "cycle_active_packets": cycle["active_packets"]})
+            result["reservation_reused"] = True
+            return result
+        result = evaluate(policy, {**request,
+                                   "cycle_spend_usd": cycle["reserved_cost_usd"],
+                                   "cycle_active_packets": cycle["active_packets"]})
+        if result["decision"] == "allow":
+            estimate = result["budget"]["estimated_cost_usd"]
+            reservations[job_id] = {"estimated_cost_usd": estimate}
+            cycle["reserved_cost_usd"] += estimate
+            cycle["active_packets"] += 1
+            cycle_path.parent.mkdir(parents=True, exist_ok=True)
+            cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                             allow_nan=False) + "\n", encoding="utf-8")
+        return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def release(cycle_path: Path, job_id: str, actual_cost_usd: float) -> dict[str, Any]:
+    """Release a reservation and record the provider receipt when available."""
+    if not job_id:
+        raise ValueError("job_id is required for release")
+    if not math.isfinite(actual_cost_usd) or actual_cost_usd < 0:
+        raise ValueError("actual_cost_usd must be a non-negative number")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        reservation = cycle["reservations"].pop(job_id, None)
+        if reservation is None:
+            raise ValueError(f"no reservation for job: {job_id}")
+        cycle["reserved_cost_usd"] -= reservation["estimated_cost_usd"]
+        cycle["active_packets"] -= 1
+        cycle["actual_cost_usd"] = cycle.get("actual_cost_usd", 0) + actual_cost_usd
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return {"decision": "released", "job_id": job_id,
+                "actual_cost_usd": actual_cost_usd}
+    finally:
+        lock_path.unlink(missing_ok=True)
 
 
 def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
@@ -118,11 +201,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--policy", required=True, type=Path)
     parser.add_argument("--request", required=True, type=Path)
     parser.add_argument("--ledger", required=True, type=Path)
+    parser.add_argument("--cycle-ledger", required=True, type=Path)
+    parser.add_argument("--release-job")
+    parser.add_argument("--actual-cost-usd", type=float)
     args = parser.parse_args(argv)
     try:
-        result = evaluate(_load(args.policy), _load(args.request))
+        if args.release_job:
+            if args.actual_cost_usd is None:
+                raise ValueError("--actual-cost-usd is required with --release-job")
+            result = release(args.cycle_ledger, args.release_job, args.actual_cost_usd)
+        else:
+            result = reserve(_load(args.policy), _load(args.request), args.cycle_ledger)
         args.ledger.parent.mkdir(parents=True, exist_ok=True)
-        args.ledger.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
+        args.ledger.write_text(json.dumps(result, indent=2, sort_keys=True,
+                                          allow_nan=False) + "\n",
                                encoding="utf-8")
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print(f"aiw budget gate: {error}", file=sys.stderr)

@@ -135,7 +135,8 @@ current cycle spend, and an explicit `manual_approval` flag when needed:
 python scripts/aiw_budget_gate.py `
   --policy state/driver/aiw-budget-policy.json `
   --request .octo/aiw-request.json `
-  --ledger .octo/aiw-budget-ledger.json
+  --ledger .octo/aiw-budget-ledger.json `
+  --cycle-ledger .octo/aiw-cycle-ledger.json
 ```
 
 Exit `0` is the only allowed path to invocation. Exit `1` blocks the job before
@@ -144,6 +145,17 @@ workers (`gemini-cli`, `jules`, `notebooklm`) require explicit approval even whe
 their estimate is below the per-job cap. Claude Code CLI and Codex CLI are the
 preferred first workers for local-seat work; an `ANTHROPIC_API_KEY` fallback must
 carry the same budget block and approval rules.
+
+The cycle ledger is authoritative and reserved atomically before invocation;
+callers cannot supply their own aggregate spend or concurrency values. On
+terminal completion, release the reservation and record the provider receipt:
+
+```powershell
+python scripts/aiw_budget_gate.py --release-job aiw-0001 `
+  --actual-cost-usd 0.00 --cycle-ledger .octo/aiw-cycle-ledger.json `
+  --policy state/driver/aiw-budget-policy.json `
+  --request .octo/aiw-request.json --ledger .octo/aiw-budget-ledger.json
+```
 
 ## Non-goals
 
