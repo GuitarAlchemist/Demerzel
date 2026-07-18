@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "provider": "claude-sonnet",
+  "status": "success",
+  "run_id": "run-current",
+  "task_id": "review-current-diff",
+  "commit_range": "base..head",
+  "commit_fingerprint": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "preflight": {
+    "status": "passed",
+    "checks": [
+      "claude auth precedence"
+    ]
+  },
+  "evidence": {
+    "diff_received": true,
+    "files_reviewed": [
+      "scripts/example.py"
+    ],
+    "findings": [
+      {
+        "id": "SEC-1",
+        "category": "security",
+        "summary": "Example current-run finding"
+      }
+    ]
+  },
+  "scorecard": {
+    "security": {
+      "score": 8,
+      "finding_ids": [
+        "SEC-1"
+      ]
+    },
+    "reliability": {
+      "score": 5,
+      "finding_ids": []
+    }
+  }
+}

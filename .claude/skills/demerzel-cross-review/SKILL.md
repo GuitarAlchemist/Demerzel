@@ -18,6 +18,56 @@ No model reviews its own work. When one AI generates code, a different model rev
 /demerzel cross-review --configure              # Edit review matrix for this repo
 ```
 
+## Repo-scoped fail-closed gate
+
+Every Demerzel Octopus/cross-review run must be isolated and certified before
+it can report `COMPLETE`, update governance confidence, or post an approving PR
+comment. The plugin's global `~/.claude-octopus/results` directory is not an
+evidence source: it may contain results from unrelated or older runs.
+
+Create the run contract from the exact Git diff before dispatch:
+
+```powershell
+$runId = "review-$(Get-Date -Format yyyyMMddHHmmss)"
+$taskId = if ($env:PR_NUMBER) { "pr-$env:PR_NUMBER" } else { "diff-$runId" }
+python scripts/octopus_delivery_gate.py init `
+  --repo . `
+  --runs-dir .octo/runs `
+  --run-id $runId `
+  --task-id $taskId `
+  --commit-range "$env:BASE_SHA..$env:HEAD_SHA" `
+  --required-provider claude-sonnet `
+  --required-provider gemini
+```
+
+Each provider adapter writes one JSON result under
+`.octo/runs/<run-id>/providers/`, conforming to
+`schemas/octopus-review-result.schema.json`. It must copy the run ID, task ID,
+commit range, and SHA-256 diff fingerprint from that run's `request.json`.
+Never search another run or a global results directory as fallback.
+
+Before dispatch, adapters record a process-scoped preflight in the result:
+
+- Claude: CLI availability and auth-precedence compatibility.
+- Gemini: CLI/client eligibility and workspace trust.
+- All providers: no secret values in output; a preflight failure records
+  `status: preflight_failed` and `preflight.status: failed` without dispatch.
+
+After every required provider reaches a terminal status, certify the exact run:
+
+```powershell
+python scripts/octopus_delivery_gate.py certify `
+  --request ".octo/runs/$runId/request.json" `
+  --providers-dir ".octo/runs/$runId/providers" `
+  --output ".octo/runs/$runId/certification.json"
+```
+
+Exit code `0` is the only path to `COMPLETE`. Exit code `1` means the run is
+`BLOCKED`; exit code `2` means its evidence contract is invalid. Required
+provider failures/timeouts/skips, stale identities, missing diff evidence, and
+empty commit ranges all fail closed. Scorecard categories remain `unknown`
+unless their scores cite finding IDs from accepted current-run evidence.
+
 ## Review Matrix
 
 The core invariant: `reviewer != author`. The matrix encodes which model reviews which and why.

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "provider": "gemini",
+  "status": "success",
+  "run_id": "run-20260429",
+  "task_id": "grasp-1777503661-0",
+  "commit_range": "old-base..old-head",
+  "commit_fingerprint": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "preflight": {
+    "status": "passed",
+    "checks": [
+      "gemini client eligibility",
+      "workspace trust"
+    ]
+  },
+  "evidence": {
+    "diff_received": true,
+    "files_reviewed": [
+      "old-file.md"
+    ],
+    "findings": []
+  }
+}
