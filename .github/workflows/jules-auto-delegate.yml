@@ -166,6 +166,36 @@ jobs:
             exit 0
           fi
 
+          # ── AIW budget preflight: jules is a metered-cloud provider ─────────
+          # scripts/aiw_budget_gate.py fails closed. Jules requires manual
+          # approval, so absent a committed .octo/aiw-approval.json bound to this
+          # job_id/provider/request SHA-256 the reservation BLOCKS here. We run
+          # this BEFORE writing the delegation marker so a blocked job stays
+          # re-runnable after a human commits the approval artifact.
+          #   exit 0 → allow, fall through to delegate
+          #   exit 1 → block (governed outcome): comment, proceed=false, run stays green
+          #   exit 2 → invalid request/policy: fail the job closed
+          req="$RUNNER_TEMP/aiw-jules-request.json"
+          job_id="jules-issue-${issue}-run-${GITHUB_RUN_ID}"
+          printf '{"job_id":"%s","provider":"jules","estimated_cost_usd":1.0,"estimated_total_tokens":150000,"estimated_model_calls":4,"estimated_retries":1,"estimated_runner_minutes":10}\n' "$job_id" > "$req"
+          set +e
+          python3 scripts/aiw_budget_gate.py --request "$req"
+          budget_rc=$?
+          set -e
+          if [ "$budget_rc" -eq 2 ]; then
+            echo "::error::AIW budget gate could not evaluate the request (exit 2) — failing closed for issue #$issue"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          if [ "$budget_rc" -ne 0 ]; then
+            reasons=$(jq -r '.reasons | join(", ")' .octo/aiw-budget-ledger.json 2>/dev/null || echo "budget policy")
+            gh issue comment "$issue" --repo "$REPO" --body "⛔ Delegation to **Jules** is **blocked by the AIW budget gate** (\`$reasons\`). Jules is a metered-cloud provider that requires explicit approval before any paid invocation. To authorize *this* delegation, commit a \`.octo/aiw-approval.json\` artifact bound to job_id \`$job_id\`, provider \`jules\`, and this request's SHA-256, then re-run. The \`ready-for-agent\`/\`worker:jules\` labels are kept and no delegation was performed."
+            echo "::notice::AIW budget gate blocked jules delegation for issue #$issue ($reasons)"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "::notice::AIW budget gate allowed jules delegation for issue #$issue"
+
           gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` + \`worker:jules\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`master\`. Human/Demerzel review is still required before merge."
 
           echo "issue=$issue" >> "$GITHUB_OUTPUT"

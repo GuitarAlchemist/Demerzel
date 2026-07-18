@@ -169,6 +169,22 @@ python scripts/aiw_budget_gate.py --release-job aiw-0001 `
   --receipt .octo/aiw-receipt.json
 ```
 
+### Live consumer
+
+`.github/workflows/jules-auto-delegate.yml` is the first live consumer of the gate.
+Jules is a `metered-cloud` provider, so the delegation job runs the reserve
+preflight before invoking `google-labs-code/jules-action`:
+
+- **allow (exit 0)** → delegation proceeds;
+- **block (exit 1)** → the job comments on the issue that a committed
+  `.octo/aiw-approval.json` (bound to the job id, provider, and request SHA-256)
+  is required, keeps the labels, writes no delegation marker, and stays green so
+  the issue remains re-runnable after approval;
+- **invalid (exit 2)** → the job fails closed.
+
+`scripts/test_aiw_budget_consumer.py` guards this wiring so the gate cannot be
+silently unwired back into a declared-but-unconsumed artifact.
+
 ## Non-goals
 
 - This router does not own Demerzel policy.
