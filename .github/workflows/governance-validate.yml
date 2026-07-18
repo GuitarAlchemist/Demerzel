@@ -84,8 +84,9 @@ jobs:
 
       # jsonschema enables the validate()/write_artifact() seam in demerzel_kit;
       # without it those tests skip rather than fail (graceful degradation).
+      # pyyaml is required by test_ecosystem_freshness (registry parsing).
       - name: Install deps
-        run: pip install jsonschema
+        run: pip install jsonschema pyyaml
 
       # The scripts/ emitters are the operational code; demerzel_kit makes their
       # gh/filesystem calls an injectable seam so convene() et al. are testable

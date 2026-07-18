@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "loop-health.schema.json",
+  "title": "Loop Health Registry",
+  "description": "Universal ecosystem-freshness registry: declares, per scheduled producer workflow, how its liveness is proven (proof adapter), that its silence is intentional (allowed_silence), or that it is deliberately disabled for a bounded window (disabled). The ecosystem-freshness monitor reads this to turn the board red for any dead or silent-green loop. See scripts/ecosystem_freshness.py.",
+  "type": "object",
+  "required": ["version", "loops"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Registry schema version."
+    },
+    "default_branch": {
+      "type": "string",
+      "description": "Branch whose commit history is authoritative for git_log proof adapters (default-branch evidence). Defaults to 'master' when omitted.",
+      "minLength": 1
+    },
+    "monitors": {
+      "type": "array",
+      "description": "Scheduled workflows that are freshness/health MONITORS, not producers. Self-excluded from producer coverage so the monitor never flags itself as unregistered.",
+      "items": { "$ref": "#/definitions/workflowFile" },
+      "uniqueItems": true
+    },
+    "loops": {
+      "type": "array",
+      "description": "One entry per scheduled producer workflow. Each entry declares exactly one of: proof, allowed_silence, or disabled.",
+      "items": { "$ref": "#/definitions/loop" }
+    }
+  },
+  "definitions": {
+    "workflowFile": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+\\.ya?ml$",
+      "description": "Bare workflow filename under .github/workflows/, e.g. demerzel-ideation.yml."
+    },
+    "loop": {
+      "type": "object",
+      "required": ["workflow", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "workflow": { "$ref": "#/definitions/workflowFile" },
+        "schedule": {
+          "type": "string",
+          "description": "Harvested cron expression (documentation/identity; not re-derived by the monitor)."
+        },
+        "status": {
+          "enum": ["active", "disabled"],
+          "description": "active loops must carry proof or allowed_silence; disabled loops must carry a disabled block."
+        },
+        "proof": { "$ref": "#/definitions/proof" },
+        "allowed_silence": {
+          "type": "boolean",
+          "description": "When true, the loop legitimately leaves no committed repo evidence (it delivers value externally, e.g. posting a Discussion). Its silence is neutral, not silent-green. Requires a reason."
+        },
+        "disabled": { "$ref": "#/definitions/disabled" },
+        "reason": {
+          "type": "string",
+          "description": "Human justification (required for allowed_silence entries; greppable acceptance of the monitoring gap)."
+        },
+        "note": {
+          "type": "string",
+          "description": "Free-form note (e.g. the remediation that would let a silent-green loop graduate to a proof adapter)."
+        }
+      }
+    },
+    "proof": {
+      "type": "object",
+      "required": ["adapter", "max_stale_days"],
+      "additionalProperties": false,
+      "description": "How the loop proves it is alive from default-branch repository evidence.",
+      "properties": {
+        "adapter": {
+          "enum": ["state_glob", "git_log"],
+          "description": "state_glob: newest timestamp inside committed JSON/JSONL state files. git_log: last commit touching a path on the default branch (for commit-only-on-change loops)."
+        },
+        "glob": {
+          "type": "string",
+          "description": "state_glob only: repo-relative glob of committed state files."
+        },
+        "timestamp_field": {
+          "type": "string",
+          "description": "state_glob only: the field carrying an ISO-8601 timestamp in each record (top-level object, array element, or JSONL line)."
+        },
+        "path": {
+          "type": "string",
+          "description": "git_log only: repo-relative path whose last commit dates the loop."
+        },
+        "max_stale_days": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Freshness threshold. Age strictly greater than this many days is stale."
+        }
+      }
+    },
+    "disabled": {
+      "type": "object",
+      "required": ["reason", "until"],
+      "additionalProperties": false,
+      "description": "Time-bounded intentional-disable allowlist. Past 'until' the entry is expired and the board turns red so the pause cannot be forgotten.",
+      "properties": {
+        "reason": { "type": "string", "minLength": 1 },
+        "by": { "type": "string", "description": "Who authorized the disable." },
+        "since": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "until": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Date (inclusive) the disable remains valid through. After this date the entry is an expired disable (red)."
+        }
+      }
+    }
+  }
+}

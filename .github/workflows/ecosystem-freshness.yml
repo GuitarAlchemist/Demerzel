@@ -1,0 +1,66 @@
+name: Ecosystem Freshness
+
+# Universal green != dead guard for EVERY scheduled producer loop. Generalizes
+# the per-loop quality-trend freshness guard: a silent "no news" loop is
+# indistinguishable from a dead one, which is exactly how state/quality-trend/
+# died unnoticed for 64 days. This runs INDEPENDENTLY of the producers and reads
+# .github/loop-health.yml to turn the board RED for any dead or silent-green loop
+# (and stay green + silent when all are healthy). It never remediates.
+#
+# This workflow is itself a MONITOR, not a producer: it is listed under
+# `monitors:` in the registry and self-excluded from coverage.
+
+on:
+  schedule:
+    # Weekly, Monday 13:15 UTC — just after the quality-trend freshness guard.
+    - cron: '15 13 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Full history so git_log proof adapters see the default branch's dates.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install pyyaml jsonschema
+
+      - name: Assert ecosystem freshness
+        id: freshness
+        run: |
+          python scripts/ecosystem_freshness.py \
+            --json \
+            --alert-file state/loop-health/.freshness-alert.json
+
+      - name: Persist freshness alert state
+        if: steps.freshness.outcome == 'success' || steps.freshness.outcome == 'failure'
+        run: |
+          git config user.name "Demerzel"
+          git config user.email "demerzel@guitaralchemist.com"
+          git add -A state/loop-health/.freshness-alert.json || true
+          git diff --cached --quiet || {
+            if [[ -f state/loop-health/.freshness-alert.json ]]; then
+              message="alert(loop-health): dead or silent-green loop — ecosystem freshness tripped"
+            else
+              message="chore(loop-health): clear recovered ecosystem freshness alert"
+            fi
+            git commit -m "$message"
+            git pull --rebase || true
+            git push
+          }
