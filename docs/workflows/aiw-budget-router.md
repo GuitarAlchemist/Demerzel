@@ -124,6 +124,27 @@ Each routed job should emit a budget ledger artifact with:
 
 See `examples/aiw-budget-ledger.example.json`.
 
+## Executable preflight
+
+The policy is executable before a provider is invoked. `state/driver/aiw-budget-policy.json`
+allowlists the worker tiers and keeps local-seat tools first. Run the gate with a
+job request that contains the estimated tokens, calls, retries, runner minutes,
+current cycle spend, and an explicit `manual_approval` flag when needed:
+
+```powershell
+python scripts/aiw_budget_gate.py `
+  --policy state/driver/aiw-budget-policy.json `
+  --request .octo/aiw-request.json `
+  --ledger .octo/aiw-budget-ledger.json
+```
+
+Exit `0` is the only allowed path to invocation. Exit `1` blocks the job before
+the provider call; exit `2` means the request or policy is invalid. Metered cloud
+workers (`gemini-cli`, `jules`, `notebooklm`) require explicit approval even when
+their estimate is below the per-job cap. Claude Code CLI and Codex CLI are the
+preferred first workers for local-seat work; an `ANTHROPIC_API_KEY` fallback must
+carry the same budget block and approval rules.
+
 ## Non-goals
 
 - This router does not own Demerzel policy.

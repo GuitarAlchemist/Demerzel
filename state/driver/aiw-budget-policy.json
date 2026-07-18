@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "cycle": {
+    "max_cost_usd": 10.0,
+    "max_parallel_packets": 4
+  },
+  "defaults": {
+    "max_cost_usd": 2.0,
+    "max_total_tokens": 200000,
+    "max_model_calls": 6,
+    "max_retries": 1,
+    "max_runner_minutes": 30,
+    "approval_required_above_usd": 5.0
+  },
+  "providers": [
+    {
+      "id": "claude-code-cli",
+      "tier": "local-seat",
+      "cost_model": "subscription-or-local",
+      "requires_manual_approval": false
+    },
+    {
+      "id": "codex-cli",
+      "tier": "local-seat",
+      "cost_model": "subscription-or-local",
+      "requires_manual_approval": false
+    },
+    {
+      "id": "antigravity",
+      "tier": "local-seat",
+      "cost_model": "subscription-or-local",
+      "requires_manual_approval": false
+    },
+    {
+      "id": "augment-code",
+      "tier": "local-seat",
+      "cost_model": "subscription-or-local",
+      "requires_manual_approval": false
+    },
+    {
+      "id": "gemini-cli",
+      "tier": "metered-cloud",
+      "cost_model": "provider-billing",
+      "requires_manual_approval": true
+    },
+    {
+      "id": "jules",
+      "tier": "metered-cloud",
+      "cost_model": "provider-billing",
+      "requires_manual_approval": true
+    },
+    {
+      "id": "notebooklm",
+      "tier": "metered-cloud",
+      "cost_model": "provider-billing",
+      "requires_manual_approval": true
+    }
+  ],
+  "selection_order": [
+    "claude-code-cli",
+    "codex-cli",
+    "antigravity",
+    "augment-code",
+    "gemini-cli",
+    "jules",
+    "notebooklm"
+  ]
+}
