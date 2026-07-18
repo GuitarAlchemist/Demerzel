@@ -40,6 +40,12 @@ def _cap(request: dict[str, Any], name: str, policy_default: Any) -> float:
     return value
 
 
+def _required_number(value: dict[str, Any], name: str) -> float:
+    if name not in value:
+        raise ValueError(f"{name} is required")
+    return _number(value, name)
+
+
 def _lock(path: Path):
     """Acquire a short-lived cross-process lock; fail closed if contended."""
     lock_path = Path(f"{path}.lock")
@@ -55,13 +61,23 @@ def _lock(path: Path):
 
 def _read_cycle(path: Path) -> dict[str, Any]:
     if not path.exists():
-        return {"reserved_cost_usd": 0.0, "active_packets": 0, "reservations": {}}
+        return {"reserved_cost_usd": 0.0, "actual_cost_usd": 0.0,
+                "active_packets": 0, "reservations": {}}
     value = _load(path)
-    for name in ("reserved_cost_usd", "active_packets"):
-        _number(value, name)
+    for name in ("reserved_cost_usd", "actual_cost_usd", "active_packets"):
+        _required_number(value, name)
     reservations = value.get("reservations", {})
     if not isinstance(reservations, dict):
         raise ValueError("cycle ledger reservations must be an object")
+    reserved = sum(_required_number(item, "estimated_cost_usd")
+                   for item in reservations.values()
+                   if isinstance(item, dict))
+    if len(reservations) != sum(isinstance(item, dict) for item in reservations.values()):
+        raise ValueError("cycle ledger reservation entries must be objects")
+    if not math.isclose(reserved, value["reserved_cost_usd"], rel_tol=0, abs_tol=1e-9):
+        raise ValueError("cycle ledger reserved cost does not match reservations")
+    if value["active_packets"] != len(reservations):
+        raise ValueError("cycle ledger active packet count does not match reservations")
     return value
 
 
@@ -75,13 +91,14 @@ def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path) -
         cycle = _read_cycle(cycle_path)
         reservations = cycle["reservations"]
         if job_id in reservations:
-            result = evaluate(policy, {**request,
-                                       "cycle_spend_usd": cycle["reserved_cost_usd"],
-                                       "cycle_active_packets": cycle["active_packets"]})
-            result["reservation_reused"] = True
-            return result
+            reservation = reservations[job_id]
+            return {"schema_version": "1.0", "job_id": job_id,
+                    "provider": request.get("provider"), "decision": "allow",
+                    "reasons": [], "reservation_reused": True,
+                    "budget": {"estimated_cost_usd": reservation["estimated_cost_usd"]}}
         result = evaluate(policy, {**request,
-                                   "cycle_spend_usd": cycle["reserved_cost_usd"],
+                                   "cycle_spend_usd": (cycle["reserved_cost_usd"]
+                                                        + cycle["actual_cost_usd"]),
                                    "cycle_active_packets": cycle["active_packets"]})
         if result["decision"] == "allow":
             estimate = result["budget"]["estimated_cost_usd"]
@@ -119,6 +136,15 @@ def release(cycle_path: Path, job_id: str, actual_cost_usd: float) -> dict[str, 
         lock_path.unlink(missing_ok=True)
 
 
+def _canonical_cycle_path(policy_path: Path, supplied: Path) -> Path:
+    """Bind the aggregate ledger to this repository's canonical runtime path."""
+    policy_path = policy_path.resolve()
+    expected = policy_path.parents[2] / ".octo" / "aiw-cycle-ledger.json"
+    if supplied.resolve() != expected.resolve():
+        raise ValueError(f"cycle ledger must be {expected}")
+    return expected
+
+
 def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
     provider_id = request.get("provider")
     if not isinstance(provider_id, str) or not provider_id:
@@ -135,6 +161,8 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
     cycle = policy.get("cycle")
     if not isinstance(defaults, dict) or not isinstance(cycle, dict):
         raise ValueError("policy.defaults and policy.cycle are required")
+    cycle_max_cost = _required_number(cycle, "max_cost_usd")
+    cycle_max_parallel = _required_number(cycle, "max_parallel_packets")
 
     estimated_cost = _number(request, "estimated_cost_usd")
     cycle_spend = _number(request, "cycle_spend_usd")
@@ -156,7 +184,7 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
 
     if estimated_cost > max_cost:
         reasons.append("job_cost_cap_exceeded")
-    if cycle_spend + estimated_cost > float(cycle["max_cost_usd"]):
+    if cycle_spend + estimated_cost > cycle_max_cost:
         reasons.append("cycle_cost_cap_exceeded")
     if tokens > max_tokens:
         reasons.append("token_cap_exceeded")
@@ -166,7 +194,7 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
         reasons.append("retry_cap_exceeded")
     if runner_minutes > max_runner:
         reasons.append("runner_minutes_cap_exceeded")
-    if active_packets >= float(cycle["max_parallel_packets"]):
+    if active_packets >= cycle_max_parallel:
         reasons.append("parallel_packet_cap_exceeded")
     if provider.get("requires_manual_approval") is True and not manual_approval:
         reasons.append("provider_requires_manual_approval")
@@ -206,17 +234,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--actual-cost-usd", type=float)
     args = parser.parse_args(argv)
     try:
+        cycle_path = _canonical_cycle_path(args.policy, args.cycle_ledger)
         if args.release_job:
             if args.actual_cost_usd is None:
                 raise ValueError("--actual-cost-usd is required with --release-job")
-            result = release(args.cycle_ledger, args.release_job, args.actual_cost_usd)
+            result = release(cycle_path, args.release_job, args.actual_cost_usd)
         else:
-            result = reserve(_load(args.policy), _load(args.request), args.cycle_ledger)
+            result = reserve(_load(args.policy), _load(args.request), cycle_path)
         args.ledger.parent.mkdir(parents=True, exist_ok=True)
         args.ledger.write_text(json.dumps(result, indent=2, sort_keys=True,
                                           allow_nan=False) + "\n",
                                encoding="utf-8")
-    except (OSError, ValueError, json.JSONDecodeError) as error:
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
         print(f"aiw budget gate: {error}", file=sys.stderr)
         return 2
     print(f"{result['decision'].upper()}: {args.ledger}")
