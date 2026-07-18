@@ -127,9 +127,11 @@ See `examples/aiw-budget-ledger.example.json`.
 ## Executable preflight
 
 The policy is executable before a provider is invoked. `state/driver/aiw-budget-policy.json`
-allowlists the worker tiers and keeps local-seat tools first. Run the gate with a
-job request that contains the estimated tokens, calls, retries, runner minutes,
-current cycle spend, and an explicit `manual_approval` flag when needed:
+allowlists the worker tiers and keeps local-seat tools first. The policy, ledgers,
+approval artifact, and receipt are pinned to canonical repository paths; a caller
+may pass them explicitly but cannot redirect them to a caller-controlled file. Run
+the gate with a job request that contains the estimated tokens, calls, retries,
+runner minutes, and estimated cost:
 
 ```powershell
 python scripts/aiw_budget_gate.py `
@@ -142,19 +144,29 @@ python scripts/aiw_budget_gate.py `
 Exit `0` is the only allowed path to invocation. Exit `1` blocks the job before
 the provider call; exit `2` means the request or policy is invalid. Metered cloud
 workers (`gemini-cli`, `jules`, `notebooklm`) require explicit approval even when
-their estimate is below the per-job cap. Claude Code CLI and Codex CLI are the
-preferred first workers for local-seat work; an `ANTHROPIC_API_KEY` fallback must
-carry the same budget block and approval rules.
+their estimate is below the per-job cap. Approval is **not** a self-attested flag
+in the request: it is a separate `.octo/aiw-approval.json` artifact bound to the
+job id, provider, and exact request SHA-256; a `manual_approval` key inside the
+request is rejected. Claude Code CLI and Codex CLI are the preferred first workers
+for local-seat work; an `ANTHROPIC_API_KEY` fallback must carry the same budget
+block and approval rules.
 
 The cycle ledger is authoritative and reserved atomically before invocation;
-callers cannot supply their own aggregate spend or concurrency values. On
-terminal completion, release the reservation and record the provider receipt:
+callers cannot supply their own aggregate spend or concurrency values. A
+reservation is bound to its provider and request SHA-256, so a reused job id
+cannot inherit an old grant under a changed request. On terminal completion,
+release the reservation. Metered providers must supply a trusted
+`.octo/aiw-receipt.json` receipt whose issuer matches the policy's
+`trusted_receipt_issuer` and whose actual cost matches the released amount;
+spend over the reservation's admitted cap is recorded truthfully but returned as a
+blocking `over_budget` decision:
 
 ```powershell
 python scripts/aiw_budget_gate.py --release-job aiw-0001 `
   --actual-cost-usd 0.00 --cycle-ledger .octo/aiw-cycle-ledger.json `
   --policy state/driver/aiw-budget-policy.json `
-  --request .octo/aiw-request.json --ledger .octo/aiw-budget-ledger.json
+  --request .octo/aiw-request.json --ledger .octo/aiw-budget-ledger.json `
+  --receipt .octo/aiw-receipt.json
 ```
 
 ## Non-goals

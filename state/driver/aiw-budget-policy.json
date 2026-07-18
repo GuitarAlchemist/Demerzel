@@ -41,19 +41,22 @@
       "id": "gemini-cli",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
-      "requires_manual_approval": true
+      "requires_manual_approval": true,
+      "trusted_receipt_issuer": "generativelanguage.googleapis.com"
     },
     {
       "id": "jules",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
-      "requires_manual_approval": true
+      "requires_manual_approval": true,
+      "trusted_receipt_issuer": "jules.googleapis.com"
     },
     {
       "id": "notebooklm",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
-      "requires_manual_approval": true
+      "requires_manual_approval": true,
+      "trusted_receipt_issuer": "notebooklm.google.com"
     }
   ],
   "selection_order": [
