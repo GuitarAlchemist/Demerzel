@@ -1,0 +1,49 @@
+name: Demerzel Quality Trend
+
+# Feeder for state/quality-trend/ — the `do` phase of skills/demerzel-quality-trend.
+# Deterministic per-artifact health deltas from state/evolution/*.evolution.json.
+# Revived 2026-07-18 after the loop died 2026-05 (no scheduled feeder existed).
+# Paired with demerzel-quality-trend-freshness.yml, which goes RED if this stops.
+
+on:
+  schedule:
+    # Daily 08:00 America/New_York (12:00 UTC during EDT). Nightly, cheap (<5s).
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: quality-trend
+  cancel-in-progress: false
+
+jobs:
+  emit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Emit quality-trend deltas
+        run: python scripts/quality_trend.py
+
+      - name: Commit
+        run: |
+          git config user.name "Demerzel"
+          git config user.email "demerzel@guitaralchemist.com"
+          git add state/quality-trend/
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -m "chore(quality-trend): nightly deltas $(date -u +%Y-%m-%d)"
+          git pull --rebase || true
+          git push
