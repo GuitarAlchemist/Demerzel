@@ -26,6 +26,7 @@ state/governance/dev-process-overseer.json
 
 # Local tooling / editor / per-session scratch (machine-specific, not repo content)
 .claude-octopus/
+.octo/runs/
 .claude/*.local.md
 .claude/scheduled_tasks.lock
 .claude/session-intent.md

@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 45,
-    "schema": 43,
+    "schema": 45,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
@@ -461,6 +461,14 @@
       {
         "name": "meta-audit.schema",
         "path": "schemas/meta-audit.schema.json"
+      },
+      {
+        "name": "octopus-review-request.schema",
+        "path": "schemas/octopus-review-request.schema.json"
+      },
+      {
+        "name": "octopus-review-result.schema",
+        "path": "schemas/octopus-review-result.schema.json"
       },
       {
         "name": "persona.schema",

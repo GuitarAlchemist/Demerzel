@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "provider": "claude-sonnet",
+  "status": "timeout",
+  "run_id": "run-20260718",
+  "task_id": "review-universal-freshness",
+  "commit_range": "96d960c..cb59ecd",
+  "commit_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "preflight": {
+    "status": "passed",
+    "checks": [
+      "claude auth precedence"
+    ]
+  },
+  "evidence": {
+    "diff_received": false,
+    "files_reviewed": [],
+    "findings": []
+  }
+}
