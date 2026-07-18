@@ -64,6 +64,10 @@ class BudgetGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not allowlisted"):
             evaluate(POLICY, request(provider="unknown"))
 
+    def test_job_cannot_widen_policy_cap(self):
+        with self.assertRaisesRegex(ValueError, "cannot exceed policy default"):
+            evaluate(POLICY, request(max_cost_usd=200))
+
     def test_cli_ledger_shape_is_json_serializable(self):
         result = evaluate(POLICY, request())
         with tempfile.TemporaryDirectory() as directory:

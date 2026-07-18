@@ -25,6 +25,17 @@ def _number(request: dict[str, Any], name: str) -> float:
     return float(value)
 
 
+def _cap(request: dict[str, Any], name: str, policy_default: Any) -> float:
+    """Allow a job to tighten policy caps, never widen them."""
+    default = _number({name: policy_default}, name)
+    if name not in request:
+        return default
+    value = _number(request, name)
+    if value > default:
+        raise ValueError(f"{name} cannot exceed policy default")
+    return value
+
+
 def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
     provider_id = request.get("provider")
     if not isinstance(provider_id, str) or not provider_id:
@@ -52,13 +63,13 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
     manual_approval = request.get("manual_approval") is True
 
     reasons: list[str] = []
-    max_cost = float(request.get("max_cost_usd", defaults["max_cost_usd"]))
-    max_tokens = float(request.get("max_total_tokens", defaults["max_total_tokens"]))
-    max_calls = float(request.get("max_model_calls", defaults["max_model_calls"]))
-    max_retries = float(request.get("max_retries", defaults["max_retries"]))
-    max_runner = float(request.get("max_runner_minutes", defaults["max_runner_minutes"]))
-    approval_threshold = float(
-        request.get("approval_required_above_usd", defaults["approval_required_above_usd"]))
+    max_cost = _cap(request, "max_cost_usd", defaults["max_cost_usd"])
+    max_tokens = _cap(request, "max_total_tokens", defaults["max_total_tokens"])
+    max_calls = _cap(request, "max_model_calls", defaults["max_model_calls"])
+    max_retries = _cap(request, "max_retries", defaults["max_retries"])
+    max_runner = _cap(request, "max_runner_minutes", defaults["max_runner_minutes"])
+    approval_threshold = _cap(
+        request, "approval_required_above_usd", defaults["approval_required_above_usd"])
 
     if estimated_cost > max_cost:
         reasons.append("job_cost_cap_exceeded")
