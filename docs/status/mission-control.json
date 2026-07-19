@@ -21,6 +21,88 @@
       "planned": 1
     }
   },
+  "capabilities": [
+    {
+      "capability": "observability",
+      "total_nodes": 5,
+      "completed_nodes": 1,
+      "blocked_nodes": 1,
+      "executable_nodes": 3,
+      "percent_complete": 20.0
+    },
+    {
+      "capability": "intelligence",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "supervisor",
+      "total_nodes": 1,
+      "completed_nodes": 1,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 100.0
+    },
+    {
+      "capability": "planner",
+      "total_nodes": 3,
+      "completed_nodes": 3,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 100.0
+    },
+    {
+      "capability": "knowledge",
+      "total_nodes": 1,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 1,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "runtime",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "pipeline_dsl",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "governance",
+      "total_nodes": 2,
+      "completed_nodes": 1,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 50.0
+    },
+    {
+      "capability": "review",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "local_ai_fabric",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    }
+  ],
   "critical_path": [],
   "eta": null,
   "eta_confidence": 0.0,

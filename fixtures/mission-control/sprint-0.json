@@ -5,16 +5,16 @@
   "milestone": "M1 Foundations",
   "sprint": "Sprint 0",
   "issues": [
-    { "number": 515, "title": "Bootstrap Sprint: contracts, IDs, schemas, registries", "state": "closed", "labels": ["component:demerzel", "priority:P0"] },
+    { "number": 515, "title": "Bootstrap Sprint: contracts, IDs, schemas, registries", "state": "closed", "labels": ["component:demerzel", "area:governance", "area:sprint", "priority:P0"] },
     { "number": 531, "title": "Define Execution Graph Schema v1", "state": "closed", "labels": ["area:planner", "priority:P0"] },
     { "number": 533, "title": "Build Epic-to-DAG Compiler prototype", "state": "closed", "labels": ["area:planner", "worker:claude"] },
-    { "number": 545, "title": "Bootstrap EngineeringEvent JSONL store", "state": "closed", "labels": ["component:streeling", "critical-path"] },
-    { "number": 584, "title": "Unblock non-Jules AI worker lanes", "state": "closed", "labels": ["component:demerzel", "area:planner"] },
-    { "number": 517, "title": "Core IDs and engineering ontology v1", "state": "open", "labels": ["component:streeling", "ready-for-agent"] },
-    { "number": 519, "title": "Streeling event foundations", "state": "open", "labels": ["component:streeling", "ready-for-agent"] },
-    { "number": 543, "title": "Read-only GitHub App permission model and webhook receiver", "state": "open", "labels": ["component:streeling", "blocked"] },
-    { "number": 547, "title": "Mission Control / Progress Engine", "state": "open", "labels": ["area:mission-control", "ready-for-human"] },
-    { "number": 588, "title": "Add Demerzel policy engine and lifecycle state machines", "state": "open", "labels": ["component:demerzel", "area:planner"] }
+    { "number": 545, "title": "Bootstrap EngineeringEvent JSONL store", "state": "closed", "labels": ["component:streeling", "area:observability", "critical-path"] },
+    { "number": 584, "title": "Unblock non-Jules AI worker lanes", "state": "closed", "labels": ["area:supervisor", "area:planner"] },
+    { "number": 517, "title": "Core IDs and engineering ontology v1", "state": "open", "labels": ["component:streeling", "area:ontology", "ready-for-agent"] },
+    { "number": 519, "title": "Streeling event foundations", "state": "open", "labels": ["component:streeling", "area:observability", "ready-for-agent"] },
+    { "number": 543, "title": "Read-only GitHub App permission model and webhook receiver", "state": "open", "labels": ["component:streeling", "area:observability", "blocked"] },
+    { "number": 547, "title": "Mission Control / Progress Engine", "state": "open", "labels": ["area:mission-control", "area:observability", "ready-for-human"] },
+    { "number": 588, "title": "Add Demerzel policy engine and lifecycle state machines", "state": "open", "labels": ["component:demerzel", "area:governance"] }
   ],
   "pull_requests": [
     { "number": 740, "title": "Streeling append-only EngineeringEvent store", "state": "merged", "draft": false },

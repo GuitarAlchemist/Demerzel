@@ -23,7 +23,9 @@ from pathlib import Path
 
 import jsonschema
 
-_SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "progress-snapshot.schema.json"
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_SCHEMA_PATH = _REPO_ROOT / "schemas" / "progress-snapshot.schema.json"
+_CAPABILITY_MAP_PATH = _REPO_ROOT / "state" / "driver" / "mission-control-capability-map.json"
 
 _READY_LABELS = ("ready-for-agent", "ready-for-human")
 
@@ -45,6 +47,46 @@ def classify_issue(issue):
     return "planned"
 
 
+def _counts(statuses):
+    """Return (total, completed, blocked, executable, percent) for a status list."""
+    total = len(statuses)
+    completed = sum(1 for s in statuses if s == "done")
+    blocked = sum(1 for s in statuses if s == "blocked")
+    executable = sum(1 for s in statuses if s == "executable")
+    percent = round(100.0 * completed / total, 1) if total else 0.0
+    return total, completed, blocked, executable, percent
+
+
+def load_capability_map(path=None):
+    with open(Path(path) if path else _CAPABILITY_MAP_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)["capabilities"]
+
+
+def capability_progress(issues, capability_map):
+    """Per-capability progress. An issue counts toward a capability if it carries
+    ANY of that capability's labels; an issue may count toward several. Capability
+    order follows the map (stable output). Capabilities with no matching issue
+    report 0/0 = 0%% rather than being dropped."""
+    rows = []
+    for capability, labels in capability_map.items():
+        label_set = {label.lower() for label in labels}
+        statuses = [
+            classify_issue(issue)
+            for issue in issues
+            if label_set & {str(l).lower() for l in issue.get("labels", [])}
+        ]
+        total, completed, blocked, executable, percent = _counts(statuses)
+        rows.append({
+            "capability": capability,
+            "total_nodes": total,
+            "completed_nodes": completed,
+            "blocked_nodes": blocked,
+            "executable_nodes": executable,
+            "percent_complete": percent,
+        })
+    return rows
+
+
 def _dashboard(issues_by_status, pull_requests):
     open_prs = [p for p in pull_requests if str(p.get("state", "open")).lower() == "open"]
     return {
@@ -56,7 +98,7 @@ def _dashboard(issues_by_status, pull_requests):
     }
 
 
-def build_snapshot(data):
+def build_snapshot(data, capability_map=None):
     """Compute a progress snapshot dict from an issues/PRs fixture."""
     issues = data.get("issues", [])
     statuses = [classify_issue(issue) for issue in issues]
@@ -65,11 +107,10 @@ def build_snapshot(data):
     for status in statuses:
         by_status[status] = by_status.get(status, 0) + 1
 
-    total = len(issues)
-    completed = by_status.get("done", 0)
-    blocked = by_status.get("blocked", 0)
-    executable = by_status.get("executable", 0)
-    percent = round(100.0 * completed / total, 1) if total else 0.0
+    total, completed, blocked, executable, percent = _counts(statuses)
+
+    if capability_map is None:
+        capability_map = load_capability_map()
 
     snapshot = {
         "snapshot_id": data.get("snapshot_id", "progress-snapshot"),
@@ -83,6 +124,7 @@ def build_snapshot(data):
         "executable_nodes": executable,
         "percent_complete": percent,
         "dashboard": _dashboard(by_status, data.get("pull_requests", [])),
+        "capabilities": capability_progress(issues, capability_map),
         # Owned by later slices — emitted empty in S0.
         "critical_path": [],
         "eta": None,
@@ -125,6 +167,16 @@ def render_markdown(snapshot):
         f"| Open PRs | {d.get('open_prs', 0)} (review queue {d.get('review_queue', 0)}, draft {d.get('draft_prs', 0)}) |",
         f"| Merged PRs | {d.get('merged_prs', 0)} |",
     ]
+
+    active = [c for c in snapshot.get("capabilities", []) if c["total_nodes"] > 0]
+    if active:
+        lines += ["", "## Capability progress", "", "| Capability | Complete | Done / Total |", "|---|---|---|"]
+        for cap in active:
+            lines.append(
+                f"| {cap['capability']} | {cap['percent_complete']}% | "
+                f"{cap['completed_nodes']}/{cap['total_nodes']} |"
+            )
+
     return "\n".join(lines) + "\n"
 
 
