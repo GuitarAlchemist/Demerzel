@@ -60,7 +60,7 @@ jobs:
           # ── MCP tools available ──
           MCP_REGISTRY=""
           if [ -f schemas/capability-registry.json ]; then
-            MCP_REGISTRY=$(jq -r '.tools[].name' schemas/capability-registry.json 2>/dev/null | tr '\n' ', ')
+            MCP_REGISTRY=$(jq -r '(.tools // [])[].name' schemas/capability-registry.json 2>/dev/null | tr '\n' ', ')
           fi
 
           # Save capability map
