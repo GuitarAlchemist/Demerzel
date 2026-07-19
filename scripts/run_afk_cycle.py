@@ -47,6 +47,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import aiw_budget_gate as budget  # noqa: E402  (fail-closed AIW budget preflight)
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
 
@@ -65,6 +66,78 @@ LOW_KEYWORDS = ("doc", "documentation", "typo", "comment", "test", "config")
 CONSCIENCE_SIGNALS_DIR = ROOT / "state" / "conscience" / "signals"
 CONSCIENCE_BLOCK_WEIGHT = 0.8         # an active signal at/above this blocks self-merge
 SELF_MERGE_MIN_CONFIDENCE = 0.7       # minimum post_council_confidence
+
+# ── AIW budget enforcement (#471) ──────────────────────────────────────────
+# Every worker invocation goes through the fail-closed budget gate first: no
+# granted reservation, no invocation. Each backend maps to an allowlisted
+# provider so the gate applies its per-job / per-cycle caps and local-first rule.
+BACKEND_PROVIDER = {
+    "local": "codex-cli",             # ../afk-harness sandcastle runs Codex CLI
+    "claude-code": "claude-code-cli",  # headless `claude -p` on the subscription
+}
+# Recognized budget numbers an issue may carry to tighten the policy defaults.
+_BUDGET_KEYS = (
+    "estimated_cost_usd", "estimated_total_tokens", "estimated_model_calls",
+    "estimated_retries", "estimated_runner_minutes",
+    "max_cost_usd", "max_total_tokens", "max_model_calls", "max_retries",
+    "max_runner_minutes", "approval_required_above_usd",
+)
+
+
+def _parse_budget_block(body: str) -> dict:
+    """Harvest recognized budget numbers from an issue body (string-based, no
+    regex). Any ``key: number`` line whose key is a known budget field is picked
+    up; unknown keys and non-numeric values are ignored. Missing fields fall back
+    to the gate's policy defaults."""
+    out: dict[str, float] = {}
+    for raw in (body or "").splitlines():
+        line = raw.strip().lstrip("-").strip()
+        key, sep, val = line.partition(":")
+        if not sep or key.strip() not in _BUDGET_KEYS:
+            continue
+        try:
+            num = float(val.strip().rstrip(","))
+        except ValueError:
+            continue
+        if num >= 0:
+            out[key.strip()] = num
+    return out
+
+
+def _budget_request(issue: dict, backend: str) -> dict:
+    """Build an AIW budget request for one issue+backend. Raises for a backend
+    with no budgeted provider mapping (fail closed — an unmapped worker is never
+    reserved)."""
+    provider = BACKEND_PROVIDER.get(backend)
+    if provider is None:
+        raise ValueError(f"backend {backend!r} has no budgeted provider mapping")
+    req = {"job_id": f"aiw-{issue.get('number')}", "provider": provider}
+    req.update(_parse_budget_block(issue.get("body") or ""))
+    return req
+
+
+def _budget_reserve(issue: dict, backend: str) -> tuple[bool, dict]:
+    """Fail-closed budget preflight before any worker invocation. Returns
+    ``(allowed, result)``; ANY error is a block, never an invocation."""
+    try:
+        policy = budget._load(budget.POLICY_PATH)
+        result = budget.reserve(policy, _budget_request(issue, backend),
+                                budget.CYCLE_LEDGER_PATH)
+    except Exception as exc:  # a broken/absent policy must fail closed
+        return False, {"decision": "block", "reasons": ["budget_preflight_error"],
+                       "error": str(exc)[:200]}
+    return result.get("decision") == "allow", result
+
+
+def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
+    """Best-effort reservation release after an episode; a reconciliation hiccup
+    must never break the loop. Local-seat backends carry no marginal spend."""
+    try:
+        budget.release(budget.CYCLE_LEDGER_PATH, f"aiw-{issue.get('number')}",
+                       actual_cost_usd, policy=budget._load(budget.POLICY_PATH))
+    except Exception as exc:
+        print(f"budget release skipped for #{issue.get('number')}: {exc}",
+              file=sys.stderr)
 
 
 def halt_active() -> tuple[bool, str]:
@@ -533,6 +606,17 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
         _write_loop_state(state)
         return decision, state
 
+    # Budget preflight (#471): a worker is NEVER invoked without a granted
+    # reservation. A blocked/errored preflight fails closed — no clone, no spend.
+    allowed, budget_result = _budget_reserve(issue, backend)
+    if not allowed:
+        reasons = budget_result.get("reasons") or ["denied"]
+        decision["action"] = f"blocked:budget:{','.join(reasons)}"
+        state["status"] = "halted"
+        state["halt_reason"] = f"budget: {', '.join(reasons)}"
+        _write_loop_state(state)
+        return decision, state
+
     clone = None
     try:
         if backend == "remote":
@@ -579,6 +663,8 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
     finally:
         if clone:
             shutil.rmtree(clone, ignore_errors=True)
+        # Reconcile the reservation: local-seat backends carry no marginal spend.
+        _budget_release(issue, actual_cost_usd=0.0)
 
     _write_loop_state(state)
     return decision, state
