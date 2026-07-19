@@ -32,6 +32,11 @@ Each worker should have:
 
 ### Definitions
 
+> **Canonical machine-readable form:** `state/driver/aiw-worker-lanes.json`. The YAML
+> below is human-readable illustration; the JSON is the single source of truth the
+> advisory selector (`scripts/aiw_lane_selector.py`, #737) reads. Keep the two in
+> sync — edit the JSON first.
+
 ```yaml
 composite_lanes:
   jules:
@@ -84,6 +89,27 @@ composite_lanes:
       - merge_decider
       - policy_override_actor
 ```
+
+### Terminology reconciliation (roles ↔ work classes)
+
+Roles and adaptive-mode rules use one shared vocabulary in
+`state/driver/aiw-worker-lanes.json`: every role maps to a `work_class`, and each
+mode blocks a set of work classes (`mode_blocks`). This is what lets the selector
+gate a named role (`builder_fixer`) by a mode rule phrased about a category
+(`net-new feature work`).
+
+- `net_new_feature` — `builder_fixer`
+- `broad_architecture` — `broad_architecture_owner` *(forbidden)*
+- `workflow_policy_change` — `high_risk_workflow_editor_without_human_review`, `policy_override_actor` *(forbidden)*
+- `fix` — `draft_to_ready_helper`, `test_author`, `review_feedback_applier`, `focused_patch_helper`
+- `groom` — `docs_first_researcher`, `issue_groomer`, `process_drafter`, `lightweight_groomer`
+- `navigate` — `navigator`, `impact_mapper`, `dependency_mapper`, `path_collision_checker`, `stale_marker_investigator`
+- `review` — `read_only_critic`, `architecture_reviewer`, `policy_ambiguity_reviewer`, `risk_classifier`, `architecture_summarizer`, `test_suggester`, `code_review_helper`, `alternative_implementation_proposer`
+
+The three merge-forbidding tokens (`merge_decider`, `final_merge_decider`,
+`autonomous_merge_actor`) are **aliases for the same `merge` work class** — different
+lanes named it differently; `merge_action_aliases` in the JSON records the equivalence
+without renaming the per-lane tokens.
 
 ## Adaptive use by mode
 
