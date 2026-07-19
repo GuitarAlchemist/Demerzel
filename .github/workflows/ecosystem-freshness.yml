@@ -90,6 +90,7 @@ jobs:
           path: ${{ runner.temp }}/ecosystem-freshness-result
 
       - name: Persist failure or verified recovery
+        id: persist
         if: always()
         run: |
           result_dir="$RUNNER_TEMP/ecosystem-freshness-result"
@@ -122,3 +123,26 @@ jobs:
           git commit -m "$message"
           git pull --rebase
           git push
+
+          # Signal a newly-committed trip so the next step can alert once
+          # (not every daily run — recovery/no-change paths never reach here).
+          if [[ -f "$target_alert" ]]; then
+            echo "alerted=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Discord alert on trip (dormant until DISCORD_WEBHOOK_URL secret is set)
+        if: steps.persist.outputs.alerted == 'true'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
+            echo "::notice::DISCORD_WEBHOOK_URL secret not set — skipping Discord alert."
+            exit 0
+          fi
+          alert="state/loop-health/.freshness-alert.json"
+          summary=$(jq -r '"🔴 **Demerzel loop-health tripped**\n"
+            + ([.problems[] | "- `\(.workflow)` — \(.kind)"] | join("\n"))' "$alert")
+          jq -n --arg c "$summary" '{content: $c}' \
+            | curl -sS -X POST -H 'content-type: application/json' -d @- "$DISCORD_WEBHOOK_URL" >/dev/null
+          echo "Posted Discord alert."
