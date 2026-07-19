@@ -7,6 +7,10 @@ See also: [Harness-Driven Development (HDD)](harness-driven-development.md) for 
 > Design*, and mapped to **this repo's** existing machinery. Read it when you're deciding *how* to
 > direct AI on a non-trivial change — not on every turn. (Mirrors `ga/docs/methodology/agentic-engineering.md`,
 > adapted to Demerzel.)
+>
+> **Update:** [agentic-engineering-2026-07.md](agentic-engineering-2026-07.md) captures the delta from
+> Pocock's 31 *newer* AI-coding videos (swept 2026-07-19) — the evolved skill flow, the CLAUDE.md
+> instruction-budget tension, cost reality behind our budget gate, and a prioritized adoption table.
 
 ## The one idea
 
