@@ -185,6 +185,37 @@ preflight before invoking `google-labs-code/jules-action`:
 `scripts/test_aiw_budget_consumer.py` guards this wiring so the gate cannot be
 silently unwired back into a declared-but-unconsumed artifact.
 
+## Trust boundary
+
+The gate validates the approval (`.octo/aiw-approval.json`) and the receipt
+(`.octo/aiw-receipt.json`) by **field equality** — the approval must match the
+job id, provider, and request SHA-256; the receipt's `issuer` must equal the
+policy's `trusted_receipt_issuer` and its actual cost must match the released
+amount. This is an **integrity** check, not an **authenticity** one: there is no
+cryptographic signature, so the gate cannot itself tell a genuine receipt from a
+forged JSON file with the right fields.
+
+Authenticity therefore comes from **git-commit provenance, not from the gate**:
+
+- **Approval and receipt artifacts must be committed** to the repository (a
+  human-reviewed PR / an orchestrator step running under separate credentials),
+  never written at runtime by the worker they authorize. Committing requires
+  review, and review — not the string comparison — is what makes the artifact
+  trustworthy. **The requesting job must not be able to write or commit these**;
+  that separation is enforced by ordinary PR review and branch protection, and it
+  is the property the whole metered-spend guarantee rests on.
+- **Runtime ledgers are the opposite** — `.octo/aiw-budget-ledger.json`,
+  `.octo/aiw-cycle-ledger.json`, and `*.lock` are per-run state, are gitignored,
+  and must never be committed. A committed ledger would be stale, caller-authored
+  authority — exactly what the boundary excludes.
+
+**Decision (accepted for the current threat model):** where `.octo/` approval and
+receipt artifacts originate from committed, reviewed sources and the worker cannot
+commit them, the git + filesystem boundary is sufficient. Cryptographically signed
+receipts / approvals (e.g. an HMAC or Sigstore attestation the gate verifies) are
+a **future hardening, not a requirement today** — see Non-goals. A consumer must
+not read the gate's field-equality checks as cryptographic trust.
+
 ## Non-goals
 
 - This router does not own Demerzel policy.
@@ -192,3 +223,6 @@ silently unwired back into a declared-but-unconsumed artifact.
 - This router does not override HALT.
 - This router does not make paid or cloud workers the default.
 - This router does not treat NotebookLM as the canonical source of truth.
+- This router does not cryptographically sign approvals or receipts today —
+  their authenticity comes from git-commit provenance, not the gate (see
+  [Trust boundary](#trust-boundary)); signed attestations are a future option.
