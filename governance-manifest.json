@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 46,
-    "schema": 46,
+    "schema": 47,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
@@ -490,6 +490,10 @@
       {
         "name": "pre-mortem.schema",
         "path": "schemas/pre-mortem.schema.json"
+      },
+      {
+        "name": "progress-snapshot.schema",
+        "path": "schemas/progress-snapshot.schema.json"
       },
       {
         "name": "reconnaissance-profile.schema",

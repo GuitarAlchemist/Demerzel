@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/progress-snapshot",
+  "title": "Progress Snapshot",
+  "description": "A read-only Mission Control progress snapshot (Epic #547, slice S0 #742). Computed from GitHub issues/labels/PRs by scripts/mission_control_snapshot.py. Fields for later slices (critical_path/eta — S3; risks/recommendations — S4) are present but empty in S0 so those slices extend without a schema change.",
+  "type": "object",
+  "required": [
+    "snapshot_id",
+    "observed_at",
+    "total_nodes",
+    "completed_nodes",
+    "blocked_nodes",
+    "executable_nodes",
+    "percent_complete"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "snapshot_id": { "type": "string" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "roadmap": { "type": "string" },
+    "milestone": { "type": ["string", "null"] },
+    "sprint": { "type": ["string", "null"] },
+    "total_nodes": { "type": "integer", "minimum": 0 },
+    "completed_nodes": { "type": "integer", "minimum": 0 },
+    "blocked_nodes": { "type": "integer", "minimum": 0 },
+    "executable_nodes": { "type": "integer", "minimum": 0 },
+    "percent_complete": { "type": "number", "minimum": 0, "maximum": 100 },
+    "dashboard": {
+      "type": "object",
+      "description": "Level 1 execution dashboard (#547).",
+      "additionalProperties": true,
+      "properties": {
+        "open_prs": { "type": "integer", "minimum": 0 },
+        "merged_prs": { "type": "integer", "minimum": 0 },
+        "draft_prs": { "type": "integer", "minimum": 0 },
+        "review_queue": { "type": "integer", "minimum": 0 },
+        "issues_by_status": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "critical_path": { "type": "array", "items": { "type": "string" }, "description": "Populated by S3 (#746)." },
+    "eta": { "type": ["string", "null"], "description": "Populated by S3 (#746)." },
+    "eta_confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Populated by S3 (#746)." },
+    "risks": { "type": "array", "description": "Populated by S4 (#749)." },
+    "recommendations": { "type": "array", "description": "Populated by S4 (#749)." },
+    "metadata": { "type": "object", "additionalProperties": true }
+  }
+}
