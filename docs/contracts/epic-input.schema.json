@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "epic-input.schema.json",
+  "title": "Planner Epic Input",
+  "description": "Structured epic/story metadata consumed by the Epic-to-DAG compiler (scripts/epic_to_dag_compiler.py, #533) to produce an execution graph conforming to execution-graph.schema.json. Each work package declares its dependency edges per kind; the compiler transcribes them into DependencyEdges and validates the resulting DAG.",
+  "type": "object",
+  "required": ["graph_id", "work_packages"],
+  "additionalProperties": false,
+  "properties": {
+    "graph_id": { "type": "string", "description": "Unique identifier for the compiled execution graph" },
+    "epic_id": { "type": "string", "description": "Optional identifier of the source epic" },
+    "work_packages": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/WorkPackage" }
+    },
+    "review_stages": { "type": "array", "description": "Passed through to the execution graph verbatim" },
+    "merge_stages": { "type": "array", "description": "Passed through to the execution graph verbatim" },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "definitions": {
+    "WorkPackage": {
+      "type": "object",
+      "required": ["id", "type", "repo", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "description": "Node id (e.g., #517)" },
+        "type": { "type": "string", "enum": ["doc", "code", "test", "review", "merge"] },
+        "repo": { "type": "string", "enum": ["demerzel", "ix", "tars", "ga"] },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "running", "completed", "failed", "blocked"] },
+        "blocks": { "type": "array", "items": { "type": "string" }, "description": "Ids this package blocks" },
+        "depends_on": { "type": "array", "items": { "type": "string" }, "description": "Ids this package depends on" },
+        "reviews": { "type": "array", "items": { "type": "string" }, "description": "Ids this package reviews" },
+        "should_merge_after": { "type": "array", "items": { "type": "string" }, "description": "Ids this package should merge after" },
+        "evidence": { "type": "array" },
+        "metadata": { "type": "object", "additionalProperties": true }
+      }
+    }
+  }
+}
