@@ -40,6 +40,23 @@
         }
       }
     },
+    "capabilities": {
+      "type": "array",
+      "description": "Per-capability progress (#547 Level 2 / S1 #744).",
+      "items": {
+        "type": "object",
+        "required": ["capability", "total_nodes", "completed_nodes", "blocked_nodes", "executable_nodes", "percent_complete"],
+        "additionalProperties": false,
+        "properties": {
+          "capability": { "type": "string" },
+          "total_nodes": { "type": "integer", "minimum": 0 },
+          "completed_nodes": { "type": "integer", "minimum": 0 },
+          "blocked_nodes": { "type": "integer", "minimum": 0 },
+          "executable_nodes": { "type": "integer", "minimum": 0 },
+          "percent_complete": { "type": "number", "minimum": 0, "maximum": 100 }
+        }
+      }
+    },
     "critical_path": { "type": "array", "items": { "type": "string" }, "description": "Populated by S3 (#746)." },
     "eta": { "type": ["string", "null"], "description": "Populated by S3 (#746)." },
     "eta_confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Populated by S3 (#746)." },

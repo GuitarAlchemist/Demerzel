@@ -13,7 +13,14 @@ import json
 from pathlib import Path
 import unittest
 
-from mission_control_snapshot import build_snapshot, classify_issue, render_markdown, validate_snapshot
+from mission_control_snapshot import (
+    build_snapshot,
+    capability_progress,
+    classify_issue,
+    load_capability_map,
+    render_markdown,
+    validate_snapshot,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = REPO_ROOT / "fixtures" / "mission-control" / "sprint-0.json"
@@ -84,6 +91,50 @@ class SnapshotTests(unittest.TestCase):
         md = render_markdown(self.snapshot)
         self.assertIn("50.0% complete", md)
         self.assertIn("| Merged PRs | 2 |", md)
+
+
+class CapabilityTests(unittest.TestCase):
+    MAP = {
+        "observability": ["area:observability", "component:streeling"],
+        "planner": ["area:planner"],
+        "intelligence": ["component:seldon"],
+    }
+
+    def test_issue_counts_toward_matching_capability(self):
+        issues = [{"state": "closed", "labels": ["area:planner"]}]
+        rows = {r["capability"]: r for r in capability_progress(issues, self.MAP)}
+        self.assertEqual(rows["planner"]["completed_nodes"], 1)
+        self.assertEqual(rows["planner"]["percent_complete"], 100.0)
+
+    def test_issue_can_count_toward_several_capabilities(self):
+        # a streeling+observability issue matches observability via either label
+        issues = [{"state": "open", "labels": ["component:streeling", "area:observability", "ready-for-agent"]}]
+        rows = {r["capability"]: r for r in capability_progress(issues, self.MAP)}
+        self.assertEqual(rows["observability"]["total_nodes"], 1)
+        self.assertEqual(rows["observability"]["executable_nodes"], 1)
+
+    def test_capability_without_matches_reports_zero_not_dropped(self):
+        rows = {r["capability"]: r for r in capability_progress([], self.MAP)}
+        self.assertIn("intelligence", rows)
+        self.assertEqual(rows["intelligence"]["total_nodes"], 0)
+        self.assertEqual(rows["intelligence"]["percent_complete"], 0.0)
+
+    def test_capability_order_is_stable(self):
+        rows = capability_progress([], self.MAP)
+        self.assertEqual([r["capability"] for r in rows], list(self.MAP.keys()))
+
+    def test_canonical_map_covers_ten_capabilities(self):
+        self.assertEqual(len(load_capability_map()), 10)
+
+
+class SprintZeroCapabilityTests(unittest.TestCase):
+    def test_fixture_capability_breakdown(self):
+        snap = build_snapshot(_load(FIXTURE))
+        rows = {r["capability"]: r for r in snap["capabilities"]}
+        self.assertEqual(rows["planner"]["percent_complete"], 100.0)   # #531 #533 #584 done
+        self.assertEqual(rows["observability"]["total_nodes"], 5)
+        self.assertEqual(rows["observability"]["completed_nodes"], 1)  # #545
+        self.assertEqual(rows["governance"]["completed_nodes"], 1)     # #515 done, #588 planned
 
 
 class GeneratedFileTests(unittest.TestCase):
