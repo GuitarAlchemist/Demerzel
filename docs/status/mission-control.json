@@ -1,39 +1,29 @@
 {
-  "generated_at": "2026-06-30T02:45:00Z",
-  "mode": "DRAINING",
-  "summary": {
-    "open_prs": 19,
-    "draft_prs": 12,
-    "mergeable_true": 7,
-    "mergeable_false": 0
-  },
-  "queue": [
-    {
-      "number": 567,
-      "title": "Define Execution Graph Schema v1",
-      "draft": false,
-      "mergeable": true,
-      "next_action": "Review with explicit human approval."
-    },
-    {
-      "number": 572,
-      "title": "Add fan-out/fan-in controller for AFK agent work",
-      "draft": true,
-      "mergeable": true,
-      "next_action": "Drain after PR 567."
-    },
-    {
-      "number": 583,
-      "title": "Add adaptive fan-out backpressure policy",
-      "draft": true,
-      "mergeable": true,
-      "next_action": "Drain after PR 572."
+  "snapshot_id": "sprint-0-snapshot",
+  "observed_at": "2026-07-18T00:00:00Z",
+  "roadmap": "Autonomous Software Organization",
+  "milestone": "M1 Foundations",
+  "sprint": "Sprint 0",
+  "total_nodes": 10,
+  "completed_nodes": 5,
+  "blocked_nodes": 1,
+  "executable_nodes": 3,
+  "percent_complete": 50.0,
+  "dashboard": {
+    "open_prs": 2,
+    "merged_prs": 2,
+    "draft_prs": 1,
+    "review_queue": 1,
+    "issues_by_status": {
+      "done": 5,
+      "executable": 3,
+      "blocked": 1,
+      "planned": 1
     }
-  ],
-  "next_safe_actions": [
-    "Review PR 567.",
-    "Then drain PR 572.",
-    "Then drain PR 583.",
-    "Keep new fan-out on hold."
-  ]
+  },
+  "critical_path": [],
+  "eta": null,
+  "eta_confidence": 0.0,
+  "risks": [],
+  "recommendations": []
 }
