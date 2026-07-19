@@ -356,5 +356,70 @@ class TestClaudeCodeBackend(unittest.TestCase):
         self.assertIn("Bash(python *)", cmd)
 
 
+class TestBudgetGate(unittest.TestCase):
+    """#471: the AIW/AFK loop must run every worker invocation through the
+    fail-closed budget gate (aiw_budget_gate) — no reservation, no invocation."""
+
+    def _issue(self, **over):
+        i = {"number": 77, "title": "fix docs typo", "body": "x", "labels": []}
+        i.update(over)
+        return i
+
+    def test_blocked_budget_prevents_worker_invocation(self):
+        with mock.patch.object(g, "_budget_reserve",
+                               return_value=(False, {"decision": "block",
+                                                     "reasons": ["cycle_cost_cap_exceeded"]})), \
+             mock.patch.object(g, "_prepare_clone") as clone, \
+             mock.patch.object(g, "_invoke_harness") as inv_local, \
+             mock.patch.object(g, "_invoke_harness_claude_code") as inv_cc, \
+             mock.patch.object(g, "_write_loop_state"):
+            decision, state = g._process_issue(self._issue(), seq=1,
+                                               today="2026-07-19", backend="local")
+        clone.assert_not_called()
+        inv_local.assert_not_called()
+        inv_cc.assert_not_called()
+        self.assertIn("budget", decision["action"])
+        self.assertEqual(state["status"], "halted")
+
+    def test_allowed_budget_reserves_then_releases(self):
+        with mock.patch.object(g, "_budget_reserve",
+                               return_value=(True, {"decision": "allow"})) as res, \
+             mock.patch.object(g, "_budget_release") as rel, \
+             mock.patch.object(g, "_prepare_clone", return_value="/tmp/clone"), \
+             mock.patch.object(g, "_invoke_harness",
+                               return_value={"branch": "agent/issue-77",
+                                             "commits": ["x"], "blocked": None}), \
+             mock.patch.object(g, "_open_pr",
+                               return_value="https://github.com/x/y/pull/1"), \
+             mock.patch.object(g.shutil, "rmtree"), \
+             mock.patch.object(g, "_write_loop_state"):
+            decision, state = g._process_issue(self._issue(), seq=1,
+                                               today="2026-07-19", backend="local")
+        res.assert_called_once()
+        rel.assert_called_once()            # reservation reconciled after the episode
+        self.assertEqual(state["status"], "completed")
+
+    def test_parse_budget_block_picks_known_numeric_keys(self):
+        body = ("intro\nmax_cost_usd: 1.5\n- estimated_total_tokens: 50000\n"
+                "ignored_key: nope\nestimated_model_calls: 3\nmax_cost_usd: abc")
+        b = g._parse_budget_block(body)
+        self.assertEqual(b["max_cost_usd"], 1.5)     # numeric wins; "abc" ignored
+        self.assertEqual(b["estimated_total_tokens"], 50000)
+        self.assertEqual(b["estimated_model_calls"], 3)
+        self.assertNotIn("ignored_key", b)
+
+    def test_budget_request_maps_backend_provider(self):
+        self.assertEqual(
+            g._budget_request({"number": 5, "body": ""}, "local")["provider"], "codex-cli")
+        self.assertEqual(
+            g._budget_request({"number": 5, "body": ""}, "claude-code")["provider"],
+            "claude-code-cli")
+
+    def test_unmapped_backend_fails_closed(self):
+        allowed, result = g._budget_reserve({"number": 5, "body": ""}, "remote")
+        self.assertFalse(allowed)
+        self.assertEqual(result["decision"], "block")
+
+
 if __name__ == "__main__":
     unittest.main()
