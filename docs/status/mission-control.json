@@ -103,6 +103,127 @@
       "percent_complete": 0.0
     }
   ],
+  "agent_telemetry": [
+    {
+      "worker": "claude",
+      "prs_opened": 1,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "jules",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 1,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "gemini",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 1,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "codex",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "augment",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "github-actions",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 1,
+      "workflow_successes": 1,
+      "ci_success_rate": 1.0,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "human",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    }
+  ],
   "critical_path": [],
   "eta": null,
   "eta_confidence": 0.0,

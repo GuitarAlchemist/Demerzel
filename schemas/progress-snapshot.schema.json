@@ -57,6 +57,26 @@
         }
       }
     },
+    "agent_telemetry": {
+      "type": "array",
+      "description": "Per-worker visible activity (#547 Level 3 / S2 #745), derived from the Streeling event store (#545). Metrics not derivable from visible activity are null / listed in `unmeasured` — never guessed.",
+      "items": {
+        "type": "object",
+        "required": ["worker", "prs_opened", "prs_merged", "reviews", "comments", "workflow_runs", "workflow_successes", "ci_success_rate", "unmeasured"],
+        "additionalProperties": false,
+        "properties": {
+          "worker": { "type": "string" },
+          "prs_opened": { "type": "integer", "minimum": 0 },
+          "prs_merged": { "type": "integer", "minimum": 0 },
+          "reviews": { "type": "integer", "minimum": 0 },
+          "comments": { "type": "integer", "minimum": 0 },
+          "workflow_runs": { "type": "integer", "minimum": 0 },
+          "workflow_successes": { "type": "integer", "minimum": 0 },
+          "ci_success_rate": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "unmeasured": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
     "critical_path": { "type": "array", "items": { "type": "string" }, "description": "Populated by S3 (#746)." },
     "eta": { "type": ["string", "null"], "description": "Populated by S3 (#746)." },
     "eta_confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Populated by S3 (#746)." },

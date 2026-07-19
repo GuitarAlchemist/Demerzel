@@ -23,11 +23,22 @@ from pathlib import Path
 
 import jsonschema
 
+from streeling_event_store import EventStore
+
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _SCHEMA_PATH = _REPO_ROOT / "schemas" / "progress-snapshot.schema.json"
 _CAPABILITY_MAP_PATH = _REPO_ROOT / "state" / "driver" / "mission-control-capability-map.json"
+# The Streeling event store (#545) is the telemetry source. In MVP this is the
+# committed sample; in production it is the live append-only log.
+_EVENTS_PATH = _REPO_ROOT / "fixtures" / "streeling" / "engineering-events-sample.jsonl"
 
 _READY_LABELS = ("ready-for-agent", "ready-for-human")
+
+# Workers reported in telemetry (schema worker enum minus "unknown"), fixed order.
+_TELEMETRY_WORKERS = ("claude", "jules", "gemini", "codex", "augment", "github-actions", "human")
+# Level 3 metrics that are NOT derivable from visible GitHub/Streeling activity
+# today — reported as unmeasured rather than guessed (#745 non-goal).
+_UNMEASURED = ("average_latency", "accepted_findings", "false_positives", "human_rescue_rate", "cost")
 
 
 def classify_issue(issue):
@@ -87,6 +98,47 @@ def capability_progress(issues, capability_map):
     return rows
 
 
+def load_events(path=None):
+    """Read engineering events through the #545 Streeling store reader. Empty if
+    the log does not exist."""
+    return list(EventStore(Path(path) if path else _EVENTS_PATH).read_all())
+
+
+def agent_telemetry(events):
+    """Per-worker visible activity from the Streeling event stream. Reports every
+    known worker (0s if idle); unmeasurable Level 3 metrics are null/unmeasured,
+    never guessed."""
+    rows = []
+    for worker in _TELEMETRY_WORKERS:
+        mine = [e for e in events if e.get("worker") == worker]
+
+        def _action(evt):
+            return (evt.get("metadata") or {}).get("action")
+
+        prs_opened = sum(1 for e in mine if e.get("event_type") == "pr" and _action(e) == "opened")
+        prs_merged = sum(1 for e in mine if e.get("event_type") == "pr" and _action(e) == "merged")
+        reviews = sum(1 for e in mine if e.get("event_type") == "review")
+        comments = sum(1 for e in mine if e.get("event_type") == "comment")
+        workflow_runs = sum(1 for e in mine if e.get("event_type") == "workflow")
+        workflow_successes = sum(
+            1 for e in mine if e.get("event_type") == "workflow" and e.get("severity") == "success"
+        )
+        ci_rate = round(workflow_successes / workflow_runs, 2) if workflow_runs else None
+
+        rows.append({
+            "worker": worker,
+            "prs_opened": prs_opened,
+            "prs_merged": prs_merged,
+            "reviews": reviews,
+            "comments": comments,
+            "workflow_runs": workflow_runs,
+            "workflow_successes": workflow_successes,
+            "ci_success_rate": ci_rate,
+            "unmeasured": list(_UNMEASURED),
+        })
+    return rows
+
+
 def _dashboard(issues_by_status, pull_requests):
     open_prs = [p for p in pull_requests if str(p.get("state", "open")).lower() == "open"]
     return {
@@ -98,7 +150,7 @@ def _dashboard(issues_by_status, pull_requests):
     }
 
 
-def build_snapshot(data, capability_map=None):
+def build_snapshot(data, capability_map=None, events=None):
     """Compute a progress snapshot dict from an issues/PRs fixture."""
     issues = data.get("issues", [])
     statuses = [classify_issue(issue) for issue in issues]
@@ -111,6 +163,8 @@ def build_snapshot(data, capability_map=None):
 
     if capability_map is None:
         capability_map = load_capability_map()
+    if events is None:
+        events = load_events()
 
     snapshot = {
         "snapshot_id": data.get("snapshot_id", "progress-snapshot"),
@@ -125,6 +179,7 @@ def build_snapshot(data, capability_map=None):
         "percent_complete": percent,
         "dashboard": _dashboard(by_status, data.get("pull_requests", [])),
         "capabilities": capability_progress(issues, capability_map),
+        "agent_telemetry": agent_telemetry(events),
         # Owned by later slices — emitted empty in S0.
         "critical_path": [],
         "eta": None,
@@ -176,6 +231,20 @@ def render_markdown(snapshot):
                 f"| {cap['capability']} | {cap['percent_complete']}% | "
                 f"{cap['completed_nodes']}/{cap['total_nodes']} |"
             )
+
+    def _active_worker(t):
+        return t["prs_opened"] or t["prs_merged"] or t["reviews"] or t["comments"] or t["workflow_runs"]
+
+    telemetry = [t for t in snapshot.get("agent_telemetry", []) if _active_worker(t)]
+    if telemetry:
+        lines += ["", "## Agent telemetry", "",
+                  "| Worker | PRs opened | PRs merged | Reviews | CI success |", "|---|---|---|---|---|"]
+        for t in telemetry:
+            ci = "—" if t["ci_success_rate"] is None else f"{int(t['ci_success_rate'] * 100)}%"
+            lines.append(
+                f"| {t['worker']} | {t['prs_opened']} | {t['prs_merged']} | {t['reviews']} | {ci} |"
+            )
+        lines += ["", f"_Not yet measurable: {', '.join(_UNMEASURED)}._"]
 
     return "\n".join(lines) + "\n"
 

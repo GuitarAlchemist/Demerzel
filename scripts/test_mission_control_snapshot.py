@@ -14,10 +14,12 @@ from pathlib import Path
 import unittest
 
 from mission_control_snapshot import (
+    agent_telemetry,
     build_snapshot,
     capability_progress,
     classify_issue,
     load_capability_map,
+    load_events,
     render_markdown,
     validate_snapshot,
 )
@@ -135,6 +137,51 @@ class SprintZeroCapabilityTests(unittest.TestCase):
         self.assertEqual(rows["observability"]["total_nodes"], 5)
         self.assertEqual(rows["observability"]["completed_nodes"], 1)  # #545
         self.assertEqual(rows["governance"]["completed_nodes"], 1)     # #515 done, #588 planned
+
+
+class TelemetryTests(unittest.TestCase):
+    EVENTS = [
+        {"worker": "claude", "event_type": "pr", "metadata": {"action": "opened"}},
+        {"worker": "claude", "event_type": "pr", "metadata": {"action": "merged"}},
+        {"worker": "gemini", "event_type": "review"},
+        {"worker": "github-actions", "event_type": "workflow", "severity": "success"},
+        {"worker": "github-actions", "event_type": "workflow", "severity": "info"},
+    ]
+
+    def setUp(self):
+        self.rows = {r["worker"]: r for r in agent_telemetry(self.EVENTS)}
+
+    def test_pr_open_and_merge_counted(self):
+        self.assertEqual(self.rows["claude"]["prs_opened"], 1)
+        self.assertEqual(self.rows["claude"]["prs_merged"], 1)
+
+    def test_review_counted(self):
+        self.assertEqual(self.rows["gemini"]["reviews"], 1)
+
+    def test_ci_success_rate_computed(self):
+        self.assertEqual(self.rows["github-actions"]["workflow_runs"], 2)
+        self.assertEqual(self.rows["github-actions"]["ci_success_rate"], 0.5)
+
+    def test_ci_rate_null_without_runs(self):
+        # gemini has no workflow events -> rate is unknown, not 0.0
+        self.assertIsNone(self.rows["gemini"]["ci_success_rate"])
+
+    def test_unmeasured_metrics_listed_not_guessed(self):
+        self.assertIn("cost", self.rows["claude"]["unmeasured"])
+        self.assertIn("human_rescue_rate", self.rows["claude"]["unmeasured"])
+
+    def test_all_known_workers_reported(self):
+        self.assertEqual(len(self.rows), 7)
+        for worker in ("claude", "jules", "gemini", "codex", "augment", "github-actions", "human"):
+            self.assertIn(worker, self.rows)
+
+    def test_telemetry_reads_streeling_store(self):
+        # the default source is the committed Streeling sample (#545) — the wiring
+        events = load_events()
+        self.assertTrue(events, "telemetry should read the Streeling event store")
+        rows = {r["worker"]: r for r in agent_telemetry(events)}
+        self.assertEqual(rows["claude"]["prs_opened"], 1)
+        self.assertEqual(rows["github-actions"]["ci_success_rate"], 1.0)
 
 
 class GeneratedFileTests(unittest.TestCase):
