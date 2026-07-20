@@ -45,11 +45,20 @@ implement / test.
   the agent into correctness."
 - **Steering knowledge → progressively-disclosed skills**, discovered just-in-time, not resident.
 
-**Mapping to Demerzel — honest tension.** Our `CLAUDE.md` is large by this standard: Karpathy 4 Rules,
-Cherny patterns, the Pocock delta itself, cross-repo contract descriptions, skill catalogs, and the
-`.claude/rules/*.md` set. Much of it is either discoverable (`policies/`, `schemas/`, `README.md`) or
-enforceable (the `no-runtime-code`, `commit-style`, `persona-requirements` rules are *prohibitions*
-that a `PreToolUse` hook could enforce far more reliably than prose). Counter-argument specific to us:
+**Mapping to Demerzel — measured, not assumed.** An earlier draft asserted "our `CLAUDE.md` is large by
+this standard." That was wrong, and it was the load-bearing premise for the riskiest adoption item.
+Measured: **124 lines / 1,150 words**, with the five `.claude/rules/*.md` files totalling 6 lines.
+Against the 300–500-instruction budget cited above, that is roughly an order of magnitude *under* the
+threshold. `docs/methodology/agentic-engineering.md` independently reached the same conclusion
+("already lean"), and this doc had contradicted its own companion without noticing.
+
+The real finding is narrower and duller: the surface is **duplicated**, not oversized — several rules
+are restated 2–4× across `CLAUDE.md`, `AGENTS.md`, and `.claude/rules/`. De-duplication is worth doing
+on its own merits (#775) and does not need the instruction-budget argument to justify it.
+
+A related caution, learned the hard way in #775: *"a hook can enforce this prohibition more reliably
+than prose"* is only true once the hook demonstrably works. Demoting prose in anticipation of
+enforcement that doesn't exist yet is strictly worse than either. Counter-argument specific to us:
 Demerzel is a **governance** repo whose CLAUDE.md is partly a *constitutional mandate*, not just
 tactical steering — some of it is deliberately load-bearing context an agent must not have to
 rediscover. **This is a one-way-ish door; it needs the maintainer's call, not an autonomous rewrite.**
@@ -60,8 +69,18 @@ See the adoption table (§7) for the surgical version.
 ## 1. The named end-to-end flow, and the skill catalog has moved on
 
 Pocock's `mattpocock/skills` is now an **ordered, named flow** walked down in one unbroken context
-window, not a bag of independent skills. Our installed set (`grill-me`, `to-prd`, `to-issues`, `tdd`,
-`improve-codebase-architecture`, `grill-with-docs`, `teach`) is **one generation behind**.
+window, not a bag of independent skills.
+
+**Correction — check the filesystem before declaring a gap.** An earlier draft claimed our installed
+set was "one generation behind" and filed four adoption items to build skills that already exist.
+Measured against `~/.claude/skills/`: **`implement`, `handoff`, `triage`, `prototype`, and `review`
+are all installed and live**, alongside `git-guardrails-claude-code` and `ubiquitous-language`.
+`review`'s own description is the two-axis parallel-sub-agent design this doc proposed as net-new.
+
+The accurate finding is a one-liner: the **project-scoped** copy under `.claude/skills/` is stale
+while the newer generation sits at **user scope**. The fix is to sync, not to rebuild. Acting on the
+original table would have duplicated five working skills — in a document arguing for a leaner surface.
+**Only `wayfinder` is genuinely absent.**
 
 **The current flow:**
 
@@ -74,8 +93,8 @@ setup (one-time)  →  grill-with-docs | wayfinder   →  [to-spec → to-ticket
 
 - `[NEW]` **`implement`** — a deliberately *tiny* skill ("implement the spec/tickets; TDD at pre-agreed
   seams; type-check + targeted tests continuously, full suite once; then `code-review`; then commit").
-  It exists only to name the spine. **We have no `implement` skill — our flow is implicit and
-  scattered.** This is the cheapest high-value gap to close.
+  It exists only to name the spine. **`~/.claude/skills/implement/` already exists** (`disable-model-invocation: true`) and is verbatim
+  this skill. Nothing to build; sync the project-scoped copy if it matters.
 - `[NEW]` **`wayfinder`** — his new default for work that is *big AND foggy* (route not yet visible).
   Charts a **map as a GitHub issue with typed, blocking sub-issues** (research / grilling / prototype /
   task); you close them one at a time until the route clears, then `to-spec`. **We have no
@@ -116,7 +135,7 @@ setup (one-time)  →  grill-with-docs | wayfinder   →  [to-spec → to-ticket
   a local-markdown fallback matters for repos/sessions without `gh` auth.
 - `[SHARPENS]` **Skill descriptions are a budget.** His 38 skills cost ~660 always-loaded tokens by being
   terse and user-invoked. Model-only skills set **`user_invocable: false`** to stay out of the human
-  menu *and* out of description leakage. **Audit our ~90 skills** via `demerzel-context-budget`.
+  menu *and* out of description leakage. **Audit our 69 project skills** (measured; +35 at user scope) via `demerzel-context-budget`.
 
 ## 2. Loop & AFK mechanics (Ralph, sandbox, worktrees)
 
@@ -171,15 +190,28 @@ setup (one-time)  →  grill-with-docs | wayfinder   →  [to-spec → to-ticket
   "Haskell case": they tokenize expensively *and* run off-distribution (worse model performance).
   Prefer canonical JSON-on-disk contracts over novel notation where a model is in the loop.
 - `[SHARPENS]` **MCP is the #1 stealth context-bloater** ("a third system prompt"). Treat adding any MCP
-  server as an **admission gate**: measure its tool-schema token cost *before* adding. Our large
-  deferred-MCP roster (godot 150+, ga 80+) is exactly the risk; **ToolSearch/deferred-loading is the
+  server as an **admission gate**: measure its tool-schema token cost *before* adding. The large deferred-MCP roster visible in a
+  *session* (godot ~150, ga ~90) is the risk — note this repo's `.mcp.json` declares only `ga`, so
+  that surface is user/session-level, not repo-level; **ToolSearch/deferred-loading is the
   correct mitigation** — keep it. Also: **trim tool output at the boundary** (paginate/summarize
   server-side) and always give tools **descriptions** (an undescribed tool is an ungoverned capability).
 
 ## 4. Cost reality — why local-seat-first is now non-optional
 
+> **Sourcing caveat — read before acting on any number below.** Everything in this section is a
+> paraphrase of one video and **nothing here is independently verified**. The dollar figures, the
+> "non-rolling" mechanic, and the ~June-2026 date are *as stated in the source*, not confirmed against
+> Anthropic's published pricing — treat all of them as hearsay, not just the multiplier at the end.
+> The `sources/` rule forbids vendoring raw captions; it does not forbid citations, and their absence
+> here is a defect of this doc, not a constraint.
+>
+> **Do not let this section justify engineering.** The `token_multiplier` work it motivated (P5) was
+> built and then withdrawn (#772) — it turned out to be attached to the token cap, which for these
+> providers costs nothing, while leaving cost untouched. Confirm the pricing model directly before
+> anything here becomes code.
+
 *"Anthropic's dedicated monthly credit is actually a huge cut"* is the load-bearing video for the
-budget gate we just shipped.
+budget gate.
 
 - `[NEW]` From ~June 2026, paid Claude plans fund **all programmatic/AFK usage** (Agent SDK, `claude -p`,
   Claude Code GitHub Actions, 3rd-party apps) from a **separate monthly credit ≈ the plan price** (Pro
@@ -245,19 +277,19 @@ call.** Grouped so the human can pick a slice.
 
 | # | Change | Class | Risk | Where |
 |---|--------|-------|------|-------|
-| A1 | Add a tiny **`implement`** spine skill + document the ordered flow | Adopt now | low | `.claude/skills/implement/` |
-| A2 | Add a **`PreToolUse` push-guard hook** (block push to master, `exit 2` + print exact command) | Adopt now | low | `.claude/hooks/` + `settings.json` |
+| A1 | ~~Add an `implement` spine skill~~ **Already installed at user scope.** Sync the stale project-scoped copy instead | Corrected | low | `.claude/skills/` |
+| A2 | Run the existing **`git-guardrails-claude-code`** skill rather than hand-writing a hook (a bespoke regex guard was tried in #775 and removed — 12 bypasses) | Adopt now | low | #786 |
 | A3 | Emit **red→green transition as evidence** + one-test-at-a-time in `tdd` skill | Adopt now | low | `.claude/skills/tdd/` |
 | A4 | `demerzel-self-diagnostic`: treat **confident negatives + unsearched claims** as investigation triggers | Adopt now | low | skill prompt |
 | A5 | **Front-load invariants / end-load task** ordering rule; **spec-vs-tickets** vocabulary | Adopt now | low | this doc + skills |
 | P1 | **Slim CLAUDE.md** by the admission test; migrate enforceable rules to hooks/validators | **Propose** | **high (one-way)** | `CLAUDE.md`, `.claude/rules/` |
-| P2 | **`triage` one-category+one-state** invariant + `.out-of-scope/` ADR non-goals | Propose | med | triage machinery |
+| P2 | ~~Build triage machinery~~ **`~/.claude/skills/triage/` already installed.** Only the one-category+one-state invariant + `.out-of-scope/` ADR non-goals are net-new | Corrected | med | existing `triage` |
 | P3 | **`wayfinder`-style map-as-issue-tree** planner (feeds Planner MVP #529) | Propose | med | new skill + Planner |
-| P4 | **`handoff`** skill (disposable, temp-file, cross-harness) — distinct from `/digest` | Propose | low | `.claude/skills/handoff/` |
+| P4 | ~~Build a `handoff` skill~~ **`~/.claude/skills/handoff/` already installed**, argument-hint and all. Net-new is only the doctrine that it stays distinct from `/digest` | Corrected | low | existing `handoff` |
 | P5 | Budget gate: **provider-native token accounting** + separate **AFK monthly-reset ledger** | Propose | med | `scripts/aiw_budget_gate.py` |
 | P6 | Routing rule: **planning = frontier model, implementation = cheap model** (parametric vs contextual) | Propose | low | routing policy |
 | W1 | **MCP admission gate** — measure tool-schema token cost before adding; trim tool output | Watch | low | context-budget doctrine |
-| W2 | `code-review` two-axis (Standards+Spec) sub-agents + named Fowler smells + ambition clause | Watch | low | review skills |
+| W2 | ~~Propose two-axis review~~ **`~/.claude/skills/review/` already does this**, word for word (Standards + Spec, parallel sub-agents). Net-new is only the named Fowler smells + ambition clause | Corrected | low | existing `review` |
 | R1 | Rename `to-prd`→`to-spec`, `to-issues`→`to-tickets` (adopt vocabulary; rename optional) | Defer | — | ecosystem parity |
 
 **Provenance:** 140 videos enumerated, 31 AI-coding transcripts captured & distilled 2026-07-19 (the
