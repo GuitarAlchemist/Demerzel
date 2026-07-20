@@ -120,11 +120,18 @@ module.exports = grammar({
         seq("cron", "(", $.string_literal, ")"),
         // prec.right: on `stdin csv` the generator cannot decide with one token
         // of lookahead whether to reduce `stdin` and treat `csv` as the start of
-        // a new source, or shift `csv` into format_spec. Only the second reading
-        // is reachable -- data_source appears in exactly three places
-        // (simple_pipeline, fan_in, assertion_subject) and every one separates
-        // sources with an arrow or a comma, so two sources are never adjacent.
-        // Preferring the shift picks the sole legal parse.
+        // a new source, or shift `csv` into format_spec.
+        //
+        // Shifting is the only legal reading. This choice can only affect a
+        // program if some token that may FOLLOW `stdin` is also a format_spec
+        // token (json/csv/text/binary). The complete follow set, over every
+        // context reaching streaming_source_expr:
+        //   simple_pipeline      -> arrow, or end
+        //   fan_in_expr          -> ',' or ')'
+        //   assertion_subject    -> arrow, or end
+        //   reactive_source_expr -> '=>'          (does NOT go via data_source)
+        // None is a format_spec token, so preferring the shift can never steal a
+        // token belonging to a following construct. No valid program reparses.
         prec.right(seq("stdin", optional($.format_spec))),
         seq("subscribe", "(", $.string_literal, ",", $.string_literal, ")"),
         seq("cdc", "(", $.string_literal, ",", $.string_literal, ")"),
