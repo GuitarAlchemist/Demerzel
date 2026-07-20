@@ -200,8 +200,10 @@ Reconciles with the Karpathy 4 Rules and the Cherny session-continuity patterns 
   A codebase that is *easy to change* lets a *cheaper* model do the same work.
   Optimize **AX (Agent Experience)** the way you optimize DX.
 - **Queue, not loop.** A backlog of scoped tasks with human checkpoints pushed as
-  far right as safe beats an infinite loop. Our queue is `BACKLOG.md` plus
-  `demerzel-driver-triggers.yml` → `state/triggers/*.trigger.json`.
+  far right as safe beats an infinite loop. Our queue is
+  `demerzel-driver-triggers.yml` → `state/triggers/*.trigger.json`. (A root
+  `BACKLOG.md` is proposed in #779 but is not in the repo yet — do not cite it as
+  existing until that merges.)
 - **Procedures over abilities.** Skills the user invokes ("procedures") keep their
   descriptions out of the context window; model-invoked "abilities" leak a
   description each. Prefer procedures. *(Tension with superpowers' model-in-control
@@ -213,3 +215,21 @@ Reconciles with the Karpathy 4 Rules and the Cherny session-continuity patterns 
   buy a lock. Reinforces the `metafix` + ml-feedback loop.
 - **Strategic > tactical (Ousterhout).** AI ate tactical programming; be the
   strategic delegator. Converges with Karpathy R1 and R4.
+
+## Prefer Existing Tooling Over New Skills
+
+Adopted from aihero.dev (2026-06-14). Restored here 2026-07-20 — it was deleted
+from both `CLAUDE.md` and `AGENTS.md` during the decomposition and landed nowhere,
+while `AGENTS.md` continued to assert it lived in this directory.
+
+Prefer this ecosystem's existing planning, review, and quality machinery over
+adding new skills. `/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, and
+`/improve-codebase-architecture` are already covered by the brainstorming,
+planning-doc, test, and structural-quality tooling here. (`/teach` **is** adopted —
+see `.claude/skills/teach`.)
+
+This is the repo's main anti-sprawl rule, and it governs exactly the decision an
+adoption table makes: before a proposal adds a skill, it has to establish that
+nothing existing already does the job. Two rounds of review found five adoption
+items proposing to rebuild skills that were already installed — this rule is the
+check that should have caught them.
