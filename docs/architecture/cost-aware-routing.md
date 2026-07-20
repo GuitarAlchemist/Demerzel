@@ -22,6 +22,39 @@ To avoid "LLM-by-default" patterns, the following tasks *must* attempt a determi
 - **Syntax Validation**: Use compilers, linters, or tree-sitter.
 - **Dependency Analysis**: Use repo-specific package managers or graph tools.
 
+## Routing by Knowledge Type (parametric vs contextual)
+
+The hierarchy above routes by **risk and stakes**. That is necessary but not
+sufficient: it tends to send *every* hard task to a premium model, because "hard"
+reads as "high-stakes". A second, orthogonal question sharpens it — **which kind of
+knowledge does this task actually draw on?**
+
+- **Parametric knowledge** lives in the model's weights (breadth, prior art,
+  unprompted alternatives, "have you considered X?"). **Planning, grilling,
+  architecture, and design exploration depend on it** — a bigger model is
+  genuinely better here, because you are paying for what it knows that you did not
+  put in the window.
+- **Contextual knowledge** lives in the prompt (the agreed plan, the spec, the
+  files already in context). **Implementation depends mostly on this** — once a
+  task is well-scoped and the plan and seams are decided, a cheaper model performs
+  close to a frontier one, because the hard thinking is already in the window.
+
+**The rule:** *plan with the strongest model available; implement with the cheapest
+model that clears the bar.* A difficult feature does **not** by itself justify a
+premium implementation model — an under-specified one does. If implementation
+quality is poor, the first remedy is a better plan/spec in context, not a bigger
+model.
+
+This composes with, and does not replace, the tier hierarchy: deterministic tools
+still come first, and a high-**risk** change still escalates for review regardless
+of which model produced the diff.
+
+> Wiring note: `state/driver/aiw-worker-lanes.json` already classifies every role by
+> `work_class` (`groom`/`review`/`navigate` are planning-shaped; `net_new_feature`/
+> `fix` are implementation-shaped). That field is the natural hook for making this
+> rule executable in `scripts/aiw_lane_selector.py`; it is documented doctrine
+> today, not yet an enforced selector.
+
 ## Escalation Rules
 
 Escalation to a higher-cost tier is only permitted when:

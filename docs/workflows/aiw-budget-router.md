@@ -169,6 +169,35 @@ python scripts/aiw_budget_gate.py --release-job aiw-0001 `
   --receipt .octo/aiw-receipt.json
 ```
 
+### Provider-native token accounting
+
+Token caps (`max_total_tokens`) are expressed in **canonical** tokens, but each
+provider ships its own tokenizer, so the same prompt bills a different number of
+tokens on each — a 2-3x spread between providers is ordinary. A single normalized
+cap therefore over-admits work on a coarse tokenizer and under-admits it on a fine
+one.
+
+A provider entry in `state/driver/aiw-budget-policy.json` may declare an optional
+`token_multiplier` that converts a canonical estimate into that provider's own
+tokens before the cap is applied:
+
+```json
+{ "id": "some-provider", "tier": "metered-cloud", "token_multiplier": 1.8 }
+```
+
+- **Absent means `1.0`** — a provider that has not been measured keeps exactly the
+  previous behaviour, so adding the field is non-breaking.
+- The value must be a **positive, finite number**; `0`, negatives, NaN, booleans,
+  and strings are rejected as invalid policy.
+- The gate reports both counts in its budget block: `estimated_total_tokens` (the
+  raw canonical estimate) alongside `token_multiplier` and
+  `effective_total_tokens` (what the provider actually bills). `token_cap_exceeded`
+  is raised against the **effective** count.
+
+**Every shipped provider currently omits the field** (i.e. 1.0). Populating real
+multipliers requires *measured* tokenizer ratios per provider — they are
+deliberately not guessed here; contribute them with the measurement as evidence.
+
 ### Live consumer
 
 `.github/workflows/jules-auto-delegate.yml` is the first live consumer of the gate.

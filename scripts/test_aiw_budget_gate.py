@@ -281,6 +281,52 @@ class BudgetGateTests(unittest.TestCase):
             self.assertEqual("block", result["decision"], provider)
             self.assertIn("provider_requires_manual_approval", result["reasons"])
 
+    def _policy_with_multiplier(self, value, provider="claude-code-cli"):
+        """A policy copy whose named provider declares a token multiplier."""
+        policy = json.loads(json.dumps(POLICY))
+        for item in policy["providers"]:
+            if item["id"] == provider:
+                item["token_multiplier"] = value
+        return policy
+
+    def test_absent_token_multiplier_leaves_tokens_unchanged(self):
+        # Regression guard: every shipped provider omits the field, so the
+        # effective count must equal the raw estimate and existing caps hold.
+        result = evaluate(POLICY, request(estimated_total_tokens=150000))
+        self.assertEqual("allow", result["decision"])
+        self.assertEqual(1.0, result["budget"]["token_multiplier"])
+        self.assertEqual(150000, result["budget"]["effective_total_tokens"])
+
+    def test_provider_token_multiplier_scales_tokens_against_the_cap(self):
+        # 120k raw tokens fits the 200k cap on a 1.0 provider, but a provider
+        # that tokenizes ~2x coarser really consumes 240k and must be blocked.
+        raw = 120000
+        self.assertEqual("allow", evaluate(POLICY, request(
+            estimated_total_tokens=raw))["decision"])
+        result = evaluate(self._policy_with_multiplier(2.0),
+                          request(estimated_total_tokens=raw))
+        self.assertEqual("block", result["decision"])
+        self.assertIn("token_cap_exceeded", result["reasons"])
+        self.assertEqual(240000, result["budget"]["effective_total_tokens"])
+        self.assertEqual(raw, result["budget"]["estimated_total_tokens"])
+
+    def test_token_multiplier_below_one_widens_effective_headroom(self):
+        # A finer-grained tokenizer legitimately fits more raw text per cap.
+        result = evaluate(self._policy_with_multiplier(0.5),
+                          request(estimated_total_tokens=300000))
+        self.assertEqual("allow", result["decision"])
+        self.assertEqual(150000, result["budget"]["effective_total_tokens"])
+
+    def test_non_positive_token_multiplier_is_rejected(self):
+        for bad in (0, -1, float("nan")):
+            with self.assertRaisesRegex(ValueError, "token_multiplier"):
+                evaluate(self._policy_with_multiplier(bad), request())
+
+    def test_non_numeric_token_multiplier_is_rejected(self):
+        for bad in ("2", True, None):
+            with self.assertRaisesRegex(ValueError, "token_multiplier"):
+                evaluate(self._policy_with_multiplier(bad), request())
+
     def test_cli_ledger_shape_is_json_serializable(self):
         result = evaluate(POLICY, request())
         with tempfile.TemporaryDirectory() as directory:

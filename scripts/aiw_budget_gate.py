@@ -101,6 +101,24 @@ def _is_metered(provider: dict[str, Any]) -> bool:
     return provider.get("tier") == "metered-cloud"
 
 
+def _token_multiplier(provider: dict[str, Any]) -> float:
+    """Convert a canonical token estimate into this provider's own tokens.
+
+    Providers ship different tokenizers, so the same prompt bills a different
+    number of tokens on each (a 2-3x spread is ordinary). A single normalized
+    cap therefore over-admits work on coarse tokenizers and under-admits it on
+    fine ones. An absent multiplier means 1.0, so a provider that has not been
+    measured keeps exactly today's behaviour.
+    """
+    if "token_multiplier" not in provider:
+        return 1.0
+    value = provider["token_multiplier"]
+    if (isinstance(value, bool) or not isinstance(value, (int, float))
+            or not math.isfinite(value) or value <= 0):
+        raise ValueError("token_multiplier must be a positive number")
+    return float(value)
+
+
 def _validate_approval(approval: dict[str, Any] | None, request: dict[str, Any],
                        request_sha256: str) -> bool:
     if approval is None:
@@ -296,6 +314,7 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any],
              approval: dict[str, Any] | None = None) -> dict[str, Any]:
     provider_id = request.get("provider")
     provider = _provider(policy, provider_id)
+    token_multiplier = _token_multiplier(provider)
 
     defaults = policy.get("defaults")
     cycle = policy.get("cycle")
@@ -331,7 +350,9 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any],
         reasons.append("job_cost_cap_exceeded")
     if cycle_spend + estimated_cost > cycle_max_cost:
         reasons.append("cycle_cost_cap_exceeded")
-    if tokens > max_tokens:
+    # Caps are expressed in canonical tokens; compare in the provider's own.
+    effective_tokens = tokens * token_multiplier
+    if effective_tokens > max_tokens:
         reasons.append("token_cap_exceeded")
     if calls > max_calls:
         reasons.append("model_call_cap_exceeded")
@@ -358,6 +379,8 @@ def evaluate(policy: dict[str, Any], request: dict[str, Any],
             "estimated_cost_usd": estimated_cost,
             "cycle_spend_usd": cycle_spend,
             "estimated_total_tokens": int(tokens),
+            "token_multiplier": token_multiplier,
+            "effective_total_tokens": int(effective_tokens),
             "estimated_model_calls": int(calls),
             "estimated_retries": int(retries),
             "estimated_runner_minutes": runner_minutes,
