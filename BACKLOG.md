@@ -20,7 +20,12 @@ architecture is clean" — that has no fixed point.
 - **Do not** delete an entry to skip it. Either do it, or record why not as an ADR so
   future reviews stop re-proposing it (`docs/adr/`).
 - 🔒 marks entries that must **not** run unattended — they change the loop's own
-  safety gate or lack a regression net. A human drives those.
+  gate, or the target has no regression net. A human drives those. Applied
+  honestly this locks 4 of 6 entries, which is itself the finding: most of this
+  queue is not yet safe to automate, and C1 is why.
+- **Nothing parses this file.** No checkbox reader exists in `scripts/` or
+  `.github/`; the consumer is an LLM reading `supervised-loop/SKILL.md`. Slice
+  selection is model judgment, unenforced.
 
 ## Provenance
 
@@ -33,18 +38,26 @@ follows its precondition chain, not its interest level.
 
 ## Queue
 
-- [ ] **C1 — Run the Python test suite in the oracle.**
+- [ ] 🔒 **C1 — Run the Python test suite in the oracle.**
   `scripts/verify.ps1`. ~10 lines, 1 file. **Precondition for everything below.**
-  The oracle runs `ConvertFrom-Json` over `*.json` plus one npm test. The 20
+  **Human-driven — this edits the loop's own pass/fail criterion.** An autonomous
+  cycle rewriting the oracle it will then be judged by is the sharpest
+  self-referential hazard in this queue.
+  The oracle runs `ConvertFrom-Json` over `*.json` plus one npm test. The 21
   `scripts/test_*.py` modules run **only** in `governance-validate.yml` — so an
   autonomous cycle can gut `demerzel_kit`, `aiw_budget_gate`, or `build_manifest`,
   get a green `verify.ps1`, and commit. Add a `python -m unittest discover -s scripts
   -p 'test_*.py'` block, guarded on `python` being present, failing on non-zero.
-  Converts 20 already-written test modules from decorative into load-bearing.
+  Converts 21 already-written test modules from decorative into load-bearing.
   *Expect pre-existing red tests on first run — that is the finding, not a blocker.*
-  *Note: consider extending to Pester (`tests/powershell/`), which C3 depends on.*
+  *Blocked on #778 (the oracle currently swallowed native failures) and #780 (the
+  grammar leg cannot pass). Follow #778's `Assert-NativeSuccess` pattern — a bare
+  native call in `verify.ps1` is discarded, not fatal.*
+  *Note: consider extending to Pester (`tests/powershell/`), which C3a depends on.*
 
-- [ ] **C6 — Finish the `demerzel_kit` migration for `compliance_report.py`.**
+- [ ] 🔒 **C6 — Finish the `demerzel_kit` migration for `compliance_report.py`.**
+  *(🔒 for the same reason as C5a: there is no `scripts/test_compliance_report.py`,
+  so this refactor has no regression net.)*
   `scripts/compliance_report.py`. ~40 lines, 1–2 files. Low risk. Already a declared
   to-do in `CONTEXT.md`. It still carries its own `_now_iso` and `_atomic_write` (a
   hand-rolled duplicate of `kit.atomic_write`), and its docstring cites
@@ -81,17 +94,24 @@ follows its precondition chain, not its interest level.
   *Do not refactor `_lock` in this slice — a crash between acquire and the `finally`
   wedges the ledger, and that path is untested.*
 
-- [ ] 🔒 **C3a — Make `supervised-loop-preflight.ps1` consume `Get-DomainGateState`.**
-  `scripts/supervised-loop-preflight.ps1`, `scripts/DomainGate.psm1`. ~40 lines.
-  **Human-driven — this is the loop's own safety gate.**
-  `Get-DomainGateState` is a genuinely deep module with **zero callers**: both the
-  overseer and preflight `Import-Module` it and then reach past it to leaf helpers.
-  `CONTEXT.md` claims these are "thin deciders that weigh those facts themselves" —
-  they are not. Worse, the two scripts read protected paths from **different sources**
-  (`baseline.json` vs `$script:ProtectedPaths`) and nothing checks they agree.
-  Start with preflight (the safest slice), single-sourcing on `Get-ProtectedPaths`.
+- [ ] 🔒 **C3a — Decide whether `Get-DomainGateState` should exist.**
+  `scripts/DomainGate.psm1`. **Human-driven — this is the loop's own safety gate.**
+  The aggregator is defined (`DomainGate.psm1:68`) and exported (`:85`) but has
+  **zero callers**. Both the overseer and preflight `Import-Module` it and then
+  call leaf helpers directly. It is referenced only in `CONTEXT.md` and ADR-0003.
+  This is a **deletion-test question, not a refactor.** Either adopt it or remove
+  it — an exported deep module with no callers is a claim the codebase does not
+  honor. Note `CONTEXT.md:79` sits under *"Architecture seams (designed…)"*, i.e.
+  declared intent, so the drift is narrow: the aggregator went unadopted, not
+  that the callers are wrong.
+  *An earlier version of this entry also claimed preflight and the overseer read
+  protected paths from different sources. That was false and has been removed:
+  preflight reaches them via `Test-ProtectedDirty` → `$script:ProtectedPaths`
+  (`DomainGate.psm1:61`), the overseer does not read them at all, and
+  `supervised-loop-preflight.ps1:32` already says "single source of protected
+  paths". The remedy proposed was work already done.*
   *Blocked on: C1 extended to run Pester. There is no `DomainGate.Tests.ps1` and no
-  overseer test at all, so today this refactor has no regression net.*
+  overseer test at all, so today this has no regression net.*
 
 - [ ] 🔒 **C5a — Thread a `root` seam through `build_manifest.py` (part 1 of 4).**
   `scripts/build_manifest.py`. ~80 lines. **Human-driven.**
@@ -120,5 +140,17 @@ follows its precondition chain, not its interest level.
   docs only). This is a `/demerzel evolve` question, not a refactor — and
   cleanup candidates are usually false positives until verified against docs and
   consumer counts.
-- **17 scripts recomputing the repo root** two different ways despite `kit.ROOT`.
+- **21 scripts recomputing the repo root** two different ways despite `kit.ROOT`.
   Too small to spend a cycle on; fold into whichever entry touches the file.
+
+## agent-blackbox install-audit follow-ups
+
+`docs/harness-observability.md` (:36, :96) points here for these. They are
+tracked, not queued: the `loop-controls` and `response-quality` evidence credits
+live as **workflow step strings** inside `.github/workflows/agent-blackbox.yml`,
+which is in the protected-paths list. The supervised loop cannot edit it.
+
+- **Not loop-eligible by construction.** Closing these needs either an operator
+  workflow edit or a relaxation of the audit rule in `agent-blackbox` itself.
+  Both are human decisions, so neither becomes a `## Queue` entry — recording
+  them here is the whole obligation.
