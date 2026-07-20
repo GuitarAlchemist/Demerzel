@@ -49,6 +49,12 @@ than vendored verbatim. Raw dumps rot, bloat the repo, and carry no governance
 provenance. Capture the source wherever you like while working; commit only the
 transform, and cite what it came from.
 
+### Every policy carries versioning with explicit rationale
+
+A policy in `policies/` states its version and *why* it changed. A version bump
+with no rationale makes the governance history unauditable — the artifact records
+what the rule became but not what evidence moved it.
+
 ### Conventional commits
 
 Use the conventional commit format. Commit often — at least once per completed task.
@@ -129,4 +135,5 @@ Before opening a PR, confirm:
 
 Open an issue. If you are uncertain about a contribution, open a **draft PR** and ask for feedback before putting in significant effort.
 
-See also: [CLAUDE.md](CLAUDE.md) for the full governance reference.
+See also: [CONTEXT.md](CONTEXT.md) for the domain glossary and constitutional
+hierarchy. [CLAUDE.md](CLAUDE.md) is a short index that points at both.

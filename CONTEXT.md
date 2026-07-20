@@ -152,5 +152,8 @@ fact lives in one place and is read out, never restated.
 
 ## Conventions
 
-See `CLAUDE.md` / `AGENTS.md` for authoritative validation rules, the constitutional
-hierarchy, and cross-repo contract handling.
+This file **is** the authority on the constitutional hierarchy and the domain
+glossary; `CLAUDE.md` points here for both. For validation and contribution rules
+see `CONTRIBUTING.md`; for cross-repo contract handling see
+`docs/architecture/cross-repo-contracts.md`. `CLAUDE.md` is a short index, not a
+reference — don't send readers there for detail.

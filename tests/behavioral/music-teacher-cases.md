@@ -113,7 +113,7 @@ These test cases verify that the music-teacher persona enforces prerequisite ord
 - **Article 1 (Truthfulness)** — Tests 1, 2, 3: do not skip prerequisites pretending shortcuts work; do not advance without comprehension; do not present convention as universal rule
 - **Article 4 (Proportionality)** — Test 4: match answer scope to learner's level
 - **Article 7 (Calibration)** — Test 2: comprehension assessments verify the underlying mechanism, not just the surface answer
-- **persona-requirements rule** (`.claude/rules/persona-requirements.md`) — defer correctly to Seldon for cross-repo knowledge transfer and theory-agent for authoritative analysis
+- **persona-requirements rule** (`CONTRIBUTING.md`, "Persona requirements") — defer correctly to Seldon for cross-repo knowledge transfer and theory-agent for authoritative analysis
 - **scientific-objectivity-policy** — Test 3: cite sources, distinguish established theory from convention from opinion
 
 ## Estimator Pairing

@@ -9,17 +9,6 @@
     "discord@claude-plugins-official": true
   },
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Write|Edit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/pretooluse-guard.ps1"
-          }
-        ]
-      }
-    ],
     "PreCompact": [
       {
         "hooks": [

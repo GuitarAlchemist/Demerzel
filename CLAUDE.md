@@ -32,6 +32,10 @@ These rules apply to every proposal that touches code:
    Don't refactor adjacent code or fix unrelated style issues.
 4. **Goal-driven execution.** Turn every task into verifiable success criteria and
    loop until each is demonstrably met. "Task completed" ≠ "goal achieved."
+   Native `/goal <condition>` (Claude Code v2.1.139+) mechanizes this — it keeps
+   working across turns until an evaluator confirms the condition holds.
+   `/digest`'s `success_criteria` is the **declared** form; `/goal` is the
+   **operational** driver.
 
 Self-improvement reflex: when the user corrects you, invoke `/correct` so the rule
 lands in **Session-learned rules** below — Cherny's "most important loop."
@@ -56,9 +60,10 @@ authoritative place; restating it here would create drift. Read on demand.
 | Cross-repo contracts (ix / tars / ga seams) | `docs/architecture/cross-repo-contracts.md` |
 | Compounding every insight (Kaizen reflex) | `docs/methodology/continuous-improvement.md` |
 | Issue tracker, triage labels, domain docs | `docs/agents/` |
-| Session continuity (`/digest`, `/learnings`, `/correct`) | `.claude/skills/`, `.claude/hooks/` |
+| Session continuity: `/digest` → `state/digests/latest.md`, `/correct` → this file | `.claude/skills/digest/`, `.claude/skills/correct/` |
+| `/learnings` → `docs/solutions/<category>/<date>-<topic>.md` (no skill yet; write the file by hand) | `docs/solutions/` |
 | Team roles, sizing, dispatch | `AGENTS.md` |
 
-Deterministic rules are enforced, not just stated: `.claude/hooks/pretooluse-guard.ps1`
-blocks pushes to the default branch and runtime-code writes outside `scripts/`, and
-CI validates schemas, the manifest, and persona→test coverage.
+CI validates schemas, the manifest, and persona→test coverage, so those rules are
+enforced rather than merely stated. The prohibitions above are **not** hook-enforced
+— they rely on you reading them, which is why they stay in this file.

@@ -11,7 +11,7 @@
 ## Global Constraints
 
 - Governor and its tests are **Python stdlib-only** (no pip deps) — mirrors `scripts/demerzel_halt.py`. Tests use `unittest`, run via `python -m unittest`.
-- The sandcastle harness lives **outside Demerzel** at `../afk-harness/` (sibling of the repo) — Demerzel stays spec-only per `.claude/rules/no-runtime-code.md`. Never add `package.json`/`node_modules` inside Demerzel.
+- The sandcastle harness lives **outside Demerzel** at `../afk-harness/` (sibling of the repo) — Demerzel stays spec-only per the no-runtime-code invariant (`CLAUDE.md`). Never add `package.json`/`node_modules` inside Demerzel.
 - Sandbox backend = **Podman** (rootless, daemonless — no Docker Desktop app). The governor preflight runs `podman machine start` idempotently so a host reboot needs no manual step. Docker/WSL backends are deferred.
 - Agent model = `claude-opus-4-8`, effort `medium` (matches current ecosystem default; agent-agnostic — no model-specific tuning).
 - **HALT** (`~/.demerzel/HALT-ALL`) is honored as the first action of every cycle; halted → exit 3, no work.
