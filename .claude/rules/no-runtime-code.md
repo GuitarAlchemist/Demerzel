@@ -1,1 +1,0 @@
-Demerzel contains NO runtime code. Only behavioral specifications: personas (YAML), constitutions (Markdown), policies (YAML), schemas (JSON Schema), contracts (Markdown + JSON Schema), tests (Markdown), examples (JSON + Markdown), templates, and skills. Never add executable code — only governance artifacts.

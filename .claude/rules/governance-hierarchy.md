@@ -1,1 +1,0 @@
-Asimov constitution (Articles 0-5) overrides everything. Demerzel mandate defines who enforces. Default constitution (Articles 1-11) provides operational ethics. Policies override personas. When in doubt, check the constitution first.

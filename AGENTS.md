@@ -26,12 +26,16 @@ Full responsibilities are in the persona YAML. Summary:
 
 ## Governance Rules for Teammates
 
-1. **Asimov Laws override everything** — no teammate can violate Articles 0-5.
-2. **Confidence thresholds apply** per alignment policy; escalate to lead when `<0.5`.
-3. **Conventional commits**, at least one per completed task.
-4. **No secrets** — never commit tokens, credentials, or API keys.
-5. **Test what you build** — behavioral test validation required.
-6. **IxQL awareness** — governance pipelines are IxQL; think in pipelines.
+Every teammate inherits the repo-wide rules — they are **not** restated here, so
+there is one place to change them: constitutional precedence and hexavalent logic
+in `CONTEXT.md`, the confidence ladder in `logic/confidence-thresholds.yaml`, and
+commits / secrets / behavioral-test requirements in `CONTRIBUTING.md`.
+
+Team-specific additions:
+
+1. **Escalate to the lead below the `ask` rung** — a teammate that cannot clear the
+   confidence ladder hands the decision up rather than proceeding.
+2. **IxQL awareness** — governance pipelines are IxQL; think in pipelines.
 
 ## Verification Standard
 
@@ -71,24 +75,10 @@ Use Sonnet for Seldon/Integrator, Opus for Architect/Auditor.
 Require plan approval for Architect before implementation.
 ```
 
-## Tracer-bullets + vertical slices (aihero delta, 2026-06-14)
+## How teammates work
 
-Adopted ecosystem-wide from aihero.dev. Counters AI's "build the whole thing at
-once" failure mode:
-
-- **Tracer-bullet first.** For any non-trivial feature, build the smallest
-  **end-to-end** slice that touches *every* layer, test it, get feedback, then
-  expand — never build layers in isolation. "Context-window constraints make the
-  discipline non-negotiable."
-- **Vertical, not horizontal, decomposition.** Each task/PR is a thin slice
-  cutting through all integration layers (surfacing unknowns early), not a
-  horizontal layer.
-- **AIW Operating Doctrine.** Adhere to the Karpathy (exploration), Pocock
-  (discipline), Cherny (loops), and Demerzel (governance) lanes. See
-  `docs/workflows/aiw-operating-doctrine.md` for details.
-
-Prefer existing planning/review/quality tooling over adding new skills — aihero's
-`/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, `/improve-codebase-architecture`
-are already covered by this ecosystem's brainstorming, planning-doc, test, and
-structural-quality machinery. (The `/teach` skill IS adopted — see
-`.claude/skills/teach`.)
+Tracer-bullets and vertical slices, the AIW operating doctrine, and the
+prefer-existing-tooling rule are ecosystem-wide, not team-specific — they live in
+[`docs/methodology/`](docs/methodology/) and
+[`docs/workflows/aiw-operating-doctrine.md`](docs/workflows/aiw-operating-doctrine.md).
+They were duplicated here verbatim from `CLAUDE.md`; single-sourced 2026-07-19.

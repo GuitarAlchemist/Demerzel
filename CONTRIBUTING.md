@@ -41,6 +41,14 @@ If you add or modify a persona in `personas/`, you must add or update a correspo
 
 Articles in `constitutions/` may be added or amended, but **removals require explicit written justification** in the PR description. This is not a bureaucratic rule — it is constitutional integrity.
 
+### Source material must be transformed, never copied raw
+
+Anything in `sources/` (transcripts, papers, chat logs, external corpora) must be
+distilled into a canonical repo format — a doc, policy, schema, or test — rather
+than vendored verbatim. Raw dumps rot, bloat the repo, and carry no governance
+provenance. Capture the source wherever you like while working; commit only the
+transform, and cite what it came from.
+
 ### Conventional commits
 
 Use the conventional commit format. Commit often — at least once per completed task.
