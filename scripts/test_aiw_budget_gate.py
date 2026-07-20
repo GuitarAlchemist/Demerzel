@@ -308,6 +308,40 @@ class PolicySchemaTests(unittest.TestCase):
     def test_shipped_policy_validates(self):
         self.assertEqual(POLICY, load_policy(aiw_budget_gate.POLICY_PATH))
 
+    def test_metered_provider_cannot_be_downgraded_to_local_seat(self):
+        # The tier-keyed guards constrain the shape GIVEN a tier -- but tier is
+        # editable in the same diff. Downgrading jules to local-seat escaped
+        # every metered guard and allowed a billed reservation with no approval
+        # artifact and no trusted receipt. Known providers are pinned by id.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["tier"] = "local-seat"
+            provider["cost_model"] = "subscription-or-local"
+            provider["requires_manual_approval"] = False
+            provider.pop("trusted_receipt_issuer", None)
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_trusted_receipt_issuer_cannot_be_repointed(self):
+        # Any well-formed hostname passed the pattern, so the issuer could be
+        # repointed at an attacker-controlled host and still validate.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["trusted_receipt_issuer"] = "evil.attacker.com"
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_validation_error_names_the_offending_field(self):
+        # "True was expected" alone locates nothing in a 7-provider file.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["requires_manual_approval"] = False
+
+        with self.assertRaisesRegex(ValueError, r"\$\.providers\[\d+\]\.requires_manual_approval"):
+            self._written(mutate)
+
     def test_metered_provider_cannot_claim_a_free_cost_model(self):
         # The metered branch pinned only the issuer and approval flag, so a
         # paid provider could label itself "subscription-or-local" and pass.

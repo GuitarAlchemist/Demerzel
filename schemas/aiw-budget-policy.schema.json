@@ -84,6 +84,85 @@
         },
         "allOf": [
           {
+            "description": "gemini-cli bills real money. Its tier, approval requirement and receipt issuer are pinned by id, because the tier-keyed guards above constrain the shape GIVEN a tier -- and tier is editable in the same diff that would downgrade it.",
+            "if": {"properties": {"id": {"const": "gemini-cli"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "metered-cloud"},
+                "cost_model": {"const": "provider-billing"},
+                "requires_manual_approval": {"const": true},
+                "trusted_receipt_issuer": {"const": "generativelanguage.googleapis.com"}
+              },
+              "required": ["trusted_receipt_issuer"]
+            }
+          },
+          {
+            "description": "jules bills real money. Its tier, approval requirement and receipt issuer are pinned by id, because the tier-keyed guards above constrain the shape GIVEN a tier -- and tier is editable in the same diff that would downgrade it.",
+            "if": {"properties": {"id": {"const": "jules"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "metered-cloud"},
+                "cost_model": {"const": "provider-billing"},
+                "requires_manual_approval": {"const": true},
+                "trusted_receipt_issuer": {"const": "jules.googleapis.com"}
+              },
+              "required": ["trusted_receipt_issuer"]
+            }
+          },
+          {
+            "description": "notebooklm bills real money. Its tier, approval requirement and receipt issuer are pinned by id, because the tier-keyed guards above constrain the shape GIVEN a tier -- and tier is editable in the same diff that would downgrade it.",
+            "if": {"properties": {"id": {"const": "notebooklm"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "metered-cloud"},
+                "cost_model": {"const": "provider-billing"},
+                "requires_manual_approval": {"const": true},
+                "trusted_receipt_issuer": {"const": "notebooklm.google.com"}
+              },
+              "required": ["trusted_receipt_issuer"]
+            }
+          },
+          {
+            "description": "claude-code-cli is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
+            "if": {"properties": {"id": {"const": "claude-code-cli"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "local-seat"},
+                "cost_model": {"const": "subscription-or-local"}
+              }
+            }
+          },
+          {
+            "description": "codex-cli is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
+            "if": {"properties": {"id": {"const": "codex-cli"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "local-seat"},
+                "cost_model": {"const": "subscription-or-local"}
+              }
+            }
+          },
+          {
+            "description": "antigravity is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
+            "if": {"properties": {"id": {"const": "antigravity"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "local-seat"},
+                "cost_model": {"const": "subscription-or-local"}
+              }
+            }
+          },
+          {
+            "description": "augment-code is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
+            "if": {"properties": {"id": {"const": "augment-code"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "local-seat"},
+                "cost_model": {"const": "subscription-or-local"}
+              }
+            }
+          },
+          {
             "description": "A metered provider bills real money: it must name a receipt issuer and require approval, because _validate_receipt refuses a null issuer and release() cannot reconcile without one.",
             "if": {"properties": {"tier": {"const": "metered-cloud"}}, "required": ["tier"]},
             "then": {

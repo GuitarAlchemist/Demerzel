@@ -53,7 +53,11 @@ def load_policy(path: Path | None = None) -> dict[str, Any]:
     try:
         demerzel_kit.validate(policy, "aiw-budget-policy")
     except jsonschema.ValidationError as error:
-        raise ValueError(f"policy is invalid: {error.message}") from error
+        # json_path locates the offending key. Without it the message alone
+        # ("True was expected") names neither field nor provider, which is not
+        # enough to find the key in a 7-provider file under time pressure.
+        raise ValueError(
+            f"policy is invalid at {error.json_path}: {error.message}") from error
 
     # JSON Schema cannot express these cross-references within one document.
     ids = [provider["id"] for provider in policy["providers"]]
