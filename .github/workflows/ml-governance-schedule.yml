@@ -1,0 +1,140 @@
+name: ML-Governance Loop Schedule
+
+# Brings the ML-governance feedback loop's cadence IN-REPO as a tripwire.
+#
+# Per GuitarAlchemist/hari issue #29 (loop triage, "Fragile-but-healthy —
+# protect"): the Demerzel ML-governance feedback loop is the ecosystem's only
+# audit-trailed decision-changing loop, and until now its scheduler lived
+# OUTSIDE any repo (a local cron / Task Scheduler on the operator's machine,
+# with no .github/workflow). If that scheduler dies, the healthiest loop in the
+# ecosystem dies SILENTLY. This workflow makes the loop's death visible.
+#
+# WHAT RUNS HERE (read-only): a freshness guard + a headless entrypoint smoke.
+# WHAT STAYS OUT-OF-BAND (mutating): the actual cycle. `run_ml_feedback_cycle.py`
+# harvests sibling repos (../ix, ../tars, ../ga), sources ix producers from
+# their origin/main, honors the ~/.demerzel/HALT-ALL kill switch, and WRITES
+# governance state (state/oversight/, state/beliefs/) that gets committed. None
+# of that is reproducible or safe from CI (no sibling checkouts, no write intent),
+# so this workflow does NOT run the cycle — it is a tripwire, not the loop.
+#
+# The tripwire has two independent legs, both exiting non-zero on failure:
+#   freshness  — the loop's own audit trail (state/oversight/ml-feedback-cycle-*.json,
+#                field `cycle_at`) must be fresher than MAX_STALE_DAYS. This is the
+#                death detector: if the out-of-band scheduler stops, the newest
+#                cycle summary goes stale and this turns RED. Mirrors the
+#                "green != dead" doctrine of demerzel-quality-trend-freshness.yml.
+#   entrypoint — `run_ml_feedback_cycle.py --dry-run` must still run headlessly
+#                (no writes, no sibling repos). A rotted entrypoint is another way
+#                the loop dies; this catches it before the operator's next cycle.
+#
+# A failed scheduled run notifies the workflow's last editor via GitHub's default
+# scheduled-workflow-failure notification — that is the tripwire signal. Silent on
+# green; RED on stale/broken; never remediates and never commits (contents: read).
+
+on:
+  schedule:
+    # Daily, 15:00 UTC. The orchestrator's effective cadence is daily (its
+    # finest-grained producer, staleness_predictor, runs daily per
+    # ml-governance-feedback-policy.yaml); observed cycle gaps top out at 2 days,
+    # so MAX_STALE_DAYS=3 clears normal gaps and only trips on real death.
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      MAX_STALE_DAYS: '3'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Assert ML-governance cycle freshness
+        run: |
+          python - <<'PY'
+          import glob, json, os
+          from datetime import datetime, timezone
+
+          max_stale = int(os.environ["MAX_STALE_DAYS"])
+
+          # The orchestrator writes ml-feedback-cycle-*.json (field cycle_at); the
+          # governor leg writes ml-feedback-loop-*.json (field run_at). Both are
+          # emitted each cycle — glob both and take the newest timestamp across them
+          # so the guard is robust to either summary being the survivor.
+          newest_ts, newest_src = None, None
+          patterns = ("state/oversight/ml-feedback-cycle-*.json",
+                      "state/oversight/ml-feedback-loop-*.json")
+          for pattern in patterns:
+              for path in glob.glob(pattern):
+                  try:
+                      with open(path, encoding="utf-8") as fh:
+                          data = json.load(fh)
+                  except (json.JSONDecodeError, OSError):
+                      continue
+                  ts = data.get("cycle_at") or data.get("run_at")
+                  if not ts:
+                      continue
+                  dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                  if newest_ts is None or dt > newest_ts:
+                      newest_ts, newest_src = dt, path
+
+          now = datetime.now(timezone.utc)
+          if newest_ts is None:
+              reason = "no ML-governance cycle summary found at all"
+              stale = True
+              age = None
+          else:
+              age = (now - newest_ts).days
+              stale = age > max_stale
+              reason = (f"newest ML-governance cycle is {age}d old "
+                        f"(threshold {max_stale}d) from {newest_src}")
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if not stale:
+              if summary:
+                  with open(summary, "a") as fh:
+                      fh.write(f"ML-governance loop fresh: {reason}\n")
+              print(f"OK: {reason}")
+              raise SystemExit(0)
+
+          if summary:
+              with open(summary, "a") as fh:
+                  fh.write(f"### 🔴 ML-governance loop STALE\n\n{reason}\n\n"
+                           f"Likely cause: the out-of-band ML-feedback scheduler "
+                           f"(local cron / Task Scheduler running "
+                           f"`scripts/run_ml_feedback_cycle.py`) stopped. This is the "
+                           f"ecosystem's only audit-trailed decision-changing loop "
+                           f"(hari issue #29). Restart the scheduler or run one cycle "
+                           f"by hand, then investigate why it died.\n")
+          print(f"STALE: {reason}")
+          raise SystemExit(1)
+          PY
+
+  entrypoint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Headless smoke: --dry-run plans every leg without running subprocesses,
+      # without writing state, and without needing the sibling repos. It proves
+      # the orchestrator entrypoint still imports and its plan logic is coherent —
+      # a broken entrypoint is one way the loop silently dies. Exits non-zero if
+      # the script cannot even plan a cycle.
+      - name: ML-feedback orchestrator dry-run
+        run: python scripts/run_ml_feedback_cycle.py --dry-run
