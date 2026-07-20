@@ -118,7 +118,14 @@ module.exports = grammar({
         seq("sse", "(", $.string_literal, ")"),
         seq("webhook", "(", $.provider, ",", $.string_literal, ")"),
         seq("cron", "(", $.string_literal, ")"),
-        seq("stdin", optional($.format_spec)),
+        // prec.right: on `stdin csv` the generator cannot decide with one token
+        // of lookahead whether to reduce `stdin` and treat `csv` as the start of
+        // a new source, or shift `csv` into format_spec. Only the second reading
+        // is reachable -- data_source appears in exactly three places
+        // (simple_pipeline, fan_in, assertion_subject) and every one separates
+        // sources with an arrow or a comma, so two sources are never adjacent.
+        // Preferring the shift picks the sole legal parse.
+        prec.right(seq("stdin", optional($.format_spec))),
         seq("subscribe", "(", $.string_literal, ",", $.string_literal, ")"),
         seq("cdc", "(", $.string_literal, ",", $.string_literal, ")"),
         seq("grpc", "(", $.string_literal, ",", $.string_literal, ")"),
