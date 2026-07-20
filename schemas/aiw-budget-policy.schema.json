@@ -69,7 +69,11 @@
         "required": ["id", "tier", "cost_model", "requires_manual_approval"],
         "additionalProperties": false,
         "properties": {
-          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "id": {
+            "type": "string",
+            "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "gemini-cli", "jules", "notebooklm"],
+            "description": "Closed allowlist. The tier-keyed guards below constrain the shape GIVEN a tier, so an UNPINNED id could declare itself local-seat with no receipt issuer and bill for free. Adding a provider must be a deliberate schema change, which is the allowlist semantics this file already claims."
+          },
           "tier": {"type": "string", "enum": ["local-seat", "metered-cloud"]},
           "cost_model": {
             "type": "string",
@@ -189,7 +193,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "description": "Router preference order. Entries must be declared provider ids — that cross-reference is enforced in load_policy(), which JSON Schema cannot express.",
-      "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+      "items": {"type": "string", "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "gemini-cli", "jules", "notebooklm"]}
     }
   }
 }

@@ -308,6 +308,33 @@ class PolicySchemaTests(unittest.TestCase):
     def test_shipped_policy_validates(self):
         self.assertEqual(POLICY, load_policy(aiw_budget_gate.POLICY_PATH))
 
+    def test_an_unpinned_provider_id_is_rejected(self):
+        # The tier-keyed guards constrain the shape GIVEN a tier, and the
+        # per-id pins only bind the seven known providers. An EIGHTH id was
+        # unconstrained: it could declare itself local-seat with no receipt
+        # issuer, and reserve + release billed with no approval artifact.
+        # Inert today only because routing is hardcoded to pinned ids -- a
+        # property of the call sites, not a guarantee of this schema.
+        def mutate(policy):
+            policy["providers"].append({
+                "id": "jules-v2", "tier": "local-seat",
+                "cost_model": "subscription-or-local",
+                "requires_manual_approval": False,
+            })
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_a_pinned_provider_cannot_be_renamed_out_of_its_pin(self):
+        # Renaming sidesteps a per-id pin: the constraint keys on the id, so
+        # changing the id escapes it. The closed enum is what stops this.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["id"] = "jules-v2"
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
     def test_metered_provider_cannot_be_downgraded_to_local_seat(self):
         # The tier-keyed guards constrain the shape GIVEN a tier -- but tier is
         # editable in the same diff. Downgrading jules to local-seat escaped
@@ -414,7 +441,26 @@ class PolicySchemaTests(unittest.TestCase):
             self._written(mutate)
 
     def test_selection_order_cannot_name_an_undeclared_provider(self):
+        # Two layers reject an unroutable selection_order entry, and this test
+        # targets the SECOND deliberately. The id enum catches ids that are not
+        # known at all, so an entry like "shadow-provider" now fails at the
+        # schema before load_policy's cross-reference check ever runs. The
+        # cross-reference is still the only thing catching a KNOWN id that this
+        # policy does not declare, so drop a real provider and route to it.
+        def mutate(policy):
+            # selection_order already lists notebooklm, so only drop the
+            # provider -- appending it too would trip uniqueItems first and
+            # test the wrong layer.
+            policy["providers"] = [p for p in policy["providers"]
+                                   if p["id"] != "notebooklm"]
+
         with self.assertRaisesRegex(ValueError, "undeclared providers"):
+            self._written(mutate)
+
+    def test_selection_order_rejects_a_wholly_unknown_id(self):
+        # The layer above: an id outside the allowlist never reaches the
+        # cross-reference check.
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
             self._written(lambda p: p["selection_order"].append("shadow-provider"))
 
     def test_duplicate_provider_ids_are_rejected(self):
