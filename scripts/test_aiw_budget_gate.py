@@ -2,8 +2,10 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-from aiw_budget_gate import _request_sha256, evaluate
+import aiw_budget_gate
+from aiw_budget_gate import _request_sha256, evaluate, load_policy
 
 
 ROOT = Path(__file__).parents[1]
@@ -287,6 +289,125 @@ class BudgetGateTests(unittest.TestCase):
             path = Path(directory) / "ledger.json"
             path.write_text(json.dumps(result), encoding="utf-8")
             self.assertEqual("allow", json.loads(path.read_text())["decision"])
+
+
+class PolicySchemaTests(unittest.TestCase):
+    """The policy gates real spend and arrives as an ordinary PR diff, so an
+    unrecognized or out-of-bounds key must fail the load, not slip through."""
+
+    def _written(self, mutate):
+        """Write a mutated copy of the shipped policy and load it."""
+        policy = json.loads(json.dumps(POLICY))
+        mutate(policy)
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "policy.json"
+        path.write_text(json.dumps(policy), encoding="utf-8")
+        return load_policy(path)
+
+    def test_shipped_policy_validates(self):
+        self.assertEqual(POLICY, load_policy(aiw_budget_gate.POLICY_PATH))
+
+    def test_unknown_root_key_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(lambda p: p.update({"max_spend_multiplier": 100}))
+
+    def test_unknown_provider_key_is_rejected(self):
+        # The concrete #772 finding: an out-of-range multiplier added to the
+        # metered `jules` provider left the whole suite green.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["cost_multiplier"] = 1000
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_unknown_defaults_key_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(lambda p: p["defaults"].update({"max_cost_eur": 2.0}))
+
+    def test_zero_cost_cap_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(lambda p: p["defaults"].update({"max_cost_usd": 0}))
+
+    def test_negative_cycle_cap_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(lambda p: p["cycle"].update({"max_cost_usd": -1}))
+
+    def test_zero_parallel_packets_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(lambda p: p["cycle"].update({"max_parallel_packets": 0}))
+
+    def test_zero_retries_is_accepted_as_a_tightening(self):
+        loaded = self._written(lambda p: p["defaults"].update({"max_retries": 0}))
+        self.assertEqual(0, loaded["defaults"]["max_retries"])
+
+    def test_unknown_cost_model_is_rejected(self):
+        def mutate(policy):
+            policy["providers"][0]["cost_model"] = "free-lunch"
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_missing_required_provider_field_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(lambda p: p["providers"][0].pop("tier"))
+
+    def test_metered_provider_without_receipt_issuer_is_rejected(self):
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider.pop("trusted_receipt_issuer")
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_metered_provider_cannot_drop_manual_approval(self):
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["requires_manual_approval"] = False
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
+    def test_selection_order_cannot_name_an_undeclared_provider(self):
+        with self.assertRaisesRegex(ValueError, "undeclared providers"):
+            self._written(lambda p: p["selection_order"].append("shadow-provider"))
+
+    def test_duplicate_provider_ids_are_rejected(self):
+        def mutate(policy):
+            policy["providers"].append(json.loads(json.dumps(policy["providers"][0])))
+        with self.assertRaisesRegex(ValueError, "duplicate provider ids"):
+            self._written(mutate)
+
+    def test_invalid_policy_exits_2_not_1(self):
+        """Exit 2 is 'fail closed / invalid'; exit 1 is a governed block. An
+        unloadable policy must never be mistaken for an ordinary denial."""
+        policy = json.loads(json.dumps(POLICY))
+        policy["defaults"]["max_cost_usd"] = -5
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "aiw-budget-policy.json"
+            path.write_text(json.dumps(policy), encoding="utf-8")
+            with mock.patch.object(aiw_budget_gate, "POLICY_PATH", path):
+                self.assertEqual(2, aiw_budget_gate.main(["--policy", str(path)]))
+
+    def test_valid_policy_block_still_exits_1(self):
+        """Control for the test above: with the shipped policy, a governed
+        block is exit 1, so exit 2 really does isolate invalidity."""
+        with tempfile.TemporaryDirectory() as directory:
+            req = Path(directory) / "request.json"
+            ledger = Path(directory) / "ledger.json"
+            cycle = Path(directory) / "cycle.json"
+            req.write_text(json.dumps(
+                request(job_id="cli-block", provider="gemini-cli",
+                        estimated_cost_usd=1.0)), encoding="utf-8")
+            with mock.patch.object(aiw_budget_gate, "LEDGER_PATH", ledger), \
+                    mock.patch.object(aiw_budget_gate, "CYCLE_LEDGER_PATH", cycle), \
+                    mock.patch.object(aiw_budget_gate, "APPROVAL_PATH",
+                                      Path(directory) / "approval.json"), \
+                    mock.patch.object(aiw_budget_gate, "RECEIPT_PATH",
+                                      Path(directory) / "receipt.json"):
+                code = aiw_budget_gate.main([
+                    "--request", str(req), "--ledger", str(ledger),
+                    "--cycle-ledger", str(cycle),
+                    "--approval", str(Path(directory) / "approval.json"),
+                    "--receipt", str(Path(directory) / "receipt.json")])
+            self.assertEqual(1, code)
 
 
 if __name__ == "__main__":

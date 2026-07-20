@@ -120,7 +120,7 @@ def _budget_reserve(issue: dict, backend: str) -> tuple[bool, dict]:
     """Fail-closed budget preflight before any worker invocation. Returns
     ``(allowed, result)``; ANY error is a block, never an invocation."""
     try:
-        policy = budget._load(budget.POLICY_PATH)
+        policy = budget.load_policy(budget.POLICY_PATH)
         result = budget.reserve(policy, _budget_request(issue, backend),
                                 budget.CYCLE_LEDGER_PATH)
     except Exception as exc:  # a broken/absent policy must fail closed
@@ -134,7 +134,7 @@ def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
     must never break the loop. Local-seat backends carry no marginal spend."""
     try:
         budget.release(budget.CYCLE_LEDGER_PATH, f"aiw-{issue.get('number')}",
-                       actual_cost_usd, policy=budget._load(budget.POLICY_PATH))
+                       actual_cost_usd, policy=budget.load_policy(budget.POLICY_PATH))
     except Exception as exc:
         print(f"budget release skipped for #{issue.get('number')}: {exc}",
               file=sys.stderr)

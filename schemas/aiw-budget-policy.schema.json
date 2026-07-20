@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "aiw-budget-policy.schema.json",
+  "title": "AIW Budget Policy",
+  "description": "Spend policy for the AIW provider router — the file that decides how much real money one AFK cycle may spend. additionalProperties is false at every level so an unrecognized key is a load error, not a silent no-op.",
+  "type": "object",
+  "required": ["schema_version", "cycle", "defaults", "providers", "selection_order"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"],
+      "description": "Pinned deliberately — a version bump must arrive with a schema change, not on its own"
+    },
+    "cycle": {
+      "type": "object",
+      "description": "Aggregate caps across all packets in one cycle",
+      "required": ["max_cost_usd", "max_parallel_packets"],
+      "additionalProperties": false,
+      "properties": {
+        "max_cost_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Total USD one cycle may reserve plus spend"
+        },
+        "max_parallel_packets": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "description": "Concurrent reservations allowed in the cycle ledger"
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Per-job ceilings. A job request may tighten these (see _cap) but never widen them.",
+      "required": [
+        "max_cost_usd",
+        "max_total_tokens",
+        "max_model_calls",
+        "max_retries",
+        "max_runner_minutes",
+        "approval_required_above_usd"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "max_cost_usd": {"type": "number", "exclusiveMinimum": 0},
+        "max_total_tokens": {"type": "integer", "exclusiveMinimum": 0},
+        "max_model_calls": {"type": "integer", "exclusiveMinimum": 0},
+        "max_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero is a legitimate tightening (no retries), so this bound is inclusive unlike the other caps"
+        },
+        "max_runner_minutes": {"type": "number", "exclusiveMinimum": 0},
+        "approval_required_above_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Estimated cost above this needs a bound human-approval artifact"
+        }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The allowlist. _provider() rejects any id absent from this list.",
+      "items": {
+        "type": "object",
+        "required": ["id", "tier", "cost_model", "requires_manual_approval"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "tier": {"type": "string", "enum": ["local-seat", "metered-cloud"]},
+          "cost_model": {
+            "type": "string",
+            "enum": ["subscription-or-local", "provider-billing"]
+          },
+          "requires_manual_approval": {"type": "boolean"},
+          "trusted_receipt_issuer": {
+            "type": "string",
+            "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$",
+            "description": "Hostname that must issue the release receipt; only meaningful for metered-cloud"
+          }
+        },
+        "allOf": [
+          {
+            "description": "A metered provider bills real money: it must name a receipt issuer and require approval, because _validate_receipt refuses a null issuer and release() cannot reconcile without one.",
+            "if": {"properties": {"tier": {"const": "metered-cloud"}}, "required": ["tier"]},
+            "then": {
+              "required": ["trusted_receipt_issuer"],
+              "properties": {"requires_manual_approval": {"const": true}}
+            }
+          },
+          {
+            "description": "A local-seat provider costs no metered money and has no receipt to trust.",
+            "if": {"properties": {"tier": {"const": "local-seat"}}, "required": ["tier"]},
+            "then": {
+              "not": {"required": ["trusted_receipt_issuer"]},
+              "properties": {"cost_model": {"const": "subscription-or-local"}}
+            }
+          }
+        ]
+      }
+    },
+    "selection_order": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Router preference order. Entries must be declared provider ids — that cross-reference is enforced in load_policy(), which JSON Schema cannot express.",
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}
+    }
+  }
+}
