@@ -65,6 +65,44 @@ Two observations with the same key are the same observation.
 merge(A, B) := A ∪ B
 ```
 
+### Key-collision resolution (changed 2026-07-20)
+
+The dedup-key contract says two observations with the same key *are*
+the same observation — but the type cannot enforce it, so divergent
+payloads under one key are representable and the merge must resolve
+them deterministically. Prior to 2026-07-20 this resolution was
+**first-write-wins**, which let input order leak into the output:
+the algebraic audit in hari
+(GuitarAlchemist/hari#27, `docs/research/2026-07-20-hex-merge-algebraic-audit.md`)
+showed first-write-wins falsifies the CRDT reproducibility claim on
+representable input and is the sole root cause of an associativity
+failure in carried re-merges.
+
+The resolution is now an **associative, commutative, idempotent
+fold** over the version multiset of each key:
+
+- **Identical payloads** → that payload (true duplicates collapse).
+- **Same variant, divergent weight/evidence/claim_key** → keep the
+  variant at the **minimum** weight (conservative confidence), with
+  the lexicographically least claim_key and evidence.
+- **Divergent variants** → the source has contradicted itself within
+  a single observation slot. Nothing licenses picking a winner, and
+  the vocabulary has a value for exactly this: resolve to
+  `variant=C` at the **minimum** weight (matching the Belnap `min`
+  convention). The resolved observation keeps its original `source`
+  — it is a resolved *base* observation, not a `demerzel-merge`
+  synthesis, and does not appear in the contradictions list. Its
+  evidence marker is derived from the key alone
+  (`self-conflict:{source}|{diagnosis_id}|r{round}|o{ordinal}`),
+  never from the version count or contents, then folded through
+  lexicographic `min` with the versions' own evidence — so the fold
+  groups identically however versions are split across merge
+  boundaries.
+
+Because the fold is associative-commutative-idempotent, resolving in
+stages (carried merges) yields the same observation as resolving
+flat, and the G-Set laws above hold over the resolved state.
+
 This makes the state a **state-based CRDT**, specifically a G-Set
 (grow-only set):
 
@@ -189,6 +227,26 @@ The same applies on the negative side: tars `D` ("seems unhelpful")
 + ix `F` ("execution refuted") is a stronger negative conclusion,
 not a conflict.
 
+### Synthesis round stamp (changed 2026-07-20)
+
+A synthesized `C` observation (direct or meta-conflict) is stamped
+
+```
+round = min(parent_a.round, parent_b.round)
+```
+
+**not** `max`. The synthesis is supported only while **both** parents
+are inside the staleness window, and the pair coexists iff
+`min(parents) >= cutoff` — so the derived `C` expires exactly when
+its older parent does. The previous `max` stamp created **ghost
+contradictions**: a carried `C` outlived its older parent's staleness
+window, so a consumer carrying merged state forward and one
+recomputing from raw evidence got different answers to "is this
+claim contradictory?" (GuitarAlchemist/hari#27, audit §4). This is
+contradiction-preservation, not contradiction-immortality: the
+caller's staleness window defines what evidence is live, and a
+derivation is supported only while all of its evidence is.
+
 ## Meta-Conflict Rule (cross-aspect contradiction)
 
 The Belnap table handles **same-aspect** contradictions. But a
@@ -217,6 +275,7 @@ for each action_key with observations from multiple sources:
             source       = "demerzel-merge",
             claim_key    = f"{action_key}::meta_conflict",
             variant      = C,
+            round        = min(pos_obs.round, neg_obs.round),  # see "Synthesis round stamp"
             weight       = min(pos_obs.weight, neg_obs.weight),
             evidence     = f"cross-aspect: {pos_obs.source}:{pos_obs.aspect}:{pos_obs.variant} "
                            f"vs {neg_obs.source}:{neg_obs.aspect}:{neg_obs.variant}",
@@ -231,6 +290,29 @@ is claiming a constraint).
 The synthesized observation has a distinct `claim_key` ending in
 `::meta_conflict` so it doesn't collide with direct contradictions
 on the same action.
+
+## Derived observations are cache, not evidence (step 0, added 2026-07-20)
+
+Synthesized observations carry `source = "demerzel-merge"`. They are
+**derived cache**, not evidence: an implementation MUST drop incoming
+observations with the merge's own source as step 0 of the pipeline,
+before dedup, and re-derive all synthesis from the surviving base
+evidence on every merge.
+
+Rationale (GuitarAlchemist/hari#27, audit §7 item 3, found by a
+randomized probe after the key-collision fix alone proved
+insufficient): a carried synthesis derived from a *partial view* —
+before a later key-collision resolution or staleness expiry changed
+its parents — otherwise survives into states where a fresh
+derivation would not produce it. The base-evidence fold cannot fix
+that, because synthesis is derived state. Evidence-recompute is
+authoritative; synthesis is a pure function of the surviving base
+observations.
+
+With step 0, key-collision resolution, and the min round stamp
+together, **the merge is a pure, order-independent function of the
+base-evidence multiset**: carried re-merges agree with flat merges
+and with evidence recomputes under any staleness window.
 
 ## Derivation: observations → distribution
 
@@ -296,6 +378,22 @@ Any implementation of this merge MUST satisfy the following tests:
    at the same claim_key must be the same regardless of which
    observation was added first.
 
+Added 2026-07-20 (GuitarAlchemist/hari#27 — the prior obligations
+held only conditionally on globally distinct dedup keys; these make
+the purity claim unconditional):
+
+7. **Unconditional order-independence:** obligations 1–3 must hold
+   for ALL representable input, including key collisions with
+   divergent payloads — not only for well-formed input with
+   distinct dedup keys.
+8. **Carried state equals evidence recompute:** merging a previous
+   `MergedState`'s observations together with new observations must
+   equal merging the union of all base observations flat, under
+   every staleness window.
+9. **Derived-cache invariance:** incoming observations with
+   `source = "demerzel-merge"` must not affect the output — they
+   are dropped at step 0 and re-derived.
+
 The `demerzel-merge` source observations (the synthesized
 contradictions) MUST be deterministic in their ordinals so the
 merge is reproducible — two independent runs on the same input
@@ -321,5 +419,21 @@ produce the same output.
 
 ## Version
 
+- **1.1** (2026-07-20) — purity fixes from the hari algebraic audit
+  (GuitarAlchemist/hari#27,
+  `hari:docs/research/2026-07-20-hex-merge-algebraic-audit.md`).
+  One doctrine applied three times: the merge is a pure,
+  order-independent function of the base-evidence multiset.
+  (1) Key-collision resolution replaces first-write-wins with an
+  associative-commutative-idempotent fold — first-write-wins broke
+  order-independence and associativity on representable input.
+  (2) Synthesized `C` observations are stamped
+  `round = min(parents)`, not `max` — the max stamp created ghost
+  contradictions where carried state disagreed with an evidence
+  recompute. (3) Step 0: incoming `demerzel-merge` observations are
+  derived cache, dropped and re-derived — carried syntheses from
+  partial views otherwise survived states a fresh derivation would
+  not produce. Fixtures 08–10 pin the new semantics; fixture 06's
+  description updated (expected output unchanged).
 - **1.0** (2026-04-11) — initial specification. Six variants,
   Belnap-extended table, meta-conflict rule, staleness budget K=5.
