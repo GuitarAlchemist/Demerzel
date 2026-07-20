@@ -47,10 +47,14 @@ implement / test.
 
 **Mapping to Demerzel — measured, not assumed.** An earlier draft asserted "our `CLAUDE.md` is large by
 this standard." That was wrong, and it was the load-bearing premise for the riskiest adoption item.
-Measured: **124 lines / 1,150 words**, with the five `.claude/rules/*.md` files totalling 6 lines.
+Measured: **124 lines / 1,150 words**, with the six `.claude/rules/*.md` files totalling 6 lines
+(one line each).
 Against the 300–500-instruction budget cited above, that is roughly an order of magnitude *under* the
-threshold. `docs/methodology/agentic-engineering.md` independently reached the same conclusion
-("already lean"), and this doc had contradicted its own companion without noticing.
+threshold. `docs/methodology/agentic-engineering.md` reaches the same conclusion ("already lean"), and this doc
+had contradicted its own companion without noticing. That is agreement, not corroboration: its stated
+figures (~85 / ~72) are themselves unmeasured and off by roughly 30% against the real 124 / 94. Two
+docs agreeing directionally on numbers neither of them counted is exactly the habit this correction
+exists to break.
 
 The real finding is narrower and duller: the surface is **duplicated**, not oversized — several rules
 are restated 2–4× across `CLAUDE.md`, `AGENTS.md`, and `.claude/rules/`. De-duplication is worth doing
@@ -99,7 +103,8 @@ setup (one-time)  →  grill-with-docs | wayfinder   →  [to-spec → to-ticket
   Charts a **map as a GitHub issue with typed, blocking sub-issues** (research / grilling / prototype /
   task); you close them one at a time until the route clears, then `to-spec`. **We have no
   map-as-issue-tree planning primitive** — strong fit for cross-repo cycles (and it is what our Planner
-  MVP #529 execution-graph should *feed*).
+  MVP #529 execution-graph should *feed* — note #529 is now **CLOSED**, so treat it as shipped
+  groundwork rather than in-flight work).
 - `[NEW]` **`handoff`** — compress current context into a **disposable temp-file** (OS temp, *not* the
   repo) for a fresh/other agent (even a different harness) to pick up: read-before-write, reference
   artifacts by path (don't duplicate), redact secrets, include a *suggested-skills* section, take the
@@ -134,7 +139,9 @@ setup (one-time)  →  grill-with-docs | wayfinder   →  [to-spec → to-ticket
   not GitHub-locked) and writes `CONTEXT.md` + ADR + triage docs. Our machinery hardcodes GitHub Issues;
   a local-markdown fallback matters for repos/sessions without `gh` auth.
 - `[SHARPENS]` **Skill descriptions are a budget.** His 38 skills cost ~660 always-loaded tokens by being
-  terse and user-invoked. Model-only skills set **`user_invocable: false`** to stay out of the human
+  terse and user-invoked. Skills opt out of model invocation with **`disable-model-invocation: true`**
+  (the real key — an earlier draft invented `user_invocable: false`, which appears in no skill at
+  either scope). It keeps them out of the human
   menu *and* out of description leakage. **Audit our 69 project skills** (measured; +35 at user scope) via `demerzel-context-budget`.
 
 ## 2. Loop & AFK mechanics (Ralph, sandbox, worktrees)
@@ -282,9 +289,9 @@ call.** Grouped so the human can pick a slice.
 | A3 | Emit **red→green transition as evidence** + one-test-at-a-time in `tdd` skill | Adopt now | low | `.claude/skills/tdd/` |
 | A4 | `demerzel-self-diagnostic`: treat **confident negatives + unsearched claims** as investigation triggers | Adopt now | low | skill prompt |
 | A5 | **Front-load invariants / end-load task** ordering rule; **spec-vs-tickets** vocabulary | Adopt now | low | this doc + skills |
-| P1 | **Slim CLAUDE.md** by the admission test; migrate enforceable rules to hooks/validators | **Propose** | **high (one-way)** | `CLAUDE.md`, `.claude/rules/` |
+| P1 | ~~Slim CLAUDE.md by the admission test~~ **Premise retracted in §0** — the file measured an order of magnitude under the budget. De-duplication (#775) is the real work and needs no instruction-budget argument | Withdrawn | — | #775 |
 | P2 | ~~Build triage machinery~~ **`~/.claude/skills/triage/` already installed.** Only the one-category+one-state invariant + `.out-of-scope/` ADR non-goals are net-new | Corrected | med | existing `triage` |
-| P3 | **`wayfinder`-style map-as-issue-tree** planner (feeds Planner MVP #529) | Propose | med | new skill + Planner |
+| P3 | **`wayfinder`-style map-as-issue-tree** planner (would build on the Planner work from #529, now closed — re-scope against what actually shipped) | Propose | med | new skill + Planner |
 | P4 | ~~Build a `handoff` skill~~ **`~/.claude/skills/handoff/` already installed**, argument-hint and all. Net-new is only the doctrine that it stays distinct from `/digest` | Corrected | low | existing `handoff` |
 | P5 | Budget gate: **provider-native token accounting** + separate **AFK monthly-reset ledger** | Propose | med | `scripts/aiw_budget_gate.py` |
 | P6 | Routing rule: **planning = frontier model, implementation = cheap model** (parametric vs contextual) | Propose | low | routing policy |
