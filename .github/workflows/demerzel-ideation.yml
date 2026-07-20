@@ -88,21 +88,24 @@ jobs:
           RECENT=$(git log --oneline -10)
 
           # Recent changes (what files changed)
-          CHANGED=$(git diff --name-only HEAD~5..HEAD 2>/dev/null | head -30)
+          # `shell: bash` runs with `set -eo pipefail`, so a `| head -N` that closes
+          # the pipe early kills the writer with SIGPIPE and fails the step with 141.
+          # Use each tool's own limit where it has one; tolerate the pipe where it does not.
+          CHANGED=$( { git diff --name-only HEAD~5..HEAD 2>/dev/null || true; } | head -30)
 
           # Open issues across all repos
-          DEMERZEL_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --json number,title --jq '.[].title' | head -15)
-          IX_ISSUES=$(gh issue list --repo GuitarAlchemist/ix --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
-          TARS_ISSUES=$(gh issue list --repo GuitarAlchemist/tars --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
-          GA_ISSUES=$(gh issue list --repo GuitarAlchemist/ga --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
+          DEMERZEL_ISSUES=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --limit 15 --json number,title --jq '.[].title')
+          IX_ISSUES=$(gh issue list --repo GuitarAlchemist/ix --state open --limit 5 --json number,title --jq '.[].title' 2>/dev/null)
+          TARS_ISSUES=$(gh issue list --repo GuitarAlchemist/tars --state open --limit 5 --json number,title --jq '.[].title' 2>/dev/null)
+          GA_ISSUES=$(gh issue list --repo GuitarAlchemist/ga --state open --limit 5 --json number,title --jq '.[].title' 2>/dev/null)
 
           # Open PRs
-          GA_PRS=$(gh pr list --repo GuitarAlchemist/ga --state open --json number,title --jq '.[].title' 2>/dev/null | head -5)
+          GA_PRS=$(gh pr list --repo GuitarAlchemist/ga --state open --limit 5 --json number,title --jq '.[].title' 2>/dev/null)
 
           # Conscience state
           CONSCIENCE=""
           if [ -f "state/conscience/weekly/2026-03-17-weekly.report.json" ]; then
-            CONSCIENCE=$(jq -r '.self_reflection' state/conscience/weekly/*.report.json 2>/dev/null | head -5)
+            CONSCIENCE=$( { jq -r '.self_reflection' state/conscience/weekly/*.report.json 2>/dev/null || true; } | head -5)
           fi
 
           # Build context
@@ -230,7 +233,8 @@ jobs:
           fi
 
           # Extract JSON from response
-          REVIEW_JSON=$(echo "$REVIEW_TEXT" | sed -n '/\[/,/\]/p' | head -50)
+          # Same pipefail/SIGPIPE hazard as the context step above.
+          REVIEW_JSON=$( { echo "$REVIEW_TEXT" | sed -n '/\[/,/\]/p' || true; } | head -50)
           echo "$REVIEW_JSON" > /tmp/review.json
 
           APPROVED=$(echo "$REVIEW_JSON" | jq '[.[] | select(.verdict == "APPROVE")] | length' 2>/dev/null || echo "0")
