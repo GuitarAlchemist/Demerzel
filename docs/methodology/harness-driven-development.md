@@ -230,6 +230,7 @@ see `.claude/skills/teach`.)
 
 This is the repo's main anti-sprawl rule, and it governs exactly the decision an
 adoption table makes: before a proposal adds a skill, it has to establish that
-nothing existing already does the job. Two rounds of review found five adoption
-items proposing to rebuild skills that were already installed — this rule is the
-check that should have caught them.
+nothing existing already does the job. A review round found four adoption items
+proposing to rebuild five skills that were already installed (`implement`,
+`handoff`, `triage`, `prototype`, `review`) — this rule is the check that should
+have caught them.
