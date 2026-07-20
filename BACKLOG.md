@@ -50,9 +50,10 @@ follows its precondition chain, not its interest level.
   -p 'test_*.py'` block, guarded on `python` being present, failing on non-zero.
   Converts 21 already-written test modules from decorative into load-bearing.
   *Expect pre-existing red tests on first run — that is the finding, not a blocker.*
-  *Blocked on #778 (the oracle currently swallowed native failures) and #780 (the
-  grammar leg cannot pass). Follow #778's `Assert-NativeSuccess` pattern — a bare
-  native call in `verify.ps1` is discarded, not fatal.*
+  *#778 has merged, so `verify.ps1` now checks `$LASTEXITCODE` — follow its
+  `Assert-NativeSuccess` pattern, because a bare native call is discarded, not
+  fatal. Still blocked on #780: the grammar leg cannot pass, so the oracle stays
+  red regardless of what this entry adds.*
   *Note: consider extending to Pester (`tests/powershell/`), which C3a depends on.*
 
 - [ ] 🔒 **C6 — Finish the `demerzel_kit` migration for `compliance_report.py`.**
@@ -155,11 +156,15 @@ follows its precondition chain, not its interest level.
   revisit after a release, and if nothing external consumes it by then, that is the
   finding. *(An earlier draft of this entry stated the reference counts exactly
   backwards.)*
-- **29 scripts recomputing the repo root** two different ways despite `kit.ROOT`
-  (24 via `parents[1]`, 5 via `parent.parent`). The raw grep returns 30; one of
-  those is `demerzel_kit.py:49`, which *is* `kit.ROOT` and cannot duplicate itself.
-  `demerzel_halt.py:71` is the clearest waste — it recomputes inline while already
-  importing `demerzel_kit as kit` at :58.
+- **Many scripts recompute the repo root** two different ways (`Path(__file__).resolve().parents[1]`
+  and `.parent.parent`) despite `kit.ROOT`. `demerzel_halt.py:71` is the clearest
+  waste — it recomputes inline while already importing `demerzel_kit as kit` at :58.
+  **No count is given here deliberately.** Four successive hand-counts of this were
+  wrong (17 → 21 → 30 → 29), each correction introducing a new error: one included
+  `demerzel_kit.py:49`, which *is* `kit.ROOT` and cannot duplicate itself; another
+  counted a docstring in `test_apply_ml_feedback.py` that says the test *avoids*
+  the pattern. The number is derivable and should be generated, not written — see
+  #789. Until then, run the grep rather than trusting a figure in this file.
   Too small to spend a cycle on; fold into whichever entry touches the file.
 
 ## agent-blackbox install-audit follow-ups
