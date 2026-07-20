@@ -141,12 +141,25 @@ follows its precondition chain, not its interest level.
   tests. `aiw_lane_selector.py` and `aiw_prompt_pack.py` do have test coverage.
   This is a `/demerzel evolve` question, not a refactor — and cleanup candidates
   are usually false positives until verified against docs and consumer counts.
-  **`planner_*.py` was wrongly listed here and has been removed**: it merged two
-  commits ago (`728bd84` / #767, `08ec2c8` / #766), and only
-  `planner_critical_path.py` lacks a non-test reference. It was exactly the false
-  positive the sentence above warns about.
-- **30 scripts recomputing the repo root** two different ways despite `kit.ROOT`
-  (25 via `parents[1]`, 5 via `parent.parent`).
+  **`planner_*.py` is listed separately below** rather than as a dead-module
+  candidate: it merged two commits ago (`728bd84` / #767, `08ec2c8` / #766), which
+  is far too early to call anything dead. It was the false positive the sentence
+  above warns about.
+
+- **The `planner_*` cluster has no external consumer yet.** All four modules
+  reference only each other: `planner_critical_path` is imported by
+  `planner_merge_simulator.py:34` and `planner_scheduler.py:31` (6 references, the
+  most of the four), while the cluster's apex `planner_merge_simulator` has **zero**
+  references outside its own test. So intra-cluster imports are not evidence of
+  production use — they describe a self-contained island. Not actionable now;
+  revisit after a release, and if nothing external consumes it by then, that is the
+  finding. *(An earlier draft of this entry stated the reference counts exactly
+  backwards.)*
+- **29 scripts recomputing the repo root** two different ways despite `kit.ROOT`
+  (24 via `parents[1]`, 5 via `parent.parent`). The raw grep returns 30; one of
+  those is `demerzel_kit.py:49`, which *is* `kit.ROOT` and cannot duplicate itself.
+  `demerzel_halt.py:71` is the clearest waste — it recomputes inline while already
+  importing `demerzel_kit as kit` at :58.
   Too small to spend a cycle on; fold into whichever entry touches the file.
 
 ## agent-blackbox install-audit follow-ups
@@ -159,9 +172,10 @@ protected-paths list.
 
 *Caveat: that premise does not currently check out. Neither `harness-audit` nor
 `response-quality` appears anywhere in `agent-blackbox.yml` (its steps are
-Checkout / Set up Python / Collect PR evidence / Generate risk report / Comment /
-Upload artifacts / Enforce verdict). Either the workflow changed since the doc was
-written, or the credits live somewhere else entirely. Verify before acting on the
+Checkout target repo / Set up Python / Checkout Agent Blackbox / Collect PR
+evidence / Generate risk report / Comment risk report / Upload risk artifacts /
+Enforce verdict -- eight, including two distinct checkouts). Either the workflow
+changed since the doc was written, or the credits live somewhere else entirely. Verify before acting on the
 "not loop-eligible" conclusion below, which rests entirely on it.*
 
 - **Not loop-eligible by construction.** Closing these needs either an operator
