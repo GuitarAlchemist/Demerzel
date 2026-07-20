@@ -308,6 +308,20 @@ class PolicySchemaTests(unittest.TestCase):
     def test_shipped_policy_validates(self):
         self.assertEqual(POLICY, load_policy(aiw_budget_gate.POLICY_PATH))
 
+    def test_metered_provider_cannot_claim_a_free_cost_model(self):
+        # The metered branch pinned only the issuer and approval flag, so a
+        # paid provider could label itself "subscription-or-local" and pass.
+        # The local-seat branch already pinned cost_model; this restores the
+        # symmetry. cost_model is read by no production code today, which is
+        # exactly why a wrong value would go unnoticed.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"]
+                            if p["tier"] == "metered-cloud")
+            provider["cost_model"] = "subscription-or-local"
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self._written(mutate)
+
     def test_unknown_root_key_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
             self._written(lambda p: p.update({"max_spend_multiplier": 100}))

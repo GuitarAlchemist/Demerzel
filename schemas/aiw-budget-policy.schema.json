@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "aiw-budget-policy.schema.json",
   "title": "AIW Budget Policy",
+  "$comment": "exclusiveMinimum does NOT reject Infinity or NaN: Python's json.load accepts those literals, inf > 0 is true, and every NaN comparison is false. Finiteness is enforced elsewhere -- by type:integer on the integer fields, and by _number() (math.isfinite) in scripts/aiw_budget_gate.py for the float fields. Any NEW numeric field added here must also be read through _number(), or it loses that guarantee.",
   "description": "Spend policy for the AIW provider router — the file that decides how much real money one AFK cycle may spend. additionalProperties is false at every level so an unrecognized key is a load error, not a silent no-op.",
   "type": "object",
   "required": ["schema_version", "cycle", "defaults", "providers", "selection_order"],
@@ -87,7 +88,10 @@
             "if": {"properties": {"tier": {"const": "metered-cloud"}}, "required": ["tier"]},
             "then": {
               "required": ["trusted_receipt_issuer"],
-              "properties": {"requires_manual_approval": {"const": true}}
+              "properties": {
+                "requires_manual_approval": {"const": true},
+                "cost_model": {"const": "provider-billing"}
+              }
             }
           },
           {

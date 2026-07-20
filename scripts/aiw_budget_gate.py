@@ -33,7 +33,7 @@ def _load(path: Path) -> dict[str, Any]:
     return value
 
 
-def load_policy(path: Path = None) -> dict[str, Any]:
+def load_policy(path: Path | None = None) -> dict[str, Any]:
     """Load the budget policy and validate it against its schema, fail-closed.
 
     The policy decides how much real money a cycle may spend and arrives as an
