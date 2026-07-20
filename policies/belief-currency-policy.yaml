@@ -1,5 +1,5 @@
 name: belief-currency-policy
-version: "1.0.0"
+version: "1.1.0"
 effective_date: "2026-03-17"
 description: How Demerzel and Seldon keep their beliefs current — triggers, schedules, and decay rules
 
@@ -93,6 +93,34 @@ integrations:
   auto_remediation: "Stale beliefs are a staleness gap — auto-refresh via recon"
   ml_feedback: "Staleness predictor pipeline proactively identifies at-risk beliefs"
   alignment: "Confidence gating uses effective_confidence (after decay), not stored_confidence"
+
+# Enforcement (added 1.1.0, 2026-07-20). Until this version the rules
+# above were declaration only — a 2026-07-20 machine replay of
+# state/beliefs/ through hari's hexavalent substrate found a belief held
+# at T@0.8 for four months alongside its own contradicting evidence
+# (GuitarAlchemist/hari docs/research/2026-07-20-demerzel-belief-replay.md).
+# Policy without a mechanism is the measured failure mode
+# (hari docs/research/2026-07-20-compounding-strategy.md §2).
+enforcement:
+  ci_lint:
+    script: "scripts/belief_lint.py"
+    workflow: ".github/workflows/governance-validate.yml (beliefs job)"
+    fails_on:
+      - "unaddressed-contradiction — T/P verdict with contradicting evidence newer than last_updated"
+      - "assertion-without-evidence — non-U verdict with empty evidence"
+    warns_on:
+      - "dissent-held — T/P verdict with standing contradicting evidence (process-compliant; epistemically the substrate replay resolves this Contradictory)"
+      - "overconfident-with-dissent — confidence >= 0.85 alongside contradicting evidence"
+      - "expired — non-U verdict older than the 14-day expiry (promote via --strict-expiry once the March backlog is re-evaluated)"
+  substrate_audit:
+    description: >
+      The monthly "audit belief accuracy" item above is implemented by
+      replaying state/beliefs/ through hari's substrate: hari
+      scripts/demerzel/beliefs_to_trace.py -> hari-core replay. The lint
+      checks process compliance (did the holder re-evaluate?); the replay
+      checks epistemic compliance (does the verdict follow from the
+      evidence?). Divergence between a hand-maintained verdict and the
+      substrate verdict is a re-evaluation trigger.
 
 # Observability
 metrics:
