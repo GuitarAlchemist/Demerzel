@@ -136,19 +136,33 @@ follows its precondition chain, not its interest level.
   cycle.
 - **Possible dead modules** — `aiw_lane_selector.py`, `aiw_prompt_pack.py`,
   `poincare_roadmap.py`, `seldon_intelligence_dry_run.py`,
-  `streeling_tracer_bullet.py`, `planner_*.py` have no production callers (tests and
-  docs only). This is a `/demerzel evolve` question, not a refactor — and
-  cleanup candidates are usually false positives until verified against docs and
-  consumer counts.
-- **21 scripts recomputing the repo root** two different ways despite `kit.ROOT`.
+  `streeling_tracer_bullet.py` have no production callers. The last three are
+  deader than first stated — zero references anywhere outside this file, not even
+  tests. `aiw_lane_selector.py` and `aiw_prompt_pack.py` do have test coverage.
+  This is a `/demerzel evolve` question, not a refactor — and cleanup candidates
+  are usually false positives until verified against docs and consumer counts.
+  **`planner_*.py` was wrongly listed here and has been removed**: it merged two
+  commits ago (`728bd84` / #767, `08ec2c8` / #766), and only
+  `planner_critical_path.py` lacks a non-test reference. It was exactly the false
+  positive the sentence above warns about.
+- **30 scripts recomputing the repo root** two different ways despite `kit.ROOT`
+  (25 via `parents[1]`, 5 via `parent.parent`).
   Too small to spend a cycle on; fold into whichever entry touches the file.
 
 ## agent-blackbox install-audit follow-ups
 
 `docs/harness-observability.md` (:36, :96) points here for these. They are
-tracked, not queued: the `loop-controls` and `response-quality` evidence credits
-live as **workflow step strings** inside `.github/workflows/agent-blackbox.yml`,
-which is in the protected-paths list. The supervised loop cannot edit it.
+tracked, not queued: the `harness-audit` and `response-quality` evidence credits
+are described by `docs/harness-observability.md` as living in **workflow step
+strings** inside `.github/workflows/agent-blackbox.yml`, which is in the
+protected-paths list.
+
+*Caveat: that premise does not currently check out. Neither `harness-audit` nor
+`response-quality` appears anywhere in `agent-blackbox.yml` (its steps are
+Checkout / Set up Python / Collect PR evidence / Generate risk report / Comment /
+Upload artifacts / Enforce verdict). Either the workflow changed since the doc was
+written, or the credits live somewhere else entirely. Verify before acting on the
+"not loop-eligible" conclusion below, which rests entirely on it.*
 
 - **Not loop-eligible by construction.** Closing these needs either an operator
   workflow edit or a relaxation of the audit rule in `agent-blackbox` itself.
