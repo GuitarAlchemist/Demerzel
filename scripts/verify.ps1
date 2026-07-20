@@ -4,7 +4,12 @@ $root = Split-Path -Parent $PSScriptRoot
 
 Get-ChildItem -LiteralPath $root -Recurse -File -Include *.json |
     Where-Object { $_.FullName -notmatch '\\node_modules\\|\\.git\\' } |
-    ForEach-Object { Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json | Out-Null }
+    # -AsHashtable: npm lockfiles legitimately use "" as the root package key.
+    # That is valid JSON, but ConvertFrom-Json rejects an empty-string property
+    # name unless it deserializes to a hashtable - which made the repo oracle
+    # fail on a well-formed file. Parsing is still the check; only the target
+    # type changes.
+    ForEach-Object { Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json -AsHashtable | Out-Null }
 
 if (Test-Path -LiteralPath (Join-Path $root 'tree-sitter-ixql/package.json')) {
     Push-Location (Join-Path $root 'tree-sitter-ixql')
