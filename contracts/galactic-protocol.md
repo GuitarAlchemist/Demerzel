@@ -1,11 +1,12 @@
 # Galactic Protocol Specification
 
-Version: 1.3.0
+Version: 1.4.0
 Effective: 2026-03-15
 Updated: 2026-07-21
 
 ## Changelog
 
+- **1.4.0 (2026-07-21)** — local live-session bridge — adds an implemented stdio MCP transport, Codex lifecycle-hook delivery, shared `~/.agents/claims.jsonl` interoperability, a machine-readable claim-row contract, and behavioral tests. Desktop activation requires hook trust and a new chat.
 - **1.3.0 (2026-07-21)** — status-honesty amendment — spec now distinguishes IMPLEMENTED from DRAFT; no protections are claimed that code does not provide. Adds the §Implementation Status table, the Registered Machine Emitters table (Rule 1 amendment), documents the observer model for compliance reports, fixes the v1.1 version drift in the embedded issue template, and voids the lapsed 2026-04-15 integrity hard-reject deadline until reissued. Append-only: no sections removed; unimplemented sections carry explicit status labels instead.
 - **1.2.0 (2026-03-23)** — prior baseline (Message Integrity layer specified); see git history.
 
@@ -13,19 +14,20 @@ Updated: 2026-07-21
 
 This document defines the behavioral semantics of the Galactic Protocol — the communication and persistence protocol between Demerzel and consumer repos (ix, tars, ga). Contract schemas in `schemas/contracts/` define message formats; this document defines when and how those messages flow.
 
-## Implementation Status (v1.3.0)
+## Implementation Status (v1.4.0)
 
-What this spec claims vs. what code actually provides, as of 2026-07-21. Only the compliance-report flow is live end-to-end. This table is normative for honesty: any claim elsewhere in this document counts only as strong as its status row here.
+What this spec claims vs. what code actually provides, as of 2026-07-21. Only the compliance-report governance flow and the local session-coordination tracer bullet have live implementations. This table is normative for honesty: any claim elsewhere in this document counts only as strong as its status row here.
 
 | Message type / layer | Status | Evidence |
 |---|---|---|
 | `compliance-report` | **IMPLEMENTED** | Emitted daily by `scripts/compliance_report.py` (observer model — see below) into `state/oversight/compliance-reports/` (~110 instances; gitignored runtime state). Consumed by the ix `violation_pattern_detector` producer → `state/oversight/ml-recommendations/` → `scripts/apply_ml_feedback.py`. Instances are schema-validated by `scripts/validate_governance.py`. |
+| Local session coordination | **IMPLEMENTED — ACTIVATION REQUIRES HOOK TRUST** | `scripts/galactic_bridge.py`, `scripts/galactic_hook.py`, installer, `session-claim.schema.json`, and `scripts/test_galactic_bridge.py`. User must review `/hooks` and start a new chat; idle-chat push is not implemented. |
 | `directive` (JSON message instance) | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. Directives flow today as GitHub Issues (§Directive → GitHub Issue Mapping), not as protocol JSON messages. |
 | `knowledge-package` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
 | `belief-snapshot` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
 | `learning-outcome` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
 | `external-sync-envelope` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced; no adapters defined. |
-| Message Integrity layer (§Message Integrity) | **SPECIFIED — NOT IMPLEMENTED** | No receiver verifies origin, hash, timestamp, or replay. `state/security/processed-messages.json` does not exist. The compliance-report emitter *attaches* integrity fields, but nothing checks them on receipt. The 2026-04-15 hard-reject deadline (§Backward Compatibility) passed unenforced and is **void until reissued**. |
+| Message Integrity layer (§Message Integrity) | **SPECIFIED — NOT IMPLEMENTED for governance messages** | No governance receiver verifies origin, hash, timestamp, or replay. `state/security/processed-messages.json` does not exist. The compliance-report emitter *attaches* integrity fields, but nothing checks them on receipt. The 2026-04-15 hard-reject deadline passed unenforced and is void until reissued. The separate local session ledger does verify its own content hashes. |
 
 New message types or integrity enforcement move to IMPLEMENTED only when an emitter/verifier ships with instances or checks on disk — no artifact without consumer.
 
@@ -44,7 +46,7 @@ Compliance reports are synthesized **centrally by Demerzel**: `scripts/complianc
 | `learning-outcome.schema.json` | Consumer → Demerzel | PDCA/5 Whys/knowledge results |
 | `external-sync-envelope.schema.json` | Bidirectional | External system wrapper |
 
-Only `compliance-report` has a live emitter as of v1.3.0 — see §Implementation Status for the authoritative per-type status.
+Only `compliance-report` has a live governance-message emitter as of v1.4.0 — see §Implementation Status for the authoritative per-type status. Local coordination uses its separate experimental event namespace.
 
 ## Protocol Flows
 
@@ -91,7 +93,7 @@ Both require logged reasoning with specific constitutional citations.
 
 ## Message Integrity
 
-> **Status (v1.3.0): SPECIFIED — NOT IMPLEMENTED.** This entire section describes intended protections that no code currently provides. There is no receiver-side verification of origin, hash, timestamp, sequence, or replay; `state/security/` does not exist; content scanning is not performed. The section is retained per append-only discipline as the design target. Do not rely on any protection described here until this label is lifted in a future version.
+> **Status (v1.4.0): SPECIFIED — NOT IMPLEMENTED for governance messages.** This section describes intended protections that no governance-message receiver currently provides. There is no receiver-side verification of origin, hash, timestamp, sequence, or replay; `state/security/` does not exist; content scanning is not performed. The section is retained per append-only discipline as the design target. The local live-session ledger implements content-hash verification for its own experimental events only; that does not lift this status for directives, reports, snapshots, outcomes, packages, or envelopes.
 
 All Galactic Protocol messages must include integrity fields to prevent forgery, tampering, and replay attacks. This section was added per `policies/adversarial-resilience-policy.yaml` to close the blind spot identified in the HBR "Agents as Team Members" reflection.
 
@@ -110,9 +112,9 @@ Every protocol message (directive, compliance report, belief snapshot, learning 
 
 ### Verification Rules
 
-1. **Origin verification:** `origin_repo` must be a registered participant in the Galactic Protocol. `origin_agent` must be a valid persona in that repo **or a machine emitter listed in the Registered Machine Emitters table below** *(amended v1.3.0: every live message carries `origin_agent: "compliance-reporter"`, which is an emitter script, not a persona — the rule as originally written was violated by 100% of real traffic)*. Messages from unregistered origins are rejected.
+1. **Origin verification:** `origin_repo` must be a registered participant in the Galactic Protocol. `origin_agent` must be a valid persona in that repo **or a machine emitter listed in the Registered Machine Emitters table below**. Messages from unregistered origins are rejected.
 
-   **Registered Machine Emitters (v1.3.0):** machine emitters are scripts, not personas; they are valid `origin_agent` values under this rule.
+   **Registered Machine Emitters:** machine emitters are scripts, not personas; they are valid `origin_agent` values under this rule.
 
    | `origin_agent` | Emitter | Model |
    |---|---|---|
@@ -165,7 +167,7 @@ Beyond structural integrity, message content is scanned for adversarial patterns
 
 Existing messages without integrity fields are accepted during a **transition period ending 2026-04-15** with a governance warning logged. After 2026-04-15, messages without integrity fields are **hard-rejected** — no grace period, no override. Consumer repos must update their message generation to include integrity fields before this deadline. The transition period is not extendable without a constitutional amendment (requires human approval per Governance Promotion Protocol §Stage 2).
 
-> **v1.3.0 note:** the 2026-04-15 deadline passed with no rejection logic ever implemented — no message was ever warned or hard-rejected. The deadline is **void until reissued** in a future version alongside an actual verifier. Claiming an enforced deadline that code does not enforce would violate the status-honesty principle of this amendment.
+> **v1.3.0 status-honesty note:** the 2026-04-15 deadline passed with no rejection logic ever implemented — no message was ever warned or hard-rejected. The deadline is **void until reissued** in a future version alongside an actual verifier.
 
 ## Error Handling
 
@@ -408,7 +410,7 @@ Governance directives are materialized as GitHub Issues in the target repo.
 Per Galactic Protocol §1, valid rejection requires First Law or Second Law override with logged constitutional citations.
 
 ---
-*Issued via Galactic Protocol v1.3.0 — [directive schema](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/contracts/directive.schema.json)*
+*Issued via Galactic Protocol v1.4.0 — [directive schema](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/contracts/directive.schema.json)*
 ```
 
 ### Compliance Report → Issue Comment Mapping
@@ -510,12 +512,71 @@ Each agent role has a defined responsibility for Galactic Protocol messages:
 | `seldon` | Knowledge packages (inbound), learning outcomes (outbound) | Belief state file |
 | `integrator` | `reconnaissance-request`, cross-repo coordination | GitHub Issue comment |
 
+## Local Live Session Coordination
+
+The durable GitHub Issue and state-file flows above remain authoritative for
+governance directives and compliance. Local interactive agent sessions MAY use
+the Galactic live session bridge as a low-latency coordination transport for
+presence, work claims, handoffs, and acknowledgements.
+
+### Transport and state
+
+- The reference implementation is `scripts/galactic_bridge.py`, exposed to
+  Codex as a local stdio MCP server named `galactic`.
+- Presence and message events are appended to a host-local ledger outside the git worktree.
+  The default Windows location is
+  `%LOCALAPPDATA%/Demerzel/galactic-protocol/events.jsonl`.
+- `GALACTIC_STATE_ROOT` MAY override the state location for tests or a managed
+  shared host.
+- Repo/lane claims use the existing `~/.agents/claims.jsonl` fleet ledger and
+  its `~/.agents/README.md` schema. `GALACTIC_CLAIMS_PATH` MAY override it.
+- The transport MUST NOT open a network listener by default.
+
+### Session event semantics
+
+The experimental event namespace is `galactic.session-coordination/v0.1`:
+
+| Event | Meaning |
+|-------|---------|
+| `session.started` | Register session identity, repo, branch, lane, and working directory |
+| `session.heartbeat` | Refresh session presence; a session is live for 15 minutes |
+| `message.sent` | Address coordination text to one session or repo |
+| `message.delivered` | Record that a lifecycle hook surfaced the message once |
+| `message.acknowledged` | Confirm the receiving session handled the message |
+
+Every event in the live event ledger MUST carry the six Message Integrity fields
+from this protocol. Claim rows instead conform exactly to the existing fleet
+schema: `ts`, `repo`, `lane`, `status`, `session`, `evidence`, and optional
+`note`. Latest row per `(repo, lane)` wins. The claims ledger is deliberately an
+advisory collision-avoidance channel, not a distributed lock server.
+The committed machine-readable row contract is
+`schemas/contracts/session-claim.schema.json`.
+
+### Authority boundary
+
+Session coordination messages are peer context, not governance directives. A
+Codex hook MUST label injected message bodies as untrusted cross-session context
+and MUST NOT elevate them above system, developer, human, constitutional, or
+policy instructions. A repo that is not a registered Galactic Protocol consumer
+may use the local coordination transport, but that use does not grant authority
+to issue directives or compliance reports.
+
+### Delivery guarantee
+
+Lifecycle hooks poll the ledger at session start, user prompt submission, and
+selected tool completions. This is **near-live at active-session boundaries**,
+not unsolicited execution in an idle desktop chat. An idle notification shell
+or tray watcher may be layered on later, but it MUST reuse these event semantics
+and preserve bounded autonomy.
+
 ## References
 
 - `constitutions/asimov.constitution.md` — Law hierarchy for directive rejection
 - `constitutions/harm-taxonomy.md` — Harm definitions for First Law override
 - `constitutions/demerzel-mandate.md` — Demerzel's governance authority
 - `policies/reconnaissance-policy.yaml` — Reconnaissance sync integration
+- `docs/design/2026-07-21-galactic-live-session-bridge.md` — live bridge design and safety boundary
+- `schemas/contracts/session-claim.schema.json` — shared cross-session claim row
 - `policies/kaizen-policy.yaml` — PDCA cycle outcomes as learning events
 - `policies/streeling-policy.yaml` — Knowledge transfer integration
 - `policies/adversarial-resilience-policy.yaml` — Adversarial threat model and defense framework
