@@ -1,0 +1,28 @@
+job_id: aiw-0001
+issue: 123
+repo: GuitarAlchemist/Demerzel
+risk: low
+afk_eligible: true
+provider_candidates:
+  - claude-code-local
+  - codex-cloud
+  - gemini-cli-action
+  - ollama-local
+runner_requirement:
+  os: linux
+  needs_gpu: false
+  needs_network: limited
+  needs_browser: false
+cost_tier: cheap
+sandbox: podman
+allowed_paths:
+  - scripts/
+  - docs/workflows/
+test_commands:
+  - python -m unittest discover -s scripts -p 'test_*.py'
+outputs_required:
+  - branch_or_pr
+  - test_log
+  - summary
+  - risk_notes
+  - cost_notes

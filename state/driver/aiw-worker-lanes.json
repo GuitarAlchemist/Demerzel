@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "description": "Canonical machine-readable worker-lane definitions for the AIW advisory lane selector (scripts/aiw_lane_selector.py). Single source of truth reconciling the two vocabularies in docs/workflows/aiw-composite-lanes.md: per-worker role tokens (defined once in `roles`) and per-mode work categories (expressed in the shared `work_class` vocabulary used by `mode_blocks`). Advisory/dry-run only — no state mutation. See #584, #586, #600, #737.",
+  "work_classes": {
+    "net_new_feature": "Build/implement net-new functionality.",
+    "broad_architecture": "Broad structural or architecture change.",
+    "workflow_policy_change": "Edit CI workflows, policy, or governance config.",
+    "fix": "Targeted fix, draft-to-ready, tests, or applying review feedback.",
+    "groom": "Issue grooming, process/docs drafting, readiness shaping.",
+    "navigate": "Read-only repo navigation, impact/dependency/path/stale analysis.",
+    "review": "Read-only review, critique, risk classification, summarization.",
+    "diagnostic": "Read-only diagnostics and recovery-plan authoring.",
+    "merge": "Deciding or performing a merge (forbidden action).",
+    "secret": "Handling secrets or credentials (forbidden action).",
+    "push": "Pushing commits directly (forbidden action).",
+    "state_mutation": "Mutating issue/PR labels or state (forbidden action).",
+    "review_approval": "Approving one's own or peer review (forbidden action)."
+  },
+  "roles": {
+    "docs_first_researcher": { "work_class": "groom", "expected_output": "source-grounded research pack or docs-first draft" },
+    "issue_groomer": { "work_class": "groom", "expected_output": "groomed issue with allowed paths, non-goals, and acceptance criteria" },
+    "process_drafter": { "work_class": "groom", "expected_output": "process / operating-model draft" },
+    "architecture_summarizer": { "work_class": "review", "expected_output": "read-only architecture summary" },
+    "builder_fixer": { "work_class": "net_new_feature", "expected_output": "branch + PR implementing or refactoring the change" },
+    "draft_to_ready_helper": { "work_class": "fix", "expected_output": "draft PR advanced to ready-for-review" },
+    "test_author": { "work_class": "fix", "expected_output": "added or updated tests" },
+    "review_feedback_applier": { "work_class": "fix", "expected_output": "commits applying review feedback" },
+    "lightweight_groomer": { "work_class": "groom", "expected_output": "lightly groomed issue" },
+    "read_only_critic": { "work_class": "review", "expected_output": "structured adversarial review findings" },
+    "architecture_reviewer": { "work_class": "review", "expected_output": "architecture critique" },
+    "policy_ambiguity_reviewer": { "work_class": "review", "expected_output": "policy / governance ambiguity findings" },
+    "risk_classifier": { "work_class": "review", "expected_output": "risk-tier classification" },
+    "focused_patch_helper": { "work_class": "fix", "expected_output": "focused fix PR or patch within explicit constraints" },
+    "test_suggester": { "work_class": "review", "expected_output": "suggested test cases (advisory)" },
+    "code_review_helper": { "work_class": "review", "expected_output": "low-risk code-review notes" },
+    "alternative_implementation_proposer": { "work_class": "review", "expected_output": "alternative patch proposal (advisory)" },
+    "navigator": { "work_class": "navigate", "expected_output": "repo navigation report" },
+    "impact_mapper": { "work_class": "navigate", "expected_output": "impact analysis" },
+    "dependency_mapper": { "work_class": "navigate", "expected_output": "dependency map" },
+    "path_collision_checker": { "work_class": "navigate", "expected_output": "path-collision report" },
+    "stale_marker_investigator": { "work_class": "navigate", "expected_output": "stale-marker investigation" },
+    "merge_decider": { "work_class": "merge", "expected_output": null },
+    "final_merge_decider": { "work_class": "merge", "expected_output": null },
+    "autonomous_merge_actor": { "work_class": "merge", "expected_output": null },
+    "secret_handler": { "work_class": "secret", "expected_output": null },
+    "high_risk_workflow_editor_without_human_review": { "work_class": "workflow_policy_change", "expected_output": null },
+    "self_review_approver": { "work_class": "review_approval", "expected_output": null },
+    "code_pusher": { "work_class": "push", "expected_output": null },
+    "label_mutator": { "work_class": "state_mutation", "expected_output": null },
+    "broad_architecture_owner": { "work_class": "broad_architecture", "expected_output": null },
+    "policy_override_actor": { "work_class": "workflow_policy_change", "expected_output": null }
+  },
+  "merge_action_aliases": ["merge_decider", "final_merge_decider", "autonomous_merge_actor"],
+  "workers": {
+    "jules": {
+      "primary": "docs_first_researcher",
+      "secondary": ["issue_groomer", "process_drafter", "architecture_summarizer"],
+      "forbidden": ["merge_decider", "secret_handler", "high_risk_workflow_editor_without_human_review"]
+    },
+    "claude": {
+      "primary": "builder_fixer",
+      "secondary": ["draft_to_ready_helper", "test_author", "review_feedback_applier", "lightweight_groomer"],
+      "forbidden": ["final_merge_decider", "self_review_approver"]
+    },
+    "gemini": {
+      "primary": "read_only_critic",
+      "secondary": ["architecture_reviewer", "policy_ambiguity_reviewer", "risk_classifier"],
+      "forbidden": ["code_pusher", "label_mutator", "merge_decider"]
+    },
+    "codex": {
+      "primary": "focused_patch_helper",
+      "secondary": ["test_suggester", "code_review_helper", "alternative_implementation_proposer"],
+      "forbidden": ["broad_architecture_owner", "autonomous_merge_actor"]
+    },
+    "augment": {
+      "primary": "navigator",
+      "secondary": ["impact_mapper", "dependency_mapper", "path_collision_checker", "stale_marker_investigator"],
+      "forbidden": ["merge_decider", "policy_override_actor"]
+    }
+  },
+  "mode_blocks": {
+    "NORMAL": [],
+    "CONSTRAINED": ["net_new_feature", "broad_architecture"],
+    "DRAINING": ["net_new_feature", "broad_architecture", "workflow_policy_change"],
+    "HALTED": ["net_new_feature", "broad_architecture", "workflow_policy_change", "fix", "groom", "navigate", "merge", "secret", "push", "state_mutation", "review_approval"]
+  }
+}

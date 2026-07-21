@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run-current",
+  "task_id": "review-current-diff",
+  "commit_range": "base..head",
+  "commit_fingerprint": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "required_providers": [
+    "claude-sonnet",
+    "gemini"
+  ]
+}

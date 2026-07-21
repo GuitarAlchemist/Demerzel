@@ -26,6 +26,13 @@ state/governance/dev-process-overseer.json
 
 # Local tooling / editor / per-session scratch (machine-specific, not repo content)
 .claude-octopus/
+.octo/runs/
+# AIW budget-gate runtime ledgers are per-run state — never commit them (see
+# docs/workflows/aiw-budget-router.md "Trust boundary"). Approval/receipt
+# artifacts are deliberately NOT ignored: they must be committed & reviewed.
+.octo/aiw-budget-ledger.json
+.octo/aiw-cycle-ledger.json
+.octo/*.lock
 .claude/*.local.md
 .claude/scheduled_tasks.lock
 .claude/session-intent.md
@@ -45,3 +52,4 @@ state/oversight/policy-review-requests.json
 state/oversight/ml-feedback-cycle-*.json
 state/oversight/ml-feedback-audit.json
 state/.cache/
+dist/

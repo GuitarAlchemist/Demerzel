@@ -9,12 +9,12 @@
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,
-    "policy": 45,
-    "schema": 42,
+    "policy": 46,
+    "schema": 47,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 24
+    "workflow": 27
   },
   "inventory": {
     "constitution": [
@@ -127,6 +127,11 @@
       }
     ],
     "policy": [
+      {
+        "name": "adaptive-fanout-policy",
+        "path": "policies/adaptive-fanout-policy.yaml",
+        "version": "1.0.0"
+      },
       {
         "name": "adversarial-resilience-policy",
         "path": "policies/adversarial-resilience-policy.yaml",
@@ -371,6 +376,10 @@
         "path": "schemas/ai-probe.schema.json"
       },
       {
+        "name": "aiw-harness-result.schema",
+        "path": "schemas/aiw-harness-result.schema.json"
+      },
+      {
         "name": "blackboard-state.schema",
         "path": "schemas/blackboard-state.schema.json"
       },
@@ -451,12 +460,24 @@
         "path": "schemas/hexavalent-distribution.schema.json"
       },
       {
+        "name": "loop-health.schema",
+        "path": "schemas/loop-health.schema.json"
+      },
+      {
         "name": "loop-state.schema",
         "path": "schemas/loop-state.schema.json"
       },
       {
         "name": "meta-audit.schema",
         "path": "schemas/meta-audit.schema.json"
+      },
+      {
+        "name": "octopus-review-request.schema",
+        "path": "schemas/octopus-review-request.schema.json"
+      },
+      {
+        "name": "octopus-review-result.schema",
+        "path": "schemas/octopus-review-result.schema.json"
       },
       {
         "name": "persona.schema",
@@ -469,6 +490,10 @@
       {
         "name": "pre-mortem.schema",
         "path": "schemas/pre-mortem.schema.json"
+      },
+      {
+        "name": "progress-snapshot.schema",
+        "path": "schemas/progress-snapshot.schema.json"
       },
       {
         "name": "reconnaissance-profile.schema",
@@ -1273,6 +1298,14 @@
         "path": ".github/workflows/demerzel-ideation.yml"
       },
       {
+        "name": "demerzel-quality-trend-freshness",
+        "path": ".github/workflows/demerzel-quality-trend-freshness.yml"
+      },
+      {
+        "name": "demerzel-quality-trend",
+        "path": ".github/workflows/demerzel-quality-trend.yml"
+      },
+      {
         "name": "demerzel-self-improvement",
         "path": ".github/workflows/demerzel-self-improvement.yml"
       },
@@ -1283,6 +1316,10 @@
       {
         "name": "demerzel-wiki-cross-repo",
         "path": ".github/workflows/demerzel-wiki-cross-repo.yml"
+      },
+      {
+        "name": "ecosystem-freshness",
+        "path": ".github/workflows/ecosystem-freshness.yml"
       },
       {
         "name": "ga-chatbot-discussions",
@@ -1809,6 +1846,24 @@
       "from": "personas/virtuous-leader.persona.yaml",
       "to": "tests/behavioral/virtuous-leader-cases.md",
       "kind": "has_test",
+      "resolved": true
+    },
+    {
+      "from": "policies/adaptive-fanout-policy.yaml",
+      "to": "docs/architecture/adaptive-fanout.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adaptive-fanout-policy.yaml",
+      "to": "docs/workflows/aiw-composite-lanes.md",
+      "kind": "reference",
+      "resolved": true
+    },
+    {
+      "from": "policies/adaptive-fanout-policy.yaml",
+      "to": "policies/autonomous-loop-policy.yaml",
+      "kind": "reference",
       "resolved": true
     },
     {

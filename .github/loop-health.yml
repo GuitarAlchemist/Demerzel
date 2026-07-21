@@ -1,0 +1,114 @@
+# Universal loop-health registry. Every scheduled producer must prove that it
+# ran successfully; there is no unbounded "allowed silence" state. Producers
+# whose value lands outside git use the read-only GitHub Actions workflow-run
+# adapter, which verifies the latest completed scheduled run and conclusion.
+version: 1
+default_branch: master
+
+# Exclusion is deliberately constrained in scripts/ecosystem_freshness.py and
+# the schema to these two freshness guards. A producer cannot self-exempt merely
+# by adding its filename here.
+monitors:
+  - ecosystem-freshness.yml
+  - demerzel-quality-trend-freshness.yml
+
+loops:
+  - workflow: demerzel-quality-trend.yml
+    schedule:
+      - '0 12 * * *'
+    status: active
+    proof:
+      adapter: state_glob
+      glob: state/quality-trend/*.jsonl
+      timestamp_field: timestamp
+      max_stale_days: 3
+    note: >-
+      Deterministic evidence is committed daily. More than three days without
+      state proves the feeder has died even if its workflow looked green.
+
+  - workflow: demerzel-capability-expansion.yml
+    schedule:
+      - '37 15 * * 1'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 10
+
+  - workflow: demerzel-discussion-lifecycle.yml
+    schedule:
+      - '47 14 * * 1-5'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3
+
+  - workflow: demerzel-ideation.yml
+    schedule:
+      - '47 13 * * 1,3,5'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 4
+
+  - workflow: demerzel-self-improvement.yml
+    schedule:
+      - '17 15 * * 0'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 10
+
+  - workflow: demerzel-showcase.yml
+    schedule:
+      - '7 14 1-7,15-21 * 1'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 14
+
+  - workflow: ga-chatbot-discussions.yml
+    schedule:
+      - '*/15 * * * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 1
+
+  - workflow: jules-auto-delegate.yml
+    schedule:
+      - '*/30 * * * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 1
+
+  - workflow: qa-tribunal.yml
+    schedule:
+      - '0 9 * * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3
+
+  # Bounded disable: repeated scheduled runs failed and issue #705 gates the
+  # 2026-10-16 revive-or-retire decision on fresh evidence and an explicit cap.
+  - workflow: seldon-plan.yml
+    status: disabled
+    disabled:
+      reason: >-
+        Autonomous research scheduler paused after repeated failed scheduled
+        runs; issue #705 requires a revive-or-retire decision with fresh value
+        evidence and an explicit cost cap.
+      by: issue-705 (GuitarAlchemist governance)
+      since: '2026-07-18'
+      until: '2026-10-16'
+      verification: schedule_absent
+
+  - workflow: streeling-daily.yml
+    schedule:
+      - '17 13 * * 1-4'
+      - '17 13 * * 5'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3

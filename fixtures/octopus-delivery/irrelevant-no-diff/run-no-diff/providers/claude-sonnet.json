@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "provider": "claude-sonnet",
+  "status": "success",
+  "run_id": "run-no-diff",
+  "task_id": "review-no-diff",
+  "commit_range": "base..head",
+  "commit_fingerprint": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "preflight": {
+    "status": "passed",
+    "checks": [
+      "claude auth precedence"
+    ]
+  },
+  "evidence": {
+    "diff_received": false,
+    "files_reviewed": [],
+    "findings": [],
+    "summary": "No diff was provided."
+  },
+  "scorecard": {
+    "security": {
+      "score": 5,
+      "finding_ids": []
+    }
+  }
+}

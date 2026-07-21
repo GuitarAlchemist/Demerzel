@@ -109,7 +109,7 @@ jobs:
           # Gap 2: Policies not referenced in any constitution or persona
           for pol in policies/*.yaml; do
             POLNAME=$(basename "$pol" .yaml)
-            REFS=$(grep -rl "$POLNAME" constitutions/ personas/ contracts/ 2>/dev/null | wc -l)
+            REFS=$(bash .github/scripts/count_matching_files.sh "$POLNAME" constitutions/ personas/ contracts/)
             if [ "$REFS" -eq 0 ]; then
               GAPS="${GAPS}\n- **Orphan policy:** \`$POLNAME\` is not referenced by any constitution, persona, or contract"
               GAP_COUNT=$((GAP_COUNT + 1))
@@ -119,7 +119,7 @@ jobs:
           # Gap 3: Schemas without examples
           for schema in schemas/contracts/*.json; do
             SNAME=$(basename "$schema" .json)
-            EXAMPLES=$(grep -rl "$SNAME" examples/ 2>/dev/null | wc -l)
+            EXAMPLES=$(bash .github/scripts/count_matching_files.sh "$SNAME" examples/)
             if [ "$EXAMPLES" -eq 0 ]; then
               GAPS="${GAPS}\n- **Missing example:** Schema \`$SNAME\` has no example data file"
               GAP_COUNT=$((GAP_COUNT + 1))

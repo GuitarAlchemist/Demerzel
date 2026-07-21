@@ -27,6 +27,34 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
+  // GLR conflicts. Every entry here is a place where one token of lookahead is
+  // not enough to decide a reduction; tree-sitter forks, parses both ways, and
+  // keeps the branch that yields a valid tree. We prefer this over prec.right,
+  // which hard-codes one interpretation and silently misparses the other. Each
+  // conflict below is either a rule against its own optional/repeat boundary (a
+  // self-conflict, written as a single-rule entry) or two rules that share a
+  // prefix. They were surfaced one at a time by `tree-sitter generate`; the set
+  // is minimal in the sense that removing any one reintroduces a generate error.
+  //
+  //   namespace_path        `a.b.c` — extend the path vs. stop for tool_invocation's trailing `.method`
+  //   streaming_source_expr `stdin` with an optional trailing format_spec, before the next statement
+  //   output_sink_expr      `stdout` with an optional trailing format_spec (the `stdin` case's twin)
+  //   preprocessing_stage   a stage's optional trailing clauses vs. the next `->` stage
+  //   guard_conjunction     `a && b && c` associativity
+  //   simple_pipeline       a bare data_source vs. a data_source that begins an arrow chain
+  //   conditional_step_expr dangling-else: bind `else` to the nearest `if`
+  //   pipeline_expr/ensemble_pipeline  a simple_pipeline alone vs. the first arm of an ensemble
+  conflicts: ($) => [
+    [$.namespace_path],
+    [$.streaming_source_expr],
+    [$.output_sink_expr],
+    [$.preprocessing_stage],
+    [$.guard_conjunction],
+    [$.simple_pipeline],
+    [$.conditional_step_expr],
+    [$.pipeline_expr, $.ensemble_pipeline],
+  ],
+
   rules: {
     // =========================================================
     // Top-level: a document is a sequence of statements
@@ -39,7 +67,12 @@ module.exports = grammar({
           $.reactive_pipeline_statement,
           $.mcp_pipeline_statement,
           $.assertion_statement,
-          $.binding_statement,
+          // binding_statement is intentionally NOT a top-level statement. The
+          // spec (sci-ml-pipelines.ebnf) defines `binding_step` only as an
+          // mcp_step, and mcp_step_expr already includes it. Listing it here as
+          // well made `identifier <- ...` reducible two ways and blocked
+          // generate. Removed to match the spec; bindings still parse inside
+          // MCP pipelines.
           $.comment,
         ),
       ),
@@ -118,6 +151,13 @@ module.exports = grammar({
         seq("sse", "(", $.string_literal, ")"),
         seq("webhook", "(", $.provider, ",", $.string_literal, ")"),
         seq("cron", "(", $.string_literal, ")"),
+        // `stdin` may carry an optional format_spec. Because source_file is a
+        // bare repeat with no statement terminator, a format_spec keyword (csv,
+        // json, ...) can also begin the *next* statement (file_source starts
+        // with `csv`/`json`/`parquet`). One token of lookahead cannot tell
+        // `stdin csv(...)` (one source) from `stdin` / `csv(...)` (two
+        // statements). The [$.streaming_source_expr] conflict lets the parser
+        // decide by which reading actually yields a valid tree.
         seq("stdin", optional($.format_spec)),
         seq("subscribe", "(", $.string_literal, ",", $.string_literal, ")"),
         seq("cdc", "(", $.string_literal, ",", $.string_literal, ")"),
@@ -547,8 +587,12 @@ module.exports = grammar({
     gated_tool_expr: ($) =>
       seq("when", $.mog_guard, ":", $.mcp_step_expr),
 
+    // Spec: `binding_step ::= identifier "<-" mcp_step`. The earlier
+    // `choice($.mcp_step_expr, $.pipeline_expr)` widened the RHS beyond the
+    // spec and made a binding indistinguishable from a pipeline_statement's
+    // optional `identifier <-` prefix. Narrowed to the spec form.
     binding_statement: ($) =>
-      seq($.identifier, "<-", choice($.mcp_step_expr, $.pipeline_expr)),
+      seq($.identifier, "<-", $.mcp_step_expr),
 
     conditional_step_expr: ($) =>
       seq(
@@ -611,14 +655,32 @@ module.exports = grammar({
         $.assertion_pipeline,
       ),
 
+    // Spec (sci-ml-pipelines.ebnf:453): `assertion_pipeline ::= assertion_subject
+    // assertion_check+` — the checks are JUXTAPOSED, not arrow-joined. The earlier
+    // `repeat(seq($.arrow, $.assertion_check))` required an arrow before each
+    // check, which (a) could not parse the canonical arrow-less form used by every
+    // example in the EBNF and in tests/behavioral/ixql-assertions-cases.md, and
+    // (b) when an arrow was present, absorbed the "check" into the subject's own
+    // pipeline_expr as a pipeline_stage, leaving this rule's check list dead. An
+    // assertion subject that is itself an arrow pipeline still works: those arrows
+    // belong to pipeline_expr, not to the check separator.
     assertion_pipeline: ($) =>
       seq(
         $.assertion_subject,
-        repeat(seq($.arrow, $.assertion_check)),
+        repeat1($.assertion_check),
       ),
 
+    // Spec lists data_source | pipeline_expr | ... | identifier as alternatives,
+    // but they are mutually reducible: pipeline_expr -> simple_pipeline is a
+    // data_source followed by an (optionally empty) arrow chain, and data_source
+    // already covers a bare identifier. Keeping all three as direct choices made
+    // every assertion subject ambiguous. pipeline_expr subsumes the others, so a
+    // subject like `csv("train.csv")` or `random_forest -> f1_score` still parses;
+    // it simply nests one level deeper. Since this grammar had never generated,
+    // there was no prior CST for consumers to depend on -- this is the first
+    // shape, not a breaking change to an existing one.
     assertion_subject: ($) =>
-      choice($.data_source, $.identifier, $.pipeline_expr),
+      $.pipeline_expr,
 
     assertion_check: ($) =>
       seq(

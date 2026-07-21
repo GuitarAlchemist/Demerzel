@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "octopus-review-result.schema.json",
+  "title": "Repo-scoped Octopus provider result",
+  "description": "Current-run provider outcome and evidence consumed by the fail-closed delivery gate.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "provider",
+    "status",
+    "run_id",
+    "task_id",
+    "commit_range",
+    "commit_fingerprint",
+    "preflight",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "success",
+        "failed",
+        "timeout",
+        "skipped",
+        "preflight_failed"
+      ]
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "commit_range": {
+      "type": "string"
+    },
+    "commit_fingerprint": {
+      "type": "string"
+    },
+    "preflight": {
+      "type": "object",
+      "required": [
+        "status",
+        "checks"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "not_run"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "diff_received",
+        "files_reviewed",
+        "findings"
+      ],
+      "properties": {
+        "diff_received": {
+          "type": "boolean"
+        },
+        "files_reviewed": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "category",
+              "summary"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "category": {
+                "type": "string",
+                "minLength": 1
+              },
+              "summary": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scorecard": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "score",
+          "finding_ids"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "finding_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

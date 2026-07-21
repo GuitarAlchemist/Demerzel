@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/aiw-harness-result",
+  "title": "AIW Harness Result",
+  "description": "Structured result of an AIW execution episode, ensuring the work is observable, bounded, repeatable, and reviewable.",
+  "type": "object",
+  "required": [
+    "job_id",
+    "issue",
+    "lane",
+    "autonomy_mode",
+    "provider",
+    "workspace",
+    "context_bundle_sha",
+    "prompt_pack_version",
+    "budget",
+    "commands_run",
+    "changed_files",
+    "outputs",
+    "observations",
+    "decision",
+    "stop_reason",
+    "risk_notes"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string"
+    },
+    "issue": {
+      "type": ["integer", "string"]
+    },
+    "lane": {
+      "type": "string",
+      "enum": ["explore", "shape", "loop", "verify", "govern"]
+    },
+    "autonomy_mode": {
+      "type": "string",
+      "enum": ["observe", "draft", "patch", "pr", "harvest"]
+    },
+    "provider": {
+      "type": "string"
+    },
+    "workspace": {
+      "type": "string"
+    },
+    "context_bundle_sha": {
+      "type": "string"
+    },
+    "prompt_pack_version": {
+      "type": "string"
+    },
+    "budget": {
+      "type": "object",
+      "required": [
+        "tier",
+        "max_total_tokens",
+        "max_model_calls",
+        "max_retries",
+        "max_runner_minutes",
+        "max_cost_usd",
+        "approval_required_above_usd"
+      ],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": ["free-local", "cheap-hosted", "paid-agent", "manual-approval"]
+        },
+        "max_total_tokens": {
+          "type": "integer"
+        },
+        "max_model_calls": {
+          "type": "integer"
+        },
+        "max_retries": {
+          "type": "integer"
+        },
+        "max_runner_minutes": {
+          "type": "integer"
+        },
+        "max_cost_usd": {
+          "type": "number"
+        },
+        "approval_required_above_usd": {
+          "type": "number"
+        }
+      }
+    },
+    "commands_run": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["command", "status"],
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["passed", "failed", "timeout", "blocked"]
+          },
+          "log": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "type": ["string", "null"]
+        },
+        "pr": {
+          "type": ["string", "null"]
+        },
+        "diff_summary": {
+          "type": "string"
+        },
+        "validation_log": {
+          "type": "string"
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision": {
+      "type": "string"
+    },
+    "stop_reason": {
+      "type": "string"
+    },
+    "risk_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

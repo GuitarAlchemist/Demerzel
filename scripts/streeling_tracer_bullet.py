@@ -1,14 +1,20 @@
 import json
-import uuid
 from datetime import datetime
 
+from streeling_event_store import EventStore
+
 def generate_mock_events():
-    """Generates a set of mock engineering events following the Streeling schema."""
+    """Generates a set of mock engineering events following the Streeling schema.
+
+    Ids are derived deterministically from `raw_ref` so re-running the tracer
+    bullet is idempotent against the append-only store (#545) rather than growing
+    the log with fresh random ids on every run.
+    """
     now = datetime.utcnow().isoformat() + "Z"
 
     events = [
         {
-            "id": str(uuid.uuid4()),
+            "id": "evt:gh:pr:487",
             "observed_at": now,
             "source": "github",
             "repo": "GuitarAlchemist/Demerzel",
@@ -28,7 +34,7 @@ def generate_mock_events():
             }
         },
         {
-            "id": str(uuid.uuid4()),
+            "id": "evt:gh:workflow_run:123456789",
             "observed_at": now,
             "source": "workflow",
             "repo": "GuitarAlchemist/Demerzel",
@@ -48,7 +54,7 @@ def generate_mock_events():
             }
         },
         {
-            "id": str(uuid.uuid4()),
+            "id": "evt:gh:comment:1",
             "observed_at": now,
             "source": "agent",
             "repo": "GuitarAlchemist/Demerzel",
@@ -83,16 +89,16 @@ def main():
         print(json.dumps(event, indent=2))
         print("---")
 
-    # Save to a mock state file
+    # Append through the validated, append-only store (#545). Deterministic ids
+    # make re-runs idempotent, so the log does not grow on repeated dry-runs.
     output_path = "state/streeling/tracer_bullet_output.jsonl"
-    import os
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    store = EventStore(output_path)
+    written = sum(1 for event in events if store.append(event))
 
-    with open(output_path, "w") as f:
-        for event in events:
-            f.write(json.dumps(event) + "\n")
-
-    print(f"Tracer bullet results saved to {output_path}")
+    print(
+        f"Tracer bullet: {written} new event(s) appended "
+        f"({store.count()} total) in {output_path}"
+    )
 
 if __name__ == "__main__":
     main()

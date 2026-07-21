@@ -50,9 +50,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+import demerzel_kit as kit
 
 
 def _halt_active() -> tuple[bool, str]:
@@ -180,7 +178,7 @@ def main(argv: list[str]) -> int:
     steps.append(gov)
 
     summary = {
-        "cycle_at": _now_iso(),
+        "cycle_at": kit.now_iso(),
         "dry_run": args.dry_run,
         "halted": False,
         "steps": steps,
@@ -193,12 +191,8 @@ def main(argv: list[str]) -> int:
         "governor": gov.get("stdout_tail", gov.get("note", "")),
     }
     if not args.dry_run:
-        out = root / "state" / "oversight" / f"ml-feedback-cycle-{_now_iso()[:10]}.json"
-        out.parent.mkdir(parents=True, exist_ok=True)
-        tmp = out.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-        import os
-        os.replace(tmp, out)
+        out = root / "state" / "oversight" / f"ml-feedback-cycle-{kit.now_iso()[:10]}.json"
+        kit.write_artifact(out, summary)
 
     print(json.dumps(summary, indent=2))
     for s in steps:

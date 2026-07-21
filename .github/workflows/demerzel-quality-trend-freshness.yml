@@ -9,8 +9,8 @@ name: Demerzel Quality Trend Freshness
 
 on:
   schedule:
-    # Weekly, Monday 13:00 UTC. Feeder is daily, so >3 days stale => the feeder died.
-    - cron: '0 13 * * 1'
+    # Daily at 13:00 UTC. Feeder is daily, so >3 days stale => the feeder died.
+    - cron: '0 13 * * *'
   workflow_dispatch:
 
 permissions:
@@ -36,81 +36,25 @@ jobs:
           python-version: '3.12'
 
       - name: Assert quality-trend freshness
-        run: |
-          python - <<'PY'
-          import glob, json, os
-          from datetime import datetime, timezone
+        id: freshness
+        run: >-
+          python scripts/quality_trend_freshness.py
+          --out-dir state/quality-trend
+          --max-stale-days "$MAX_STALE_DAYS"
 
-          max_stale = int(os.environ["MAX_STALE_DAYS"])
-          files = sorted(glob.glob("state/quality-trend/*.jsonl"))
-          newest_ts, newest_src = None, None
-          for path in files:
-              with open(path, encoding="utf-8") as fh:
-                  for line in fh:
-                      line = line.strip()
-                      if not line:
-                          continue
-                      try:
-                          ts = json.loads(line).get("timestamp")
-                      except json.JSONDecodeError:
-                          continue
-                      if ts:
-                          dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-                          if newest_ts is None or dt > newest_ts:
-                              newest_ts, newest_src = dt, path
-
-          now = datetime.now(timezone.utc)
-          alert_path = "state/quality-trend/.freshness-alert.json"
-
-          if newest_ts is None:
-              age = None
-              stale = True
-              reason = "no quality-trend data found at all"
-          else:
-              age = (now - newest_ts).days
-              stale = age > max_stale
-              reason = (f"newest quality-trend row is {age}d old "
-                        f"(threshold {max_stale}d) from {newest_src}")
-
-          summary = os.environ.get("GITHUB_STEP_SUMMARY")
-          if not stale:
-              # Green: silent. Clear any prior alert (recovery).
-              if os.path.exists(alert_path):
-                  os.remove(alert_path)
-              if summary:
-                  with open(summary, "a") as fh:
-                      fh.write(f"quality-trend fresh: {reason}\n")
-              print(f"OK: {reason}")
-              raise SystemExit(0)
-
-          # Red: write diagnostic, will be committed + fail the check.
-          diag = {
-              "alert": "quality-trend-stale",
-              "detected_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-              "newest_row_age_days": age,
-              "max_stale_days": max_stale,
-              "reason": reason,
-              "likely_cause": "the demerzel-quality-trend feeder stopped running",
-          }
-          with open(alert_path, "w", encoding="utf-8") as fh:
-              json.dump(diag, fh, indent=2)
-          if summary:
-              with open(summary, "a") as fh:
-                  fh.write(f"### 🔴 quality-trend STALE\n\n{reason}\n\n"
-                           f"Likely cause: the feeder stopped. Check "
-                           f"`demerzel-quality-trend.yml` runs.\n")
-          print(f"STALE: {reason}")
-          raise SystemExit(1)
-          PY
-
-      - name: Commit diagnostic on stale
-        if: failure()
+      - name: Persist freshness alert state
+        if: always() && (steps.freshness.outcome == 'success' || steps.freshness.outcome == 'failure')
         run: |
           git config user.name "Demerzel"
           git config user.email "demerzel@guitaralchemist.com"
-          git add state/quality-trend/.freshness-alert.json || true
+          git add -A state/quality-trend/.freshness-alert.json || true
           git diff --cached --quiet || {
-            git commit -m "alert(quality-trend): feeder stale — freshness guard tripped"
+            if [[ -f state/quality-trend/.freshness-alert.json ]]; then
+              message="alert(quality-trend): feeder stale — freshness guard tripped"
+            else
+              message="chore(quality-trend): clear recovered freshness alert"
+            fi
+            git commit -m "$message"
             git pull --rebase || true
             git push
           }

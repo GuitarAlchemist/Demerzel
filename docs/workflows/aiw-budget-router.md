@@ -124,6 +124,98 @@ Each routed job should emit a budget ledger artifact with:
 
 See `examples/aiw-budget-ledger.example.json`.
 
+## Executable preflight
+
+The policy is executable before a provider is invoked. `state/driver/aiw-budget-policy.json`
+allowlists the worker tiers and keeps local-seat tools first. The policy, ledgers,
+approval artifact, and receipt are pinned to canonical repository paths; a caller
+may pass them explicitly but cannot redirect them to a caller-controlled file. Run
+the gate with a job request that contains the estimated tokens, calls, retries,
+runner minutes, and estimated cost:
+
+```powershell
+python scripts/aiw_budget_gate.py `
+  --policy state/driver/aiw-budget-policy.json `
+  --request .octo/aiw-request.json `
+  --ledger .octo/aiw-budget-ledger.json `
+  --cycle-ledger .octo/aiw-cycle-ledger.json
+```
+
+Exit `0` is the only allowed path to invocation. Exit `1` blocks the job before
+the provider call; exit `2` means the request or policy is invalid. Metered cloud
+workers (`gemini-cli`, `jules`, `notebooklm`) require explicit approval even when
+their estimate is below the per-job cap. Approval is **not** a self-attested flag
+in the request: it is a separate `.octo/aiw-approval.json` artifact bound to the
+job id, provider, and exact request SHA-256; a `manual_approval` key inside the
+request is rejected. Claude Code CLI and Codex CLI are the preferred first workers
+for local-seat work; an `ANTHROPIC_API_KEY` fallback must carry the same budget
+block and approval rules.
+
+The cycle ledger is authoritative and reserved atomically before invocation;
+callers cannot supply their own aggregate spend or concurrency values. A
+reservation is bound to its provider and request SHA-256, so a reused job id
+cannot inherit an old grant under a changed request. On terminal completion,
+release the reservation. Metered providers must supply a trusted
+`.octo/aiw-receipt.json` receipt whose issuer matches the policy's
+`trusted_receipt_issuer` and whose actual cost matches the released amount;
+spend over the reservation's admitted cap is recorded truthfully but returned as a
+blocking `over_budget` decision:
+
+```powershell
+python scripts/aiw_budget_gate.py --release-job aiw-0001 `
+  --actual-cost-usd 0.00 --cycle-ledger .octo/aiw-cycle-ledger.json `
+  --policy state/driver/aiw-budget-policy.json `
+  --request .octo/aiw-request.json --ledger .octo/aiw-budget-ledger.json `
+  --receipt .octo/aiw-receipt.json
+```
+
+### Live consumer
+
+`.github/workflows/jules-auto-delegate.yml` is the first live consumer of the gate.
+Jules is a `metered-cloud` provider, so the delegation job runs the reserve
+preflight before invoking `google-labs-code/jules-action`:
+
+- **allow (exit 0)** → delegation proceeds;
+- **block (exit 1)** → the job comments on the issue that a committed
+  `.octo/aiw-approval.json` (bound to the job id, provider, and request SHA-256)
+  is required, keeps the labels, writes no delegation marker, and stays green so
+  the issue remains re-runnable after approval;
+- **invalid (exit 2)** → the job fails closed.
+
+`scripts/test_aiw_budget_consumer.py` guards this wiring so the gate cannot be
+silently unwired back into a declared-but-unconsumed artifact.
+
+## Trust boundary
+
+The gate validates the approval (`.octo/aiw-approval.json`) and the receipt
+(`.octo/aiw-receipt.json`) by **field equality** — the approval must match the
+job id, provider, and request SHA-256; the receipt's `issuer` must equal the
+policy's `trusted_receipt_issuer` and its actual cost must match the released
+amount. This is an **integrity** check, not an **authenticity** one: there is no
+cryptographic signature, so the gate cannot itself tell a genuine receipt from a
+forged JSON file with the right fields.
+
+Authenticity therefore comes from **git-commit provenance, not from the gate**:
+
+- **Approval and receipt artifacts must be committed** to the repository (a
+  human-reviewed PR / an orchestrator step running under separate credentials),
+  never written at runtime by the worker they authorize. Committing requires
+  review, and review — not the string comparison — is what makes the artifact
+  trustworthy. **The requesting job must not be able to write or commit these**;
+  that separation is enforced by ordinary PR review and branch protection, and it
+  is the property the whole metered-spend guarantee rests on.
+- **Runtime ledgers are the opposite** — `.octo/aiw-budget-ledger.json`,
+  `.octo/aiw-cycle-ledger.json`, and `*.lock` are per-run state, are gitignored,
+  and must never be committed. A committed ledger would be stale, caller-authored
+  authority — exactly what the boundary excludes.
+
+**Decision (accepted for the current threat model):** where `.octo/` approval and
+receipt artifacts originate from committed, reviewed sources and the worker cannot
+commit them, the git + filesystem boundary is sufficient. Cryptographically signed
+receipts / approvals (e.g. an HMAC or Sigstore attestation the gate verifies) are
+a **future hardening, not a requirement today** — see Non-goals. A consumer must
+not read the gate's field-equality checks as cryptographic trust.
+
 ## Non-goals
 
 - This router does not own Demerzel policy.
@@ -131,3 +223,6 @@ See `examples/aiw-budget-ledger.example.json`.
 - This router does not override HALT.
 - This router does not make paid or cloud workers the default.
 - This router does not treat NotebookLM as the canonical source of truth.
+- This router does not cryptographically sign approvals or receipts today —
+  their authenticity comes from git-commit provenance, not the gate (see
+  [Trust boundary](#trust-boundary)); signed attestations are a future option.

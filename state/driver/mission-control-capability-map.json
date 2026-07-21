@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "description": "Maps GitHub issue labels to the 10 Mission Control capabilities (#547 Level 2), consumed by scripts/mission_control_snapshot.py for capability progress (#744). An issue counts toward a capability if it carries ANY of that capability's labels; an issue may count toward several. `component:demerzel` is deliberately NOT a capability marker (it is a repo tag on nearly every issue) — capabilities are keyed on `area:*` plus the component labels that denote a specific capability. Capabilities with no matching label yet report 0% honestly; correct the map as the label taxonomy evolves.",
+  "capabilities": {
+    "observability": ["area:observability", "component:streeling"],
+    "intelligence": ["area:intelligence", "area:intelligence-platform", "component:seldon"],
+    "supervisor": ["area:supervisor"],
+    "planner": ["area:planner"],
+    "knowledge": ["area:ontology", "area:research"],
+    "runtime": ["area:runtime"],
+    "pipeline_dsl": ["area:pipeline"],
+    "governance": ["area:governance"],
+    "review": ["area:review", "routing:review"],
+    "local_ai_fabric": ["area:local-ai-fabric", "area:noc"]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run-no-diff",
+  "task_id": "review-no-diff",
+  "commit_range": "base..head",
+  "commit_fingerprint": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "required_providers": [
+    "claude-sonnet"
+  ]
+}

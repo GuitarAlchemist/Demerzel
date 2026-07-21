@@ -7,8 +7,8 @@
     "computed_at": "2026-03-23T18:00:00Z"
   },
   "quality_trend": {
-    "latest_artifact": "docs/governance/the-sentinel-spec.md",
-    "source": "state/quality-trend/2026-05.jsonl",
-    "computed_at": "2026-05-01T00:00:00Z"
+    "latest_artifact": "afk-graduated-self-merge",
+    "source": "state/quality-trend/2026-07.jsonl",
+    "computed_at": "2026-07-18T12:00:00Z"
   }
 }

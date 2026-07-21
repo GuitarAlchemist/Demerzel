@@ -1,39 +1,232 @@
 {
-  "generated_at": "2026-06-30T02:45:00Z",
-  "mode": "DRAINING",
-  "summary": {
-    "open_prs": 19,
-    "draft_prs": 12,
-    "mergeable_true": 7,
-    "mergeable_false": 0
+  "snapshot_id": "sprint-0-snapshot",
+  "observed_at": "2026-07-18T00:00:00Z",
+  "roadmap": "Autonomous Software Organization",
+  "milestone": "M1 Foundations",
+  "sprint": "Sprint 0",
+  "total_nodes": 10,
+  "completed_nodes": 5,
+  "blocked_nodes": 1,
+  "executable_nodes": 3,
+  "percent_complete": 50.0,
+  "dashboard": {
+    "open_prs": 2,
+    "merged_prs": 2,
+    "draft_prs": 1,
+    "review_queue": 1,
+    "issues_by_status": {
+      "done": 5,
+      "executable": 3,
+      "blocked": 1,
+      "planned": 1
+    }
   },
-  "queue": [
+  "capabilities": [
     {
-      "number": 567,
-      "title": "Define Execution Graph Schema v1",
-      "draft": false,
-      "mergeable": true,
-      "next_action": "Review with explicit human approval."
+      "capability": "observability",
+      "total_nodes": 5,
+      "completed_nodes": 1,
+      "blocked_nodes": 1,
+      "executable_nodes": 3,
+      "percent_complete": 20.0
     },
     {
-      "number": 572,
-      "title": "Add fan-out/fan-in controller for AFK agent work",
-      "draft": true,
-      "mergeable": true,
-      "next_action": "Drain after PR 567."
+      "capability": "intelligence",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
     },
     {
-      "number": 583,
-      "title": "Add adaptive fan-out backpressure policy",
-      "draft": true,
-      "mergeable": true,
-      "next_action": "Drain after PR 572."
+      "capability": "supervisor",
+      "total_nodes": 1,
+      "completed_nodes": 1,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 100.0
+    },
+    {
+      "capability": "planner",
+      "total_nodes": 3,
+      "completed_nodes": 3,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 100.0
+    },
+    {
+      "capability": "knowledge",
+      "total_nodes": 1,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 1,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "runtime",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "pipeline_dsl",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "governance",
+      "total_nodes": 2,
+      "completed_nodes": 1,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 50.0
+    },
+    {
+      "capability": "review",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
+    },
+    {
+      "capability": "local_ai_fabric",
+      "total_nodes": 0,
+      "completed_nodes": 0,
+      "blocked_nodes": 0,
+      "executable_nodes": 0,
+      "percent_complete": 0.0
     }
   ],
-  "next_safe_actions": [
-    "Review PR 567.",
-    "Then drain PR 572.",
-    "Then drain PR 583.",
-    "Keep new fan-out on hold."
-  ]
+  "agent_telemetry": [
+    {
+      "worker": "claude",
+      "prs_opened": 1,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "jules",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 1,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "gemini",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 1,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "codex",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "augment",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "github-actions",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 1,
+      "workflow_successes": 1,
+      "ci_success_rate": 1.0,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    },
+    {
+      "worker": "human",
+      "prs_opened": 0,
+      "prs_merged": 0,
+      "reviews": 0,
+      "comments": 0,
+      "workflow_runs": 0,
+      "workflow_successes": 0,
+      "ci_success_rate": null,
+      "unmeasured": [
+        "average_latency",
+        "accepted_findings",
+        "false_positives",
+        "human_rescue_rate",
+        "cost"
+      ]
+    }
+  ],
+  "critical_path": [],
+  "eta": null,
+  "eta_confidence": 0.0,
+  "risks": [],
+  "recommendations": []
 }
