@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "work-manifest.schema.json",
   "title": "Driver Work Manifest",
   "description": "A complete record of one autonomous driver cycle — plan, execution, and outcomes",

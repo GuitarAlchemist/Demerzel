@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "loop-health.schema.json",
   "title": "Loop Health Registry",
   "description": "Universal ecosystem-freshness registry: every scheduled producer must prove liveness or be deliberately disabled for a bounded, mechanically verified window. The monitor turns the board red for dead, failed, stale, activation-mismatched, or unregistered loops.",

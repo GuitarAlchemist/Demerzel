@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "loop-state.schema.json",
   "title": "Loop State",
   "description": "Tracks an autonomous loop's iterations, stall detection, and governance decisions",
