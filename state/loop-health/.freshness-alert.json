@@ -1,9 +1,0 @@
-{
-  "alert": "ecosystem-freshness",
-  "problems": [
-    {
-      "kind": "failed_run",
-      "workflow": "demerzel-capability-expansion.yml"
-    }
-  ]
-}
