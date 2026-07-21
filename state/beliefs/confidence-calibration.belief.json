@@ -5,22 +5,22 @@
   "evidence": {
     "supporting": [
       {
-        "source": "ml-feedback-recommendation 222e1f07-719a-4d2d-97c0-3f423e374159",
+        "source": "ml-feedback-recommendation 0f10d244-cfde-4799-8b86-7b8f157935b8",
         "claim": "2 of 6 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.3333). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy.",
-        "timestamp": "2026-07-16T15:55:21Z",
+        "timestamp": "2026-07-21T13:00:57Z",
         "reliability": 0.92
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-07-16T15:55:22Z",
+  "last_updated": "2026-07-21T13:00:57Z",
   "evaluated_by": "demerzel",
   "calibration": {
     "threshold_nudge": -0.1,
     "applied_delta": 0.0,
     "prior_nudge": -0.1,
     "cap": 0.1,
-    "source_recommendation": "222e1f07-719a-4d2d-97c0-3f423e374159",
+    "source_recommendation": "0f10d244-cfde-4799-8b86-7b8f157935b8",
     "rationale": "2 of 6 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.3333). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy."
   }
 }
