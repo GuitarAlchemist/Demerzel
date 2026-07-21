@@ -83,7 +83,8 @@ are all installed and live**, alongside `git-guardrails-claude-code` and `ubiqui
 
 The accurate finding is a one-liner: the **project-scoped** copy under `.claude/skills/` is stale
 while the newer generation sits at **user scope**. The fix is to sync, not to rebuild. Acting on the
-original table would have duplicated five working skills — in a document arguing for a leaner surface.
+original table would have duplicated four working skills (`implement`, `triage`, `handoff`, `review`) —
+in a document arguing for a leaner surface.
 **Only `wayfinder` is genuinely absent.**
 
 **The current flow:**
