@@ -48,6 +48,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # jsonschema powers the compliance-report contract-instance gate
+      # (galactic-protocol.md v1.3.0); the validator degrades to a printed
+      # skip without it, so install it to keep the gate real.
+      - name: Install deps
+        run: pip install jsonschema
+
       - name: Run governance validator
         run: python scripts/validate_governance.py
 
