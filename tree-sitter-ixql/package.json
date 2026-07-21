@@ -28,9 +28,9 @@
     "tree-sitter-cli": "^0.23.0"
   },
   "scripts": {
-    "build": "tree-sitter generate && node-gyp build",
-    "generate": "tree-sitter generate",
-    "test": "tree-sitter test",
+    "build": "tree-sitter generate --no-bindings && node-gyp build",
+    "generate": "tree-sitter generate --no-bindings",
+    "test": "tree-sitter generate --no-bindings && tree-sitter test",
     "lint": "tree-sitter generate --report-states-for-rule source_file"
   },
   "tree-sitter": [
