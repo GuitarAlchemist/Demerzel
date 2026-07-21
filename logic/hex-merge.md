@@ -329,8 +329,35 @@ else:
 ```
 
 The distribution is the input to the existing escalation logic in
-`ix-fuzzy::escalation_triggered`: if `dist[C] > ESCALATION_THRESHOLD`
-(currently 0.3), the plan must be escalated rather than executed.
+`ix-fuzzy::escalation_triggered`.
+
+### Escalation predicate: informative-mass share (changed 2026-07-20, v1.2)
+
+Escalation compares the contradictory mass against the
+**informative mass only** — `Unknown` is excluded from the
+denominator (GuitarAlchemist/hari#28):
+
+```
+informative = weights[T] + weights[P] + weights[D] + weights[F] + weights[C]   // Unknown excluded
+escalate    = informative > 0 and weights[C] / informative > ESCALATION_THRESHOLD
+```
+
+Equivalently on the normalized distribution, `informative = 1 -
+dist[U]` and `escalate = informative > 0 and dist[C] / informative >
+ESCALATION_THRESHOLD`. `ESCALATION_THRESHOLD` is **unchanged at
+0.3**.
+
+**Why exclude `Unknown`.** Abstention is the *absence* of evidence,
+not evidence that nothing conflicts. An evidence-based alarm must
+not be dilutable by non-evidence: under the prior predicate
+(`dist[C] > 0.3` over the full mass, v1.1) a genuine `T`/`F`
+contradiction could be silenced simply by flooding the claim with
+`Unknown` observations, because `Unknown` inflated the denominator
+and dragged `dist[C]` below the threshold. This "abstention-muting"
+hole was found by hari's SL-correspondence probes and closed before
+any autonomy gates on substrate verdicts. An all-`Unknown`
+distribution has **zero informative mass** and therefore never
+escalates (the `informative > 0` guard).
 
 **Because synthesized C observations are folded in before
 normalization**, cross-source disagreements automatically push the
@@ -419,6 +446,23 @@ produce the same output.
 
 ## Version
 
+- **1.2** (2026-07-20) — informative-mass escalation v1.2
+  (GuitarAlchemist/hari#28, ratified). `escalation_triggered` now
+  compares `C` against the **informative mass** `T+P+D+F+C`, with
+  `Unknown` excluded from the denominator; threshold unchanged at
+  0.3. All-`Unknown` input has zero informative mass and never
+  escalates. Rationale: abstention is the absence of evidence and
+  must not be able to mute an evidence-based alarm — the prior
+  full-mass predicate let `Unknown` observations dilute a genuine
+  `T`/`F` contradiction below threshold (the "abstention-muting"
+  hole, found by hari's SL-correspondence probes). Fixtures 11–12
+  pin the new predicate; fixture 11 is escalation-true under v1.2
+  but was false under v1.1, fixture 12 (all-`Unknown`) is
+  escalation-false. The hari-lattice port is GuitarAlchemist/hari
+  commit 5d32abb; ix-fuzzy lockstep lands separately. All 10 prior
+  conformance fixtures are unchanged (escalation was already
+  computed over informative-only mass in every case where `Unknown`
+  mass was zero).
 - **1.1** (2026-07-20) — purity fixes from the hari algebraic audit
   (GuitarAlchemist/hari#27,
   `hari:docs/research/2026-07-20-hex-merge-algebraic-audit.md`).
