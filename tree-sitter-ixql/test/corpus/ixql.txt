@@ -1,0 +1,192 @@
+========================================
+stdin followed by a csv statement parses as two statements
+========================================
+
+stdin
+csv("f.csv")
+
+---
+
+(source_file
+  (pipeline_statement
+    (pipeline_expr
+      (simple_pipeline
+        (data_source
+          (streaming_source_expr)))))
+  (pipeline_statement
+    (pipeline_expr
+      (simple_pipeline
+        (data_source
+          (file_source
+            (string_literal)))))))
+
+========================================
+stdin with an explicit format spec
+========================================
+
+stdin csv
+
+---
+
+(source_file
+  (pipeline_statement
+    (pipeline_expr
+      (simple_pipeline
+        (data_source
+          (streaming_source_expr
+            (format_spec)))))))
+
+========================================
+dotted tool invocation
+========================================
+
+ix.ml.deep.classify(x)
+
+---
+
+(source_file
+  (mcp_pipeline_statement
+    (mcp_step_expr
+      (tool_invocation
+        (namespace_path
+          (identifier)
+          (identifier)
+          (identifier))
+        (identifier)
+        (arg_list
+          (expression
+            (identifier)))))))
+
+========================================
+mcp binding to a tool invocation
+========================================
+
+result <- context7.resolve("react")
+
+---
+
+(source_file
+  (mcp_pipeline_statement
+    (mcp_step_expr
+      (binding_statement
+        (identifier)
+        (mcp_step_expr
+          (tool_invocation
+            (namespace_path
+              (identifier))
+            (identifier)
+            (arg_list
+              (expression
+                (string_literal)))))))))
+
+========================================
+simple file pipeline
+========================================
+
+csv("data.csv") -> random_forest
+
+---
+
+(source_file
+  (pipeline_statement
+    (pipeline_expr
+      (simple_pipeline
+        (data_source
+          (file_source
+            (string_literal)))
+        (arrow)
+        (pipeline_stage
+          (model_stage))))))
+
+========================================
+assertion over a data source
+========================================
+
+assert input_quality: csv("train.csv") -> assert_check(not_null)
+
+---
+
+(source_file
+  (assertion_statement
+    (identifier)
+    (assertion_pipeline
+      (assertion_subject
+        (pipeline_expr
+          (simple_pipeline
+            (data_source
+              (file_source
+                (string_literal)))
+            (arrow)
+            (pipeline_stage
+              (assertion_check
+                (assertion_condition)))))))))
+
+========================================
+assertion over a model-stage chain
+========================================
+
+assert model_quality: random_forest -> f1_score
+
+---
+
+(source_file
+  (assertion_statement
+    (identifier)
+    (assertion_pipeline
+      (assertion_subject
+        (pipeline_expr
+          (simple_pipeline
+            (data_source
+              (identifier))
+            (arrow)
+            (pipeline_stage
+              (evaluation_stage))))))))
+
+========================================
+parallel tool fanout
+========================================
+
+parallel(a.b(x), c.d(y))
+
+---
+
+(source_file
+  (mcp_pipeline_statement
+    (mcp_step_expr
+      (parallel_tools_expr
+        (tool_invocation
+          (namespace_path
+            (identifier))
+          (identifier)
+          (arg_list
+            (expression
+              (identifier))))
+        (tool_invocation
+          (namespace_path
+            (identifier))
+          (identifier)
+          (arg_list
+            (expression
+              (identifier))))))))
+
+========================================
+reactive webhook to sink
+========================================
+
+webhook(github, "push") => csv("f.csv") => stdout json
+
+---
+
+(source_file
+  (reactive_pipeline_statement
+    (reactive_source_expr
+      (streaming_source_expr
+        (provider)
+        (string_literal)))
+    (pipeline_expr
+      (simple_pipeline
+        (data_source
+          (file_source
+            (string_literal)))))
+    (output_sink_expr
+      (format_spec))))

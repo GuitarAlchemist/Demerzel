@@ -81,8 +81,8 @@
   "subscribe"
   "cdc"
   "grpc"
-  "governance_state"
-  "git_history"
+  (governance_state_source)
+  (git_history_source)
   "mcp_tool_output"
 ] @function.builtin
 
@@ -284,8 +284,6 @@
   "alert"
   "github"
   "notify"
-  "mcp_register"
-  "mcp_invoke"
 ] @function.builtin
 
 ; Sink target providers
