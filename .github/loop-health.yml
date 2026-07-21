@@ -82,6 +82,18 @@ loops:
       adapter: workflow_run
       max_stale_days: 1
 
+  - workflow: ml-governance-schedule.yml
+    schedule:
+      - '0 15 * * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 3
+    note: >-
+      Death tripwire for the daily ML-feedback loop: freshness leg checks
+      cycle-state recency, entrypoint leg proves the orchestrator still runs
+      headlessly. Value is the check itself, so workflow_run is the proof.
+
   - workflow: qa-tribunal.yml
     schedule:
       - '0 9 * * *'
@@ -103,6 +115,17 @@ loops:
       since: '2026-07-18'
       until: '2026-10-16'
       verification: schedule_absent
+
+  - workflow: substrate-audit.yml
+    schedule:
+      - '0 6 1 * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 35
+    note: >-
+      Monthly belief-substrate audit per substrate-audit policy 1.2.0; 35 days
+      allows the monthly cadence plus scheduler jitter before tripping.
 
   - workflow: streeling-daily.yml
     schedule:
