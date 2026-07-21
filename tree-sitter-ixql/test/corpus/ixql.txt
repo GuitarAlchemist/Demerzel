@@ -99,10 +99,34 @@ csv("data.csv") -> random_forest
           (model_stage))))))
 
 ========================================
-assertion over a data source
+assertion with an arrow-less check (spec Test Case 1)
 ========================================
 
-assert input_quality: csv("train.csv") -> assert_check(not_null)
+assert input_quality: csv("train.csv")
+  assert_check(not_null)
+
+---
+
+(source_file
+  (assertion_statement
+    (identifier)
+    (assertion_pipeline
+      (assertion_subject
+        (pipeline_expr
+          (simple_pipeline
+            (data_source
+              (file_source
+                (string_literal))))))
+      (assertion_check
+        (assertion_condition)))))
+
+========================================
+assertion with a pipeline subject and multiple checks
+========================================
+
+assert q: csv("f.csv") -> zscore
+  assert_check(not_null)
+  assert_check(schema: "s.json")
 
 ---
 
@@ -118,14 +142,20 @@ assert input_quality: csv("train.csv") -> assert_check(not_null)
                 (string_literal)))
             (arrow)
             (pipeline_stage
-              (assertion_check
-                (assertion_condition)))))))))
+              (preprocessing_stage
+                (cleaning_expr))))))
+      (assertion_check
+        (assertion_condition))
+      (assertion_check
+        (assertion_condition
+          (string_literal))))))
 
 ========================================
 assertion over a model-stage chain
 ========================================
 
 assert model_quality: random_forest -> f1_score
+  assert_check(not_null)
 
 ---
 
@@ -140,7 +170,9 @@ assert model_quality: random_forest -> f1_score
               (identifier))
             (arrow)
             (pipeline_stage
-              (evaluation_stage))))))))
+              (evaluation_stage)))))
+      (assertion_check
+        (assertion_condition)))))
 
 ========================================
 parallel tool fanout

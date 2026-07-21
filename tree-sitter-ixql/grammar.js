@@ -655,10 +655,19 @@ module.exports = grammar({
         $.assertion_pipeline,
       ),
 
+    // Spec (sci-ml-pipelines.ebnf:453): `assertion_pipeline ::= assertion_subject
+    // assertion_check+` — the checks are JUXTAPOSED, not arrow-joined. The earlier
+    // `repeat(seq($.arrow, $.assertion_check))` required an arrow before each
+    // check, which (a) could not parse the canonical arrow-less form used by every
+    // example in the EBNF and in tests/behavioral/ixql-assertions-cases.md, and
+    // (b) when an arrow was present, absorbed the "check" into the subject's own
+    // pipeline_expr as a pipeline_stage, leaving this rule's check list dead. An
+    // assertion subject that is itself an arrow pipeline still works: those arrows
+    // belong to pipeline_expr, not to the check separator.
     assertion_pipeline: ($) =>
       seq(
         $.assertion_subject,
-        repeat(seq($.arrow, $.assertion_check)),
+        repeat1($.assertion_check),
       ),
 
     // Spec lists data_source | pipeline_expr | ... | identifier as alternatives,
