@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "situation-report.schema.json",
   "title": "Situation Report",
   "description": "A point-in-time assessment of ecosystem health, open work, and recommended priorities",

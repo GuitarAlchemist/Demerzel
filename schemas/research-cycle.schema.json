@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "research-cycle.schema.json",
   "title": "Research Cycle Log",
   "description": "Log entry for a single research cycle executed by the Streeling autoresearch loop",

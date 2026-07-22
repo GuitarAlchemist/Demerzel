@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "conscience-pattern.schema.json",
   "title": "Conscience Pattern",
   "description": "Detected pattern across accumulated conscience signals — clusters of related moral concerns",

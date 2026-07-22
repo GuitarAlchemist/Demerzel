@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "course-production.schema.json",
   "title": "Course Production Pipeline Run",
   "description": "Log entry for a complete course production pipeline: research → outline → content → translation → review → publish",

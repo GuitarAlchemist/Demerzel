@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "council-verdict.schema.json",
   "title": "LLM Council Verdict",
   "description": "A structured verdict from the LLM council reviewing a high-risk or borderline-confidence change",

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "research-weights.schema.json",
   "title": "Research Weight Profile",
   "description": "Per-department probability weights for the scientific method grammar productions",
