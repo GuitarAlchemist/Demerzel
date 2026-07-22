@@ -170,3 +170,65 @@ HDD is designed to be **free/local by default** during bootstrapping and routine
 - The Harness relies on deterministic (free) logic whenever possible.
 - Local models are preferred for cheap tasks like lightweight classification, retrieval, or dry-runs.
 - Paid LLM calls (e.g., Claude, Opus, Gemini) are only utilized when deep judgment, complex reasoning, implementation, or high-tier adversarial review justifies the expense.
+
+---
+
+## Tracer Bullets and Vertical Slices
+
+Adopted ecosystem-wide from aihero.dev (2026-06-14). Counters AI's "build the
+whole thing at once" failure mode. Restored to this file 2026-07-19, when
+`CLAUDE.md` was decomposed and pointed here.
+
+- **Tracer-bullet first.** For any non-trivial feature, build the smallest
+  **end-to-end** slice that touches *every* layer, test it, get feedback, then
+  expand — never build layers in isolation. Context-window constraints make the
+  discipline non-negotiable.
+- **Vertical, not horizontal, decomposition.** Each task or PR is a thin slice
+  cutting through all integration layers, surfacing unknowns early, rather than a
+  horizontal layer completed across the whole system.
+
+This is the same instinct as §6 *Deterministic Before AI* applied to scope: prove
+the seam works before investing in either side of it.
+
+## Harness Doctrine (Pocock delta, 2026-06-22)
+
+Reconciles with the Karpathy 4 Rules and the Cherny session-continuity patterns —
+**agree = keep, diverge = adjust**.
+
+- **Harness ≈ model (50/50), stay agent-agnostic.** Optimize the harness (prompts,
+  skills, codebase, sandbox) as much as the model, and don't over-fit to one model.
+  A codebase that is *easy to change* lets a *cheaper* model do the same work.
+  Optimize **AX (Agent Experience)** the way you optimize DX.
+- **Queue, not loop.** A backlog of scoped tasks with human checkpoints pushed as
+  far right as safe beats an infinite loop. Our queue is `BACKLOG.md` plus
+  `demerzel-driver-triggers.yml` → `state/triggers/*.trigger.json`.
+- **Procedures over abilities.** Skills the user invokes ("procedures") keep their
+  descriptions out of the context window; model-invoked "abilities" leak a
+  description each. Prefer procedures. *(Tension with superpowers' model-in-control
+  stance — documented rather than resolved.)*
+- **Delete → observe → layer back.** Periodically strip skills/MCP/instructions to
+  a blank slate, watch the bare agent, then re-add only what you choose.
+  `demerzel-context-budget` is the tool for this.
+- **Review the system, not just the code.** If someone keeps stealing your bike,
+  buy a lock. Reinforces the `metafix` + ml-feedback loop.
+- **Strategic > tactical (Ousterhout).** AI ate tactical programming; be the
+  strategic delegator. Converges with Karpathy R1 and R4.
+
+## Prefer Existing Tooling Over New Skills
+
+Adopted from aihero.dev (2026-06-14). Restored here 2026-07-20 — it was deleted
+from both `CLAUDE.md` and `AGENTS.md` during the decomposition and landed nowhere,
+while `AGENTS.md` continued to assert it lived in this directory.
+
+Prefer this ecosystem's existing planning, review, and quality machinery over
+adding new skills. `/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, and
+`/improve-codebase-architecture` are already covered by the brainstorming,
+planning-doc, test, and structural-quality tooling here. (`/teach` **is** adopted —
+see `.claude/skills/teach`.)
+
+This is the repo's main anti-sprawl rule, and it governs exactly the decision an
+adoption table makes: before a proposal adds a skill, it has to establish that
+nothing existing already does the job. A review round found four adoption items
+proposing to rebuild skills that were already installed — `implement` (A1),
+`triage` (P2), `handoff` (P4) and `review` (W2) — and this rule is the check that
+should have caught them.

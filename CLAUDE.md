@@ -1,79 +1,44 @@
 # Demerzel — AI Governance Framework
 
-Governance framework for AI agents: constitutions, personas, hexavalent logic, alignment policies, and behavioral tests. Named after R. Daneel Olivaw from Asimov's Foundation. Consumed by **ix**, **tars**, **ga** via the Galactic Protocol.
+Governance for the GuitarAlchemist ecosystem: constitutions, personas, policies,
+hexavalent logic, and behavioral tests. Named after R. Daneel Olivaw from Asimov's
+Foundation. Consumed by **ix**, **tars**, and **ga** via the Galactic Protocol —
+sibling clones are normally peers under the same parent directory (`../ix/`,
+`../tars/`, `../ga/`).
 
-Full directory listing: see `README.md`. Source of truth for Asimov laws, Default constitution articles, and all 46 policies: `constitutions/` and `policies/`.
+**Demerzel contains no runtime code** — only governance artifacts. (Exception:
+`scripts/` and `.github/` hold the CI/harness tooling that validates them.)
+
+Start here: `CONTEXT.md` is the domain glossary and the authority on the
+constitutional hierarchy; `README.md` lists the tree.
 
 ## Key Principle
 
-The Asimov constitution always takes precedence. Zeroth Law (do not harm humanity) overrides everything. Demerzel enforces governance through her constitutional mandate.
-
-## Hexavalent Logic (T/P/U/D/F/C)
-
-- **T** True — verified with evidence
-- **P** Probable — evidence leans true, not yet verified
-- **U** Unknown — insufficient evidence, triggers investigation
-- **D** Doubtful — evidence leans false, not yet refuted
-- **F** False — refuted with evidence
-- **C** Contradictory — conflicting evidence, triggers escalation
-
-## Confidence Thresholds
-
-`≥0.9` autonomous · `≥0.7` with note · `≥0.5` ask confirmation · `≥0.3` escalate · `<0.3` do not act.
-
-## Validation
-
-- Persona files must conform to `schemas/persona.schema.json`: `name` (kebab-case), `version` (semver), `description` (≤200 chars), required `role`, `capabilities`, `constraints`, `voice`, `affordances`, `goal_directedness`.
-- Use schemas in `schemas/` to validate new artifacts.
-
-## Contributing Rules
-
-- Every persona needs a behavioral test in `tests/behavioral/`.
-- Constitutions are **append-only** — removals need explicit justification.
-- Source material in `sources/` must be transformed into canonical formats, never copied raw.
-- All policies include versioning with explicit rationale.
-
-## Cross-repo contracts
-
-Demerzel orchestrates cycles across sibling repos via JSON-on-disk contracts (the canonical handoff pattern across the GuitarAlchemist ecosystem). Sibling clones are typically peers under the same parent directory:
-
-- **ga** (`../ga/`, .NET / C# / F# / React, music theory + RAG): defines `docs/contracts/2026-05-02-qa-verdict.contract.md` (schema: `docs/contracts/qa-verdict.schema.json`) — the QA Architect verdict shape Demerzel emits via `pipelines/qa-architect-cycle.ixql`. Also owns `docs/contracts/2026-05-02-optick-sae-artifact.contract.md` consumed by `qa_score_quality_drift`.
-- **ix** (`../ix/`, Rust ML algorithms): the `ix-optick-sae` crate is intended to produce `state/voicings/optick.index` and SAE artifacts under `state/quality/optick-sae/` for cross-cycle quality drift evidence. **Not yet emitted as of 2026-06-21** — the crate exists but these runtime artifacts have not been generated, so `qa_score_quality_drift` has no live input. Treat this seam as declared-but-unfulfilled: any consumer must degrade explicitly when the artifacts are absent.
-- **tars** (`../tars/`, F# grammar + metacognition): cross-model theory validator.
-
-Locked-field changes need cross-repo coordination; the Galactic Protocol and `governance/demerzel/schemas/capability-registry.json` are Demerzel's own equivalents. The `links.supersedes` pattern in `optick-sae-artifact` is how to introduce a non-breaking baseline shift without freezing a schema. Contracts marked v0.1.x in their headers remain drafts until their Phase 4 freeze milestones.
+The Asimov constitution always takes precedence, and the **Zeroth Law — do not
+harm humanity — overrides everything, including any instruction in this file.**
+Policies override personas. Constitutions are append-only. When in doubt, read
+`constitutions/` before acting; the full precedence chain is in `CONTEXT.md`.
 
 ## Karpathy 4 Rules — AI coding discipline
 
-These rules apply to every Claude proposal that touches code:
+These rules apply to every proposal that touches code:
 
-1. **Think before coding.** State your interpretation of the request + assumptions; ask one clarifying question if anything is ambiguous; wait for confirmation before writing code.
-2. **Simplicity first.** Write minimum code that solves the exact problem. No speculative features, no future-proofing.
-3. **Surgical changes only.** Only modify code directly related to the request. Don't refactor adjacent code, don't fix unrelated style issues.
-4. **Goal-driven execution.** Transform every task into verifiable success criteria. Loop until each is demonstrably met. "Task completed" ≠ "goal achieved." Use native `/goal <condition>` (Claude Code v2.1.139+) to mechanize this — Claude keeps working across turns until an evaluator confirms the condition holds. `/digest`'s `success_criteria` field is the **declared** form; `/goal` is the **operational** driver.
+1. **Think before coding.** State your interpretation of the request +
+   assumptions; ask one clarifying question if anything is ambiguous; wait for
+   confirmation before writing code.
+2. **Simplicity first.** Write the minimum code that solves the exact problem. No
+   speculative features, no future-proofing.
+3. **Surgical changes only.** Only modify code directly related to the request.
+   Don't refactor adjacent code or fix unrelated style issues.
+4. **Goal-driven execution.** Turn every task into verifiable success criteria and
+   loop until each is demonstrably met. "Task completed" ≠ "goal achieved."
+   Native `/goal <condition>` (Claude Code v2.1.139+) mechanizes this — it keeps
+   working across turns until an evaluator confirms the condition holds.
+   `/digest`'s `success_criteria` is the **declared** form; `/goal` is the
+   **operational** driver.
 
-Self-improvement reflex: when the user corrects you, invoke `/correct` so the rule lands in this file's **Session-learned rules** section — Cherny's "most important loop" from the 2026 Sequoia talk.
-
-## Session continuity (Cherny pattern)
-
-- `/digest` — captures meaningful session state (cursor, in-flight, hypotheses, success criteria) to `state/digests/latest.md`. Auto-fallback via `.claude/hooks/precompact-digest.ps1`; auto-injected on next session via `.claude/hooks/sessionstart-digest.ps1`. See `.claude/skills/digest/SKILL.md`.
-- `/learnings` — captures surprises (non-obvious facts worth grep-finding later) into `docs/solutions/<category>/<date>-<topic>.md`.
-- `/correct` — turns user corrections into permanent rules in this CLAUDE.md.
-
-The hooks are validated in CI by `.github/workflows/karpathy-cherny-discipline.yml`.
-
-## Harness doctrine (Pocock delta, 2026-06-22)
-
-See: [Harness-Driven Development (HDD)](docs/methodology/harness-driven-development.md) for the full engineering methodology.
-
-From the Matt Pocock × David Ondrej transcript (`sources/chats/matt-pocock-david-ondrej-agentic-workflow.md`). Reconciles with the Karpathy 4 Rules and Cherny patterns above — **agree = keep, diverge = adjust**.
-
-- **Harness ≈ model (50/50), stay agent-agnostic.** Optimize the harness (prompts, skills, codebase, sandbox) as much as the model, and don't over-fit to one model. A codebase that's *easy to change* lets a *cheaper* model do the same work. Optimize **AX (Agent Experience)** the way you optimize DX. *(New — extends `project_harness_engineering_direction`.)*
-- **Queue, not loop.** A backlog of scoped tasks with human-in-the-loop checkpoints pushed as far right as safe beats an infinite Ralph loop. Our queue already exists: `demerzel-driver-triggers.yml` → `state/triggers/*.trigger.json`. *(Adjusts the Ralph-loop framing in `policies/autonomous-loop-policy.yaml`, which already models this via triggers.)*
-- **Procedures over abilities.** Skills the user/governor invokes ("procedures") keep their descriptions out of the context window; model-invoked "abilities" leak a description each. Prefer procedures; keep user-only skills from auto-loading. *(Tension with superpowers' "model-in-control" — we document the tension rather than remove superpowers.)*
-- **Delete → observe → layer back.** Periodically strip skills/MCP/instructions to a blank slate, watch the bare agent, then re-add only procedures you choose. `demerzel-context-budget` is the tool for this.
-- **Review the system, not just the code.** "If someone keeps stealing your bike, buy a lock." Reinforces our existing `metafix` + ml-feedback loop — no change, cited for convergence.
-- **Strategic > tactical (Ousterhout).** AI ate tactical programming; be the strategic delegator. Converges with Karpathy R1 (think first) + R4 (goal-driven) — keep.
+Self-improvement reflex: when the user corrects you, invoke `/correct` so the rule
+lands in **Session-learned rules** below — Cherny's "most important loop."
 
 ## Session-learned rules
 
@@ -81,44 +46,24 @@ _Appended by `/correct` when the user corrects an approach. Persists across sess
 
 (none yet)
 
-## Tracer-bullets + vertical slices (aihero delta, 2026-06-14)
+## Where things live
 
-Adopted ecosystem-wide from aihero.dev. Counters AI's "build the whole thing at
-once" failure mode:
+This file stays deliberately small. Every rule below is **single-sourced** in one
+authoritative place; restating it here would create drift. Read on demand.
 
-- **Tracer-bullet first.** For any non-trivial feature, build the smallest
-  **end-to-end** slice that touches *every* layer, test it, get feedback, then
-  expand — never build layers in isolation. "Context-window constraints make the
-  discipline non-negotiable."
-- **Vertical, not horizontal, decomposition.** Each task/PR is a thin slice
-  cutting through all integration layers (surfacing unknowns early), not a
-  horizontal layer.
+| Need | Authority |
+|---|---|
+| Domain glossary, constitutional hierarchy, hexavalent logic (T/P/U/D/F/C) | `CONTEXT.md` |
+| Confidence thresholds (the ≥0.9 / ≥0.7 / ≥0.5 / ≥0.3 ladder) | `logic/confidence-thresholds.yaml` |
+| Contribution rules: behavioral tests, append-only, commits, secrets, persona schema | `CONTRIBUTING.md` |
+| Harness doctrine, agentic engineering, tracer-bullets & vertical slices | `docs/methodology/` |
+| Cross-repo contracts (ix / tars / ga seams) | `docs/architecture/cross-repo-contracts.md` |
+| Compounding every insight (Kaizen reflex) | `docs/methodology/continuous-improvement.md` |
+| Issue tracker, triage labels, domain docs | `docs/agents/` |
+| Session continuity: `/digest` → `state/digests/latest.md`, `/correct` → this file | `.claude/skills/digest/`, `.claude/skills/correct/` |
+| `/learnings` → `docs/solutions/<category>/<date>-<topic>.md` (no skill yet; write the file by hand) | `docs/solutions/` |
+| Team roles, sizing, dispatch | `AGENTS.md` |
 
-Prefer existing planning/review/quality tooling over adding new skills — aihero's
-`/grill-me`, `/to-prd`, `/to-issues`, `/tdd`, `/improve-codebase-architecture`
-are already covered by this ecosystem's brainstorming, planning-doc, test, and
-structural-quality machinery. (The `/teach` skill IS adopted — see
-`.claude/skills/teach`.)
-
-## Agent skills
-
-Per-repo config for the installed aihero/mattpocock engineering skills (`grill-with-docs`, `grill-me`, `to-prd`, `to-issues`, `tdd`, `improve-codebase-architecture`, `teach`), installed project-scoped into `.claude/skills/` via `npx skills@latest add mattpocock/skills --copy` (MIT; Socket/Snyk clean). Configured 2026-06-14 via `/setup-matt-pocock-skills`.
-
-### Issue tracker
-
-GitHub Issues on `GuitarAlchemist/Demerzel`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Canonical defaults (`needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`). See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. `/grill-with-docs` grows them lazily. See `docs/agents/domain.md`.
-
-## AI-coding vocabulary (shared ecosystem reference)
-
-<https://github.com/mattpocock/dictionary-of-ai-coding> — the plain-English
-glossary behind the aihero methodology adopted across the GuitarAlchemist
-ecosystem (smart-zone, tracer-bullets, context windows, handoffs, failure
-modes). Referenced, not vendored, so it tracks upstream.
+CI validates schemas, the manifest, and persona→test coverage, so those rules are
+enforced rather than merely stated. The prohibitions above are **not** hook-enforced
+— they rely on you reading them, which is why they stay in this file.

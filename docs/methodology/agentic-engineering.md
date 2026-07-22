@@ -119,3 +119,20 @@ just implements them faster.
 *Pointer, not gospel: this doc is read when you're deciding how to direct a non-trivial change. It is
 deliberately **not** wired into the always-loaded instruction set — that would contradict its own
 context-hygiene advice.*
+
+## References
+
+- [Dictionary of AI Coding](https://github.com/mattpocock/dictionary-of-ai-coding) —
+  the plain-English glossary behind the aihero methodology adopted across the
+  GuitarAlchemist ecosystem (smart-zone, tracer-bullets, context windows, handoffs,
+  failure modes). Referenced, not vendored, so it tracks upstream.
+
+## Skill install provenance
+
+The aihero/mattpocock engineering skills (`grill-with-docs`, `grill-me`, `to-prd`,
+`to-issues`, `tdd`, `improve-codebase-architecture`, `teach`) were installed
+project-scoped into `.claude/skills/` via
+`npx skills@latest add mattpocock/skills --copy` (MIT; Socket/Snyk clean),
+configured 2026-06-14. Note that a newer generation of several of these now sits at
+**user scope** — see `agentic-engineering-2026-07.md` §1 before assuming the
+project-scoped copy is current.

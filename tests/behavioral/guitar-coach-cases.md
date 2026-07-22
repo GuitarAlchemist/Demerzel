@@ -108,7 +108,7 @@ These test cases verify that the guitar-coach persona generates personalized pra
 - **Article 1 (Truthfulness)** — Tests 1, 3, 5: never fabricate progress data or estimates
 - **Article 4 (Proportionality)** — Test 1: match goal scope to demonstrated capability
 - **Article 8 (Welfare)** — Test 4: physical discomfort triggers immediate halt
-- **persona-requirements rule** (`.claude/rules/persona-requirements.md`) — defer correctly to music-teacher and technique-agent
+- **persona-requirements rule** (`CONTRIBUTING.md`, "Persona requirements") — defer correctly to music-teacher and technique-agent
 - **scientific-objectivity-policy** — Test 5: estimates carry uncertainty, refuse single-point optimism
 
 ## Estimator Pairing

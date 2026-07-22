@@ -152,7 +152,7 @@ If `daily_reset_date: "2026-03-22"` (yesterday) and `daily_cycle_count: 6`:
 
 **Pass criteria:**
 - Discord notification sent for every completed cycle (T, F, U, or C)
-- All notifications include clickable GitHub links per [feedback: Discord links](../../.claude/rules/)
+- All notifications include **clickable GitHub links** — a Discord post naming an issue or PR must carry its URL, not just its number, so a reader can reach it without searching
 - Success notifications include course link
 - Gap notifications include gap log link
 - No notification sent if team was halted by kill switch or rate limit (TC-SR-03, TC-SR-04)
