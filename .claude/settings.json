@@ -1,6 +1,6 @@
 {
   "env": {
-    "CLAUDE_CODE_AUTOCOMPACT_PCT_OVERRIDE": "40"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "40"
   },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
