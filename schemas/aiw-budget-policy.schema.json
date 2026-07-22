@@ -1,6 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "aiw-budget-policy.schema.json",
+  "definitions": {
+    "providerId": {
+      "type": "string",
+      "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "gemini-cli", "jules", "notebooklm"],
+      "description": "Closed allowlist. Adding a provider must be a deliberate schema change."
+    }
+  },
   "title": "AIW Budget Policy",
   "$comment": "exclusiveMinimum does NOT reject Infinity or NaN: Python's json.load accepts those literals, inf > 0 is true, and every NaN comparison is false. Finiteness is enforced elsewhere -- by type:integer on the integer fields, and by _number() (math.isfinite) in scripts/aiw_budget_gate.py for the float fields. Any NEW numeric field added here must also be read through _number(), or it loses that guarantee.",
   "description": "Spend policy for the AIW provider router — the file that decides how much real money one AFK cycle may spend. additionalProperties is false at every level so an unrecognized key is a load error, not a silent no-op.",
@@ -69,11 +76,7 @@
         "required": ["id", "tier", "cost_model", "requires_manual_approval"],
         "additionalProperties": false,
         "properties": {
-          "id": {
-            "type": "string",
-            "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "gemini-cli", "jules", "notebooklm"],
-            "description": "Closed allowlist. The tier-keyed guards below constrain the shape GIVEN a tier, so an UNPINNED id could declare itself local-seat with no receipt issuer and bill for free. Adding a provider must be a deliberate schema change, which is the allowlist semantics this file already claims."
-          },
+          "id": {"$ref": "#/definitions/providerId"},
           "tier": {"type": "string", "enum": ["local-seat", "metered-cloud"]},
           "cost_model": {
             "type": "string",
@@ -127,38 +130,13 @@
             }
           },
           {
-            "description": "claude-code-cli is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
-            "if": {"properties": {"id": {"const": "claude-code-cli"}}, "required": ["id"]},
-            "then": {
+            "description": "Local-seat providers have no metered spend; grouping their ids keeps one shared constraint from drifting as the allowlist evolves.",
+            "if": {
               "properties": {
-                "tier": {"const": "local-seat"},
-                "cost_model": {"const": "subscription-or-local"}
-              }
-            }
-          },
-          {
-            "description": "codex-cli is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
-            "if": {"properties": {"id": {"const": "codex-cli"}}, "required": ["id"]},
-            "then": {
-              "properties": {
-                "tier": {"const": "local-seat"},
-                "cost_model": {"const": "subscription-or-local"}
-              }
-            }
-          },
-          {
-            "description": "antigravity is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
-            "if": {"properties": {"id": {"const": "antigravity"}}, "required": ["id"]},
-            "then": {
-              "properties": {
-                "tier": {"const": "local-seat"},
-                "cost_model": {"const": "subscription-or-local"}
-              }
-            }
-          },
-          {
-            "description": "augment-code is a subscription/local seat with no metered spend; pinned by id so it cannot be promoted into a billing path.",
-            "if": {"properties": {"id": {"const": "augment-code"}}, "required": ["id"]},
+                "id": {"enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code"]}
+              },
+              "required": ["id"]
+            },
             "then": {
               "properties": {
                 "tier": {"const": "local-seat"},
@@ -193,7 +171,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "description": "Router preference order. Entries must be declared provider ids — that cross-reference is enforced in load_policy(), which JSON Schema cannot express.",
-      "items": {"type": "string", "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "gemini-cli", "jules", "notebooklm"]}
+      "items": {"$ref": "#/definitions/providerId"}
     }
   }
 }

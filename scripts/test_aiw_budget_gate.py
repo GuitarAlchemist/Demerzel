@@ -295,10 +295,10 @@ class PolicySchemaTests(unittest.TestCase):
     """The policy gates real spend and arrives as an ordinary PR diff, so an
     unrecognized or out-of-bounds key must fail the load, not slip through."""
 
-    def _written(self, mutate):
+    def load_mutated_policy(self, mutator):
         """Write a mutated copy of the shipped policy and load it."""
         policy = json.loads(json.dumps(POLICY))
-        mutate(policy)
+        mutator(policy)
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         path = Path(directory.name) / "policy.json"
@@ -323,7 +323,7 @@ class PolicySchemaTests(unittest.TestCase):
             })
 
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_a_pinned_provider_cannot_be_renamed_out_of_its_pin(self):
         # Renaming sidesteps a per-id pin: the constraint keys on the id, so
@@ -333,7 +333,7 @@ class PolicySchemaTests(unittest.TestCase):
             provider["id"] = "jules-v2"
 
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_metered_provider_cannot_be_downgraded_to_local_seat(self):
         # The tier-keyed guards constrain the shape GIVEN a tier -- but tier is
@@ -348,7 +348,23 @@ class PolicySchemaTests(unittest.TestCase):
             provider.pop("trusted_receipt_issuer", None)
 
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
+
+    def test_local_provider_cannot_be_promoted_to_metered_cloud(self):
+        for provider_id in (
+                "claude-code-cli", "codex-cli", "antigravity", "augment-code"):
+            with self.subTest(provider=provider_id):
+                def mutate(policy):
+                    provider = next(
+                        item for item in policy["providers"]
+                        if item["id"] == provider_id)
+                    provider["tier"] = "metered-cloud"
+                    provider["cost_model"] = "provider-billing"
+                    provider["requires_manual_approval"] = True
+                    provider["trusted_receipt_issuer"] = "billing.example.com"
+
+                with self.assertRaisesRegex(ValueError, "policy is invalid"):
+                    self.load_mutated_policy(mutate)
 
     def test_trusted_receipt_issuer_cannot_be_repointed(self):
         # Any well-formed hostname passed the pattern, so the issuer could be
@@ -358,7 +374,7 @@ class PolicySchemaTests(unittest.TestCase):
             provider["trusted_receipt_issuer"] = "evil.attacker.com"
 
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_validation_error_names_the_offending_field(self):
         # "True was expected" alone locates nothing in a 7-provider file.
@@ -367,7 +383,7 @@ class PolicySchemaTests(unittest.TestCase):
             provider["requires_manual_approval"] = False
 
         with self.assertRaisesRegex(ValueError, r"\$\.providers\[\d+\]\.requires_manual_approval"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_metered_provider_cannot_claim_a_free_cost_model(self):
         # The metered branch pinned only the issuer and approval flag, so a
@@ -381,11 +397,12 @@ class PolicySchemaTests(unittest.TestCase):
             provider["cost_model"] = "subscription-or-local"
 
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_unknown_root_key_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p.update({"max_spend_multiplier": 100}))
+            self.load_mutated_policy(
+                lambda p: p.update({"max_spend_multiplier": 100}))
 
     def test_unknown_provider_key_is_rejected(self):
         # The concrete #772 finding: an out-of-range multiplier added to the
@@ -394,51 +411,56 @@ class PolicySchemaTests(unittest.TestCase):
             provider = next(p for p in policy["providers"] if p["id"] == "jules")
             provider["cost_multiplier"] = 1000
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_unknown_defaults_key_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p["defaults"].update({"max_cost_eur": 2.0}))
+            self.load_mutated_policy(
+                lambda p: p["defaults"].update({"max_cost_eur": 2.0}))
 
     def test_zero_cost_cap_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p["defaults"].update({"max_cost_usd": 0}))
+            self.load_mutated_policy(
+                lambda p: p["defaults"].update({"max_cost_usd": 0}))
 
     def test_negative_cycle_cap_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p["cycle"].update({"max_cost_usd": -1}))
+            self.load_mutated_policy(
+                lambda p: p["cycle"].update({"max_cost_usd": -1}))
 
     def test_zero_parallel_packets_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p["cycle"].update({"max_parallel_packets": 0}))
+            self.load_mutated_policy(
+                lambda p: p["cycle"].update({"max_parallel_packets": 0}))
 
     def test_zero_retries_is_accepted_as_a_tightening(self):
-        loaded = self._written(lambda p: p["defaults"].update({"max_retries": 0}))
+        loaded = self.load_mutated_policy(
+            lambda p: p["defaults"].update({"max_retries": 0}))
         self.assertEqual(0, loaded["defaults"]["max_retries"])
 
     def test_unknown_cost_model_is_rejected(self):
         def mutate(policy):
             policy["providers"][0]["cost_model"] = "free-lunch"
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_missing_required_provider_field_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p["providers"][0].pop("tier"))
+            self.load_mutated_policy(lambda p: p["providers"][0].pop("tier"))
 
     def test_metered_provider_without_receipt_issuer_is_rejected(self):
         def mutate(policy):
             provider = next(p for p in policy["providers"] if p["id"] == "jules")
             provider.pop("trusted_receipt_issuer")
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_metered_provider_cannot_drop_manual_approval(self):
         def mutate(policy):
             provider = next(p for p in policy["providers"] if p["id"] == "jules")
             provider["requires_manual_approval"] = False
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_selection_order_cannot_name_an_undeclared_provider(self):
         # Two layers reject an unroutable selection_order entry, and this test
@@ -455,19 +477,20 @@ class PolicySchemaTests(unittest.TestCase):
                                    if p["id"] != "notebooklm"]
 
         with self.assertRaisesRegex(ValueError, "undeclared providers"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_selection_order_rejects_a_wholly_unknown_id(self):
         # The layer above: an id outside the allowlist never reaches the
         # cross-reference check.
         with self.assertRaisesRegex(ValueError, "policy is invalid"):
-            self._written(lambda p: p["selection_order"].append("shadow-provider"))
+            self.load_mutated_policy(
+                lambda p: p["selection_order"].append("shadow-provider"))
 
     def test_duplicate_provider_ids_are_rejected(self):
         def mutate(policy):
             policy["providers"].append(json.loads(json.dumps(policy["providers"][0])))
         with self.assertRaisesRegex(ValueError, "duplicate provider ids"):
-            self._written(mutate)
+            self.load_mutated_policy(mutate)
 
     def test_invalid_policy_exits_2_not_1(self):
         """Exit 2 is 'fail closed / invalid'; exit 1 is a governed block. An
