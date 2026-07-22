@@ -5,7 +5,7 @@
   "counts": {
     "behavioral_test": 115,
     "constitution": 5,
-    "contract_schema": 9,
+    "contract_schema": 10,
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,
@@ -588,6 +588,10 @@
       {
         "name": "belief-snapshot.schema",
         "path": "schemas/contracts/belief-snapshot.schema.json"
+      },
+      {
+        "name": "claude-compaction-event.schema",
+        "path": "schemas/contracts/claude-compaction-event.schema.json"
       },
       {
         "name": "compliance-report.schema",
