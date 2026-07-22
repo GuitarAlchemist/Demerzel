@@ -1,12 +1,37 @@
 # Galactic Protocol Specification
 
-Version: 1.2.0
+Version: 1.3.0
 Effective: 2026-03-15
-Updated: 2026-03-23
+Updated: 2026-07-21
+
+## Changelog
+
+- **1.3.0 (2026-07-21)** — status-honesty amendment — spec now distinguishes IMPLEMENTED from DRAFT; no protections are claimed that code does not provide. Adds the §Implementation Status table, the Registered Machine Emitters table (Rule 1 amendment), documents the observer model for compliance reports, fixes the v1.1 version drift in the embedded issue template, and voids the lapsed 2026-04-15 integrity hard-reject deadline until reissued. Append-only: no sections removed; unimplemented sections carry explicit status labels instead.
+- **1.2.0 (2026-03-23)** — prior baseline (Message Integrity layer specified); see git history.
 
 ## Purpose
 
 This document defines the behavioral semantics of the Galactic Protocol — the communication and persistence protocol between Demerzel and consumer repos (ix, tars, ga). Contract schemas in `schemas/contracts/` define message formats; this document defines when and how those messages flow.
+
+## Implementation Status (v1.3.0)
+
+What this spec claims vs. what code actually provides, as of 2026-07-21. Only the compliance-report flow is live end-to-end. This table is normative for honesty: any claim elsewhere in this document counts only as strong as its status row here.
+
+| Message type / layer | Status | Evidence |
+|---|---|---|
+| `compliance-report` | **IMPLEMENTED** | Emitted daily by `scripts/compliance_report.py` (observer model — see below) into `state/oversight/compliance-reports/` (~110 instances; gitignored runtime state). Consumed by the ix `violation_pattern_detector` producer → `state/oversight/ml-recommendations/` → `scripts/apply_ml_feedback.py`. Instances are schema-validated by `scripts/validate_governance.py`. |
+| `directive` (JSON message instance) | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. Directives flow today as GitHub Issues (§Directive → GitHub Issue Mapping), not as protocol JSON messages. |
+| `knowledge-package` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
+| `belief-snapshot` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
+| `learning-outcome` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
+| `external-sync-envelope` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced; no adapters defined. |
+| Message Integrity layer (§Message Integrity) | **SPECIFIED — NOT IMPLEMENTED** | No receiver verifies origin, hash, timestamp, or replay. `state/security/processed-messages.json` does not exist. The compliance-report emitter *attaches* integrity fields, but nothing checks them on receipt. The 2026-04-15 hard-reject deadline (§Backward Compatibility) passed unenforced and is **void until reissued**. |
+
+New message types or integrity enforcement move to IMPLEMENTED only when an emitter/verifier ships with instances or checks on disk — no artifact without consumer.
+
+### Observer model for compliance reports
+
+Compliance reports are synthesized **centrally by Demerzel**: `scripts/compliance_report.py` runs governance checks against each consumer repo's local `governance/demerzel/` mirror on the same machine. `origin_repo` therefore identifies the **observed** repo (ix, tars, ga), not the author of the message — the author is always Demerzel's `compliance-reporter` emitter. Consumers do not self-report in the current implementation (acknowledged in the emitter's docstring as the pragmatic single-home option; strict self-reporting fidelity would move the checks into each consumer repo).
 
 ## Message Types
 
@@ -18,6 +43,8 @@ This document defines the behavioral semantics of the Galactic Protocol — the 
 | `belief-snapshot.schema.json` | Consumer → Demerzel | Belief state export |
 | `learning-outcome.schema.json` | Consumer → Demerzel | PDCA/5 Whys/knowledge results |
 | `external-sync-envelope.schema.json` | Bidirectional | External system wrapper |
+
+Only `compliance-report` has a live emitter as of v1.3.0 — see §Implementation Status for the authoritative per-type status.
 
 ## Protocol Flows
 
@@ -64,6 +91,8 @@ Both require logged reasoning with specific constitutional citations.
 
 ## Message Integrity
 
+> **Status (v1.3.0): SPECIFIED — NOT IMPLEMENTED.** This entire section describes intended protections that no code currently provides. There is no receiver-side verification of origin, hash, timestamp, sequence, or replay; `state/security/` does not exist; content scanning is not performed. The section is retained per append-only discipline as the design target. Do not rely on any protection described here until this label is lifted in a future version.
+
 All Galactic Protocol messages must include integrity fields to prevent forgery, tampering, and replay attacks. This section was added per `policies/adversarial-resilience-policy.yaml` to close the blind spot identified in the HBR "Agents as Team Members" reflection.
 
 ### Required Integrity Fields
@@ -81,7 +110,13 @@ Every protocol message (directive, compliance report, belief snapshot, learning 
 
 ### Verification Rules
 
-1. **Origin verification:** `origin_repo` must be a registered participant in the Galactic Protocol. `origin_agent` must be a valid persona in that repo. Messages from unregistered origins are rejected.
+1. **Origin verification:** `origin_repo` must be a registered participant in the Galactic Protocol. `origin_agent` must be a valid persona in that repo **or a machine emitter listed in the Registered Machine Emitters table below** *(amended v1.3.0: every live message carries `origin_agent: "compliance-reporter"`, which is an emitter script, not a persona — the rule as originally written was violated by 100% of real traffic)*. Messages from unregistered origins are rejected.
+
+   **Registered Machine Emitters (v1.3.0):** machine emitters are scripts, not personas; they are valid `origin_agent` values under this rule.
+
+   | `origin_agent` | Emitter | Model |
+   |---|---|---|
+   | `compliance-reporter` | `scripts/compliance_report.py` | Observer — Demerzel synthesizes the report from the consumer's local mirror; `origin_repo` = observed repo, not author (see §Implementation Status → Observer model). |
 
 2. **Timestamp validation:** `timestamp` must be within 5 minutes of receiver's clock (clock skew tolerance). Messages older than 24 hours are rejected as stale — potential replay attacks.
 
@@ -129,6 +164,8 @@ Beyond structural integrity, message content is scanned for adversarial patterns
 ### Backward Compatibility
 
 Existing messages without integrity fields are accepted during a **transition period ending 2026-04-15** with a governance warning logged. After 2026-04-15, messages without integrity fields are **hard-rejected** — no grace period, no override. Consumer repos must update their message generation to include integrity fields before this deadline. The transition period is not extendable without a constitutional amendment (requires human approval per Governance Promotion Protocol §Stage 2).
+
+> **v1.3.0 note:** the 2026-04-15 deadline passed with no rejection logic ever implemented — no message was ever warned or hard-rejected. The deadline is **void until reissued** in a future version alongside an actual verifier. Claiming an enforced deadline that code does not enforce would violate the status-honesty principle of this amendment.
 
 ## Error Handling
 
@@ -371,7 +408,7 @@ Governance directives are materialized as GitHub Issues in the target repo.
 Per Galactic Protocol §1, valid rejection requires First Law or Second Law override with logged constitutional citations.
 
 ---
-*Issued via Galactic Protocol v1.1 — [directive schema](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/contracts/directive.schema.json)*
+*Issued via Galactic Protocol v1.3.0 — [directive schema](https://github.com/GuitarAlchemist/Demerzel/blob/master/schemas/contracts/directive.schema.json)*
 ```
 
 ### Compliance Report → Issue Comment Mapping
