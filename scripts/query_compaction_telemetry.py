@@ -14,6 +14,24 @@ def sql_literal(value: str) -> str:
     return value.replace("'", "''")
 
 
+def build_query(source: str) -> str:
+    return f"""
+WITH events AS (
+  SELECT * FROM read_json_auto('{source}', format='newline_delimited', union_by_name=true)
+)
+SELECT
+  repo,
+  count(*) AS lifecycle_events,
+  count(*) FILTER (WHERE event = 'post_compact') AS completed_compactions,
+  count(*) FILTER (WHERE event = 'session_rehydrated') AS recoveries,
+  max(ts) AS latest_event,
+  max(project_setting) FILTER (WHERE project_setting = 'obsolete-key') AS obsolete_project_setting
+FROM events
+GROUP BY repo
+ORDER BY latest_event DESC, repo;
+"""
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -28,21 +46,7 @@ def main() -> int:
     if not duckdb:
         parser.error("duckdb CLI is required")
     source = sql_literal(args.log_path.resolve().as_posix())
-    query = f"""
-WITH events AS (
-  SELECT * FROM read_json_auto('{source}', format='newline_delimited', union_by_name=true)
-)
-SELECT
-  repo,
-  count(*) AS lifecycle_events,
-  count(*) FILTER (event = 'post_compact') AS completed_compactions,
-  count(*) FILTER (event = 'session_rehydrated') AS recoveries,
-  max(ts) AS latest_event,
-  max(project_setting) FILTER (project_setting = 'obsolete-key') AS obsolete_project_setting
-FROM events
-GROUP BY repo
-ORDER BY latest_event DESC, repo;
-"""
+    query = build_query(source)
     result = subprocess.run(
         [duckdb, "-json", "-c", query],
         check=False,

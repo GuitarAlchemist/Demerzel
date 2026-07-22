@@ -69,10 +69,10 @@ def project_setting_status(root: Path) -> str:
     env = data.get("env") if isinstance(data, dict) else None
     if not isinstance(env, dict):
         return "inherited"
-    if SUPPORTED_KEY in env:
-        return "supported"
     if OBSOLETE_KEY in env:
         return "obsolete-key"
+    if SUPPORTED_KEY in env:
+        return "supported"
     return "inherited"
 
 
