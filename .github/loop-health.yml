@@ -91,8 +91,10 @@ loops:
       max_stale_days: 3
     note: >-
       Death tripwire for the daily ML-feedback loop: freshness leg checks
-      cycle-state recency, entrypoint leg proves the orchestrator still runs
-      headlessly. Value is the check itself, so workflow_run is the proof.
+      committed belief last_updated recency (7d — cycle summaries are
+      gitignored, so tracked beliefs are the only CI-visible evidence),
+      entrypoint leg runs a strict dry-run with producers resolved from a
+      real ix checkout. Value is the check itself, so workflow_run is the proof.
 
   - workflow: qa-tribunal.yml
     schedule:
