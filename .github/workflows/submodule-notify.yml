@@ -38,13 +38,17 @@ jobs:
 
           echo "Demerzel HEAD: $DEMERZEL_HEAD ($COMMIT_MSG)"
 
-          for REPO in ix tars ga; do
-            # Get the submodule commit in the consumer repo
-            SUB_SHA=$(gh api "repos/GuitarAlchemist/$REPO/contents/governance/demerzel" \
-              --jq '.sha' 2>/dev/null || echo "none")
+          # Fail loud: any API failure below increments this and fails the job at
+          # the end, after all repos are processed. A swallowed failure here hid
+          # months of red (see docs/research/2026-07-21-staleness-downstream-verdict.md).
+          FAILURES=0
 
-            if [ "$SUB_SHA" = "none" ]; then
-              echo "$REPO: no submodule found, skipping"
+          for REPO in ix tars ga; do
+            # Get the submodule commit in the consumer repo. An API error must not
+            # read as "no submodule" — that silently skips the repo forever.
+            if ! SUB_SHA=$(gh api "repos/GuitarAlchemist/$REPO/contents/governance/demerzel" --jq '.sha'); then
+              echo "::error::$REPO: could not read submodule pin (API failure, not absence)"
+              FAILURES=$((FAILURES+1))
               continue
             fi
 
@@ -56,19 +60,29 @@ jobs:
             echo "$REPO: submodule at $SUB_SHORT, $BEHIND commits behind"
 
             # Dispatch auto-update event (consumer decides whether to auto-commit or PR)
-            gh api "repos/GuitarAlchemist/$REPO/dispatches" \
+            if gh api "repos/GuitarAlchemist/$REPO/dispatches" \
               --method POST \
               -f event_type="demerzel-updated" \
               -f "client_payload[demerzel_head]=$DEMERZEL_HEAD" \
               -f "client_payload[commit_msg]=$COMMIT_MSG" \
-              -f "client_payload[behind]=$BEHIND" \
-              2>/dev/null && echo "  Dispatched auto-update to $REPO" || echo "  Failed to dispatch to $REPO"
+              -f "client_payload[behind]=$BEHIND"; then
+              echo "  Dispatched auto-update to $REPO"
+            else
+              echo "::error::$REPO: dispatch failed"
+              FAILURES=$((FAILURES+1))
+            fi
 
-            # Only create issue if significantly behind (>5 commits) AND no existing issue
+            # Only create issue if significantly behind (>5 commits) AND no existing issue.
+            # in:title is load-bearing: a full-text search matches any open issue whose
+            # BODY mentions the submodule (ga #47 did), muting staleness alerts forever.
             if [ "$BEHIND" -gt 5 ] 2>/dev/null; then
-              EXISTING=$(gh issue list --repo "GuitarAlchemist/$REPO" \
-                --search "Demerzel submodule" --state open \
-                --json number --jq 'length' 2>/dev/null || echo "0")
+              if ! EXISTING=$(gh issue list --repo "GuitarAlchemist/$REPO" \
+                --search "Demerzel submodule in:title" --state open \
+                --json number --jq 'length'); then
+                echo "::error::$REPO: issue list failed; cannot tell if an alert already exists"
+                FAILURES=$((FAILURES+1))
+                EXISTING="skip"
+              fi
 
               if [ "$EXISTING" = "0" ]; then
                 gh issue create --repo "GuitarAlchemist/$REPO" \
@@ -92,9 +106,14 @@ jobs:
           ---
           *Automated by Demerzel submodule staleness detection.*
           ISSUEEOF
-          )" 2>/dev/null && echo "  Created issue for $REPO" || echo "  Failed to create issue for $REPO"
-              else
+          )" && echo "  Created issue for $REPO" || { echo "::error::$REPO: issue creation failed"; FAILURES=$((FAILURES+1)); }
+              elif [ "$EXISTING" != "skip" ]; then
                 echo "  $REPO: staleness issue already exists, skipping"
               fi
             fi
           done
+
+          if [ "$FAILURES" -gt 0 ]; then
+            echo "::error::$FAILURES notification hop(s) failed — see errors above"
+            exit 1
+          fi
