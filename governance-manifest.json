@@ -5,7 +5,7 @@
   "counts": {
     "behavioral_test": 115,
     "constitution": 5,
-    "contract_schema": 9,
+    "contract_schema": 10,
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,
@@ -620,6 +620,10 @@
       {
         "name": "qa-verdict.schema",
         "path": "schemas/contracts/qa-verdict.schema.json"
+      },
+      {
+        "name": "session-claim.schema",
+        "path": "schemas/contracts/session-claim.schema.json"
       }
     ],
     "grammar": [
