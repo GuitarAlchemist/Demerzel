@@ -1,7 +1,8 @@
 # Galactic Protocol follow-ups — evidence-first ledger ratification
 
 **Date:** 2026-07-21 (deepened same day)
-**Status:** owner decision recorded — option (a), adopt the bridge as a stacked follow-up to PR #813
+**Status:** COMPLETE (2026-07-23) — all slices landed. A: staleness investigation shipped (`docs/research/2026-07-21-staleness-downstream-verdict.md` + fix #814). B: spec v1.4.1 crisp-channel exemption. C: ratified via #817 + review-fix commit 58aa82b (schema additive-only + CI-validated fixture + SINGLE-HOST ADVISORY label + changelog waiver). §0 resolved as (a) adopt-whole; the bridge's constitutional question (CL-817-12) adjudicated in CONTRIBUTING.md (scripts/ tooling exception). Prior status line kept below for provenance.
+**Status (superseded):** owner decision recorded — option (a), adopt the bridge as a stacked follow-up to PR #813
 **Provenance:** two-subagent audit (spec survey + usage audit) → PR #813 (v1.3.0 status-honesty) → this plan → 4-agent deepening panel (2 researchers, 2 reviewers) + 2 documented learnings.
 
 ## Enhancement Summary
