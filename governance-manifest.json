@@ -14,7 +14,7 @@
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 27
+    "workflow": 29
   },
   "inventory": {
     "constitution": [
@@ -175,7 +175,7 @@
       {
         "name": "belief-currency-policy",
         "path": "policies/belief-currency-policy.yaml",
-        "version": "1.0.0"
+        "version": "1.2.0"
       },
       {
         "name": "capability-unity",
@@ -1342,6 +1342,10 @@
         "path": ".github/workflows/karpathy-cherny-discipline.yml"
       },
       {
+        "name": "ml-governance-schedule",
+        "path": ".github/workflows/ml-governance-schedule.yml"
+      },
+      {
         "name": "project-automation",
         "path": ".github/workflows/project-automation.yml"
       },
@@ -1364,6 +1368,10 @@
       {
         "name": "submodule-notify",
         "path": ".github/workflows/submodule-notify.yml"
+      },
+      {
+        "name": "substrate-audit",
+        "path": ".github/workflows/substrate-audit.yml"
       },
       {
         "name": "tribunal-panel",
