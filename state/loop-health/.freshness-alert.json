@@ -1,0 +1,13 @@
+{
+  "alert": "ecosystem-freshness",
+  "problems": [
+    {
+      "kind": "silent_green",
+      "workflow": "ml-governance-schedule.yml"
+    },
+    {
+      "kind": "silent_green",
+      "workflow": "substrate-audit.yml"
+    }
+  ]
+}
