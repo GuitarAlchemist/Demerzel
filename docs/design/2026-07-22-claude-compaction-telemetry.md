@@ -6,10 +6,24 @@ Every local Claude Code repo inherits the supported 40% auto-compaction
 threshold. `PreCompact`, `PostCompact`, and compact-driven `SessionStart`
 events append privacy-safe metadata to `~/.agents/compaction-events.jsonl`.
 
-The slice closes one real feedback loop:
+**Scope honesty (amended 2026-07-23, cross-model review CL-815-5):** this
+slice ships the **producer half only**. Nothing schedules
+`query_compaction_telemetry.py` — no CI job, cron, loop, or doc-driven ritual
+reads the stream yet, so steps 2–5 below are the *intended* loop, not a closed
+one. Per silent-loop-death doctrine, treat the stream as unconsumed until a
+scheduled reader exists; do not cite this slice as a working feedback loop.
+Known caveats from the same review: the hook's `compact_summary` payload field
+is undocumented in the hooks spec, so `summary_sha256`/`summary_chars` are
+best-effort and may stay null; the threshold override only *lowers* proactive
+compaction, so on extended-context sessions events may be rare and the stream
+near-empty; `branch` is the one raw free-text field (avoid customer/ticket
+descriptors in branch names).
 
-1. Claude Code emits lifecycle evidence.
-2. IX/DuckDB queries compaction and recovery rates by repo.
+The intended loop, producer-first:
+
+1. Claude Code emits lifecycle evidence. *(implemented)*
+2. IX/DuckDB queries compaction and recovery rates by repo. *(tooling exists,
+   unscheduled)*
 3. TARS retains task meaning in the existing per-repo session digest.
 4. Demerzel flags obsolete project settings and governs threshold changes.
 5. The fleet Project carries the verified remediation work.

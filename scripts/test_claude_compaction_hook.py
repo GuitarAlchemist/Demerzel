@@ -47,6 +47,24 @@ class ClaudeCompactionHookTests(unittest.TestCase):
             self.assertNotIn("secret summary body", persisted)
             self.assertNotIn("C:/private/transcript.jsonl", persisted)
 
+            # Anti-theater guard (cross-model review CL-815-4): the committed
+            # schema must actually accept a real emitted row, or it is
+            # decorative and free to drift from the emitter.
+            try:
+                import jsonschema
+            except ImportError:
+                return  # row assertions above still ran; schema check skipped
+            schema_path = (
+                Path(__file__).resolve().parents[1]
+                / "schemas"
+                / "contracts"
+                / "claude-compaction-event.schema.json"
+            )
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+            emitted = json.loads(persisted.splitlines()[0])
+            errors = list(jsonschema.Draft202012Validator(schema).iter_errors(emitted))
+            self.assertEqual(errors, [], f"emitted row rejected by schema: {errors}")
+
     def test_obsolete_project_setting_is_detected(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
