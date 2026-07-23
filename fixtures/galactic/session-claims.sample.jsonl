@@ -1,0 +1,5 @@
+{"ts":"2026-07-21T18:00:00Z","session":"demerzel","repo":"Demerzel","lane":"pr-808","status":"claimed","note":"sanitized fixture: plain claim row without evidence field"}
+{"ts":"2026-07-21T19:00:00Z","session":"ix","repo":"ix","lane":"sigpipe-fix","status":"in-progress","evidence":"abc1234","note":"sanitized fixture: row with evidence"}
+{"ts":"2026-07-21T20:00:00Z","session":"tars","repo":"Demerzel","lane":"pr-808","status":"done","evidence":null,"note":"sanitized fixture: later file position wins over the first pr-808 row regardless of ts"}
+{"ts":"2026-07-21T17:00:00Z","session":"hari","repo":"hari","lane":"loop-triage","status":"flag","note":"sanitized fixture: unknown status token exercises the enum-with-escape branch"}
+{"schema_version":"1.1","ts":"2026-07-22T09:00:00Z","session":"demerzel-codex","repo":"fleet-tools","lane":"bridge","status":"released","priority":"low","note":"sanitized fixture: schema_version + unknown extra field exercise additive-only tolerance"}

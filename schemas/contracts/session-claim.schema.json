@@ -2,15 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/session-claim",
   "title": "Cross-Session Claim Ledger Row",
-  "description": "One append-only ~/.agents/claims.jsonl row. Latest row for a (repo, lane) pair wins; this is advisory coordination, not a distributed lock.",
+  "description": "One append-only ~/.agents/claims.jsonl row. Latest row for a (repo, lane) pair wins BY FILE POSITION — never by comparing ts values, which are advisory only (writer clocks may skew). This is advisory coordination, not a distributed lock. Schema evolution is additive-only: readers MUST tolerate unknown fields (additionalProperties true) and unknown status values (the anyOf escape), per the ledger adoption plan (docs/superpowers/plans/2026-07-21-galactic-protocol-followups.md, Slice C).",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["ts", "repo", "lane", "status", "session", "evidence"],
+  "additionalProperties": true,
+  "required": ["ts", "repo", "lane", "status", "session"],
   "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Optional per-line schema version (e.g. \"1.0\"). Absent means 1.0. Enables additive evolution without a flag day across writer sessions.",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
     "ts": {
       "type": "string",
       "format": "date-time",
-      "description": "RFC 3339 UTC event timestamp"
+      "description": "RFC 3339 UTC event timestamp. Advisory only — ordering authority is file position, not this value."
     },
     "repo": {
       "type": "string",
@@ -21,8 +26,17 @@
       "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}$"
     },
     "status": {
-      "type": "string",
-      "enum": ["claimed", "done", "released", "in-progress"]
+      "description": "Known lifecycle values are enumerated; any other well-formed token is legal (enum-with-escape). 46 observed rows is too small a sample to freeze the vocabulary — readers treat unknown statuses as opaque and keep folding.",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["claimed", "done", "released", "in-progress"]
+        },
+        {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,63}$"
+        }
+      ]
     },
     "session": {
       "type": "string",

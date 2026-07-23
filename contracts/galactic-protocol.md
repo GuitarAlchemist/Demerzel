@@ -6,7 +6,7 @@ Updated: 2026-07-21
 
 ## Changelog
 
-- **1.4.0 (2026-07-21)** — local live-session bridge — adds an implemented stdio MCP transport, Codex lifecycle-hook delivery, shared `~/.agents/claims.jsonl` interoperability, a machine-readable claim-row contract, and behavioral tests. Desktop activation requires hook trust and a new chat.
+- **1.4.0 (2026-07-21)** — local live-session bridge — adds an implemented stdio MCP transport, Codex lifecycle-hook delivery, shared `~/.agents/claims.jsonl` interoperability, a machine-readable claim-row contract, and behavioral tests. Desktop activation requires hook trust and a new chat. **Evidence-gate waiver (recorded 2026-07-23, owner decision):** the ledger adoption plan's ratification gate (≥3 sessions × ≥3 days of observed `claims.jsonl` use before freezing a schema) was pre-empted by shipping this contract at ~2 sessions/2 days of evidence; the schema therefore ships with additive-only constraints (`additionalProperties: true`, enum-with-escape `status`, optional per-line `schema_version`) so early freezing cannot invalidate rows written by sessions that predate it. Waivers of plan gates are never silent — this line is the record.
 - **1.3.0 (2026-07-21)** — status-honesty amendment — spec now distinguishes IMPLEMENTED from DRAFT; no protections are claimed that code does not provide. Adds the §Implementation Status table, the Registered Machine Emitters table (Rule 1 amendment), documents the observer model for compliance reports, fixes the v1.1 version drift in the embedded issue template, and voids the lapsed 2026-04-15 integrity hard-reject deadline until reissued. Append-only: no sections removed; unimplemented sections carry explicit status labels instead.
 - **1.2.0 (2026-03-23)** — prior baseline (Message Integrity layer specified); see git history.
 
@@ -21,7 +21,7 @@ What this spec claims vs. what code actually provides, as of 2026-07-21. Only th
 | Message type / layer | Status | Evidence |
 |---|---|---|
 | `compliance-report` | **IMPLEMENTED** | Emitted daily by `scripts/compliance_report.py` (observer model — see below) into `state/oversight/compliance-reports/` (~110 instances; gitignored runtime state). Consumed by the ix `violation_pattern_detector` producer → `state/oversight/ml-recommendations/` → `scripts/apply_ml_feedback.py`. Instances are schema-validated by `scripts/validate_governance.py`. |
-| Local session coordination | **IMPLEMENTED — ACTIVATION REQUIRES HOOK TRUST** | `scripts/galactic_bridge.py`, `scripts/galactic_hook.py`, installer, `session-claim.schema.json`, and `scripts/test_galactic_bridge.py`. User must review `/hooks` and start a new chat; idle-chat push is not implemented. |
+| Local session coordination | **IMPLEMENTED — SINGLE-HOST ADVISORY** | `scripts/galactic_bridge.py`, `scripts/galactic_hook.py`, installer, `session-claim.schema.json`, and `scripts/test_galactic_bridge.py`. Single-host only: all coordinating sessions share one machine's filesystem; multi-host synchronization is **normatively out of scope** for this layer (a future layer that syncs ledgers across hosts must be specified separately and does not inherit this IMPLEMENTED status). Advisory only — not a lock server. Activation additionally requires hook trust: user must review `/hooks` and start a new chat; idle-chat push is not implemented. |
 | `directive` (JSON message instance) | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. Directives flow today as GitHub Issues (§Directive → GitHub Issue Mapping), not as protocol JSON messages. |
 | `knowledge-package` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
 | `belief-snapshot` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
@@ -545,9 +545,17 @@ The experimental event namespace is `galactic.session-coordination/v0.1`:
 | `message.acknowledged` | Confirm the receiving session handled the message |
 
 Every event in the live event ledger MUST carry the six Message Integrity fields
-from this protocol. Claim rows instead conform exactly to the existing fleet
-schema: `ts`, `repo`, `lane`, `status`, `session`, `evidence`, and optional
-`note`. Latest row per `(repo, lane)` wins. The claims ledger is deliberately an
+from this protocol. The ledger's `content_hash` verification is **integrity-only,
+not authentication**: an unkeyed SHA-256 detects accidental corruption and torn
+writes, but any local process can compute a valid hash, so it provides no
+forgery, spoofing, or replay protection — do not read the §Message Integrity
+section's broader goals into this layer. Claim rows instead conform to the
+existing fleet schema: `ts`, `repo`, `lane`, `status`, `session`, and optional
+`evidence`, `note`, and `schema_version`. Latest row per `(repo, lane)` wins
+**by file position** — readers MUST NOT order rows by comparing `ts` values,
+which are advisory (writer clocks may skew); the append order of the file is the
+ordering authority. Readers MUST tolerate unknown fields and unknown `status`
+values (additive-only evolution). The claims ledger is deliberately an
 advisory collision-avoidance channel, not a distributed lock server.
 The committed machine-readable row contract is
 `schemas/contracts/session-claim.schema.json`.

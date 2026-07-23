@@ -5,7 +5,7 @@
   "counts": {
     "behavioral_test": 115,
     "constitution": 5,
-    "contract_schema": 10,
+    "contract_schema": 11,
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,

@@ -166,5 +166,46 @@ class GalacticBridgeTests(unittest.TestCase):
         self.assertNotIn("hookSpecificOutput", next_result)
 
 
+class SessionClaimSchemaTests(unittest.TestCase):
+    """Anti-theater guard: the committed claim-row schema must actually accept
+    the committed sanitized fixture (fixtures/galactic/session-claims.sample.jsonl).
+    Without this, session-claim.schema.json is loaded by nothing and can drift
+    from ledger reality unnoticed — the exact decorative-schema trap the ledger
+    adoption plan (Slice C) exists to prevent."""
+
+    REPO_ROOT = Path(__file__).resolve().parents[1]
+    SCHEMA = REPO_ROOT / "schemas" / "contracts" / "session-claim.schema.json"
+    FIXTURE = REPO_ROOT / "fixtures" / "galactic" / "session-claims.sample.jsonl"
+
+    def test_fixture_rows_validate_against_schema(self) -> None:
+        try:
+            import jsonschema
+        except ImportError:
+            self.skipTest("jsonschema not installed")
+        schema = json.loads(self.SCHEMA.read_text(encoding="utf-8"))
+        validator = jsonschema.Draft202012Validator(schema)
+        rows = [
+            json.loads(line)
+            for line in self.FIXTURE.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        self.assertGreaterEqual(len(rows), 5, "fixture must exercise several row shapes")
+        for i, row in enumerate(rows):
+            errors = list(validator.iter_errors(row))
+            self.assertEqual(
+                errors, [], f"fixture row {i + 1} rejected by schema: {errors}"
+            )
+
+    def test_schema_is_additive_only(self) -> None:
+        """The plan's evolution constraints, pinned as executable assertions:
+        unknown fields tolerated, unknown status tokens legal, ts never required
+        to order rows (no exclusive enum on status)."""
+        schema = json.loads(self.SCHEMA.read_text(encoding="utf-8"))
+        self.assertIs(schema.get("additionalProperties"), True)
+        self.assertIn("anyOf", schema["properties"]["status"])
+        self.assertNotIn("enum", schema["properties"]["status"])
+        self.assertNotIn("evidence", schema["required"])
+
+
 if __name__ == "__main__":
     unittest.main()
