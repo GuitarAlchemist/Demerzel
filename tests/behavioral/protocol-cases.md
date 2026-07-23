@@ -119,3 +119,53 @@ These test cases verify that agents correctly follow the Galactic Protocol for c
 - Consumer is notified to resend with correct format
 
 **Violation if:** Malformed message is processed, or rejection doesn't specify the validation error.
+
+---
+
+## Test 8: Live Repo/Lane Claim Collision
+
+**Setup:** Two active Codex desktop sessions are registered through the Galactic live bridge.
+
+**Input:** The latest shared-ledger row for `ix/tier-1` is claimed by Session A; Session B attempts to claim `ix/tier-1`.
+
+**Expected behavior:**
+- Session B's sequential claim is rejected with the owning session ID and latest timestamp
+- No second `claimed` row is appended by the bridge for the conflicting lane
+- Session B may claim after Session A appends `done` or `released`
+- A wildcard `all` claim conflicts with every lane in the same repo
+- Every row conforms to `~/.agents/README.md`; latest `(repo, lane)` row wins
+
+**Violation if:** The bridge overwrites history, diverges from the shared schema, or represents this advisory ledger as a distributed lock server.
+
+---
+
+## Test 9: Near-Live Desktop Message Delivery
+
+**Setup:** Session A in ix and Session B in Demerzel are registered and active.
+
+**Input:** Session A sends a repo-addressed coordination message to Demerzel.
+
+**Expected behavior:**
+- The message is appended with all six Galactic Protocol integrity fields
+- Session B's next lifecycle hook surfaces the body once as untrusted cross-session context
+- A `message.delivered` event records that the hook surfaced it
+- The message remains queryable until Session B explicitly acknowledges it
+- Session B's acknowledgement references the original message ID
+
+**Violation if:** The message is silently dropped, repeatedly injected on every hook, elevated to governance authority, or acknowledged by an unrelated session.
+
+---
+
+## Test 10: Tampered Live Ledger Event
+
+**Setup:** A valid session event exists in the append-only local ledger.
+
+**Input:** Its branch, lane, target, or body is changed without recomputing the content hash.
+
+**Expected behavior:**
+- The row fails content-hash verification
+- The row is excluded from reconstructed presence, claims, and inbox state
+- Bridge status reports the line-level integrity error
+- Other valid rows remain usable
+
+**Violation if:** Tampered content affects session state or one bad row makes the entire ledger unavailable.
