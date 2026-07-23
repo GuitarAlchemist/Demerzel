@@ -1,11 +1,12 @@
 # Galactic Protocol Specification
 
-Version: 1.4.0
+Version: 1.4.1
 Effective: 2026-03-15
-Updated: 2026-07-21
+Updated: 2026-07-23
 
 ## Changelog
 
+- **1.4.1 (2026-07-23)** — crisp-channel honesty correction (plan Slice B) — the Channel Assignments table said "Directives: always crisp ⇒ schema-validated before sending" while the status table says directives have NO JSON emitter and flow as GitHub Issues, which are not schema-validated. One-sentence exemption added to §Rules; revival criterion appended to the directive status row. Doc-only; `directive.schema.json` untouched.
 - **1.4.0 (2026-07-21)** — local live-session bridge — adds an implemented stdio MCP transport, Codex lifecycle-hook delivery, shared `~/.agents/claims.jsonl` interoperability, a machine-readable claim-row contract, and behavioral tests. Desktop activation requires hook trust and a new chat. **Evidence-gate waiver (recorded 2026-07-23, owner decision):** the ledger adoption plan's ratification gate (≥3 sessions × ≥3 days of observed `claims.jsonl` use before freezing a schema) was pre-empted by shipping this contract at ~2 sessions/2 days of evidence; the schema therefore ships with additive-only constraints (`additionalProperties: true`, enum-with-escape `status`, optional per-line `schema_version`) so early freezing cannot invalidate rows written by sessions that predate it. Waivers of plan gates are never silent — this line is the record.
 - **1.3.0 (2026-07-21)** — status-honesty amendment — spec now distinguishes IMPLEMENTED from DRAFT; no protections are claimed that code does not provide. Adds the §Implementation Status table, the Registered Machine Emitters table (Rule 1 amendment), documents the observer model for compliance reports, fixes the v1.1 version drift in the embedded issue template, and voids the lapsed 2026-04-15 integrity hard-reject deadline until reissued. Append-only: no sections removed; unimplemented sections carry explicit status labels instead.
 - **1.2.0 (2026-03-23)** — prior baseline (Message Integrity layer specified); see git history.
@@ -22,7 +23,7 @@ What this spec claims vs. what code actually provides, as of 2026-07-21. Only th
 |---|---|---|
 | `compliance-report` | **IMPLEMENTED** | Emitted daily by `scripts/compliance_report.py` (observer model — see below) into `state/oversight/compliance-reports/` (~110 instances; gitignored runtime state). Consumed by the ix `violation_pattern_detector` producer → `state/oversight/ml-recommendations/` → `scripts/apply_ml_feedback.py`. Instances are schema-validated by `scripts/validate_governance.py`. |
 | Local session coordination | **IMPLEMENTED — SINGLE-HOST ADVISORY** | `scripts/galactic_bridge.py`, `scripts/galactic_hook.py`, installer, `session-claim.schema.json`, and `scripts/test_galactic_bridge.py`. Single-host only: all coordinating sessions share one machine's filesystem; multi-host synchronization is **normatively out of scope** for this layer (a future layer that syncs ledgers across hosts must be specified separately and does not inherit this IMPLEMENTED status). Advisory only — not a lock server. Activation additionally requires hook trust: user must review `/hooks` and start a new chat; idle-chat push is not implemented. |
-| `directive` (JSON message instance) | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. Directives flow today as GitHub Issues (§Directive → GitHub Issue Mapping), not as protocol JSON messages. |
+| `directive` (JSON message instance) | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. Directives flow today as GitHub Issues (§Directive → GitHub Issue Mapping), not as protocol JSON messages. Revival criterion: revive the JSON form when a directive requires machine parsing by a consumer repo. |
 | `knowledge-package` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
 | `belief-snapshot` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
 | `learning-outcome` | **DRAFT — NO EMITTER** | Schema exists; zero instances ever produced. |
@@ -255,7 +256,7 @@ Message channels distinguish actionable data from explanatory content.
 
 ### Rules
 
-- **Crisp enforcement:** Crisp messages must pass schema validation before sending. Reject invalid messages with validation errors.
+- **Crisp enforcement:** Crisp messages must pass schema validation before sending. Reject invalid messages with validation errors. Message types whose §Implementation Status row is DRAFT — NO EMITTER are exempt from this rule until an emitter ships: their crisp channel assignment describes the intended JSON form, not today's carrier (directives, for example, currently flow as GitHub Issues, which are not schema-validated).
 - **Fuzzy tagging:** Fuzzy messages are not schema-validated but must be tagged (e.g., `channel: fuzzy`) so downstream systems do not treat them as authoritative.
 - **Channel mixing:** A message may include both channels — crisp payload for execution + fuzzy annotation for human context.
 - **Boundary violations:** Confidence inflation is a crisp/fuzzy boundary violation — subjective assessment (fuzzy) claimed as calibrated confidence (crisp). Skeptical-auditor challenges these violations.
