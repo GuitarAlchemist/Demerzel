@@ -31,6 +31,7 @@ Usage:
   python scripts/run_ml_feedback_cycle.py --dry-run       # plan only, no writes
   python scripts/run_ml_feedback_cycle.py --repos ix tars # limit consumer harvest
   python scripts/run_ml_feedback_cycle.py --producer-source worktree  # use ix working tree
+  python scripts/run_ml_feedback_cycle.py --dry-run --strict  # CI smoke: errored steps are fatal
 
 Producers default to ix origin/main (branch-independent), materialized into
 state/.cache/ix-producers/, so a scheduled cycle is unaffected by which branch
@@ -38,7 +39,8 @@ ix's working tree is on. Use --producer-source worktree to run local edits.
 
 Exit codes:
   0  cycle ran (any mix of applied/escalated/no-op)
-  1  usage / environment error (e.g. ix producers not found)
+  1  usage / environment error (e.g. ix producers not found), or --strict
+     and one or more steps errored (e.g. an unresolved producer)
   3  aborted: HALT-ALL marker in effect
 """
 from __future__ import annotations
@@ -137,6 +139,9 @@ def main(argv: list[str]) -> int:
                     help="source ix producers from origin/main (default, branch-independent) "
                          "or the ix working tree")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 1 if any step errors; without it a dry-run always "
+                         "exits 0, so a smoke check could pass on an incoherent plan")
     args = ap.parse_args(argv)
 
     py = sys.executable
@@ -197,6 +202,9 @@ def main(argv: list[str]) -> int:
     print(json.dumps(summary, indent=2))
     for s in steps:
         print(f"  {s['status']:8} {s['step']}  {s.get('note','')}", file=sys.stderr)
+    if args.strict and summary["tally"]["errors"]:
+        print(f"strict: {summary['tally']['errors']} step(s) errored", file=sys.stderr)
+        return 1
     return 0
 
 

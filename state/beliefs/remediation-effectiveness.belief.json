@@ -1,0 +1,53 @@
+{
+  "proposition": "Remediation-strategy effectiveness is tracked from PDCA outcomes; fragile strategies stay human-gated.",
+  "truth_value": "P",
+  "confidence": 0.86,
+  "evidence": {
+    "supporting": [
+      {
+        "source": "ml-feedback-recommendation cf902728-003d-4fa7-b855-e893c1746d86",
+        "claim": "Across 6 outcome-bearing PDCA records: proactive=0.333(n=3), standardize=1.0(n=3). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
+        "timestamp": "2026-07-22T13:00:05Z",
+        "reliability": 0.86
+      }
+    ],
+    "contradicting": []
+  },
+  "last_updated": "2026-07-22T13:00:05Z",
+  "evaluated_by": "demerzel",
+  "strategy_success_rates": {
+    "proactive": {
+      "success_rate": 0.333,
+      "attempts": 3,
+      "successes": 1
+    },
+    "standardize": {
+      "success_rate": 1.0,
+      "attempts": 3,
+      "successes": 3
+    }
+  },
+  "prior_strategy_success_rates": {
+    "proactive": {
+      "success_rate": 0.333,
+      "attempts": 3,
+      "successes": 1
+    },
+    "standardize": {
+      "success_rate": 1.0,
+      "attempts": 3,
+      "successes": 3
+    }
+  },
+  "advisory_escalation_changes": [
+    {
+      "strategy": "proactive",
+      "success_rate": 0.333,
+      "n": 3,
+      "change": "keep manual / high-risk (do not auto-remediate)",
+      "requires_human_approval": true
+    }
+  ],
+  "risk_classes_modified": 0,
+  "source_recommendation": "cf902728-003d-4fa7-b855-e893c1746d86"
+}
