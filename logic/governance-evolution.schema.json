@@ -75,6 +75,7 @@
               "amended",
               "promoted",
               "demoted",
+              "superseded",
               "created",
               "compounding_cycle",
               "pattern_detected",

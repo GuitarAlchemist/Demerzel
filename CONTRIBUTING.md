@@ -18,10 +18,9 @@ Demerzel contains **no consumer or product runtime**. It is primarily a collecti
 - Skills (`.claude/skills/<name>/SKILL.md`) — Markdown
 - Examples, templates, docs — Markdown + JSON
 
-Executable code is limited to repository-local governance tooling under `scripts/`
-and its tests. It must enforce, validate, or operate the artifacts in this repository;
-it must not implement consumer/product behavior. Raise an issue before adding a new
-tooling capability, keep it bounded to that issue, and test its behavior.
+**Do not add executable code** (Python, TypeScript, Rust, etc.) outside `scripts/`. If you need a script to support governance work, raise an issue first.
+
+**The `scripts/` exception (owner adjudication, 2026-07-23 — CL-817-12):** `scripts/` is the sanctioned home for governance *tooling*: emitters, linters, validators, CI gates, orchestrators, and local coordination transports (e.g. the Galactic live-session bridge). This codifies long-standing practice (~58 scripts referenced by CI and CLAUDE.md at adjudication time). The boundary is purpose, not language: a script must serve the governance of artifacts in this repo or the fleet sessions working on it — Demerzel still ships no product/runtime code, and nothing in `scripts/` may become a dependency of a consumer repo's runtime. Tooling that outgrows this (a long-running service, a product feature, a consumer-facing library) moves to a sibling repo, with Demerzel keeping only the contract and behavioral tests.
 
 ---
 

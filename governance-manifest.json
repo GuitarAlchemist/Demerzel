@@ -5,7 +5,7 @@
   "counts": {
     "behavioral_test": 115,
     "constitution": 5,
-    "contract_schema": 9,
+    "contract_schema": 11,
     "grammar": 20,
     "persona": 17,
     "pipeline": 23,
@@ -14,7 +14,7 @@
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 27
+    "workflow": 29
   },
   "inventory": {
     "constitution": [
@@ -175,7 +175,7 @@
       {
         "name": "belief-currency-policy",
         "path": "policies/belief-currency-policy.yaml",
-        "version": "1.0.0"
+        "version": "1.2.0"
       },
       {
         "name": "capability-unity",
@@ -594,6 +594,10 @@
         "path": "schemas/contracts/belief-snapshot.schema.json"
       },
       {
+        "name": "claude-compaction-event.schema",
+        "path": "schemas/contracts/claude-compaction-event.schema.json"
+      },
+      {
         "name": "compliance-report.schema",
         "path": "schemas/contracts/compliance-report.schema.json"
       },
@@ -624,6 +628,10 @@
       {
         "name": "qa-verdict.schema",
         "path": "schemas/contracts/qa-verdict.schema.json"
+      },
+      {
+        "name": "session-claim.schema",
+        "path": "schemas/contracts/session-claim.schema.json"
       }
     ],
     "grammar": [
@@ -1342,6 +1350,10 @@
         "path": ".github/workflows/karpathy-cherny-discipline.yml"
       },
       {
+        "name": "ml-governance-schedule",
+        "path": ".github/workflows/ml-governance-schedule.yml"
+      },
+      {
         "name": "project-automation",
         "path": ".github/workflows/project-automation.yml"
       },
@@ -1364,6 +1376,10 @@
       {
         "name": "submodule-notify",
         "path": ".github/workflows/submodule-notify.yml"
+      },
+      {
+        "name": "substrate-audit",
+        "path": ".github/workflows/substrate-audit.yml"
       },
       {
         "name": "tribunal-panel",

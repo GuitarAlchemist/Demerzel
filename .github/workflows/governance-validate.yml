@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'logic/governance-evolution.schema.json'
+      - 'state/beliefs/**'
       - 'state/evolution/**'
       - 'constitutions/**'
       - 'personas/**'
@@ -20,6 +21,7 @@ on:
   pull_request:
     paths:
       - 'logic/governance-evolution.schema.json'
+      - 'state/beliefs/**'
       - 'state/evolution/**'
       - 'constitutions/**'
       - 'personas/**'
@@ -56,6 +58,24 @@ jobs:
 
       - name: Run governance validator
         run: python scripts/validate_governance.py
+
+  # belief-currency-policy 1.1.0 enforcement: the policy's staleness and
+  # contradiction rules were declaration-only until 2026-07-20, when a
+  # machine replay found a belief held T@0.8 for four months alongside
+  # its own contradicting evidence. This lint is the tripwire; the
+  # monthly substrate replay (hari) is the deeper audit.
+  beliefs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Belief-currency lint
+        run: python scripts/belief_lint.py
 
   manifest:
     runs-on: ubuntu-latest

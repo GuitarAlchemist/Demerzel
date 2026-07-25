@@ -252,7 +252,7 @@ Structure responses this exact way for consistency:
 - [course file § section] OR
 - [FAQ file § question]
 
-**Confidence**: T/P/U/D/F/C(0.NN) — [one-line justification]
+**Confidence**: one of T (True) / P (Probable) / U (Unknown) / D (Doubtful) / F (False) / C (Contradictory), followed by (0.NN) — [one-line justification]
 ```
 
 Always cite file § section so users can verify.

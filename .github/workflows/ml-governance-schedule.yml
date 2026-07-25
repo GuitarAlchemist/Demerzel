@@ -1,0 +1,166 @@
+name: ML-Governance Loop Schedule
+
+# Brings the ML-governance feedback loop's cadence IN-REPO as a tripwire.
+#
+# Per GuitarAlchemist/hari issue #29 (loop triage, "Fragile-but-healthy —
+# protect"): the Demerzel ML-governance feedback loop is the ecosystem's only
+# audit-trailed decision-changing loop, and until now its scheduler lived
+# OUTSIDE any repo (a local cron / Task Scheduler on the operator's machine,
+# with no .github/workflow). If that scheduler dies, the healthiest loop in the
+# ecosystem dies SILENTLY. This workflow makes the loop's death visible.
+#
+# WHAT RUNS HERE (read-only): a freshness guard + a headless entrypoint smoke.
+# WHAT STAYS OUT-OF-BAND (mutating): the actual cycle. `run_ml_feedback_cycle.py`
+# harvests sibling repos (../ix, ../tars, ../ga), sources ix producers from
+# their origin/main, honors the ~/.demerzel/HALT-ALL kill switch, and WRITES
+# governance state (state/oversight/, state/beliefs/) that gets committed. None
+# of that is reproducible or safe from CI (no sibling checkouts, no write intent),
+# so this workflow does NOT run the cycle — it is a tripwire, not the loop.
+#
+# The tripwire has two independent legs, both exiting non-zero on failure:
+#   freshness  — the loop's COMMITTED evidence trail must be fresher than
+#                MAX_STALE_DAYS. The cycle summaries under state/oversight/ are
+#                gitignored runtime I/O and never exist in a CI checkout, so they
+#                cannot be the evidence; the tracked trail is state/beliefs/
+#                *.belief.json, whose `last_updated` the governor bumps every
+#                cycle and the operator commits. This is the death detector: if
+#                the out-of-band scheduler stops — or its output stops landing in
+#                the repo, which is death by another name — the newest committed
+#                belief goes stale and this turns RED. Mirrors the "green != dead"
+#                doctrine of demerzel-quality-trend-freshness.yml.
+#   entrypoint — `run_ml_feedback_cycle.py --dry-run --strict` must plan a full
+#                cycle with zero errored steps, with producers resolved from a
+#                real checkout of ix (public) at origin/main. A rotted entrypoint
+#                or a broken producer contract is another way the loop dies; this
+#                catches it before the operator's next cycle.
+#
+# A failed scheduled run notifies the workflow's last editor via GitHub's default
+# scheduled-workflow-failure notification — that is the tripwire signal. Silent on
+# green; RED on stale/broken; never remediates and never commits (contents: read).
+
+on:
+  schedule:
+    # Daily, 15:00 UTC. The orchestrator's effective cadence is daily (its
+    # finest-grained producer, staleness_predictor, runs daily per
+    # ml-governance-feedback-policy.yaml); observed cycle gaps top out at 2 days,
+    # so MAX_STALE_DAYS=3 clears normal gaps and only trips on real death.
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # The loop bumps belief `last_updated` daily, but landings are commit-bound:
+      # observed gaps between belief commits reach 5 days (2026-07-16 -> 07-21).
+      # 7 clears normal operator cadence and only trips on real death — of the
+      # loop itself or of its path into the repo.
+      MAX_STALE_DAYS: '7'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Assert ML-governance cycle freshness
+        run: |
+          python - <<'PY'
+          import glob, json, os
+          from datetime import datetime, timezone
+
+          max_stale = int(os.environ["MAX_STALE_DAYS"])
+
+          # The cycle summaries under state/oversight/ are gitignored runtime I/O —
+          # they never exist in a CI checkout, so globbing them here would make a
+          # tripwire that is born red. The COMMITTED evidence trail is the live
+          # belief files (top level only; state/beliefs/archived/ is retired):
+          # the governor bumps `last_updated` every cycle, and the operator commits
+          # the refresh. Newest last_updated == last time loop output landed.
+          newest_ts, newest_src = None, None
+          for path in glob.glob("state/beliefs/*.belief.json"):
+              try:
+                  with open(path, encoding="utf-8") as fh:
+                      data = json.load(fh)
+              except (json.JSONDecodeError, OSError):
+                  continue
+              ts = data.get("last_updated")
+              if not ts:
+                  continue
+              try:
+                  dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+              except ValueError:
+                  continue
+              if newest_ts is None or dt > newest_ts:
+                  newest_ts, newest_src = dt, path
+
+          now = datetime.now(timezone.utc)
+          if newest_ts is None:
+              reason = "no belief file with a parseable last_updated found at all"
+              stale = True
+              age = None
+          else:
+              age = (now - newest_ts).days
+              stale = age > max_stale
+              reason = (f"newest committed belief update is {age}d old "
+                        f"(threshold {max_stale}d) from {newest_src}")
+
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          if not stale:
+              if summary:
+                  with open(summary, "a") as fh:
+                      fh.write(f"ML-governance loop fresh: {reason}\n")
+              print(f"OK: {reason}")
+              raise SystemExit(0)
+
+          if summary:
+              with open(summary, "a") as fh:
+                  fh.write(f"### 🔴 ML-governance loop STALE\n\n{reason}\n\n"
+                           f"Likely cause: the out-of-band ML-feedback scheduler "
+                           f"(local cron / Task Scheduler running "
+                           f"`scripts/run_ml_feedback_cycle.py`) stopped, OR it is "
+                           f"running but its belief refreshes stopped being "
+                           f"committed. This is the ecosystem's only audit-trailed "
+                           f"decision-changing loop (hari issue #29). Restart the "
+                           f"scheduler or run one cycle by hand, commit the belief "
+                           f"refresh, then investigate why it died.\n")
+          print(f"STALE: {reason}")
+          raise SystemExit(1)
+          PY
+
+  entrypoint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      # Real producer source: ix is public, so the smoke can resolve the four
+      # producers from an actual ix checkout at origin/main instead of tolerating
+      # "unresolved" — without --strict below, a dry-run that failed to resolve
+      # every single producer still exited 0 and the smoke proved nothing.
+      - uses: actions/checkout@v4
+        with:
+          repository: GuitarAlchemist/ix
+          path: _siblings/ix
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Headless smoke: --dry-run plans every leg without running subprocesses and
+      # without writing state; --strict turns any errored plan step (e.g. an
+      # unresolved producer) into exit 1. It proves the orchestrator entrypoint
+      # still imports, its plan logic is coherent, and the ix producer contract
+      # still holds — a broken entrypoint is one way the loop silently dies.
+      - name: ML-feedback orchestrator dry-run (strict)
+        run: >-
+          python scripts/run_ml_feedback_cycle.py
+          --dry-run --strict --repos-root _siblings

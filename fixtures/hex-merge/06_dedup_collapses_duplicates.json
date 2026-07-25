@@ -1,6 +1,6 @@
 {
   "name": "dedup_collapses_duplicates",
-  "description": "Two observations sharing the dedup key (tars, d, 0, 0) but different weights (0.5 vs 0.9). Dedup keeps first-write (weight 0.5); the second is dropped. This pins ix-fuzzy's BTreeMap::entry::or_insert_with semantics.",
+  "description": "Two observations sharing the dedup key (tars, d, 0, 0), same variant, different weights (0.5 vs 0.9). The key-collision fold keeps the variant at the MINIMUM weight (0.5) — order-independent, not first-write-wins (2026-07-20, GuitarAlchemist/hari#27). The expected output is unchanged from the pre-fix corpus only because the smaller weight happens to arrive first here; under min-fold the result no longer depends on that ordering, where first-write-wins would have kept 0.9 for the swapped input.",
   "input": {
     "observations": [
       {"source": "tars", "diagnosis_id": "d", "round": 0, "ordinal": 0, "claim_key": "k::valuable", "variant": "T", "weight": 0.5},

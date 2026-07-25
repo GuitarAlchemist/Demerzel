@@ -152,11 +152,11 @@ jobs:
           4. LOLLI DETECTION: Does this create artifacts without named consumers? Does it add governance weight without proportional value?
           5. CONSTITUTIONAL COMPLIANCE: Check against Demerzel's 11-article constitution — especially Article 4 (Proportionality), Article 3 (Reversibility), Article 9 (Bounded Autonomy)
 
+          You are NOT told who or what authored this diff. Author identity is not
+          evidence — judge the diff on its content alone.
+
           Output format — use exactly this structure:
           ## Cross-Model Review
-
-          **Author model:** AUTHOR_MODEL
-          **Reviewer model:** REVIEWER_MODEL
 
           ### Findings
           - [CATEGORY] Finding description
@@ -170,12 +170,13 @@ jobs:
           DIFF:
           PROMPT_EOF
 
-          # Append the actual diff
+          # Append the actual diff.
+          # Deliberately NO author/reviewer identity in the prompt: judges shift
+          # verdicts on author-model labels alone (self-enhancement bias,
+          # arXiv:2604.16790). Author detection is used only to SELECT the
+          # reviewer; attribution is appended to the posted comment AFTER the
+          # verdict, in the "Post review to PR" step.
           cat /tmp/pr_diff.txt >> /tmp/review_prompt.txt
-
-          # Replace placeholders
-          sed -i "s/AUTHOR_MODEL/${{ steps.detect.outputs.author }}/" /tmp/review_prompt.txt
-          sed -i "s/REVIEWER_MODEL/${{ steps.reviewer.outputs.reviewer }}/" /tmp/review_prompt.txt
 
       - name: Run Claude review
         if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'claude'

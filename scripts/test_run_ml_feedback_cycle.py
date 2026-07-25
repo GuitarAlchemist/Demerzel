@@ -18,6 +18,15 @@ class TestRunMLFeedbackCycle(unittest.TestCase):
             rc = r.main(["--dry-run"])
             self.assertEqual(rc, 0)
 
+    def test_strict_dry_run_fails_on_unresolved_producers(self):
+        # No producer resolves: default dry-run stays advisory (exit 0), but
+        # --strict must surface the errored plan steps as exit 1 — this is the
+        # contract the CI entrypoint smoke relies on.
+        with mock.patch.object(r, "_halt_active", return_value=(False, "")), \
+             mock.patch.object(r, "_resolve_producers", return_value={"paths": {}, "notes": {}}):
+            self.assertEqual(r.main(["--dry-run"]), 0)
+            self.assertEqual(r.main(["--dry-run", "--strict"]), 1)
+
     def test_halt_aborts_cycle(self):
         with mock.patch.object(r, "_halt_active", return_value=(True, "halted")), \
              mock.patch.object(r, "_resolve_producers", return_value={"paths": {"p": "mock"}, "notes": {}}):
