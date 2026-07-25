@@ -100,10 +100,14 @@ jobs:
           CAPABILITIES=$(cat /tmp/capabilities.json)
           FOCUS="${{ inputs.focus_area || 'all' }}"
 
+          # This is a scheduled producer: its whole job is to emit an expansion
+          # issue. A run that cannot call the model has not "skipped" — it has
+          # died, and must say so. Exiting 0 here is what let four consecutive
+          # failures read as one green run and three red ones (#703).
           if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "No API key, skipping AI analysis"
+            echo "::error::ANTHROPIC_API_KEY is not set; the capability scan cannot run."
             echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
-            exit 0
+            exit 1
           fi
 
           # Call Claude via the shared llm_call.sh seam (Candidate 3).
@@ -117,8 +121,12 @@ jobs:
           if bash .github/scripts/llm_call.sh claude "$PROMPT" 2000 > /tmp/expansion-analysis.txt 2>/tmp/llm_err; then
             echo "ANALYSIS_READY=true" >> $GITHUB_OUTPUT
           else
-            echo "::warning::Capability analysis call failed: $(cat /tmp/llm_err)"
+            # A failed call means no issue and no discussion post — the outcome
+            # this workflow exists for did not happen. Fail loudly rather than
+            # skipping the producing steps behind a green check.
+            echo "::error::Capability analysis call failed: $(cat /tmp/llm_err)"
             echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
+            exit 1
           fi
 
       - name: Create expansion issue

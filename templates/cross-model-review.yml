@@ -294,7 +294,7 @@ jobs:
             -d "$(jq -n \
               --arg content "$FULL_PROMPT" \
               '{
-                model: "claude-sonnet-4-20250514",
+                model: "claude-sonnet-5",
                 max_tokens: 4096,
                 messages: [{role: "user", content: $content}]
               }')")
