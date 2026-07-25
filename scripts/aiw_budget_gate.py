@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import json
 import math
@@ -33,6 +33,18 @@ def _load(path: Path) -> dict[str, Any]:
     return value
 
 
+class PolicyInvalid(ValueError):
+    """The budget policy file itself is malformed or out of bounds.
+
+    Distinct from an ordinary budget block. "We are out of budget" and "the file
+    that decides the budget is broken" need opposite responses — the first is the
+    gate working, the second is the gate being unable to work — and collapsing
+    both into one reason code leaves an operator unable to tell them apart (#794).
+
+    Subclasses ValueError so main()'s existing exit-2 mapping is unchanged.
+    """
+
+
 def load_policy(path: Path | None = None) -> dict[str, Any]:
     """Load the budget policy and validate it against its schema, fail-closed.
 
@@ -41,14 +53,19 @@ def load_policy(path: Path | None = None) -> dict[str, Any]:
     error rather than a silent no-op. Every failure is raised as ValueError so
     main() maps it to exit 2 (invalid) rather than exit 1 (governed block).
     """
-    policy = _load(POLICY_PATH if path is None else path)
+    # An absent or unparseable policy file is the same class of failure as one
+    # that fails schema validation: the gate cannot establish what it may spend.
+    try:
+        policy = _load(POLICY_PATH if path is None else path)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        raise PolicyInvalid(f"policy could not be loaded: {error}") from error
     try:
         import jsonschema  # noqa: PLC0415 — optional dependency, imported lazily
     except ImportError as error:
         # demerzel_kit.validate() degrades to a warning when jsonschema is
         # absent. That is right for a reporting emitter and wrong for a spend
         # gate, so this caller refuses instead.
-        raise ValueError(
+        raise PolicyInvalid(
             "jsonschema is required to validate the AIW budget policy") from error
     try:
         demerzel_kit.validate(policy, "aiw-budget-policy")
@@ -56,17 +73,17 @@ def load_policy(path: Path | None = None) -> dict[str, Any]:
         # json_path locates the offending key. Without it the message alone
         # ("True was expected") names neither field nor provider, which is not
         # enough to find the key in a 7-provider file under time pressure.
-        raise ValueError(
+        raise PolicyInvalid(
             f"policy is invalid at {error.json_path}: {error.message}") from error
 
     # JSON Schema cannot express these cross-references within one document.
     ids = [provider["id"] for provider in policy["providers"]]
     duplicates = {name for name in ids if ids.count(name) > 1}
     if duplicates:
-        raise ValueError(f"policy declares duplicate provider ids: {sorted(duplicates)}")
+        raise PolicyInvalid(f"policy declares duplicate provider ids: {sorted(duplicates)}")
     undeclared = [name for name in policy["selection_order"] if name not in ids]
     if undeclared:
-        raise ValueError(f"selection_order names undeclared providers: {undeclared}")
+        raise PolicyInvalid(f"selection_order names undeclared providers: {undeclared}")
     return policy
 
 
@@ -262,6 +279,44 @@ def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path,
             cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
                                              allow_nan=False) + "\n", encoding="utf-8")
         return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def note_release_failure(cycle_path: Path, job_id: str, error: str) -> bool:
+    """Record that a release was attempted and swallowed, leaving a reservation open.
+
+    The caller's ``except Exception`` around release is deliberate — a
+    reconciliation hiccup must never break the loop — but the consequence is that
+    reservations silently stop clearing while the cycle ledger keeps counting them
+    as committed spend, and ``max_parallel_packets`` fills with reservations that
+    will never clear. Fail-closed in the money direction, but a liveness failure:
+    the cycle wedges quietly rather than stopping loudly (#794).
+
+    Writing the swallow down makes that state detectable afterwards. Returns True
+    if the note was recorded. Never raises: a failure to record a failure must not
+    become a second failure.
+    """
+    try:
+        lock_path = _lock(cycle_path)
+    except ValueError:
+        return False
+    try:
+        cycle = _read_cycle(cycle_path)
+        notes = cycle.setdefault("release_failures", [])
+        if not isinstance(notes, list):
+            return False
+        notes.append({
+            "job_id": job_id,
+            "error": str(error)[:200],
+            "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "reservation_open": job_id in cycle.get("reservations", {}),
+        })
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return True
+    except Exception:  # noqa: BLE001 — recording is best-effort by construction
+        return False
     finally:
         lock_path.unlink(missing_ok=True)
 

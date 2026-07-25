@@ -529,3 +529,98 @@ class PolicySchemaTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPolicyInvalidIsDistinct(unittest.TestCase):
+    """#794: a corrupt policy and an ordinary budget block need opposite
+    responses, so they must not be the same exception class."""
+
+    def _load_mutated(self, mutator):
+        policy = json.loads(json.dumps(POLICY))
+        mutator(policy)
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "policy.json"
+        path.write_text(json.dumps(policy), encoding="utf-8")
+        return load_policy(path)
+
+    def test_schema_violation_raises_policy_invalid(self):
+        def mutate(policy):
+            policy["defaults"]["max_cost_usd_per_job"] = -999
+        with self.assertRaises(aiw_budget_gate.PolicyInvalid):
+            self._load_mutated(mutate)
+
+    def test_undeclared_selection_order_raises_policy_invalid(self):
+        def mutate(policy):
+            policy["selection_order"].append("no-such-provider")
+        with self.assertRaises(aiw_budget_gate.PolicyInvalid):
+            self._load_mutated(mutate)
+
+    def test_missing_file_raises_policy_invalid(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        with self.assertRaises(aiw_budget_gate.PolicyInvalid):
+            load_policy(Path(directory.name) / "absent.json")
+
+    def test_unparseable_file_raises_policy_invalid(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "policy.json"
+        path.write_text("{not json", encoding="utf-8")
+        with self.assertRaises(aiw_budget_gate.PolicyInvalid):
+            load_policy(path)
+
+    def test_policy_invalid_is_still_a_value_error(self):
+        # main() maps ValueError to exit 2; that mapping must not change.
+        self.assertTrue(issubclass(aiw_budget_gate.PolicyInvalid, ValueError))
+
+    def test_shipped_policy_does_not_raise(self):
+        self.assertEqual(POLICY, load_policy(aiw_budget_gate.POLICY_PATH))
+
+
+class TestNoteReleaseFailure(unittest.TestCase):
+    """#794: a swallowed release leaves the reservation open. Record it, so an
+    unreconciled reservation is detectable instead of silent."""
+
+    def _ledger(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        return Path(directory.name) / "cycle.json"
+
+    def test_records_the_swallow_against_an_open_reservation(self):
+        path = self._ledger()
+        aiw_budget_gate.reserve(POLICY, request(job_id="aiw-1"), path)
+        self.assertTrue(aiw_budget_gate.note_release_failure(path, "aiw-1", "boom"))
+        cycle = json.loads(path.read_text())
+        note = cycle["release_failures"][0]
+        self.assertEqual(note["job_id"], "aiw-1")
+        self.assertIn("boom", note["error"])
+        self.assertTrue(note["reservation_open"])
+        self.assertTrue(note["at"].endswith("Z"))
+
+    def test_note_does_not_disturb_ledger_invariants(self):
+        # _read_cycle asserts reserved_cost == sum(reservations) and
+        # active_packets == len(reservations). A note must not perturb either,
+        # or the next reserve() would fail closed on a ledger it wrote itself.
+        path = self._ledger()
+        aiw_budget_gate.reserve(POLICY, request(job_id="aiw-1"), path)
+        before = json.loads(path.read_text())
+        aiw_budget_gate.note_release_failure(path, "aiw-1", "boom")
+        after = json.loads(path.read_text())
+        self.assertEqual(before["reserved_cost_usd"], after["reserved_cost_usd"])
+        self.assertEqual(before["active_packets"], after["active_packets"])
+        self.assertEqual(before["reservations"], after["reservations"])
+        aiw_budget_gate.reserve(POLICY, request(job_id="aiw-2"), path)  # still loadable
+
+    def test_notes_accumulate(self):
+        path = self._ledger()
+        aiw_budget_gate.reserve(POLICY, request(job_id="aiw-1"), path)
+        aiw_budget_gate.note_release_failure(path, "aiw-1", "first")
+        aiw_budget_gate.note_release_failure(path, "aiw-1", "second")
+        self.assertEqual(len(json.loads(path.read_text())["release_failures"]), 2)
+
+    def test_never_raises_when_the_ledger_is_unwritable(self):
+        # Recording a failure must not become a second failure.
+        path = self._ledger()
+        path.write_text("{not json", encoding="utf-8")
+        self.assertFalse(aiw_budget_gate.note_release_failure(path, "aiw-1", "boom"))
