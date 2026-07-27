@@ -184,8 +184,21 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
+          # A failed review must not masquerade as a review. The previous form
+          # (`|| echo <placeholder> > /tmp/review_result.txt`) discarded
+          # llm_call's stderr, wrote that placeholder into the review body,
+          # and exited 0 -- so an absent OPENAI_API_KEY and a retired
+          # model id both read as green runs for a week while every PR went
+          # unreviewed. Surface the real diagnostic and let the run go red.
+          # rc carries llm_call's classification: 2 usage, 3 API/transport,
+          # 4 empty/blocked response.
+          rc=0
           bash .github/scripts/llm_call.sh claude "$(cat /tmp/review_prompt.txt)" 2048 \
-            > /tmp/review_result.txt || echo "Review failed: no response" > /tmp/review_result.txt
+            > /tmp/review_result.txt 2> /tmp/review_error.txt || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Claude review failed (llm_call exit $rc): $(tr '\n' ' ' < /tmp/review_error.txt)"
+            exit "$rc"
+          fi
 
       - name: Run Gemini review
         if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'gemini'
@@ -194,8 +207,17 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
           LLM_GEMINI_MODEL: gemini-2.5-flash
         run: |
+          # NOTE: GOOGLE_AI_KEY is not currently set on this repo, so this step
+          # fails every time gemini is selected. That is now visible instead of
+          # silent -- deliberately left in rotation per owner decision; add the
+          # secret or drop gemini from "Select reviewer model" to resolve.
+          rc=0
           bash .github/scripts/llm_call.sh gemini "$(cat /tmp/review_prompt.txt)" 2048 \
-            > /tmp/review_result.txt || echo "Review failed: no response" > /tmp/review_result.txt
+            > /tmp/review_result.txt 2> /tmp/review_error.txt || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Gemini review failed (llm_call exit $rc): $(tr '\n' ' ' < /tmp/review_error.txt)"
+            exit "$rc"
+          fi
 
       - name: Run Codex review
         if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'codex'
@@ -203,8 +225,13 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          rc=0
           bash .github/scripts/llm_call.sh codex "$(cat /tmp/review_prompt.txt)" 2048 \
-            > /tmp/review_result.txt || echo "Review failed: no response" > /tmp/review_result.txt
+            > /tmp/review_result.txt 2> /tmp/review_error.txt || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Codex review failed (llm_call exit $rc): $(tr '\n' ' ' < /tmp/review_error.txt)"
+            exit "$rc"
+          fi
 
       - name: Post review to PR
         if: env.SKIP_REVIEW != 'true'
