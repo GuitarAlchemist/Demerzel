@@ -1,7 +1,7 @@
 {
   "proposition": "The Demerzel governance framework is structurally complete with all constitutional, policy, and schema artifacts intact",
-  "truth_value": "T",
-  "confidence": 0.98,
+  "truth_value": "P",
+  "confidence": 0.82,
   "evidence": {
     "supporting": [
       {
@@ -17,8 +17,15 @@
         "reliability": 0.95
       }
     ],
-    "contradicting": []
+    "contradicting": [
+      {
+        "source": "/demerzel audit level 1 (2026-07-25)",
+        "claim": "The 2026-03-23 'all artifacts schema-validated' claim no longer holds: all 8 PDCA state instances and both loop state instances fail validation against their declared schemas (logic/kaizen-pdca-state.schema.json, logic/loop-state.schema.json) due to schema drift. Constitutions, personas, policies, contract schemas, tetravalent beliefs, and reconnaissance profiles remain intact and conformant.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.99
+      }
+    ]
   },
-  "last_updated": "2026-03-23T00:00:00Z",
+  "last_updated": "2026-07-25T00:00:00Z",
   "evaluated_by": "demerzel"
 }

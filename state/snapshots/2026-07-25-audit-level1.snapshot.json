@@ -1,0 +1,117 @@
+{
+  "audit": "governance-audit-policy",
+  "level": 1,
+  "date": "2026-07-25",
+  "auditor": "demerzel",
+  "read_only": true,
+  "summary": {
+    "checks_total": 7,
+    "checks_passed": 5,
+    "checks_failed": 2,
+    "artifacts_scanned": 47,
+    "artifacts_failing": 10
+  },
+  "checks": [
+    {
+      "id": "audit-1-1-persona-schema",
+      "status": "PASS",
+      "severity_if_failed": "critical",
+      "scanned": 17,
+      "failing": 0,
+      "note": "All personas conform to schemas/persona.schema.json."
+    },
+    {
+      "id": "audit-1-2-tetravalent-state-schema",
+      "status": "PASS",
+      "severity_if_failed": "high",
+      "scanned": 5,
+      "failing": 0,
+      "note": "Non-archived state/beliefs/*.belief.json conform to logic/tetravalent-state.schema.json."
+    },
+    {
+      "id": "audit-1-3-pdca-state-schema",
+      "status": "FAIL",
+      "severity_if_failed": "high",
+      "scanned": 8,
+      "failing": 8,
+      "note": "Instances use cycle_phase/hypothesis/plan/do/check/kaizen_kind; schema requires proposition/model/phase/belief_state/iterations. Schema/instance drift — schema-follows-reality discipline never applied here."
+    },
+    {
+      "id": "audit-1-4-knowledge-state-schema",
+      "status": "PASS",
+      "severity_if_failed": "high",
+      "scanned": 0,
+      "failing": 0,
+      "note": "No state/knowledge/*.knowledge.json instances present (vacuously conformant)."
+    },
+    {
+      "id": "audit-1-loop-state-schema",
+      "status": "FAIL",
+      "severity_if_failed": "high",
+      "scanned": 2,
+      "failing": 2,
+      "note": "Instances use loop_id/risk/repo/governance_mode; schema requires id/risk_level/target_repo/worker/reviewer/current_iteration/convergence. Schema/instance drift on AFK-loop state."
+    },
+    {
+      "id": "audit-1-5-contract-schemas-valid",
+      "status": "PASS",
+      "severity_if_failed": "critical",
+      "scanned": 11,
+      "failing": 0,
+      "note": "All schemas/contracts/*.schema.json are valid JSON Schema (Draft 2020-12 meta-validation)."
+    },
+    {
+      "id": "audit-1-6-reconnaissance-profile-schema",
+      "status": "PASS",
+      "severity_if_failed": "high",
+      "scanned": 3,
+      "failing": 0,
+      "note": "examples/sample-data/recon-profile-{ga,ix,tars}.json conform to schemas/reconnaissance-profile.schema.json."
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding-1-pdca-schema-drift",
+      "severity": "high",
+      "artifact": "logic/kaizen-pdca-state.schema.json",
+      "evidence_files": [
+        "state/pdca/2026-03-17-behavioral-test-gap.pdca.json",
+        "state/pdca/2026-03-17-rust-dashboard-experiment.pdca.json",
+        "state/pdca/2026-05-01-compound-freshness-check.pdca.json",
+        "state/pdca/2026-05-01-evolution-schema-follows-reality.pdca.json",
+        "state/pdca/2026-05-01-governance-quality-trend.pdca.json",
+        "state/pdca/2026-05-01-harvest-compound-cron-pair.pdca.json",
+        "state/pdca/2026-05-01-subjective-logic-tetravalent-upgrade.pdca.json",
+        "state/pdca/2026-06-24-council-reviewer-context.pdca.json"
+      ],
+      "recommendation": "Reconcile via schema-follows-reality: either update kaizen-pdca-state.schema.json to match the real instance shape, or migrate instances. Pair with a CI validator so future drift surfaces within a day."
+    },
+    {
+      "id": "finding-2-loop-schema-drift",
+      "severity": "high",
+      "artifact": "logic/loop-state.schema.json",
+      "evidence_files": [
+        "state/loops/loop-2026-06-23-001.loop.json",
+        "state/loops/loop-2026-06-24-001.loop.json"
+      ],
+      "recommendation": "Reconcile loop-state.schema.json with the AFK-loop instance shape emitted by scripts/run_afk_cycle.py, or migrate instances."
+    },
+    {
+      "id": "finding-3-evolution-schema-ref",
+      "severity": "note",
+      "out_of_scope_for": "level 1 (flagged for level 2 audit-2-4)",
+      "artifact": "logic/governance-evolution.schema.json",
+      "note": "assessment.effectiveness $ref targets .../schemas/logic/tetravalent-state, but the tetravalent schema $id is .../schemas/tetravalent-state (no /logic/ segment). Potential unresolved $ref."
+    }
+  ],
+  "state_updates": {
+    "beliefs_written": [
+      "state/beliefs/2026-07-25-schema-conformance.belief.json",
+      "state/beliefs/2026-03-17-demerzel-framework-integrity.belief.json"
+    ],
+    "evolution_written": [
+      "state/evolution/2026-07-25-kaizen-pdca-schema.evolution.json",
+      "state/evolution/2026-07-25-loop-state-schema.evolution.json"
+    ]
+  }
+}

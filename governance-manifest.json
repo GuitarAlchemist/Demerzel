@@ -230,7 +230,7 @@
       {
         "name": "governance-audit-policy",
         "path": "policies/governance-audit-policy.yaml",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       {
         "name": "governance-experimentation-policy",

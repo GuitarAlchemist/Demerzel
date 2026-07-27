@@ -1,10 +1,13 @@
 name: governance-audit-policy
-version: "1.0.0"
+version: "1.1.0"
 effective_date: "2026-03-15"
 description: >
   Three-level governance validation checklist formalizing Tier 1 reconnaissance
   for the Demerzel repo itself. Ensures schema validity, cross-reference integrity,
-  and architectural consistency.
+  and architectural consistency. Version 1.1.0: aligns behavioral-test coverage
+  with the established tests/behavioral/*-cases.md convention and distinguishes
+  active artifacts (7-day staleness) from historical state records (90-day
+  threshold or archived/historical exemption).
 
 constitutional_basis:
   - Article 7 (Auditability) — governance artifacts must be auditable and traceable
@@ -106,7 +109,7 @@ level_2_cross_reference_integrity:
       method: >
         Scan personas/ directory. For each *.persona.yaml file:
         - Extract persona name
-        - Check for corresponding test file tests/behavioral/{name}.test.md or {name}.test.yaml
+        - Check for corresponding test file tests/behavioral/{name}-cases.md
         - Verify test file is not empty and contains assertions
         - Report any personas without tests
       severity_if_failed: high
@@ -153,13 +156,21 @@ level_2_cross_reference_integrity:
       severity_if_failed: medium
 
     - id: "audit-2-6-stale-artifacts-detection"
-      description: "No stale artifacts (obsolete personas, deprecated policies, old belief states)"
+      description: "No stale active artifacts; historical state records are exempt from the active threshold"
       method: >
-        Scan all governance artifacts and state files. For each artifact:
-        - Check if last_updated or created_at timestamp is older than staleness threshold (7 days default)
+        Distinguish active artifacts from historical state records.
+        Active artifacts (policies, personas, constitutions, schemas, active contracts,
+        beliefs currently driving decisions):
+        - Check if last_updated or created_at timestamp is older than 7 days
         - Verify that personas correspond to active agents
         - Confirm that policies are still enforced
-        - Report any stale content with recommended action (update or remove)
+        - Report stale active content with recommended action (update, remove, or archive)
+        Historical state records (evolution logs, PDCA cycles, read-only audit snapshots,
+        archived beliefs):
+        - Use a 90-day staleness threshold
+        - Exempt if the file or enclosing directory is explicitly marked archived/historical
+        - Report exceeded historical records as informational (not a failure)
+        Do not flag historical records solely because they are referenced by read-only snapshots.
       severity_if_failed: medium
 
 level_3_full_governance_audit:

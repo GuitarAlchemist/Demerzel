@@ -103,7 +103,7 @@
       "required": ["effectiveness", "recommendation"],
       "properties": {
         "effectiveness": {
-          "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/logic/tetravalent-state",
+          "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
           "description": "Tetravalent belief state (T/F/U/C) assessing whether this artifact is effectively serving its purpose"
         },
         "recommendation": {
