@@ -27,9 +27,14 @@ You are operating in the **Cherny lane** (agentic loop), executing a task that h
 ## Definition of done
 1. Make the change.
 2. Run the oracle: `python scripts/validate_governance.py`. It must exit 0.
-3. If it fails, fix your change until it passes (max 5 attempts), or emit
+3. Run the unit tests: `python -m unittest discover -s scripts -p 'test_*.py'`.
+   It must exit 0. `validate_governance.py` checks schemas and the manifest — it
+   does NOT execute the suite, so a signature change can leave it green while CI
+   is red. If you changed a function in `scripts/`, update its `test_*.py`
+   callers in the same commit.
+4. If either fails, fix your change until both pass (max 5 attempts), or emit
    `BLOCKED: oracle failing — <reason>` and stop without committing.
-4. Commit with a conventional-commit message referencing the issue:
+5. Commit with a conventional-commit message referencing the issue:
    `<type>(<scope>): <summary> (#{{ISSUE_NUMBER}})` and the trailer
    `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
-5. When done, print: `<promise>COMPLETE</promise>`.
+6. When done, print: `<promise>COMPLETE</promise>`.
