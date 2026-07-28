@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/loop-state",
   "title": "Loop State",
-  "description": "Tracks the orchestration state of a governed Ralph Loop (autonomous iterative development cycle). This schema is relaxed to the minimal core shape currently emitted by scripts/run_afk_cycle.py; a follow-up ticket will enrich the emitter to restore full auditability fields.",
+  "description": "Tracks the orchestration state of a governed Ralph Loop (autonomous iterative development cycle). Reconciled to match the operational contract in schemas/loop-state.schema.json, which is what demerzel_kit enforces at write time (demerzel_kit.py SCHEMA_DIR -> schemas/); both files now carry the same required set. The richer auditability fields (worker, reviewer, convergence, outcome, current_iteration) are retained as optional: no loop instance has ever carried them and no script reads them, so they are aspirational rather than dropped guarantees. Issue #834 tracks enriching the emitter; the duplication between this file and schemas/loop-state.schema.json is tracked separately and should be collapsed to one source of truth.",
   "type": "object",
-  "required": ["loop_id", "goal", "repo", "status", "iterations"],
+  "required": ["loop_id", "goal", "repo", "risk", "governance_mode", "status", "iterations"],
   "properties": {
     "loop_id": {
       "type": "string",
@@ -21,15 +21,18 @@
     },
     "risk": {
       "type": "string",
-      "description": "Risk classification determined before the loop starts (e.g., low, medium, high, critical)"
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Risk classification determined before the loop starts"
     },
     "governance_mode": {
       "type": "string",
-      "description": "Governance oversight mode (e.g., boundary-only, per-iteration)"
+      "enum": ["boundary-only", "per-iteration"],
+      "description": "Governance oversight mode"
     },
     "status": {
       "type": "string",
-      "description": "Current loop status (e.g., in_progress, completed, halted, escalated)"
+      "enum": ["running", "halted", "completed", "stalled"],
+      "description": "Current loop status"
     },
     "iterations": {
       "type": "array",
