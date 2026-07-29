@@ -45,6 +45,12 @@
         "claim": "Updated governance docs and policy for tool-agnostic AFK. Added an AFK backend registry section to docs/workflows/aiw-operating-doctrine.md describing the AFKBackend contract, registry, current backends, and provider attribution. Added an afk_backend_governance section to policies/autonomous-loop-policy.yaml with registry rules, provider attribution rules, and adapter contract rules. Closes #884.",
         "timestamp": "2026-07-29T12:55:00Z",
         "reliability": 0.98
+      },
+      {
+        "source": "feat/junie-backend (PR #911)",
+        "claim": "Implemented JunieBackend as a third-party desktop adapter in scripts/afk_backends/junie.py. It invokes the JetBrains Junie CLI in --headless mode in the ephemeral repo path, parses the resulting git state to detect the branch and commits created by the agent, and returns the AFK result contract. Added a registry entry in config/afk-backends.yaml with provider junie-cli, disabled by default. Added unit tests in scripts/test_junie_backend.py that mock subprocess.run and git interactions. All 411 unit tests pass.",
+        "timestamp": "2026-07-29T23:17:00Z",
+        "reliability": 0.98
       }
     ],
     "contradicting": [
@@ -62,6 +68,6 @@
       }
     ]
   },
-  "last_updated": "2026-07-29T13:05:00Z",
+  "last_updated": "2026-07-29T23:17:00Z",
   "evaluated_by": "demerzel"
 }
