@@ -425,7 +425,7 @@ class TestBudgetGate(unittest.TestCase):
             "claude-code-cli")
 
     def test_unmapped_backend_fails_closed(self):
-        allowed, result = g._budget_reserve({"number": 5, "body": ""}, "remote")
+        allowed, result = g._budget_reserve({"number": 5, "body": ""}, "not-a-backend")
         self.assertFalse(allowed)
         self.assertEqual(result["decision"], "block")
 
