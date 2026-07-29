@@ -17,9 +17,15 @@ origin; PRs are independent. The whole queue is always processed — concurrency
 a throughput cap, not a truncation (waves of --max-parallel at a time).
 
 Backends (--backend):
-  local        — per-agent ephemeral clone + Podman sandbox (default; runs on this box)
-  claude-code  — per-agent ephemeral clone + headless `claude -p` (no container;
-                 bills the interactive subscription, not the spend-capped API key)
+  claude-code  — DEFAULT. Per-agent ephemeral clone + headless `claude -p`, no
+                 container. ANTHROPIC_API_KEY is stripped from the child env, so
+                 the CLI falls back to the interactive subscription.
+  local        — per-agent ephemeral clone + Podman sandbox. Runs on this box and
+                 FORWARDS ANTHROPIC_API_KEY into the sandbox, i.e. it bills
+                 metered API spend. It is currently attributed to `codex-cli`
+                 (local-seat, no approval required) by BACKEND_PROVIDER below, so
+                 that spend passes the AIW budget gate as if it were free
+                 subscription work — see #863. Opt in explicitly, knowing that.
   remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
 
 Usage:
@@ -717,10 +723,14 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--max-parallel", type=int, default=3,
                     help="max concurrent AFK agents (default 3); the whole queue is "
                          "still processed in waves of this size")
-    ap.add_argument("--backend", choices=["local", "remote", "claude-code"], default="local",
-                    help="local = per-agent clone + Podman (default); "
-                         "claude-code = per-agent clone + headless `claude -p` (no container, "
-                         "bills the subscription not the spend-capped API key); "
+    ap.add_argument("--backend", choices=["local", "remote", "claude-code"],
+                    default="claude-code",
+                    help="claude-code = per-agent clone + headless `claude -p` (default; no "
+                         "container, bills the interactive subscription because "
+                         "ANTHROPIC_API_KEY is stripped from the child env); "
+                         "local = per-agent clone + Podman sandbox — NOTE this forwards "
+                         "ANTHROPIC_API_KEY and bills metered API spend, currently "
+                         "misattributed to codex-cli by the budget gate (#863); "
                          "remote = Vercel isolated sandboxes (not yet implemented)")
     ap.add_argument("--harvest", action="store_true",
                     help="self-merge pass: gate already-open AFK PRs through the "
