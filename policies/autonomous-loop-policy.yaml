@@ -239,6 +239,60 @@ domain_work_authorization:
       Governance work bypass does not extend to domain work disguised as governance.
       Drift checks (see review_criteria.drift_check) apply.
 
+### AFK Backend Governance
+
+afk_backend_governance:
+  description: >
+    Governance rules for the AFK implement lane's backend adapter system. The
+    governor must be tool-agnostic: it selects a backend from the registry and
+    drives it through the AFKBackend contract, regardless of whether the underlying
+    tool is a local desktop agent, a container, or a remote cloud worker.
+  references:
+    - config/afk-backends.yaml
+    - scripts/afk_backends/__init__.py
+    - scripts/afk_backends/registry.py
+    - scripts/aiw_budget_gate.py
+    - docs/workflows/aiw-operating-doctrine.md
+
+  registry_rules:
+    - >
+      Every backend entry must declare an adapter Python class, a budget provider,
+      an enabled flag, and an optional config block. Unknown or disabled backends
+      must fail closed.
+    - >
+      New backends may be added by creating an adapter module and a registry entry.
+      The governor must not require code changes to recognize a new backend.
+    - >
+      Backend configuration that is required for operation (e.g., a remote endpoint or
+      shell command) must be explicitly set before the backend is enabled. Disabled
+      backends must return a clean blocked result rather than crash.
+
+  provider_attribution_rules:
+    - >
+      The budget provider assigned to a backend must match the actual API or compute
+      that will be billed. A backend that forwards a metered API key is attributed
+      to that metered provider, not to a free local provider.
+    - >
+      Changing a backend's provider attribution requires updating the registry entry
+      and the AIW budget policy if the provider is not already allowlisted.
+    - >
+      Provider attribution changes are treated as high-risk because they affect cost
+      gating and may bypass budget controls.
+
+  adapter_contract_rules:
+    - >
+      Every adapter must implement prepare(), needs_local_repo(), invoke(), and
+      estimate_cost(). cancel() is optional and defaults to a no-op.
+    - >
+      prepare() verifies prerequisites before the cycle starts. A failed prepare is a
+      hard abort for the cycle.
+    - >
+      invoke() must return a result dict with branch, commits, and blocked keys. It
+      must not mutate the issue dict.
+    - >
+      Adapters must return structured blocked reasons for configuration errors,
+      network failures, invalid worker output, and missing response fields.
+
 ### Self-Merge Authority
 
 self_merge_authority:

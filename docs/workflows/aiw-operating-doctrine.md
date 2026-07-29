@@ -301,9 +301,10 @@ job_spec (explore/shape)
 The AIW router chooses how an already-shaped issue becomes an agent execution episode and should own:
 
 1. **Provider selection**
-   - choose from Claude Code, Codex, Jules, Gemini, Ollama, NotebookLM, Augment/Antigravity, etc.;
+   - choose a backend from the `config/afk-backends.yaml` registry (Claude Code, local sandcastle, remote cloud worker, generic shell, etc.);
    - prefer local/free providers first when adequate;
-   - escalate only when evidence justifies it.
+   - escalate only when evidence justifies it;
+   - new backends can be added without changing the governor because the AFK harness uses the `AFKBackend` adapter contract.
 2. **Budget control**
    - read budget caps from the job spec;
    - estimate context/token cost before invocation;
@@ -388,6 +389,23 @@ adapter:
     - cancel
     - estimate_cost
 ```
+
+### AFK backend registry
+
+The AFK implement governor is tool-agnostic: it loads backends from `config/afk-backends.yaml` and drives them through the `AFKBackend` contract in `scripts/afk_backends/`. A new backend is added by creating an adapter module and a registry entry; the governor does not change.
+
+Registry entries declare the adapter class, the AIW budget provider used for cost gating, an `enabled` flag, and an optional `config` block. The provider must match the actual API or compute that will be billed (for example, the local Podman sandcastle forwards `ANTHROPIC_API_KEY` and is therefore attributed to `claude-code-cli`, not a free local provider).
+
+Current shipped backends:
+
+| Name | Adapter | Provider | Execution environment |
+|------|---------|----------|----------------------|
+| `claude-code` | `afk_backends.claude_code.ClaudeCodeBackend` | `claude-code-cli` | Local Claude Code desktop subscription |
+| `local` | `afk_backends.sandcastle.SandcastleBackend` | `claude-code-cli` | Podman sandcastle in sibling `../afk-harness` |
+| `remote` | `afk_backends.remote.RemoteBackend` | `claude-code-cli` | HTTP cloud worker (Vercel, Codespaces, etc.) |
+| `shell` | `afk_backends.shell.ShellBackend` | `generic-shell` | Configurable local command; proves non-Claude abstraction |
+
+The harness fails closed on unknown backends, disabled backends, and backends whose configuration is missing or invalid. This keeps the AFK surface bounded, observable, and reviewable regardless of which AI tool is behind the adapter.
 
 ## Follow-up Implementation
 
