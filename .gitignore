@@ -55,3 +55,8 @@ state/oversight/ml-feedback-cycle-*.json
 state/oversight/ml-feedback-audit.json
 state/.cache/
 dist/
+
+# DSP validation run records — one per `scripts/validate_dsp_loop.py` run; reproducible
+# from the tracked bounds + template, not canonical governance state. Same precedent as
+# state/oversight/ml-recommendations/. The seam README is tracked.
+state/dsp-validation/*.json
