@@ -1,0 +1,23 @@
+{
+  "proposition": "The Demerzel AFK implement governor uses a backend-adapter abstraction so that desktop, container, and cloud AI tools can be plugged in without changing the governor.",
+  "truth_value": "T",
+  "confidence": 0.92,
+  "evidence": {
+    "supporting": [
+      {
+        "source": "feat/afk-backend-adapter-contract-872 (#886)",
+        "claim": "Defined the AFKBackend abstract contract (prepare, needs_local_repo, invoke, estimate_cost, cancel) and documented the adapter architecture in docs/solutions/harness/2026-07-29-afk-backend-adapter-contract.md.",
+        "timestamp": "2026-07-29T00:00:00Z",
+        "reliability": 0.95
+      },
+      {
+        "source": "feat/extract-afk-backends-873 (#888)",
+        "claim": "Extracted the existing claude-code, local (sandcastle), and remote invocation paths from scripts/run_afk_cycle.py into scripts/afk_backends/claude_code.py, sandcastle.py, and remote.py. The governor now selects backends via get_backend() and delegates prepare()/invoke() to the adapter. All 357 unit tests pass.",
+        "timestamp": "2026-07-29T00:00:00Z",
+        "reliability": 0.98
+      }
+    ]
+  },
+  "last_updated": "2026-07-29T00:00:00Z",
+  "evaluated_by": "demerzel"
+}

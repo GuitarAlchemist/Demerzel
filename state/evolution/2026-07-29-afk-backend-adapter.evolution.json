@@ -1,0 +1,36 @@
+{
+  "id": "gel-afk-backend-adapter-2026-07-29",
+  "artifact": "scripts/afk_backends/",
+  "artifact_type": "capability",
+  "metrics": {
+    "citation_count": 0,
+    "violation_count": 0,
+    "compliance_rate": 0.0,
+    "last_cited": null,
+    "last_violated": null,
+    "promotion_candidate": false,
+    "deprecation_candidate": false
+  },
+  "events": [
+    {
+      "type": "governance_concept_created",
+      "context": "Defined the AFKBackend abstract contract in scripts/afk_backends/__init__.py: prepare(), needs_local_repo(), invoke(), estimate_cost(), and cancel(). Documented the design rationale in docs/solutions/harness/2026-07-29-afk-backend-adapter-contract.md. The contract decouples the governor from any specific AI tool so that desktop (Claude Code), container (Podman sandcastle), and cloud (HTTP worker) backends can be registered and swapped without changing run_afk_cycle.py. Issue #872.",
+      "timestamp": "2026-07-29T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Extracted the existing backend invocation paths from scripts/run_afk_cycle.py into dedicated adapter modules: ClaudeCodeBackend (scripts/afk_backends/claude_code.py), SandcastleBackend (scripts/afk_backends/sandcastle.py), and RemoteBackend (scripts/afk_backends/remote.py). The governor now selects a backend via get_backend(name) and delegates prepare() once per cycle and invoke() per issue. Removed the monolithic _invoke_harness, _invoke_harness_claude_code, _invoke_harness_remote, and _ensure_podman functions from the governor. Updated tests to mock adapter classes instead of internal helpers. Issue #873, PR #888.",
+      "timestamp": "2026-07-29T00:00:00Z"
+    }
+  ],
+  "assessment": {
+    "effectiveness": {
+      "proposition": "The AFK backend adapter capability is operational and tested",
+      "truth_value": "P",
+      "confidence": 0.85
+    },
+    "recommendation": "investigate"
+  },
+  "created_at": "2026-07-29T00:00:00Z",
+  "last_updated": "2026-07-29T00:00:00Z"
+}
