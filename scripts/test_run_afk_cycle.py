@@ -99,7 +99,7 @@ class TestParallelDispatch(unittest.TestCase):
 
 
 class TestBackend(unittest.TestCase):
-    def test_remote_backend_is_blocked_stub(self):
+    def test_remote_backend_without_config_is_blocked(self):
         hr = RemoteBackend().invoke({"number": 1, "title": "x", "body": "y"}, None)
         self.assertIsNone(hr["branch"])
         self.assertIn("remote", hr["blocked"].lower())

@@ -23,5 +23,9 @@ backends:
   remote:
     adapter: "afk_backends.remote.RemoteBackend"
     provider: "claude-code-cli"
-    description: "Cloud-worker backend (Vercel isolated sandboxes). Not yet implemented."
+    description: "HTTP cloud worker (Vercel, Codespaces, or any AFK-compatible endpoint). Disabled by default until an endpoint is configured."
     enabled: false
+    config:
+      # endpoint: "https://example.com/afk-worker"
+      # api_key_env: "DEMERZEL_REMOTE_API_KEY"
+      # timeout: 300

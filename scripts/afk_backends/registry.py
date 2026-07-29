@@ -86,7 +86,7 @@ def get_backend(name: str, registry: dict[str, dict[str, Any]] | None = None) ->
     if not cfg.get("enabled", False):
         raise RegistryError(f"backend {name!r} is disabled in the registry")
     cls = _resolve_class(cfg["adapter"])
-    return cls()
+    return cls(cfg.get("config"))
 
 
 def provider_for(name: str, registry: dict[str, dict[str, Any]] | None = None) -> str:

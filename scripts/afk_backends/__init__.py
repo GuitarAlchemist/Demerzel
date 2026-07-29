@@ -33,6 +33,15 @@ class AFKBackend(ABC):
     and treats them as interchangeable workers.
     """
 
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
+        """Optional config from the registry entry.
+
+        Backends that do not need configuration can ignore this. Cloud or
+        pluggable backends should read their endpoint, credentials, etc. from
+        the registry-supplied config dict.
+        """
+        self.config = config or {}
+
     @abstractmethod
     def prepare(self) -> tuple[bool, str]:
         """Check that the backend is ready to run.
