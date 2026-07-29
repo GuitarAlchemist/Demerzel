@@ -22,10 +22,9 @@ Backends (--backend):
                  the CLI falls back to the interactive subscription.
   local        — per-agent ephemeral clone + Podman sandbox. Runs on this box and
                  FORWARDS ANTHROPIC_API_KEY into the sandbox, i.e. it bills
-                 metered API spend. It is currently attributed to `codex-cli`
-                 (local-seat, no approval required) by config/afk-backends.yaml, so
-                 that spend passes the AIW budget gate as if it were free
-                 subscription work — see #863/#877. Opt in explicitly, knowing that.
+                 metered Claude API spend. It is attributed to `claude-code-cli`
+                 by config/afk-backends.yaml so the AIW budget gate applies the
+                 right provider caps and approval rules. Opt in explicitly.
   remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
 
 Usage:

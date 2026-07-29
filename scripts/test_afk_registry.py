@@ -19,7 +19,7 @@ class TestLoadRegistry(unittest.TestCase):
         self.assertIn("local", reg)
         self.assertIn("remote", reg)
         self.assertEqual(reg["claude-code"]["provider"], "claude-code-cli")
-        self.assertEqual(reg["local"]["provider"], "codex-cli")
+        self.assertEqual(reg["local"]["provider"], "claude-code-cli")
 
     def test_missing_schema_version_raises(self):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as tmp:

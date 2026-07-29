@@ -16,8 +16,8 @@ backends:
 
   local:
     adapter: "afk_backends.sandcastle.SandcastleBackend"
-    provider: "codex-cli"
-    description: "Podman sandcastle via the sibling ../afk-harness project."
+    provider: "claude-code-cli"
+    description: "Podman sandcastle via the sibling ../afk-harness project. Forwards ANTHROPIC_API_KEY, so it is metered Claude API spend."
     enabled: true
 
   remote:
