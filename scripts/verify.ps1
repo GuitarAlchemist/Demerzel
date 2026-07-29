@@ -36,3 +36,26 @@ if (Test-Path -LiteralPath (Join-Path $root 'tree-sitter-ixql/package.json')) {
         Pop-Location
     }
 }
+
+# ADR-0005 §Decision.4 — regenerate the BAML clients and fail on drift.
+#
+# The three client trees are COMMITTED (sibling repos copy or reference them, and a
+# Rust/TypeScript consumer cannot run `baml generate` as part of its own build), so
+# they are derived-but-tracked artifacts. That only stays honest if CI diffs them:
+# without this check a `.baml` edit merges with stale clients and the typed contract
+# silently stops matching the schema. Same discipline as governance-manifest.json.
+if (Test-Path -LiteralPath (Join-Path $root 'baml_src')) {
+    Push-Location $root
+    try {
+        npx --yes @boundaryml/baml generate
+        Assert-NativeSuccess 'npx @boundaryml/baml generate'
+
+        $drift = git status --porcelain -- baml_client clients
+        if ($drift) {
+            Write-Host $drift
+            throw "BAML clients are out of date with baml_src/. Run 'npx --yes @boundaryml/baml generate' and commit the result."
+        }
+    } finally {
+        Pop-Location
+    }
+}
