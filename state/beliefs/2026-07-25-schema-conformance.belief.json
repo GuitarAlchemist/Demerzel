@@ -18,7 +18,7 @@
       },
       {
         "source": "/demerzel audit level 2 + schema fix (2026-07-25)",
-        "claim": "logic/loop-state.schema.json was relaxed to the minimal core shape emitted by scripts/run_afk_cycle.py (loop_id, goal, repo, status, iterations). Both state/loops/*.loop.json instances now validate successfully. The original rich governance fields (worker, reviewer, convergence, per-iteration governance_check) are intentionally preserved as optional and will be reintroduced when the emitter is upgraded.",
+        "claim": "logic/loop-state.schema.json was reconciled to the operational contract enforced at write time by schemas/loop-state.schema.json; its top-level required set is now loop_id, goal, repo, risk, governance_mode, status, iterations (7 fields, identical to the enforced copy). Both state/loops/*.loop.json instances now validate successfully. The original rich governance fields (worker, reviewer, convergence, per-iteration governance_check) are REMOVED ENTIRELY, not preserved as optional. This file remains MORE PERMISSIVE than the enforced copy one level down: schemas/ requires `outcome` in iterations.items and sets additionalProperties:false at both levels; this file does neither. They can only be reintroduced after schemas/loop-state.schema.json changes, since its additionalProperties:false would reject them; tracked by the emitter is upgraded.",
         "timestamp": "2026-07-25T00:00:00Z",
         "reliability": 0.98
       }
