@@ -1,0 +1,27 @@
+schema_version: "1.0"
+
+# AFK backend registry.
+# Each entry maps a backend name (the value passed to --backend) to the Python
+# adapter class that implements the AFKBackend contract and to the AIW budget
+# provider used for cost gating.
+#
+# The adapter path is relative to the scripts/ directory, because
+# scripts/run_afk_cycle.py adds scripts/ to sys.path before loading backends.
+backends:
+  claude-code:
+    adapter: "afk_backends.claude_code.ClaudeCodeBackend"
+    provider: "claude-code-cli"
+    description: "Headless Claude Code on the interactive subscription (no container)."
+    enabled: true
+
+  local:
+    adapter: "afk_backends.sandcastle.SandcastleBackend"
+    provider: "codex-cli"
+    description: "Podman sandcastle via the sibling ../afk-harness project."
+    enabled: true
+
+  remote:
+    adapter: "afk_backends.remote.RemoteBackend"
+    provider: "claude-code-cli"
+    description: "Cloud-worker backend (Vercel isolated sandboxes). Not yet implemented."
+    enabled: false

@@ -23,9 +23,9 @@ Backends (--backend):
   local        — per-agent ephemeral clone + Podman sandbox. Runs on this box and
                  FORWARDS ANTHROPIC_API_KEY into the sandbox, i.e. it bills
                  metered API spend. It is currently attributed to `codex-cli`
-                 (local-seat, no approval required) by BACKEND_PROVIDER below, so
+                 (local-seat, no approval required) by config/afk-backends.yaml, so
                  that spend passes the AIW budget gate as if it were free
-                 subscription work — see #863. Opt in explicitly, knowing that.
+                 subscription work — see #863/#877. Opt in explicitly, knowing that.
   remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
 
 Usage:
@@ -55,9 +55,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import aiw_budget_gate as budget  # noqa: E402  (fail-closed AIW budget preflight)
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
-from afk_backends.claude_code import ClaudeCodeBackend  # noqa: E402
-from afk_backends.remote import RemoteBackend  # noqa: E402
-from afk_backends.sandcastle import SandcastleBackend  # noqa: E402
+from afk_backends import AFKBackend  # noqa: E402
+from afk_backends.registry import RegistryError, get_backend, provider_for  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]            # repos/Demerzel
 PROMPT_FILE = ROOT / "prompts" / "afk-implement.prompt.md"
@@ -76,29 +75,9 @@ SELF_MERGE_MIN_CONFIDENCE = 0.7       # minimum post_council_confidence
 
 # ── AIW budget enforcement (#471) ──────────────────────────────────────────
 # Every worker invocation goes through the fail-closed budget gate first: no
-# granted reservation, no invocation. Each backend maps to an allowlisted
-# provider so the gate applies its per-job / per-cycle caps and local-first rule.
-BACKEND_PROVIDER = {
-    "local": "codex-cli",             # ../afk-harness sandcastle runs Codex CLI
-    "claude-code": "claude-code-cli",  # headless `claude -p` on the subscription
-}
-
-
-_BACKEND_ADAPTERS = {
-    "claude-code": ClaudeCodeBackend,
-    "local": SandcastleBackend,
-    "remote": RemoteBackend,
-}
-
-
-def get_backend(name: str) -> ClaudeCodeBackend | SandcastleBackend | RemoteBackend:
-    """Return an adapter instance for the named backend. Raises ValueError for an
-    unknown backend so the governor fails closed."""
-    cls = _BACKEND_ADAPTERS.get(name)
-    if cls is None:
-        raise ValueError(f"unknown backend {name!r}")
-    return cls()
-
+# granted reservation, no invocation. The backend registry (config/afk-backends.yaml)
+# maps each backend to an allowlisted provider so the gate applies its per-job /
+# per-cycle caps and local-first rule.
 
 # Recognized budget numbers an issue may carry to tighten the policy defaults.
 _BUDGET_KEYS = (
@@ -133,9 +112,7 @@ def _budget_request(issue: dict, backend: str) -> dict:
     """Build an AIW budget request for one issue+backend. Raises for a backend
     with no budgeted provider mapping (fail closed — an unmapped worker is never
     reserved)."""
-    provider = BACKEND_PROVIDER.get(backend)
-    if provider is None:
-        raise ValueError(f"backend {backend!r} has no budgeted provider mapping")
+    provider = provider_for(backend)
     req = {"job_id": f"aiw-{issue.get('number')}", "provider": provider}
     req.update(_parse_budget_block(issue.get("body") or ""))
     return req
@@ -509,7 +486,7 @@ def _run_harvest(dry: bool, today: str) -> int:
 
 
 def _process_issue(issue: dict, seq: int, today: str, backend: str,
-                    adapter) -> tuple[dict, dict]:
+                    adapter: AFKBackend) -> tuple[dict, dict]:
     """Live processing of ONE issue end-to-end (runs inside the thread pool).
     Each call is independent: its own clone, its own branch, its own PR, its own
     loop-state file. Returns (decision, state).
@@ -685,7 +662,11 @@ def main(argv: list[str]) -> int:
             return 2
 
     # Live: ensure the selected backend is ready once, up front.
-    adapter = get_backend(args.backend)
+    try:
+        adapter = get_backend(args.backend)
+    except RegistryError as exc:
+        print(f"ABORT: backend registry error: {exc}", file=sys.stderr)
+        return 1
     if issues:
         ok, pnote = adapter.prepare()
         if not ok:
