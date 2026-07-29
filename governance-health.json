@@ -7,8 +7,8 @@
     "computed_at": "2026-03-23T18:00:00Z"
   },
   "quality_trend": {
-    "latest_artifact": "afk-graduated-self-merge",
+    "latest_artifact": "contracts/galactic-protocol.md",
     "source": "state/quality-trend/2026-07.jsonl",
-    "computed_at": "2026-07-22T13:26:31Z"
+    "computed_at": "2026-07-29T00:19:14Z"
   }
 }

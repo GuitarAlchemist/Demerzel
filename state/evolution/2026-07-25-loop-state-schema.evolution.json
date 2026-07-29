@@ -1,6 +1,6 @@
 {
   "id": "gel-loop-state-schema-2026-07-25",
-  "artifact": "logic/loop-state.schema.json",
+  "artifact": "schemas/loop-state.schema.json",
   "artifact_type": "schema",
   "metrics": {
     "citation_count": 3,
@@ -21,16 +21,21 @@
       "type": "amended",
       "context": "Reconciled logic/loop-state.schema.json to the operational contract already encoded in schemas/loop-state.schema.json -- the copy demerzel_kit enforces at write time (demerzel_kit.py SCHEMA_DIR -> schemas/, via run_afk_cycle.py kit.write_artifact). Both files now carry the identical TOP-LEVEL required set: loop_id, goal, repo, risk, governance_mode, status, iterations. Enums on risk, governance_mode and status match the operational copy. The de-required fields (worker, reviewer, current_iteration, convergence, outcome, rich per-iteration governance check) are REMOVED ENTIRELY (not retained as optional) and were never a real guarantee: no loop instance in repo history has ever carried them, no script reads them, and the prior required set was unsatisfiable regardless -- its target_repo enum was [ix, tars, ga] while both instances are repo=demerzel. All 2 state/loops/*.loop.json instances validate against BOTH schemas. This file remains MORE PERMISSIVE than the enforced copy one level down: schemas/ requires `outcome` in iterations.items and sets additionalProperties:false at both levels; this file does neither. Reintroducing the removed fields therefore requires changing schemas/loop-state.schema.json first. Issue #834 tracks enriching the emitter; note its acceptance criteria name this file, but the file governing writes is schemas/loop-state.schema.json. The duplication between the two copies is the root cause of this drift and is tracked separately.",
       "timestamp": "2026-07-25T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Collapsed the two loop-state schemas into one source of truth (issue #852): deleted logic/loop-state.schema.json and retained schemas/loop-state.schema.json, which is the copy enforced by demerzel_kit.py at write time. Repointed policy, skill, pipeline, and state references to schemas/loop-state.schema.json. The surviving schema uses $id 'loop-state.schema.json' because it is loaded by path from schemas/ and no URL reference is required.",
+      "timestamp": "2026-07-28T00:00:00Z"
     }
   ],
   "assessment": {
     "effectiveness": {
-      "proposition": "logic/loop-state.schema.json accurately describes the autonomous-loop state instances it governs",
+      "proposition": "schemas/loop-state.schema.json accurately describes the autonomous-loop state instances it governs",
       "truth_value": "P",
-      "confidence": 0.8
+      "confidence": 0.85
     },
     "recommendation": "investigate"
   },
   "created_at": "2026-07-25T00:00:00Z",
-  "last_updated": "2026-07-25T00:00:00Z"
+  "last_updated": "2026-07-28T00:00:00Z"
 }

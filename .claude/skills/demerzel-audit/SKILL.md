@@ -18,7 +18,7 @@ Verify all governance artifacts conform to their schemas.
 - [ ] Reconnaissance profiles conform to `schemas/reconnaissance-profile.schema.json`
 - [ ] PDCA states conform to `logic/kaizen-pdca-state.schema.json`
 - [ ] Knowledge states conform to `logic/knowledge-state.schema.json`
-- [ ] Loop states conform to `logic/loop-state.schema.json`
+- [ ] Loop states conform to `schemas/loop-state.schema.json`
 
 ## Level 2 — Cross-Reference Integrity
 Verify artifacts reference each other correctly.
