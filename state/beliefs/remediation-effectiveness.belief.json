@@ -5,15 +5,15 @@
   "evidence": {
     "supporting": [
       {
-        "source": "ml-feedback-recommendation 53db9f7d-c625-4358-9dcc-7a355870938a",
+        "source": "ml-feedback-recommendation 0e5a4434-438e-4bee-a828-c1dde83b0e72",
         "claim": "Across 6 outcome-bearing PDCA records: proactive=0.333(n=3), standardize=1.0(n=3). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
-        "timestamp": "2026-07-24T13:00:03Z",
+        "timestamp": "2026-07-28T13:00:04Z",
         "reliability": 0.86
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-07-24T13:00:03Z",
+  "last_updated": "2026-07-28T13:00:04Z",
   "evaluated_by": "demerzel",
   "strategy_success_rates": {
     "proactive": {
@@ -49,5 +49,5 @@
     }
   ],
   "risk_classes_modified": 0,
-  "source_recommendation": "53db9f7d-c625-4358-9dcc-7a355870938a"
+  "source_recommendation": "0e5a4434-438e-4bee-a828-c1dde83b0e72"
 }

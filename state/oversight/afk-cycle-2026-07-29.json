@@ -1,0 +1,27 @@
+{
+  "cycle_at": "2026-07-29T01:11:56Z",
+  "dry_run": false,
+  "halted": false,
+  "backend": "claude-code",
+  "max_parallel": 1,
+  "queue_size": 1,
+  "decisions": [
+    {
+      "issue": 860,
+      "title": "demerzel-ideation: dead-green loop \u00e2\u20ac\u201d pins a model id that does not exist, warns, exits 0",
+      "risk": "low",
+      "mode": "boundary-only",
+      "eligible": true,
+      "action": "implement",
+      "pr": "https://github.com/GuitarAlchemist/Demerzel/pull/865",
+      "branch": "agent/issue-860"
+    }
+  ],
+  "tally": {
+    "implement": 1,
+    "skipped": 0,
+    "stalled": 0,
+    "blocked": 0,
+    "error": 0
+  }
+}
