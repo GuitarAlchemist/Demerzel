@@ -1,0 +1,49 @@
+{
+  "proposition": "Demerzel cross-references between governance artifacts resolve correctly (behavioral tests, estimator pairings, policy references, and schema $refs)",
+  "truth_value": "P",
+  "confidence": 0.8,
+  "evidence": {
+    "supporting": [
+      {
+        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-1-behavioral-test-coverage",
+        "claim": "All 17 personas have a corresponding behavioral case file in tests/behavioral/, e.g., demerzel-cases.md, skeptical-auditor-cases.md, seldon-cases.md. Tests are substantive and contain assertions.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.95
+      },
+      {
+        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-2-estimator-pairing-resolution",
+        "claim": "Every persona with estimator_pairing references the existing skeptical-auditor persona (personas/skeptical-auditor.persona.yaml). No broken estimator pairings found.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.98
+      },
+      {
+        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-3-policy-references-resolution",
+        "claim": "Sampled policy and constitution references in personas, constitutions, and skills resolve to existing files in policies/ and constitutions/. No dangling references detected in the sample.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.85
+      },
+      {
+        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-4-schema-ref-resolution (post-fix)",
+        "claim": "logic/governance-evolution.schema.json $ref now points to /schemas/tetravalent-state and resolves. All other logic schemas use the same /schemas/ tetravalent reference. Contract schemas use relative integrity-fields.schema.json refs that resolve within schemas/contracts/.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.95
+      }
+    ],
+    "contradicting": [
+      {
+        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-1-behavioral-test-coverage",
+        "claim": "Behavioral case files use the naming convention {persona}-cases.md, but policies/governance-audit-policy.yaml specifies the expected filenames as {persona}.test.md or {persona}.test.yaml. This is a convention drift between policy and repository practice.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.9
+      },
+      {
+        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-6-stale-artifacts-detection",
+        "claim": "Several state files have not been updated in more than 7 days: state/beliefs/2026-03-17-behavioral-test-coverage.belief.json, state/beliefs/2026-03-18-consumer-repo-integration-status.belief.json, state/evolution/2026-03-17-alignment-policy.evolution.json, state/evolution/2026-03-17-asimov-constitution.evolution.json, state/evolution/2026-03-17-default-constitution.evolution.json, state/evolution/2026-03-20-memristive-markov.evolution.json, state/evolution/2026-04-03-visual-governance.evolution.json, and state/pdca/2026-03-17-behavioral-test-gap.pdca.json. These are stale relative to the policy's 7-day staleness threshold.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.95
+      }
+    ]
+  },
+  "last_updated": "2026-07-25T00:00:00Z",
+  "evaluated_by": "demerzel"
+}

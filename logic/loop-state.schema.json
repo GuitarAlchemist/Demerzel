@@ -2,46 +2,75 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/loop-state",
   "title": "Loop State",
-  "description": "Tracks the orchestration state of a governed Ralph Loop (autonomous iterative development cycle)",
+  "description": "Tracks the orchestration state of a governed Ralph Loop (autonomous iterative development cycle). Reconciled to match the operational contract in schemas/loop-state.schema.json, which is what demerzel_kit enforces at write time (demerzel_kit.py SCHEMA_DIR -> schemas/); both files now carry the same TOP-LEVEL required set. This file remains MORE PERMISSIVE than the enforced copy one level down: schemas/ requires `outcome` in iterations.items and sets additionalProperties:false at both levels; this file does neither. The richer auditability fields (worker, reviewer, convergence, outcome, current_iteration) are REMOVED ENTIRELY, not retained as optional: no loop instance has ever carried them and no script reads them, so they were aspirational rather than dropped guarantees. Reintroducing them requires changing schemas/loop-state.schema.json first, because that copy sets additionalProperties:false and would reject them. Issue #834 tracks enriching the emitter; the duplication between this file and schemas/loop-state.schema.json is tracked separately and should be collapsed to one source of truth.",
   "type": "object",
-  "required": ["id", "goal", "risk_level", "governance_mode", "initiator", "target_repo", "worker", "reviewer", "max_iterations", "current_iteration", "iterations", "convergence", "outcome"],
+  "required": ["loop_id", "goal", "repo", "risk", "governance_mode", "status", "iterations"],
   "properties": {
-    "id": {
+    "loop_id": {
       "type": "string",
-      "pattern": "^loop-[a-z0-9-]+$",
-      "description": "Unique loop identifier (e.g., loop-ix-compliance-remediation-2026-03-15)"
+      "pattern": "^loop-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{3}$",
+      "description": "Unique loop identifier (e.g., loop-2026-06-23-001)"
     },
     "goal": {
       "type": "string",
       "description": "What the loop is trying to accomplish"
     },
-    "risk_level": {
+    "repo": {
+      "type": "string",
+      "description": "Which repo the loop operates in (e.g., demerzel, ix, tars, ga)"
+    },
+    "risk": {
       "type": "string",
       "enum": ["low", "medium", "high", "critical"],
-      "description": "Risk classification determined via reconnaissance Tier 3 before loop starts"
+      "description": "Risk classification determined before the loop starts"
     },
     "governance_mode": {
       "type": "string",
       "enum": ["boundary-only", "per-iteration"],
-      "description": "boundary-only for low/medium risk, per-iteration for high/critical risk"
+      "description": "Governance oversight mode"
     },
-    "initiator": {
+    "status": {
       "type": "string",
-      "enum": ["agent", "demerzel"],
-      "description": "Who started the loop: agent (self-initiated) or demerzel (governance-initiated)"
+      "enum": ["running", "halted", "completed", "stalled"],
+      "description": "Current loop status"
     },
-    "target_repo": {
-      "type": "string",
-      "enum": ["ix", "tars", "ga"],
-      "description": "Which repo the loop operates in"
+    "iterations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["iteration", "timestamp", "action"],
+        "properties": {
+          "iteration": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "action": {
+            "type": "string",
+            "description": "What the worker did in this iteration"
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Result of the iteration (e.g., progress, shipped, blocked, halted)"
+          },
+          "governance_decision": {
+            "type": ["string", "null"],
+            "description": "Governance gate decision for this iteration, if any"
+          },
+          "belief_state": {
+            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
+            "description": "Tetravalent belief state for the iteration outcome (optional)"
+          }
+        }
+      }
     },
-    "worker": {
-      "type": "string",
-      "description": "Persona name executing the work"
-    },
-    "reviewer": {
-      "type": "string",
-      "description": "Persona name reviewing iterations (typically the worker's estimator_pairing)"
+    "stall_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Count of consecutive iterations without measurable progress"
     },
     "max_iterations": {
       "type": "integer",
@@ -50,80 +79,17 @@
       "default": 10,
       "description": "Hard cap on iterations (default 10, absolute max 25)"
     },
-    "current_iteration": {
-      "type": "integer",
-      "minimum": 0,
-      "description": "Current iteration counter"
-    },
-    "iterations": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["number", "started_at", "work_summary", "review_decision", "governance_check"],
-        "properties": {
-          "number": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "started_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "completed_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "work_summary": {
-            "type": "string",
-            "description": "What the worker did in this iteration"
-          },
-          "review_decision": {
-            "type": "string",
-            "enum": ["SHIP", "REVISE", "HALT"],
-            "description": "Reviewer's decision after evaluating the iteration"
-          },
-          "review_feedback": {
-            "type": "string",
-            "description": "Reviewer's notes and reasoning"
-          },
-          "belief_state": {
-            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
-            "description": "Tetravalent belief state for the iteration outcome"
-          },
-          "governance_check": {
-            "type": "string",
-            "enum": ["passed", "failed", "skipped"],
-            "description": "Governance gate result — skipped only in boundary-only mode"
-          },
-          "governance_notes": {
-            "type": "string",
-            "description": "Any governance concerns flagged during this iteration"
-          }
-        }
-      }
-    },
-    "convergence": {
-      "type": "object",
-      "required": ["iterations_without_progress", "max_stall_iterations"],
-      "properties": {
-        "iterations_without_progress": {
-          "type": "integer",
-          "minimum": 0,
-          "description": "Counter of consecutive iterations without measurable progress"
-        },
-        "max_stall_iterations": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 3,
-          "description": "Halt threshold — loop stops if this many iterations pass without progress"
-        }
-      }
-    },
-    "outcome": {
+    "authorization_artifact": {
       "type": "string",
-      "enum": ["in_progress", "shipped", "halted", "escalated"],
-      "default": "in_progress",
-      "description": "Final outcome of the loop"
+      "description": "Reference to the artifact that authorized the loop (e.g., github_issue:#381)"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
     },
     "created_at": {
       "type": "string",

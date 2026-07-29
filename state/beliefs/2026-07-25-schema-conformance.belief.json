@@ -1,0 +1,43 @@
+{
+  "proposition": "All Demerzel state instances conform to their declared JSON schemas — specifically PDCA states (logic/kaizen-pdca-state.schema.json) and autonomous-loop states (logic/loop-state.schema.json)",
+  "truth_value": "T",
+  "confidence": 0.95,
+  "evidence": {
+    "supporting": [
+      {
+        "source": "/demerzel audit level 1 (2026-07-25)",
+        "claim": "Personas (17/17), tetravalent beliefs (5/5), contract schemas (11/11 valid JSON Schema), and reconnaissance profiles (3/3) all conform to their schemas.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.98
+      },
+      {
+        "source": "/demerzel audit level 2 + schema fix (2026-07-25)",
+        "claim": "logic/kaizen-pdca-state.schema.json was rewritten to match real instance shape (cycle_phase, hypothesis, kaizen_kind, plan/do/check/act objects). All 8 state/pdca/*.pdca.json instances now validate successfully against the amended schema.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.99
+      },
+      {
+        "source": "/demerzel audit level 2 + schema fix (2026-07-25)",
+        "claim": "logic/loop-state.schema.json was reconciled to the operational contract enforced at write time by schemas/loop-state.schema.json; its top-level required set is now loop_id, goal, repo, risk, governance_mode, status, iterations (7 fields, identical to the enforced copy). Both state/loops/*.loop.json instances now validate successfully. The original rich governance fields (worker, reviewer, convergence, per-iteration governance_check) are REMOVED ENTIRELY, not preserved as optional. This file remains MORE PERMISSIVE than the enforced copy one level down: schemas/ requires `outcome` in iterations.items and sets additionalProperties:false at both levels; this file does neither. They can only be reintroduced after schemas/loop-state.schema.json changes, since its additionalProperties:false would reject them; tracked by the emitter is upgraded.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.98
+      }
+    ],
+    "contradicting": [
+      {
+        "source": "/demerzel audit level 1 (2026-07-25) — audit-1-3-pdca-state-schema",
+        "claim": "All 8 state/pdca/*.pdca.json instances fail validation against kaizen-pdca-state.schema.json. Instances use fields cycle_phase/hypothesis/kaizen_kind and lack the schema-required proposition/model/phase/belief_state/iterations. The schema and instances have diverged.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.99
+      },
+      {
+        "source": "/demerzel audit level 1 (2026-07-25) — loop-state check",
+        "claim": "Both state/loops/*.loop.json instances fail validation against loop-state.schema.json. Instances use loop_id/risk/repo/governance_mode while the schema requires id/risk_level/target_repo/worker/reviewer/current_iteration/convergence.",
+        "timestamp": "2026-07-25T00:00:00Z",
+        "reliability": 0.99
+      }
+    ]
+  },
+  "last_updated": "2026-07-25T00:00:00Z",
+  "evaluated_by": "demerzel"
+}
