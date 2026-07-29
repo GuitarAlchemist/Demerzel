@@ -13,7 +13,7 @@ permissions:
   discussions: write
 
 env:
-  CLAUDE_MODEL: claude-sonnet-4-20250514
+  CLAUDE_MODEL: claude-sonnet-5
   CLAUDE_MAX_TOKENS: 2048
   MCP_TIMEOUT_SECONDS: 30
   DIRECT_MCP_TIMEOUT_SECONDS: 10

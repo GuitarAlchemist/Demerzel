@@ -40,56 +40,71 @@ jobs:
       - name: Inventory ecosystem capabilities
         id: capabilities
         run: |
+          # `gh api` prints its error body to STDOUT on a missing path, and a
+          # pipeline's exit status is the *last* command's — so the old
+          # `gh api ... | tr ... || echo "none"` fallback could never fire, and a
+          # 404 body was interpolated verbatim into the JSON below. The embedded
+          # quotes then broke it ("Invalid numeric literal"), which is what took
+          # out the first run that got far enough to reach step 6 (#703).
+          # Capture gh's own status, and build the JSON with jq rather than by
+          # string interpolation.
+          repo_dir() {  # repo_dir <owner/repo> <path> <fallback> [limit]
+            local out
+            if out=$(gh api "repos/$1/contents/$2" --jq '.[].name' 2>/dev/null); then
+              if [ -n "${4:-}" ]; then
+                out=$(printf '%s\n' "$out" | head -n "$4")
+              fi
+              printf '%s' "$out" | paste -sd, -
+            else
+              printf '%s' "$3"
+            fi
+          }
+
+          local_dir() {  # local_dir <glob> <basename-suffix>
+            ls -d $1 2>/dev/null | xargs -I{} basename {} "$2" | paste -sd, -
+          }
+
           # ── Demerzel capabilities (governance) ──
-          DEMERZEL_SKILLS=$(ls -d .claude/skills/*/ 2>/dev/null | xargs -I{} basename {} | tr '\n' ', ')
-          DEMERZEL_WORKFLOWS=$(ls .github/workflows/*.yml 2>/dev/null | xargs -I{} basename {} .yml | tr '\n' ', ')
-          DEMERZEL_PERSONAS=$(ls personas/*.persona.yaml 2>/dev/null | xargs -I{} basename {} .persona.yaml | tr '\n' ', ')
+          DEMERZEL_SKILLS=$(local_dir '.claude/skills/*/' '')
+          DEMERZEL_WORKFLOWS=$(local_dir '.github/workflows/*.yml' '.yml')
+          DEMERZEL_PERSONAS=$(local_dir 'personas/*.persona.yaml' '.persona.yaml')
 
           # ── ix capabilities (ML/Rust) ──
-          IX_CRATES=$(gh api repos/GuitarAlchemist/ix/contents/crates --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "unknown")
-          IX_MCP=$(gh api repos/GuitarAlchemist/ix/contents/mcp-servers --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "none")
+          IX_CRATES=$(repo_dir GuitarAlchemist/ix crates unknown)
+          IX_MCP=$(repo_dir GuitarAlchemist/ix mcp-servers none)
 
           # ── tars capabilities (F#/reasoning) ──
-          TARS_PROJECTS=$(gh api repos/GuitarAlchemist/tars/contents/src --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "unknown")
-          TARS_EXPLORATIONS=$(gh api repos/GuitarAlchemist/tars/contents/v1/docs/Explorations --jq '.[].name' 2>/dev/null | head -10 | tr '\n' ', ' || echo "unknown")
+          TARS_PROJECTS=$(repo_dir GuitarAlchemist/tars src unknown)
+          TARS_EXPLORATIONS=$(repo_dir GuitarAlchemist/tars v1/docs/Explorations unknown 10)
 
           # ── ga capabilities (C#/music) ──
-          GA_PROJECTS=$(gh api repos/GuitarAlchemist/ga/contents/src --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "unknown")
-          GA_MCP=$(gh api repos/GuitarAlchemist/ga/contents/mcp-servers --jq '.[].name' 2>/dev/null | tr '\n' ', ' || echo "none")
+          GA_PROJECTS=$(repo_dir GuitarAlchemist/ga src unknown)
+          GA_MCP=$(repo_dir GuitarAlchemist/ga mcp-servers none)
 
           # ── MCP tools available ──
           MCP_REGISTRY=""
           if [ -f schemas/capability-registry.json ]; then
-            MCP_REGISTRY=$(jq -r '(.tools // [])[].name' schemas/capability-registry.json 2>/dev/null | tr '\n' ', ')
+            MCP_REGISTRY=$(jq -r '(.tools // [])[].name' schemas/capability-registry.json 2>/dev/null | paste -sd, -)
           fi
 
-          # Save capability map
-          cat > /tmp/capabilities.json <<CAPEOF
-          {
-            "demerzel": {
-              "role": "Governance coordinator",
-              "skills": "$DEMERZEL_SKILLS",
-              "workflows": "$DEMERZEL_WORKFLOWS",
-              "personas": "$DEMERZEL_PERSONAS"
-            },
-            "ix": {
-              "role": "Machine forge (Rust ML)",
-              "crates": "$IX_CRATES",
-              "mcp_servers": "$IX_MCP"
-            },
-            "tars": {
-              "role": "Cognition engine (F# reasoning)",
-              "projects": "$TARS_PROJECTS",
-              "explorations": "$TARS_EXPLORATIONS"
-            },
-            "ga": {
-              "role": "Guitar Alchemist (C# music domain)",
-              "projects": "$GA_PROJECTS",
-              "mcp_servers": "$GA_MCP"
-            },
-            "mcp_tools": "$MCP_REGISTRY"
-          }
-          CAPEOF
+          # Save capability map. jq --arg quotes every value, so no inventory
+          # string can break the document no matter what the API returned.
+          jq -n \
+            --arg ds "$DEMERZEL_SKILLS" --arg dw "$DEMERZEL_WORKFLOWS" --arg dp "$DEMERZEL_PERSONAS" \
+            --arg ic "$IX_CRATES" --arg im "$IX_MCP" \
+            --arg tp "$TARS_PROJECTS" --arg te "$TARS_EXPLORATIONS" \
+            --arg gp "$GA_PROJECTS" --arg gm "$GA_MCP" \
+            --arg mcp "$MCP_REGISTRY" \
+            '{
+              demerzel: {role: "Governance coordinator", skills: $ds, workflows: $dw, personas: $dp},
+              ix:       {role: "Machine forge (Rust ML)", crates: $ic, mcp_servers: $im},
+              tars:     {role: "Cognition engine (F# reasoning)", projects: $tp, explorations: $te},
+              ga:       {role: "Guitar Alchemist (C# music domain)", projects: $gp, mcp_servers: $gm},
+              mcp_tools: $mcp
+            }' > /tmp/capabilities.json
+
+          # Fail here rather than handing malformed JSON to the model downstream.
+          jq -e . /tmp/capabilities.json > /dev/null
 
           echo "CAPABILITIES_READY=true" >> $GITHUB_OUTPUT
 
@@ -100,10 +115,14 @@ jobs:
           CAPABILITIES=$(cat /tmp/capabilities.json)
           FOCUS="${{ inputs.focus_area || 'all' }}"
 
+          # This is a scheduled producer: its whole job is to emit an expansion
+          # issue. A run that cannot call the model has not "skipped" — it has
+          # died, and must say so. Exiting 0 here is what let four consecutive
+          # failures read as one green run and three red ones (#703).
           if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "No API key, skipping AI analysis"
+            echo "::error::ANTHROPIC_API_KEY is not set; the capability scan cannot run."
             echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
-            exit 0
+            exit 1
           fi
 
           # Call Claude via the shared llm_call.sh seam (Candidate 3).
@@ -117,8 +136,12 @@ jobs:
           if bash .github/scripts/llm_call.sh claude "$PROMPT" 2000 > /tmp/expansion-analysis.txt 2>/tmp/llm_err; then
             echo "ANALYSIS_READY=true" >> $GITHUB_OUTPUT
           else
-            echo "::warning::Capability analysis call failed: $(cat /tmp/llm_err)"
+            # A failed call means no issue and no discussion post — the outcome
+            # this workflow exists for did not happen. Fail loudly rather than
+            # skipping the producing steps behind a green check.
+            echo "::error::Capability analysis call failed: $(cat /tmp/llm_err)"
             echo "ANALYSIS_READY=false" >> $GITHUB_OUTPUT
+            exit 1
           fi
 
       - name: Create expansion issue
@@ -126,10 +149,20 @@ jobs:
         run: |
           DATE=$(date -u +%Y-%m-%d)
           ANALYSIS=$(cat /tmp/expansion-analysis.txt)
-          CAPABILITIES=$(cat /tmp/capabilities.json | jq '.')
+          CAPABILITIES=$(jq '.' /tmp/capabilities.json)
+
+          # Self-heal the label. `gh issue create --label` fails outright on a
+          # label that does not exist, and this one never did — so the very first
+          # run to survive the analysis step died here instead, with the reason
+          # swallowed by 2>/dev/null (#703).
+          gh label create capability-expansion \
+            --repo GuitarAlchemist/Demerzel \
+            --color 0E8A16 \
+            --description "Ecosystem capability gaps identified by the expansion scanner" \
+            2>/dev/null || true
 
           # Check for existing expansion issue
-          EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --label "capability-expansion" --json number --jq 'length' 2>/dev/null || echo "0")
+          EXISTING=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --label "capability-expansion" --json number --jq 'length' || echo "0")
           if [ "$EXISTING" -gt 0 ]; then
             echo "Expansion issue already open, updating..."
             ISSUE_NUM=$(gh issue list --repo GuitarAlchemist/Demerzel --state open --label "capability-expansion" --json number --jq '.[0].number' 2>/dev/null)
@@ -138,7 +171,7 @@ jobs:
           ${ANALYSIS}
 
           ---
-          *Demerzel Capability Expansion Scanner*" 2>/dev/null
+          *Demerzel Capability Expansion Scanner*"
             exit 0
           fi
 
@@ -156,7 +189,7 @@ jobs:
 
           ---
           *Generated by Demerzel Capability Expansion Scanner. Demerzel identifies what she doesn't know and proposes how to learn it.*" \
-            --label "capability-expansion,enhancement" 2>/dev/null
+            --label "capability-expansion,enhancement"
 
       - name: Post to Discussions
         if: steps.analyze.outputs.ANALYSIS_READY == 'true'
