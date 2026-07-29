@@ -1,0 +1,21 @@
+{
+  "loop_id": "loop-2026-07-29-001",
+  "goal": "AFK-implement issue #860: demerzel-ideation: dead-green loop \u00e2\u20ac\u201d pins a model id that does not exist, warns, exits 0",
+  "repo": "demerzel",
+  "risk": "low",
+  "governance_mode": "boundary-only",
+  "status": "completed",
+  "iterations": [
+    {
+      "iteration": 1,
+      "timestamp": "2026-07-29T01:11:56Z",
+      "action": "opened PR for #860",
+      "outcome": "progress",
+      "governance_decision": null
+    }
+  ],
+  "stall_count": 0,
+  "authorization_artifact": "github_issue:#860",
+  "started_at": "2026-07-29T01:08:22Z",
+  "max_iterations": 10
+}
