@@ -29,9 +29,19 @@ forwards `ANTHROPIC_API_KEY` into the sandbox — metered API spend. But
 precisely to stop unapproved metered spend. It ran, it passed, and it was correct
 about `codex-cli` — a provider that was not being used. (#863)
 
-Fixed in #877 by moving the provider mapping to `config/afk-backends.yaml` and
-attributing the `local` backend to `claude-code-cli`, so the gate now applies the
-right provider caps and approval rules.
+**And then it happened a second time, to this very instance.** #877 "fixed" it by
+moving the mapping into `config/afk-backends.yaml` and changing `codex-cli` to
+`claude-code-cli` — a *different* `local-seat`, `requires_manual_approval: false`
+provider. The gate's answer never changed. The commit closed #863, and this
+paragraph was edited to record the fix. Both were wrong.
+
+That is the pattern eating its own tail: the note about guards bound to the wrong
+subject was amended to certify a guard bound to a different wrong subject. The
+tell was available the whole time — the registry entry's own `description` said
+"metered Claude API spend" one line under a free-tier provider id. **When a
+config value and its adjacent description disagree, the description is usually
+the one written by someone who understood the system.** Actually fixed by
+attributing `local` to `anthropic-api` (metered-cloud, approval required).
 
 **2. The agent's oracle checked schemas, not the suite.**
 `prompts/afk-implement.prompt.md` required `validate_governance.py` and nothing

@@ -22,9 +22,17 @@ Backends (--backend):
                  the CLI falls back to the interactive subscription.
   local        — per-agent ephemeral clone + Podman sandbox. Runs on this box and
                  FORWARDS ANTHROPIC_API_KEY into the sandbox, i.e. it bills
-                 metered Claude API spend. It is attributed to `claude-code-cli`
-                 by config/afk-backends.yaml so the AIW budget gate applies the
-                 right provider caps and approval rules. Opt in explicitly.
+                 metered Anthropic API spend. Attributed to `anthropic-api`
+                 (metered-cloud, requires_manual_approval) by
+                 config/afk-backends.yaml, so the AIW gate BLOCKS it. The governor
+                 can never clear that gate on its own: _budget_reserve calls
+                 reserve() with approval=None, and only the gate's own CLI reads
+                 .octo/aiw-approval.json. To run this lane, pre-reserve the job via
+                 the aiw_budget_gate CLI with a bound approval artifact; the
+                 governor then clears via job-id reuse. The release leg is NOT
+                 plumbed -- a metered job needs a trusted receipt that
+                 _budget_release never passes, so every approved run leaves an open
+                 reservation (#896). Treat `local` as operator-driven.
   remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
 
 Usage:
@@ -609,8 +617,10 @@ def main(argv: list[str]) -> int:
                          "container, bills the interactive subscription because "
                          "ANTHROPIC_API_KEY is stripped from the child env); "
                          "local = per-agent clone + Podman sandbox — NOTE this forwards "
-                         "ANTHROPIC_API_KEY and bills metered API spend, currently "
-                         "misattributed to codex-cli by the budget gate (#863); "
+                         "ANTHROPIC_API_KEY and bills metered API spend; attributed to "
+                         "anthropic-api (metered-cloud) so the gate blocks it from the "
+                         "governor unless the job was pre-reserved via the "
+                         "aiw_budget_gate CLI with an approval artifact (#863); "
                          "remote = Vercel isolated sandboxes (not yet implemented)")
     ap.add_argument("--harvest", action="store_true",
                     help="self-merge pass: gate already-open AFK PRs through the "

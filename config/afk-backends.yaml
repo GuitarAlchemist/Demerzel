@@ -16,8 +16,13 @@ backends:
 
   local:
     adapter: "afk_backends.sandcastle.SandcastleBackend"
-    provider: "claude-code-cli"
-    description: "Podman sandcastle via the sibling ../afk-harness project. Forwards ANTHROPIC_API_KEY, so it is metered Claude API spend."
+    # Attribute a backend to the provider it ACTUALLY BILLS. This line was
+    # codex-cli, then claude-code-cli (#877) -- both local-seat with
+    # requires_manual_approval: false, so metered spend cleared the gate either
+    # way. The description below was correct the whole time; only the value was
+    # wrong. See #863.
+    provider: "anthropic-api"
+    description: "Podman sandcastle via the sibling ../afk-harness project. Forwards ANTHROPIC_API_KEY and runs claudeCode(opus), so it is metered Anthropic API spend and requires a manual approval artifact."
     enabled: true
 
   remote:

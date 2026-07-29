@@ -38,6 +38,13 @@
       "requires_manual_approval": false
     },
     {
+      "id": "anthropic-api",
+      "tier": "metered-cloud",
+      "cost_model": "provider-billing",
+      "requires_manual_approval": true,
+      "trusted_receipt_issuer": "api.anthropic.com"
+    },
+    {
       "id": "gemini-cli",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
@@ -64,6 +71,7 @@
     "codex-cli",
     "antigravity",
     "augment-code",
+    "anthropic-api",
     "gemini-cli",
     "jules",
     "notebooklm"
