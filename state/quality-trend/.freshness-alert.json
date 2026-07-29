@@ -1,8 +1,0 @@
-{
-  "alert": "quality-trend-stale",
-  "detected_at": "2026-07-28T15:23:10Z",
-  "newest_row_age_days": 6,
-  "max_stale_days": 3,
-  "reason": "newest quality-trend row is 6d old (threshold 3d) from state/quality-trend/2026-07.jsonl",
-  "likely_cause": "the demerzel-quality-trend feeder stopped running"
-}
