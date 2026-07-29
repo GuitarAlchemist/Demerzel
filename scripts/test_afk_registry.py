@@ -21,7 +21,7 @@ class TestLoadRegistry(unittest.TestCase):
         self.assertIn("remote", reg)
         self.assertIn("shell", reg)
         self.assertEqual(reg["claude-code"]["provider"], "claude-code-cli")
-        self.assertEqual(reg["local"]["provider"], "claude-code-cli")
+        self.assertEqual(reg["local"]["provider"], "anthropic-api")
         self.assertEqual(reg["shell"]["provider"], "generic-shell")
         self.assertFalse(reg["shell"]["enabled"])
 

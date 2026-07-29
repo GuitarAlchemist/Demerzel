@@ -419,10 +419,80 @@ class TestBudgetGate(unittest.TestCase):
 
     def test_budget_request_maps_backend_provider(self):
         self.assertEqual(
-            g._budget_request({"number": 5, "body": ""}, "local")["provider"], "claude-code-cli")
+            g._budget_request({"number": 5, "body": ""}, "local")["provider"],
+            "anthropic-api")
         self.assertEqual(
             g._budget_request({"number": 5, "body": ""}, "claude-code")["provider"],
             "claude-code-cli")
+
+    def test_local_backend_is_blocked_without_approval(self):
+        """#863 regression, stated as the behaviour that was missing. `local`
+        forwards ANTHROPIC_API_KEY and runs claudeCode(opus), so the gate must
+        REFUSE it with no approval artifact.
+
+        Two prior values passed this lane silently: codex-cli, then
+        claude-code-cli (#877). Both are local-seat/no-approval, so swapping
+        between them changed nothing observable. Assert the DECISION and the
+        TIER, not the provider string -- a test that only pins the id would have
+        gone green on that swap too.
+
+        Asserts against the REAL policy and registry, not fixtures: the defect
+        lived in the mapping BETWEEN config and policy, so a fixture would
+        reproduce the bug rather than catch it."""
+        policy = g.budget.load_policy(g.budget.POLICY_PATH)
+        with tempfile.TemporaryDirectory() as d:
+            result = g.budget.reserve(
+                policy, g._budget_request({"number": 5, "body": ""}, "local"),
+                Path(d) / "cycle.json")
+        self.assertEqual(result["decision"], "block")
+        self.assertIn("provider_requires_manual_approval", result["reasons"])
+        self.assertEqual(result["tier"], "metered-cloud")
+
+    def test_claude_code_backend_still_allowed_without_approval(self):
+        """The other half: tightening `local` must not block the subscription
+        lane, or the fix is indistinguishable from breaking the loop."""
+        policy = g.budget.load_policy(g.budget.POLICY_PATH)
+        with tempfile.TemporaryDirectory() as d:
+            result = g.budget.reserve(
+                policy, g._budget_request({"number": 5, "body": ""}, "claude-code"),
+                Path(d) / "cycle.json")
+        self.assertEqual(result["decision"], "allow")
+        self.assertEqual(result["tier"], "local-seat")
+
+    def test_every_registry_provider_is_declared_in_policy(self):
+        """config/afk-backends.yaml has no schema, so an unvalidated YAML edit
+        is all that stands between a correct and an incorrect attribution. Bind
+        it to the policy allowlist at least."""
+        from afk_backends.registry import load_registry
+        declared = {p["id"] for p in
+                    g.budget.load_policy(g.budget.POLICY_PATH)["providers"]}
+        for backend, cfg in load_registry().items():
+            if not cfg.get("enabled"):
+                # A disabled backend cannot spend. `shell` (#882) currently names
+                # `generic-shell`, which no policy declares -- _provider() raises
+                # and _budget_reserve fails closed, so it is safe but unrunnable.
+                # Filed rather than fixed here: choosing its tier is #882's call.
+                continue
+            self.assertIn(cfg["provider"], declared,
+                          f"backend {backend!r} names undeclared provider "
+                          f"{cfg['provider']!r}")
+
+    def test_process_issue_forwards_its_own_backend_to_the_gate(self):
+        """Pinning the registry is not enough: if _process_issue reserves under
+        a hardcoded backend, `local` reserves as the subscription lane and #863
+        re-opens with the whole suite green. An adversarial review proved that
+        exact one-line edit survived 360 passing tests. Assert the forwarded
+        ARGUMENT, not the call count."""
+        for backend in ("local", "claude-code"):
+            issue = self._issue()
+            with mock.patch.object(
+                    g, "_budget_reserve",
+                    return_value=(False, {"decision": "block",
+                                          "reasons": ["cycle_cost_cap_exceeded"]})) as res, \
+                 mock.patch.object(g, "_write_loop_state"):
+                g._process_issue(issue, seq=1, today="2026-07-19", backend=backend,
+                                 adapter=mock.Mock())
+            res.assert_called_once_with(issue, backend)
 
     def test_unmapped_backend_fails_closed(self):
         allowed, result = g._budget_reserve({"number": 5, "body": ""}, "not-a-backend")

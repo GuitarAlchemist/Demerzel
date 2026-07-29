@@ -394,14 +394,14 @@ adapter:
 
 The AFK implement governor is tool-agnostic: it loads backends from `config/afk-backends.yaml` and drives them through the `AFKBackend` contract in `scripts/afk_backends/`. A new backend is added by creating an adapter module and a registry entry; the governor does not change.
 
-Registry entries declare the adapter class, the AIW budget provider used for cost gating, an `enabled` flag, and an optional `config` block. The provider must match the actual API or compute that will be billed (for example, the local Podman sandcastle forwards `ANTHROPIC_API_KEY` and is therefore attributed to `claude-code-cli`, not a free local provider).
+Registry entries declare the adapter class, the AIW budget provider used for cost gating, an `enabled` flag, and an optional `config` block. The provider must match the actual API or compute that will be billed. The local Podman sandcastle forwards `ANTHROPIC_API_KEY` and runs `claudeCode(opus)`, so it is attributed to `anthropic-api` (`metered-cloud`, `requires_manual_approval: true`) — **not** to `claude-code-cli`, which is a `local-seat` subscription provider that requires no approval. #863 was mis-fixed twice by naming a free `local-seat` id here (`codex-cli`, then `claude-code-cli`); both were well-formed and allowlisted, so nothing caught either. When a backend forwards a metered key, name the metered provider.
 
 Current shipped backends:
 
 | Name | Adapter | Provider | Execution environment |
 |------|---------|----------|----------------------|
 | `claude-code` | `afk_backends.claude_code.ClaudeCodeBackend` | `claude-code-cli` | Local Claude Code desktop subscription |
-| `local` | `afk_backends.sandcastle.SandcastleBackend` | `claude-code-cli` | Podman sandcastle in sibling `../afk-harness` |
+| `local` | `afk_backends.sandcastle.SandcastleBackend` | `anthropic-api` | Podman sandcastle in sibling `../afk-harness`; forwards `ANTHROPIC_API_KEY`, so metered and approval-gated |
 | `remote` | `afk_backends.remote.RemoteBackend` | `claude-code-cli` | HTTP cloud worker (Vercel, Codespaces, etc.) |
 | `shell` | `afk_backends.shell.ShellBackend` | `generic-shell` | Configurable local command; proves non-Claude abstraction |
 

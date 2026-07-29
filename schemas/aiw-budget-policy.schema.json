@@ -4,7 +4,7 @@
   "definitions": {
     "providerId": {
       "type": "string",
-      "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "gemini-cli", "jules", "notebooklm"],
+      "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "anthropic-api", "gemini-cli", "jules", "notebooklm"],
       "description": "Closed allowlist. Adding a provider must be a deliberate schema change."
     }
   },
@@ -125,6 +125,19 @@
                 "cost_model": {"const": "provider-billing"},
                 "requires_manual_approval": {"const": true},
                 "trusted_receipt_issuer": {"const": "notebooklm.google.com"}
+              },
+              "required": ["trusted_receipt_issuer"]
+            }
+          },
+          {
+            "description": "anthropic-api bills real money: it is the Anthropic Messages API consuming ANTHROPIC_API_KEY, NOT a Claude subscription seat. Pinned by id because #863 was exactly this confusion, twice. First the AFK `local` backend was attributed to codex-cli; then #877 'fixed' it by swapping to claude-code-cli -- a DIFFERENT local-seat, no-approval provider -- so the observable behaviour never changed. Both wrong values were well-formed and allowlisted, which is why nothing caught either. Pinning by id means a later diff cannot re-open the hole by editing tier alone. Do NOT reuse this id for claude-code-cli, which strips the key and rides the subscription.",
+            "if": {"properties": {"id": {"const": "anthropic-api"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "metered-cloud"},
+                "cost_model": {"const": "provider-billing"},
+                "requires_manual_approval": {"const": true},
+                "trusted_receipt_issuer": {"const": "api.anthropic.com"}
               },
               "required": ["trusted_receipt_issuer"]
             }
