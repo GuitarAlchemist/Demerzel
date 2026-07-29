@@ -561,7 +561,7 @@ agentic_patterns:
       - Tasks requiring graduated oversight
 
     governance_mapping:
-      schema: logic/loop-state.schema.json (full state tracking)
+      schema: schemas/loop-state.schema.json (full state tracking)
       policy: >
         This policy (autonomous-loop-policy.yaml) — Sections 1 and 2
         define all governance rules

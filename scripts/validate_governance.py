@@ -31,6 +31,8 @@ SCHEMA = REPO / "logic" / "governance-evolution.schema.json"
 EVOLUTION_DIR = REPO / "state" / "evolution"
 CONTRACTS_DIR = REPO / "schemas" / "contracts"
 REPORTS_DIR = REPO / "state" / "oversight" / "compliance-reports"
+LOOPS_DIR = REPO / "state" / "loops"
+LOOP_SCHEMA = REPO / "schemas" / "loop-state.schema.json"
 
 
 def check_evolution_enums() -> tuple[int, int]:
@@ -119,16 +121,63 @@ def check_compliance_reports(reports_dir: Path = REPORTS_DIR) -> tuple[int, int]
     return ok, bad
 
 
+def check_loop_states(loops_dir: Path = LOOPS_DIR) -> tuple[int, int]:
+    """Validate state/loops/*.loop.json against schemas/loop-state.schema.json.
+
+    Issue #852: two loop-state schemas existed for one artifact class; the
+    schemas/ copy is the one enforced by demerzel_kit.py at write time. This
+    gate ensures the surviving schema and the on-disk instances stay aligned
+    in CI, not just during hand-run audits.
+    """
+    try:
+        import jsonschema
+    except ImportError:
+        print("SKIP jsonschema not installed — loop state instances not validated")
+        return 0, 0
+
+    files = sorted(loops_dir.glob("*.loop.json")) if loops_dir.is_dir() else []
+    if not files:
+        print("NOTE no loop-state instances on disk — nothing to validate")
+        return 0, 0
+
+    schema = json.loads(LOOP_SCHEMA.read_text(encoding="utf-8"))
+    validator = jsonschema.Draft7Validator(schema)
+
+    ok = bad = 0
+    for path in files:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            bad += 1
+            print(f"FAIL {path.relative_to(REPO)}")
+            print(f"  - not valid JSON: {exc}")
+            continue
+        issues = [e.message for e in validator.iter_errors(data)]
+        if issues:
+            bad += 1
+            print(f"FAIL {path.relative_to(REPO)}")
+            for issue in issues:
+                print(f"  - {issue}")
+        else:
+            ok += 1
+            print(f"OK   {path.relative_to(REPO)}")
+    return ok, bad
+
+
 def main() -> int:
     print("=== Evolution log: schema enum validation ===")
     e_ok, e_bad = check_evolution_enums()
     print(f"Result: {e_ok} valid, {e_bad} invalid\n")
 
+    print("=== Loop state: schema instance validation ===")
+    l_ok, l_bad = check_loop_states()
+    print(f"Result: {l_ok} valid, {l_bad} invalid\n")
+
     print("=== Compliance reports: contract instance validation ===")
     c_ok, c_bad = check_compliance_reports()
     print(f"Result: {c_ok} valid, {c_bad} invalid\n")
 
-    total_bad = e_bad + c_bad
+    total_bad = e_bad + l_bad + c_bad
     if total_bad:
         print(f"FAILED: {total_bad} violation(s) — see above.")
         return 1
