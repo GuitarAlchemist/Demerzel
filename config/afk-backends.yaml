@@ -29,3 +29,15 @@ backends:
       # endpoint: "https://example.com/afk-worker"
       # api_key_env: "DEMERZEL_REMOTE_API_KEY"
       # timeout: 300
+
+  shell:
+    adapter: "afk_backends.shell.ShellBackend"
+    provider: "generic-shell"
+    description: "Generic configurable shell command. Proves the AFKBackend abstraction works with any non-Claude tool that reads a JSON issue from stdin and emits a JSON result on stdout. Disabled by default until a command is configured."
+    enabled: false
+    config:
+      # command: ["python", "my_afk_agent.py"]
+      # timeout: 300
+      # needs_local_repo: true
+      # env:
+      #   MY_AGENT_MODE: "afk"
