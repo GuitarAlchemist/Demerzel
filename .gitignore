@@ -53,3 +53,4 @@ state/oversight/ml-feedback-cycle-*.json
 state/oversight/ml-feedback-audit.json
 state/.cache/
 dist/
+assets/generated/*.png

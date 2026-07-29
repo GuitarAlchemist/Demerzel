@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://guitaralchemist.dev/demerzel/schemas/asset-provenance.schema.json",
+  "title": "Generated Asset Provenance",
+  "description": "Auditable, reproducible record for one asset produced by the governed local generative-asset pipeline (ComfyUI, epic #724). Every file under assets/generated/ MUST have a sibling <id>.provenance.json validating against this schema, and consumer_ref MUST name something that references the asset (anti-LOLLI).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "provider",
+    "workflow",
+    "workflow_sha256",
+    "seed",
+    "prompt",
+    "created_at",
+    "consumer_ref"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable asset id; the generated file is assets/generated/<id>.png"
+    },
+    "provider": {
+      "type": "string",
+      "const": "comfyui-local",
+      "description": "Must be the AIW provider that produced it; matches state/driver/aiw-budget-policy.json"
+    },
+    "workflow": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repo-relative path to the ComfyUI API workflow used"
+    },
+    "workflow_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 of the workflow file at generation time (reproducibility)"
+    },
+    "model": {
+      "type": "string",
+      "description": "Checkpoint / model id used by the workflow"
+    },
+    "sampler": {
+      "type": "string",
+      "description": "Sampler name (e.g. euler, dpmpp_2m)"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Fixed seed — same spec + workflow + seed reproduces the asset"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Positive prompt driving the generation"
+    },
+    "negative_prompt": {
+      "type": "string",
+      "description": "Optional negative prompt"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 UTC timestamp of generation"
+    },
+    "consumer_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What renders/uses this asset (a repo path, component, or issue ref). Anti-LOLLI: an asset with no live consumer is a violation."
+    },
+    "dry_run": {
+      "type": "boolean",
+      "description": "True when produced by --dry-run (stub image, no GPU); such assets are never committed as real deliverables"
+    }
+  }
+}

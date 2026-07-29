@@ -384,6 +384,10 @@
         "path": "schemas/aiw-harness-result.schema.json"
       },
       {
+        "name": "asset-provenance.schema",
+        "path": "schemas/asset-provenance.schema.json"
+      },
+      {
         "name": "blackboard-state.schema",
         "path": "schemas/blackboard-state.schema.json"
       },
