@@ -15,6 +15,12 @@
         "claim": "Extracted the existing claude-code, local (sandcastle), and remote invocation paths from scripts/run_afk_cycle.py into scripts/afk_backends/claude_code.py, sandcastle.py, and remote.py. The governor now selects backends via get_backend() and delegates prepare()/invoke() to the adapter. All 357 unit tests pass.",
         "timestamp": "2026-07-29T00:00:00Z",
         "reliability": 0.98
+      },
+      {
+        "source": "feat/afk-backend-registry-875 (#893)",
+        "claim": "Added a YAML registry at config/afk-backends.yaml and a loader in scripts/afk_backends/registry.py. The governor no longer hardcodes adapter-to-provider mappings; it loads them from configuration, enabling new backends and provider attributions to be added without code changes. 368 unit tests pass.",
+        "timestamp": "2026-07-29T00:00:00Z",
+        "reliability": 0.98
       }
     ]
   },

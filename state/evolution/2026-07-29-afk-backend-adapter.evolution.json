@@ -21,6 +21,11 @@
       "type": "amended",
       "context": "Extracted the existing backend invocation paths from scripts/run_afk_cycle.py into dedicated adapter modules: ClaudeCodeBackend (scripts/afk_backends/claude_code.py), SandcastleBackend (scripts/afk_backends/sandcastle.py), and RemoteBackend (scripts/afk_backends/remote.py). The governor now selects a backend via get_backend(name) and delegates prepare() once per cycle and invoke() per issue. Removed the monolithic _invoke_harness, _invoke_harness_claude_code, _invoke_harness_remote, and _ensure_podman functions from the governor. Updated tests to mock adapter classes instead of internal helpers. Issue #873, PR #888.",
       "timestamp": "2026-07-29T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Added a backend registry so adapter and provider mappings are loaded from configuration rather than hardcoded. Created config/afk-backends.yaml with entries for claude-code, local, and remote backends, each specifying adapter class, budget provider, description, and enabled flag. Added scripts/afk_backends/registry.py with load_registry(), get_backend(), and provider_for() to resolve adapters dynamically and fail closed on registry errors. Removed the hardcoded BACKEND_PROVIDER and _BACKEND_ADAPTERS dicts from scripts/run_afk_cycle.py. Added scripts/test_afk_registry.py. Issue #875, PR #893.",
+      "timestamp": "2026-07-29T00:00:00Z"
     }
   ],
   "assessment": {
