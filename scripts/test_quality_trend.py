@@ -40,7 +40,9 @@ class QualityTrendTests(unittest.TestCase):
                 "effectiveness_to": "U",
             }) + "\n", encoding="utf-8")
 
-            row = build_rows(str(evolution), str(output), NOW)[0]
+            rows, skips = build_rows(str(evolution), str(output), NOW)
+            self.assertEqual([], skips)
+            row = rows[0]
 
             self.assertEqual(2, row["delta_citations"])
             self.assertEqual(1, row["delta_violations"])
