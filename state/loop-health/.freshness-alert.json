@@ -2,10 +2,6 @@
   "alert": "ecosystem-freshness",
   "problems": [
     {
-      "kind": "stale",
-      "workflow": "demerzel-quality-trend.yml"
-    },
-    {
       "kind": "silent_green",
       "workflow": "substrate-audit.yml"
     }
