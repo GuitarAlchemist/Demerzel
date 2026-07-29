@@ -1,7 +1,7 @@
 {
   "proposition": "The Demerzel AFK implement governor uses a backend-adapter abstraction so that desktop, container, and cloud AI tools can be plugged in without changing the governor.",
   "truth_value": "T",
-  "confidence": 0.92,
+  "confidence": 0.82,
   "evidence": {
     "supporting": [
       {
@@ -53,9 +53,15 @@
         "claim": "CORRECTION to the #877/#895 entry above. That entry states the local backend 'must be gated as claude-code-cli rather than the free local-seat codex-cli'. This asserts a distinction that does not exist: state/driver/aiw-budget-policy.json declares BOTH claude-code-cli and codex-cli as tier 'local-seat' with requires_manual_approval false. The swap changed no observable behaviour -- provider_for('local') still returns a local-seat id, the gate still returns allow, and metered ANTHROPIC_API_KEY spend still clears it. #863 was closed on that basis and has been reopened. The adapter abstraction itself is real and works; only the attribution claim was false.",
         "timestamp": "2026-07-29T04:45:00Z",
         "reliability": 0.99
+      },
+      {
+        "source": "fix/afk-863-spend-attribution (#887)",
+        "claim": "CORRECTION to the #877/#895 supporting entry. It states the local backend 'must be gated as claude-code-cli rather than the free local-seat codex-cli'. That distinction does not exist: aiw-budget-policy.json declares BOTH as tier 'local-seat' with requires_manual_approval false, so provider_for('local') still returned a free-tier id and the gate still returned allow. #863 was closed on that basis. The #884 entry then wrote the same error into docs/workflows/aiw-operating-doctrine.md and policies/autonomous-loop-policy.yaml, whose own stated rule ('a backend that forwards a metered API key is attributed to that metered provider, not to a free local provider') the example contradicts. Corrected by attributing local to anthropic-api (metered-cloud, approval required). The adapter abstraction itself is real and works; only the attribution claims were false.",
+        "timestamp": "2026-07-29T13:00:00Z",
+        "reliability": 0.99
       }
     ]
   },
-  "last_updated": "2026-07-29T12:55:00Z",
+  "last_updated": "2026-07-29T13:05:00Z",
   "evaluated_by": "demerzel"
 }
