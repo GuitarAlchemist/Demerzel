@@ -41,6 +41,11 @@
       "type": "amended",
       "context": "Implemented a second desktop adapter (ShellBackend) to prove the AFKBackend abstraction works with a non-Claude tool. Created scripts/afk_backends/shell.py with a configurable command, timeout, optional local-repo flag, and extra env vars. The command receives the issue as JSON on stdin and AFK_ISSUE_NUMBER, AFK_ISSUE_TITLE, AFK_ISSUE_BODY, AFK_ISSUE_LABELS, and AFK_REPO_PATH via the environment. It parses the command's stdout JSON and validates branch/commits/blocked. Added a shell entry to config/afk-backends.yaml with provider generic-shell, disabled by default. Added scripts/test_shell_backend.py with subprocess.run mocks covering success, env vars, missing command, missing executable, nonzero exit, timeout, invalid JSON, and missing response fields. Updated scripts/test_afk_registry.py to assert the shell backend is present. Reverted the README schema count from 49 to 48 after the prior drift was traced to an untracked schema file in the working tree. 390 unit tests pass. Issue #882, PR #902.",
       "timestamp": "2026-07-29T12:50:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Updated governance docs and policy for tool-agnostic AFK. In docs/workflows/aiw-operating-doctrine.md, updated the router provider-selection bullet to reference the config/afk-backends.yaml registry and the AFKBackend adapter contract, and added a new 'AFK backend registry' subsection with a table of the current backends (claude-code, local, remote, shell), their providers, and execution environments. In policies/autonomous-loop-policy.yaml, added an afk_backend_governance section with registry rules, provider attribution rules (including the local sandcastle -> claude-code-cli requirement), and adapter contract rules. All governance validation passes. Issue #884, PR #906.",
+      "timestamp": "2026-07-29T12:55:00Z"
     }
   ],
   "assessment": {
