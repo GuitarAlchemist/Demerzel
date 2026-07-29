@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 46,
-    "schema": 49,
+    "schema": 48,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
@@ -502,10 +502,6 @@
       {
         "name": "reconnaissance-profile.schema",
         "path": "schemas/reconnaissance-profile.schema.json"
-      },
-      {
-        "name": "recursive-learning-eval.schema",
-        "path": "schemas/recursive-learning-eval.schema.json"
       },
       {
         "name": "research-anomaly.schema",

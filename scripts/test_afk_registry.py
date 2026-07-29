@@ -10,6 +10,7 @@ from afk_backends.claude_code import ClaudeCodeBackend
 from afk_backends.registry import get_backend, load_registry, provider_for, RegistryError
 from afk_backends.remote import RemoteBackend
 from afk_backends.sandcastle import SandcastleBackend
+from afk_backends.shell import ShellBackend
 
 
 class TestLoadRegistry(unittest.TestCase):
@@ -18,8 +19,11 @@ class TestLoadRegistry(unittest.TestCase):
         self.assertIn("claude-code", reg)
         self.assertIn("local", reg)
         self.assertIn("remote", reg)
+        self.assertIn("shell", reg)
         self.assertEqual(reg["claude-code"]["provider"], "claude-code-cli")
         self.assertEqual(reg["local"]["provider"], "claude-code-cli")
+        self.assertEqual(reg["shell"]["provider"], "generic-shell")
+        self.assertFalse(reg["shell"]["enabled"])
 
     def test_missing_schema_version_raises(self):
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as tmp:
@@ -55,9 +59,13 @@ class TestGetBackend(unittest.TestCase):
                       "provider": "codex-cli", "enabled": True},
             "remote": {"adapter": "afk_backends.remote.RemoteBackend",
                        "provider": "claude-code-cli", "enabled": False},
+            "shell": {"adapter": "afk_backends.shell.ShellBackend",
+                      "provider": "generic-shell", "enabled": True,
+                      "config": {"command": ["echo"]}},
         }
         self.assertIsInstance(get_backend("claude-code", reg), ClaudeCodeBackend)
         self.assertIsInstance(get_backend("local", reg), SandcastleBackend)
+        self.assertIsInstance(get_backend("shell", reg), ShellBackend)
 
     def test_disabled_backend_raises(self):
         reg = {
