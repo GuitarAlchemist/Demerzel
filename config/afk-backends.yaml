@@ -27,8 +27,14 @@ backends:
 
   remote:
     adapter: "afk_backends.remote.RemoteBackend"
+    # PROVISIONAL attribution, and knowingly imprecise: what this backend bills
+    # depends entirely on the endpoint an operator configures, so no single
+    # provider is correct for it in the abstract. A remote HTTP worker is NOT a
+    # local Claude Code subscription seat. Re-attribute this to the provider the
+    # configured endpoint actually bills BEFORE setting enabled: true, or the
+    # gate will wave through metered spend exactly as in #863.
     provider: "claude-code-cli"
-    description: "HTTP cloud worker (Vercel, Codespaces, or any AFK-compatible endpoint). Disabled by default until an endpoint is configured."
+    description: "HTTP cloud worker (Vercel, Codespaces, or any AFK-compatible endpoint). Disabled by default until an endpoint is configured. Provider attribution is provisional and must be set to whatever the endpoint bills before enabling."
     enabled: false
     config:
       # endpoint: "https://example.com/afk-worker"

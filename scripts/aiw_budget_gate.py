@@ -375,6 +375,64 @@ def release(cycle_path: Path, job_id: str, actual_cost_usd: float,
         lock_path.unlink(missing_ok=True)
 
 
+def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
+    """Give up reconciling a reservation WITHOUT claiming its spend was verified.
+
+    A metered job cannot be released without a trusted provider receipt (see
+    ``release``), and the AFK governor has none to offer. Before this existed, a
+    metered episode left its reservation open forever: ``active_packets`` never
+    fell, and after ``cycle.max_parallel_packets`` such episodes the gate blocked
+    EVERY provider — including the free subscription lane that had nothing to do
+    with it (#896).
+
+    Fabricating a receipt would restore liveness by destroying the control the
+    receipt exists to provide: ``trusted_receipt_issuer`` is the only thing
+    separating "the provider states this cost $X" from "we state it did". A
+    self-issued receipt would satisfy ``_validate_receipt`` — it checks structure,
+    not authenticity — and reconcile metered spend at whatever the caller passed,
+    forever, self-certified.
+
+    So this frees the slot and charges the RESERVED ESTIMATE to actual spend
+    instead. Pessimistic on purpose: we cannot prove the money was not spent, so
+    the cycle cost cap keeps counting it rather than crediting the cycle back to
+    zero. Unverified is not the same as free.
+
+    The abandonment is recorded permanently under ``unreconciled`` so an operator
+    can see exactly which spend was never receipt-verified.
+    """
+    if not job_id:
+        raise ValueError("job_id is required to abandon")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        reservation = cycle["reservations"].get(job_id)
+        if reservation is None:
+            raise ValueError(f"no reservation for job: {job_id}")
+        estimate = _required_number(reservation, "estimated_cost_usd")
+
+        cycle["reservations"].pop(job_id)
+        cycle["reserved_cost_usd"] -= estimate
+        cycle["active_packets"] -= 1
+        cycle["actual_cost_usd"] = cycle.get("actual_cost_usd", 0) + estimate
+        entry = {
+            "job_id": job_id,
+            "provider": reservation.get("provider"),
+            "request_sha256": reservation.get("request_sha256"),
+            "charged_estimate_usd": estimate,
+            "receipt_verified": False,
+            "reason": str(reason)[:200],
+        }
+        cycle.setdefault("unreconciled", []).append(entry)
+        cycle_path.parent.mkdir(parents=True, exist_ok=True)
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                        allow_nan=False) + "\n", encoding="utf-8")
+        return {"decision": "abandoned", "job_id": job_id,
+                "charged_estimate_usd": estimate,
+                "receipt_verified": False, "reason": entry["reason"]}
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
 def _bind_canonical(name: str, supplied: Path, canonical: Path) -> Path:
     """Pin a runtime path to this repository, never the caller's directory.
 
