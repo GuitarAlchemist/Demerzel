@@ -123,7 +123,14 @@ def _budget_reserve(issue: dict, backend: str) -> tuple[bool, dict]:
         policy = budget.load_policy(budget.POLICY_PATH)
         result = budget.reserve(policy, _budget_request(issue, backend),
                                 budget.CYCLE_LEDGER_PATH)
-    except Exception as exc:  # a broken/absent policy must fail closed
+    except budget.PolicyInvalid as exc:
+        # Distinct from budget_preflight_error on purpose: "the policy file is
+        # broken" and "this job does not fit the budget" demand opposite
+        # responses, and an operator reading the cycle output could not tell
+        # them apart when both surfaced as the same reason (#794).
+        return False, {"decision": "block", "reasons": ["policy_invalid"],
+                       "error": str(exc)[:200]}
+    except Exception as exc:  # any other preflight failure must also fail closed
         return False, {"decision": "block", "reasons": ["budget_preflight_error"],
                        "error": str(exc)[:200]}
     return result.get("decision") == "allow", result
@@ -132,11 +139,22 @@ def _budget_reserve(issue: dict, backend: str) -> tuple[bool, dict]:
 def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
     """Best-effort reservation release after an episode; a reconciliation hiccup
     must never break the loop. Local-seat backends carry no marginal spend."""
+    job_id = f"aiw-{issue.get('number')}"
     try:
-        budget.release(budget.CYCLE_LEDGER_PATH, f"aiw-{issue.get('number')}",
-                       actual_cost_usd, policy=budget.load_policy(budget.POLICY_PATH))
+        budget.release(budget.CYCLE_LEDGER_PATH, job_id, actual_cost_usd,
+                       policy=budget.load_policy(budget.POLICY_PATH))
     except Exception as exc:
-        print(f"budget release skipped for #{issue.get('number')}: {exc}",
+        # The breadth here is deliberate — release failure must never break the
+        # loop. But a swallowed release leaves the reservation open, so the
+        # ledger over-reports committed spend and max_parallel_packets fills with
+        # reservations that never clear. Write the swallow down so that state is
+        # detectable afterwards instead of silent (#794).
+        try:
+            noted = budget.note_release_failure(budget.CYCLE_LEDGER_PATH, job_id, str(exc))
+        except Exception:  # noqa: BLE001 — recording a failure must never become one
+            noted = False
+        print(f"budget release skipped for #{issue.get('number')}: {exc}"
+              f"{'' if noted else ' (and the ledger note could not be written)'}",
               file=sys.stderr)
 
 
@@ -739,6 +757,18 @@ def main(argv: list[str]) -> int:
                               "action": "implement" if eligible else "skip:needs-human-preapproval"})
         _print_summary(decisions, len(issues), True, args.max_parallel, args.backend, today)
         return 0
+
+    # Live: an invalid policy is not a per-job condition, so discovering it once
+    # per reservation is both noisy and too late — the first job blocks, every
+    # subsequent job blocks for the same reason, and any release in flight is
+    # swallowed. Establish that the gate can function before starting work (#794).
+    if issues:
+        try:
+            budget.load_policy(budget.POLICY_PATH)
+        except budget.PolicyInvalid as exc:
+            print(f"ABORT: budget policy is invalid, refusing to start a cycle: {exc}",
+                  file=sys.stderr)
+            return 2
 
     # Live: ensure the sandbox backend is ready once, up front.
     if args.backend == "local" and issues:

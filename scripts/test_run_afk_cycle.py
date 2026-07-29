@@ -423,3 +423,93 @@ class TestBudgetGate(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPolicyInvalidDistinctFromBlock(unittest.TestCase):
+    """#794: on the AFK path an invalid policy was indistinguishable from an
+    ordinary governed block, and a release failure vanished entirely."""
+
+    def _issue(self):
+        return {"number": 77, "title": "fix docs typo", "body": "x", "labels": []}
+
+    def test_invalid_policy_reserves_with_its_own_reason_code(self):
+        # Measured in the issue: reasons=['budget_preflight_error'] for a corrupt
+        # policy — the same code an out-of-budget job gets.
+        with mock.patch.object(g.budget, "load_policy",
+                               side_effect=g.budget.PolicyInvalid(
+                                   "-999 is less than or equal to the minimum of 0")):
+            allowed, result = g._budget_reserve(self._issue(), "local")
+        self.assertFalse(allowed)
+        self.assertEqual(result["reasons"], ["policy_invalid"])
+        self.assertNotIn("budget_preflight_error", result["reasons"])
+        self.assertIn("-999", result["error"])
+
+    def test_other_preflight_errors_keep_the_original_reason_code(self):
+        # The distinction must be narrow: only policy validity moves.
+        with mock.patch.object(g.budget, "load_policy",
+                               side_effect=RuntimeError("ledger is busy")):
+            allowed, result = g._budget_reserve(self._issue(), "local")
+        self.assertFalse(allowed)
+        self.assertEqual(result["reasons"], ["budget_preflight_error"])
+
+    def test_reserve_still_fails_closed_for_both(self):
+        for exc in (g.budget.PolicyInvalid("bad"), RuntimeError("other")):
+            with mock.patch.object(g.budget, "load_policy", side_effect=exc):
+                allowed, result = g._budget_reserve(self._issue(), "local")
+            self.assertFalse(allowed, f"{type(exc).__name__} must never allow")
+            self.assertEqual(result["decision"], "block")
+
+    def test_release_failure_is_recorded_not_just_swallowed(self):
+        # Measured in the issue: "_budget_release returned normally (swallowed)".
+        # It must still return normally, but leave a trace.
+        with mock.patch.object(g.budget, "load_policy",
+                               side_effect=g.budget.PolicyInvalid("bad")), \
+             mock.patch.object(g.budget, "note_release_failure",
+                               return_value=True) as note:
+            g._budget_release(self._issue(), actual_cost_usd=0.0)   # must not raise
+        note.assert_called_once()
+        self.assertEqual(note.call_args[0][1], "aiw-77")
+        self.assertIn("bad", note.call_args[0][2])
+
+    def test_release_survives_a_failure_to_record_the_failure(self):
+        # The reason release swallows at all is that a reconciliation hiccup must
+        # never break the loop. Adding bookkeeping must not smuggle a new way for
+        # it to break: if the note itself fails, release still returns normally.
+        with mock.patch.object(g.budget, "load_policy",
+                               side_effect=g.budget.PolicyInvalid("bad")), \
+             mock.patch.object(g.budget, "note_release_failure",
+                               side_effect=OSError("ledger gone")):
+            g._budget_release(self._issue(), actual_cost_usd=0.0)   # must not raise
+
+    def test_cycle_refuses_to_start_on_an_invalid_policy(self):
+        # An invalid policy is not a per-job condition: validate once, up front,
+        # and refuse — rather than blocking every job for the same reason while
+        # swallowing every release in flight.
+        with mock.patch.object(g, "_gh_queue", return_value=[self._issue()]), \
+             mock.patch.object(g.budget, "load_policy",
+                               side_effect=g.budget.PolicyInvalid("bad policy")), \
+             mock.patch.object(g, "_ensure_podman") as podman, \
+             mock.patch.object(g, "_process_issue") as proc:
+            rc = g.main([])
+        self.assertEqual(rc, 2)          # distinct from 1 (error) and 3 (halted)
+        proc.assert_not_called()         # no work started
+        podman.assert_not_called()       # not even the sandbox came up
+
+    def test_valid_policy_does_not_block_the_cycle(self):
+        with mock.patch.object(g, "_gh_queue", return_value=[self._issue()]), \
+             mock.patch.object(g.budget, "load_policy", return_value={"ok": True}), \
+             mock.patch.object(g, "_ensure_podman", return_value=(True, "")), \
+             mock.patch.object(g, "_process_issue",
+                               return_value=({"issue": 77, "action": "x"}, {})), \
+             mock.patch.object(g, "_write_audit"):
+            rc = g.main([])
+        self.assertEqual(rc, 0)
+
+    def test_dry_run_is_unaffected_by_policy_validity(self):
+        # Dry-run plans only and reserves nothing, so a broken policy must not
+        # stop an operator inspecting the queue.
+        with mock.patch.object(g, "_gh_queue", return_value=[self._issue()]), \
+             mock.patch.object(g.budget, "load_policy",
+                               side_effect=g.budget.PolicyInvalid("bad policy")):
+            rc = g.main(["--dry-run"])
+        self.assertEqual(rc, 0)
