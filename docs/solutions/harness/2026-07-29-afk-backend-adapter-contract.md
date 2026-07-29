@@ -81,20 +81,20 @@ A declarative registry file will map backend names to adapter classes, execution
 ```yaml
 backends:
   claude-code:
-    adapter: scripts.afk_backends.claude_code.ClaudeCodeBackend
-    execution_mode: desktop
+    adapter: afk_backends.claude_code.ClaudeCodeBackend
     provider: claude-code-cli
+    enabled: true
   local:
-    adapter: scripts.afk_backends.sandcastle.SandcastleBackend
-    execution_mode: desktop
-    provider: anthropic-api
+    adapter: afk_backends.sandcastle.SandcastleBackend
+    provider: claude-code-cli
+    enabled: true
   remote:
-    adapter: scripts.afk_backends.remote.RemoteBackend
-    execution_mode: cloud
-    provider: cloud-worker
+    adapter: afk_backends.remote.RemoteBackend
+    provider: claude-code-cli
+    enabled: false
 ```
 
-This removes the hardcoded `BACKEND_PROVIDER` dict from `run_afk_cycle.py` and fixes the spend-attribution bug in #863 at the config/policy layer.
+This removes the hardcoded `BACKEND_PROVIDER` dict from `run_afk_cycle.py` and fixes the spend-attribution bug in #863 at the config/policy layer (completed in #877).
 
 ## Consequences
 

@@ -419,7 +419,7 @@ class TestBudgetGate(unittest.TestCase):
 
     def test_budget_request_maps_backend_provider(self):
         self.assertEqual(
-            g._budget_request({"number": 5, "body": ""}, "local")["provider"], "codex-cli")
+            g._budget_request({"number": 5, "body": ""}, "local")["provider"], "claude-code-cli")
         self.assertEqual(
             g._budget_request({"number": 5, "body": ""}, "claude-code")["provider"],
             "claude-code-cli")

@@ -24,10 +24,14 @@ The guard is not dead. It is looking in the wrong direction, confidently.
 **1. The budget gate evaluated the right policy against the wrong provider.**
 `run_afk_cycle.py --backend local` runs `claudeCode("claude-opus-4-8")` and
 forwards `ANTHROPIC_API_KEY` into the sandbox — metered API spend. But
-`BACKEND_PROVIDER` maps `local` → `codex-cli`, which the policy classifies
-`tier: local-seat`, `requires_manual_approval: false`. The AIW budget gate exists
+`BACKEND_PROVIDER` mapped `local` → `codex-cli`, which the policy classifies
+`tier: local-seat`, `requires_manual_approval: false`. The AIW budget gate existed
 precisely to stop unapproved metered spend. It ran, it passed, and it was correct
 about `codex-cli` — a provider that was not being used. (#863)
+
+Fixed in #877 by moving the provider mapping to `config/afk-backends.yaml` and
+attributing the `local` backend to `claude-code-cli`, so the gate now applies the
+right provider caps and approval rules.
 
 **2. The agent's oracle checked schemas, not the suite.**
 `prompts/afk-implement.prompt.md` required `validate_governance.py` and nothing
