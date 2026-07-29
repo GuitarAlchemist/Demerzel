@@ -41,3 +41,15 @@ backends:
       # needs_local_repo: true
       # env:
       #   MY_AGENT_MODE: "afk"
+
+  junie:
+    adapter: "afk_backends.junie.JunieBackend"
+    provider: "junie-cli"
+    description: "JetBrains Junie CLI agent. Runs as a terminal agent in the ephemeral repo path and detects the branch/commits it creates. Disabled by default until Junie is installed and configured."
+    enabled: false
+    config:
+      # command: ["junie", "--headless"]
+      # task_template: "Implement GitHub issue #{number}: {title}\n\n{body}"
+      # timeout: 600
+      # api_key_env: "JUNIE_API_KEY"
+      # branch_prefix: "agent/issue-"

@@ -48,6 +48,21 @@ humanity) overrides everything. Constitutions are **append-only**.
 - **LOLLI / Resilience score (R)** — `R = injections_caught / injections_total`; the
   chaos-engineering metric for how well governance detects injected poison (dead
   bindings, orphaned branches, BS descriptions, unconsumed artifacts).
+- **BAML (Boundary AI Markup Language)** — the DSL (`baml_src/`) that declares prompts as
+  strongly-typed functions, enforcing LLM output schemas *in flight* rather than validating
+  them at rest (ADR-0005). One `.baml` source generates three clients: Python/Pydantic at
+  the repo root (`baml_client/`, so `from baml_client import b` resolves) plus TypeScript
+  and Rust under `clients/`, one per consumer language. Each generator needs a distinct
+  `output_dir` — BAML writes `<output_dir>/baml_client`, so two generators sharing a
+  directory silently clobber each other. The Rust output is a module tree, not a crate.
+- **validate_dsp_loop** — the self-correcting parameter gate (`scripts/validate_dsp_loop.py`):
+  binary-searches a DSP distortion parameter until a hexavalent swarm consensus clears the
+  bounds in [`logic/dsp-safety-bounds.yaml`](logic/dsp-safety-bounds.yaml). Two interchangeable
+  graders — deterministic threshold comparisons (default) and the typed BAML
+  `EvaluateSignalSwarm` function (`--use-baml`) — read the *same* bounds file, so the code
+  gate and the model gate cannot drift apart. Emits an audited record per run to
+  `state/dsp-validation/`; a validated parameter is a **proposal**, and enacting it as a
+  control input (`--use-cached-bounds`) is an explicit authorization, per Article 9.
 
 ## Architecture seams (designed 2026-06-20 via `/improve-codebase-architecture`; built 2026-06-21, PR #357)
 
