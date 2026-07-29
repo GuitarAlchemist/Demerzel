@@ -46,6 +46,11 @@
       "type": "amended",
       "context": "Updated governance docs and policy for tool-agnostic AFK. In docs/workflows/aiw-operating-doctrine.md, updated the router provider-selection bullet to reference the config/afk-backends.yaml registry and the AFKBackend adapter contract, and added a new 'AFK backend registry' subsection with a table of the current backends (claude-code, local, remote, shell), their providers, and execution environments. In policies/autonomous-loop-policy.yaml, added an afk_backend_governance section with registry rules, provider attribution rules (including the local sandcastle -> claude-code-cli requirement), and adapter contract rules. All governance validation passes. Issue #884, PR #906.",
       "timestamp": "2026-07-29T12:55:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Implemented JunieBackend as a third-party desktop adapter in scripts/afk_backends/junie.py. It invokes the JetBrains Junie CLI in --headless mode in the ephemeral repo path, parses the resulting git state to detect the branch and commits created by the agent, and returns the AFK result contract. Added a registry entry in config/afk-backends.yaml with provider junie-cli, disabled by default. Added unit tests in scripts/test_junie_backend.py that mock subprocess.run and git interactions. All 411 unit tests pass. PR #911.",
+      "timestamp": "2026-07-29T23:17:00Z"
     }
   ],
   "assessment": {
@@ -57,5 +62,5 @@
     "recommendation": "investigate"
   },
   "created_at": "2026-07-29T00:00:00Z",
-  "last_updated": "2026-07-29T00:00:00Z"
+  "last_updated": "2026-07-29T23:17:00Z"
 }
