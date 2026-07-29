@@ -30,12 +30,18 @@
       },
       {
         "source": "feat/cloud-worker-backend-879 (#899)",
-        "claim": "Implemented RemoteBackend as a real HTTP adapter in scripts/afk_backends/remote.py. It POSTs {issue, repo_path} JSON to a configured endpoint, supports an optional api_key_env bearer token, validates the response shape, and returns clean blocked messages on network or HTTP errors. Added scripts/test_remote_backend.py with mocks for urllib.request. The README schema count was also synchronized (49 + 9 contracts). Closes #879.",
+        "claim": "Implemented RemoteBackend as a real HTTP adapter in scripts/afk_backends/remote.py. It POSTs {issue, repo_path} JSON to a configured endpoint, supports an optional api_key_env bearer token, validates the response shape, and returns clean blocked messages on network or HTTP errors. Added scripts/test_remote_backend.py with mocks for urllib.request. Closes #879.",
         "timestamp": "2026-07-29T04:30:00Z",
+        "reliability": 0.98
+      },
+      {
+        "source": "feat/second-desktop-adapter-882 (#902)",
+        "claim": "Implemented ShellBackend as a second, non-Claude desktop adapter in scripts/afk_backends/shell.py. It runs a configurable command, passes the issue as JSON on stdin and AFK_* environment variables, and parses the JSON result. Added a registry entry with provider generic-shell and tests in scripts/test_shell_backend.py. Also corrected the README schema count back to 48 + 9 contracts after discovering the prior drift was caused by an untracked schema file. Closes #882.",
+        "timestamp": "2026-07-29T12:50:00Z",
         "reliability": 0.98
       }
     ]
   },
-  "last_updated": "2026-07-29T04:30:00Z",
+  "last_updated": "2026-07-29T12:50:00Z",
   "evaluated_by": "demerzel"
 }
