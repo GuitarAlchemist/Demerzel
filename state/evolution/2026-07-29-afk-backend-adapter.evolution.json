@@ -26,6 +26,11 @@
       "type": "amended",
       "context": "Added a backend registry so adapter and provider mappings are loaded from configuration rather than hardcoded. Created config/afk-backends.yaml with entries for claude-code, local, and remote backends, each specifying adapter class, budget provider, description, and enabled flag. Added scripts/afk_backends/registry.py with load_registry(), get_backend(), and provider_for() to resolve adapters dynamically and fail closed on registry errors. Removed the hardcoded BACKEND_PROVIDER and _BACKEND_ADAPTERS dicts from scripts/run_afk_cycle.py. Added scripts/test_afk_registry.py. Issue #875, PR #893.",
       "timestamp": "2026-07-29T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Fixed the local backend spend attribution bug (#863). The local backend (SandcastleBackend / Podman sandcastle) forwards ANTHROPIC_API_KEY and bills metered Claude API spend, but it was mapped to the free local-seat provider codex-cli in the old hardcoded BACKEND_PROVIDER dict. After the registry was introduced in #875, the fix was a one-line config change: set the local backend's provider to claude-code-cli in config/afk-backends.yaml. Updated scripts/run_afk_cycle.py docstring, the ADR in docs/solutions/harness/2026-07-29-afk-backend-adapter-contract.md, the incident write-up in docs/solutions/harness/2026-07-29-a-guard-is-only-as-good-as-its-subject.md, and the relevant tests in scripts/test_run_afk_cycle.py and scripts/test_afk_registry.py. Issue #877, PR #895.",
+      "timestamp": "2026-07-29T00:00:00Z"
     }
   ],
   "assessment": {

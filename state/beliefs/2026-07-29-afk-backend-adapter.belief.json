@@ -21,6 +21,12 @@
         "claim": "Added a YAML registry at config/afk-backends.yaml and a loader in scripts/afk_backends/registry.py. The governor no longer hardcodes adapter-to-provider mappings; it loads them from configuration, enabling new backends and provider attributions to be added without code changes. 368 unit tests pass.",
         "timestamp": "2026-07-29T00:00:00Z",
         "reliability": 0.98
+      },
+      {
+        "source": "fix/local-backend-spend-attribution-877 (#895)",
+        "claim": "Changed the local (Podman sandcastle) backend provider from codex-cli to claude-code-cli in config/afk-backends.yaml. The local backend forwards ANTHROPIC_API_KEY and bills metered Claude API spend, so it must be gated as claude-code-cli rather than the free local-seat codex-cli. Updated docs and tests. Closes #863.",
+        "timestamp": "2026-07-29T00:00:00Z",
+        "reliability": 0.99
       }
     ]
   },
