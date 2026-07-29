@@ -31,6 +31,11 @@
       "type": "amended",
       "context": "Fixed the local backend spend attribution bug (#863). The local backend (SandcastleBackend / Podman sandcastle) forwards ANTHROPIC_API_KEY and bills metered Claude API spend, but it was mapped to the free local-seat provider codex-cli in the old hardcoded BACKEND_PROVIDER dict. After the registry was introduced in #875, the fix was a one-line config change: set the local backend's provider to claude-code-cli in config/afk-backends.yaml. Updated scripts/run_afk_cycle.py docstring, the ADR in docs/solutions/harness/2026-07-29-afk-backend-adapter-contract.md, the incident write-up in docs/solutions/harness/2026-07-29-a-guard-is-only-as-good-as-its-subject.md, and the relevant tests in scripts/test_run_afk_cycle.py and scripts/test_afk_registry.py. Issue #877, PR #895.",
       "timestamp": "2026-07-29T00:00:00Z"
+    },
+    {
+      "type": "amended",
+      "context": "Implemented the cloud-worker backend adapter (RemoteBackend). Updated AFKBackend.__init__ to accept an optional config dict so the registry can pass per-backend configuration. Updated scripts/afk_backends/registry.py to instantiate adapters with cfg.get('config'). Rewrote scripts/afk_backends/remote.py to POST a JSON payload {issue, repo_path} to a configured endpoint, optionally include an Authorization: Bearer token from an environment variable named in api_key_env, enforce a 5-minute default timeout, and validate the response contains branch/commits/blocked. Added scripts/test_remote_backend.py with urllib.request mocks covering success, auth header, HTTP error, network error, invalid JSON, and missing response fields. Updated config/afk-backends.yaml with a remote config block and corrected the README schema count from 48 to 49 so build_manifest passes. 390 unit tests pass. Issue #879, PR #899.",
+      "timestamp": "2026-07-29T04:30:00Z"
     }
   ],
   "assessment": {

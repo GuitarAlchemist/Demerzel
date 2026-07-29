@@ -27,9 +27,15 @@
         "claim": "Changed the local (Podman sandcastle) backend provider from codex-cli to claude-code-cli in config/afk-backends.yaml. The local backend forwards ANTHROPIC_API_KEY and bills metered Claude API spend, so it must be gated as claude-code-cli rather than the free local-seat codex-cli. Updated docs and tests. Closes #863.",
         "timestamp": "2026-07-29T00:00:00Z",
         "reliability": 0.99
+      },
+      {
+        "source": "feat/cloud-worker-backend-879 (#899)",
+        "claim": "Implemented RemoteBackend as a real HTTP adapter in scripts/afk_backends/remote.py. It POSTs {issue, repo_path} JSON to a configured endpoint, supports an optional api_key_env bearer token, validates the response shape, and returns clean blocked messages on network or HTTP errors. Added scripts/test_remote_backend.py with mocks for urllib.request. The README schema count was also synchronized (49 + 9 contracts). Closes #879.",
+        "timestamp": "2026-07-29T04:30:00Z",
+        "reliability": 0.98
       }
     ]
   },
-  "last_updated": "2026-07-29T00:00:00Z",
+  "last_updated": "2026-07-29T04:30:00Z",
   "evaluated_by": "demerzel"
 }
