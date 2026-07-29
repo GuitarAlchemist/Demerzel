@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-Demerzel is a governance framework for AI agents, providing constitutions, personas, policies, behavioral tests, cross-repo communication contracts, and bounded repository-local tooling that validates or operates those artifacts. It contains no consumer or product runtime; consumer repos (ix, tars, ga) adopt its governance artifacts via git submodule. Named after Asimov's R. Daneel Olivaw, it enforces a constitutional hierarchy rooted in the Laws of Robotics.
+Demerzel is a specification-only governance framework for AI agents, providing constitutions, personas, policies, behavioral tests, and cross-repo communication contracts. It contains no runtime code -- only YAML, Markdown, and JSON Schema artifacts that consumer repos (ix, tars, ga) adopt via git submodule. Named after Asimov's R. Daneel Olivaw, it enforces a constitutional hierarchy rooted in the Laws of Robotics.
 
 ## Problem Statement
 

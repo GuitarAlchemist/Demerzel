@@ -2,7 +2,7 @@
 
 Agent governance for the GuitarAlchemist ecosystem — reusable constitutions, personas, alignment policies, tetravalent logic, behavioral tests, and cross-repo loop control. Part of a four-repo ecosystem (`Demerzel` + [`ga`](https://github.com/GuitarAlchemist/ga) .NET + [`ix`](https://github.com/GuitarAlchemist/ix) Rust ML + [`tars`](https://github.com/GuitarAlchemist/tars) F# theory validator).
 
-> Named after [Eto Demerzel](https://asimov.fandom.com/wiki/R._Daneel_Olivaw) — the guardian who shapes policy without wielding direct power. This repo is deliberately separate from consumer and product runtime code: it defines *how agents should behave* and includes only the repository-local tooling needed to validate and operate that governance.
+> Named after [Eto Demerzel](https://asimov.fandom.com/wiki/R._Daneel_Olivaw) — the guardian who shapes policy without wielding direct power. This repo is deliberately separate from runtime code: it defines *how agents should behave*, not *how they compute*.
 
 > **Agent-facing canonical docs:** [`CLAUDE.md`](./CLAUDE.md) (breadcrumb-style) and [`AGENTS.md`](./AGENTS.md) (full development guidelines).
 

@@ -6,7 +6,7 @@ Thank you for contributing to Demerzel — an AI governance framework. Before su
 
 ## What Demerzel Is (and Is Not)
 
-Demerzel contains **no consumer or product runtime**. It is primarily a collection of governance artifacts:
+Demerzel contains **no runtime code**. It is a collection of governance artifacts:
 
 - Personas (`personas/`) — YAML
 - Constitutions (`constitutions/`) — Markdown
@@ -126,7 +126,7 @@ Before opening a PR, confirm:
 
 - [ ] Artifacts validated against their schemas
 - [ ] Behavioral tests added or updated (if persona changed)
-- [ ] No consumer/product runtime introduced; repository-local tooling is issue-backed and tested
+- [ ] No runtime code introduced
 - [ ] No secrets committed
 - [ ] Conventional commit messages used
 - [ ] Constitutional implications noted (which article does this touch?)
