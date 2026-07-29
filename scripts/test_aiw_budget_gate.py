@@ -2,8 +2,10 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-from aiw_budget_gate import _request_sha256, evaluate
+import aiw_budget_gate
+from aiw_budget_gate import _request_sha256, evaluate, load_policy
 
 
 ROOT = Path(__file__).parents[1]
@@ -287,6 +289,242 @@ class BudgetGateTests(unittest.TestCase):
             path = Path(directory) / "ledger.json"
             path.write_text(json.dumps(result), encoding="utf-8")
             self.assertEqual("allow", json.loads(path.read_text())["decision"])
+
+
+class PolicySchemaTests(unittest.TestCase):
+    """The policy gates real spend and arrives as an ordinary PR diff, so an
+    unrecognized or out-of-bounds key must fail the load, not slip through."""
+
+    def load_mutated_policy(self, mutator):
+        """Write a mutated copy of the shipped policy and load it."""
+        policy = json.loads(json.dumps(POLICY))
+        mutator(policy)
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "policy.json"
+        path.write_text(json.dumps(policy), encoding="utf-8")
+        return load_policy(path)
+
+    def test_shipped_policy_validates(self):
+        self.assertEqual(POLICY, load_policy(aiw_budget_gate.POLICY_PATH))
+
+    def test_an_unpinned_provider_id_is_rejected(self):
+        # The tier-keyed guards constrain the shape GIVEN a tier, and the
+        # per-id pins only bind the seven known providers. An EIGHTH id was
+        # unconstrained: it could declare itself local-seat with no receipt
+        # issuer, and reserve + release billed with no approval artifact.
+        # Inert today only because routing is hardcoded to pinned ids -- a
+        # property of the call sites, not a guarantee of this schema.
+        def mutate(policy):
+            policy["providers"].append({
+                "id": "jules-v2", "tier": "local-seat",
+                "cost_model": "subscription-or-local",
+                "requires_manual_approval": False,
+            })
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_a_pinned_provider_cannot_be_renamed_out_of_its_pin(self):
+        # Renaming sidesteps a per-id pin: the constraint keys on the id, so
+        # changing the id escapes it. The closed enum is what stops this.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["id"] = "jules-v2"
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_metered_provider_cannot_be_downgraded_to_local_seat(self):
+        # The tier-keyed guards constrain the shape GIVEN a tier -- but tier is
+        # editable in the same diff. Downgrading jules to local-seat escaped
+        # every metered guard and allowed a billed reservation with no approval
+        # artifact and no trusted receipt. Known providers are pinned by id.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["tier"] = "local-seat"
+            provider["cost_model"] = "subscription-or-local"
+            provider["requires_manual_approval"] = False
+            provider.pop("trusted_receipt_issuer", None)
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_local_provider_cannot_be_promoted_to_metered_cloud(self):
+        for provider_id in (
+                "claude-code-cli", "codex-cli", "antigravity", "augment-code"):
+            with self.subTest(provider=provider_id):
+                def mutate(policy):
+                    provider = next(
+                        item for item in policy["providers"]
+                        if item["id"] == provider_id)
+                    provider["tier"] = "metered-cloud"
+                    provider["cost_model"] = "provider-billing"
+                    provider["requires_manual_approval"] = True
+                    provider["trusted_receipt_issuer"] = "billing.example.com"
+
+                with self.assertRaisesRegex(ValueError, "policy is invalid"):
+                    self.load_mutated_policy(mutate)
+
+    def test_trusted_receipt_issuer_cannot_be_repointed(self):
+        # Any well-formed hostname passed the pattern, so the issuer could be
+        # repointed at an attacker-controlled host and still validate.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["trusted_receipt_issuer"] = "evil.attacker.com"
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_validation_error_names_the_offending_field(self):
+        # "True was expected" alone locates nothing in a 7-provider file.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["requires_manual_approval"] = False
+
+        with self.assertRaisesRegex(ValueError, r"\$\.providers\[\d+\]\.requires_manual_approval"):
+            self.load_mutated_policy(mutate)
+
+    def test_metered_provider_cannot_claim_a_free_cost_model(self):
+        # The metered branch pinned only the issuer and approval flag, so a
+        # paid provider could label itself "subscription-or-local" and pass.
+        # The local-seat branch already pinned cost_model; this restores the
+        # symmetry. cost_model is read by no production code today, which is
+        # exactly why a wrong value would go unnoticed.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"]
+                            if p["tier"] == "metered-cloud")
+            provider["cost_model"] = "subscription-or-local"
+
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_unknown_root_key_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(
+                lambda p: p.update({"max_spend_multiplier": 100}))
+
+    def test_unknown_provider_key_is_rejected(self):
+        # The concrete #772 finding: an out-of-range multiplier added to the
+        # metered `jules` provider left the whole suite green.
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["cost_multiplier"] = 1000
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_unknown_defaults_key_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(
+                lambda p: p["defaults"].update({"max_cost_eur": 2.0}))
+
+    def test_zero_cost_cap_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(
+                lambda p: p["defaults"].update({"max_cost_usd": 0}))
+
+    def test_negative_cycle_cap_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(
+                lambda p: p["cycle"].update({"max_cost_usd": -1}))
+
+    def test_zero_parallel_packets_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(
+                lambda p: p["cycle"].update({"max_parallel_packets": 0}))
+
+    def test_zero_retries_is_accepted_as_a_tightening(self):
+        loaded = self.load_mutated_policy(
+            lambda p: p["defaults"].update({"max_retries": 0}))
+        self.assertEqual(0, loaded["defaults"]["max_retries"])
+
+    def test_unknown_cost_model_is_rejected(self):
+        def mutate(policy):
+            policy["providers"][0]["cost_model"] = "free-lunch"
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_missing_required_provider_field_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(lambda p: p["providers"][0].pop("tier"))
+
+    def test_metered_provider_without_receipt_issuer_is_rejected(self):
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider.pop("trusted_receipt_issuer")
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_metered_provider_cannot_drop_manual_approval(self):
+        def mutate(policy):
+            provider = next(p for p in policy["providers"] if p["id"] == "jules")
+            provider["requires_manual_approval"] = False
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(mutate)
+
+    def test_selection_order_cannot_name_an_undeclared_provider(self):
+        # Two layers reject an unroutable selection_order entry, and this test
+        # targets the SECOND deliberately. The id enum catches ids that are not
+        # known at all, so an entry like "shadow-provider" now fails at the
+        # schema before load_policy's cross-reference check ever runs. The
+        # cross-reference is still the only thing catching a KNOWN id that this
+        # policy does not declare, so drop a real provider and route to it.
+        def mutate(policy):
+            # selection_order already lists notebooklm, so only drop the
+            # provider -- appending it too would trip uniqueItems first and
+            # test the wrong layer.
+            policy["providers"] = [p for p in policy["providers"]
+                                   if p["id"] != "notebooklm"]
+
+        with self.assertRaisesRegex(ValueError, "undeclared providers"):
+            self.load_mutated_policy(mutate)
+
+    def test_selection_order_rejects_a_wholly_unknown_id(self):
+        # The layer above: an id outside the allowlist never reaches the
+        # cross-reference check.
+        with self.assertRaisesRegex(ValueError, "policy is invalid"):
+            self.load_mutated_policy(
+                lambda p: p["selection_order"].append("shadow-provider"))
+
+    def test_duplicate_provider_ids_are_rejected(self):
+        def mutate(policy):
+            policy["providers"].append(json.loads(json.dumps(policy["providers"][0])))
+        with self.assertRaisesRegex(ValueError, "duplicate provider ids"):
+            self.load_mutated_policy(mutate)
+
+    def test_invalid_policy_exits_2_not_1(self):
+        """Exit 2 is 'fail closed / invalid'; exit 1 is a governed block. An
+        unloadable policy must never be mistaken for an ordinary denial."""
+        policy = json.loads(json.dumps(POLICY))
+        policy["defaults"]["max_cost_usd"] = -5
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "aiw-budget-policy.json"
+            path.write_text(json.dumps(policy), encoding="utf-8")
+            with mock.patch.object(aiw_budget_gate, "POLICY_PATH", path):
+                self.assertEqual(2, aiw_budget_gate.main(["--policy", str(path)]))
+
+    def test_valid_policy_block_still_exits_1(self):
+        """Control for the test above: with the shipped policy, a governed
+        block is exit 1, so exit 2 really does isolate invalidity."""
+        with tempfile.TemporaryDirectory() as directory:
+            req = Path(directory) / "request.json"
+            ledger = Path(directory) / "ledger.json"
+            cycle = Path(directory) / "cycle.json"
+            req.write_text(json.dumps(
+                request(job_id="cli-block", provider="gemini-cli",
+                        estimated_cost_usd=1.0)), encoding="utf-8")
+            with mock.patch.object(aiw_budget_gate, "LEDGER_PATH", ledger), \
+                    mock.patch.object(aiw_budget_gate, "CYCLE_LEDGER_PATH", cycle), \
+                    mock.patch.object(aiw_budget_gate, "APPROVAL_PATH",
+                                      Path(directory) / "approval.json"), \
+                    mock.patch.object(aiw_budget_gate, "RECEIPT_PATH",
+                                      Path(directory) / "receipt.json"):
+                code = aiw_budget_gate.main([
+                    "--request", str(req), "--ledger", str(ledger),
+                    "--cycle-ledger", str(cycle),
+                    "--approval", str(Path(directory) / "approval.json"),
+                    "--receipt", str(Path(directory) / "receipt.json")])
+            self.assertEqual(1, code)
 
 
 if __name__ == "__main__":

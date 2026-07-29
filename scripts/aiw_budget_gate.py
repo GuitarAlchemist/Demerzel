@@ -14,6 +14,8 @@ import sys
 import time
 from typing import Any
 
+import demerzel_kit
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = REPO_ROOT / "state" / "driver" / "aiw-budget-policy.json"
@@ -29,6 +31,43 @@ def _load(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{path}: expected a JSON object")
     return value
+
+
+def load_policy(path: Path | None = None) -> dict[str, Any]:
+    """Load the budget policy and validate it against its schema, fail-closed.
+
+    The policy decides how much real money a cycle may spend and arrives as an
+    ordinary PR diff, so an unrecognized or out-of-bounds key must be a load
+    error rather than a silent no-op. Every failure is raised as ValueError so
+    main() maps it to exit 2 (invalid) rather than exit 1 (governed block).
+    """
+    policy = _load(POLICY_PATH if path is None else path)
+    try:
+        import jsonschema  # noqa: PLC0415 — optional dependency, imported lazily
+    except ImportError as error:
+        # demerzel_kit.validate() degrades to a warning when jsonschema is
+        # absent. That is right for a reporting emitter and wrong for a spend
+        # gate, so this caller refuses instead.
+        raise ValueError(
+            "jsonschema is required to validate the AIW budget policy") from error
+    try:
+        demerzel_kit.validate(policy, "aiw-budget-policy")
+    except jsonschema.ValidationError as error:
+        # json_path locates the offending key. Without it the message alone
+        # ("True was expected") names neither field nor provider, which is not
+        # enough to find the key in a 7-provider file under time pressure.
+        raise ValueError(
+            f"policy is invalid at {error.json_path}: {error.message}") from error
+
+    # JSON Schema cannot express these cross-references within one document.
+    ids = [provider["id"] for provider in policy["providers"]]
+    duplicates = {name for name in ids if ids.count(name) > 1}
+    if duplicates:
+        raise ValueError(f"policy declares duplicate provider ids: {sorted(duplicates)}")
+    undeclared = [name for name in policy["selection_order"] if name not in ids]
+    if undeclared:
+        raise ValueError(f"selection_order names undeclared providers: {undeclared}")
+    return policy
 
 
 def _number(request: dict[str, Any], name: str) -> float:
@@ -389,7 +428,7 @@ def main(argv: list[str] | None = None) -> int:
         _bind_canonical("--cycle-ledger", args.cycle_ledger, CYCLE_LEDGER_PATH)
         _bind_canonical("--approval", args.approval, APPROVAL_PATH)
         _bind_canonical("--receipt", args.receipt, RECEIPT_PATH)
-        policy = _load(POLICY_PATH)
+        policy = load_policy(POLICY_PATH)
         if args.release_job:
             if args.actual_cost_usd is None:
                 raise ValueError("--actual-cost-usd is required with --release-job")

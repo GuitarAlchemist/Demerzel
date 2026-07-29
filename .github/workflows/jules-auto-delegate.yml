@@ -61,6 +61,20 @@ jobs:
       - name: Checkout governance state
         uses: actions/checkout@v4
 
+      # aiw_budget_gate.py validates the budget policy against its schema and
+      # REFUSES to run without jsonschema (a spend gate must not degrade open).
+      # ubuntu-latest does not preinstall it, so without this every delegation
+      # would exit 2 -- a hard red job blaming the request for a missing
+      # package. governance-validate, karpathy-cherny-discipline and qa-tribunal
+      # install it the same way.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install budget-gate dependencies
+        run: pip install jsonschema
+
       - name: Select eligible issue + governance preflight
         id: gate
         env:
