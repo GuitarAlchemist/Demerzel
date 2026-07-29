@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 import unittest
 import unittest.mock as mock
@@ -7,6 +8,9 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_afk_cycle as g
+from afk_backends.claude_code import ClaudeCodeBackend, _claude_code_prompt
+from afk_backends.remote import RemoteBackend
+from afk_backends.sandcastle import SandcastleBackend
 
 
 class TestClassifyRisk(unittest.TestCase):
@@ -66,23 +70,26 @@ class TestDryRunNoLiveCalls(unittest.TestCase):
         with mock.patch.object(g, "_gh_queue", return_value=[
                  {"number": 7, "title": "fix docs typo", "body": "x", "labels": []}]), \
              mock.patch.object(g, "_process_issue") as proc, \
-             mock.patch.object(g, "_ensure_podman") as podman, \
+             mock.patch.object(g, "get_backend") as get_backend, \
              mock.patch.object(g, "_write_audit") as audit:
             rc = g.main(["--dry-run"])
         self.assertEqual(rc, 0)
-        proc.assert_not_called()      # no clone / sandbox / push / PR
-        podman.assert_not_called()    # no machine start
-        audit.assert_not_called()     # dry-run writes nothing
+        proc.assert_not_called()         # no clone / sandbox / push / PR
+        get_backend.assert_not_called()  # backend not selected in dry-run mode
+        audit.assert_not_called()        # dry-run writes nothing
 
 
 class TestParallelDispatch(unittest.TestCase):
     def test_live_processes_every_issue_once(self):
         issues = [{"number": n, "title": f"fix docs typo {n}", "body": "x", "labels": []}
                   for n in (1, 2, 3)]
+        fake_adapter = mock.Mock()
+        fake_adapter.prepare.return_value = (True, "ok")
+        fake_adapter.needs_local_repo.return_value = True
         with mock.patch.object(g, "_gh_queue", return_value=issues), \
-             mock.patch.object(g, "_ensure_podman", return_value=(True, "ok")), \
+             mock.patch.object(g, "get_backend", return_value=fake_adapter), \
              mock.patch.object(g, "_process_issue",
-                               side_effect=lambda issue, seq, today, backend:
+                               side_effect=lambda issue, seq, today, backend, adapter:
                                    ({"issue": issue["number"], "action": "implement"}, {})) as proc, \
              mock.patch.object(g, "_write_audit") as audit:
             rc = g.main(["--max-parallel", "2"])
@@ -93,7 +100,7 @@ class TestParallelDispatch(unittest.TestCase):
 
 class TestBackend(unittest.TestCase):
     def test_remote_backend_is_blocked_stub(self):
-        hr = g._invoke_harness_remote({"number": 1, "title": "x", "body": "y"})
+        hr = RemoteBackend().invoke({"number": 1, "title": "x", "body": "y"}, None)
         self.assertIsNone(hr["branch"])
         self.assertIn("remote", hr["blocked"].lower())
 
@@ -284,7 +291,7 @@ class TestClaudeCodeBackend(unittest.TestCase):
     instead of a Podman sandbox, returning the same {branch,commits,blocked}."""
 
     def test_prompt_carries_issue_and_commit_contract(self):
-        p = g._claude_code_prompt({"number": 410, "title": "Migrate X onto kit", "body": "do the thing"})
+        p = _claude_code_prompt({"number": 410, "title": "Migrate X onto kit", "body": "do the thing"})
         self.assertIn("#410", p)
         self.assertIn("Migrate X onto kit", p)
         self.assertIn("do the thing", p)
@@ -307,13 +314,13 @@ class TestClaudeCodeBackend(unittest.TestCase):
 
     def test_no_commits_returns_blocked(self):
         with mock.patch.object(g.subprocess, "run", side_effect=self._fake_run("")):
-            out = g._invoke_harness_claude_code({"number": 410, "title": "t", "body": "b"}, "/tmp/x")
+            out = ClaudeCodeBackend().invoke({"number": 410, "title": "t", "body": "b"}, "/tmp/x")
         self.assertIsNone(out["branch"])
         self.assertIn("no commits", out["blocked"])
 
     def test_commits_return_branch(self):
         with mock.patch.object(g.subprocess, "run", side_effect=self._fake_run("feat: migrate\n")):
-            out = g._invoke_harness_claude_code({"number": 410, "title": "t", "body": "b"}, "/tmp/x")
+            out = ClaudeCodeBackend().invoke({"number": 410, "title": "t", "body": "b"}, "/tmp/x")
         self.assertEqual(out["branch"], "agent/issue-410")
         self.assertEqual(out["commits"], ["feat: migrate"])
         self.assertIsNone(out["blocked"])
@@ -329,9 +336,9 @@ class TestClaudeCodeBackend(unittest.TestCase):
             elif "log" in cmd:
                 ns.stdout = "feat: x\n"
             return ns
-        with mock.patch.dict(g.os.environ, {"ANTHROPIC_API_KEY": "sk-should-be-stripped"}), \
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-should-be-stripped"}), \
              mock.patch.object(g.subprocess, "run", side_effect=run):
-            g._invoke_harness_claude_code({"number": 1, "title": "t", "body": "b"}, "/tmp/x")
+            ClaudeCodeBackend().invoke({"number": 1, "title": "t", "body": "b"}, "/tmp/x")
         self.assertNotIn("ANTHROPIC_API_KEY", seen["env"],
                          "claude must run on the subscription, not the capped API key")
 
@@ -347,7 +354,7 @@ class TestClaudeCodeBackend(unittest.TestCase):
                 ns.stdout = "feat: x\n"
             return ns
         with mock.patch.object(g.subprocess, "run", side_effect=run):
-            g._invoke_harness_claude_code({"number": 1, "title": "t", "body": "b"}, "/tmp/x")
+            ClaudeCodeBackend().invoke({"number": 1, "title": "t", "body": "b"}, "/tmp/x")
         cmd = seen["cmd"]
         self.assertNotIn("--dangerously-skip-permissions", cmd,
                          "backend must not bypass all permissions")
@@ -366,37 +373,39 @@ class TestBudgetGate(unittest.TestCase):
         return i
 
     def test_blocked_budget_prevents_worker_invocation(self):
+        adapter = mock.Mock()
         with mock.patch.object(g, "_budget_reserve",
                                return_value=(False, {"decision": "block",
                                                      "reasons": ["cycle_cost_cap_exceeded"]})), \
              mock.patch.object(g, "_prepare_clone") as clone, \
-             mock.patch.object(g, "_invoke_harness") as inv_local, \
-             mock.patch.object(g, "_invoke_harness_claude_code") as inv_cc, \
              mock.patch.object(g, "_write_loop_state"):
             decision, state = g._process_issue(self._issue(), seq=1,
-                                               today="2026-07-19", backend="local")
+                                               today="2026-07-19", backend="local",
+                                               adapter=adapter)
         clone.assert_not_called()
-        inv_local.assert_not_called()
-        inv_cc.assert_not_called()
+        adapter.invoke.assert_not_called()
         self.assertIn("budget", decision["action"])
         self.assertEqual(state["status"], "halted")
 
     def test_allowed_budget_reserves_then_releases(self):
+        adapter = mock.Mock()
+        adapter.needs_local_repo.return_value = True
+        adapter.invoke.return_value = {"branch": "agent/issue-77",
+                                       "commits": ["x"], "blocked": None}
         with mock.patch.object(g, "_budget_reserve",
                                return_value=(True, {"decision": "allow"})) as res, \
              mock.patch.object(g, "_budget_release") as rel, \
              mock.patch.object(g, "_prepare_clone", return_value="/tmp/clone"), \
-             mock.patch.object(g, "_invoke_harness",
-                               return_value={"branch": "agent/issue-77",
-                                             "commits": ["x"], "blocked": None}), \
              mock.patch.object(g, "_open_pr",
                                return_value="https://github.com/x/y/pull/1"), \
              mock.patch.object(g.shutil, "rmtree"), \
              mock.patch.object(g, "_write_loop_state"):
             decision, state = g._process_issue(self._issue(), seq=1,
-                                               today="2026-07-19", backend="local")
+                                               today="2026-07-19", backend="local",
+                                               adapter=adapter)
         res.assert_called_once()
         rel.assert_called_once()            # reservation reconciled after the episode
+        adapter.invoke.assert_called_once()
         self.assertEqual(state["status"], "completed")
 
     def test_parse_budget_block_picks_known_numeric_keys(self):
@@ -485,25 +494,31 @@ class TestPolicyInvalidDistinctFromBlock(unittest.TestCase):
         # An invalid policy is not a per-job condition: validate once, up front,
         # and refuse — rather than blocking every job for the same reason while
         # swallowing every release in flight.
+        fake_adapter = mock.Mock()
+        fake_adapter.prepare.return_value = (True, "ok")
         with mock.patch.object(g, "_gh_queue", return_value=[self._issue()]), \
              mock.patch.object(g.budget, "load_policy",
                                side_effect=g.budget.PolicyInvalid("bad policy")), \
-             mock.patch.object(g, "_ensure_podman") as podman, \
+             mock.patch.object(g, "get_backend", return_value=fake_adapter) as get_backend, \
              mock.patch.object(g, "_process_issue") as proc:
             rc = g.main([])
         self.assertEqual(rc, 2)          # distinct from 1 (error) and 3 (halted)
         proc.assert_not_called()         # no work started
-        podman.assert_not_called()       # not even the sandbox came up
+        get_backend.assert_not_called()  # adapter not selected when policy is invalid
 
     def test_valid_policy_does_not_block_the_cycle(self):
+        fake_adapter = mock.Mock()
+        fake_adapter.prepare.return_value = (True, "")
+        fake_adapter.needs_local_repo.return_value = True
         with mock.patch.object(g, "_gh_queue", return_value=[self._issue()]), \
              mock.patch.object(g.budget, "load_policy", return_value={"ok": True}), \
-             mock.patch.object(g, "_ensure_podman", return_value=(True, "")), \
+             mock.patch.object(g, "get_backend", return_value=fake_adapter), \
              mock.patch.object(g, "_process_issue",
                                return_value=({"issue": 77, "action": "x"}, {})), \
              mock.patch.object(g, "_write_audit"):
             rc = g.main([])
         self.assertEqual(rc, 0)
+        fake_adapter.prepare.assert_called_once()
 
     def test_dry_run_is_unaffected_by_policy_validity(self):
         # Dry-run plans only and reserves nothing, so a broken policy must not

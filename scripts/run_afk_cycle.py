@@ -43,7 +43,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -56,9 +55,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import aiw_budget_gate as budget  # noqa: E402  (fail-closed AIW budget preflight)
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
+from afk_backends.claude_code import ClaudeCodeBackend  # noqa: E402
+from afk_backends.remote import RemoteBackend  # noqa: E402
+from afk_backends.sandcastle import SandcastleBackend  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]            # repos/Demerzel
-HARNESS_DIR = ROOT.parent / "afk-harness"             # sibling, outside Demerzel
 PROMPT_FILE = ROOT / "prompts" / "afk-implement.prompt.md"
 LABEL = "agent-implement"
 REPO_SLUG = "GuitarAlchemist/Demerzel"
@@ -81,6 +82,24 @@ BACKEND_PROVIDER = {
     "local": "codex-cli",             # ../afk-harness sandcastle runs Codex CLI
     "claude-code": "claude-code-cli",  # headless `claude -p` on the subscription
 }
+
+
+_BACKEND_ADAPTERS = {
+    "claude-code": ClaudeCodeBackend,
+    "local": SandcastleBackend,
+    "remote": RemoteBackend,
+}
+
+
+def get_backend(name: str) -> ClaudeCodeBackend | SandcastleBackend | RemoteBackend:
+    """Return an adapter instance for the named backend. Raises ValueError for an
+    unknown backend so the governor fails closed."""
+    cls = _BACKEND_ADAPTERS.get(name)
+    if cls is None:
+        raise ValueError(f"unknown backend {name!r}")
+    return cls()
+
+
 # Recognized budget numbers an issue may carry to tighten the policy defaults.
 _BUDGET_KEYS = (
     "estimated_cost_usd", "estimated_total_tokens", "estimated_model_calls",
@@ -246,129 +265,6 @@ def _prepare_clone(issue: dict) -> str:
         subprocess.run(["git", "-C", clone, "remote", "set-url", "origin", url],
                        capture_output=True, text=True, timeout=30, check=True)
     return clone
-
-
-def _invoke_harness(issue: dict, repo_path: str) -> dict:
-    """Run the sandcastle harness for one issue against repo_path. Returns
-    {branch,commits,blocked}.
-
-    Invokes node with the tsx loader directly rather than `npx tsx`: on Windows
-    `npx` is `npx.cmd` (no .exe) and Python's subprocess cannot CreateProcess it
-    without a shell — and a shell would expose the issue body to command
-    injection. `node` is a real executable and args pass straight through as argv.
-    """
-    cmd = ["node", "--import", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
-           "--repo", str(repo_path), "--issue", str(issue.get("number")),
-           "--title", issue.get("title", ""), "--body", issue.get("body", "")]
-    p = subprocess.run(cmd, cwd=str(HARNESS_DIR), capture_output=True, text=True, timeout=1800)
-    if p.returncode != 0:
-        return {"branch": None, "commits": [], "blocked": f"harness exit {p.returncode}: {p.stderr.strip()[:200]}"}
-    last = [l for l in p.stdout.strip().splitlines() if l.strip().startswith("{")]
-    if not last:
-        return {"branch": None, "commits": [], "blocked": "harness produced no JSON result"}
-    return json.loads(last[-1])
-
-
-def _invoke_harness_remote(issue: dict) -> dict:
-    """Backend seam for Vercel isolated sandboxes (Approach C). Not yet
-    implemented — returns a clean blocked result so --backend remote is a no-op
-    rather than a crash until the remote provider lands."""
-    return {"branch": None, "commits": [],
-            "blocked": "remote backend (Vercel isolated sandboxes) not implemented yet — use --backend local"}
-
-
-CLAUDE_CODE_TIMEOUT = 1800  # seconds for one headless `claude -p` agent run
-
-
-def _claude_code_prompt(issue: dict) -> str:
-    """The instruction handed to the headless Claude Code agent. The issue body
-    already carries the full implementation spec (pattern + success criteria), so
-    this only frames the autonomy contract: implement, test, commit — no push/PR
-    (the governor owns those)."""
-    num = issue.get("number")
-    return (
-        "You are an autonomous AFK engineer working in a fresh clone of the "
-        "Demerzel governance repo, on a dedicated branch. Implement the issue "
-        "below end-to-end, then COMMIT your work on the current branch with a "
-        "conventional-commit message (feat/refactor/test). Be surgical — change "
-        "only what the issue requires. After editing, run "
-        "`python -m unittest discover -s scripts -p \"test_*.py\"` and make sure it "
-        "passes before committing. Do NOT push and do NOT open a pull request; "
-        "just commit locally.\n\n"
-        f"=== ISSUE #{num}: {issue.get('title', '')} ===\n\n"
-        f"{issue.get('body', '')}"
-    )
-
-
-def _invoke_harness_claude_code(issue: dict, repo_path: str) -> dict:
-    """Backend: delegate one issue to a headless Claude Code agent (`claude -p`)
-    in repo_path instead of the Podman sandbox. Returns {branch,commits,blocked} —
-    the same contract as the other backends, so the governor's push/PR/council
-    wrappers are unchanged.
-
-    Three deliberate choices:
-      * ANTHROPIC_API_KEY is stripped from the child env so `claude` bills the
-        interactive subscription, not the spend-capped API key — the reason this
-        backend exists (the Podman backend's claude-code hits that cap).
-      * The agent runs under a SCOPED tool allowlist (not skip-permissions): it may
-        edit/read files and run only `python`/`git` — enough to migrate, test, and
-        commit, but not arbitrary commands. A non-listed tool is denied rather than
-        prompting (headless), so the blast radius is the allowlist, not the host.
-      * Isolation is also the ephemeral clone (a git boundary). Even so this is a
-        weaker boundary than the container backend; use for trusted, mechanical
-        issues — the risk classifier keeps critical/high out of the auto lane.
-    """
-    num = issue.get("number")
-    branch = f"agent/issue-{num}"
-    try:
-        subprocess.run(["git", "-C", repo_path, "checkout", "-b", branch],
-                       capture_output=True, text=True, timeout=30, check=True)
-        base = subprocess.run(["git", "-C", repo_path, "rev-parse", "HEAD"],
-                              capture_output=True, text=True, timeout=30).stdout.strip()
-        env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
-        cmd = ["claude", "-p", _claude_code_prompt(issue),
-               "--output-format", "json",
-               "--allowedTools", "Edit", "Write", "Read", "Grep", "Glob",
-               "Bash(python *)", "Bash(python3 *)", "Bash(git *)"]
-        p = subprocess.run(cmd, cwd=repo_path, capture_output=True, text=True,
-                           timeout=CLAUDE_CODE_TIMEOUT, env=env)
-    except (OSError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as exc:
-        return {"branch": None, "commits": [], "blocked": f"claude-code invoke failed: {exc}"}
-
-    # The agent is told to commit; if it left changes uncommitted, capture them so a
-    # real implementation isn't lost to a missing commit step.
-    dirty = subprocess.run(["git", "-C", repo_path, "status", "--porcelain"],
-                           capture_output=True, text=True, timeout=30).stdout.strip()
-    if dirty:
-        subprocess.run(["git", "-C", repo_path, "add", "-A"],
-                       capture_output=True, text=True, timeout=60)
-        subprocess.run(["git", "-C", repo_path, "commit", "-m",
-                        f"feat: implement #{num} via AFK claude-code backend"],
-                       capture_output=True, text=True, timeout=60)
-    commits = subprocess.run(["git", "-C", repo_path, "log", "--format=%s", f"{base}..HEAD"],
-                             capture_output=True, text=True, timeout=30).stdout.strip()
-    if not commits:
-        tail = (p.stderr or p.stdout or "").strip()[-200:]
-        return {"branch": None, "commits": [],
-                "blocked": f"claude-code made no commits (exit {p.returncode}): {tail}"}
-    return {"branch": branch, "commits": commits.splitlines(), "blocked": None}
-
-
-def _ensure_podman() -> tuple[bool, str]:
-    """Restart-robustness: make sure the Podman machine is up before sandboxing.
-    Idempotent — 'already running' is success. Returns (ok, note)."""
-    try:
-        chk = subprocess.run(["podman", "machine", "list", "--format", "{{.Running}}"],
-                             capture_output=True, text=True, timeout=30)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return False, f"podman not available: {exc}"
-    if chk.returncode == 0 and "true" in chk.stdout.lower():
-        return True, "podman machine already running"
-    start = subprocess.run(["podman", "machine", "start"],
-                           capture_output=True, text=True, timeout=180)
-    if start.returncode == 0 or "already running" in (start.stderr + start.stdout).lower():
-        return True, "podman machine started"
-    return False, f"podman machine start failed: {start.stderr.strip()[:160]}"
 
 
 def _open_pr(issue: dict, branch: str, repo_path: str) -> str:
@@ -612,10 +508,15 @@ def _run_harvest(dry: bool, today: str) -> int:
     return 0
 
 
-def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dict, dict]:
+def _process_issue(issue: dict, seq: int, today: str, backend: str,
+                    adapter) -> tuple[dict, dict]:
     """Live processing of ONE issue end-to-end (runs inside the thread pool).
     Each call is independent: its own clone, its own branch, its own PR, its own
-    loop-state file. Returns (decision, state)."""
+    loop-state file. Returns (decision, state).
+
+    The adapter is responsible for turning the issue into a branch with commits;
+    the governor owns the clone, budget, PR, and loop-state.
+    """
     risk, mode = classify_risk(issue)
     eligible = is_eligible(issue)
     state = build_loop_state(issue, seq, risk, mode, today)
@@ -643,37 +544,40 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
 
     clone = None
     try:
-        if backend == "remote":
-            hr = _invoke_harness_remote(issue)
-            repo_for_push = None
-        elif backend == "claude-code":
+        if adapter.needs_local_repo():
             clone = _prepare_clone(issue)
-            hr = _invoke_harness_claude_code(issue, clone)
+            hr = adapter.invoke(issue, clone)
             repo_for_push = clone
         else:
-            clone = _prepare_clone(issue)
-            hr = _invoke_harness(issue, clone)
-            repo_for_push = clone
+            hr = adapter.invoke(issue, None)
+            repo_for_push = None
 
         if hr.get("blocked"):
             decision["action"] = f"blocked:{hr['blocked']}"
             state["status"] = "halted"
             state["halt_reason"] = str(hr["blocked"])
         elif hr.get("branch"):
-            pr = _open_pr(issue, hr["branch"], repo_for_push)
-            decision["pr"] = pr
-            decision["branch"] = hr["branch"]
-            if pr.startswith("pr-create-failed"):
-                # A failed PR must NOT be reported as completed.
-                decision["action"] = "stalled:pr-create-failed"
+            if repo_for_push is None:
+                # Cloud backends that do not use a local clone are responsible for
+                # opening their own PR. This branch is defensive until #879 lands.
+                decision["action"] = "stalled:no-local-repo-for-push"
                 state["status"] = "stalled"
-                state["halt_reason"] = pr
+                state["halt_reason"] = "backend returned a branch but has no local repo to push"
             else:
-                state["iterations"].append({
-                    "iteration": 1, "timestamp": kit.now_iso(),
-                    "action": f"opened PR for #{issue.get('number')}",
-                    "outcome": "progress", "governance_decision": None})
-                state["status"] = "completed"
+                pr = _open_pr(issue, hr["branch"], repo_for_push)
+                decision["pr"] = pr
+                decision["branch"] = hr["branch"]
+                if pr.startswith("pr-create-failed"):
+                    # A failed PR must NOT be reported as completed.
+                    decision["action"] = "stalled:pr-create-failed"
+                    state["status"] = "stalled"
+                    state["halt_reason"] = pr
+                else:
+                    state["iterations"].append({
+                        "iteration": 1, "timestamp": kit.now_iso(),
+                        "action": f"opened PR for #{issue.get('number')}",
+                        "outcome": "progress", "governance_decision": None})
+                    state["status"] = "completed"
         else:
             # Harness returned neither a branch nor a blocked reason (e.g. agent
             # made no commits). Do not leave status pinned at 'running'.
@@ -780,9 +684,10 @@ def main(argv: list[str]) -> int:
                   file=sys.stderr)
             return 2
 
-    # Live: ensure the sandbox backend is ready once, up front.
-    if args.backend == "local" and issues:
-        ok, pnote = _ensure_podman()
+    # Live: ensure the selected backend is ready once, up front.
+    adapter = get_backend(args.backend)
+    if issues:
+        ok, pnote = adapter.prepare()
         if not ok:
             print(f"ABORT: {pnote}", file=sys.stderr)
             return 1
@@ -794,7 +699,7 @@ def main(argv: list[str]) -> int:
 
     decisions_by_seq: dict[int, dict] = {}
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futs = {ex.submit(_process_issue, issue, seq, today, args.backend): seq
+        futs = {ex.submit(_process_issue, issue, seq, today, args.backend, adapter): seq
                 for seq, issue in enumerate(issues, start=1)}
         for fut in as_completed(futs):
             seq = futs[fut]
