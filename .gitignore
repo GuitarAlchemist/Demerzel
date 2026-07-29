@@ -28,6 +28,7 @@ state/governance/dev-process-overseer.json
 .claude-octopus/
 .octo/runs/
 .tmp/
+.antigravitycli/
 # AIW budget-gate runtime ledgers are per-run state — never commit them (see
 # docs/workflows/aiw-budget-router.md "Trust boundary"). Approval/receipt
 # artifacts are deliberately NOT ignored: they must be committed & reviewed.
