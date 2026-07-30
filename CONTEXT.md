@@ -53,11 +53,17 @@ humanity) overrides everything. Constitutions are **append-only**.
   them at rest ([ADR-0005](docs/adr/0005-adopt-baml-for-strongly-typed-prompts.md), which
   supersedes the earlier **defer** recommendation in
   [`docs/research/2026-07-28-baml-adoption-assessment.md`](docs/research/2026-07-28-baml-adoption-assessment.md);
-  adoption is tracked in #890). One `.baml` source generates three clients: Python/Pydantic
-  at the repo root (`baml_client/`, so `from baml_client import b` resolves) plus TypeScript
-  and Rust under `clients/`, one per consumer language. Each generator needs a distinct
-  `output_dir` — BAML writes `<output_dir>/baml_client`, so two generators sharing a
-  directory silently clobber each other. The Rust output is a module tree, not a crate.
+  adoption is tracked in #890). `baml_src/schema.baml` is **the contract**; Demerzel generates
+  exactly one client from it — Python/Pydantic at the repo root (`baml_client/`, so
+  `from baml_client import b` resolves), because this repo's own scripts import it. Consumers
+  generate their own from the same contract: a client library built here for a sibling to
+  compile would be that sibling's runtime living in the governance repo, which
+  `CONTRIBUTING.md`'s CL-817-12 adjudication sends to the sibling. If you do add a generator,
+  give it a distinct `output_dir` — BAML writes `<output_dir>/baml_client`, so two generators
+  sharing a directory silently clobber each other.
+  Because the client is derived-but-tracked, `baml_src/` and `baml_client/` can disagree;
+  `scripts/verify.ps1` regenerates and diffs to catch that, but **no workflow invokes it**
+  (#919), so treat a matching pair as unverified rather than guaranteed.
 - **validate_dsp_loop** — the self-correcting parameter gate (`scripts/validate_dsp_loop.py`):
   binary-searches a DSP distortion parameter until a hexavalent swarm consensus clears the
   bounds in [`logic/dsp-safety-bounds.yaml`](logic/dsp-safety-bounds.yaml). Two interchangeable

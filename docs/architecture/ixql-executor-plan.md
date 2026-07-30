@@ -30,13 +30,23 @@ it. `ix-agent` can depend on `ix-ixql` later to expose the executor as a tool.
 **§2 — no `#[path]` include of Demerzel's generated client.**
 Design-spec §5 proposes
 `#[path = "../../../../Demerzel-baml/clients/rust/baml_client/mod.rs"]`. Three
-problems: the directory `Demerzel-baml` does not exist (the client is at
-`Demerzel/clients/rust/baml_client`); that tree is untracked and lives only on
+problems: the directory `Demerzel-baml` does not exist (the client was at
+`Demerzel/clients/rust/baml_client` — **removed 2026-07-30**, see below); that
+tree was untracked and lived only on
 the unmerged `feat/baml-adoption` branch (PR #908); and a `#[path]` escape into
 a sibling clone makes `cargo check --workspace` fail for CI and for every
 contributor without Demerzel checked out. `ix-baml` instead owns the dynamic
 boundary, which is what the executor actually dispatches through, so vendoring
 the generated client later changes nothing outside that crate.
+
+*Update 2026-07-30 — this deviation is now the ecosystem rule, not a local
+workaround.* Demerzel removed `clients/rust/` and `clients/typescript/` under
+CL-817-12 (ADR-0005 Amendment): a client library generated in the governance repo
+for a sibling to compile is that sibling's runtime, and belongs in the sibling.
+Demerzel keeps the contract (`baml_src/schema.baml`) and the Python client its own
+scripts use. So Task 2 changes from *vendor Demerzel's output* to **generate from
+Demerzel's contract into `ix-baml`** — which is what §2 argued for on independent
+grounds, and it removes the last reason the `#[path]` escape could come back.
 
 **§3 — a parser had to be written.**
 The plan and the design spec both assumed parsing was solved by
