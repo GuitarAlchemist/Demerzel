@@ -163,8 +163,81 @@ class TestRunClaudeCode(unittest.TestCase):
         self.assertIn("1s", str(ctx.exception))
 
 
-@unittest.skipUnless((ROOT / "baml_client" / "sync_client.py").is_file(),
-                     "generated BAML client not present")
+def _generated_client_importable():
+    """Whether the generated client can actually be IMPORTED — not merely whether its
+    file exists. `baml_client/` is committed, so a file check passes on a machine with no
+    `baml-py` installed and the tests then error instead of skipping. Checking the file
+    was a guard pointed at the wrong subject; this checks the thing that matters."""
+    try:
+        import baml_client.sync_client  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+CLIENT_IMPORTABLE = _generated_client_importable()
+
+
+class TestTheMoneySeamWithoutTheRuntime(unittest.TestCase):
+    """Source-level assertions on the seam where spend could leak.
+
+    Deliberately textual so they run EVERYWHERE, including CI, which has no `baml-py`.
+    The runtime tests below are stronger but skip without it, and a gate that skips is
+    not a gate — the same reasoning as the `pip install jsonschema` comment in
+    `governance-validate.yml`. These cover the invariant even when the runtime is absent.
+    """
+
+    def test_grader_source_uses_request_and_parse_not_the_in_band_call(self):
+        """Walk the AST rather than grepping the text.
+
+        A substring search cannot tell a CALL from PROSE ABOUT a call — the docstring in
+        `baml_votes` explains why the in-band form is wrong, and a textual guard flags
+        that explanation as the violation it is warning against. Matching `ast.Call`
+        nodes asks the question that actually matters. (`ast` is stdlib, so this still
+        runs where `baml-py` is absent.)
+        """
+        import ast
+        tree = ast.parse((ROOT / "scripts" / "validate_dsp_loop.py").read_text(encoding="utf-8"))
+
+        in_band, via_request, via_parse = [], False, False
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            if not (isinstance(func, ast.Attribute) and func.attr == "EvaluateSignalSwarm"):
+                continue
+            target = func.value
+            if isinstance(target, ast.Name) and target.id == "b":
+                in_band.append(node.lineno)                      # b.EvaluateSignalSwarm(...)
+            elif isinstance(target, ast.Attribute) and isinstance(target.value, ast.Name) \
+                    and target.value.id == "b":
+                via_request |= target.attr == "request"          # b.request.Evaluate...
+                via_parse |= target.attr == "parse"              # b.parse.Evaluate...
+
+        self.assertEqual(
+            [], in_band,
+            f"in-band BAML call at line(s) {in_band}: this sends to the client declared "
+            "in baml_src, which is not a provider the AIW budget policy gates. Use "
+            "b.request/b.parse with scripts/baml_claude_code.py.",
+        )
+        self.assertTrue(via_request, "grader no longer renders via b.request")
+        self.assertTrue(via_parse, "grader no longer types via b.parse")
+
+    def test_the_declared_client_cannot_bill_anyone(self):
+        """Defence in depth: even if an in-band call slipped through, the declared client
+        points at a port nothing can listen on, so it fails closed rather than spending.
+        Asserted against baml_src, which is the contract consumers also generate from."""
+        schema = (ROOT / "baml_src" / "schema.baml").read_text(encoding="utf-8")
+        self.assertIn("client NeverSendInBand", schema)
+        self.assertIn("127.0.0.1:1", schema)
+        self.assertNotIn('client "openai/', schema)
+
+    def test_transport_strips_the_api_key_by_construction(self):
+        self.assertIn("ANTHROPIC_API_KEY", bcc._SUPPRESSED_AUTH_VARS)
+
+
+@unittest.skipUnless(CLIENT_IMPORTABLE,
+                     "baml-py not installed — generated client cannot be imported")
 class TestGraderUsesTheOutOfBandPath(unittest.TestCase):
     """The money tests. These need the real generated client, but no network."""
 
@@ -246,15 +319,6 @@ class TestGraderUsesTheOutOfBandPath(unittest.TestCase):
             with self.assertRaises(SystemExit) as ctx:
                 v.baml_votes(0.0, 0.70, 0.03, self._bounds())
         self.assertIn("grader unavailable", str(ctx.exception))
-
-    def test_the_declared_client_cannot_bill_anyone(self):
-        """Defence in depth behind the tripwire: even if an in-band call slipped through,
-        the declared client points at a port nothing can listen on, so it fails closed
-        rather than spending. Asserted against baml_src, which is the contract."""
-        schema = (ROOT / "baml_src" / "schema.baml").read_text(encoding="utf-8")
-        self.assertIn("client NeverSendInBand", schema)
-        self.assertIn("127.0.0.1:1", schema)
-        self.assertNotIn('client "openai/', schema)
 
 
 if __name__ == "__main__":
