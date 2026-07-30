@@ -2,8 +2,8 @@
   "alert": "ecosystem-freshness",
   "problems": [
     {
-      "kind": "silent_green",
-      "workflow": "substrate-audit.yml"
+      "kind": "failed_run",
+      "workflow": "demerzel-ideation.yml"
     }
   ]
 }
