@@ -104,6 +104,14 @@ jobs:
             #
             # One sed process, reading a FILE, so there is no pipe to break: print lines
             # 1..50, stopping early at the marker.
+            #
+            # NOT byte-equivalent to the old form in one case, and the new behaviour is the
+            # correct one. In `sed -n 'addr1,/regex/p'` the end regex is never tested
+            # against addr1's own line, so if the marker were on LINE 1 the old range ran
+            # to EOF and `head -50` published 50 lines of governance content — precisely
+            # what this step exists to exclude. The new form quits on line 1. Every other
+            # marker position (1<n<=50, >50, absent, empty file) is byte-identical;
+            # verified across all of them.
             sed -n '1,50{p;/<!-- BEGIN DEMERZEL GOVERNANCE -->/q;};50q' repo/CLAUDE.md >> wiki/Home.md
             echo "" >> wiki/Home.md
             echo "[Full CLAUDE.md](${REPO_URL}/blob/master/CLAUDE.md)" >> wiki/Home.md
