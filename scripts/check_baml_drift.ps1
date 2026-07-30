@@ -59,6 +59,23 @@ try {
     npx --yes "@boundaryml/baml@$version" generate
     Assert-NativeSuccess "npx @boundaryml/baml@$version generate"
 
+    # The generator ends several files with a BARE CR and no LF — on Windows
+    # `baml_client/__init__.py` finishes `...\n]\r`, on Linux `...\n]`. A lone \r is not a
+    # line ending, so git's CRLF->LF clean filter does not touch it and .gitattributes
+    # cannot normalise it away: the byte is committed verbatim. That made these files
+    # permanently irreproducible across platforms — whoever last ran the generator decided
+    # the trailing byte, and the other platform's CI saw drift forever.
+    #
+    # Measured, not assumed: committed blob ended b'...\n]\r' (1 CR, 0 CRLF) while the
+    # Linux runner produced b'...\n]'. Strip the trailing CR so both platforms converge on
+    # the same bytes. It is a stray character in a Python file, not content. (#919)
+    foreach ($file in Get-ChildItem -LiteralPath (Join-Path $root 'baml_client') -File -Recurse) {
+        $bytes = [System.IO.File]::ReadAllBytes($file.FullName)
+        if ($bytes.Length -gt 0 -and $bytes[-1] -eq 13) {
+            [System.IO.File]::WriteAllBytes($file.FullName, $bytes[0..($bytes.Length - 2)])
+        }
+    }
+
     # `git status --porcelain` reports a file whose only difference is its line endings,
     # so on a Windows checkout (autocrlf) a CORRECT regenerate looks like 7 changed files
     # when exactly 1 changed. Compare content instead: `git diff` applies the same
