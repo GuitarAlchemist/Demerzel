@@ -38,10 +38,14 @@ jobs:
             echo "kill_active=false" >> $GITHUB_OUTPUT
           fi
 
+      # Pushes to master go over the write deploy key, not GITHUB_TOKEN: the
+      # `risk-report` ruleset on master lists `DeployKey` as its only bypass
+      # actor (the GitHub Actions integration cannot be a bypass actor here —
+      # it has no org installation record). See #902.
       - uses: actions/checkout@v4
         if: steps.kill-check.outputs.kill_active != 'true'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.RULESET_BYPASS_SSH_KEY }}
           fetch-depth: 1
 
       - name: Check daily cap
@@ -84,14 +88,14 @@ jobs:
             git config user.name "Seldon Plan"
             git config user.email "seldon-plan@demerzel.ai"
             git add state/seldon-plan/kill.switch
-            git commit -m "feat(seldon-plan): activate kill switch — manual pause"
+            git commit -m "feat(seldon-plan): activate kill switch — manual pause [skip ci]"
             git push
           elif [ "$ACTION" = "resume" ]; then
             rm -f state/seldon-plan/kill.switch
             git config user.name "Seldon Plan"
             git config user.email "seldon-plan@demerzel.ai"
             git rm -f state/seldon-plan/kill.switch 2>/dev/null || true
-            git commit -m "feat(seldon-plan): deactivate kill switch — resuming"
+            git commit -m "feat(seldon-plan): deactivate kill switch — resuming [skip ci]"
             git push
           elif [ "$ACTION" = "status" ]; then
             echo "=== Seldon Plan Status ==="
