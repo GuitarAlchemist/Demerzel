@@ -43,4 +43,4 @@ class LlmStreamParser:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="EvaluateSignalSwarm", llm_response=llm_response, mode="stream")
         return typing.cast(stream_types.SwarmVote, __result__)
 
-    
+    
