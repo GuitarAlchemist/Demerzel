@@ -24,6 +24,16 @@ are typically peers under the same parent directory.
   these runtime artifacts had not been generated, so `qa_score_quality_drift` had
   no live input. Any consumer must degrade explicitly when the artifacts are absent.
   ⚠️ *This liveness claim is dated — re-verify against `../ix/` before relying on it.*
+- **ix ← Demerzel, BAML clients** — the reverse direction of the seam above, and the
+  first one where *Demerzel* is the producer. The IxQL executor in `ix`
+  (`crates/ix-ixql`, `crates/ix-baml`) consumes the Rust client generated from
+  Demerzel's `baml_src/`. `ix-baml` currently owns the dynamic seam behind offline
+  stand-ins; the generated client is vendored into it **once Demerzel #908 merges**.
+  Design and status: [`ixql-executor-design-spec.md`](ixql-executor-design-spec.md)
+  and [`ixql-executor-plan.md`](ixql-executor-plan.md).
+  ⚠️ **Undelivered:** #908 is open, so nothing in `ix` reads a real generated client
+  yet. Note also that one `.baml` source drives three generators — a consumer that
+  vendors the Rust output is pinning a copy, not tracking the source.
 - **tars** (`../tars/`, F# grammar + metacognition) — cross-model theory validator.
 
 ## Rules of change

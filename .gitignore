@@ -60,3 +60,8 @@ dist/
 # from the tracked bounds + template, not canonical governance state. Same precedent as
 # state/oversight/ml-recommendations/. The seam README is tracked.
 state/dsp-validation/*.json
+
+# Local MCP server wiring emitted by a client tool. Machine-specific (absolute
+# paths into a developer's own clone) and not governance state, so it must never
+# be committed to a public repo. The tracked, portable equivalent is `.mcp.json`.
+mcp_config.json
