@@ -24,16 +24,24 @@ are typically peers under the same parent directory.
   these runtime artifacts had not been generated, so `qa_score_quality_drift` had
   no live input. Any consumer must degrade explicitly when the artifacts are absent.
   ⚠️ *This liveness claim is dated — re-verify against `../ix/` before relying on it.*
-- **ix ← Demerzel, BAML clients** — the reverse direction of the seam above, and the
-  first one where *Demerzel* is the producer. The IxQL executor in `ix`
-  (`crates/ix-ixql`, `crates/ix-baml`) consumes the Rust client generated from
-  Demerzel's `baml_src/`. `ix-baml` currently owns the dynamic seam behind offline
-  stand-ins; the generated client is vendored into it **once Demerzel #908 merges**.
-  Design and status: [`ixql-executor-design-spec.md`](ixql-executor-design-spec.md)
-  and [`ixql-executor-plan.md`](ixql-executor-plan.md).
-  ⚠️ **Undelivered:** #908 is open, so nothing in `ix` reads a real generated client
-  yet. Note also that one `.baml` source drives three generators — a consumer that
-  vendors the Rust output is pinning a copy, not tracking the source.
+- **ix / ga / hari ← Demerzel, the BAML contract** — the reverse direction of the seam
+  above, and the only one where *Demerzel* is the producer. The contract is
+  **`baml_src/schema.baml`**, not a client. Each consumer runs `baml generate` against it
+  with its own `output_dir` and commits the result in its own repo: the IxQL executor in
+  `ix` (`crates/ix-ixql`, `crates/ix-baml`) needs the Rust client, ga's chatbot front-ends
+  the TypeScript one. Demerzel generates only the Python client, which its own scripts
+  import. Design: [`ixql-executor-design-spec.md`](ixql-executor-design-spec.md) and
+  [`ixql-executor-plan.md`](ixql-executor-plan.md).
+
+  Demerzel briefly committed all three clients (#908, 2026-07-29) and removed the
+  consumer-facing two the next day under CL-817-12 — a client library built here for a
+  sibling to compile is that sibling's runtime in the governance repo. `ix` had already
+  refused to `#[path]`-include them for its own reason (it breaks
+  `cargo check --workspace` for anyone without a Demerzel checkout), so nothing broke.
+
+  ⚠️ **Undelivered:** no consumer generates from this contract yet — `ix-baml` still runs
+  on offline stand-ins. **Changing `schema.baml` is now a cross-repo event:** consumers
+  hold their own generated copies, and nothing here can see that they have gone stale.
 - **tars** (`../tars/`, F# grammar + metacognition) — cross-model theory validator.
 
 ## Rules of change

@@ -180,3 +180,9 @@ We introduce a dedicated wrapper crate `crates/ix-baml` within `ix`'s Cargo work
   #[path = "../../../../Demerzel-baml/clients/rust/baml_client/mod.rs"]
   pub mod baml_client;
   ```
+
+  > **Superseded 2026-07-30.** This proposal was rejected — see the plan's Deviations §2
+  > for `ix`'s reasons — and the target no longer exists: Demerzel removed
+  > `clients/rust/` under CL-817-12 (ADR-0005 Amendment). `ix` generates its own client
+  > from Demerzel's `baml_src/schema.baml` into `ix-baml`, so there is no path to escape
+  > into and `cargo check --workspace` stays self-contained.

@@ -37,23 +37,36 @@ if (Test-Path -LiteralPath (Join-Path $root 'tree-sitter-ixql/package.json')) {
     }
 }
 
-# ADR-0005 §Decision.4 — regenerate the BAML clients and fail on drift.
+# ADR-0005 §Decision.4 — regenerate the Python BAML client and fail on drift.
 #
-# The three client trees are COMMITTED (sibling repos copy or reference them, and a
-# Rust/TypeScript consumer cannot run `baml generate` as part of its own build), so
-# they are derived-but-tracked artifacts. That only stays honest if CI diffs them:
-# without this check a `.baml` edit merges with stale clients and the typed contract
-# silently stops matching the schema. Same discipline as governance-manifest.json.
+# `baml_client/` is COMMITTED but derived, so baml_src/ and it can disagree. That only
+# stays honest if something diffs them: without this check a `.baml` edit merges with a
+# stale client and the typed contract silently stops matching the schema. Same discipline
+# as governance-manifest.json.
+#
+# Scope is `baml_client` only. The Rust and TypeScript trees moved to their consumers on
+# 2026-07-30 (ADR-0005 Amendment; CL-817-12) — each consumer generates from the contract
+# and diffs its own output.
+#
+# NOTE: this check is NOT wired to CI — no workflow invokes verify.ps1 (#919). It fires
+# only when a human or the supervised loop runs this script. Drift has already reached
+# master once behind that gap; do not read a passing local run as a CI guarantee.
 if (Test-Path -LiteralPath (Join-Path $root 'baml_src')) {
     Push-Location $root
     try {
         npx --yes @boundaryml/baml generate
         Assert-NativeSuccess 'npx @boundaryml/baml generate'
 
-        $drift = git status --porcelain -- baml_client clients
-        if ($drift) {
-            Write-Host $drift
-            throw "BAML clients are out of date with baml_src/. Run 'npx --yes @boundaryml/baml generate' and commit the result."
+        # `git status --porcelain` reports a file whose only difference is its line
+        # endings, so on a Windows checkout (autocrlf) a CORRECT regenerate looks like
+        # 7 changed files when exactly 1 changed. Compare content instead: `git diff`
+        # applies the same normalisation git would on commit. Verified 2026-07-30 —
+        # porcelain said 7, diff said 1, and the 1 was the real change.
+        $drift = git diff --name-only -- baml_client
+        $untracked = git ls-files --others --exclude-standard -- baml_client
+        if ($drift -or $untracked) {
+            Write-Host ($drift + $untracked)
+            throw "baml_client/ is out of date with baml_src/. Run 'npx --yes @boundaryml/baml generate' and commit the result."
         }
     } finally {
         Pop-Location
