@@ -17,7 +17,9 @@ name: Auto-delegate ready-for-agent issues to Jules
 #
 # Eligibility:
 # - open issue must have BOTH `ready-for-agent` and `worker:jules`.
-# - the workflow writes a `<!-- jules-delegated -->` marker before invoking Jules.
+# - the workflow writes a `<!-- jules-delegated -->` marker only AFTER Jules has
+#   accepted the delegation. It used to write it before invoking Jules, which turned
+#   a failed delegation into a permanent record of a successful one (#925).
 # - repeated scheduled runs skip issues already carrying that marker.
 #
 # Safety:
@@ -210,7 +212,13 @@ jobs:
           fi
           echo "::notice::AIW budget gate allowed jules delegation for issue #$issue"
 
-          gh issue comment "$issue" --repo "$REPO" --body "🤖 Delegating this \`ready-for-agent\` + \`worker:jules\` issue to Jules via governed AFK workflow. $marker\n\nJules should open a PR targeting \`master\`. Human/Demerzel review is still required before merge."
+          # NOTE: no delegation marker here. This comment announces the ATTEMPT; the
+          # marker that makes an issue permanently ineligible is written only after
+          # `Delegate to Jules` actually succeeds. See the step at the end of this job
+          # and #925 — six issues were marked delegated on 2026-06-30 and Jules never
+          # opened a single PR, because the receipt was written before the thing it
+          # attests to had happened.
+          gh issue comment "$issue" --repo "$REPO" --body "🤖 Attempting delegation of this \`ready-for-agent\` + \`worker:jules\` issue to Jules via the governed AFK workflow. Jules should open a PR targeting \`master\`; human/Demerzel review is still required before merge. If no confirmation comment follows this one, the delegation did **not** succeed and the issue stays eligible for retry."
 
           echo "issue=$issue" >> "$GITHUB_OUTPUT"
           echo "proceed=true" >> "$GITHUB_OUTPUT"
@@ -250,9 +258,43 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Delegate to Jules
+        id: jules
         if: steps.gate.outputs.proceed == 'true'
         uses: google-labs-code/jules-action@v1.0.0
         with:
           prompt: ${{ steps.prompt.outputs.text }}
           jules_api_key: ${{ secrets.JULES_API_KEY }}
           starting_branch: master
+
+      # The delegation marker is written HERE, and only here — after the action above
+      # actually succeeded. It is what makes an issue permanently ineligible for the
+      # scheduled listener (see has_delegation_marker), so writing it earlier turns a
+      # failed delegation into a permanent record of a successful one. That is exactly
+      # what happened to #596, #594, #543, #527, #517 and #471: marked 2026-06-30,
+      # zero PRs a month later, and skipped by every scheduled run since. (#925)
+      #
+      # A step with no `if:` does not run when an earlier step in the job failed, so
+      # this is naturally gated on the delegation having worked.
+      - name: Record confirmed delegation
+        if: steps.gate.outputs.proceed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh issue comment "$ISSUE" --repo "$REPO" --body "✅ Jules accepted the delegation ([run]($RUN_URL)). This marker makes the issue ineligible for further automatic delegation; re-delegate via \`workflow_dispatch\` with \`force: true\` if needed. <!-- jules-delegated -->"
+
+      # Fail loud and stay eligible. Without this the only signal that a delegation
+      # failed is a red run nobody is watching, on an issue that looks delegated.
+      - name: Report failed delegation
+        if: failure() && steps.gate.outputs.proceed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh issue comment "$ISSUE" --repo "$REPO" --body "❌ Delegation to Jules **failed** ([run]($RUN_URL)). No delegation marker was written, so this issue stays eligible and the scheduled listener will retry it. If this repeats, check \`JULES_API_KEY\` and the \`google-labs-code/jules-action\` step log."
