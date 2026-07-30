@@ -536,9 +536,19 @@ class TestBudgetGate(unittest.TestCase):
             cycle = json.loads(led.read_text(encoding="utf-8"))
         self.assertEqual({}, cycle["reservations"])          # slot freed
         self.assertEqual(0, cycle["active_packets"])
-        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"])  # charged, not $0
+        forged = (
+            "A metered reservation was released cleanly at the caller's "
+            "actual_cost_usd instead of being abandoned at its reserved estimate. "
+            "That happens when _budget_release synthesises the provider receipt "
+            "release() asks for. Do not 'fix' this test: _validate_receipt checks "
+            "structure, not authenticity, so a receipt whose issuer is copied out "
+            "of our own policy passes, and every metered episode then reconciles "
+            "as $0.00 VERIFIED spend forever. If release() cannot be satisfied "
+            "honestly, abandon() is the answer -- see #896 and "
+            "docs/solutions/harness/2026-07-29-a-guard-is-only-as-good-as-its-subject.md")
+        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"], msg=forged)  # charged, not $0
         entry = cycle["unreconciled"][0]
-        self.assertFalse(entry["receipt_verified"])
+        self.assertFalse(entry["receipt_verified"], msg=forged)
         self.assertEqual("anthropic-api", entry["provider"])
 
     def test_abandon_does_not_wedge_the_gate_after_repeated_metered_runs(self):
