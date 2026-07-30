@@ -45,15 +45,48 @@ def load_registry(path: Path | None = None) -> dict[str, dict[str, Any]]:
     for name, cfg in backends.items():
         if not isinstance(cfg, dict):
             raise RegistryError(f"{p}: backend {name!r} must be a mapping")
-        for key in ("adapter", "provider"):
-            if not isinstance(cfg.get(key), str) or not cfg[key].strip():
-                raise RegistryError(f"{p}: backend {name!r} missing required {key}")
+        if not isinstance(cfg.get("adapter"), str) or not cfg["adapter"].strip():
+            raise RegistryError(f"{p}: backend {name!r} missing required adapter")
+
+        from_config = cfg.get("provider_from_config", False)
+        if not isinstance(from_config, bool):
+            raise RegistryError(
+                f"{p}: backend {name!r} provider_from_config must be a boolean")
+        if from_config:
+            if "provider" in cfg:
+                raise RegistryError(
+                    f"{p}: backend {name!r} sets both provider and "
+                    f"provider_from_config; the attribution has one source")
+        elif not isinstance(cfg.get("provider"), str) or not cfg["provider"].strip():
+            raise RegistryError(f"{p}: backend {name!r} missing required provider")
+
         if "enabled" not in cfg:
             cfg["enabled"] = False
         elif not isinstance(cfg["enabled"], bool):
             raise RegistryError(f"{p}: backend {name!r} enabled must be a boolean")
 
+        # A backend whose spend attribution depends on operator configuration
+        # cannot be enabled without stating what it bills. Hardcoding a guess in
+        # the registry is how a metered endpoint ends up gated as a free
+        # local-seat subscription (#915, same shape as #863).
+        if from_config and cfg["enabled"] and _config_provider(cfg) is None:
+            raise RegistryError(
+                f"{p}: backend {name!r} is enabled but its config block declares "
+                f"no provider; set config.provider to the allowlisted AIW provider "
+                f"this backend actually bills")
+
     return backends
+
+
+def _config_provider(cfg: dict[str, Any]) -> str | None:
+    """Return the provider declared inside a backend's own config block, if any."""
+    conf = cfg.get("config")
+    if not isinstance(conf, dict):
+        return None
+    value = conf.get("provider")
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return None
 
 
 def _resolve_class(dotted_path: str) -> type[AFKBackend]:
@@ -90,9 +123,24 @@ def get_backend(name: str, registry: dict[str, dict[str, Any]] | None = None) ->
 
 
 def provider_for(name: str, registry: dict[str, dict[str, Any]] | None = None) -> str:
-    """Return the AIW budget provider id for the named backend."""
+    """Return the AIW budget provider id for the named backend.
+
+    For a backend marked ``provider_from_config``, the attribution is a property
+    of the endpoint an operator configured, not of the adapter, so it is read
+    from ``config.provider``. An unset one raises rather than falling back to a
+    default: the caller (``_budget_reserve``) fails closed on the raise, whereas
+    a fallback would bill metered spend under whatever the default happened to
+    be (#915).
+    """
     reg = load_registry() if registry is None else registry
     cfg = reg.get(name)
     if cfg is None:
         raise RegistryError(f"unknown backend {name!r}")
+    if cfg.get("provider_from_config"):
+        provider = _config_provider(cfg)
+        if provider is None:
+            raise RegistryError(
+                f"backend {name!r} takes its budget provider from its config "
+                f"block and none is set; there is no safe default to assume")
+        return provider
     return cfg["provider"]
