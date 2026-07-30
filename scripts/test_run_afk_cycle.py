@@ -122,6 +122,25 @@ def _council(verdict="APPROVE", conf=0.75, n_reviews=2, aligned=True):
     return {"verdict": verdict, "post_council_confidence": conf, "reviews": reviews}
 
 
+def _approval(request, policy):
+    """A structurally valid human-approval artifact for a metered reserve.
+
+    Built in the test rather than by product code on purpose: the governor must
+    never mint its own approval, exactly as it must never mint its own receipt.
+    """
+    return {
+        "schema_version": "1.0",
+        "kind": "human-approval",
+        "decision": "approve",
+        "job_id": request["job_id"],
+        "provider": request["provider"],
+        "request_sha256": g.budget._request_sha256(request),
+        "approval_id": "test-approval-001",
+        "approver": "test-operator",
+        "approved_at": "2026-07-29T00:00:00Z",
+    }
+
+
 class TestAuthorizationTrace(unittest.TestCase):
     def test_closes(self):
         self.assertEqual(g.parse_authorization_trace("Implements #381 via AFK.\nCloses #381"),
@@ -466,13 +485,13 @@ class TestBudgetGate(unittest.TestCase):
         from afk_backends.registry import load_registry
         declared = {p["id"] for p in
                     g.budget.load_policy(g.budget.POLICY_PATH)["providers"]}
+        # Every backend, enabled or not. Scoping this to enabled-only left
+        # `generic-shell` (#882) and `junie-cli` (#911) naming providers no policy
+        # declared: safe, because _provider() raises and _budget_reserve fails
+        # closed, but the misconfiguration only surfaced when someone flipped
+        # `enabled` and got a mystery block. Both are now declared, so the check
+        # can be unconditional -- which is what makes it catch the NEXT one.
         for backend, cfg in load_registry().items():
-            if not cfg.get("enabled"):
-                # A disabled backend cannot spend. `shell` (#882) currently names
-                # `generic-shell`, which no policy declares -- _provider() raises
-                # and _budget_reserve fails closed, so it is safe but unrunnable.
-                # Filed rather than fixed here: choosing its tier is #882's call.
-                continue
             self.assertIn(cfg["provider"], declared,
                           f"backend {backend!r} names undeclared provider "
                           f"{cfg['provider']!r}")
@@ -493,6 +512,54 @@ class TestBudgetGate(unittest.TestCase):
                 g._process_issue(issue, seq=1, today="2026-07-19", backend=backend,
                                  adapter=mock.Mock())
             res.assert_called_once_with(issue, backend)
+
+    def test_metered_release_is_abandoned_not_forged(self):
+        """#896: a metered reservation cannot be released (no receipt), so it used
+        to stay open forever and wedge the cycle. It is now ABANDONED: the slot is
+        freed and the reserved estimate is charged as unverified spend.
+
+        The point of the test is what must NOT happen: no receipt is synthesised.
+        `_validate_receipt` checks structure, not authenticity, so a self-issued
+        receipt would pass and reconcile metered spend at whatever we claimed --
+        turning the control into a no-op. Assert the ledger records the charge as
+        unverified rather than as a clean release."""
+        policy = g.budget.load_policy(g.budget.POLICY_PATH)
+        with tempfile.TemporaryDirectory() as d:
+            led = Path(d) / "cycle.json"
+            req = g._budget_request({"number": 5, "body": ""}, "local")
+            req["estimated_cost_usd"] = 1.25
+            g.budget.reserve(policy, req, led, approval=_approval(req, policy))
+
+            with mock.patch.object(g.budget, "CYCLE_LEDGER_PATH", led):
+                g._budget_release({"number": 5}, actual_cost_usd=0.0)
+
+            cycle = json.loads(led.read_text(encoding="utf-8"))
+        self.assertEqual({}, cycle["reservations"])          # slot freed
+        self.assertEqual(0, cycle["active_packets"])
+        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"])  # charged, not $0
+        entry = cycle["unreconciled"][0]
+        self.assertFalse(entry["receipt_verified"])
+        self.assertEqual("anthropic-api", entry["provider"])
+
+    def test_abandon_does_not_wedge_the_gate_after_repeated_metered_runs(self):
+        """The actual #896 acceptance test. Four unreconciled metered episodes
+        exhausted cycle.max_parallel_packets and blocked EVERY provider,
+        including the free subscription lane. After abandon, the default lane
+        still reserves."""
+        policy = g.budget.load_policy(g.budget.POLICY_PATH)
+        cap = int(policy["cycle"]["max_parallel_packets"])
+        with tempfile.TemporaryDirectory() as d:
+            led = Path(d) / "cycle.json"
+            for n in range(cap + 1):
+                req = g._budget_request({"number": 100 + n, "body": ""}, "local")
+                g.budget.reserve(policy, req, led, approval=_approval(req, policy))
+                with mock.patch.object(g.budget, "CYCLE_LEDGER_PATH", led):
+                    g._budget_release({"number": 100 + n})
+            after = g.budget.reserve(
+                policy, g._budget_request({"number": 999, "body": ""}, "claude-code"), led)
+        self.assertEqual("allow", after["decision"],
+                         f"subscription lane blocked after {cap + 1} metered runs: "
+                         f"{after['reasons']}")
 
     def test_unmapped_backend_fails_closed(self):
         allowed, result = g._budget_reserve({"number": 5, "body": ""}, "not-a-backend")

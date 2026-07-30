@@ -4,7 +4,7 @@
   "definitions": {
     "providerId": {
       "type": "string",
-      "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "anthropic-api", "gemini-cli", "jules", "notebooklm"],
+      "enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "generic-shell", "anthropic-api", "gemini-cli", "jules", "junie-cli", "notebooklm"],
       "description": "Closed allowlist. Adding a provider must be a deliberate schema change."
     }
   },
@@ -130,6 +130,19 @@
             }
           },
           {
+            "description": "junie-cli bills real money: JetBrains Junie consumes a JetBrains AI quota (its registry entry references JUNIE_API_KEY), so it is metered cloud spend, not a local seat. Pinned by id for the same reason as the others -- #863 was mis-fixed twice by naming a free local-seat provider for a metered backend, and both wrong values were well-formed and allowlisted.",
+            "if": {"properties": {"id": {"const": "junie-cli"}}, "required": ["id"]},
+            "then": {
+              "properties": {
+                "tier": {"const": "metered-cloud"},
+                "cost_model": {"const": "provider-billing"},
+                "requires_manual_approval": {"const": true},
+                "trusted_receipt_issuer": {"const": "api.jetbrains.com"}
+              },
+              "required": ["trusted_receipt_issuer"]
+            }
+          },
+          {
             "description": "anthropic-api bills real money: it is the Anthropic Messages API consuming ANTHROPIC_API_KEY, NOT a Claude subscription seat. Pinned by id because #863 was exactly this confusion, twice. First the AFK `local` backend was attributed to codex-cli; then #877 'fixed' it by swapping to claude-code-cli -- a DIFFERENT local-seat, no-approval provider -- so the observable behaviour never changed. Both wrong values were well-formed and allowlisted, which is why nothing caught either. Pinning by id means a later diff cannot re-open the hole by editing tier alone. Do NOT reuse this id for claude-code-cli, which strips the key and rides the subscription.",
             "if": {"properties": {"id": {"const": "anthropic-api"}}, "required": ["id"]},
             "then": {
@@ -146,7 +159,7 @@
             "description": "Local-seat providers have no metered spend; grouping their ids keeps one shared constraint from drifting as the allowlist evolves.",
             "if": {
               "properties": {
-                "id": {"enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code"]}
+                "id": {"enum": ["claude-code-cli", "codex-cli", "antigravity", "augment-code", "generic-shell"]}
               },
               "required": ["id"]
             },

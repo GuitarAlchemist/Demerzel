@@ -152,19 +152,41 @@ def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
     try:
         budget.release(budget.CYCLE_LEDGER_PATH, job_id, actual_cost_usd,
                        policy=budget.load_policy(budget.POLICY_PATH))
+        return
     except Exception as exc:
-        # The breadth here is deliberate — release failure must never break the
-        # loop. But a swallowed release leaves the reservation open, so the
-        # ledger over-reports committed spend and max_parallel_packets fills with
-        # reservations that never clear. Write the swallow down so that state is
-        # detectable afterwards instead of silent (#794).
-        try:
-            noted = budget.note_release_failure(budget.CYCLE_LEDGER_PATH, job_id, str(exc))
-        except Exception:  # noqa: BLE001 — recording a failure must never become one
-            noted = False
-        print(f"budget release skipped for #{issue.get('number')}: {exc}"
-              f"{'' if noted else ' (and the ledger note could not be written)'}",
-              file=sys.stderr)
+        release_error = exc
+
+    # A metered reservation (e.g. `local` -> anthropic-api) cannot be released
+    # here: release() demands a trusted provider receipt and the governor has
+    # none to offer. Leaving it open was the #896 wedge — active_packets never
+    # fell, and four such episodes blocked every lane including the healthy
+    # subscription one. Abandon it instead: the slot is freed and the reserved
+    # ESTIMATE is charged to actual spend, but nothing is claimed as verified.
+    # Deliberately NOT synthesising a receipt — _validate_receipt checks
+    # structure, not authenticity, so a self-issued one would pass and turn the
+    # metered-spend control into a no-op.
+    try:
+        abandoned = budget.abandon(budget.CYCLE_LEDGER_PATH, job_id, str(release_error))
+        print(f"budget reservation abandoned for #{issue.get('number')}: charged "
+              f"${abandoned['charged_estimate_usd']:.2f} as UNVERIFIED spend "
+              f"({release_error})", file=sys.stderr)
+        return
+    except Exception:  # noqa: BLE001 — fall through to the audit note below
+        pass
+
+    # Neither release nor abandon worked (e.g. the reservation was never written,
+    # or the ledger is unreadable). Release failure must never break the loop, but
+    # a swallowed one leaves the reservation open, so the ledger over-reports
+    # committed spend and max_parallel_packets fills with reservations that never
+    # clear. Write the swallow down so that state is detectable (#794).
+    try:
+        noted = budget.note_release_failure(
+            budget.CYCLE_LEDGER_PATH, job_id, str(release_error))
+    except Exception:  # noqa: BLE001 — recording a failure must never become one
+        noted = False
+    print(f"budget release skipped for #{issue.get('number')}: {release_error}"
+          f"{'' if noted else ' (and the ledger note could not be written)'}",
+          file=sys.stderr)
 
 
 def halt_active() -> tuple[bool, str]:

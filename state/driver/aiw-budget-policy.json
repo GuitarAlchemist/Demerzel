@@ -38,6 +38,12 @@
       "requires_manual_approval": false
     },
     {
+      "id": "generic-shell",
+      "tier": "local-seat",
+      "cost_model": "subscription-or-local",
+      "requires_manual_approval": false
+    },
+    {
       "id": "anthropic-api",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
@@ -59,6 +65,13 @@
       "trusted_receipt_issuer": "jules.googleapis.com"
     },
     {
+      "id": "junie-cli",
+      "tier": "metered-cloud",
+      "cost_model": "provider-billing",
+      "requires_manual_approval": true,
+      "trusted_receipt_issuer": "api.jetbrains.com"
+    },
+    {
       "id": "notebooklm",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
@@ -71,9 +84,11 @@
     "codex-cli",
     "antigravity",
     "augment-code",
+    "generic-shell",
     "anthropic-api",
     "gemini-cli",
     "jules",
+    "junie-cli",
     "notebooklm"
   ]
 }
