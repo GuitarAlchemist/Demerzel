@@ -92,8 +92,19 @@ jobs:
           if [ -f repo/CLAUDE.md ]; then
             echo "## Development Guide" >> wiki/Home.md
             echo "" >> wiki/Home.md
-            # Extract content before governance markers
-            sed -n '1,/<!-- BEGIN DEMERZEL GOVERNANCE -->/p' repo/CLAUDE.md | head -50 >> wiki/Home.md
+            # Extract content before the governance marker, capped at 50 lines.
+            #
+            # Deliberately NOT `sed ... | head -50`. This step runs under
+            # `bash -e -o pipefail`: once head has its 50 lines it closes the pipe, sed
+            # dies on EPIPE ("couldn't flush stdout: Broken pipe", exit 4), and pipefail
+            # fails the whole step. The wiki output was always correct — only the exit
+            # code was wrong. It passed while CLAUDE.md was under 50 lines before the
+            # marker and started failing when it grew past it, so nothing looked like a
+            # change had broken it. (#917)
+            #
+            # One sed process, reading a FILE, so there is no pipe to break: print lines
+            # 1..50, stopping early at the marker.
+            sed -n '1,50{p;/<!-- BEGIN DEMERZEL GOVERNANCE -->/q;};50q' repo/CLAUDE.md >> wiki/Home.md
             echo "" >> wiki/Home.md
             echo "[Full CLAUDE.md](${REPO_URL}/blob/master/CLAUDE.md)" >> wiki/Home.md
           fi
@@ -144,8 +155,8 @@ jobs:
             ! -path './obj*' \
             ! -path './target*' \
             ! -path './.vs*' \
-            | sort | head -40 \
-            | sed 's|^\./||')
+            | sort \
+            | sed -n '1,40{s|^\./||;p}')
           \`\`\`
 
           ---
