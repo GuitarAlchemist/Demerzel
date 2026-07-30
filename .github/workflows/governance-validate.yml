@@ -33,6 +33,12 @@ on:
       - 'README.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      # baml_src/ and baml_client/ trigger the `baml-drift` job below. Without them a
+      # PR touching ONLY the contract or its generated client would not start this
+      # workflow at all, making the drift job a guard on a path that never executes —
+      # the same defect #919 is about, one level up.
+      - 'baml_src/**'
+      - 'baml_client/**'
       - '.github/loop-health.yml'
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
