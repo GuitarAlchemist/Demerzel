@@ -375,7 +375,18 @@ def baml_votes(mean, std_dev, thd, bounds, model=None):
             # voted. Abort the cycle; the caller records `aborted_reason` and exits
             # non-zero rather than proposing a parameter nothing graded.
             raise SystemExit(f"BAML grader unavailable: {exc}")
-        vote = b.parse.EvaluateSignalSwarm(raw)
+        try:
+            vote = b.parse.EvaluateSignalSwarm(raw)
+        except Exception as exc:  # noqa: BLE001 — baml_py.BamlError and anything under it
+            # The CLI can exit 0 and still return something that is not a SwarmVote: an
+            # apology, a refusal, a truncated object. BAML refuses to coerce it, which is
+            # correct — but the raw exception escaped as a traceback, so the run recorded no
+            # `aborted_reason` and never said which reply broke it. Same rule as above: an
+            # ungradeable answer is not a vote. Abort, and quote the reply.
+            raise SystemExit(
+                f"BAML grader returned an ungradeable response for {role}: {exc}\n"
+                f"  raw reply (first 300 chars): {raw[:300]}"
+            )
         votes.append({
             "agent_id": vote.agent_id,
             "role": vote.role.value if hasattr(vote.role, "value") else str(vote.role),

@@ -46,7 +46,25 @@ DEFAULT_TIMEOUT_S = 300
 #
 # So strip it from the CHILD environment rather than trusting the parent's. A transport
 # whose billing depends on an ambient variable is not a guarantee, it is a coincidence.
-_SUPPRESSED_AUTH_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")
+# The key is not the only ambient route to a metered backend, which is why this is a list
+# and not one name. An adversarial cross-model review of the first version pointed out that
+# suppressing only the key leaves every other billing switch in place:
+#
+#   ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN  — direct metered API credentials
+#   CLAUDE_CODE_USE_BEDROCK                   — routes to AWS Bedrock, billed to the AWS account
+#   CLAUDE_CODE_USE_VERTEX                    — routes to GCP Vertex, billed to the GCP project
+#   ANTHROPIC_BASE_URL                        — redirects to a gateway/proxy that may meter
+#
+# Deliberately NOT stripping AWS_*/GOOGLE_* credentials: without the routing switch above
+# they select no backend, and removing them could break unrelated tooling in the same
+# process tree. Suppress the switch, not the whole cloud.
+_SUPPRESSED_AUTH_VARS = (
+    "ANTHROPIC_API_KEY",
+    "ANTHROPIC_AUTH_TOKEN",
+    "CLAUDE_CODE_USE_BEDROCK",
+    "CLAUDE_CODE_USE_VERTEX",
+    "ANTHROPIC_BASE_URL",
+)
 
 
 class ClaudeCodeError(RuntimeError):
@@ -138,7 +156,17 @@ def run_claude_code(prompt: str, *, model: str | None = None,
             "transport; install it or pass a different grader."
         )
 
-    argv = [CLAUDE_BIN, "-p"]
+    # `claude -p` is a CODING AGENT in headless mode, not a text-completion endpoint: by
+    # default it can read and write files and run commands in its working directory. This
+    # transport wants exactly one thing from it — a completion — and a grader that can edit
+    # the repository it is grading is a worse problem than the metered spend this module was
+    # written to avoid. An empty allowlist grants no tools. (Verified: `claude -p
+    # --allowed-tools ""` still answers normally.)
+    #
+    # Cheap now, load-bearing later: today's prompt is assembled from telemetry floats, but
+    # `render_prompt` forwards whatever BAML renders, so a future prompt carrying model- or
+    # file-derived text would otherwise be an injection path straight into tool use.
+    argv = [CLAUDE_BIN, "-p", "--allowed-tools", ""]
     if model:
         argv += ["--model", model]
 

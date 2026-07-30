@@ -88,7 +88,7 @@ class TestRunClaudeCode(unittest.TestCase):
                                return_value=self._completed()) as run:
             bcc.run_claude_code(prompt)
         argv, kwargs = run.call_args[0][0], run.call_args[1]
-        self.assertEqual(["claude", "-p"], argv)
+        self.assertEqual(["claude", "-p", "--allowed-tools", ""], argv)
         self.assertEqual(prompt, kwargs["input"])
         self.assertNotIn(prompt, argv)
 
@@ -113,6 +113,40 @@ class TestRunClaudeCode(unittest.TestCase):
         self.assertNotIn("ANTHROPIC_AUTH_TOKEN", child_env)
         self.assertIn("PATH", child_env)   # the rest of the environment survives
 
+    def test_every_ambient_route_to_a_metered_backend_is_stripped(self):
+        """Suppressing only ANTHROPIC_API_KEY leaves the other billing switches in place.
+        CLAUDE_CODE_USE_BEDROCK / _USE_VERTEX select a cloud backend billed to the AWS
+        account or GCP project, and ANTHROPIC_BASE_URL can redirect to a metering gateway —
+        none of which is the subscription this transport exists to use. Raised by an
+        adversarial cross-model review of the first version."""
+        ambient = {
+            "ANTHROPIC_API_KEY": "sk-x",
+            "ANTHROPIC_AUTH_TOKEN": "tok",
+            "CLAUDE_CODE_USE_BEDROCK": "1",
+            "CLAUDE_CODE_USE_VERTEX": "1",
+            "ANTHROPIC_BASE_URL": "https://gateway.example/v1",
+            "PATH": "/usr/bin",
+        }
+        with mock.patch.dict(bcc.os.environ, ambient, clear=False):
+            env = bcc.subscription_env()
+        for var in ambient:
+            if var == "PATH":
+                self.assertIn(var, env)          # unrelated environment survives
+            else:
+                self.assertNotIn(var, env, f"{var} still reaches the child")
+
+    def test_no_tools_are_granted_to_the_grader(self):
+        """`claude -p` is a coding agent, not a completion endpoint: by default it can
+        read/write files and run commands in its cwd. A grader needs none of that, and a
+        grader able to edit the repo it grades is worse than the spend problem this module
+        was written to solve."""
+        with mock.patch.object(bcc.shutil, "which", return_value="/usr/bin/claude"),              mock.patch.object(bcc.subprocess, "run",
+                               return_value=self._completed()) as run:
+            bcc.run_claude_code("p")
+        argv = run.call_args[0][0]
+        self.assertIn("--allowed-tools", argv)
+        self.assertEqual("", argv[argv.index("--allowed-tools") + 1])
+
     def test_subscription_env_is_a_copy_not_a_mutation(self):
         # Stripping the key from os.environ itself would change auth for the whole
         # process, including code that legitimately uses the API.
@@ -129,7 +163,7 @@ class TestRunClaudeCode(unittest.TestCase):
              mock.patch.object(bcc.subprocess, "run",
                                return_value=self._completed()) as run:
             bcc.run_claude_code("p", model="a-model-name")
-        self.assertEqual(["claude", "-p", "--model", "a-model-name"],
+        self.assertEqual(["claude", "-p", "--allowed-tools", "", "--model", "a-model-name"],
                          run.call_args[0][0])
 
     def test_missing_cli_is_a_clear_error(self):
@@ -309,6 +343,19 @@ class TestGraderUsesTheOutOfBandPath(unittest.TestCase):
         with mock.patch.object(bcc, "run_claude_code", return_value=raw) as run:
             v.baml_votes(0.0, 0.70, 0.03, self._bounds(), model="some-model")
         self.assertEqual("some-model", run.call_args[1]["model"])
+
+    def test_an_ungradeable_reply_aborts_and_quotes_itself(self):
+        """The CLI can exit 0 and still return something that is not a SwarmVote — an
+        apology, a refusal, a truncated object. BAML refuses to coerce it, which is right,
+        but that must surface as an abort naming the reply rather than a bare traceback."""
+        import validate_dsp_loop as v
+        with mock.patch.object(bcc, "run_claude_code",
+                               return_value="I'm sorry, I can't help with that."):
+            with self.assertRaises(SystemExit) as ctx:
+                v.baml_votes(0.0, 0.70, 0.03, self._bounds())
+        message = str(ctx.exception)
+        self.assertIn("ungradeable", message)
+        self.assertIn("I'm sorry", message)      # the offending reply is quoted
 
     def test_an_unreachable_cli_aborts_instead_of_voting(self):
         """A grader that cannot reach its model must not be mistaken for one that voted.
