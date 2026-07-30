@@ -46,8 +46,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # Pushes to master go over the write deploy key, not GITHUB_TOKEN: the
+      # `risk-report` ruleset on master lists `DeployKey` as its only bypass
+      # actor (the GitHub Actions integration cannot be a bypass actor here —
+      # it has no org installation record). See #902.
       - name: Checkout Demerzel
         uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.RULESET_BYPASS_SSH_KEY }}
 
       - name: Resolve target
         id: tgt
