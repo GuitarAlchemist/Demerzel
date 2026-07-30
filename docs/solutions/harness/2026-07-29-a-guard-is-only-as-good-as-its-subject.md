@@ -126,6 +126,45 @@ Anthropic key?"* and the answer required reading `BACKEND_PROVIDER` next to
 `main.mts` rather than either alone. Nothing flagged it. The mechanism designed to
 flag it was, itself, the sixth instance of the pattern.
 
+## Coda: the seventh instance, caught before it landed
+
+Hours after #914 fixed the #896 metered-release wedge, the working tree held a
+staged change re-opening it — from a different lane, on top of the fix.
+
+`release()` refuses to close a metered reservation without a trusted provider
+receipt. The staged version supplied one: the governor built the receipt itself,
+copying `issuer` straight out of the policy's own `trusted_receipt_issuer` field
+and `actual_cost_usd` from a caller that passes `0.0`. `_validate_receipt` checks
+`schema_version`, `kind`, `job_id`, `provider`, `request_sha256`, `issuer` — no
+signature, no authentication. The forgery passes. Every metered episode would
+reconcile as `$0.00` **verified** spend, forever.
+
+Three things make this the sharpest instance in the set:
+
+- **It had a passing test.** `test_release_generates_receipt_for_metered_provider`
+  asserted `receipt["issuer"] == "generativelanguage.googleapis.com"` — the test
+  encoded the forgery as the requirement. Green suite, 418 tests.
+- **It sat 26 lines above the comment forbidding it.** #914 left the reasoning in
+  the source: *"Deliberately NOT synthesising a receipt — `_validate_receipt`
+  checks structure, not authenticity, so a self-issued one would pass and turn the
+  metered-spend control into a no-op."* The new code synthesised a receipt at line
+  161; the comment survived at line 187. Neither the author nor the test noticed.
+- **It was staged.** Not proposed in a PR where the blocked-path gate would see
+  `state/driver/` — staged in the index, one `git commit -a` from master.
+
+The new blade: **the six above were guards bound to the wrong subject; this one is
+a guard whose subject supplies its own evidence.** Structural validation is not
+authentication. Any check that accepts a document as proof must ask who could have
+written it — and if the answer includes "the thing being checked," it measures
+nothing. Look for it wherever a validator's field list contains no unforgeable
+element: no signature, no external fetch, no independently-observed value.
+
+Corollary for the fix, not just the guard: when a control blocks you and you cannot
+satisfy it honestly, the options are *fail loudly*, *escalate*, or *record an
+unverified state* — never *manufacture the artifact the control asked for*. #914
+took the third (`abandon()`: free the slot, charge the reserved estimate, mark it
+`receipt_verified: false`). Reverted to that; 417 tests pass.
+
 Related: [`2026-07-28-a-constraint-is-worth-its-enforcement-path.md`](2026-07-28-a-constraint-is-worth-its-enforcement-path.md)
 (a constraint is worth its enforcement path) and
 [`2026-07-25-partial-sweep-of-a-shared-seam-recurs.md`](2026-07-25-partial-sweep-of-a-shared-seam-recurs.md)
