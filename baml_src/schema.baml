@@ -49,9 +49,31 @@ class QaVerdict {
   resolved_at string
 }
 
+// The transport for these functions is OUT OF BAND: callers render with
+// `b.request.Fn(...)`, send the prompt through the Claude Code CLI
+// (`scripts/baml_claude_code.py`), and type the answer with `b.parse.Fn(raw)`. See
+// ADR-0005 Amendment and `docs/workflows/` for why — `claude-code-cli` is a declared
+// `local-seat` / `subscription-or-local` provider in the AIW budget policy, whereas the
+// previous `openai/gpt-4o` binding named a provider that policy has never heard of, so
+// an accidental in-band call billed outside the budget gate entirely.
+//
+// This client exists only so `b.request` has a shape to render into (its body format is
+// what `render_prompt` reads). `base_url` points at a port nothing can be listening on,
+// so a direct `b.Fn(...)` call — the mistake this design must survive — fails closed with
+// a connection error instead of quietly spending money. Do not "fix" it by pointing this
+// at a real endpoint; add a separate, explicitly named client if you need one.
+client<llm> NeverSendInBand {
+  provider "openai-generic"
+  options {
+    base_url "http://127.0.0.1:1/v1"
+    model "out-of-band-see-baml_claude_code.py"
+    api_key "unused-transport-is-the-claude-code-cli"
+  }
+}
+
 // BAML Prompt Function: Strong-typed LLM interface
 function EvaluateSignalSwarm(telemetry: SignalTelemetry, role: AgentRole, bounds: SafetyBounds) -> SwarmVote {
-  client "openai/gpt-4o" // Default client config
+  client NeverSendInBand
 
   prompt #"
     Evaluate the following signal telemetry from the perspective of your role as the {{ role }}.

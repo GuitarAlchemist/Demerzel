@@ -318,11 +318,23 @@ def deterministic_votes(std_dev, thd, bounds):
     ]
 
 
-def baml_votes(mean, std_dev, thd, bounds):
+def baml_votes(mean, std_dev, thd, bounds, model=None):
     """The model-based grader: one typed `EvaluateSignalSwarm` call per role.
 
+    The transport is the Claude Code CLI, not an HTTP provider. BAML renders the prompt
+    (`b.request`) and types the answer (`b.parse`); neither touches the network, so the
+    completion in between can come from anywhere. It comes from `claude -p`, which bills
+    the subscription — `claude-code-cli` is a declared `local-seat` /
+    `subscription-or-local` provider in the AIW budget policy.
+
+    Deliberately NOT `b.EvaluateSignalSwarm(...)`. That is the in-band path: it would send
+    to whatever client `baml_src` declares, which is not a provider the budget policy
+    knows, so the spend would happen entirely outside the gate meant to authorise it.
+    The declared client points at an unroutable port so that mistake fails closed rather
+    than billing quietly; this function is why it never gets made.
+
     Imported lazily so the default deterministic path keeps running with neither
-    `baml-py` installed nor an LLM provider key present.
+    `baml-py` installed nor a CLI present.
     """
     # The generated client lives at the repo root (ADR-0005 §Consequences pins the
     # `from baml_client import ...` import path), but sys.path[0] is scripts/ when this
@@ -334,6 +346,7 @@ def baml_votes(mean, std_dev, thd, bounds):
         # `baml_client.b` is the ASYNC client; the sync one must be imported by module.
         from baml_client.sync_client import b
         from baml_client.types import AgentRole, SignalTelemetry, SafetyBounds as BamlBounds
+        from baml_claude_code import ClaudeCodeError, render_prompt, run_claude_code
     except ImportError as exc:
         raise SystemExit(
             f"--use-baml requires the generated BAML client and its runtime: {exc}\n"
@@ -349,7 +362,31 @@ def baml_votes(mean, std_dev, thd, bounds):
 
     votes = []
     for role in (AgentRole.Generator, AgentRole.Auditor, AgentRole.Architect):
-        vote = b.EvaluateSignalSwarm(telemetry=telemetry, role=role, bounds=baml_bounds)
+        # 1. render (local)  2. complete (subscription, out of band)  3. type (local)
+        # The SYNC client returns an HTTPRequest directly; only `baml_client.b` (the async
+        # one) hands back a coroutine here. Neither opens a socket.
+        request = b.request.EvaluateSignalSwarm(
+            telemetry=telemetry, role=role, bounds=baml_bounds)
+        prompt = render_prompt(request)
+        try:
+            raw = run_claude_code(prompt, model=model)
+        except ClaudeCodeError as exc:
+            # A grader that cannot reach its model must not be mistaken for a grader that
+            # voted. Abort the cycle; the caller records `aborted_reason` and exits
+            # non-zero rather than proposing a parameter nothing graded.
+            raise SystemExit(f"BAML grader unavailable: {exc}")
+        try:
+            vote = b.parse.EvaluateSignalSwarm(raw)
+        except Exception as exc:  # noqa: BLE001 — baml_py.BamlError and anything under it
+            # The CLI can exit 0 and still return something that is not a SwarmVote: an
+            # apology, a refusal, a truncated object. BAML refuses to coerce it, which is
+            # correct — but the raw exception escaped as a traceback, so the run recorded no
+            # `aborted_reason` and never said which reply broke it. Same rule as above: an
+            # ungradeable answer is not a vote. Abort, and quote the reply.
+            raise SystemExit(
+                f"BAML grader returned an ungradeable response for {role}: {exc}\n"
+                f"  raw reply (first 300 chars): {raw[:300]}"
+            )
         votes.append({
             "agent_id": vote.agent_id,
             "role": vote.role.value if hasattr(vote.role, "value") else str(vote.role),
@@ -406,12 +443,17 @@ def hari_consensus(votes, binary_path):
         return None
 
 
-def run_hari_consensus(mean, std_dev, thd, bounds, use_baml, allow_hari=True):
+def run_hari_consensus(mean, std_dev, thd, bounds, use_baml, allow_hari=True,
+                       baml_model=None):
     print(f"\n[Hari] Running Swarm Consensus...")
 
-    votes = baml_votes(mean, std_dev, thd, bounds) if use_baml else deterministic_votes(std_dev, thd, bounds)
+    votes = (baml_votes(mean, std_dev, thd, bounds, model=baml_model)
+             if use_baml else deterministic_votes(std_dev, thd, bounds))
 
-    grader = "baml" if use_baml else "deterministic"
+    # Name the model in the grader id, not just "baml": a safety gate's audit record has
+    # to say what actually graded it. Two runs with different models are not the same
+    # evidence, and `graders` is the only field that could tell them apart.
+    grader = f"baml:claude-code:{baml_model or 'default'}" if use_baml else "deterministic"
     print(f"Grader: {'BAML EvaluateSignalSwarm (model-based)' if use_baml else 'deterministic thresholds (code-based)'}")
     print("Swarm Votes:")
     for v in votes:
@@ -470,7 +512,15 @@ def main():
     parser.add_argument("--max-cycles", type=int, default=10, help="Maximum self-correction cycles")
     parser.add_argument("--use-baml", action="store_true",
                         help="Grade with the typed BAML EvaluateSignalSwarm function instead of "
-                             "the deterministic thresholds (requires baml-py + a provider key)")
+                             "the deterministic thresholds. Needs baml-py and the Claude Code "
+                             "CLI on PATH — NOT a provider API key: the prompt is rendered and "
+                             "the answer typed locally, and only the completion goes out of "
+                             "band, through `claude -p` on the subscription.")
+    parser.add_argument("--baml-model", default=None, metavar="NAME",
+                        help="Model for the BAML grader, passed to `claude -p --model`. "
+                             "Defaults to the CLI's own default. Recorded in the run "
+                             "artifact's `graders` field, because two runs graded by "
+                             "different models are not the same evidence.")
     parser.add_argument("--no-hari", action="store_true",
                         help="Skip the live hari-core substrate even if the binary is present, "
                              "and fold the votes locally instead")
@@ -555,7 +605,8 @@ def main():
 
         # 3. Check consensus (Hari + Demerzel)
         passed, votes, consensus, rationale, grader, beliefs = run_hari_consensus(
-            mean, std_dev, thd, bounds, args.use_baml, allow_hari=not args.no_hari
+            mean, std_dev, thd, bounds, args.use_baml, allow_hari=not args.no_hari,
+            baml_model=args.baml_model
         )
         graders_used.add(grader)
 
