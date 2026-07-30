@@ -50,6 +50,88 @@ class TestLoadRegistry(unittest.TestCase):
             load_registry(Path(path))
 
 
+class TestConfigDerivedProvider(unittest.TestCase):
+    """#915: a backend whose spend attribution is a property of the endpoint an
+    operator configures (``remote``) has no correct provider in the abstract.
+    Naming one anyway is how a metered HTTP worker got gated as a free
+    local-seat Claude Code subscription. The attribution is read from the
+    backend's own config block instead, and it is mandatory to enable the lane."""
+
+    def _write(self, body: str) -> Path:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False,
+                                         encoding="utf-8") as tmp:
+            tmp.write(body)
+            path = Path(tmp.name)
+        self.addCleanup(path.unlink)
+        return path
+
+    def test_config_declared_provider_is_what_reaches_the_gate(self):
+        path = self._write(
+            'schema_version: "1.0"\n'
+            "backends:\n"
+            "  remote:\n"
+            "    adapter: afk_backends.remote.RemoteBackend\n"
+            "    provider_from_config: true\n"
+            "    enabled: true\n"
+            "    config:\n"
+            "      provider: anthropic-api\n"
+            "      endpoint: https://example.com/afk-worker\n")
+        reg = load_registry(path)
+        self.assertEqual("anthropic-api", provider_for("remote", reg))
+
+    def test_enabling_without_a_declared_provider_is_a_load_error(self):
+        """The control the #914 comment was not: an operator who flips
+        ``enabled: true`` without saying what the endpoint bills gets a refusal
+        at load time, before any reservation is attempted."""
+        path = self._write(
+            'schema_version: "1.0"\n'
+            "backends:\n"
+            "  remote:\n"
+            "    adapter: afk_backends.remote.RemoteBackend\n"
+            "    provider_from_config: true\n"
+            "    enabled: true\n"
+            "    config:\n"
+            "      endpoint: https://example.com/afk-worker\n")
+        with self.assertRaises(RegistryError) as ctx:
+            load_registry(path)
+        self.assertIn("config.provider", str(ctx.exception))
+
+    def test_disabled_without_a_provider_loads_but_never_resolves(self):
+        """The shipped state: the entry is loadable while the lane is off, but
+        nothing can derive a provider for it — so if anything did reach the
+        budget gate, the gate fails closed instead of billing under a guess."""
+        path = self._write(
+            'schema_version: "1.0"\n'
+            "backends:\n"
+            "  remote:\n"
+            "    adapter: afk_backends.remote.RemoteBackend\n"
+            "    provider_from_config: true\n"
+            "    enabled: false\n")
+        reg = load_registry(path)
+        with self.assertRaises(RegistryError):
+            provider_for("remote", reg)
+
+    def test_two_sources_of_truth_are_rejected(self):
+        path = self._write(
+            'schema_version: "1.0"\n'
+            "backends:\n"
+            "  remote:\n"
+            "    adapter: afk_backends.remote.RemoteBackend\n"
+            "    provider: claude-code-cli\n"
+            "    provider_from_config: true\n"
+            "    enabled: false\n")
+        with self.assertRaises(RegistryError):
+            load_registry(path)
+
+    def test_shipped_remote_entry_declares_no_static_provider(self):
+        """Bound to the real config, not a fixture: the defect was a literal
+        value in config/afk-backends.yaml, so a fixture would reproduce it
+        rather than catch it."""
+        remote = load_registry()["remote"]
+        self.assertTrue(remote.get("provider_from_config"))
+        self.assertNotIn("provider", remote)
+
+
 class TestGetBackend(unittest.TestCase):
     def test_returns_configured_adapters(self):
         reg = {

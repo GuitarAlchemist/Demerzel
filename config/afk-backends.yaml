@@ -27,16 +27,22 @@ backends:
 
   remote:
     adapter: "afk_backends.remote.RemoteBackend"
-    # PROVISIONAL attribution, and knowingly imprecise: what this backend bills
-    # depends entirely on the endpoint an operator configures, so no single
-    # provider is correct for it in the abstract. A remote HTTP worker is NOT a
-    # local Claude Code subscription seat. Re-attribute this to the provider the
-    # configured endpoint actually bills BEFORE setting enabled: true, or the
-    # gate will wave through metered spend exactly as in #863.
-    provider: "claude-code-cli"
-    description: "HTTP cloud worker (Vercel, Codespaces, or any AFK-compatible endpoint). Disabled by default until an endpoint is configured. Provider attribution is provisional and must be set to whatever the endpoint bills before enabling."
+    # NO static provider here, deliberately. What this backend bills depends
+    # entirely on the endpoint an operator configures, so no single provider is
+    # correct for it in the abstract, and the previous placeholder
+    # (claude-code-cli, a free local-seat subscription) let a metered HTTP worker
+    # clear the gate as if it cost nothing -- #915, the same shape as #863. The
+    # attribution is derived from config.provider below, and the registry
+    # REFUSES TO LOAD this entry with enabled: true while that is unset, so
+    # enabling the lane without stating what it bills is a load error rather
+    # than a comment nobody reads.
+    provider_from_config: true
+    description: "HTTP cloud worker (Vercel, Codespaces, or any AFK-compatible endpoint). Disabled by default until an endpoint is configured. Its budget provider is whatever the configured endpoint bills, declared in config.provider — the adapter has no inherent cost attribution."
     enabled: false
     config:
+      # provider: "anthropic-api"    # REQUIRED before enabling: the allowlisted
+      #                              # AIW provider (state/driver/aiw-budget-policy.json)
+      #                              # that the endpoint below ACTUALLY bills.
       # endpoint: "https://example.com/afk-worker"
       # api_key_env: "DEMERZEL_REMOTE_API_KEY"
       # timeout: 300
