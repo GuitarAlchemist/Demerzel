@@ -14,6 +14,8 @@ on:
       - 'README.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      - 'baml_src/**'
+      - 'baml_client/**'
       - '.github/loop-health.yml'
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
@@ -31,6 +33,12 @@ on:
       - 'README.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      # baml_src/ and baml_client/ trigger the `baml-drift` job below. Without them a
+      # PR touching ONLY the contract or its generated client would not start this
+      # workflow at all, making the drift job a guard on a path that never executes —
+      # the same defect #919 is about, one level up.
+      - 'baml_src/**'
+      - 'baml_client/**'
       - '.github/loop-health.yml'
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
@@ -103,6 +111,33 @@ jobs:
             echo "::error::governance-manifest.json is stale. Run: python scripts/build_manifest.py"
             exit 1
           fi
+
+  # ADR-0005 §Decision.4 — baml_client/ is committed but DERIVED, so it can fall out of
+  # step with baml_src/. The check itself is not new: scripts/verify.ps1 has had it since
+  # ADR-0005, and its comment said "that only stays honest if CI diffs them". CI did not —
+  # no workflow invoked verify.ps1, and 23 generated files reached master stale behind
+  # that gap before anyone noticed (#919). This job is the missing caller.
+  #
+  # Same discipline, and deliberately the same shape, as "Manifest must be up to date"
+  # above: regenerate the derived artifact, fail if the committed copy differs.
+  baml-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # The BAML generator ships as an npm package; the version is pinned inside
+      # check_baml_drift.ps1, read from baml_src/baml_project.baml.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # pwsh is preinstalled on ubuntu-latest runners. The check is PowerShell because it
+      # already existed as PowerShell — porting it to bash would fork the logic, which is
+      # the failure this issue is about.
+      - name: BAML client must be up to date
+        shell: pwsh
+        run: ./scripts/check_baml_drift.ps1
 
   unit-tests:
     runs-on: ubuntu-latest
