@@ -69,7 +69,11 @@ humanity) overrides everything. Constitutions are **append-only**.
   bounds in [`logic/dsp-safety-bounds.yaml`](logic/dsp-safety-bounds.yaml). Two interchangeable
   graders — deterministic threshold comparisons (default) and the typed BAML
   `EvaluateSignalSwarm` function (`--use-baml`) — read the *same* bounds file, so the code
-  gate and the model gate cannot drift apart. Emits an audited record per run to
+  gate and the model gate cannot drift apart. The BAML grader's transport is **out of
+  band**: BAML renders the prompt and types the answer locally, and the completion comes
+  from `claude -p` on the subscription via `scripts/baml_claude_code.py`, which strips
+  `ANTHROPIC_API_KEY` from the child environment because Claude Code otherwise prefers it
+  over the claude.ai login. No BAML call bills a metered provider. Emits an audited record per run to
   `state/dsp-validation/`. Only a cycle that passes in **this** run may report a value, so an
   aborted or non-converging run exits non-zero rather than re-proposing a cached one.
   `--use-cached-bounds` authorizes a *warm start* — narrowing the search space to a prior

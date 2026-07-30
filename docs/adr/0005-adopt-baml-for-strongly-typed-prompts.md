@@ -63,3 +63,34 @@ client, is the thing to watch.
 **§Decision.4 is still unfulfilled.** The drift check exists (`scripts/verify.ps1`) but no
 workflow invokes it, so "fail builds if schemas are broken" is not true today. Tracked in
 #919. Do not read this ADR as evidence that the check runs.
+
+## Amendment 2026-07-30 (b) — the transport is out of band, on the subscription
+
+**What changed.** §Decision.2 implied BAML would also *make* the LLM call. It does not.
+Callers render with `b.request.Fn(...)`, obtain a completion through the Claude Code CLI
+(`scripts/baml_claude_code.py`), and type it with `b.parse.Fn(raw)`. Neither BAML step
+opens a socket, so the typed-prompt and schema-enforcement benefits this ADR was adopted
+for are unaffected — only the wire is different.
+
+**Why.** The function was bound to `client "openai/gpt-4o"`, a provider that appears
+nowhere in `state/driver/aiw-budget-policy.json`. An in-band call would therefore have
+billed a provider the AIW budget gate has never heard of — the #863 shape exactly: a
+correct gate, pointed at a provider nobody is using. `claude-code-cli` *is* declared
+(`local-seat`, `subscription-or-local`, no manual approval), so routing through it puts
+the spend inside a control that already knows how to classify it.
+
+**The non-obvious part.** Claude Code prefers `ANTHROPIC_API_KEY` over the claude.ai
+subscription when both are present, and says so on stderr. Verified 2026-07-30: the same
+prompt returned `API Error: 400 ... usage limits` with the key set and a normal completion
+with it unset. So `run_claude_code` strips the key from the **child** environment. A
+transport whose billing depends on an ambient variable is a coincidence, not a guarantee.
+
+**Fail-closed by construction.** The declared client is now `NeverSendInBand`, pointing at
+`http://127.0.0.1:1/v1` — a port nothing can listen on. `b.request` only needs a client to
+know what body shape to render; an accidental direct `b.Fn(...)` call gets a connection
+error instead of a bill. `test_baml_claude_code.py` asserts both that the grader never
+takes the in-band path and that the declared client cannot bill anyone.
+
+**Cost.** One subprocess per call, so a full `validate_dsp_loop` run (3 roles × up to 10
+cycles) is minutes rather than seconds, and streaming is unavailable. Acceptable for a
+governance gate; wrong for anything interactive.
