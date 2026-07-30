@@ -478,11 +478,28 @@ class TestBudgetGate(unittest.TestCase):
         self.assertEqual(result["decision"], "allow")
         self.assertEqual(result["tier"], "local-seat")
 
+    def test_remote_backend_cannot_reserve_as_a_free_subscription_lane(self):
+        """#915 regression, stated as the outcome rather than the mechanism.
+        `remote` POSTs to an operator-configured endpoint with an optional bearer
+        token, so it can bill a metered API -- but it was attributed to
+        claude-code-cli (local-seat, requires_manual_approval: false) and
+        reserved as if it were free.
+
+        Asserts the DECISION, not the provider id: any attribution that clears
+        this lane with no approval artifact is #863 again, whatever it is named.
+        The safe outcomes are a block (unattributed, or metered-and-unapproved);
+        an allow is not one of them."""
+        with tempfile.TemporaryDirectory() as d, \
+             mock.patch.object(g.budget, "CYCLE_LEDGER_PATH", Path(d) / "cycle.json"):
+            allowed, result = g._budget_reserve({"number": 5, "body": ""}, "remote")
+        self.assertFalse(allowed, f"remote reserved with no approval: {result}")
+        self.assertEqual("block", result["decision"])
+
     def test_every_registry_provider_is_declared_in_policy(self):
         """config/afk-backends.yaml has no schema, so an unvalidated YAML edit
         is all that stands between a correct and an incorrect attribution. Bind
         it to the policy allowlist at least."""
-        from afk_backends.registry import load_registry
+        from afk_backends.registry import RegistryError, load_registry, provider_for
         declared = {p["id"] for p in
                     g.budget.load_policy(g.budget.POLICY_PATH)["providers"]}
         # Every backend, enabled or not. Scoping this to enabled-only left
@@ -491,10 +508,26 @@ class TestBudgetGate(unittest.TestCase):
         # closed, but the misconfiguration only surfaced when someone flipped
         # `enabled` and got a mystery block. Both are now declared, so the check
         # can be unconditional -- which is what makes it catch the NEXT one.
-        for backend, cfg in load_registry().items():
-            self.assertIn(cfg["provider"], declared,
+        #
+        # Checks the EFFECTIVE provider (what provider_for hands the gate), not
+        # the raw `provider` key: since #915 an attribution may be derived from
+        # the backend's config block, and the key the gate never reads is not
+        # the one worth pinning.
+        registry = load_registry()
+        for backend, cfg in registry.items():
+            try:
+                provider = provider_for(backend, registry)
+            except RegistryError:
+                # Only legitimate for a config-derived attribution left unset --
+                # and load_registry refuses that combination with enabled: true,
+                # so the lane cannot run. Nothing to check against the allowlist.
+                self.assertFalse(cfg["enabled"],
+                                 f"backend {backend!r} is enabled but resolves to "
+                                 f"no provider at all")
+                continue
+            self.assertIn(provider, declared,
                           f"backend {backend!r} names undeclared provider "
-                          f"{cfg['provider']!r}")
+                          f"{provider!r}")
 
     def test_process_issue_forwards_its_own_backend_to_the_gate(self):
         """Pinning the registry is not enough: if _process_issue reserves under

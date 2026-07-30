@@ -33,7 +33,13 @@ Backends (--backend):
                  plumbed -- a metered job needs a trusted receipt that
                  _budget_release never passes, so every approved run leaves an open
                  reservation (#896). Treat `local` as operator-driven.
-  remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
+  remote       — HTTP cloud worker at an operator-configured endpoint (#879).
+                 Disabled by default, and it has NO inherent cost attribution:
+                 what it bills is a property of the endpoint, so
+                 config/afk-backends.yaml marks it provider_from_config and the
+                 provider is read from that entry's config.provider. The registry
+                 refuses to load it with enabled: true while that is unset, and an
+                 unattributed backend fails closed at the gate (#915).
 
 Usage:
   python scripts/run_afk_cycle.py --dry-run            # classify + plan, no side effects
