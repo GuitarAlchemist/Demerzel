@@ -1,4 +1,5 @@
 import json
+import sys
 from pathlib import Path
 
 import jsonschema
@@ -34,6 +35,21 @@ class PromptPack:
 
         return True
 
+def get_past_lessons():
+    obs_file = Path(__file__).resolve().parents[1] / "state" / "learning" / "observations.jsonl"
+    lessons = []
+    if obs_file.is_file():
+        try:
+            with open(obs_file, "r") as f:
+                for line in f:
+                    if line.strip():
+                        data = json.loads(line)
+                        if data.get("type") == "failure" or "lesson" in data:
+                            lessons.append(data.get("lesson", data.get("message", "")))
+        except Exception:
+            pass
+    return lessons[:5]
+
 def generate_prompt(template_path, **kwargs):
     pack = PromptPack(template_path)
     pack.validate_sections()
@@ -49,8 +65,13 @@ def generate_prompt(template_path, **kwargs):
     if "<path>" in prompt:
         raise ValueError("Generated prompt must include allowed paths")
 
-    # Check if context files and allowed paths are provided when trying to do broad scope
-    # For now we'll rely on the harness check, but can implement it here too if needed
+    # Ingest lessons from past failures (Recursive Self-Improvement)
+    lessons = get_past_lessons()
+    if lessons:
+        lessons_block = "\n\n## Ingested Lessons from Past Failures\n"
+        for i, lesson in enumerate(lessons, 1):
+            lessons_block += f"{i}. {lesson}\n"
+        prompt += lessons_block
 
     return prompt
 
@@ -88,13 +109,47 @@ def check_harness_execution_rules(job_spec, harness_result_path=None):
 
     # 6. Validate JSON schema if path provided
     if harness_result_path:
-        with open(_SCHEMA_PATH, 'r') as f:
-            schema = json.load(f)
-        with open(harness_result_path, 'r') as f:
-            instance = json.load(f)
+        baml_validated = False
         try:
-            jsonschema.validate(instance, schema)
-        except jsonschema.exceptions.ValidationError as e:
-            return False, f"harness output JSON fails schema validation: {e.message}"
+            # Attempt to validate using compiled BAML client and Pydantic model
+            sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+            from baml_client.types import HarnessResult
+            with open(harness_result_path, 'r') as f:
+                instance_data = json.load(f)
+            
+            # Coerce lowercase JSON strings to capitalized BAML class enums
+            if "issue" in instance_data:
+                instance_data["issue"] = str(instance_data["issue"])
+            if "lane" in instance_data and isinstance(instance_data["lane"], str):
+                instance_data["lane"] = instance_data["lane"].capitalize()
+            if "autonomy_mode" in instance_data and isinstance(instance_data["autonomy_mode"], str):
+                mode = instance_data["autonomy_mode"]
+                instance_data["autonomy_mode"] = "Pr" if mode.lower() == "pr" else mode.capitalize()
+            if "budget" in instance_data and isinstance(instance_data["budget"], dict):
+                budget = instance_data["budget"]
+                if "tier" in budget and isinstance(budget["tier"], str):
+                    budget["tier"] = "".join(p.capitalize() for p in budget["tier"].split("-"))
+            if "commands_run" in instance_data and isinstance(instance_data["commands_run"], list):
+                for cmd in instance_data["commands_run"]:
+                    if isinstance(cmd, dict) and "status" in cmd and isinstance(cmd["status"], str):
+                        cmd["status"] = cmd["status"].capitalize()
+
+            # Throws ValidationError if format is incorrect
+            HarnessResult.model_validate(instance_data)
+            print("[BAML Validation] Harness result successfully validated via Pydantic model.")
+            baml_validated = True
+        except Exception as exc:
+            print(f"[BAML Validation Warning] BAML validation skipped or failed: {exc}")
+            print("Running fallback jsonschema validation...")
+
+        if not baml_validated:
+            with open(_SCHEMA_PATH, 'r') as f:
+                schema = json.load(f)
+            with open(harness_result_path, 'r') as f:
+                instance = json.load(f)
+            try:
+                jsonschema.validate(instance, schema)
+            except jsonschema.exceptions.ValidationError as e:
+                return False, f"harness output JSON fails schema validation: {e.message}"
 
     return True, "success"

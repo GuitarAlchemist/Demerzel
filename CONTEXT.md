@@ -48,25 +48,28 @@ humanity) overrides everything. Constitutions are **append-only**.
 - **LOLLI / Resilience score (R)** — `R = injections_caught / injections_total`; the
   chaos-engineering metric for how well governance detects injected poison (dead
   bindings, orphaned branches, BS descriptions, unconsumed artifacts).
-- **BAML (Boundary AI Markup Language)** — **PROPOSED, NOT IN TREE.** A DSL that would
-  declare prompts as strongly-typed functions, enforcing LLM output schemas *in flight*
-  rather than validating them at rest. The committed decision is to **defer**: see
-  [`docs/research/2026-07-28-baml-adoption-assessment.md`](docs/research/2026-07-28-baml-adoption-assessment.md)
-  ("do not put BAML on a production path or make it a cross-repo contract yet") and #890.
-  No `baml_src/`, `baml_client/`, or `clients/` exists in this repository, and there is no
-  committed ADR-0005. Do not write code against those paths. If adoption proceeds, note
-  that each generator needs a distinct `output_dir` — BAML writes `<output_dir>/baml_client`,
-  so two generators sharing a directory silently clobber each other.
-- **validate_dsp_loop** — **PROPOSED, NOT IN TREE.** A self-correcting parameter gate that
-  would binary-search a DSP distortion parameter until a hexavalent swarm consensus clears
-  declared safety bounds, keeping a deterministic grader and a model grader on the *same*
-  bounds file so the code gate and the model gate cannot drift apart. Neither
-  `scripts/validate_dsp_loop.py`, `logic/dsp-safety-bounds.yaml`, nor `state/dsp-validation/`
-  is in the repository. A local prototype exists outside version control and **fails open**
-  — with a warm cache it exits 0 printing "CONSTITUTIONAL RULES SATISFIED" on a compilation
-  error — so it must not be treated as a gate until that is fixed and it is committed.
-  The design intent stands: a validated parameter is a **proposal**, and enacting it as a
-  control input is an explicit authorization, per Article 9.
+- **BAML (Boundary AI Markup Language)** — the DSL (`baml_src/`) that declares prompts as
+  strongly-typed functions, enforcing LLM output schemas *in flight* rather than validating
+  them at rest ([ADR-0005](docs/adr/0005-adopt-baml-for-strongly-typed-prompts.md), which
+  supersedes the earlier **defer** recommendation in
+  [`docs/research/2026-07-28-baml-adoption-assessment.md`](docs/research/2026-07-28-baml-adoption-assessment.md);
+  adoption is tracked in #890). One `.baml` source generates three clients: Python/Pydantic
+  at the repo root (`baml_client/`, so `from baml_client import b` resolves) plus TypeScript
+  and Rust under `clients/`, one per consumer language. Each generator needs a distinct
+  `output_dir` — BAML writes `<output_dir>/baml_client`, so two generators sharing a
+  directory silently clobber each other. The Rust output is a module tree, not a crate.
+- **validate_dsp_loop** — the self-correcting parameter gate (`scripts/validate_dsp_loop.py`):
+  binary-searches a DSP distortion parameter until a hexavalent swarm consensus clears the
+  bounds in [`logic/dsp-safety-bounds.yaml`](logic/dsp-safety-bounds.yaml). Two interchangeable
+  graders — deterministic threshold comparisons (default) and the typed BAML
+  `EvaluateSignalSwarm` function (`--use-baml`) — read the *same* bounds file, so the code
+  gate and the model gate cannot drift apart. Emits an audited record per run to
+  `state/dsp-validation/`. Only a cycle that passes in **this** run may report a value, so an
+  aborted or non-converging run exits non-zero rather than re-proposing a cached one.
+  `--use-cached-bounds` authorizes a *warm start* — narrowing the search space to a prior
+  value, which cycle 1 then re-validates — and nothing more. A validated parameter remains a
+  **proposal**; enacting it as a control input is a separate explicit human authorization,
+  per Article 9.
 
 ## Architecture seams (designed 2026-06-20 via `/improve-codebase-architecture`; built 2026-06-21, PR #357)
 
