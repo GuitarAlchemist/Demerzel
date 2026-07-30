@@ -67,7 +67,18 @@ try {
     $drift = git diff --name-only -- baml_client
     $untracked = git ls-files --others --exclude-standard -- baml_client
     if ($drift -or $untracked) {
+        # Print the DIFF, not just the filenames. A drift report that names seven files
+        # without showing what changed cannot distinguish real codegen drift from a
+        # whitespace or line-ending artifact, which is most of what goes wrong here — and
+        # the reader is usually looking at a CI log they cannot reproduce locally.
+        Write-Host '--- changed files ---'
         Write-Host ($drift + $untracked)
+        Write-Host '--- diffstat ---'
+        git diff --stat -- baml_client | Write-Host
+        Write-Host '--- first 60 lines of diff (whitespace made visible) ---'
+        git diff -U0 --ws-error-highlight=all -- baml_client |
+            Select-Object -First 60 |
+            Write-Host
         throw "baml_client/ is out of date with baml_src/. Run 'npx --yes @boundaryml/baml@$version generate' and commit the result."
     }
     Write-Host 'baml_client/ is in step with baml_src/.'
