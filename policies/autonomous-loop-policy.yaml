@@ -256,9 +256,13 @@ afk_backend_governance:
 
   registry_rules:
     - >
-      Every backend entry must declare an adapter Python class, a budget provider,
-      an enabled flag, and an optional config block. Unknown or disabled backends
-      must fail closed.
+      Every backend entry must declare an adapter Python class, an enabled flag, a
+      budget provider, and an optional config block. The budget provider is declared
+      either on the entry itself, or - for a backend whose billing depends on operator
+      configuration rather than on the adapter - in its config block, by marking the
+      entry provider_from_config and setting config.provider. An entry may not do both.
+      A provider_from_config backend cannot be enabled without a configured provider.
+      Unknown or disabled backends must fail closed.
     - >
       New backends may be added by creating an adapter module and a registry entry.
       The governor must not require code changes to recognize a new backend.
@@ -278,6 +282,13 @@ afk_backend_governance:
     - >
       Provider attribution changes are treated as high-risk because they affect cost
       gating and may bypass budget controls.
+    - >
+      Where a backend's billing is a property of the endpoint an operator configures
+      rather than of the adapter, the attribution must be derived from that configuration
+      and must not be defaulted. A hardcoded guess in the registry is how a metered
+      endpoint comes to be gated as a free local seat. Resolution of an unset provider
+      must raise, so the budget preflight fails closed, rather than falling back to any
+      default.
 
   adapter_contract_rules:
     - >
