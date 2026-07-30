@@ -17,7 +17,8 @@ declares, per loop, exactly one of:
 
 Findings and exit codes (a producer with a real problem must fail CI):
 
-  0  every active loop is healthy; disabled entries are bounded and verified.
+  0  every active loop is healthy, newborn (added too recently to have been
+     able to produce evidence yet), or bounded-disabled and verified.
   1  at least one: stale, silent_green, unregistered, malformed_proof,
      expired_disable, failed_run, activation_mismatch.
   2  configuration or evidence-adapter failure (registry unreadable / invalid /
@@ -72,7 +73,7 @@ _EXIT1_KINDS = (
     "failed_run",
     "activation_mismatch",
 )
-# Everything else (healthy, disabled) is exit 0.
+# Everything else (healthy, newborn, disabled) is exit 0.
 
 
 class ConfigError(Exception):
@@ -229,6 +230,46 @@ def workflow_crons(workflows_dir: Path, workflow: str) -> list[str] | None:
         for entry in sched
         if isinstance(entry, dict) and isinstance(entry.get("cron"), str)
     )
+
+
+def workflow_added_at(
+    workflow: str,
+    workflows_dir: Path,
+    repo_root: Path,
+    default_branch: str,
+    git_runner,
+) -> datetime | None:
+    """When the workflow file was last ADDED to the default branch, or None.
+
+    Returns None whenever birth cannot be *proven* — git unavailable, the
+    workflows dir sits outside the repo, or the file has never been committed
+    to the default branch. Callers must not suppress anything on None: an
+    unprovable birth date is not evidence of youth.
+
+    The newest add-commit wins, not the oldest. A workflow that was deleted and
+    re-added (or renamed — git records a rename as an add at the new path, and
+    GitHub Actions likewise starts its run history over) is a new producer with
+    a new run history, so its clock restarts at the latest addition.
+    """
+    try:
+        rel = os.path.relpath(workflows_dir / workflow, repo_root)
+    except ValueError:  # different drives on Windows
+        return None
+    rel = rel.replace(os.sep, "/")
+    if rel.startswith("../"):
+        return None
+    try:
+        out = git_runner(
+            ["log", "--diff-filter=A", "--format=%cI", default_branch, "--", rel],
+            repo_root,
+        )
+    except AdapterError:
+        return None
+    for line in out.splitlines():
+        line = line.strip()
+        if line:
+            return _parse_iso(line)
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -397,6 +438,7 @@ def _evaluate_loop(
     loop: dict,
     now: datetime,
     repo_root: Path,
+    workflows_dir: Path,
     default_branch: str,
     git_runner,
     actions_runner,
@@ -468,11 +510,13 @@ def _evaluate_loop(
     proof = loop["proof"]
     adapter = proof.get("adapter")
     if adapter == "state_glob":
-        return _eval_state_glob(proof, now, repo_root)
-    if adapter == "git_log":
-        return _eval_git_log(proof, now, repo_root, default_branch, git_runner)
-    if adapter == "workflow_run":
-        return _eval_workflow_run(
+        kind, detail = _eval_state_glob(proof, now, repo_root)
+    elif adapter == "git_log":
+        kind, detail = _eval_git_log(
+            proof, now, repo_root, default_branch, git_runner
+        )
+    elif adapter == "workflow_run":
+        kind, detail = _eval_workflow_run(
             proof,
             wf,
             now,
@@ -481,7 +525,44 @@ def _evaluate_loop(
             token,
             actions_runner,
         )
-    raise ConfigError(f"{wf}: unknown proof adapter {adapter!r}")
+    else:
+        raise ConfigError(f"{wf}: unknown proof adapter {adapter!r}")
+
+    if kind != "silent_green":
+        return kind, detail
+
+    # Newborn grace (#850). "No evidence ever" is ambiguous: a daily loop with
+    # nothing after three days is dead, but a monthly loop added eleven days
+    # ago has simply not reached its first scheduled opportunity. Alarming on
+    # the newborn is a false positive, and a guard that cries wolf is one
+    # people stop reading — which is exactly how a real dead loop hides.
+    #
+    # The grace window is the loop's OWN max_stale_days, measured from the
+    # default-branch add-commit. Reasons for that exact boundary:
+    #   * It is already cadence-scaled (35d monthly, 1d for a */15 loop), so no
+    #     cron arithmetic and no second dial to keep in sync with the first.
+    #   * It is the tolerance the loop's author already declared as "longer
+    #     than this without output means dead". A newborn cannot be judged by a
+    #     softer standard than a running loop without inventing a weaker one.
+    #   * It is therefore not over-broad: a missed FIRST run surfaces exactly as
+    #     late as a missed subsequent run already does, no later.
+    # Silence past that window is proof of death and still turns the board red.
+    grace_days = float(proof["max_stale_days"])
+    added = workflow_added_at(
+        wf, workflows_dir, repo_root, default_branch, git_runner
+    )
+    if added is None:
+        return kind, detail
+    age = _age_days(added, now)
+    if age > grace_days:
+        return kind, detail
+    return (
+        "newborn",
+        f"added to `{default_branch}` {age:.1f}d ago and has not yet had a "
+        f"full {grace_days:g}d window to produce evidence — "
+        f"withheld until then, after which silence is red. Original finding: "
+        f"{detail}",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -558,6 +639,7 @@ def evaluate(
                 loop,
                 now,
                 repo_root,
+                workflows_dir,
                 default_branch,
                 git_runner,
                 actions_runner,

@@ -352,6 +352,107 @@ class EcosystemFreshnessTest(unittest.TestCase):
         })
         self.assertEqual(self._one(stale, "producer.yml")["kind"], "stale")
 
+    # ── newborn vs genuinely-silent (issue #850) ──────────────────────────
+
+    def _birth_git(self, added_at, seen=None):
+        """git_runner stub answering the `--diff-filter=A` birth query."""
+        def runner(args, cwd):
+            if seen is not None:
+                seen["args"] = args
+            return "" if added_at is None else _iso(added_at) + "\n"
+        return runner
+
+    def test_newborn_low_cadence_loop_stays_quiet(self):
+        # substrate-audit.yml: monthly cron, 35d threshold, added 7 days ago.
+        # Its first scheduled opportunity has not arrived, so "no run" is not
+        # evidence of death and must not turn the board red.
+        seen = {}
+        findings = self._evaluate(
+            self._workflow_run_registry("substrate-audit.yml", 35),
+            actions_runner=lambda *args: None,
+            git_runner=self._birth_git(NOW - timedelta(days=7), seen),
+        )
+        finding = self._one(findings, "substrate-audit.yml")
+        self.assertEqual(finding["kind"], "newborn")
+        self.assertEqual(ef.exit_code(findings), 0)
+        self.assertEqual(ef.stable_alert(findings), [])
+        # Birth is read from the DEFAULT branch's add-commit, not the worktree.
+        self.assertIn("--diff-filter=A", seen["args"])
+        self.assertIn("master", seen["args"])
+        self.assertIn(".github/workflows/substrate-audit.yml", seen["args"])
+
+    def test_overdue_silent_loop_still_fires_after_grace(self):
+        # Same loop, one second past its own staleness window with still no
+        # run: the grace has run out and silence is now proof of death.
+        findings = self._evaluate(
+            self._workflow_run_registry("substrate-audit.yml", 35),
+            actions_runner=lambda *args: None,
+            git_runner=self._birth_git(NOW - timedelta(days=35, seconds=1)),
+        )
+        self.assertEqual(self._one(findings, "substrate-audit.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_newborn_grace_scales_to_the_declared_cadence(self):
+        # A 1-day-threshold loop silent for 2 days is dead, not newborn — the
+        # grace is the loop's own cadence-scaled window, not a fixed one.
+        findings = self._evaluate(
+            self._workflow_run_registry("ga-chatbot-discussions.yml", 1),
+            actions_runner=lambda *args: None,
+            git_runner=self._birth_git(NOW - timedelta(days=2)),
+        )
+        self.assertEqual(self._one(findings, "ga-chatbot-discussions.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_unprovable_birth_does_not_suppress(self):
+        # Never added on the default branch -> birth unknown. An unprovable
+        # birth date is not evidence of youth; the finding must survive.
+        findings = self._evaluate(
+            self._workflow_run_registry("producer.yml", 35),
+            actions_runner=lambda *args: None,
+            git_runner=self._birth_git(None),
+        )
+        self.assertEqual(self._one(findings, "producer.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_broken_git_does_not_suppress(self):
+        def boom(args, cwd):
+            raise ef.AdapterError("git exploded")
+
+        findings = self._evaluate(
+            self._workflow_run_registry("producer.yml", 35),
+            actions_runner=lambda *args: None,
+            git_runner=boom,
+        )
+        self.assertEqual(self._one(findings, "producer.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_newborn_grace_applies_to_state_glob_evidence(self):
+        # Same defect for a committed-state producer: a brand-new loop has not
+        # had a window in which to write its first state file.
+        registry = {
+            "version": 1,
+            "loops": [{
+                "workflow": "newborn-producer.yml",
+                "status": "active",
+                "proof": {
+                    "adapter": "state_glob",
+                    "glob": "state/newborn/*.jsonl",
+                    "timestamp_field": "timestamp",
+                    "max_stale_days": 7,
+                },
+            }],
+        }
+        findings = self._evaluate(
+            registry, git_runner=self._birth_git(NOW - timedelta(days=2))
+        )
+        self.assertEqual(self._one(findings, "newborn-producer.yml")["kind"],
+                         "newborn")
+        self.assertEqual(ef.exit_code(findings), 0)
+
     def test_workflow_run_adapter_failure_is_exit_2(self):
         def boom(*args):
             raise ef.AdapterError("Actions API unavailable")
