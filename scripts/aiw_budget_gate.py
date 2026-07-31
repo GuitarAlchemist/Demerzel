@@ -215,9 +215,14 @@ def _lock(path: Path):
 def _read_cycle(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {"reserved_cost_usd": 0.0, "actual_cost_usd": 0.0,
-                "active_packets": 0, "reservations": {}}
+                "unverified_cost_usd": 0.0, "active_packets": 0, "reservations": {}}
     value = _load(path)
-    for name in ("reserved_cost_usd", "actual_cost_usd", "active_packets"):
+    # Ledgers written before the verified/unverified split carry no
+    # `unverified_cost_usd`. Default it rather than rejecting them, but validate
+    # it once present so a garbage value still fails closed.
+    value.setdefault("unverified_cost_usd", 0.0)
+    for name in ("reserved_cost_usd", "actual_cost_usd", "unverified_cost_usd",
+                 "active_packets"):
         _required_number(value, name)
     reservations = value.get("reservations", {})
     if not isinstance(reservations, dict):
@@ -259,9 +264,14 @@ def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path,
                     "reasons": [], "reservation_reused": True,
                     "request_sha256": request_sha256,
                     "budget": {"estimated_cost_usd": reservation["estimated_cost_usd"]}}
+        # Unverified spend counts against the cycle cap exactly like receipted
+        # spend. Abandoned money is money we cannot prove we did NOT spend, so
+        # omitting this term here would turn the verified/unverified split into a
+        # spend-cap bypass: every abandonment would silently restore headroom.
         result = evaluate(policy, {**request,
                                    "cycle_spend_usd": (cycle["reserved_cost_usd"]
-                                                        + cycle["actual_cost_usd"]),
+                                                        + cycle["actual_cost_usd"]
+                                                        + cycle["unverified_cost_usd"]),
                                    "cycle_active_packets": cycle["active_packets"]},
                           approval=approval)
         if result["decision"] == "allow":
@@ -392,13 +402,18 @@ def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
     not authenticity — and reconcile metered spend at whatever the caller passed,
     forever, self-certified.
 
-    So this frees the slot and charges the RESERVED ESTIMATE to actual spend
-    instead. Pessimistic on purpose: we cannot prove the money was not spent, so
-    the cycle cost cap keeps counting it rather than crediting the cycle back to
-    zero. Unverified is not the same as free.
+    So this frees the slot and charges the RESERVED ESTIMATE to
+    ``unverified_cost_usd``. Pessimistic on purpose: we cannot prove the money was
+    not spent, so the cycle cost cap keeps counting it (see ``reserve``) rather
+    than crediting the cycle back to zero. Unverified is not the same as free.
 
-    The abandonment is recorded permanently under ``unreconciled`` so an operator
-    can see exactly which spend was never receipt-verified.
+    It is charged to a bucket of its own rather than to ``actual_cost_usd``
+    because the two numbers answer different questions. ``actual_cost_usd`` is
+    what a provider receipt attested; this is what we assumed in the absence of
+    one. Both bound the cycle identically, but an operator reading the ledger has
+    to be able to tell a measured total from an asserted one, and a headline that
+    silently mixes them cannot be audited. Per-job provenance is in
+    ``unreconciled`` regardless; this keeps the aggregate honest too.
     """
     if not job_id:
         raise ValueError("job_id is required to abandon")
@@ -413,7 +428,7 @@ def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
         cycle["reservations"].pop(job_id)
         cycle["reserved_cost_usd"] -= estimate
         cycle["active_packets"] -= 1
-        cycle["actual_cost_usd"] = cycle.get("actual_cost_usd", 0) + estimate
+        cycle["unverified_cost_usd"] = cycle.get("unverified_cost_usd", 0) + estimate
         entry = {
             "job_id": job_id,
             "provider": reservation.get("provider"),

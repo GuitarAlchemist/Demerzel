@@ -182,13 +182,39 @@ python scripts/aiw_budget_gate.py --abandon-job aiw-0001 `
   --reason "anthropic-api issues no machine-readable receipt"
 ```
 
-This frees the packet slot and charges the **reserved estimate** to actual spend,
-then records the job under `unreconciled` with `receipt_verified: false`. It exits
-`0` (the ledger is consistent again) but prints `ABANDONED`, never `RELEASED`.
+This frees the packet slot and charges the **reserved estimate** to
+`unverified_cost_usd`, then records the job under `unreconciled` with
+`receipt_verified: false`. It exits `0` (the ledger is consistent again) but
+prints `ABANDONED`, never `RELEASED`.
 
 Charging the estimate is pessimistic on purpose: we cannot prove the money was
 *not* spent, so the cycle cost cap keeps counting it. **Unverified is not the same
-as free.** Do not instead synthesise a receipt to satisfy `--release-job` — the
+as free.**
+
+#### Two spend totals, one cap
+
+The cycle ledger carries the charge in a bucket of its own:
+
+| field | meaning |
+|---|---|
+| `actual_cost_usd` | a trusted provider receipt attested this |
+| `unverified_cost_usd` | we assumed this in the absence of a receipt |
+
+Both bind the cycle identically — `reserve()` sums **reserved + actual +
+unverified** before comparing against `cycle.max_cost_usd`, so abandoning never
+hands the cycle its money back. They are separated only so an operator can tell a
+measured total from an asserted one; a headline that silently mixes them cannot be
+audited, and per-job provenance in `unreconciled` does not fix an aggregate that
+already lies.
+
+Dropping `unverified_cost_usd` from that sum would turn the split into an
+unbounded metered spend loop wearing the costume of a bookkeeping cleanup, so it
+is guarded directly by
+`test_aiw_budget_gate.TestUnverifiedSpendStillBoundsTheCycle`. Ledgers written
+before the split have the field defaulted on read; a corrupt one still fails
+closed.
+
+Do not instead synthesise a receipt to satisfy `--release-job` — the
 gate checks receipt *structure*, not *authenticity* (see **Trust boundary**
 below), so a self-issued receipt passes and reconciles metered spend at whatever
 was claimed, permanently and self-certified. That restores liveness by destroying

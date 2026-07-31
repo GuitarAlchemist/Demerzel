@@ -699,8 +699,11 @@ class TestCliAbandonVerb(unittest.TestCase):
         self.assertEqual({}, cycle["reservations"])
         self.assertEqual(0, cycle["active_packets"])
         self.assertAlmostEqual(0.0, cycle["reserved_cost_usd"])
-        # Charged, not credited back: unverified is not the same as free.
-        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"])
+        # Charged, not credited back: unverified is not the same as free. It is
+        # charged to its own bucket so the headline `actual_cost_usd` keeps
+        # meaning "a provider receipt attested this".
+        self.assertAlmostEqual(1.25, cycle["unverified_cost_usd"])
+        self.assertAlmostEqual(0.0, cycle["actual_cost_usd"])
         entry = cycle["unreconciled"][0]
         self.assertFalse(entry["receipt_verified"])
         self.assertEqual(self.metered, entry["provider"])
@@ -761,6 +764,75 @@ class TestCliAbandonVerb(unittest.TestCase):
         self.assertEqual({}, cycle["reservations"])
         self.assertEqual(0, cycle["active_packets"])
         self.assertAlmostEqual(0.42, cycle["actual_cost_usd"])  # measured, not estimated
+        self.assertAlmostEqual(0.0, cycle["unverified_cost_usd"])  # nothing assumed
         self.assertNotIn("unreconciled", cycle)
         self.assertEqual("released",
                          json.loads(self.ledger.read_text(encoding="utf-8"))["decision"])
+
+
+class TestUnverifiedSpendStillBoundsTheCycle(TestCliAbandonVerb):
+    """Abandoned spend is charged to `unverified_cost_usd` rather than to
+    `actual_cost_usd`, so the headline stays "what a receipt attested". That
+    split is only honest if the money keeps binding the cycle.
+
+    These are the guard on the split itself. Drop `unverified_cost_usd` from the
+    `cycle_spend_usd` term in reserve() and every abandonment silently hands the
+    cycle its money back -- an unbounded metered spend loop dressed as a
+    bookkeeping cleanup. Reached through the real CLI, not by calling abandon()
+    directly, because the CLI is the only path an approved metered run takes.
+    """
+
+    def spend_the_cycle_cap_unverified(self):
+        """Reserve and abandon until the whole cycle cost cap is unverified
+        spend, without ever touching the parallel-packet cap."""
+        job_cap = float(POLICY["defaults"]["max_cost_usd"])
+        cycle_cap = float(POLICY["cycle"]["max_cost_usd"])
+        episodes = int(cycle_cap / job_cap)
+        for n in range(episodes):
+            job = f"aiw-unverified-{n}"
+            self.reserve_approved(job, estimated_cost_usd=job_cap)
+            self.assertEqual(0, self.cli(
+                ["--abandon-job", job, "--reason", "no provider receipt"]))
+        cycle = self.read_cycle()
+        self.assertEqual(0, cycle["active_packets"], "packet cap must not be what binds")
+        self.assertAlmostEqual(cycle_cap, cycle["unverified_cost_usd"])
+        return cycle_cap
+
+    def test_unverified_spend_consumes_the_cycle_cost_cap(self):
+        self.spend_the_cycle_cap_unverified()
+        after = aiw_budget_gate.reserve(
+            POLICY, request(job_id="aiw-after-cap", estimated_cost_usd=0.01), self.cycle)
+        self.assertEqual(
+            "block", after["decision"],
+            "the cycle cost cap was fully spent as unverified money, but the gate "
+            "still admitted more work -- reserve() is not counting "
+            "unverified_cost_usd in cycle_spend_usd, so every abandonment credits "
+            "the cycle back to zero. See abandon().")
+        self.assertIn("cycle_cost_cap_exceeded", after["reasons"])
+
+    def test_the_gate_reports_unverified_money_as_cycle_spend(self):
+        """The operator-visible number must include it too, not just the
+        internal comparison -- a block nobody can explain gets overridden."""
+        cycle_cap = self.spend_the_cycle_cap_unverified()
+        after = aiw_budget_gate.reserve(
+            POLICY, request(job_id="aiw-report", estimated_cost_usd=0.01), self.cycle)
+        self.assertAlmostEqual(cycle_cap, after["budget"]["cycle_spend_usd"])
+
+    def test_a_ledger_written_before_the_split_still_loads(self):
+        """Ledgers predating `unverified_cost_usd` are ordinary committed state;
+        the field defaults rather than failing them closed."""
+        self.cycle.write_text(json.dumps({
+            "reserved_cost_usd": 0.0, "actual_cost_usd": 3.0,
+            "active_packets": 0, "reservations": {}}), encoding="utf-8")
+        value = aiw_budget_gate._read_cycle(self.cycle)
+        self.assertAlmostEqual(0.0, value["unverified_cost_usd"])
+        self.assertAlmostEqual(3.0, value["actual_cost_usd"])
+
+    def test_a_garbage_unverified_total_fails_closed(self):
+        """Defaulting a missing field must not become tolerating a corrupt one."""
+        self.cycle.write_text(json.dumps({
+            "reserved_cost_usd": 0.0, "actual_cost_usd": 0.0,
+            "unverified_cost_usd": "free", "active_packets": 0,
+            "reservations": {}}), encoding="utf-8")
+        with self.assertRaises(ValueError):
+            aiw_budget_gate._read_cycle(self.cycle)
