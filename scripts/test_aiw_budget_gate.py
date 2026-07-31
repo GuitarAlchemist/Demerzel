@@ -648,16 +648,18 @@ class TestCliAbandonVerb(unittest.TestCase):
         # Every canonical path is redirected into the tempdir: a failing test
         # must never mutate the committed .octo/ ledger state.
         self.policy_path = self.dir / "aiw-budget-policy.json"
-        self.policy_path.write_text(
-            aiw_budget_gate.POLICY_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+        policy = json.loads(aiw_budget_gate.POLICY_PATH.read_text(encoding="utf-8"))
+        metered = next(p for p in policy["providers"]
+                       if p.get("tier") == "metered-cloud"
+                       and p.get("trusted_receipt_issuer"))
+        self.metered = metered["id"]
+        metered["trusted_receipt_issuer"] = "api.anthropic.com"
+        self.policy_path.write_text(json.dumps(policy), encoding="utf-8")
         self.cycle = self.dir / "cycle.json"
         self.ledger = self.dir / "ledger.json"
         self.approval_path = self.dir / "approval.json"
         self.receipt_path = self.dir / "receipt.json"
         self.request_path = self.dir / "request.json"
-        self.metered = next(p["id"] for p in POLICY["providers"]
-                            if p.get("tier") == "metered-cloud"
-                            and p.get("trusted_receipt_issuer"))
 
     def cli(self, args):
         with mock.patch.object(aiw_budget_gate, "POLICY_PATH", self.policy_path), \
@@ -754,10 +756,8 @@ class TestCliAbandonVerb(unittest.TestCase):
         Abandonment is the fallback for an unobtainable receipt, never the
         default for metered work."""
         req = self.reserve_approved("aiw-896-honest", estimated_cost_usd=1.0)
-        issuer = next(p["trusted_receipt_issuer"] for p in POLICY["providers"]
-                      if p["id"] == self.metered)
         self.receipt_path.write_text(
-            json.dumps(receipt(req, issuer, 0.42)), encoding="utf-8")
+            json.dumps(receipt(req, "api.anthropic.com", 0.42)), encoding="utf-8")
         code = self.cli(["--release-job", "aiw-896-honest", "--actual-cost-usd", "0.42"])
         self.assertEqual(0, code)
         cycle = self.read_cycle()
