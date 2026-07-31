@@ -520,6 +520,65 @@ def _run_harvest(dry: bool, today: str) -> int:
     return 0
 
 
+def _append_galactic_claim(repo: str, lane: str, status: str, session: str, evidence: str | None = None, note: str | None = None) -> None:
+    """Append a coordination claim row to the shared ~/.agents/claims.jsonl log per the Galactic Protocol."""
+    import os
+    claims_path = os.environ.get("GALACTIC_CLAIMS_PATH")
+    if claims_path:
+        path = Path(claims_path).expanduser().resolve()
+    else:
+        path = Path.home() / ".agents" / "claims.jsonl"
+
+    row = {
+        "schema_version": "1.0",
+        "ts": kit.now_iso(),
+        "repo": repo,
+        "lane": lane,
+        "status": status,
+        "session": session,
+        "evidence": evidence,
+        "note": note
+    }
+    row = {k: v for k, v in row.items() if v is not None}
+    
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        encoded = json.dumps(row, separators=(",", ":"), ensure_ascii=False)
+        lock_path = path.with_suffix(".lock")
+        import time
+        from contextlib import contextmanager
+        
+        @contextmanager
+        def lock_file():
+            with lock_path.open("a+b") as lf:
+                deadline = time.monotonic() + 5.0
+                while time.monotonic() < deadline:
+                    try:
+                        if os.name == "nt":
+                            import msvcrt
+                            msvcrt.locking(lf.fileno(), msvcrt.LK_NBLCK, 1)
+                            yield
+                            msvcrt.locking(lf.fileno(), msvcrt.LK_UNLCK, 1)
+                            return
+                        else:
+                            import fcntl
+                            fcntl.flock(lf.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                            yield
+                            fcntl.flock(lf.fileno(), fcntl.LOCK_UN)
+                            return
+                    except (ImportError, OSError):
+                        time.sleep(0.1)
+                yield
+                
+        with lock_file():
+            with path.open("a", encoding="utf-8", newline="\n") as handle:
+                handle.write(encoded + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+    except Exception as exc:
+        print(f"warn: failed to write galactic claim to {path}: {exc}", file=sys.stderr)
+
+
 def _process_issue(issue: dict, seq: int, today: str, backend: str,
                     adapter: AFKBackend) -> tuple[dict, dict]:
     """Live processing of ONE issue end-to-end (runs inside the thread pool).
@@ -553,6 +612,15 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
         state["halt_reason"] = f"budget: {', '.join(reasons)}"
         _write_loop_state(state)
         return decision, state
+
+    # Claim the lane in the Galactic Protocol claims ledger
+    _append_galactic_claim(
+        repo="Demerzel",
+        lane=f"issue-{issue.get('number')}",
+        status="claimed",
+        session=f"afk-cycle-{seq}",
+        note=f"AFK governor implementing issue #{issue.get('number')} via {backend}"
+    )
 
     clone = None
     try:
@@ -605,6 +673,25 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
             shutil.rmtree(clone, ignore_errors=True)
         actual_cost = hr.get("actual_cost_usd", 0.0) if ("hr" in locals() and isinstance(hr, dict)) else 0.0
         _budget_release(issue, actual_cost_usd=actual_cost)
+
+    # Write final claim outcome to Galactic Protocol claims ledger
+    if state["status"] == "completed" and "pr" in decision:
+        _append_galactic_claim(
+            repo="Demerzel",
+            lane=f"issue-{issue.get('number')}",
+            status="done",
+            session=f"afk-cycle-{seq}",
+            evidence=f"pr-{decision['pr']}",
+            note=f"PR opened successfully"
+        )
+    else:
+        _append_galactic_claim(
+            repo="Demerzel",
+            lane=f"issue-{issue.get('number')}",
+            status="released",
+            session=f"afk-cycle-{seq}",
+            note=f"Stopped: {decision.get('action') or state.get('halt_reason') or 'unknown'}"
+        )
 
     _write_loop_state(state)
     return decision, state
