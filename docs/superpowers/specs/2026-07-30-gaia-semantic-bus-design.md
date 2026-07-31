@@ -76,6 +76,16 @@ Everything below is downstream of it.
 A named pipe rather than a localhost port keeps the existing safety boundary from
 the Galactic bridge: local stdio only, nothing bindable from off-machine.
 
+**The daemon is deferred to slice 2.** Reviewing what it actually buys slice 1:
+the vector index needs a resident process, but slice 1 has no embeddings; TTL
+expiry can sweep on read; fan-out bookkeeping only matters for messages, which
+slice 1 does not carry. Nothing in deterministic collision detection needs a
+long-lived process that SQLite's WAL and the hooks do not already provide — while
+the daemon contributes the one failure mode this codebase is repeatedly burned by,
+a process that dies quietly and reads green. Slice 1 therefore ships
+**brokerless**: hooks write to SQLite directly. The daemon arrives with the
+semantic exchange, when there is something resident for it to hold.
+
 SQLite is the working store because it gives multi-process concurrency for free.
 `claims.jsonl` keeps its current schema and keeps being appended, so every
 existing reader — including the `SessionStart` hook — continues to work untouched.
@@ -111,17 +121,47 @@ Identity is therefore `(repo, repo_relative_path)` where `repo` derives from
 `git config remote.origin.url` and the path is relative to
 `git rev-parse --show-toplevel`.
 
-### Hits are graded
+### What counts as a collision — settled by measurement, 2026-07-30
 
-Normalizing across worktrees creates the opposite risk: parallel worktree work is
-*normal*, and warning on all of it produces a noise floor that trains the reader
-to ignore it — the cry-wolf failure of #850.
+An earlier draft of this spec graded hits as *hard* (same worktree) and *soft*
+(different worktree, same file). Measuring the live machine refuted the soft tier
+outright.
+
+| signal | files | overlapping | rate |
+|---|---|---|---|
+| touched vs master, all 31 worktrees with a diff | 159 | 77 | **48%** |
+| touched vs master, 16 worktrees active in last 48 h | 114 | 66 | **58%** |
+| **uncommitted simultaneously**, 7 dirty worktrees | 29 | **0** | **0%** |
+
+Two conclusions, and they point the same way.
+
+**Branch-level overlap is not a signal.** At 48% — rising to 58% when restricted
+to *live* work, so this is not stale-branch noise — a warning on shared branch
+paths fires on the majority of edits. That is a noise floor that trains the reader
+to ignore it, which is the cry-wolf death of #850 arriving on day one. It is also
+redundant: divergent committed branches touching one file is the case git already
+handles, loudly, at merge.
+
+**Simultaneous uncommitted overlap is the signal.** It is the case git *cannot*
+help with — no merge, no conflict marker, just one session's working tree
+overwritten — and it is exactly what #873 was: two sessions with uncommitted edits
+"in the SHARED tree". Its measured base rate is **zero**, which is what a
+high-signal alarm needs. Every fire is real by construction.
+
+So slice 1 keys on **dirty-state overlap**, not branch overlap:
 
 | situation | verdict | rationale |
 |---|---|---|
-| same worktree, same file | **hard** | literally the same bytes; one session will clobber the other |
-| different worktree, same file, both targeting master | **soft** | a merge conflict is coming; worth knowing, not alarming |
-| different repo | no hit | — |
+| two live sessions holding *uncommitted* edits to the same `(repo, rel_path)` | **collision** | unrecoverable; git offers nothing |
+| same path, committed on divergent branches | **not a collision** | git's job, at merge, with markers |
+| different repo | not a collision | — |
+
+The measurement also validates the problem. Two of the 66 live branch-level
+overlaps were this session's own lanes — `scripts/aiw_budget_gate.py`
+(`agent-ac5e6c441797d4c0b` vs `demerzel-fixall`) and `scripts/ecosystem_freshness.py`
+(`agent-a48ee49061d2bb40c` vs `agent-a6225e88fd138f984`) — neither noticed while
+the work was happening. The collision risk is real and continuous. Only the
+*discriminator* needed correcting.
 
 ## Claim liveness
 
@@ -209,28 +249,45 @@ distributed consensus, no partition semantics.
 Slice 1 is complete when this passes as an automated test, and not before:
 
 ```
-GIVEN  session A has touched scripts/run_afk_cycle.py
-         (lane issue-873-governor, worktree W1)
-WHEN   session B, on lane issue-863-spend-attribution in worktree W2,
-         is about to edit the same repo-relative path
-THEN   B's PreToolUse hook receives a SOFT collision naming A, its lane,
-         and the claim age
-AND    the same scenario within one worktree yields a HARD collision
+GIVEN  session A holds UNCOMMITTED edits to scripts/run_afk_cycle.py
+         (lane issue-873-governor)
+WHEN   session B, on lane issue-863-spend-attribution, is about to edit
+         the same (repo, repo-relative path) while A's edits are still
+         uncommitted and A is still live
+THEN   B's PreToolUse hook receives a collision naming A, its lane,
+         and the claim age — before B's edit runs
 FAILS IF the warning arrives after the edit, or not at all.
+
+AND, equally required:
+GIVEN  A's edits to that path are COMMITTED on a divergent branch
+WHEN   B edits the same path
+THEN   NO collision is reported — that is git's job, at merge
+FAILS IF this warns, because at a 58% branch-overlap rate the signal
+         is destroyed on day one.
 ```
 
 This is the #873 collision replayed. It was chosen because it already cost real
-work, so passing it proves the bus catches something that actually happens.
+work, so passing it proves the bus catches something that actually happens. The
+second clause is not optional politeness: it is what keeps the first clause
+readable.
 
 ### Guards, because a green test that has never been seen red is not coverage
 
 1. **Mutation — disable path normalization.** The collision must be missed and the
    test must fail. This proves worktree handling is load-bearing rather than
    decorative, and is the guard for the highest-risk detail in the design.
-2. **Daemon stopped.** The bus must report DEAD and publish must error.
-   Green-while-dead must be unreachable.
-3. **Grading.** A different-worktree hit must not report as HARD. Without this the
-   noise floor eats the signal and the warning stops being read.
+2. **Store unreachable.** The bus must report DEAD and publish must error.
+   Green-while-dead must be unreachable. (Slice 1 is brokerless, so this is an
+   unwritable/locked SQLite file rather than a stopped daemon; the requirement is
+   identical and carries forward when the daemon lands in slice 2.)
+3. **Committed-divergence must stay silent.** A path committed on two branches
+   must produce NO collision. Measured branch-level overlap is 58%, so a
+   regression here does not degrade the signal — it deletes it. This guard is the
+   reason the first guard's warnings remain readable.
+4. **Base-rate regression.** Re-run the dirty-overlap measurement against the live
+   machine and assert the alarm's fire rate stays near its measured zero. A
+   detector whose base rate has silently climbed is one nobody reads, and no unit
+   test would show it.
 
 ## Deliberately not in slice 1
 
@@ -265,7 +322,19 @@ still can. Gaia removes the excuse of not knowing; it does not remove the abilit
 
 ## Open question for the owner
 
-**Hard-block escalation.** Slice 1 warns only. Whether a HARD same-worktree
-collision should eventually *deny* the tool call is a judgement about how much
-autonomy to hand a detector, and it should be made with slice 1's measured false
-positive rate in hand rather than now.
+**Hard-block escalation.** Slice 1 warns only, and the measurement makes that
+worth revisiting sooner than planned. Warn-only was chosen against an assumed
+false-positive rate; the measured base rate for simultaneous uncommitted overlap
+is **zero**. A detector that fires approximately never can afford to block, and
+the cost asymmetry favours it — a false block costs seconds, a missed collision
+cost an hour of thrown-away work in #873.
+
+The conservative form worth considering: **deny once, then allow.** The first
+attempt is refused with the holder named; an immediate retry proceeds. That makes
+the collision impossible to not-read while leaving the session able to overrule
+itself, and it never deadlocks an agent with no alternative path.
+
+I have not changed slice 1 to block, because the zero base rate is one
+measurement on one day and warn-only is the reversible choice. But the reasoning
+that produced warn-only no longer holds, and this should be decided deliberately
+rather than inherited.
