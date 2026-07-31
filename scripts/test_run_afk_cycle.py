@@ -579,7 +579,14 @@ class TestBudgetGate(unittest.TestCase):
             "as $0.00 VERIFIED spend forever. If release() cannot be satisfied "
             "honestly, abandon() is the answer -- see #896 and "
             "docs/solutions/harness/2026-07-29-a-guard-is-only-as-good-as-its-subject.md")
-        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"], msg=forged)  # charged, not $0
+        # The estimate is charged, and charged to the bucket that says nobody
+        # verified it. Both halves matter: $0.00 anywhere means the spend was
+        # credited back, and a non-zero actual_cost_usd means an unreceipted
+        # charge is being reported as measured.
+        self.assertAlmostEqual(1.25, cycle["unverified_cost_usd"], msg=forged)
+        self.assertAlmostEqual(0.0, cycle["actual_cost_usd"], msg=forged)
+        self.assertAlmostEqual(
+            1.25, cycle["actual_cost_usd"] + cycle["unverified_cost_usd"], msg=forged)
         entry = cycle["unreconciled"][0]
         self.assertFalse(entry["receipt_verified"], msg=forged)
         self.assertEqual("anthropic-api", entry["provider"])
