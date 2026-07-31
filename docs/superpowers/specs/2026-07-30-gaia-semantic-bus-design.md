@@ -45,12 +45,36 @@ ahead of a proven consumer. Gaia is only worth building if it does not repeat it
 
 **Nothing is published by hand.**
 
-`PostToolUse` on Edit/Write emits a touch event automatically. `PreToolUse` on
-Edit/Write asks whether anyone else holds that path. Neither requires a session
-to decide to cooperate — coordination becomes a side effect of working.
+`PreToolUse` on Edit/Write **atomically checks and claims** the path in one SQLite
+transaction. `PostToolUse` confirms and `SessionEnd` releases. Neither requires a
+session to decide to cooperate — coordination becomes a side effect of working.
 
-If that idea is wrong, Gaia becomes a third dead ledger and should not be built.
-Everything below is downstream of it.
+The claim must be taken at `PreToolUse`, not `PostToolUse`. Check-at-Pre and
+publish-at-Post leaves a race: A checks clear, B checks clear, both edit, and
+neither has published yet — precisely the simultaneous case the bus exists to
+catch, sailing through green. Test-and-set in one transaction closes it, and a
+concurrent test is mandatory rather than optional (see Guards).
+
+### Where this claim is weaker than it looks
+
+Automatic publication removes the discipline of *calling send*. It does not
+remove discipline; it relocates it, and the honest list is:
+
+- Hooks must stay installed, enabled and fast in every harness.
+- **Every mutation must pass through a recognised Edit/Write tool.** Shell
+  redirection, `sed`, formatters, patch tools, IDE saves and build steps all
+  bypass it. This is not theoretical: the session that wrote this spec appended
+  test code with `cat >>` and wrote files from inline Python, neither of which
+  any Edit/Write hook would have seen.
+- Sessions must actually heed `additionalContext`.
+- A flaky 100 ms tax must get repaired rather than disabled.
+
+So the third-dead-ledger risk is not "nobody writes events" — publication is now
+automatic and will look healthy indefinitely. It is that **events stop predicting
+danger**: missed mutation paths and stale sessions produce false negatives,
+over-broad matching produces false positives, warnings become ambient text, and
+consumption decays to zero while the ledger stays busy. That is the predecessor's
+354-heartbeat failure wearing a different mask, and it is the thing to watch for.
 
 ## Architecture
 
@@ -152,9 +176,19 @@ So slice 1 keys on **dirty-state overlap**, not branch overlap:
 
 | situation | verdict | rationale |
 |---|---|---|
-| two live sessions holding *uncommitted* edits to the same `(repo, rel_path)` | **collision** | unrecoverable; git offers nothing |
+| two live sessions, uncommitted edits, same path, **same physical worktree** | **collision** | one working tree, one copy of the file; the loser is overwritten with no trace |
+| same path dirty in *different* worktrees | **not a collision** | different physical files; git reconciles at merge |
 | same path, committed on divergent branches | **not a collision** | git's job, at merge, with markers |
 | different repo | not a collision | — |
+
+The worktree axis was itself a correction. An earlier revision keyed on
+`(repo, rel_path)` across all worktrees, which over-claims: two dirty copies in
+separate trees cannot silently overwrite each other. Only a shared physical tree
+can, and that is exactly what #873 recorded — *"in the SHARED tree"*. Note the
+measurement above cannot see this case at all: it keys on worktree, so it counts
+overlap *between* trees and is blind to two sessions inside one. **The zero is
+real but off-axis.** The same-worktree rate is unmeasured and should be
+instrumented before slice 1 is called done.
 
 The measurement also validates the problem. Two of the 66 live branch-level
 overlaps were this session's own lanes — `scripts/aiw_budget_gate.py`
@@ -288,6 +322,15 @@ readable.
    machine and assert the alarm's fire rate stays near its measured zero. A
    detector whose base rate has silently climbed is one nobody reads, and no unit
    test would show it.
+5. **Concurrency — the race.** Two sessions must call `PreToolUse` on the same
+   path with **no serialisation between them**, and exactly one must win. A test
+   that claims sequentially passes against a broken check-then-publish
+   implementation, so this must exercise genuine concurrency. This is the guard
+   for the failure the tracer bullet cannot see.
+6. **Bypass honesty.** A file mutated *outside* Edit/Write — shell redirection or
+   an inline script — must be shown to produce **no** claim, asserted rather than
+   assumed. The coverage gap is real and permanent; a spec that lets it stay
+   implicit invites the false confidence that the bus sees everything.
 
 ## Deliberately not in slice 1
 
@@ -329,12 +372,25 @@ is **zero**. A detector that fires approximately never can afford to block, and
 the cost asymmetry favours it — a false block costs seconds, a missed collision
 cost an hour of thrown-away work in #873.
 
-The conservative form worth considering: **deny once, then allow.** The first
-attempt is refused with the holder named; an immediate retry proceeds. That makes
-the collision impossible to not-read while leaving the session able to overrule
-itself, and it never deadlocks an agent with no alternative path.
+The conservative form I first proposed — **deny once, then allow** — does not
+survive review. An autonomous agent that hits a denial simply retries, and a
+retry is indistinguishable from an override, so the block degrades to a warning
+with extra latency. **If it blocks, the override must be a distinct act** — a
+different call carrying an explicit acknowledgement of the holder — not the same
+call issued twice.
 
-I have not changed slice 1 to block, because the zero base rate is one
-measurement on one day and warn-only is the reversible choice. But the reasoning
-that produced warn-only no longer holds, and this should be decided deliberately
-rather than inherited.
+Warn-only is also weaker than it sounds against this particular failure. It
+proves information was *emitted*, not that destruction was *prevented*: an agent
+can summarise the warning away, judge its own task more urgent, or never surface
+it. Across enough edits, recurrence is the default outcome.
+
+Against that, the narrow condition — same repo, same relative path, same physical
+worktree, another live session holding uncommitted edits — has close to no
+legitimate concurrent-write reading. That is a strong case for denial, and the
+cost asymmetry agrees: a false block costs one coordination step, a false allow
+destroyed an hour of work in #873.
+
+Slice 1 still ships warn-only, because the same-worktree base rate is **not yet
+measured** (the existing zero is off-axis, see above) and warn-only is the
+reversible choice. But this is now a live decision with an argued case against it,
+not a default to inherit. Instrument the rate during slice 1, then decide.
