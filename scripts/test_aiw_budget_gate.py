@@ -624,3 +624,143 @@ class TestNoteReleaseFailure(unittest.TestCase):
         path = self._ledger()
         path.write_text("{not json", encoding="utf-8")
         self.assertFalse(aiw_budget_gate.note_release_failure(path, "aiw-1", "boom"))
+
+
+class TestCliAbandonVerb(unittest.TestCase):
+    """#896: an APPROVED metered run reserved through the CLI had no terminal
+    state an operator could reach. `--release-job` demands a trusted provider
+    receipt (`_validate_receipt`) and a metered provider's receipt cannot be
+    self-issued, so the reservation stayed open forever; after
+    cycle.max_parallel_packets such runs the provider-agnostic packet cap blocked
+    EVERY lane, including the free subscription one.
+
+    PR #914 gave the AFK governor `abandon()`, but the governor passes
+    approval=None and therefore can never run an approved metered job at all --
+    the CLI is the only path an approved metered run takes, and it had no abandon
+    verb. This exposes it. No receipt is synthesised; see
+    test_metered_release_is_abandoned_not_forged in test_run_afk_cycle.py.
+    """
+
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.dir = Path(directory.name)
+        # Every canonical path is redirected into the tempdir: a failing test
+        # must never mutate the committed .octo/ ledger state.
+        self.policy_path = self.dir / "aiw-budget-policy.json"
+        self.policy_path.write_text(
+            aiw_budget_gate.POLICY_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+        self.cycle = self.dir / "cycle.json"
+        self.ledger = self.dir / "ledger.json"
+        self.approval_path = self.dir / "approval.json"
+        self.receipt_path = self.dir / "receipt.json"
+        self.request_path = self.dir / "request.json"
+        self.metered = next(p["id"] for p in POLICY["providers"]
+                            if p.get("tier") == "metered-cloud"
+                            and p.get("trusted_receipt_issuer"))
+
+    def cli(self, args):
+        with mock.patch.object(aiw_budget_gate, "POLICY_PATH", self.policy_path), \
+                mock.patch.object(aiw_budget_gate, "CYCLE_LEDGER_PATH", self.cycle), \
+                mock.patch.object(aiw_budget_gate, "LEDGER_PATH", self.ledger), \
+                mock.patch.object(aiw_budget_gate, "APPROVAL_PATH", self.approval_path), \
+                mock.patch.object(aiw_budget_gate, "RECEIPT_PATH", self.receipt_path):
+            return aiw_budget_gate.main(args)
+
+    def reserve_approved(self, job_id, estimated_cost_usd=1.0):
+        """Drive an approved metered reserve exactly as an operator must: a
+        committed approval artifact bound to the request fingerprint."""
+        req = {"job_id": job_id, "provider": self.metered,
+               "estimated_cost_usd": estimated_cost_usd}
+        self.request_path.write_text(json.dumps(req), encoding="utf-8")
+        self.approval_path.write_text(json.dumps(approval(req)), encoding="utf-8")
+        self.assertEqual(0, self.cli(["--request", str(self.request_path)]),
+                         "approved metered reserve should be allowed")
+        return req
+
+    def read_cycle(self):
+        return json.loads(self.cycle.read_text(encoding="utf-8"))
+
+    def test_release_without_a_receipt_leaves_the_reservation_open(self):
+        """The leak itself, stated as a fact about `--release-job`. This is why
+        an abandon verb is needed rather than a looser release."""
+        self.reserve_approved("aiw-896-a")
+        self.assertEqual(2, self.cli(
+            ["--release-job", "aiw-896-a", "--actual-cost-usd", "0.0"]))
+        cycle = self.read_cycle()
+        self.assertIn("aiw-896-a", cycle["reservations"])
+        self.assertEqual(1, cycle["active_packets"])
+
+    def test_abandon_job_reaches_a_terminal_state_from_the_cli(self):
+        self.reserve_approved("aiw-896-b", estimated_cost_usd=1.25)
+        code = self.cli(["--abandon-job", "aiw-896-b", "--reason", "no provider receipt"])
+        self.assertEqual(0, code)
+        cycle = self.read_cycle()
+        self.assertEqual({}, cycle["reservations"])
+        self.assertEqual(0, cycle["active_packets"])
+        self.assertAlmostEqual(0.0, cycle["reserved_cost_usd"])
+        # Charged, not credited back: unverified is not the same as free.
+        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"])
+        entry = cycle["unreconciled"][0]
+        self.assertFalse(entry["receipt_verified"])
+        self.assertEqual(self.metered, entry["provider"])
+        self.assertIn("no provider receipt", entry["reason"])
+
+    def test_abandon_is_reported_as_abandoned_not_released(self):
+        """An abandon must never be mistakable for a clean release: the decision
+        written to the budget ledger is the operator's only record of which
+        happened."""
+        self.reserve_approved("aiw-896-c")
+        self.cli(["--abandon-job", "aiw-896-c", "--reason", "receipt unobtainable"])
+        self.assertEqual("abandoned",
+                         json.loads(self.ledger.read_text(encoding="utf-8"))["decision"])
+
+    def test_abandon_requires_a_reason(self):
+        """An abandonment with no recorded reason is an unauditable write."""
+        self.reserve_approved("aiw-896-d")
+        self.assertEqual(2, self.cli(["--abandon-job", "aiw-896-d"]))
+        self.assertIn("aiw-896-d", self.read_cycle()["reservations"])
+
+    def test_abandoning_an_unknown_job_fails_closed(self):
+        self.reserve_approved("aiw-896-e")
+        self.assertEqual(2, self.cli(["--abandon-job", "no-such-job", "--reason", "x"]))
+        self.assertIn("aiw-896-e", self.read_cycle()["reservations"])
+
+    def test_release_and_abandon_cannot_be_requested_together(self):
+        with self.assertRaises(SystemExit):
+            self.cli(["--release-job", "a", "--abandon-job", "a", "--reason", "x"])
+
+    def test_abandon_unwedges_the_gate_for_every_other_lane(self):
+        """The #896 acceptance criterion at the CLI: cap+1 approved metered runs
+        no longer exhaust the provider-agnostic packet cap, so the free
+        subscription lane -- which had nothing to do with them -- still reserves."""
+        cap = int(POLICY["cycle"]["max_parallel_packets"])
+        for n in range(cap + 1):
+            job = f"aiw-896-cap-{n}"
+            self.reserve_approved(job, estimated_cost_usd=0.01)
+            self.assertEqual(0, self.cli(
+                ["--abandon-job", job, "--reason", "no provider receipt"]))
+        free = aiw_budget_gate.reserve(
+            POLICY, request(job_id="aiw-896-free"), self.cycle)
+        self.assertEqual("allow", free["decision"],
+                         f"free lane blocked after {cap + 1} metered runs: {free['reasons']}")
+
+    def test_an_honest_release_still_reconciles_and_is_not_abandoned(self):
+        """The honest path must stay honest: when a trusted receipt DOES exist,
+        `--release-job` reconciles verified spend and nothing is abandoned.
+        Abandonment is the fallback for an unobtainable receipt, never the
+        default for metered work."""
+        req = self.reserve_approved("aiw-896-honest", estimated_cost_usd=1.0)
+        issuer = next(p["trusted_receipt_issuer"] for p in POLICY["providers"]
+                      if p["id"] == self.metered)
+        self.receipt_path.write_text(
+            json.dumps(receipt(req, issuer, 0.42)), encoding="utf-8")
+        code = self.cli(["--release-job", "aiw-896-honest", "--actual-cost-usd", "0.42"])
+        self.assertEqual(0, code)
+        cycle = self.read_cycle()
+        self.assertEqual({}, cycle["reservations"])
+        self.assertEqual(0, cycle["active_packets"])
+        self.assertAlmostEqual(0.42, cycle["actual_cost_usd"])  # measured, not estimated
+        self.assertNotIn("unreconciled", cycle)
+        self.assertEqual("released",
+                         json.loads(self.ledger.read_text(encoding="utf-8"))["decision"])

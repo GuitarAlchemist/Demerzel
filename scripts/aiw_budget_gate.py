@@ -530,8 +530,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cycle-ledger", type=Path, default=CYCLE_LEDGER_PATH)
     parser.add_argument("--approval", type=Path, default=APPROVAL_PATH)
     parser.add_argument("--receipt", type=Path, default=RECEIPT_PATH)
-    parser.add_argument("--release-job")
+    # A reservation has exactly two terminal states and they are mutually
+    # exclusive: released against a trusted receipt, or abandoned. Naming both
+    # in one invocation is ambiguous about which one was intended.
+    terminal = parser.add_mutually_exclusive_group()
+    terminal.add_argument("--release-job")
+    terminal.add_argument("--abandon-job")
     parser.add_argument("--actual-cost-usd", type=float)
+    parser.add_argument("--reason")
     args = parser.parse_args(argv)
     try:
         # Policy and ledgers are pinned to canonical repository paths; the
@@ -542,7 +548,19 @@ def main(argv: list[str] | None = None) -> int:
         _bind_canonical("--approval", args.approval, APPROVAL_PATH)
         _bind_canonical("--receipt", args.receipt, RECEIPT_PATH)
         policy = load_policy(POLICY_PATH)
-        if args.release_job:
+        if args.abandon_job:
+            # The only honest way out of a metered reservation whose receipt does
+            # not exist. `--release-job` demands a trusted receipt and a metered
+            # provider's receipt cannot be self-issued, so without this verb an
+            # approved metered run had NO terminal state reachable by an operator:
+            # the reservation stayed open, active_packets never fell, and after
+            # cycle.max_parallel_packets such runs the gate blocked every lane
+            # including the free subscription one (#896). Abandon charges the
+            # reserved estimate as UNVERIFIED spend rather than inventing a cost.
+            if not args.reason:
+                raise ValueError("--reason is required with --abandon-job")
+            result = abandon(CYCLE_LEDGER_PATH, args.abandon_job, args.reason)
+        elif args.release_job:
             if args.actual_cost_usd is None:
                 raise ValueError("--actual-cost-usd is required with --release-job")
             receipt = _load(RECEIPT_PATH) if RECEIPT_PATH.exists() else None
@@ -561,8 +579,11 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
         print(f"aiw budget gate: {error}", file=sys.stderr)
         return 2
+    # ABANDONED exits 0 because the operator's action succeeded and the ledger is
+    # consistent again -- but it prints as ABANDONED, never as RELEASED, and the
+    # cycle ledger records it under `unreconciled` with receipt_verified: false.
     print(f"{result['decision'].upper()}: {LEDGER_PATH}")
-    return 0 if result["decision"] in {"allow", "released"} else 1
+    return 0 if result["decision"] in {"allow", "released", "abandoned"} else 1
 
 
 if __name__ == "__main__":
