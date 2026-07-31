@@ -58,6 +58,15 @@ def _claude_code_prompt(issue: dict) -> str:
     )
 
 
+def _run_tests_locally(repo_path: str) -> tuple[bool, str]:
+    """Execute python unit tests in repo_path and return (success, log)."""
+    p = subprocess.run(
+        [sys.executable, "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
+        cwd=repo_path, capture_output=True, text=True, timeout=300
+    )
+    return p.returncode == 0, p.stdout + p.stderr
+
+
 class ClaudeCodeBackend(AFKBackend):
     """Desktop backend: delegate one issue to a headless Claude Code agent."""
 
@@ -87,32 +96,77 @@ class ClaudeCodeBackend(AFKBackend):
             base = subprocess.run(["git", "-C", repo_path, "rev-parse", "HEAD"],
                                   capture_output=True, text=True, timeout=30).stdout.strip()
             env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
-            cmd = ["claude", "-p", _claude_code_prompt(issue),
-                   "--output-format", "json",
-                   "--allowedTools", "Edit", "Write", "Read", "Grep", "Glob",
-                   "Bash(python *)", "Bash(python3 *)", "Bash(git *)"]
-            p = subprocess.run(cmd, cwd=repo_path, capture_output=True, text=True,
-                               timeout=CLAUDE_CODE_TIMEOUT, env=env)
+
+            max_attempts = 3
+            current_attempt = 1
+            last_test_output = ""
+            blocked_reason = None
+            p = None
+
+            while current_attempt <= max_attempts:
+                prompt = _claude_code_prompt(issue)
+                if current_attempt > 1:
+                    prompt += (
+                        f"\n\n[ATTEMPT {current_attempt} OF {max_attempts}]\n"
+                        "Your previous implementation failed the unit tests. Please analyze the test failure output "
+                        "below, correct the bug in your code, and commit your changes.\n\n"
+                        f"=== TEST OUTPUT FAILURE ===\n{last_test_output}\n"
+                        "=== END TEST OUTPUT ==="
+                    )
+
+                cmd = ["claude", "-p", prompt,
+                       "--output-format", "json",
+                       "--allowedTools", "Edit", "Write", "Read", "Grep", "Glob",
+                       "Bash(python *)", "Bash(python3 *)", "Bash(git *)"]
+                p = subprocess.run(cmd, cwd=repo_path, capture_output=True, text=True,
+                                   timeout=CLAUDE_CODE_TIMEOUT, env=env)
+
+                # Capture any uncommitted changes left by the agent
+                dirty = subprocess.run(["git", "-C", repo_path, "status", "--porcelain"],
+                                       capture_output=True, text=True, timeout=30).stdout.strip()
+                if dirty:
+                    subprocess.run(["git", "-C", repo_path, "add", "-A"],
+                                   capture_output=True, text=True, timeout=60)
+                    subprocess.run(["git", "-C", repo_path, "commit", "-m",
+                                    f"wip: attempt {current_attempt} implementing #{num}"],
+                                   capture_output=True, text=True, timeout=60)
+
+                # Run tests
+                passed, test_log = _run_tests_locally(repo_path)
+                if passed:
+                    print(f"AFK: attempt {current_attempt} succeeded. Verification tests passed!", file=sys.stderr)
+                    break
+
+                print(f"AFK: attempt {current_attempt} failed verification tests. Retrying...", file=sys.stderr)
+                last_test_output = test_log[:5000]  # truncate to avoid prompt bloating
+                current_attempt += 1
+            else:
+                blocked_reason = f"Verification tests failed after {max_attempts} attempts. Last log: {last_test_output[:200]}"
+
         except (OSError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as exc:
             return {"branch": None, "commits": [], "blocked": f"claude-code invoke failed: {exc}"}
 
-        # The agent is told to commit; if it left changes uncommitted, capture them so a
-        # real implementation isn't lost to a missing commit step.
-        dirty = subprocess.run(["git", "-C", repo_path, "status", "--porcelain"],
-                               capture_output=True, text=True, timeout=30).stdout.strip()
-        if dirty:
-            subprocess.run(["git", "-C", repo_path, "add", "-A"],
-                           capture_output=True, text=True, timeout=60)
-            subprocess.run(["git", "-C", repo_path, "commit", "-m",
-                            f"feat: implement #{num} via AFK claude-code backend"],
-                           capture_output=True, text=True, timeout=60)
+        if blocked_reason:
+            return {"branch": None, "commits": [], "blocked": blocked_reason}
+
         commits = subprocess.run(["git", "-C", repo_path, "log", "--format=%s", f"{base}..HEAD"],
                                  capture_output=True, text=True, timeout=30).stdout.strip()
         if not commits:
-            tail = (p.stderr or p.stdout or "").strip()[-200:]
+            tail = (p.stderr or p.stdout or "").strip()[-200:] if p else ""
             return {"branch": None, "commits": [],
-                    "blocked": f"claude-code made no commits (exit {p.returncode}): {tail}"}
-        return {"branch": branch, "commits": commits.splitlines(), "blocked": None}
+                    "blocked": f"claude-code made no commits: {tail}"}
+
+        # Perform the squashing
+        subprocess.run(["git", "-C", repo_path, "reset", "--soft", base],
+                       capture_output=True, text=True, timeout=60)
+        subprocess.run(["git", "-C", repo_path, "commit", "-m",
+                        f"feat: implement #{num} via AFK claude-code backend"],
+                       capture_output=True, text=True, timeout=60)
+
+        final_commits = subprocess.run(["git", "-C", repo_path, "log", "--format=%s", f"{base}..HEAD"],
+                                       capture_output=True, text=True, timeout=30).stdout.strip()
+
+        return {"branch": branch, "commits": final_commits.splitlines(), "blocked": None}
 
     def estimate_cost(self, issue: dict[str, Any]) -> dict:
         """Claude Code on the subscription is treated as local-seat cost.
