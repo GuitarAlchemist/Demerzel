@@ -556,20 +556,54 @@ class EcosystemFreshnessTest(unittest.TestCase):
         )
         finding = self._one(findings, "reviewer.yml")
         self.assertEqual(finding["kind"], "stale")
-        self.assertIn("9.0d old", finding["detail"])
+        # The run started 8.5d before the event it should have answered. That lag is
+        # what proves death here — the event itself is only 0.5d old, so an
+        # "unanswered for longer than the allowance" test alone would still be green.
+        self.assertIn("8.5d BEFORE that event", finding["detail"])
         self.assertEqual(ef.exit_code(findings), 1)
 
     def test_event_loop_quiet_with_no_event_supply_stays_silent(self):
-        # THE OTHER DIRECTION: no PR in the window, so no run was owed. A repo
-        # with a quiet week must not turn the board red — that is the cry-wolf
+        # THE OTHER DIRECTION: the last PR was 30d ago and was answered. A repo
+        # with a quiet month must not turn the board red — that is the cry-wolf
         # failure that trains people to ignore the guard.
         findings = self._event_findings(
             self._supply(event_age_days=30, run_age_days=30)
         )
         finding = self._one(findings, "reviewer.yml")
         self.assertEqual(finding["kind"], "healthy")
-        self.assertIn("quiet", finding["detail"])
+        self.assertIn("postdates the newest event", finding["detail"])
         self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_a_dead_loop_stays_red_however_long_the_repo_stays_quiet(self):
+        """Regression for the vanishing detection window (adversarial review, pre-merge).
+
+        The first version compared the event and the run each against `now`:
+        `event_age <= max AND run_age > max`. That makes the window in which both hold
+        exactly as wide as the gap between the dead loop's last run and the unanswered
+        event — here six hours — and then it CLOSES, because the event ages past the
+        window and the quiet arm returns healthy. A loop that died just before a final
+        event and then went quiet read green forever, and this guard runs once a day
+        (cron `15 13 * * *`), so it could miss the window entirely.
+
+        Ordering has no window. The event is unanswered and stays unanswered, so the
+        finding must hold at 4 days, 40 days and 400.
+        """
+        # Run at T, the event it never answered 6h later — a lag far INSIDE the
+        # allowance, so only the unanswered-duration arm can catch this one.
+        for quiet_days in (4, 40, 400):
+            with self.subTest(quiet_days=quiet_days):
+                findings = self._event_findings(
+                    self._supply(
+                        event_age_days=quiet_days,
+                        run_age_days=quiet_days + 0.25,
+                    )
+                )
+                finding = self._one(findings, "reviewer.yml")
+                self.assertEqual(
+                    finding["kind"], "stale",
+                    f"a loop dead for {quiet_days}d read {finding['kind']!r}; evidence of "
+                    "death must not decay at the same rate as the obligation")
+                self.assertEqual(ef.exit_code(findings), 1)
 
     def test_event_loop_never_triggered_at_all_stays_silent(self):
         # No PR has ever existed: absence of supply, not absence of life.

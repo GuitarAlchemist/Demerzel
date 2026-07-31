@@ -627,11 +627,10 @@ def _eval_event_producer(
 
     newest_event_iso, run = event_supply_runner(workflow, event, repository, token)
     newest_event = _parse_iso(newest_event_iso)
-    if newest_event is None or _age_days(newest_event, now) > max_days:
+    if newest_event is None:
         return ("healthy",
-                f"quiet: no `{event}` event within the last {max_days:g}d, so no "
-                "run was owed (event-triggered loops are judged by event supply, "
-                "not by a clock)")
+                f"quiet: no `{event}` event has ever occurred, so no run was owed "
+                "(event-triggered loops are judged by event supply, not by a clock)")
     event_age = _age_days(newest_event, now)
 
     if run is None:
@@ -656,15 +655,55 @@ def _eval_event_producer(
         return ("malformed_proof",
                 f"newest completed `{event}` run has no parseable start timestamp")
     run_age = _age_days(newest_run, now)
-    if run_age > max_days:
+
+    # Compare the run to the EVENT it should have answered — not both to the clock.
+    #
+    # The first version of this adapter tested `event_age <= max_days AND run_age >
+    # max_days`, i.e. both against `now`. That makes the detection window exactly as wide
+    # as the gap between the dead loop's last run and the unanswered event, and then it
+    # closes: once the event ages past max_days the quiet arm returns healthy and a dead
+    # loop reads green FOREVER. Worked example — loop answers PR A at 09:00 and dies, PR B
+    # opens at 15:00, repo goes quiet: `stale` is true only between run_age=3d and
+    # event_age=3d, a six-hour window, and this guard runs once a day
+    # (ecosystem-freshness.yml, cron `15 13 * * *`). Evidence of death decayed at exactly
+    # the rate the obligation did. Caught in adversarial review before merge.
+    #
+    # Ordering has no window. An event newer than the newest run is unanswered, and stays
+    # unanswered until a run actually answers it, so the finding is STICKY: missing one
+    # daily sweep costs nothing. max_days stops being a detection threshold and becomes a
+    # pure response allowance — how long the loop may take to answer — which is what the
+    # registry field should have meant here all along. It also removes an unstated
+    # coupling: detection no longer requires max_days to exceed this guard's own cadence.
+    if newest_run >= newest_event:
+        return ("healthy",
+                f"answering `{event}` supply: newest successful run ({run_age:.1f}d ago) "
+                f"postdates the newest event ({event_age:.1f}d ago): {url}")
+
+    # The newest event is UNANSWERED. Two independent ways that becomes overdue, and the
+    # loop is dead if either holds — neither alone is sufficient:
+    #
+    #   unanswered_for : how long this event has gone unanswered (now - event). Grows
+    #                    without bound, so it catches a loop that died just before a final
+    #                    event and then went quiet — the case a lag-only test misses,
+    #                    because there the lag is fixed and small.
+    #   lag            : how far the run already trailed the event when it arrived
+    #                    (event - run). Catches a loop that has been behind for a long
+    #                    time even though its newest event is recent — the case an
+    #                    age-only test misses for up to the full allowance.
+    #
+    # Both are monotonic while the loop stays dead, so the finding is STICKY once it
+    # fires: unlike the previous `event_age <= max AND run_age > max` form, there is no
+    # window to miss and no path back to green except an actual answering run.
+    unanswered_for = event_age
+    lag = _age_days(newest_run, newest_event)
+    if unanswered_for > max_days or lag > max_days:
         return ("stale",
-                f"a `{event}` event arrived {event_age:.1f}d ago but the newest "
-                f"completed run is {run_age:.1f}d old (threshold {max_days:g}d): "
-                f"{url}")
+                f"a `{event}` event arrived {event_age:.1f}d ago and is still "
+                f"unanswered: the newest completed run started {run_age:.1f}d ago, "
+                f"{lag:.1f}d BEFORE that event (allowance {max_days:g}d): {url}")
     return ("healthy",
-            f"answering `{event}` supply: newest event {event_age:.1f}d ago, "
-            f"newest successful run {run_age:.1f}d ago (threshold {max_days:g}d): "
-            f"{url}")
+            f"a `{event}` event arrived {event_age:.1f}d ago and is not answered yet, "
+            f"still within the {max_days:g}d response allowance: {url}")
 
 
 # ---------------------------------------------------------------------------
