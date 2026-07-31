@@ -66,6 +66,16 @@ class _Repo:
             encoding="utf-8",
         )
 
+    def write_event_workflow(self, name: str, events: list[str]) -> None:
+        """A workflow with only event triggers — no cron at all (#844)."""
+        (self.workflows / name).write_text(
+            "name: stub\n"
+            "on:\n"
+            + "".join(f"  {event}:\n" for event in events)
+            + "jobs: {}\n",
+            encoding="utf-8",
+        )
+
 
 class EcosystemFreshnessTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -73,7 +83,8 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.addCleanup(self.repo.close)
 
     def _evaluate(self, registry: dict, *, git_runner=None,
-                  actions_runner=None, auto_workflows=True) -> list[dict]:
+                  actions_runner=None, auto_workflows=True,
+                  event_supply_runner=None, event_producers=None) -> list[dict]:
         # Most unit tests exercise an adapter, not activation declarations. Give
         # them a matching scheduled stub; activation tests opt out explicitly.
         registry = json.loads(json.dumps(registry))
@@ -91,11 +102,17 @@ class EcosystemFreshnessTest(unittest.TestCase):
         kwargs = {
             "repository": "GuitarAlchemist/Demerzel",
             "token": "test-token",
+            # Event-triggered producers are opt-in per test: the shipped
+            # EVENT_PRODUCERS names a real workflow that does not exist in these
+            # throwaway repos.
+            "event_producers": event_producers or {},
         }
         if git_runner is not None:
             kwargs["git_runner"] = git_runner
         if actions_runner is not None:
             kwargs["actions_runner"] = actions_runner
+        if event_supply_runner is not None:
+            kwargs["event_supply_runner"] = event_supply_runner
         return ef.evaluate(
             registry,
             now=NOW,
@@ -496,6 +513,251 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertEqual(seen["request"].get_header("Authorization"),
                          "Bearer secret")
 
+    # ── event-triggered producers (#844) ──────────────────────────────────
+    #
+    # These loops have no cadence, so freshness is bound to EVENT SUPPLY: a
+    # `pull_request` loop is only expected to have run when a PR happened.
+    # Both directions matter — a genuinely dead loop must fire, and a quiet but
+    # healthy one must stay silent.
+
+    EVENT_SPEC = {"reviewer.yml": {"event": "pull_request", "max_stale_days": 3}}
+
+    def _event_repo(self, events=("pull_request",)):
+        self.repo.write_event_workflow("reviewer.yml", list(events))
+
+    def _supply(self, event_age_days=None, run_age_days=None,
+                conclusion="success"):
+        """Stub the (newest event, latest completed run) seam."""
+        event_iso = (
+            None if event_age_days is None
+            else _iso(NOW - timedelta(days=event_age_days))
+        )
+        run = None if run_age_days is None else {
+            "conclusion": conclusion,
+            "run_started_at": _iso(NOW - timedelta(days=run_age_days)),
+            "html_url": "https://example.test/pr-run",
+        }
+        return lambda *args: (event_iso, run)
+
+    def _event_findings(self, supply, git_runner=None):
+        self._event_repo()
+        return self._evaluate(
+            {"version": 1, "loops": []},
+            event_producers=self.EVENT_SPEC,
+            event_supply_runner=supply,
+            git_runner=git_runner or (lambda args, cwd: ""),
+        )
+
+    def test_event_loop_dead_while_events_flow_turns_red(self):
+        # THE #844 SHAPE: PRs kept arriving, the loop stopped answering, and
+        # nothing enumerated it because it has no cron.
+        findings = self._event_findings(
+            self._supply(event_age_days=0.5, run_age_days=9)
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "stale")
+        self.assertIn("9.0d old", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_event_loop_quiet_with_no_event_supply_stays_silent(self):
+        # THE OTHER DIRECTION: no PR in the window, so no run was owed. A repo
+        # with a quiet week must not turn the board red — that is the cry-wolf
+        # failure that trains people to ignore the guard.
+        findings = self._event_findings(
+            self._supply(event_age_days=30, run_age_days=30)
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertIn("quiet", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_event_loop_never_triggered_at_all_stays_silent(self):
+        # No PR has ever existed: absence of supply, not absence of life.
+        findings = self._event_findings(self._supply(event_age_days=None))
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_event_loop_answering_supply_is_healthy(self):
+        findings = self._event_findings(
+            self._supply(event_age_days=0.2, run_age_days=0.2)
+        )
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_event_loop_with_live_supply_and_no_run_ever_is_red(self):
+        findings = self._event_findings(
+            self._supply(event_age_days=1, run_age_days=None)
+        )
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_event_loop_failed_run_turns_red(self):
+        # Post-#840 a broken reviewer exits non-zero, so the conclusion is the
+        # leg that catches the original incident class.
+        findings = self._event_findings(
+            self._supply(event_age_days=0.5, run_age_days=0.5,
+                         conclusion="failure")
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "failed_run")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_newborn_event_loop_is_not_reported_dead(self):
+        # #850 grace applies unchanged: a loop added yesterday cannot have
+        # answered a PR opened before it existed.
+        findings = self._event_findings(
+            self._supply(event_age_days=1, run_age_days=None),
+            git_runner=lambda args, cwd: _iso(NOW - timedelta(days=0.5)) + "\n",
+        )
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "newborn")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_event_loop_past_newborn_grace_still_fires(self):
+        findings = self._event_findings(
+            self._supply(event_age_days=1, run_age_days=None),
+            git_runner=lambda args, cwd: _iso(NOW - timedelta(days=40)) + "\n",
+        )
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_event_loop_losing_its_trigger_turns_red(self):
+        # Silently rewriting `on:` must not make the producer vanish from the
+        # guard the way a cron-less workflow does today.
+        self.repo.write_event_workflow("reviewer.yml", ["workflow_dispatch"])
+        findings = self._evaluate(
+            {"version": 1, "loops": []},
+            event_producers=self.EVENT_SPEC,
+            event_supply_runner=lambda *args: self.fail("must not call API"),
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "activation_mismatch")
+        self.assertIn("pull_request", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_event_loop_deleted_workflow_turns_red(self):
+        findings = self._evaluate(
+            {"version": 1, "loops": []},
+            event_producers=self.EVENT_SPEC,
+            event_supply_runner=lambda *args: self.fail("must not call API"),
+        )
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
+                         "activation_mismatch")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_event_supply_adapter_failure_is_exit_2(self):
+        def boom(*args):
+            raise ef.AdapterError("GitHub API failed for pull_request supply")
+
+        findings = self._event_findings(boom)
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
+                         "adapter_error")
+        self.assertEqual(ef.exit_code(findings), 2)
+
+    def test_event_producer_cannot_also_be_a_registered_scheduled_loop(self):
+        self._event_repo()
+        self.repo.write_workflow("reviewer.yml", crons=["0 0 * * *"])
+        findings = self._evaluate({
+            "version": 1,
+            "loops": [{"workflow": "reviewer.yml", "status": "active",
+                       "schedule": ["0 0 * * *"],
+                       "proof": {"adapter": "workflow_run",
+                                 "max_stale_days": 1}}],
+        }, event_producers=self.EVENT_SPEC,
+            actions_runner=lambda *args: {
+                "conclusion": "success", "run_started_at": _iso(NOW)},
+            event_supply_runner=lambda *args: self.fail("must not call API"))
+        self.assertTrue(any(
+            f["kind"] == "config_error" and "event-triggered" in f["detail"]
+            for f in findings
+        ))
+
+    def test_default_event_supply_adapter_queries_pulls_and_pr_runs(self):
+        seen = []
+
+        class Response:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode()
+
+        payloads = [
+            [{"created_at": "2026-07-18T09:00:00Z"}],
+            {"workflow_runs": [{"id": 7, "conclusion": "success"}]},
+        ]
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response(payloads[len(seen) - 1])
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            event_iso, run = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+            )
+        self.assertEqual(event_iso, "2026-07-18T09:00:00Z")
+        self.assertEqual(run, {"id": 7, "conclusion": "success"})
+
+        pulls_q = parse_qs(urlparse(seen[0].full_url).query)
+        self.assertEqual(pulls_q, {
+            "state": ["all"], "sort": ["created"],
+            "direction": ["desc"], "per_page": ["1"],
+        })
+        runs_q = parse_qs(urlparse(seen[1].full_url).query)
+        self.assertEqual(runs_q, {
+            "event": ["pull_request"], "status": ["completed"], "per_page": ["1"],
+        })
+        # A pull_request run lives on the PR head branch, so a default-branch
+        # filter would find nothing and read every healthy loop as dead.
+        self.assertNotIn("branch", runs_q)
+        for request in seen:
+            self.assertNotIn("secret", request.full_url)
+            self.assertEqual(request.get_header("Authorization"), "Bearer secret")
+
+    def test_event_supply_adapter_requires_repository_and_token(self):
+        with self.assertRaises(ef.AdapterError):
+            ef.default_event_supply_runner("w.yml", "pull_request", "", "t")
+        with self.assertRaises(ef.AdapterError):
+            ef.default_event_supply_runner("w.yml", "pull_request", "o/r", "")
+        with self.assertRaises(ef.AdapterError):
+            ef.default_event_supply_runner("w.yml", "issues", "o/r", "t")
+
+    def test_shipped_event_producers_match_live_workflow_yaml(self):
+        # THE LIVE ORACLE for #844: cross-model-review.yml is on: pull_request,
+        # carries no cron, and was therefore invisible to scheduled_workflows().
+        workflows = Path(ef.REPO) / ef.DEFAULT_WORKFLOWS_DIR
+        self.assertIn("cross-model-review.yml", ef.EVENT_PRODUCERS)
+        scheduled = set(ef.scheduled_workflows(workflows))
+        for wf, spec in ef.EVENT_PRODUCERS.items():
+            events = ef.workflow_events(workflows, wf)
+            self.assertIsNotNone(events, f"{wf} is declared but does not exist")
+            self.assertIn(spec["event"], events)
+            self.assertNotIn(wf, scheduled,
+                             f"{wf} has a cron and belongs in the registry")
+            self.assertGreater(spec["max_stale_days"], 0)
+
+    def test_workflow_events_handles_every_on_shape(self):
+        self.repo.write_event_workflow("mapping.yml", ["pull_request", "issues"])
+        (self.repo.workflows / "seq.yml").write_text(
+            "name: s\non: [push, pull_request]\njobs: {}\n", encoding="utf-8")
+        (self.repo.workflows / "scalar.yml").write_text(
+            "name: s\non: push\njobs: {}\n", encoding="utf-8")
+        self.assertEqual(ef.workflow_events(self.repo.workflows, "mapping.yml"),
+                         {"pull_request", "issues"})
+        self.assertEqual(ef.workflow_events(self.repo.workflows, "seq.yml"),
+                         {"push", "pull_request"})
+        self.assertEqual(ef.workflow_events(self.repo.workflows, "scalar.yml"),
+                         {"push"})
+        self.assertIsNone(ef.workflow_events(self.repo.workflows, "gone.yml"))
+
     # ── registry activation must match actual workflow YAML ───────────────
 
     def test_active_schedule_mismatch_turns_red_before_adapter(self):
@@ -815,8 +1077,19 @@ class EcosystemFreshnessTest(unittest.TestCase):
                 "run_started_at": _iso(NOW),
                 "html_url": "https://example.test/production-proof",
             },
+            event_supply_runner=lambda *args: (_iso(NOW), {
+                "conclusion": "success",
+                "run_started_at": _iso(NOW),
+                "html_url": "https://example.test/production-event-proof",
+            }),
             repository="GuitarAlchemist/Demerzel",
             token="test-token",
+        )
+        # The event-triggered producers really are evaluated in production.
+        self.assertEqual(
+            {f["workflow"] for f in findings} & set(ef.EVENT_PRODUCERS),
+            set(ef.EVENT_PRODUCERS),
+            "every declared event-triggered producer must yield a finding",
         )
         # No unregistered producers and no config/adapter errors: coverage is
         # complete and the registry is internally consistent.

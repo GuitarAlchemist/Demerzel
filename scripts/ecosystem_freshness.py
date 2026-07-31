@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Universal ecosystem-freshness monitor — one guard for every scheduled loop.
+"""Universal ecosystem-freshness monitor — one guard for every producer loop.
 
 `state/quality-trend/` died silently for 64 days because a "no news" feeder is
 indistinguishable from a dead one (green != alive). scripts/quality_trend.py got
@@ -14,6 +14,13 @@ declares, per loop, exactly one of:
                        branch git history, or the latest completed scheduled
                        GitHub Actions run and its conclusion).
   * disabled         — intentionally paused for a bounded window (`until`).
+
+Event-triggered producers (#844) have no cron and so cannot be expressed in that
+registry at all — an `active` entry requires at least one cron expression, and
+the schema is closed to new fields. They are declared in EVENT_PRODUCERS below
+and judged against their EVENT SUPPLY rather than a clock: a `pull_request` loop
+is only expected to have run when a pull request actually happened. See
+_eval_event_producer for the semantics and their stated limit.
 
 Findings and exit codes (a producer with a real problem must fail CI):
 
@@ -56,6 +63,26 @@ DEFAULT_BRANCH = "master"
 ALLOWED_MONITORS = {
     "ecosystem-freshness.yml",
     "demerzel-quality-trend-freshness.yml",
+}
+
+# Event-triggered producers (#844). `cross-model-review.yml` is `on:
+# pull_request`; it has no cron, so scheduled_workflows() never enumerates it
+# and nothing noticed when it stopped producing for a week.
+#
+# These live in code rather than in .github/loop-health.yml for the same reason
+# ALLOWED_MONITORS does: the registry schema is closed (an `active` loop REQUIRES
+# >= 1 cron expression, and additionalProperties is false), so an event-triggered
+# loop is not expressible there today, and a hardcoded list cannot be extended by
+# a producer editing its own workflow file.
+#
+# `event` is the `on:` key that dispatches the loop; membership is verified
+# against the live workflow YAML. `max_stale_days` is BOTH the response
+# tolerance and the width of the event-supply window (see _eval_event_producer).
+# Only 'pull_request' is supported — the one event this repo actually has a
+# producer for. Adding a second event means teaching the supply adapter how to
+# date it, which is deliberately not speculated on here.
+EVENT_PRODUCERS: dict[str, dict] = {
+    "cross-model-review.yml": {"event": "pull_request", "max_stale_days": 3},
 }
 
 for _stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252.
@@ -159,6 +186,92 @@ def default_actions_runner(
     return runs[0] if runs else None
 
 
+def _github_get(endpoint: str, token: str, what: str):
+    """Read-only authenticated GET against the GitHub API. Raises AdapterError."""
+    request = Request(endpoint, headers={
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "demerzel-ecosystem-freshness",
+    })
+    try:
+        with urlopen(request, timeout=20) as response:
+            return json.load(response)
+    except HTTPError as exc:
+        raise AdapterError(
+            f"GitHub API returned HTTP {exc.code} for {what}"
+        ) from exc
+    except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+        raise AdapterError(
+            f"GitHub API failed for {what}: {type(exc).__name__}"
+        ) from exc
+
+
+def default_event_supply_runner(
+    workflow: str,
+    event: str,
+    repository: str,
+    token: str,
+) -> tuple[str | None, dict | None]:
+    """Return (newest triggering event ISO timestamp, latest completed run).
+
+    Two reads, one seam, so tests inject a single stub:
+
+      * event supply — the newest pull request CREATED on the repo. `created_at`
+        is used, not `updated_at`: the `opened` activity type dispatches
+        unconditionally, so a PR created inside the window is *proof* that a run
+        was due. `updated_at` also bumps on comments and label edits, which are
+        not triggers, and would demand runs that were never owed (a guard that
+        cries wolf is worse than none). The cost is that a window containing
+        only `synchronize` pushes reads as quiet — under-claiming, not
+        over-claiming.
+      * latest completed run of `workflow` for that event, on ANY branch. There
+        is deliberately no branch filter: a `pull_request` run is attributed to
+        the PR's head branch, so filtering on the default branch would find
+        nothing and every healthy loop would read as dead.
+    """
+    if not repository or "/" not in repository:
+        raise AdapterError(
+            "event-supply proof requires GITHUB_REPOSITORY (owner/repo)"
+        )
+    if not token:
+        raise AdapterError("event-supply proof requires the existing GITHUB_TOKEN")
+    if event != "pull_request":
+        raise AdapterError(f"no event-supply adapter for event {event!r}")
+
+    repo_path = quote(repository, safe="/")
+    pulls = _github_get(
+        f"https://api.github.com/repos/{repo_path}/pulls?"
+        + urlencode({
+            "state": "all",
+            "sort": "created",
+            "direction": "desc",
+            "per_page": 1,
+        }),
+        token,
+        f"{event} supply on {repository}",
+    )
+    if not isinstance(pulls, list):
+        raise AdapterError(f"GitHub API returned malformed pull data for {repository}")
+    newest_event = None
+    if pulls and isinstance(pulls[0], dict):
+        newest_event = pulls[0].get("created_at")
+
+    payload = _github_get(
+        f"https://api.github.com/repos/{repo_path}/actions/workflows/"
+        f"{quote(workflow, safe='')}/runs?"
+        + urlencode({"event": event, "status": "completed", "per_page": 1}),
+        token,
+        f"{workflow} runs",
+    )
+    runs = payload.get("workflow_runs") if isinstance(payload, dict) else None
+    if not isinstance(runs, list):
+        raise AdapterError(
+            f"GitHub Actions API returned malformed run data for {workflow}"
+        )
+    return newest_event, (runs[0] if runs else None)
+
+
 # ---------------------------------------------------------------------------
 # time helpers
 # ---------------------------------------------------------------------------
@@ -183,13 +296,18 @@ def _age_days(newest: datetime, now: datetime) -> float:
 # workflow enumeration (which scheduled producers exist on disk)
 # ---------------------------------------------------------------------------
 
-def _schedule_block(doc: dict):
+def _on_block(doc: dict):
     """`on:` parses to the YAML 1.1 boolean True under PyYAML, so look under both."""
     if not isinstance(doc, dict):
         return None
     on = doc.get("on")
     if on is None:
         on = doc.get(True)
+    return on
+
+
+def _schedule_block(doc: dict):
+    on = _on_block(doc)
     if isinstance(on, dict):
         return on.get("schedule")
     return None
@@ -230,6 +348,29 @@ def workflow_crons(workflows_dir: Path, workflow: str) -> list[str] | None:
         for entry in sched
         if isinstance(entry, dict) and isinstance(entry.get("cron"), str)
     )
+
+
+def workflow_events(workflows_dir: Path, workflow: str) -> set[str] | None:
+    """Trigger names under `on:`, or None when the workflow file is absent.
+
+    Handles all three YAML shapes GitHub accepts: mapping (`on: {pull_request:
+    ...}`), sequence (`on: [push, pull_request]`), and scalar (`on: push`).
+    """
+    path = workflows_dir / workflow
+    if not path.exists():
+        return None
+    try:
+        doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"{workflow}: workflow YAML is invalid: {exc}") from exc
+    on = _on_block(doc)
+    if isinstance(on, dict):
+        return {str(k) for k in on}
+    if isinstance(on, list):
+        return {str(k) for k in on}
+    if isinstance(on, str):
+        return {on}
+    return set()
 
 
 def workflow_added_at(
@@ -430,9 +571,152 @@ def _eval_workflow_run(
     )
 
 
+def _eval_event_producer(
+    workflow: str,
+    spec: dict,
+    now: datetime,
+    repo_root: Path,
+    workflows_dir: Path,
+    default_branch: str,
+    git_runner,
+    event_supply_runner,
+    repository: str,
+    token: str,
+) -> tuple[str, str]:
+    """Prove an event-triggered loop against its EVENT SUPPLY, not a clock.
+
+    An event-triggered loop has no cadence, so "overdue" is undefined in the
+    abstract — inventing a pseudo-cron for it would be a fabricated oracle. The
+    honest observable is conditional:
+
+        a `pull_request` loop is expected to have run only when a pull request
+        actually happened.
+
+    So `max_stale_days` does double duty as the width of the supply window and
+    the response tolerance:
+
+      * newest triggering event older than the window  -> QUIET. Nothing was
+        owed, so the guard says nothing. This is the "quiet but healthy" arm; a
+        repo with no PRs this week must not turn the board red.
+      * event inside the window, no completed run ever -> silent_green (red),
+        subject to the same newborn grace as #850.
+      * event inside the window, newest completed run older than the window
+        -> stale (red). This is the #844 shape: events kept arriving, the loop
+        stopped answering, and nothing enumerated it.
+      * newest completed run did not conclude 'success' -> failed_run (red),
+        matching _eval_workflow_run. For a PR loop this self-clears on the next
+        PR, so a one-off flake fades while a persistently broken loop stays red.
+
+    LIMIT, stated plainly: this proves the loop was DISPATCHED and did not fail,
+    not that its output was VALID. The specific #844 incident (runs green,
+    review body a placeholder) is only caught here via the run conclusion, which
+    exists because #840 made that failure loud. Asserting the artifact itself
+    needs per-workflow proof declarations in the registry — see the report.
+    """
+    event = spec["event"]
+    max_days = float(spec["max_stale_days"])
+
+    actual_events = workflow_events(workflows_dir, workflow)
+    if actual_events is None:
+        return ("activation_mismatch",
+                "declared event-triggered producer workflow is missing")
+    if event not in actual_events:
+        return ("activation_mismatch",
+                f"declared as an `{event}` producer but the workflow's `on:` "
+                f"triggers are {sorted(actual_events)}")
+
+    newest_event_iso, run = event_supply_runner(workflow, event, repository, token)
+    newest_event = _parse_iso(newest_event_iso)
+    if newest_event is None or _age_days(newest_event, now) > max_days:
+        return ("healthy",
+                f"quiet: no `{event}` event within the last {max_days:g}d, so no "
+                "run was owed (event-triggered loops are judged by event supply, "
+                "not by a clock)")
+    event_age = _age_days(newest_event, now)
+
+    if run is None:
+        kind, detail = ("silent_green",
+                        f"a `{event}` event arrived {event_age:.1f}d ago but the "
+                        "workflow has no completed run at all")
+        return _apply_newborn_grace(
+            kind, detail, workflow, max_days, now, repo_root, workflows_dir,
+            default_branch, git_runner,
+        )
+    if not isinstance(run, dict):
+        raise AdapterError(f"event-supply adapter returned invalid run data for {workflow}")
+
+    conclusion = run.get("conclusion")
+    url = run.get("html_url") or "(no run URL)"
+    if conclusion != "success":
+        return ("failed_run",
+                f"newest completed `{event}` run concluded {conclusion!r}: {url}")
+
+    newest_run = _parse_iso(run.get("run_started_at") or run.get("created_at"))
+    if newest_run is None:
+        return ("malformed_proof",
+                f"newest completed `{event}` run has no parseable start timestamp")
+    run_age = _age_days(newest_run, now)
+    if run_age > max_days:
+        return ("stale",
+                f"a `{event}` event arrived {event_age:.1f}d ago but the newest "
+                f"completed run is {run_age:.1f}d old (threshold {max_days:g}d): "
+                f"{url}")
+    return ("healthy",
+            f"answering `{event}` supply: newest event {event_age:.1f}d ago, "
+            f"newest successful run {run_age:.1f}d ago (threshold {max_days:g}d): "
+            f"{url}")
+
+
 # ---------------------------------------------------------------------------
 # per-loop evaluation
 # ---------------------------------------------------------------------------
+
+def _apply_newborn_grace(
+    kind: str,
+    detail: str,
+    workflow: str,
+    grace_days: float,
+    now: datetime,
+    repo_root: Path,
+    workflows_dir: Path,
+    default_branch: str,
+    git_runner,
+) -> tuple[str, str]:
+    """Withhold a no-evidence-ever finding while the loop is still newborn (#850).
+
+    "No evidence ever" is ambiguous: a daily loop with nothing after three days
+    is dead, but a monthly loop added eleven days ago has simply not reached its
+    first scheduled opportunity — and an event-triggered loop added yesterday
+    cannot have answered a pull request opened the day before it existed.
+    Alarming on the newborn is a false positive, and a guard that cries wolf is
+    one people stop reading, which is exactly how a real dead loop hides.
+
+    The grace window is the loop's OWN max_stale_days, measured from the
+    default-branch add-commit. Reasons for that exact boundary:
+      * It is already cadence-scaled (35d monthly, 1d for a */15 loop), so no
+        cron arithmetic and no second dial to keep in sync with the first.
+      * It is the tolerance the loop's author already declared as "longer than
+        this without output means dead". A newborn cannot be judged by a softer
+        standard than a running loop without inventing a weaker one.
+      * It is therefore not over-broad: a missed FIRST run surfaces exactly as
+        late as a missed subsequent run already does, no later.
+    Silence past that window is proof of death and still turns the board red.
+    """
+    added = workflow_added_at(
+        workflow, workflows_dir, repo_root, default_branch, git_runner
+    )
+    if added is None:
+        return kind, detail
+    age = _age_days(added, now)
+    if age > grace_days:
+        return kind, detail
+    return (
+        "newborn",
+        f"added to `{default_branch}` {age:.1f}d ago and has not yet had a "
+        f"full {grace_days:g}d window to produce evidence — "
+        f"withheld until then, after which silence is red. Original finding: "
+        f"{detail}",
+    )
 
 def _evaluate_loop(
     loop: dict,
@@ -531,37 +815,10 @@ def _evaluate_loop(
     if kind != "silent_green":
         return kind, detail
 
-    # Newborn grace (#850). "No evidence ever" is ambiguous: a daily loop with
-    # nothing after three days is dead, but a monthly loop added eleven days
-    # ago has simply not reached its first scheduled opportunity. Alarming on
-    # the newborn is a false positive, and a guard that cries wolf is one
-    # people stop reading — which is exactly how a real dead loop hides.
-    #
-    # The grace window is the loop's OWN max_stale_days, measured from the
-    # default-branch add-commit. Reasons for that exact boundary:
-    #   * It is already cadence-scaled (35d monthly, 1d for a */15 loop), so no
-    #     cron arithmetic and no second dial to keep in sync with the first.
-    #   * It is the tolerance the loop's author already declared as "longer
-    #     than this without output means dead". A newborn cannot be judged by a
-    #     softer standard than a running loop without inventing a weaker one.
-    #   * It is therefore not over-broad: a missed FIRST run surfaces exactly as
-    #     late as a missed subsequent run already does, no later.
-    # Silence past that window is proof of death and still turns the board red.
-    grace_days = float(proof["max_stale_days"])
-    added = workflow_added_at(
-        wf, workflows_dir, repo_root, default_branch, git_runner
-    )
-    if added is None:
-        return kind, detail
-    age = _age_days(added, now)
-    if age > grace_days:
-        return kind, detail
-    return (
-        "newborn",
-        f"added to `{default_branch}` {age:.1f}d ago and has not yet had a "
-        f"full {grace_days:g}d window to produce evidence — "
-        f"withheld until then, after which silence is red. Original finding: "
-        f"{detail}",
+    # Newborn grace (#850) — rationale lives on _apply_newborn_grace.
+    return _apply_newborn_grace(
+        kind, detail, wf, float(proof["max_stale_days"]), now, repo_root,
+        workflows_dir, default_branch, git_runner,
     )
 
 
@@ -577,6 +834,8 @@ def evaluate(
     repo_root: Path,
     git_runner=default_git_runner,
     actions_runner=default_actions_runner,
+    event_supply_runner=default_event_supply_runner,
+    event_producers: dict | None = None,
     repository: str = "",
     token: str = "",
 ) -> list[dict]:
@@ -589,6 +848,8 @@ def evaluate(
     monitors = set(registry.get("monitors") or [])
     default_branch = registry.get("default_branch") or DEFAULT_BRANCH
     loops = registry.get("loops") or []
+    if event_producers is None:
+        event_producers = EVENT_PRODUCERS
 
     registered: dict[str, dict] = {}
     findings: list[dict] = []
@@ -646,6 +907,37 @@ def evaluate(
                 repository,
                 token,
                 crons,
+            )
+        except AdapterError as exc:
+            kind, detail = "adapter_error", str(exc)
+        except ConfigError as exc:
+            kind, detail = "config_error", str(exc)
+        findings.append({"workflow": wf, "kind": kind, "detail": detail})
+
+    # Event-triggered producers (#844): no cron, so scheduled_workflows() below
+    # cannot see them and the registry cannot express them. Evaluated from the
+    # in-code declaration against live event supply.
+    for wf in sorted(event_producers):
+        if wf in monitors or wf in registered:
+            findings.append({
+                "workflow": wf,
+                "kind": "config_error",
+                "detail": "workflow is declared as an event-triggered producer "
+                          "and also registered as a monitor or scheduled loop",
+            })
+            continue
+        try:
+            kind, detail = _eval_event_producer(
+                wf,
+                event_producers[wf],
+                now,
+                repo_root,
+                workflows_dir,
+                default_branch,
+                git_runner,
+                event_supply_runner,
+                repository,
+                token,
             )
         except AdapterError as exc:
             kind, detail = "adapter_error", str(exc)
