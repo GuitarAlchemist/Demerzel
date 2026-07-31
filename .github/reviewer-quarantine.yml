@@ -1,0 +1,36 @@
+# Cross-model reviewers that are credentialed but currently UNUSABLE.
+#
+# Consumed by scripts/reviewer_quarantine.py, which the "Select reviewer model"
+# step of .github/workflows/cross-model-review.yml calls before choosing.
+#
+# `has_credential` in that workflow answers "is this provider's key set?". This
+# file answers the question a key cannot: "does the key still buy anything?" A
+# quota wall, a suspended account or a retired model leaves the credential
+# perfectly valid while every review attempt fails.
+#
+# Rules (enforced by scripts/test_reviewer_quarantine.py):
+#   * `until` is INCLUSIVE — the last day the provider is treated as unusable.
+#     Same meaning as `until` in .github/loop-health.yml; do not let them drift.
+#   * An entry expires on its own. If the provider is still broken afterwards,
+#     the review step fails loudly, which is the correct outcome — a quarantine
+#     is a routing hint, never a way to make a failure quiet.
+#   * Prefer a date the PROVIDER stated. A guessed `until` is a guess about
+#     someone else's billing system.
+#   * Quarantining every provider is allowed and fails the run loudly. It is
+#     never a way to skip review.
+
+schema_version: '1.0'
+
+quarantined:
+  - provider: claude
+    reason: >-
+      Anthropic API usage limit reached for the account behind
+      ANTHROPIC_API_KEY. The key is present and valid, so has_credential admits
+      claude and every selected review then fails with:
+      "You have reached your specified API usage limits. You will regain access
+      on 2026-08-01 at 00:00 UTC." Access returns at 00:00 UTC on 2026-08-01,
+      so the last unusable day is 2026-07-31.
+    by: 'PR #935 — provider-stated usage limit, not a judgement call'
+    since: '2026-07-30'
+    until: '2026-07-31'
+    evidence: https://github.com/GuitarAlchemist/Demerzel/actions/runs/30592105382
