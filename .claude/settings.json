@@ -43,6 +43,27 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py PreToolUse"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py SessionEnd"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write|Bash",
@@ -50,6 +71,15 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/digest-activity-tracker.ps1"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py PostToolUse"
           }
         ]
       },
