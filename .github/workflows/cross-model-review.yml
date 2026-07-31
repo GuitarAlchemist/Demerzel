@@ -84,44 +84,62 @@ jobs:
       - name: Select reviewer model
         if: env.SKIP_REVIEW != 'true'
         id: reviewer
+        env:
+          # Secrets reach this script through the ENVIRONMENT, never through `${{ }}`
+          # interpolation into the script body. `[ -n "${{ secrets.X }}" ]` expands the
+          # raw secret into shell SOURCE before bash parses it, so a value containing a
+          # quote or backtick breaks the script or executes as code. GitHub masks the
+          # value in logs; masking does not stop the shell from parsing it. (#846)
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_AI_KEY: ${{ secrets.GOOGLE_AI_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AUTHOR: ${{ steps.detect.outputs.author }}
         run: |
-          AUTHOR="${{ steps.detect.outputs.author }}"
+          set -euo pipefail
 
-          # No model reviews its own work
+          # A provider is selectable only when ITS OWN credential is present.
+          #
+          # Every branch of the old `case` tested some OTHER provider's key and fell
+          # through to codex — whose credential, OPENAI_API_KEY, was never checked
+          # anywhere. So the more keys were missing, the more traffic routed to the one
+          # provider guaranteed to fail. With OPENAI_API_KEY unset and GOOGLE_AI_KEY
+          # unset, every claude-authored PR routed to codex and failed 100% of the time:
+          # dead by construction rather than flaky. (#846)
+          has_credential() {
+            case "$1" in
+              claude) [ -n "${ANTHROPIC_API_KEY:-}" ] ;;
+              gemini) [ -n "${GOOGLE_AI_KEY:-}" ] ;;
+              codex)  [ -n "${OPENAI_API_KEY:-}" ] ;;
+              *)      return 1 ;;
+            esac
+          }
+
+          # No model reviews its own work: each author is absent from its own candidate
+          # list, in preference order. An unrecognised author is treated like `human` —
+          # the old `case` had no default, so it left REVIEWER unset and wrote an empty
+          # `reviewer=` output, which downstream steps would have read as a valid choice.
           case "$AUTHOR" in
-            claude)
-              # Prefer Gemini for Claude-authored PRs
-              if [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
-                REVIEWER="gemini"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-            gemini)
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-            codex)
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              else
-                REVIEWER="gemini"
-              fi
-              ;;
-            human)
-              # Any model can review human work; prefer Claude
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              elif [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
-                REVIEWER="gemini"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
+            claude) CANDIDATES="gemini codex" ;;
+            gemini) CANDIDATES="claude codex" ;;
+            codex)  CANDIDATES="claude gemini" ;;
+            *)      CANDIDATES="claude gemini codex" ;;
           esac
+
+          REVIEWER=""
+          for candidate in $CANDIDATES; do
+            if has_credential "$candidate"; then
+              REVIEWER="$candidate"
+              break
+            fi
+          done
+
+          # Fail loudly rather than selecting a reviewer that cannot run. A review that
+          # never happened must not be indistinguishable from a review that passed —
+          # that is the same shape as #925 and #850.
+          if [ -z "$REVIEWER" ]; then
+            echo "::error::No credentialed reviewer is available for author '$AUTHOR' (tried: $CANDIDATES). Set one of ANTHROPIC_API_KEY, GOOGLE_AI_KEY or OPENAI_API_KEY."
+            exit 1
+          fi
 
           echo "reviewer=$REVIEWER" >> "$GITHUB_OUTPUT"
           echo "Selected reviewer: $REVIEWER (author was $AUTHOR)"
