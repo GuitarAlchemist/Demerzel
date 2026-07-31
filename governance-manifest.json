@@ -14,7 +14,7 @@
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 29
+    "workflow": 30
   },
   "inventory": {
     "constitution": [
@@ -1277,6 +1277,10 @@
       }
     ],
     "workflow": [
+      {
+        "name": "afk-cycle",
+        "path": ".github/workflows/afk-cycle.yml"
+      },
       {
         "name": "agent-blackbox",
         "path": ".github/workflows/agent-blackbox.yml"
