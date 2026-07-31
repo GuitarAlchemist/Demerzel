@@ -137,3 +137,11 @@ loops:
     proof:
       adapter: workflow_run
       max_stale_days: 3
+
+  - workflow: afk-cycle.yml
+    schedule:
+      - '0 * * * *'
+    status: active
+    proof:
+      adapter: workflow_run
+      max_stale_days: 1
