@@ -603,8 +603,8 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
     finally:
         if clone:
             shutil.rmtree(clone, ignore_errors=True)
-        # Reconcile the reservation: local-seat backends carry no marginal spend.
-        _budget_release(issue, actual_cost_usd=0.0)
+        actual_cost = hr.get("actual_cost_usd", 0.0) if ("hr" in locals() and isinstance(hr, dict)) else 0.0
+        _budget_release(issue, actual_cost_usd=actual_cost)
 
     _write_loop_state(state)
     return decision, state

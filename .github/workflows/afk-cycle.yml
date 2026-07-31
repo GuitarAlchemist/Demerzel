@@ -1,0 +1,68 @@
+name: AFK Autonomous Loop
+
+on:
+  schedule:
+    # Run once an hour at the top of the hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      backend:
+        description: 'Execution backend to use'
+        required: true
+        default: 'remote'
+        type: choice
+        options:
+          - remote
+          - claude-code
+          - local
+      harvest_only:
+        description: 'Run only the harvest/self-merge pass'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  run-cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history so git diffs and logs resolve correctly
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: pip install jsonschema pyyaml baml-py==0.223.0 pydantic
+
+      - name: Configure Git Author
+        run: |
+          git config --global user.name "demerzel-bot"
+          git config --global user.email "demerzel-bot@guitaralchemist.com"
+
+      - name: Run Implement Cycle
+        if: ${{ github.event.inputs.harvest_only != 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OCTO_API_KEY: ${{ secrets.OCTO_API_KEY }}
+        run: |
+          BACKEND="${{ github.event.inputs.backend || 'remote' }}"
+          python scripts/run_afk_cycle.py --backend "$BACKEND"
+
+      - name: Run Harvest (Self-Merge) Pass
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python scripts/run_afk_cycle.py --harvest
