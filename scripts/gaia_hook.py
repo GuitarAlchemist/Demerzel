@@ -82,9 +82,17 @@ def _lane(identity) -> str:
 def _within_budget(work, budget_s: float):
     """Run `work` with a hard ceiling, returning (finished, value, error).
 
-    The worker is left running when the budget expires rather than cancelled --
-    a claim that lands late is still a correct claim, and abandoning it would
-    reintroduce the check-then-publish race for slow calls.
+    An overrun DROPS the claim; it does not defer it. The worker is a daemon
+    thread and the hook process exits as soon as it has printed, so interpreter
+    shutdown kills it mid-flight -- verified, not assumed. That leaves a real
+    hole: an over-budget check publishes nothing, which reopens the window where
+    two sessions both read clear. It is bounded rather than closed, by keeping
+    the budget roughly 6x the measured worst case (~120 ms of git plus SQLite
+    against a 750 ms ceiling), so overruns should be rare on an idle machine and
+    rarer still than the stall that cancelling the budget would cause.
+
+    An earlier version of this docstring claimed the worker "lands late". That
+    was false, and it mattered: it read as a reason not to worry about overruns.
     """
     box: dict = {}
 
@@ -181,12 +189,64 @@ def session_end(payload: dict, store_path=None) -> dict:
     return _proceed()
 
 
+def session_start(payload: dict, store_path=None) -> dict:
+    """Report the bus as DOWN at session start.
+
+    The spec puts liveness on the call path rather than in a monitor: "if the
+    daemon is unreachable the MCP tool errors, and SessionStart reports the bus
+    as down. Green must be unreachable while dead." Without this a session
+    learns nothing until its first Edit, and a dead bus is indistinguishable
+    from a quiet one for the whole opening stretch of a lane.
+
+    Silent when healthy. A bus that announces itself every session start is one
+    whose warnings get filtered out.
+    """
+    store = gaia_bus.Store(store_path)
+    try:
+        store.heartbeat(payload.get("session_id") or "unknown-session")
+    except gaia_bus.GaiaError as error:
+        return _proceed(
+            system_message=f"gaia: bus DOWN — {error}",
+            context=("GAIA IS DOWN. Cross-session collision detection is not "
+                     "running, so edits in this session are unguarded and other "
+                     "sessions cannot see them. Treat concurrent work on shared "
+                     "files as unprotected until it is fixed."),
+            event="SessionStart")
+    finally:
+        store.close()
+    return _proceed()
+
+
+def heartbeat(payload: dict, store_path=None) -> dict:
+    """Keep a session's claims alive across stretches with no edits.
+
+    Liveness is heartbeat-primary, and the spec's premise is that "sessions
+    heartbeat for free on ordinary hook traffic". Edit/Write traffic alone does
+    not deliver that: a session that edits, then reads and reasons for longer
+    than HEARTBEAT_WINDOW_S, gets swept while its uncommitted edits are still
+    sitting in the tree -- a false negative on the exact case slice 1 exists for.
+    Wiring this to UserPromptSubmit costs one cheap call per turn.
+    """
+    session = payload.get("session_id")
+    if not session:
+        return _proceed()
+    store = gaia_bus.Store(store_path)
+    try:
+        store.heartbeat(session)
+    except gaia_bus.GaiaError:
+        pass                    # never interrupt a turn over a heartbeat
+    finally:
+        store.close()
+    return _proceed()
+
+
 # NOT `Stop`. Stop fires when the assistant finishes a TURN, not when the session
 # ends, so mapping it here would release every claim a session holds after each
 # reply -- leaving its uncommitted edits unguarded for the rest of the lane and
 # quietly turning the bus into a no-op that still reads green.
 HANDLERS = {"PreToolUse": pre_tool_use, "PostToolUse": post_tool_use,
-            "SessionEnd": session_end}
+            "SessionEnd": session_end, "SessionStart": session_start,
+            "UserPromptSubmit": heartbeat}
 
 
 def main(argv=None) -> int:

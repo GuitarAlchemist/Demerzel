@@ -41,6 +41,7 @@ from pathlib import Path
 HEARTBEAT_WINDOW_S = 30 * 60        # a session is live iff it heartbeat this recently
 CLAIM_TTL_S = 24 * 60 * 60          # > p95 (22.1 h); backstop for sessions that die
 PENDING_GRACE_S = 5 * 60            # an edit that never landed stops holding the path
+CHECK_RETENTION_S = 90 * 24 * 3600  # guard #4's evidence window; bounds the store
 
 STATE_PENDING = "pending"           # claimed at PreToolUse; the edit is in flight
 STATE_DIRTY = "dirty"               # PostToolUse confirmed it; uncommitted work exists
@@ -427,8 +428,16 @@ class Store:
                 "VALUES (?, ?, ?, ?, ?, ?)",
                 (self._now(), "", raw_path, "", session, "unresolved"))
 
-    def confirm(self, identity, session: str) -> None:
-        """PostToolUse: the edit landed, so the claim now covers real dirty work."""
+    def confirm(self, identity, session: str, lane: str = "unknown") -> None:
+        """PostToolUse: the edit landed, so the claim now covers real dirty work.
+
+        `lane` matters on the path where no PreToolUse claim exists -- an
+        over-budget check, a hook installed mid-session. Without it the row is
+        created as "unknown" and the warning another session eventually reads
+        fails the spec's own requirement to name "A, its lane, and the claim
+        age". A warning that cannot say which lane holds the file is most of the
+        way to useless.
+        """
         if identity is None:
             return
         with self._write() as conn:
@@ -439,7 +448,7 @@ class Store:
                 "ON CONFLICT(repo, rel_path, worktree, session) "
                 "DO UPDATE SET state=excluded.state",
                 (identity.repo, identity.rel_path, identity.worktree, session,
-                 "unknown", STATE_DIRTY, self._now()))
+                 lane, STATE_DIRTY, self._now()))
 
     def release_session(self, session: str) -> None:
         """SessionEnd. A session may release only its own claims."""
@@ -453,6 +462,9 @@ class Store:
             "DELETE FROM claims WHERE claimed_at <= ? OR session NOT IN "
             "(SELECT session FROM sessions WHERE heartbeat_at > ?)",
             (now - CLAIM_TTL_S, now - HEARTBEAT_WINDOW_S))
+        # The checks table gets a row per Edit forever. Bounded here rather than
+        # left to grow without limit in the user's profile directory.
+        conn.execute("DELETE FROM checks WHERE at <= ?", (now - CHECK_RETENTION_S,))
 
     # -- inspection --------------------------------------------------------
 
@@ -462,8 +474,25 @@ class Store:
             "SELECT repo, rel_path, worktree, session, lane, state, claimed_at "
             "FROM claims ORDER BY claimed_at, rowid")]
 
-    def fire_rate(self) -> FireRate:
+    def fire_rate(self, since: float | None = None) -> FireRate:
+        """The observed rate, optionally over a recent window.
+
+        A lifetime-cumulative rate is the wrong instrument for guard #4: its
+        whole job is to notice the rate CLIMBING, and months of quiet history
+        dilute exactly the recent change it is watching for.
+        """
         conn = self._connect()
+        if since is not None:
+            row = conn.execute(
+                "SELECT "
+                "COALESCE(SUM(CASE WHEN verdict<>'unresolved' THEN 1 ELSE 0 END), 0) "
+                "AS checks, "
+                "COALESCE(SUM(CASE WHEN verdict='collision' THEN 1 ELSE 0 END), 0) "
+                "AS collisions, "
+                "COALESCE(SUM(CASE WHEN verdict='unresolved' THEN 1 ELSE 0 END), 0) "
+                "AS unresolved FROM checks WHERE at >= ?", (since,)).fetchone()
+            return FireRate(checks=row["checks"], collisions=row["collisions"],
+                            unresolved=row["unresolved"])
         row = conn.execute(
             "SELECT "
             "COALESCE(SUM(CASE WHEN verdict<>'unresolved' THEN 1 ELSE 0 END), 0) "
@@ -475,10 +504,6 @@ class Store:
         return FireRate(checks=row["checks"], collisions=row["collisions"],
                         unresolved=row["unresolved"])
 
-    def wipe(self) -> None:
-        with self._write() as conn:
-            for table in ("claims", "sessions", "checks"):
-                conn.execute(f"DELETE FROM {table}")
 
 
 # -------------------------------------------------------------------------- cli
@@ -514,6 +539,11 @@ def main(argv=None) -> int:
             collision = store.check_and_claim(identify(args.path), args.session, args.lane)
             if collision:
                 print(collision.describe())
+                # 1 = finding, matching scripts/planner_collision_detector.py and
+                # ecosystem_freshness.py (2 stays machinery-failure). A caller
+                # that has to parse stdout to learn there was a collision cannot
+                # gate on one.
+                return 1
             return 0
         if args.verb == "confirm":
             store.confirm(identify(args.path), args.session)

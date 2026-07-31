@@ -15,9 +15,11 @@ divergence warn does not degrade the signal, it deletes it.
 
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -131,14 +133,33 @@ class TestCommittedDivergenceIsSilent(GaiaTestCase):
     """
 
     def test_the_same_path_committed_on_divergent_branches_is_silent(self):
+        """The spec's second tracer-bullet clause.
+
+        An earlier version of this test asserted silence while session A never
+        claimed anything at all -- so it passed unconditionally, including
+        against an implementation that warns loudly on committed divergence.
+        Silence has to be observed against a LIVE HOLDER or it proves nothing,
+        which is why the precondition below is asserted rather than assumed.
+
+        B's tree is left dirty on purpose: it is what makes this test die if the
+        worktree axis is ever dropped from the holder query.
+        """
         repo = self.repo()
         other = repo.worktree("issue-873-governor")
-        repo.dirty(other)
-        repo.commit(other)                      # A's work is committed
 
         self.store.heartbeat("session-A")
-        repo.dirty(repo.root)                   # B edits in the primary tree
+        self.check(other, "session-A", "issue-873-governor")
+        repo.dirty(other)
+        self.store.confirm(gaia_bus.identify(Path(other) / RepoFixture.FILE),
+                           "session-A", "issue-873-governor")
+        repo.commit(other)                      # A's work is committed on its branch
 
+        holders = [c["session"] for c in self.store.claims()]
+        self.assertIn("session-A", holders,
+                      "precondition: A must actually hold a claim, or this test "
+                      "asserts silence against an empty store and cannot fail")
+
+        repo.dirty(repo.root)                   # B is mid-edit in the primary tree
         self.assertIsNone(self.check(repo.root, "session-B", "issue-863"),
                           "committed divergence must be git's problem, at merge")
 
@@ -306,17 +327,48 @@ class TestGuardPathNormalizationIsLoadBearing(GaiaTestCase):
     """
 
     def _spellings(self, root):
+        """Two spellings of ONE file that differ as raw strings on EVERY platform.
+
+        The `..` round trip is the load-bearing choice. A backslash-vs-slash pair
+        differs only on Windows, so a mutation test built on it would silently
+        pass on POSIX no matter what the implementation did.
+        """
         native = str(Path(root) / RepoFixture.FILE)
-        return [
-            native,
-            native.replace("\\", "/"),
-            os.path.join(str(root), "scripts", "..", "scripts", "run_afk_cycle.py"),
-        ]
+        detour = os.path.join(str(root), "scripts", os.pardir, "scripts",
+                              "run_afk_cycle.py")
+        assert native != detour, "the two spellings must differ as raw strings"
+        return native, detour
 
     def test_every_spelling_of_one_file_is_one_identity(self):
         repo = self.repo()
-        identities = {gaia_bus.identify(s) for s in self._spellings(repo.root)}
+        native, detour = self._spellings(repo.root)
+        spellings = [native, detour, native.replace("\\", "/")]
+        identities = {gaia_bus.identify(s) for s in spellings}
         self.assertEqual(1, len(identities), f"spellings diverged: {identities}")
+
+    def test_a_symlinked_route_to_one_file_is_one_identity(self):
+        """Isolates what `realpath` carries that `abspath` does not.
+
+        Mutating `realpath` away and keeping `abspath` SURVIVES every other test
+        here, because abspath already collapses `..` and normcase already folds
+        Windows case. Symlink resolution is the only remaining job, and it is a
+        real route on this machine: worktrees live under paths that may be
+        symlinked, and macOS /tmp is itself a link. Without this the mutation
+        record for guard #1 would be overstating what the guard proves.
+        """
+        repo = self.repo()
+        link = Path(tempfile.mkdtemp(prefix="gaia-link-")) / "linked-root"
+        try:
+            os.symlink(str(repo.root), str(link), target_is_directory=True)
+        except (OSError, NotImplementedError, AttributeError) as error:
+            self.skipTest(f"symlinks not permitted here: {error}")
+        self.addCleanup(lambda: __import__("shutil").rmtree(link.parent,
+                                                            ignore_errors=True))
+        direct = gaia_bus.identify(Path(repo.root) / RepoFixture.FILE)
+        through_link = gaia_bus.identify(link / RepoFixture.FILE)
+        self.assertEqual(direct, through_link,
+                         "a symlinked route to one file must be one identity, or "
+                         "two sessions reaching it differently never collide")
 
     def test_identity_is_repo_relative_not_absolute(self):
         repo = self.repo()
@@ -325,30 +377,45 @@ class TestGuardPathNormalizationIsLoadBearing(GaiaTestCase):
         self.assertEqual("demerzel", identity.repo)
 
     def test_disabling_normalization_makes_the_collision_disappear(self):
-        """The mutation. Without it, guard #1 is decorative."""
-        repo = self.repo()
-        spellings = self._spellings(repo.root)
-        self.store.heartbeat("session-A")
+        """The mutation, isolated to the one axis it claims to test.
 
-        def claim_and_check(identify):
-            store = gaia_bus.Store(self.store_path, now=self.clock)
+        An earlier version blanked BOTH `rel_path` and `worktree`. That was
+        confounded: an empty worktree alone makes `path_is_dirty` return False,
+        which sweeps the holder's claim and yields silence no matter how the path
+        is spelled. The mutant died without the spelling ever mattering, so the
+        guard was no stronger than the decorative version it replaced.
+
+        Here the worktree stays CORRECT and only the path normalization is
+        disabled, so silence can only come from the two spellings failing to
+        resolve to one identity.
+        """
+        repo = self.repo()
+        native, detour = self._spellings(repo.root)
+        worktree = gaia_bus.identify(native).worktree
+
+        def claim_and_check(identify, store_name):
+            # A fresh store per run rather than wiping a shared one: the
+            # production class should not carry a method that exists for tests.
+            store = gaia_bus.Store(self.store_path.parent / store_name, now=self.clock)
             self.addCleanup(store.close)
             store.heartbeat("session-A")
-            store.check_and_claim(identify(spellings[0]), "session-A", "issue-873")
+            store.check_and_claim(identify(native), "session-A", "issue-873")
             repo.dirty(repo.root)
-            store.confirm(identify(spellings[0]), "session-A")
-            return store.check_and_claim(identify(spellings[1]), "session-B", "issue-863")
+            store.confirm(identify(native), "session-A", "issue-873")
+            return store.check_and_claim(identify(detour), "session-B", "issue-863")
 
-        self.assertIsNotNone(claim_and_check(gaia_bus.identify),
-                             "normalized identity must catch it")
+        self.assertIsNotNone(claim_and_check(gaia_bus.identify, "normalized.sqlite3"),
+                             "normalized identity must catch the collision")
 
-        def unnormalized(path):
-            return gaia_bus.Identity(repo="demerzel", rel_path=str(path), worktree="")
+        def spelling_only_mutant(path):
+            # Worktree preserved; ONLY the path key is de-normalized.
+            return gaia_bus.Identity(repo="demerzel", rel_path=str(path),
+                                     worktree=worktree)
 
-        self.store.wipe()
-        self.assertIsNone(claim_and_check(unnormalized),
-                          "MUTATION SURVIVED: normalization is not load-bearing, "
-                          "so a real collision would be missed in production")
+        self.assertIsNone(claim_and_check(spelling_only_mutant, "mutant.sqlite3"),
+                          "MUTATION SURVIVED: path normalization is not "
+                          "load-bearing, so two harnesses spelling one file "
+                          "differently would collide undetected in production")
 
 
 class TestGuardStoreUnreachable(GaiaTestCase):
@@ -612,6 +679,39 @@ class TestHookContract(GaiaTestCase):
         self.assertEqual({"continue": True},
                          self.pre("session-A", path=outside / "notes.txt"))
 
+    def test_session_start_announces_a_dead_bus(self):
+        """Spec: "SessionStart reports the bus as down. Green must be
+        unreachable while dead." Without it a session learns nothing until its
+        first Edit, and a dead bus reads exactly like a quiet one meanwhile."""
+        blocked = Path(tempfile.mkdtemp(prefix="gaia-blocked-"))
+        self.addCleanup(lambda: __import__("shutil").rmtree(blocked, ignore_errors=True))
+        (blocked / "gaia.sqlite3").mkdir()
+        output = self.hook.session_start({"session_id": "session-A"},
+                                         store_path=blocked / "gaia.sqlite3")
+        self.assertIn("down", output["systemMessage"].lower())
+        self.assertIn("unguarded",
+                      output["hookSpecificOutput"]["additionalContext"].lower())
+
+    def test_session_start_is_silent_when_the_bus_is_healthy(self):
+        """A bus that announces itself every session start gets filtered out."""
+        self.assertEqual({"continue": True},
+                         self.hook.session_start({"session_id": "session-A"},
+                                                 store_path=self.store_path))
+
+    def test_a_heartbeat_keeps_claims_alive_without_any_edit(self):
+        """Liveness must not depend on Edit traffic alone.
+
+        A session that edits, then reads and reasons for longer than the
+        heartbeat window, would otherwise be swept while its uncommitted work
+        still sits in the tree -- a false negative on the exact case slice 1
+        exists for. UserPromptSubmit carries this for one cheap call per turn.
+        """
+        self.assertIn("UserPromptSubmit", self.hook.HANDLERS)
+        self.hook.heartbeat({"session_id": "session-A"}, store_path=self.store_path)
+        store = gaia_bus.Store(self.store_path)
+        self.addCleanup(store.close)
+        self.assertEqual([], store.claims())     # a heartbeat claims nothing
+
     def test_stop_is_not_wired_to_release(self):
         """`Stop` fires at the end of every TURN, not the session.
 
@@ -710,6 +810,35 @@ class TestLatencyBudget(GaiaTestCase):
         """A budget below the cost of the work it bounds is a disabled feature."""
         self.assertGreater(self.hook.DEFAULT_BUDGET_S, 0.1,
                            "100ms is under the measured p100 of identify()+probe")
+
+    def test_an_overrun_drops_the_claim_in_a_real_hook_process(self):
+        """Must run as a SUBPROCESS, and that is the whole finding.
+
+        In this long-lived test process the abandoned worker survives the join
+        and does eventually land its claim, so an in-process assertion would
+        report a comfortable falsehood. A real hook is a process that exits the
+        moment it prints, which kills the daemon worker mid-flight -- so an
+        over-budget check publishes NOTHING and the check-then-publish window
+        reopens for that edit. A real hole, bounded by ~6x headroom rather than
+        closed, and asserted here so it cannot quietly get worse.
+        """
+        target = Path(self.repo_fixture.root) / RepoFixture.FILE
+        payload = json.dumps({"tool_input": {"file_path": str(target)},
+                              "session_id": "session-A"})
+        environment = {**os.environ, "GAIA_BUDGET_S": "0.000001",
+                       "GAIA_STORE": str(self.store_path)}
+        result = subprocess.run(
+            [sys.executable, str(Path(__file__).with_name("gaia_hook.py")),
+             "PreToolUse"],
+            input=payload, capture_output=True, text=True, env=environment,
+            timeout=60)
+
+        self.assertEqual('{"continue": true}', result.stdout.strip(),
+                         "an over-budget hook still must not block the edit")
+        store = gaia_bus.Store(self.store_path)
+        self.addCleanup(store.close)
+        self.assertEqual([], store.claims(),
+                         "an over-budget check must not be believed to have claimed")
 
     def test_a_garbage_budget_override_falls_back_rather_than_crashing(self):
         with unittest.mock.patch.dict(os.environ, {"GAIA_BUDGET_S": "soon"}):

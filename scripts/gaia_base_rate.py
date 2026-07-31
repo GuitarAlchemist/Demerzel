@@ -29,10 +29,8 @@ from __future__ import annotations
 import argparse
 import collections
 import os
-import subprocess
 import sys
 from dataclasses import dataclass
-from pathlib import Path
 
 try:
     from scripts import gaia_bus
@@ -94,8 +92,14 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Gaia guard #4 - base-rate check")
     parser.add_argument("--repo", default=".", help="any checkout of the repo")
     parser.add_argument("--store", default=None, help="gaia store (default: standard)")
-    parser.add_argument("--max-cross-worktree-rate", type=float, default=None,
-                        help="fail if Axis C exceeds this ratio (regression gate)")
+    # Defaults that FAIL. Guard #4 is worded "assert the alarm's fire rate stays
+    # near its measured zero" -- a threshold defaulting to None makes the guard
+    # opt-in, which is a guard that never runs. Measured 0/37 on 2026-07-31, so
+    # 5% is loose enough not to be noise and tight enough to notice a climb.
+    parser.add_argument("--max-cross-worktree-rate", type=float, default=0.05,
+                        help="fail if Axis C exceeds this ratio (default 0.05)")
+    parser.add_argument("--window-days", type=float, default=7.0,
+                        help="Axis D window; 0 means all recorded history")
     args = parser.parse_args(argv)
 
     trees = worktrees(args.repo)
@@ -116,7 +120,9 @@ def main(argv=None) -> int:
     print("\nAxis D - observed same-worktree fire rate (the decision axis)")
     store = gaia_bus.Store(args.store)
     try:
-        rate = store.fire_rate()
+        import time
+        since = None if not args.window_days else time.time() - args.window_days * 86400
+        rate = store.fire_rate(since=since)
     except gaia_bus.BusUnreachable as error:
         print(f"  store unreachable: {error}", file=sys.stderr)
         return 2
