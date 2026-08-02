@@ -389,6 +389,75 @@ class Ledger:
             self._append_claim_row(row)
         return row
 
+    def append_claim_event(
+        self,
+        session_id: str,
+        repo: str,
+        lane: str,
+        status: str,
+        evidence: str | None = None,
+        note: str = "",
+        now: datetime | None = None,
+    ) -> dict[str, Any]:
+        """Append a schema-compatible lifecycle mirror without claiming a lock.
+
+        Gaia owns file-level exclusion in SQLite. This adapter preserves the
+        older lane-level ledger for existing readers; it deliberately does not
+        run the ledger's advisory conflict check or reinterpret a file claim as
+        a lane lock.
+        """
+        now = now or utc_now()
+        session_id = _safe_name(session_id, "session_id")
+        repo = _safe_name(repo.lower(), "repo")
+        lane = _safe_name(lane, "lane")
+        if status not in {"claimed", "in-progress", "done", "released"}:
+            raise BridgeError("invalid mirrored claim status")
+        row = {
+            "ts": isoformat(now),
+            "repo": repo,
+            "lane": lane,
+            "status": status,
+            "session": session_id,
+            "evidence": evidence,
+            "note": note.strip()[:500],
+            "source": "gaia",
+        }
+        with _file_lock(self.claims_lock_path):
+            self._append_claim_row(row)
+        return row
+
+    def release_mirrored_claims(
+        self,
+        session_id: str,
+        now: datetime | None = None,
+    ) -> list[dict[str, Any]]:
+        """Release every active Gaia-mirrored lane owned by one session."""
+        now = now or utc_now()
+        session_id = _safe_name(session_id, "session_id")
+        released: list[dict[str, Any]] = []
+        with _file_lock(self.claims_lock_path):
+            rows, _ = self._load_claim_rows()
+            active = [
+                row for row in self._latest_claim_rows(rows)
+                if row["session"] == session_id
+                and row["status"] in {"claimed", "in-progress"}
+                and row.get("source") == "gaia"
+            ]
+            for current in active:
+                row = {
+                    "ts": isoformat(now),
+                    "repo": current["repo"],
+                    "lane": current["lane"],
+                    "status": "released",
+                    "session": session_id,
+                    "evidence": None,
+                    "note": "Gaia mirror; session ended",
+                    "source": "gaia",
+                }
+                self._append_claim_row(row)
+                released.append(row)
+        return released
+
     def update_claim(
         self,
         session_id: str,

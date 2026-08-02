@@ -98,6 +98,8 @@ def main(argv=None) -> int:
     # 5% is loose enough not to be noise and tight enough to notice a climb.
     parser.add_argument("--max-cross-worktree-rate", type=float, default=0.05,
                         help="fail if Axis C exceeds this ratio (default 0.05)")
+    parser.add_argument("--max-same-worktree-rate", type=float, default=0.05,
+                        help="fail if Axis D exceeds this ratio (default 0.05)")
     parser.add_argument("--window-days", type=float, default=7.0,
                         help="Axis D window; 0 means all recorded history")
     args = parser.parse_args(argv)
@@ -145,6 +147,21 @@ def main(argv=None) -> int:
         # this line it looks exactly like a quiet machine.
         print(f"  UNRESOLVED paths       {rate.unresolved}  <- these edits were "
               f"NOT covered; a harness is passing paths Gaia cannot place")
+
+    if rate.checks == 0:
+        print("\nFAIL: Axis D coverage is UNKNOWN; no guarded checks were "
+              "recorded in the selected window.", file=sys.stderr)
+        return 1
+    if rate.unresolved:
+        print("\nFAIL: Axis D contains unresolved paths; measured coverage is "
+              "incomplete.", file=sys.stderr)
+        return 1
+    if (args.max_same_worktree_rate is not None and rate.ratio is not None
+            and rate.ratio > args.max_same_worktree_rate):
+        print(f"\nFAIL: Axis D is {rate.ratio:.1%}, above the "
+              f"{args.max_same_worktree_rate:.1%} ceiling. The warning rate "
+              "has left its declared high-signal range.", file=sys.stderr)
+        return 1
 
     if args.max_cross_worktree_rate is not None and overlap.ratio is not None:
         if overlap.ratio > args.max_cross_worktree_rate:

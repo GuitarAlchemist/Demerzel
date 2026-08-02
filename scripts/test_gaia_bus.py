@@ -108,6 +108,11 @@ class GaiaTestCase(unittest.TestCase):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         self.store_path = Path(directory.name) / "gaia.sqlite3"
+        environment = unittest.mock.patch.dict(
+            os.environ,
+            {"GALACTIC_CLAIMS_PATH": str(Path(directory.name) / "claims.jsonl")})
+        environment.start()
+        self.addCleanup(environment.stop)
         self.store = gaia_bus.Store(self.store_path, now=self.clock)
         self.addCleanup(self.store.close)
 
@@ -208,6 +213,50 @@ class TestCommittedDivergenceIsSilent(GaiaTestCase):
         self.assertIsNone(self.check(second.root, "session-B", "issue-863"))
 
 
+class TestGitDirtyProbeFailsClosed(GaiaTestCase):
+    def test_timeout_is_unknown_not_clean(self):
+        repo = self.repo()
+        identity = gaia_bus.identify(repo.root / RepoFixture.FILE)
+        with unittest.mock.patch(
+                "subprocess.run", side_effect=subprocess.TimeoutExpired("git", 2)):
+            with self.assertRaises(gaia_bus.GitStateUnknown):
+                gaia_bus.path_is_dirty(identity)
+
+    def test_failed_or_malformed_status_is_unknown_not_clean(self):
+        repo = self.repo()
+        identity = gaia_bus.identify(repo.root / RepoFixture.FILE)
+        results = [
+            subprocess.CompletedProcess([], 128, stdout="", stderr="index locked"),
+            subprocess.CompletedProcess([], 0, stdout="unexpected output\n", stderr=""),
+        ]
+        for result in results:
+            with self.subTest(returncode=result.returncode, stdout=result.stdout):
+                with unittest.mock.patch("subprocess.run", return_value=result):
+                    with self.assertRaises(gaia_bus.GitStateUnknown):
+                        gaia_bus.path_is_dirty(identity)
+
+    def test_unknown_git_state_neither_clears_nor_deletes_the_holder(self):
+        repo = self.repo()
+        identity = gaia_bus.identify(repo.root / RepoFixture.FILE)
+        self.assertIsNone(self.store.check_and_claim(
+            identity, "session-A", "lane-a"))
+        repo.dirty(repo.root)
+        self.store.confirm(identity, "session-A", "lane-a")
+
+        def unknown(_identity):
+            raise gaia_bus.GitStateUnknown("status timed out")
+
+        with self.assertRaises(gaia_bus.GitStateUnknown):
+            self.store.check_and_claim(
+                identity, "session-B", "lane-b", dirty_probe=unknown)
+
+        claims = self.store.claims()
+        self.assertEqual(["session-A"], [claim["session"] for claim in claims])
+        rate = self.store.fire_rate()
+        self.assertEqual(1, rate.checks,
+                         "the failed B check must not be recorded as clear")
+
+
 # --------------------------------------------------- 2. the tracer bullet (#873)
 
 
@@ -256,6 +305,28 @@ class TestTracerBullet(GaiaTestCase):
         self.assertIsNone(self.check(self.repo_fixture.root, "session-B", "issue-863",
                                      path="CONTEXT.md"))
 
+    def test_second_edit_cycle_reclaims_before_the_new_edit_lands(self):
+        """A's new PreToolUse must replace its old dirty-cycle state atomically.
+
+        A committed its first edit, so the physical file is clean. On the next
+        PreToolUse, A owns an in-flight second edit even though PostToolUse has
+        not made the file dirty yet. B must collide with that pending claim;
+        treating A's row as the old dirty claim lets B observe clean Git state,
+        delete A, and enter the same check-then-edit race Gaia exists to close.
+        """
+        self.repo_fixture.commit(self.repo_fixture.root, "first edit complete")
+        self.clock.advance(60)
+
+        self.assertIsNone(self.check(self.repo_fixture.root, "session-A",
+                                     "issue-873-second-edit"))
+        collision = self.check(self.repo_fixture.root, "session-B", "issue-863")
+
+        self.assertIsNotNone(collision)
+        self.assertEqual("session-A", collision.session)
+        self.assertEqual("issue-873-second-edit", collision.lane)
+        self.assertEqual(gaia_bus.STATE_PENDING, collision.state)
+        self.assertEqual(0, collision.age_s)
+
 
 # ------------------------------------------------------------- 3. claim liveness
 
@@ -277,9 +348,11 @@ class TestLiveness(GaiaTestCase):
         self.store.confirm(
             gaia_bus.identify(self.repo_fixture.root / RepoFixture.FILE), "session-A")
 
-    def test_a_silent_session_stops_holding_its_claim(self):
+    def test_a_silent_but_still_dirty_session_keeps_holding_its_claim(self):
+        """Heartbeat expiry cannot erase uncommitted work still on disk."""
         self.clock.advance(gaia_bus.HEARTBEAT_WINDOW_S + 1)
-        self.assertIsNone(self.check(self.repo_fixture.root, "session-B", "issue-863"))
+        self.assertIsNotNone(
+            self.check(self.repo_fixture.root, "session-B", "issue-863"))
 
     def test_a_heartbeating_session_keeps_holding_through_the_long_tail(self):
         """p90 is 14.4 h. A fixed 45-minute TTL would drop these on the floor."""
@@ -289,16 +362,18 @@ class TestLiveness(GaiaTestCase):
         self.assertGreater(self.clock() - 1_000_000.0, 4 * 60 * 60)
         self.assertIsNotNone(self.check(self.repo_fixture.root, "session-B", "issue-863"))
 
-    def test_the_ttl_expires_a_claim_even_while_the_session_lives(self):
-        """The backstop: a session alive for days must not hold Monday's file."""
-        while self.clock() - 1_000_000.0 < gaia_bus.CLAIM_TTL_S + 1:
+    def test_a_live_session_is_not_expired_by_a_fixed_claim_ttl(self):
+        """Heartbeat is authority; elapsed claim age cannot revoke a live owner."""
+        while self.clock() - 1_000_000.0 < 24 * 60 * 60 + 1:
             self.clock.advance(60)
             self.store.heartbeat("session-A")
-        self.assertIsNone(self.check(self.repo_fixture.root, "session-B", "issue-863"))
+        self.assertIsNotNone(
+            self.check(self.repo_fixture.root, "session-B", "issue-863"))
 
-    def test_the_ttl_clears_the_never_released_lane(self):
-        """5 of 44 lanes (11%) were never released. Crashes must self-heal."""
-        self.clock.advance(gaia_bus.CLAIM_TTL_S + 1)      # no heartbeats at all
+    def test_a_stale_clean_lane_self_heals(self):
+        """A dead lane stops holding once Git proves its work is durable."""
+        self.repo_fixture.commit(self.repo_fixture.root, "abandoned work preserved")
+        self.clock.advance(gaia_bus.HEARTBEAT_WINDOW_S + 1)
         self.assertIsNone(self.check(self.repo_fixture.root, "session-B", "issue-863"))
 
     def test_session_end_releases_every_claim_the_session_holds(self):
@@ -454,7 +529,7 @@ class TestGuardStoreUnreachable(GaiaTestCase):
         output = gaia_hook.pre_tool_use(
             {"tool_input": {"file_path": str(self.repo().root / RepoFixture.FILE)},
              "session_id": "session-B"},
-            store_path=blocked / "gaia.sqlite3")
+            store_path=blocked / "gaia.sqlite3", budget_s=5.0)
 
         self.assertTrue(output["continue"], "a hook must never block an edit")
         self.assertIn("unreachable", output["systemMessage"].lower())
@@ -598,6 +673,84 @@ class TestGuardBaseRateInstrumentation(GaiaTestCase):
         self.assertEqual(3, rate.checks)
         self.assertEqual(1, rate.collisions)
 
+
+class TestClaimsLedgerMirror(GaiaTestCase):
+    """The unchanged Galactic lane ledger remains readable by old consumers."""
+
+    def test_a_gaia_lane_lifecycle_is_schema_compatible_and_append_only(self):
+        try:
+            from scripts import galactic_bridge
+        except ModuleNotFoundError:
+            import galactic_bridge
+
+        mirror = self.store_path.parent / "claims.jsonl"
+        store = gaia_bus.Store(self.store_path.parent / "mirrored.sqlite3",
+                               now=self.clock, claims_path=mirror)
+        self.addCleanup(store.close)
+        repo = self.repo()
+        identity = gaia_bus.identify(repo.root / RepoFixture.FILE)
+
+        store.check_and_claim(identity, "session-A", "codex/948-gaia-brokerless")
+        repo.dirty(repo.root)
+        store.confirm(identity, "session-A", "codex/948-gaia-brokerless")
+        store.release_session("session-A")
+
+        rows = [json.loads(line) for line in mirror.read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(["claimed", "in-progress", "released"],
+                         [row["status"] for row in rows])
+        self.assertEqual("scripts/run_afk_cycle.py", rows[0]["evidence"])
+        self.assertNotIn("/", rows[0]["lane"],
+                         "the unchanged ledger schema rejects branch slashes")
+
+        reader = galactic_bridge.Ledger(
+            root=self.store_path.parent / "bridge", claims_path=mirror)
+        status = reader.status()
+        self.assertEqual([], status["claim_errors"])
+        self.assertEqual([], status["claims"],
+                         "the legacy reader must observe the final release")
+
+    def test_session_end_releases_a_lane_after_its_file_claim_was_swept(self):
+        mirror = self.store_path.parent / "swept-claims.jsonl"
+        store = gaia_bus.Store(self.store_path.parent / "swept.sqlite3",
+                               now=self.clock, claims_path=mirror)
+        self.addCleanup(store.close)
+        repo = self.repo()
+        identity = gaia_bus.identify(repo.root / RepoFixture.FILE)
+
+        store.check_and_claim(identity, "session-A", "lane-a")
+        repo.dirty(repo.root)
+        store.confirm(identity, "session-A", "lane-a")
+        repo.commit(repo.root, "A finished")
+        store.check_and_claim(identity, "session-B", "lane-b")
+        self.assertNotIn("session-A", [claim["session"] for claim in store.claims()])
+
+        store.release_session("session-A")
+
+        rows = [json.loads(line) for line in mirror.read_text(encoding="utf-8").splitlines()]
+        a_statuses = [row["status"] for row in rows if row["session"] == "session-A"]
+        self.assertEqual(["claimed", "in-progress", "released"], a_statuses)
+
+
+class TestGenericCliAdapter(GaiaTestCase):
+    """Codex, Antigravity, and other harnesses can call brokerless CLI verbs."""
+
+    def test_confirm_preserves_the_callers_lane(self):
+        repo = self.repo()
+        target = repo.root / RepoFixture.FILE
+        self.assertEqual(0, gaia_bus.main([
+            "--store", str(self.store_path), "check", "--path", str(target),
+            "--session", "codex-session", "--lane", "codex-948",
+        ]))
+        repo.dirty(repo.root)
+        self.assertEqual(0, gaia_bus.main([
+            "--store", str(self.store_path), "confirm", "--path", str(target),
+            "--session", "codex-session", "--lane", "codex-948",
+        ]))
+
+        claim = self.store.claims()[0]
+        self.assertEqual("dirty", claim["state"])
+        self.assertEqual("codex-948", claim["lane"])
+
     def test_the_fire_rate_of_an_idle_bus_is_zero_not_undefined(self):
         """A detector that has never run must not report a clean bill of health."""
         rate = self.store.fire_rate()
@@ -622,7 +775,10 @@ class TestHookContract(GaiaTestCase):
         return self.hook.pre_tool_use(
             {"tool_input": {"file_path": str(path or self.target)},
              "session_id": session, "cwd": str(self.repo_fixture.root)},
-            store_path=self.store_path)
+            store_path=self.store_path,
+            # Contract tests isolate collision semantics from the independently
+            # tested 100 ms timeout policy and its intentional overrun path.
+            budget_s=5.0)
 
     def test_a_clear_path_adds_no_context(self):
         self.assertNotIn("hookSpecificOutput", self.pre("session-A"))
@@ -639,6 +795,18 @@ class TestHookContract(GaiaTestCase):
         context = output["hookSpecificOutput"]["additionalContext"]
         self.assertIn("session-A", context)
         self.assertIn("PreToolUse", output["hookSpecificOutput"]["hookEventName"])
+
+    def test_post_tool_fallback_records_the_real_lane(self):
+        """A timed-out or newly installed PreToolUse must not erase provenance."""
+        self.hook.post_tool_use(
+            {"tool_input": {"file_path": str(self.target)},
+             "session_id": "session-A"},
+            store_path=self.store_path)
+
+        store = gaia_bus.Store(self.store_path)
+        self.addCleanup(store.close)
+        claim = store.claims()[0]
+        self.assertEqual("master", claim["lane"])
 
     def test_the_warning_is_marked_untrusted_peer_context(self):
         """Safety boundary: another session's lane slug is not an instruction."""
@@ -712,6 +880,21 @@ class TestHookContract(GaiaTestCase):
         self.addCleanup(store.close)
         self.assertEqual([], store.claims())     # a heartbeat claims nothing
 
+    def test_every_tool_activity_is_wired_as_a_heartbeat(self):
+        """Read/Bash-heavy turns must not depend on UserPromptSubmit alone."""
+        settings = json.loads(
+            (Path(__file__).parents[1] / ".claude" / "settings.json")
+            .read_text(encoding="utf-8"))
+        commands = [
+            hook["command"]
+            for group in settings["hooks"]["PreToolUse"]
+            if group.get("matcher") == ".*"
+            for hook in group["hooks"]
+        ]
+        self.assertTrue(any("gaia_hook.py ToolActivity" in command
+                            for command in commands))
+        self.assertIs(self.hook.heartbeat, self.hook.HANDLERS["ToolActivity"])
+
     def test_stop_is_not_wired_to_release(self):
         """`Stop` fires at the end of every TURN, not the session.
 
@@ -779,18 +962,42 @@ class TestBaseRateTool(GaiaTestCase):
         self.assertEqual(0, overlap.files)
         self.assertIsNone(overlap.ratio)
 
+    def test_unknown_same_worktree_coverage_fails_closed(self):
+        repo = self.repo()
+        result = self.tool.main([
+            "--repo", str(repo.root), "--store", str(self.store_path),
+            "--window-days", "0",
+        ])
+        self.assertEqual(1, result)
+
+    def test_unresolved_paths_fail_even_when_some_checks_succeeded(self):
+        repo = self.repo()
+        self.check(repo.root, "session-A", "issue-948")
+        self.store.record_unresolved("session-B", "/foreign/path.py")
+
+        result = self.tool.main([
+            "--repo", str(repo.root), "--store", str(self.store_path),
+            "--window-days", "0",
+        ])
+        self.assertEqual(1, result)
+
+    def test_same_worktree_alarm_rate_above_the_declared_ceiling_fails(self):
+        repo = self.repo()
+        identity = gaia_bus.identify(repo.root / RepoFixture.FILE)
+        self.check(repo.root, "session-A", "issue-948")
+        repo.dirty(repo.root)
+        self.store.confirm(identity, "session-A", "issue-948")
+        self.check(repo.root, "session-B", "issue-949")
+
+        result = self.tool.main([
+            "--repo", str(repo.root), "--store", str(self.store_path),
+            "--window-days", "0", "--max-same-worktree-rate", "0.1",
+        ])
+        self.assertEqual(1, result)
+
 
 class TestLatencyBudget(GaiaTestCase):
-    """The hook must not tax every edit -- but the budget has to be reachable.
-
-    Measured on this machine 2026-07-30: `identify()` costs a median 28.6 ms,
-    p90 31.2 ms, max 68.1 ms (two git subprocesses), and the dirty probe another
-    ~21 ms. The spec's 100 ms ceiling is therefore *below* the worst case of the
-    work it is meant to bound, so a session on a loaded machine would silently
-    skip the check exactly when the most sessions are running. The default is
-    raised to 750 ms and the measurement recorded, rather than shipping a
-    number that reads strict and behaves blind.
-    """
+    """The hook honours the approved 100 ms ceiling without false green."""
 
     def setUp(self):
         super().setUp()
@@ -798,18 +1005,20 @@ class TestLatencyBudget(GaiaTestCase):
         self.hook = gaia_hook
         self.repo_fixture = self.repo()
 
-    def test_an_exhausted_budget_proceeds_unwarned_rather_than_waiting(self):
-        output = self.hook.pre_tool_use(
-            {"tool_input": {"file_path": str(self.repo_fixture.root / RepoFixture.FILE)},
-             "session_id": "session-B"},
-            store_path=self.store_path, budget_s=0.0)
-        self.assertEqual({"continue": True}, output,
-                         "past the budget the edit proceeds, silently")
+    def test_an_exhausted_budget_proceeds_loudly_rather_than_waiting(self):
+        with unittest.mock.patch.object(
+                self.hook, "_within_budget", return_value=(False, None, None)):
+            output = self.hook.pre_tool_use(
+                {"tool_input": {
+                    "file_path": str(self.repo_fixture.root / RepoFixture.FILE)},
+                 "session_id": "session-B"},
+                store_path=self.store_path, budget_s=0.0)
+        self.assertTrue(output["continue"], "past the budget the edit proceeds")
+        self.assertIn("unguarded", output["systemMessage"].lower(),
+                      "a dropped claim must never look like a clear check")
 
-    def test_the_default_budget_exceeds_the_measured_worst_case(self):
-        """A budget below the cost of the work it bounds is a disabled feature."""
-        self.assertGreater(self.hook.DEFAULT_BUDGET_S, 0.1,
-                           "100ms is under the measured p100 of identify()+probe")
+    def test_the_default_budget_matches_the_approved_ceiling(self):
+        self.assertEqual(0.1, self.hook.DEFAULT_BUDGET_S)
 
     def test_an_overrun_drops_the_claim_in_a_real_hook_process(self):
         """Must run as a SUBPROCESS, and that is the whole finding.
@@ -833,8 +1042,10 @@ class TestLatencyBudget(GaiaTestCase):
             input=payload, capture_output=True, text=True, env=environment,
             timeout=60)
 
-        self.assertEqual('{"continue": true}', result.stdout.strip(),
-                         "an over-budget hook still must not block the edit")
+        output = json.loads(result.stdout)
+        self.assertTrue(output["continue"],
+                        "an over-budget hook still must not block the edit")
+        self.assertIn("unguarded", output["systemMessage"].lower())
         store = gaia_bus.Store(self.store_path)
         self.addCleanup(store.close)
         self.assertEqual([], store.claims(),

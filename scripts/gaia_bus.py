@@ -24,22 +24,29 @@ degrade it.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
+import re
 import sqlite3
 import subprocess
 import sys
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from scripts import galactic_bridge
+except ModuleNotFoundError:
+    import galactic_bridge
+
 # Lane durations measured 2026-07-30 over 44 lanes: median 30.5 min, p75 45 min,
-# p90 864 min, p95 1324 min. Sharply bimodal, so no single TTL works -- 45 min
-# expires the overnight tail, 24 h keeps dead claims warm all day. Liveness is
-# therefore heartbeat-primary and the TTL is only a crash backstop for the 11%
-# of lanes that were never released.
+# p90 864 min, p95 1324 min. Sharply bimodal, so no fixed claim TTL works --
+# 45 min expires the overnight tail and 24 h revokes a still-live owner. Liveness
+# is heartbeat-primary; the heartbeat window is also the crash backstop for the
+# 11% of lanes that were never released.
 HEARTBEAT_WINDOW_S = 30 * 60        # a session is live iff it heartbeat this recently
-CLAIM_TTL_S = 24 * 60 * 60          # > p95 (22.1 h); backstop for sessions that die
 PENDING_GRACE_S = 5 * 60            # an edit that never landed stops holding the path
 CHECK_RETENTION_S = 90 * 24 * 3600  # guard #4's evidence window; bounds the store
 
@@ -60,6 +67,14 @@ class BusUnreachable(GaiaError):
     worse than no bus, because sessions believe they coordinated. Green must be
     unreachable while dead. The *hook* catches this and lets the edit proceed --
     loud, not obstructive.
+    """
+
+
+class GitStateUnknown(GaiaError):
+    """Git could not establish whether a claimed path is clean or dirty.
+
+    Unknown is neither clean nor clear. Callers must stop the check transaction
+    without deleting a holder or publishing a verdict.
     """
 
 
@@ -131,6 +146,18 @@ def _nearest_existing_dir(path: str) -> str | None:
         candidate = candidate.parent
 
 
+def _worktree_root(start: str) -> str | None:
+    """Find the nearest Git worktree marker without spawning Git."""
+    candidate = Path(os.path.realpath(start))
+    while True:
+        marker = candidate / ".git"
+        if marker.is_dir() or marker.is_file():
+            return str(candidate)
+        if candidate.parent == candidate:
+            return None
+        candidate = candidate.parent
+
+
 def identify(path) -> Identity | None:
     """Normalize an absolute or relative path to `(repo, rel_path, worktree)`.
 
@@ -147,7 +174,7 @@ def identify(path) -> Identity | None:
     probe = _nearest_existing_dir(raw)
     if probe is None:
         return None
-    top = _git(probe, "rev-parse", "--show-toplevel")
+    top = _worktree_root(probe) or _git(probe, "rev-parse", "--show-toplevel")
     if not top:
         return None
 
@@ -165,13 +192,78 @@ def identify(path) -> Identity | None:
                     worktree=worktree)
 
 
+def _git_dir(worktree: str) -> Path | None:
+    """Resolve `.git` for both primary and linked worktrees without a process."""
+    marker = Path(worktree) / ".git"
+    if marker.is_dir():
+        return marker.resolve()
+    if marker.is_file():
+        try:
+            prefix, raw = marker.read_text(encoding="utf-8").strip().split(":", 1)
+            if prefix.lower() != "gitdir":
+                return None
+            target = Path(raw.strip())
+            return (target if target.is_absolute() else marker.parent / target).resolve()
+        except (OSError, ValueError):
+            return None
+    return None
+
+
+def _common_git_dir(worktree: str) -> Path | None:
+    git_dir = _git_dir(worktree)
+    if git_dir is None:
+        return None
+    marker = git_dir / "commondir"
+    try:
+        raw = marker.read_text(encoding="utf-8").strip()
+    except OSError:
+        return git_dir
+    target = Path(raw)
+    return (target if target.is_absolute() else git_dir / target).resolve()
+
+
+def branch_name(worktree: str) -> str:
+    """Current branch from Git's own HEAD file; detached HEAD returns empty."""
+    git_dir = _git_dir(worktree)
+    if git_dir is None:
+        return ""
+    try:
+        head = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
+    except OSError:
+        return ""
+    prefix = "ref: refs/heads/"
+    return head[len(prefix):] if head.startswith(prefix) else ""
+
+
+def _origin_url(worktree: str) -> str:
+    common = _common_git_dir(worktree)
+    if common is None:
+        return ""
+    try:
+        lines = (common / "config").read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return ""
+    in_origin = False
+    for raw in lines:
+        line = raw.strip()
+        if line.startswith("["):
+            in_origin = line.lower() == '[remote "origin"]'
+        elif in_origin and "=" in line:
+            key, value = line.split("=", 1)
+            if key.strip().lower() == "url":
+                return value.strip()
+    return ""
+
+
 def _repo_name(cwd: str, toplevel: str) -> str:
     """Repo identity from the remote, so every worktree agrees on the name.
 
     Falling back to the directory name would give each of this machine's 47
     worktrees a different repo id, which silently disables cross-checking.
     """
-    remote = _git(cwd, "config", "--get", "remote.origin.url")
+    remote = _origin_url(toplevel)
+    if not remote:
+        remote = _git(cwd, "config", "--get", "remote.origin.url")
     if remote:
         tail = remote.rstrip("/").rsplit("/", 1)[-1].rsplit(":", 1)[-1]
         name = tail.removesuffix(".git")
@@ -184,13 +276,33 @@ def path_is_dirty(identity: Identity) -> bool:
     """Does this worktree hold uncommitted changes to this path?
 
     Untracked counts: a newly written file is uncommitted work like any other.
-    An unreadable worktree reports clean, which errs toward silence -- a false
-    negative here costs a missed warning, a false positive costs the signal.
+    Timeout, command failure, and malformed porcelain are UNKNOWN and raise;
+    they must never be collapsed to clean because clean is permission to delete
+    a live holder.
     """
     if not identity.worktree:
+        raise GitStateUnknown("worktree identity is empty")
+    command = ["git", "-C", identity.worktree, "status", "--porcelain=v1",
+               "--", identity.rel_path]
+    try:
+        result = subprocess.run(command, check=False, capture_output=True, text=True,
+                                timeout=GIT_TIMEOUT_S)
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise GitStateUnknown(f"git status unavailable for {identity.rel_path}: "
+                              f"{error}") from error
+    if result.returncode != 0:
+        detail = result.stderr.strip() or f"exit {result.returncode}"
+        raise GitStateUnknown(f"git status failed for {identity.rel_path}: {detail}")
+    output = result.stdout
+    if not output:
         return False
-    output = _git(identity.worktree, "status", "--porcelain", "--", identity.rel_path)
-    return bool(output.strip())
+    valid_status = set(" MADRCU?!")
+    for line in output.splitlines():
+        if (len(line) < 4 or line[2] != " " or line[0] not in valid_status
+                or line[1] not in valid_status or line[:2] == "  "):
+            raise GitStateUnknown(
+                f"git status returned malformed porcelain for {identity.rel_path}")
+    return True
 
 
 # ------------------------------------------------------------------------ store
@@ -252,6 +364,18 @@ def default_store_path() -> Path:
     return Path.home() / ".local" / "state" / "demerzel" / "gaia" / "gaia.sqlite3"
 
 
+def _ledger_name(value: str) -> str:
+    """Map branch-like names into the unchanged claim-ledger token grammar."""
+    raw = str(value)
+    safe = re.sub(r"[^A-Za-z0-9._-]+", "-", raw).strip("-._")
+    if not safe or not safe[0].isalpha():
+        safe = f"gaia-{safe}" if safe else "gaia-unknown"
+    if safe != raw:
+        digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()[:8]
+        safe = f"{safe[:119]}-{digest}"
+    return safe[:128]
+
+
 class Store:
     """The working store. Multi-process safe via SQLite WAL.
 
@@ -259,10 +383,24 @@ class Store:
     bus as a healthy one -- the failure surfaces on the first real operation.
     """
 
-    def __init__(self, path=None, now=time.time):
+    def __init__(self, path=None, now=time.time, claims_path=None):
         self.path = Path(path) if path is not None else default_store_path()
+        self.claims_path = (Path(claims_path) if claims_path is not None
+                            else galactic_bridge.default_claims_path())
         self._now = now
         self._conn: sqlite3.Connection | None = None
+
+    def _mirror_claim(self, identity: Identity, session: str, lane: str,
+                      status: str, evidence: str | None) -> None:
+        try:
+            galactic_bridge.Ledger(claims_path=self.claims_path).append_claim_event(
+                session_id=_ledger_name(session), repo=_ledger_name(identity.repo),
+                lane=_ledger_name(lane), status=status, evidence=evidence,
+                note=f"Gaia mirror; source lane={lane}"[:500],
+                now=datetime.fromtimestamp(self._now(), timezone.utc))
+        except (galactic_bridge.BridgeError, OSError) as error:
+            raise BusUnreachable(
+                f"gaia claim mirror at {self.claims_path} is unusable: {error}") from error
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -360,16 +498,21 @@ class Store:
         """
         if identity is None:
             return None
+        mirror_claim = False
         with self._write() as conn:
             self._heartbeat(conn, session)
             self._sweep(conn)
             collision = self._first_live_holder(conn, identity, session, dirty_probe)
             now = self._now()
+            mirror_claim = conn.execute(
+                "SELECT 1 FROM claims WHERE repo=? AND session=? AND lane=? LIMIT 1",
+                (identity.repo, session, lane)).fetchone() is None
             conn.execute(
                 "INSERT INTO claims (repo, rel_path, worktree, session, lane, state, "
                 "claimed_at) VALUES (?, ?, ?, ?, ?, ?, ?) "
                 "ON CONFLICT(repo, rel_path, worktree, session) "
-                "DO UPDATE SET lane=excluded.lane",
+                "DO UPDATE SET lane=excluded.lane, state=excluded.state, "
+                "claimed_at=excluded.claimed_at",
                 (identity.repo, identity.rel_path, identity.worktree, session, lane,
                  STATE_PENDING, now))
             conn.execute(
@@ -377,6 +520,8 @@ class Store:
                 "VALUES (?, ?, ?, ?, ?, ?)",
                 (now, identity.repo, identity.rel_path, identity.worktree, session,
                  "collision" if collision else "clear"))
+        if mirror_claim:
+            self._mirror_claim(identity, session, lane, "claimed", identity.rel_path)
         return collision
 
     def _first_live_holder(self, conn, identity, session, dirty_probe):
@@ -440,8 +585,13 @@ class Store:
         """
         if identity is None:
             return
+        mirror_progress = False
         with self._write() as conn:
             self._heartbeat(conn, session)
+            mirror_progress = conn.execute(
+                "SELECT 1 FROM claims WHERE repo=? AND session=? AND lane=? "
+                "AND state=? LIMIT 1",
+                (identity.repo, session, lane, STATE_DIRTY)).fetchone() is None
             conn.execute(
                 "INSERT INTO claims (repo, rel_path, worktree, session, lane, state, "
                 "claimed_at) VALUES (?, ?, ?, ?, ?, ?, ?) "
@@ -449,19 +599,34 @@ class Store:
                 "DO UPDATE SET state=excluded.state",
                 (identity.repo, identity.rel_path, identity.worktree, session,
                  lane, STATE_DIRTY, self._now()))
+        if mirror_progress:
+            self._mirror_claim(identity, session, lane, "in-progress", identity.rel_path)
 
     def release_session(self, session: str) -> None:
         """SessionEnd. A session may release only its own claims."""
         with self._write() as conn:
             conn.execute("DELETE FROM claims WHERE session=?", (session,))
             conn.execute("DELETE FROM sessions WHERE session=?", (session,))
+        try:
+            galactic_bridge.Ledger(
+                claims_path=self.claims_path).release_mirrored_claims(
+                    _ledger_name(session),
+                    now=datetime.fromtimestamp(self._now(), timezone.utc))
+        except (galactic_bridge.BridgeError, OSError) as error:
+            raise BusUnreachable(
+                f"gaia claim mirror at {self.claims_path} is unusable: {error}") from error
 
     def _sweep(self, conn) -> None:
         now = self._now()
+        # Heartbeat expiry removes the session record, not its claims. A dirty
+        # path is still uncommitted work even if its owner is quiet, in a long
+        # reasoning turn, or crashed. `_first_live_holder` may delete the claim
+        # only after Git positively proves the path clean; unknown Git state
+        # aborts the transaction. This is the fail-closed backstop behind the
+        # heartbeat-primary fast path.
         conn.execute(
-            "DELETE FROM claims WHERE claimed_at <= ? OR session NOT IN "
-            "(SELECT session FROM sessions WHERE heartbeat_at > ?)",
-            (now - CLAIM_TTL_S, now - HEARTBEAT_WINDOW_S))
+            "DELETE FROM sessions WHERE heartbeat_at <= ?",
+            (now - HEARTBEAT_WINDOW_S,))
         # The checks table gets a row per Edit forever. Bounded here rather than
         # left to grow without limit in the user's profile directory.
         conn.execute("DELETE FROM checks WHERE at <= ?", (now - CHECK_RETENTION_S,))
@@ -522,6 +687,7 @@ def main(argv=None) -> int:
     confirm = sub.add_parser("confirm", help="confirm an edit landed (PostToolUse)")
     confirm.add_argument("--path", required=True)
     confirm.add_argument("--session", required=True)
+    confirm.add_argument("--lane", default="unknown")
 
     beat = sub.add_parser("heartbeat")
     beat.add_argument("--session", required=True)
@@ -546,7 +712,7 @@ def main(argv=None) -> int:
                 return 1
             return 0
         if args.verb == "confirm":
-            store.confirm(identify(args.path), args.session)
+            store.confirm(identify(args.path), args.session, args.lane)
             return 0
         if args.verb == "heartbeat":
             store.heartbeat(args.session)

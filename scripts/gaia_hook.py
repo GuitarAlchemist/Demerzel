@@ -31,12 +31,10 @@ except ModuleNotFoundError:
     import gaia_bus
 
 
-# A hard ceiling on the PreToolUse round trip. Past it the edit proceeds
-# unwarned: latency on every edit costs more than an occasionally missed
-# warning. Overridable because the floor is not the store -- it is the two git
-# subprocesses `identify` needs, which on Windows cost more than the budget the
-# spec assumed. See docs note in check_budget_s().
-DEFAULT_BUDGET_S = 0.75
+# The approved hard ceiling on the PreToolUse round trip. Past it the edit still
+# proceeds, but loudly as unguarded: an overrun is UNKNOWN, never a clear check.
+# The environment override is retained for measurement and incident response.
+DEFAULT_BUDGET_S = 0.1
 
 
 def check_budget_s() -> float:
@@ -75,7 +73,7 @@ def _lane(identity) -> str:
     Falls back to the worktree directory, which is how `.claude/worktrees/agent-*`
     lanes identify themselves.
     """
-    branch = gaia_bus._git(identity.worktree, "branch", "--show-current")
+    branch = gaia_bus.branch_name(identity.worktree)
     return branch or os.path.basename(identity.worktree.rstrip("/\\")) or "unknown"
 
 
@@ -86,10 +84,9 @@ def _within_budget(work, budget_s: float):
     thread and the hook process exits as soon as it has printed, so interpreter
     shutdown kills it mid-flight -- verified, not assumed. That leaves a real
     hole: an over-budget check publishes nothing, which reopens the window where
-    two sessions both read clear. It is bounded rather than closed, by keeping
-    the budget roughly 6x the measured worst case (~120 ms of git plus SQLite
-    against a 750 ms ceiling), so overruns should be rare on an idle machine and
-    rarer still than the stall that cancelling the budget would cause.
+    two sessions both read clear. The approved 100 ms ceiling intentionally
+    favours edit latency. Because the claim is dropped, the caller surfaces the
+    overrun as unguarded rather than treating it as a clear verdict.
 
     An earlier version of this docstring claimed the worker "lands late". That
     was false, and it mattered: it read as a reason not to worry about overruns.
@@ -135,9 +132,9 @@ def pre_tool_use(payload: dict, store_path=None, budget_s=None) -> dict:
     finished, collision, error = _within_budget(work, budget)
 
     if not finished:
-        # Silent by design: a slow bus must not become a chatty one. The
-        # measured overrun rate belongs in `gaia_bus status`, not in context.
-        return _proceed()
+        return _proceed(
+            system_message=("gaia: check budget exhausted; this edit is "
+                            "unguarded and no clear verdict was produced"))
     if isinstance(error, gaia_bus.BusUnreachable):
         return _proceed(system_message=f"gaia: bus unreachable — {error}")
     if error is not None:
@@ -166,7 +163,7 @@ def post_tool_use(payload: dict, store_path=None) -> dict:
     try:
         identity = gaia_bus.identify(path)
         if identity is not None:
-            store.confirm(identity, session)
+            store.confirm(identity, session, _lane(identity))
     except gaia_bus.GaiaError as error:
         return _proceed(system_message=f"gaia: bus unreachable — {error}")
     finally:
@@ -246,7 +243,7 @@ def heartbeat(payload: dict, store_path=None) -> dict:
 # quietly turning the bus into a no-op that still reads green.
 HANDLERS = {"PreToolUse": pre_tool_use, "PostToolUse": post_tool_use,
             "SessionEnd": session_end, "SessionStart": session_start,
-            "UserPromptSubmit": heartbeat}
+            "UserPromptSubmit": heartbeat, "ToolActivity": heartbeat}
 
 
 def main(argv=None) -> int:
