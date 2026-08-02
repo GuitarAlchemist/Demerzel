@@ -79,26 +79,24 @@ consumption decays to zero while the ledger stays busy. That is the predecessor'
 ## Architecture
 
 ```
-  Claude Code        Codex         Antigravity
-  (hooks + MCP)   (hooks + MCP)   (MCP only)
-       |                |                |
-       +-------- named pipe -------------+
-                \\.\pipe\gaia          (no TCP port, no listener)
-                        v
-        +-------------------------------+
-        |          gaia daemon          |
-        |  facet exchange   (exact)     |  <- slice 1
-        |  semantic exchange (kNN)      |  <- deferred, slice 2
-        |  claim liveness / expiry      |
-        +-------------------------------+
-                        |
-          SQLite (WAL)  — working store
-                        |
-          ~/.agents/claims.jsonl — mirrored, contract unchanged
+  Claude Code                 Codex / Antigravity / other harnesses
+  lifecycle hooks             dependency-free CLI verbs
+       |                                  |
+       +---------- gaia_bus.py -----------+  <- slice 1, brokerless
+                          |
+                    SQLite (WAL)            working file-claim store
+                          |
+            ~/.agents/claims.jsonl          lane lifecycle mirror
+
+  named pipe + gaia daemon + MCP           <- deferred, slice 2
+  semantic exchange (kNN)                  <- deferred, slice 2
 ```
 
-A named pipe rather than a localhost port keeps the existing safety boundary from
-the Galactic bridge: local stdio only, nothing bindable from off-machine.
+Slice 1 exposes no listener at all. Claude gets automatic publication through
+hooks; any harness that can launch a process can call the same `check`, `confirm`,
+`heartbeat`, `release`, and `status` CLI verbs. A named pipe rather than a
+localhost port remains the intended slice-2 boundary when a resident process has
+work to do.
 
 **The daemon is deferred to slice 2.** Reviewing what it actually buys slice 1:
 the vector index needs a resident process, but slice 1 has no embeddings; TTL
@@ -113,7 +111,11 @@ semantic exchange, when there is something resident for it to hold.
 SQLite is the working store because it gives multi-process concurrency for free.
 `claims.jsonl` keeps its current schema and keeps being appended, so every
 existing reader — including the `SessionStart` hook — continues to work untouched.
-**Gaia mirrors; it does not migrate.**
+**Gaia mirrors; it does not migrate.** The mirror remains lane-level: the first
+file claim appends `claimed`, the first confirmed dirty edit appends `in-progress`,
+and `SessionEnd` appends `released`, with the repo-relative path carried as
+evidence. File-level exclusion stays in SQLite; the legacy `(repo, lane)` fold is
+not reinterpreted as a file lock.
 
 ### Two exchanges, because the jobs want opposite guarantees
 
@@ -213,33 +215,32 @@ The distribution is sharply bimodal — most lanes are half an hour, a tail runs
 overnight. **A fixed TTL therefore cannot work.** 45 minutes expires the tail and
 misses real collisions; 24 hours keeps dead claims warm all day and cries wolf.
 
-So liveness is **heartbeat-primary**: a claim is live iff its owning session has
-heartbeated recently. Sessions heartbeat for free on ordinary hook traffic, so
-this costs no discipline. `SessionEnd` releases the session's claims. A generous
-TTL (> p95) remains only as a crash backstop for sessions that die without
-releasing — the 11% case.
+So liveness is **heartbeat-primary for session presence**, with ordinary tool
+traffic refreshing the heartbeat for free. `SessionEnd` releases the session's
+claims. Heartbeat expiry removes the session-presence row, but never proves that
+dirty work disappeared: a dirty claim remains protective until Git positively
+shows the path clean (committed or reverted). A pending claim whose edit never
+landed may self-heal after a short grace period, again only after positive clean
+Git state. Timeout, command failure, and malformed Git output are UNKNOWN and may
+not delete a holder.
 
-The measurement chose the mechanism, not merely the number. A single TTL constant
-would have been a judgement presented as a threshold.
+The measurement chose the mechanism, not merely the number. There is no fixed
+dirty-claim TTL: elapsed wall time cannot safely distinguish an overnight live
+lane from a crashed lane whose uncommitted work still needs protection.
 
 ## Data flow — the collision path
 
 ```
-Session A                          gaia daemon                    Session B
-    |                                   |                             |
-    | PreToolUse(Edit, run_afk_cycle.py)|                             |
-    |---- check(repo, rel_path) ------->|                             |
-    |<--- clear ------------------------|                             |
-    | (edit proceeds)                   |                             |
-    | PostToolUse(Edit)                 |                             |
-    |---- touch(repo, rel_path, lane) ->| claim recorded, live        |
-    |                                   |                             |
-    |                                   |<-- check(same repo+path) ---|
-    |                                   |--- HARD hit: A holds it, ---|
-    |                                   |    lane issue-873-governor, |
-    |                                   |    14m ago                  |
-    |                                   |    -> additionalContext     |
-    |                                   |       before B's edit runs  |
+Session A                         SQLite                       Session B
+    |                               |                              |
+    | PreToolUse(Edit, path)        |                              |
+    |-- atomic check-and-claim ---->|                              |
+    |<------------- clear ----------|                              |
+    | edit; PostToolUse confirms    |                              |
+    |                               |<-- atomic check-and-claim ----|
+    |                               |--- A holds path, lane, age -->|
+    |                               |        additionalContext      |
+    |                               |        before B edits         |
 ```
 
 ## Behavioural decisions
@@ -251,26 +252,27 @@ a warning that is read and overruled, and starting with hard blocks would poison
 adoption before the signal quality is known. Escalation stays available later.
 
 **Publish fails loudly, or the bus is worthless.** The lethal failure is sessions
-publishing into a dead daemon and believing they coordinated. Liveness is
-therefore on the call path, not in a monitor: if the daemon is unreachable the MCP
-tool **errors**, and `SessionStart` reports the bus as down. Green must be
-unreachable while dead. A scheduled guard is defense-in-depth on top, never the
-primary detector.
+publishing into an unusable store and believing they coordinated. Liveness is
+therefore on the call path, not in a monitor: the CLI errors and `SessionStart`
+reports the bus as down. Green must be unreachable while dead. A scheduled guard
+is defense-in-depth on top, never the primary detector.
 
 **A hook must never block editing.** These pull in opposite directions and the
-split resolves it: the MCP *tool* errors loudly so a calling agent knows; the
+split resolves it: the CLI/library call errors loudly so a calling agent knows; the
 *hook* catches, emits `gaia: bus unreachable` into context, and lets the edit
 proceed. Loud, not obstructive.
 
 **100 ms hard timeout** on the PreToolUse round trip. Past that the edit proceeds
-unwarned. A coordination nicety must not add latency to every edit.
+unblocked but explicitly **unguarded**; an overrun is UNKNOWN and never a clear
+verdict. A coordination nicety must not add latency to every edit, and a dropped
+claim must not read green.
 
 Desktop-only buys a real simplification: one machine, one clock. No skew, no
 distributed consensus, no partition semantics.
 
 ## Safety boundaries
 
-- Local named pipe only; no TCP listener, no network surface.
+- Slice 1 uses local files and subprocess stdio only; no listener or network surface.
 - Runtime state contains no credentials and never copies environment secrets.
 - Cross-session message bodies surface as **untrusted context**, never as
   instructions with elevated priority.
@@ -356,9 +358,10 @@ plus poll at hook points. The broker's value is durability, routing and fan-out 
 not push. During active work hooks fire often enough that delivery feels
 near-live; an idle session hears nothing until its next interaction.
 
-**Non-MCP tools are out of reach** unless they expose lifecycle hooks or can call
-the CLI verbs. The dependency-free CLI surface from the Galactic bridge is the
-intended fallback.
+**Tools without hooks are not automatic.** They can call Gaia's dependency-free
+CLI verbs directly, but mutations made without either lifecycle hooks or those
+calls remain invisible. Slice 1 deliberately does not claim automatic coverage
+for every desktop harness.
 
 **Advisory, not authoritative.** Two sessions determined to edit the same file
 still can. Gaia removes the excuse of not knowing; it does not remove the ability.
