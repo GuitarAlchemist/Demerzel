@@ -24,6 +24,7 @@ Scope note: this checks `run:` bodies only. `${{ secrets.X }}` in an `env:` bloc
 """
 from __future__ import annotations
 
+import re
 import unittest
 from pathlib import Path
 
@@ -34,6 +35,16 @@ except ImportError:  # pragma: no cover - pyyaml is installed in CI
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOWS = REPO_ROOT / ".github" / "workflows"
+ACTIONS_EXPRESSION_RE = re.compile(r"\$\{\{.*?\}\}")
+SECRET_LOOKUP_RE = re.compile(r"\bsecrets\s*(?:\.|\[)")
+
+
+def _contains_secret_lookup(line):
+    """Return whether an Actions expression reads from the secrets context."""
+    return any(
+        SECRET_LOOKUP_RE.search(expression)
+        for expression in ACTIONS_EXPRESSION_RE.findall(line)
+    )
 
 
 def _run_blocks():
@@ -68,7 +79,7 @@ class TestWorkflowSecretHandling(unittest.TestCase):
         offenders = []
         for workflow, step, body in _run_blocks():
             for number, line in enumerate(body.splitlines(), start=1):
-                if "${{" in line and "secrets." in line:
+                if _contains_secret_lookup(line):
                     offenders.append(f"{workflow} :: {step} :: line {number}: {line.strip()[:100]}")
 
         self.assertEqual(
@@ -79,6 +90,19 @@ class TestWorkflowSecretHandling(unittest.TestCase):
               "parses it, so a value containing a quote or backtick breaks the script or "
               "executes. Log masking does not prevent that. Pass the secret through `env:` "
               "and test the variable instead (#846).")
+
+    def test_secret_lookup_detection_covers_dot_and_bracket_forms(self):
+        for lookup in (
+            "${{ secrets.TOKEN }}",
+            "${{ secrets['TOKEN'] }}",
+            '${{ secrets [ "TOKEN" ] }}',
+        ):
+            with self.subTest(lookup=lookup):
+                self.assertTrue(_contains_secret_lookup(lookup))
+
+        for safe in ("$TOKEN", "${{ vars.TOKEN }}", "${{ github.token }}"):
+            with self.subTest(safe=safe):
+                self.assertFalse(_contains_secret_lookup(safe))
 
 
 if __name__ == "__main__":
