@@ -1162,7 +1162,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         persist_steps = guard["jobs"]["persist"]["steps"]
         self.assertTrue(any(step.get("if") == "always()" for step in persist_steps))
         self.assertEqual(guard["jobs"]["evaluate"]["permissions"], {
-            "actions": "read", "contents": "read",
+            "actions": "read", "contents": "read", "pull-requests": "read",
         })
         self.assertEqual(guard["jobs"]["persist"]["permissions"], {
             "contents": "write",
