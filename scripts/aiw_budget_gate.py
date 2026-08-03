@@ -169,10 +169,16 @@ def _validate_approval(approval: dict[str, Any] | None, request: dict[str, Any],
         "provider": request.get("provider"),
         "request_sha256": request_sha256,
     }
+    request_approval_id = request.get("approval_id")
+    if request_approval_id is not None:
+        if not isinstance(request_approval_id, str) or not request_approval_id:
+            raise ValueError("request approval_id must be a non-empty string")
+        expected["approval_id"] = request_approval_id
     for name, value in expected.items():
         if approval.get(name) != value:
             raise ValueError(f"approval {name} does not match the request")
-    _required_string(approval, "approval_id")
+    if request_approval_id is None:
+        _required_string(approval, "approval_id")
     _required_string(approval, "approver")
     _timestamp(approval, "approved_at")
     return True

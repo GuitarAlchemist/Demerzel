@@ -54,7 +54,7 @@ def approval(req, **overrides):
         "job_id": req["job_id"],
         "provider": req["provider"],
         "request_sha256": _request_sha256(req),
-        "approval_id": "appr-0001",
+        "approval_id": req.get("approval_id", "appr-0001"),
         "approver": "sol",
         "approved_at": "2026-07-18T00:00:00Z",
     }
@@ -97,6 +97,14 @@ class BudgetGateTests(unittest.TestCase):
         req = request(provider="jules", estimated_cost_usd=1.5)
         wrong = approval(req, provider="gemini-cli")
         with self.assertRaisesRegex(ValueError, "approval provider does not match"):
+            evaluate(POLICY, req, approval=wrong)
+
+    def test_request_approval_id_must_match_the_approval_artifact(self):
+        req = request(
+            provider="jules", estimated_cost_usd=1.5,
+            approval_id="issue-957-attempt-1")
+        wrong = approval(req, approval_id="issue-957-attempt-2")
+        with self.assertRaisesRegex(ValueError, "approval approval_id does not match"):
             evaluate(POLICY, req, approval=wrong)
 
     def test_cost_cap_blocks_before_invocation(self):

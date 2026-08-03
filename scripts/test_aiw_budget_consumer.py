@@ -3,7 +3,7 @@
 
 The budget gate (scripts/aiw_budget_gate.py) is only worth its weight if a real
 provider-invocation path calls it. jules-auto-delegate.yml delegates to `jules`,
-a metered-cloud provider, so it must run the gate BEFORE the Jules action and must
+a metered-cloud provider, so it must run the gate BEFORE the Jules API call and must
 not silently proceed when the gate blocks. This test fails closed if that wiring
 is removed or reordered, so the "declared-but-unconsumed" gap cannot silently
 return.
@@ -19,7 +19,7 @@ from pathlib import Path
 WORKFLOW = (Path(__file__).resolve().parents[1]
             / ".github" / "workflows" / "jules-auto-delegate.yml")
 GATE_INVOKE = "python3 scripts/aiw_budget_gate.py"
-JULES_ACTION = "uses: google-labs-code/jules-action"
+JULES_INVOKE = "https://jules.googleapis.com/v1alpha/sessions"
 FINALIZER_INVOKE = "python3 scripts/aiw_budget_gate.py --abandon-open-provider jules"
 UPLOAD_ACTION = "uses: actions/upload-artifact@"
 PINNED_UPLOAD_ACTION = (
@@ -37,9 +37,9 @@ class AiwBudgetConsumerWiringTests(unittest.TestCase):
 
     def test_gate_runs_before_jules_delegation(self) -> None:
         gate_at = self.text.find(GATE_INVOKE)
-        action_at = self.text.find(JULES_ACTION)
+        action_at = self.text.find(JULES_INVOKE)
         self.assertNotEqual(gate_at, -1, "budget gate invocation is missing")
-        self.assertNotEqual(action_at, -1, "jules-action step is missing")
+        self.assertNotEqual(action_at, -1, "Jules create-session call is missing")
         self.assertLess(gate_at, action_at,
                         "the budget gate must run before delegating to Jules")
 
@@ -62,9 +62,9 @@ class AiwBudgetConsumerWiringTests(unittest.TestCase):
         self.assertNotIn("steps.gate.outputs.job_id", finalizer_step)
 
     def test_jules_timeout_leaves_cleanup_margin(self) -> None:
-        action_at = self.text.find(JULES_ACTION)
+        action_at = self.text.find(JULES_INVOKE)
         record_at = self.text.find("- name: Record confirmed delegation")
-        self.assertNotEqual(action_at, -1, "jules-action step is missing")
+        self.assertNotEqual(action_at, -1, "Jules create-session call is missing")
         action_step_at = self.text.rfind("- name:", 0, action_at)
         step_timeout = re.search(
             r"timeout-minutes:\s*(\d+)", self.text[action_step_at:record_at])
@@ -75,7 +75,7 @@ class AiwBudgetConsumerWiringTests(unittest.TestCase):
                          "a global deadline can kill the budget finalizer")
 
     def test_finalizer_is_guarded_and_runs_after_result_reporting(self) -> None:
-        jules_at = self.text.find(JULES_ACTION)
+        jules_at = self.text.find(JULES_INVOKE)
         record_at = self.text.find("- name: Record confirmed delegation")
         report_at = self.text.find("- name: Report failed delegation")
         finalizer_at = self.text.find(FINALIZER_INVOKE)
