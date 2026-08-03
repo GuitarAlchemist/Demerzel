@@ -66,12 +66,18 @@ class _Repo:
             encoding="utf-8",
         )
 
-    def write_event_workflow(self, name: str, events: list[str]) -> None:
+    def write_event_workflow(self, name: str, events: list[str],
+                             activities: list[str] | None = None) -> None:
         """A workflow with only event triggers — no cron at all (#844)."""
+        event_lines = ""
+        for event in events:
+            event_lines += f"  {event}:\n"
+            if event in {"pull_request", "pull_request_target"} and activities is not None:
+                event_lines += "    types: [" + ", ".join(activities) + "]\n"
         (self.workflows / name).write_text(
             "name: stub\n"
             "on:\n"
-            + "".join(f"  {event}:\n" for event in events)
+            + event_lines
             + "jobs: {}\n",
             encoding="utf-8",
         )
@@ -520,24 +526,41 @@ class EcosystemFreshnessTest(unittest.TestCase):
     # Both directions matter — a genuinely dead loop must fire, and a quiet but
     # healthy one must stay silent.
 
-    EVENT_SPEC = {"reviewer.yml": {"event": "pull_request", "max_stale_days": 3}}
+    EVENT_SPEC = {"reviewer.yml": {
+        "events": ["pull_request", "pull_request_target"],
+        "activities": ["opened", "synchronize"],
+        "max_stale_days": 3,
+    }}
 
     def _event_repo(self, events=("pull_request",)):
-        self.repo.write_event_workflow("reviewer.yml", list(events))
+        self.repo.write_event_workflow(
+            "reviewer.yml", list(events), ["opened", "synchronize"]
+        )
 
     def _supply(self, event_age_days=None, run_age_days=None,
-                conclusion="success"):
-        """Stub the (newest event, latest completed run) seam."""
+                conclusion="success", pull_number=17,
+                obligation_sha="current-head", run_sha="current-head",
+                run_pull_number=17):
+        """Stub the (current dispatch obligation, candidate run) seam."""
         event_iso = (
             None if event_age_days is None
             else _iso(NOW - timedelta(days=event_age_days))
         )
+        obligation = None if event_iso is None else {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": event_iso,
+            "pull_number": pull_number,
+            "head_sha": obligation_sha,
+        }
         run = None if run_age_days is None else {
+            "status": "completed",
             "conclusion": conclusion,
             "run_started_at": _iso(NOW - timedelta(days=run_age_days)),
             "html_url": "https://example.test/pr-run",
+            "head_sha": run_sha,
+            "pull_requests": [{"number": run_pull_number}],
         }
-        return lambda *args: (event_iso, run)
+        return lambda *args: [] if obligation is None else [(obligation, run)]
 
     def _event_findings(self, supply, git_runner=None):
         self._event_repo()
@@ -552,14 +575,16 @@ class EcosystemFreshnessTest(unittest.TestCase):
         # THE #844 SHAPE: PRs kept arriving, the loop stopped answering, and
         # nothing enumerated it because it has no cron.
         findings = self._event_findings(
-            self._supply(event_age_days=0.5, run_age_days=9)
+            self._supply(
+                event_age_days=4,
+                run_age_days=9,
+                obligation_sha="synchronized-head",
+                run_sha="opening-head",
+            )
         )
         finding = self._one(findings, "reviewer.yml")
         self.assertEqual(finding["kind"], "stale")
-        # The run started 8.5d before the event it should have answered. That lag is
-        # what proves death here — the event itself is only 0.5d old, so an
-        # "unanswered for longer than the allowance" test alone would still be green.
-        self.assertIn("8.5d BEFORE that event", finding["detail"])
+        self.assertIn("no correlated run after 4.0d", finding["detail"])
         self.assertEqual(ef.exit_code(findings), 1)
 
     def test_event_loop_quiet_with_no_event_supply_stays_silent(self):
@@ -571,7 +596,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         )
         finding = self._one(findings, "reviewer.yml")
         self.assertEqual(finding["kind"], "healthy")
-        self.assertIn("postdates the newest event", finding["detail"])
+        self.assertIn("correlated successful run", finding["detail"])
         self.assertEqual(ef.exit_code(findings), 0)
 
     def test_a_dead_loop_stays_red_however_long_the_repo_stays_quiet(self):
@@ -596,6 +621,8 @@ class EcosystemFreshnessTest(unittest.TestCase):
                     self._supply(
                         event_age_days=quiet_days,
                         run_age_days=quiet_days + 0.25,
+                        obligation_sha="synchronized-head",
+                        run_sha="opening-head",
                     )
                 )
                 finding = self._one(findings, "reviewer.yml")
@@ -618,13 +645,137 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "healthy")
         self.assertEqual(ef.exit_code(findings), 0)
 
-    def test_event_loop_with_live_supply_and_no_run_ever_is_red(self):
+    def test_synchronize_is_unanswered_after_a_successful_opening_run(self):
+        findings = self._event_findings(self._supply(
+            event_age_days=4,
+            run_age_days=5,
+            obligation_sha="synchronized-head",
+            run_sha="opening-head",
+        ))
+        finding = self._one(findings, "reviewer.yml")
+        self.assertIn(finding["kind"], {"silent_green", "stale"})
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_unrelated_delayed_run_cannot_answer_a_pull_request(self):
+        findings = self._event_findings(self._supply(
+            event_age_days=4,
+            run_age_days=0.1,
+            pull_number=17,
+            obligation_sha="expected-head",
+            run_pull_number=99,
+            run_sha="unrelated-head",
+        ))
+        finding = self._one(findings, "reviewer.yml")
+        self.assertIn(finding["kind"], {"silent_green", "stale"})
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_commit_association_correlates_a_merged_pull_request_run(self):
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "merged-head",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/merged-pr-run",
+            "head_sha": "merged-head",
+            "pull_requests": [],
+            "associated_pull_requests": [{"number": 17}],
+        }
+        findings = self._event_findings(lambda *args: [(obligation, run)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_recent_absent_run_is_pending_within_response_allowance(self):
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=1)),
+            "pull_number": 17,
+            "head_sha": "current-head",
+        }
+        findings = self._event_findings(lambda *args: [(obligation, None)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "pending")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_recent_queued_or_in_progress_run_is_pending_within_allowance(self):
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=1)),
+            "pull_number": 17,
+            "head_sha": "current-head",
+        }
+        for status in ("queued", "in_progress"):
+            with self.subTest(status=status):
+                run = {
+                    "status": status,
+                    "conclusion": None,
+                    "created_at": _iso(NOW - timedelta(days=1)),
+                    "head_sha": "current-head",
+                    "pull_requests": [{"number": 17}],
+                }
+                findings = self._event_findings(lambda *args: [(obligation, run)])
+                finding = self._one(findings, "reviewer.yml")
+                self.assertEqual(finding["kind"], "pending")
+                self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_one_answered_pull_cannot_mask_an_overdue_pull(self):
+        answered = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(hours=1)),
+            "pull_number": 18,
+            "head_sha": "answered-head",
+        }
+        answered_run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(hours=1)),
+            "head_sha": "answered-head",
+            "pull_requests": [{"number": 18}],
+        }
+        overdue = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=4)),
+            "pull_number": 17,
+            "head_sha": "unanswered-head",
+        }
+        findings = self._event_findings(
+            lambda *args: [(answered, answered_run), (overdue, None)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "silent_green")
+        self.assertIn("#17", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_boolean_pull_identity_is_malformed_evidence(self):
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=1)),
+            "pull_number": 1,
+            "head_sha": "current-head",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=1)),
+            "head_sha": "current-head",
+            "pull_requests": [{"number": True}],
+        }
+        findings = self._event_findings(lambda *args: [(obligation, run)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "malformed_proof")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_event_loop_with_live_supply_and_no_run_is_pending_within_allowance(self):
         findings = self._event_findings(
             self._supply(event_age_days=1, run_age_days=None)
         )
-        self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
-                         "silent_green")
-        self.assertEqual(ef.exit_code(findings), 1)
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "pending")
+        self.assertEqual(ef.exit_code(findings), 0)
 
     def test_event_loop_failed_run_turns_red(self):
         # Post-#840 a broken reviewer exits non-zero, so the conclusion is the
@@ -641,7 +792,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         # #850 grace applies unchanged: a loop added yesterday cannot have
         # answered a PR opened before it existed.
         findings = self._event_findings(
-            self._supply(event_age_days=1, run_age_days=None),
+            self._supply(event_age_days=4, run_age_days=None),
             git_runner=lambda args, cwd: _iso(NOW - timedelta(days=0.5)) + "\n",
         )
         self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "newborn")
@@ -649,7 +800,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
 
     def test_event_loop_past_newborn_grace_still_fires(self):
         findings = self._event_findings(
-            self._supply(event_age_days=1, run_age_days=None),
+            self._supply(event_age_days=4, run_age_days=None),
             git_runner=lambda args, cwd: _iso(NOW - timedelta(days=40)) + "\n",
         )
         self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
@@ -669,6 +820,37 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertEqual(finding["kind"], "activation_mismatch")
         self.assertIn("pull_request", finding["detail"])
         self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_secured_pull_request_target_trigger_is_compatible(self):
+        self.repo.write_event_workflow(
+            "reviewer.yml",
+            ["pull_request_target"],
+            ["opened", "synchronize"],
+        )
+        findings = self._evaluate(
+            {"version": 1, "loops": []},
+            event_producers=self.EVENT_SPEC,
+            event_supply_runner=lambda *args: [({
+                "activities": ["opened", "synchronize"],
+                "occurred_at": _iso(NOW - timedelta(hours=1)),
+                "pull_number": 17,
+                "head_sha": "pr-head",
+            }, {
+                "status": "completed",
+                "conclusion": "success",
+                "created_at": _iso(NOW - timedelta(hours=1)),
+                "run_started_at": _iso(NOW - timedelta(hours=1)),
+                # pull_request_target runs execute against the trusted base SHA.
+                "head_sha": "base-head",
+                "pull_requests": [{
+                    "number": 17,
+                    "head": {"sha": "pr-head"},
+                }],
+            })],
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
 
     def test_event_loop_deleted_workflow_turns_red(self):
         findings = self._evaluate(
@@ -724,8 +906,21 @@ class EcosystemFreshnessTest(unittest.TestCase):
                 return json.dumps(self.payload).encode()
 
         payloads = [
-            [{"created_at": "2026-07-18T09:00:00Z"}],
-            {"workflow_runs": [{"id": 7, "conclusion": "success"}]},
+            [{
+                "number": 939,
+                "created_at": "2026-07-18T09:00:00Z",
+                "updated_at": "2026-07-18T10:00:00Z",
+                "head": {"sha": "current-head"},
+            }],
+            {"workflow_runs": [{
+                "id": 7,
+                "status": "completed",
+                "conclusion": "success",
+                "created_at": "2026-07-18T09:00:03Z",
+                "run_started_at": "2026-07-18T09:00:04Z",
+                "head_sha": "current-head",
+                "pull_requests": [{"number": 939}],
+            }]},
         ]
 
         def fake_urlopen(request, timeout):
@@ -733,21 +928,36 @@ class EcosystemFreshnessTest(unittest.TestCase):
             return Response(payloads[len(seen) - 1])
 
         with patch.object(ef, "urlopen", fake_urlopen):
-            event_iso, run = ef.default_event_supply_runner(
+            supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request",
                 "GuitarAlchemist/Demerzel", "secret",
             )
-        self.assertEqual(event_iso, "2026-07-18T09:00:00Z")
-        self.assertEqual(run, {"id": 7, "conclusion": "success"})
+        obligation, run = supplies[0]
+        self.assertEqual(obligation, {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": "2026-07-18T09:00:03+00:00",
+            "pull_number": 939,
+            "head_sha": "current-head",
+        })
+        self.assertEqual(run, {
+            "id": 7,
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-07-18T09:00:03Z",
+            "run_started_at": "2026-07-18T09:00:04Z",
+            "head_sha": "current-head",
+            "pull_requests": [{"number": 939}],
+        })
 
         pulls_q = parse_qs(urlparse(seen[0].full_url).query)
         self.assertEqual(pulls_q, {
-            "state": ["all"], "sort": ["created"],
-            "direction": ["desc"], "per_page": ["1"],
+            "state": ["open"], "sort": ["updated"],
+            "direction": ["desc"], "per_page": ["100"], "page": ["1"],
         })
         runs_q = parse_qs(urlparse(seen[1].full_url).query)
         self.assertEqual(runs_q, {
-            "event": ["pull_request"], "status": ["completed"], "per_page": ["1"],
+            "event": ["pull_request"], "head_sha": ["current-head"],
+            "per_page": ["1"],
         })
         # A pull_request run lives on the PR head branch, so a default-branch
         # filter would find nothing and read every healthy loop as dead.
@@ -755,6 +965,258 @@ class EcosystemFreshnessTest(unittest.TestCase):
         for request in seen:
             self.assertNotIn("secret", request.full_url)
             self.assertEqual(request.get_header("Authorization"), "Bearer secret")
+
+    def test_event_supply_adapter_treats_an_explicitly_empty_pull_list_as_quiet(self):
+        seen = []
+
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return b"[]"
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response()
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+            )
+        self.assertEqual(supplies, [])
+        self.assertEqual(len(seen), 1)
+
+    def test_event_supply_adapter_resolves_empty_run_pull_association(self):
+        seen = []
+
+        class Response:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode()
+
+        payloads = [
+            [{
+                "number": 17,
+                "created_at": "2026-07-18T09:00:00Z",
+                "updated_at": "2026-07-18T10:00:00Z",
+                "head": {"sha": "merged-head"},
+            }],
+            {"workflow_runs": [{
+                "id": 7,
+                "status": "completed",
+                "conclusion": "success",
+                "created_at": "2026-07-18T10:00:00Z",
+                "head_sha": "merged-head",
+                "pull_requests": [],
+            }]},
+            [{"number": 17}],
+        ]
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response(payloads[len(seen) - 1])
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+            )
+        _, run = supplies[0]
+        self.assertEqual(run["associated_pull_requests"], [{"number": 17}])
+        self.assertIn("/commits/merged-head/pulls", seen[2].full_url)
+
+    def test_adapter_does_not_treat_generic_pull_updated_at_as_synchronize(self):
+        seen = []
+
+        class Response:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode()
+
+        payloads = [
+            [{
+                "number": 17,
+                "created_at": "2026-07-18T09:00:00Z",
+                # A comment or label may cause this update; it is not a dispatch.
+                "updated_at": "2026-07-20T10:00:00Z",
+                "head": {"sha": "opening-head"},
+            }],
+            {"workflow_runs": [{
+                "id": 7,
+                "status": "completed",
+                "conclusion": "success",
+                "created_at": "2026-07-18T09:00:03Z",
+                "run_started_at": "2026-07-18T09:00:04Z",
+                "head_sha": "opening-head",
+                "pull_requests": [{"number": 17}],
+            }]},
+        ]
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response(payloads[len(seen) - 1])
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+            )
+        obligation, _ = supplies[0]
+        self.assertEqual(obligation["activities"], ["opened", "synchronize"])
+        self.assertEqual(obligation["occurred_at"], "2026-07-18T09:00:03+00:00")
+
+    def test_adapter_dates_an_absent_run_from_the_current_head_commit(self):
+        seen = []
+
+        class Response:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode()
+
+        payloads = [
+            [{
+                "number": 17,
+                "created_at": "2026-07-18T09:00:00Z",
+                "updated_at": "2026-07-20T10:00:00Z",
+                "head": {"sha": "unanswered-head"},
+            }],
+            {"workflow_runs": []},
+            {"commit": {"committer": {"date": "2026-07-19T11:00:00Z"}}},
+        ]
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response(payloads[len(seen) - 1])
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+            )
+        obligation, run = supplies[0]
+        self.assertIsNone(run)
+        self.assertEqual(obligation["occurred_at"], "2026-07-19T11:00:00+00:00")
+        self.assertIn("/commits/unanswered-head", seen[2].full_url)
+
+    def test_pull_request_target_adapter_matches_nested_pr_head_identity(self):
+        seen = []
+
+        class Response:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode()
+
+        payloads = [
+            [{
+                "number": 17,
+                "created_at": "2026-07-18T09:00:00Z",
+                "head": {"sha": "pr-head"},
+            }],
+            {"workflow_runs": [{
+                "id": 7,
+                "status": "completed",
+                "conclusion": "success",
+                "created_at": "2026-07-18T09:00:03Z",
+                "run_started_at": "2026-07-18T09:00:04Z",
+                "head_sha": "base-head",
+                "pull_requests": [{
+                    "number": 17,
+                    "head": {"sha": "pr-head"},
+                }],
+            }]},
+        ]
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response(payloads[len(seen) - 1])
+
+        with patch.object(ef, "urlopen", fake_urlopen):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request_target",
+                "GuitarAlchemist/Demerzel", "secret",
+            )
+        _, run = supplies[0]
+        self.assertEqual(run["id"], 7)
+        runs_q = parse_qs(urlparse(seen[1].full_url).query)
+        self.assertNotIn("head_sha", runs_q)
+
+    def test_event_supply_adapter_rejects_a_malformed_first_pull(self):
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return b"[{}]"
+
+        with patch.object(ef, "urlopen", lambda *args, **kwargs: Response()):
+            with self.assertRaises(ef.AdapterError):
+                ef.default_event_supply_runner(
+                    "cross-model-review.yml", "pull_request",
+                    "GuitarAlchemist/Demerzel", "secret",
+                )
+
+    def test_event_supply_adapter_rejects_an_unparseable_pull_timestamp(self):
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps([{
+                    "number": 17,
+                    "created_at": "not-a-timestamp",
+                    "updated_at": "2026-07-18T10:00:00Z",
+                    "head": {"sha": "current-head"},
+                }]).encode()
+
+        with patch.object(ef, "urlopen", lambda *args, **kwargs: Response()):
+            with self.assertRaises(ef.AdapterError):
+                ef.default_event_supply_runner(
+                    "cross-model-review.yml", "pull_request",
+                    "GuitarAlchemist/Demerzel", "secret",
+                )
 
     def test_event_supply_adapter_requires_repository_and_token(self):
         with self.assertRaises(ef.AdapterError):
@@ -773,7 +1235,13 @@ class EcosystemFreshnessTest(unittest.TestCase):
         for wf, spec in ef.EVENT_PRODUCERS.items():
             events = ef.workflow_events(workflows, wf)
             self.assertIsNotNone(events, f"{wf} is declared but does not exist")
-            self.assertIn(spec["event"], events)
+            active_events = set(spec["events"]) & events
+            self.assertEqual(len(active_events), 1)
+            active_event = next(iter(active_events))
+            self.assertEqual(
+                set(spec["activities"]),
+                ef.workflow_event_activities(workflows, wf, active_event),
+            )
             self.assertNotIn(wf, scheduled,
                              f"{wf} has a cron and belongs in the registry")
             self.assertGreater(spec["max_stale_days"], 0)
@@ -1111,11 +1579,19 @@ class EcosystemFreshnessTest(unittest.TestCase):
                 "run_started_at": _iso(NOW),
                 "html_url": "https://example.test/production-proof",
             },
-            event_supply_runner=lambda *args: (_iso(NOW), {
+            event_supply_runner=lambda *args: [({
+                "activities": ["opened", "synchronize"],
+                "occurred_at": _iso(NOW),
+                "pull_number": 939,
+                "head_sha": "production-head",
+            }, {
+                "status": "completed",
                 "conclusion": "success",
                 "run_started_at": _iso(NOW),
                 "html_url": "https://example.test/production-event-proof",
-            }),
+                "head_sha": "production-head",
+                "pull_requests": [{"number": 939}],
+            })],
             repository="GuitarAlchemist/Demerzel",
             token="test-token",
         )

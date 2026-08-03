@@ -75,14 +75,18 @@ ALLOWED_MONITORS = {
 # loop is not expressible there today, and a hardcoded list cannot be extended by
 # a producer editing its own workflow file.
 #
-# `event` is the `on:` key that dispatches the loop; membership is verified
-# against the live workflow YAML. `max_stale_days` is BOTH the response
-# tolerance and the width of the event-supply window (see _eval_event_producer).
-# Only 'pull_request' is supported — the one event this repo actually has a
-# producer for. Adding a second event means teaching the supply adapter how to
-# date it, which is deliberately not speculated on here.
+# `event` and `activities` describe the exact `on:` dispatch surface; both are
+# verified against live workflow YAML. `max_stale_days` is the response
+# tolerance for an observed but uncorrelated obligation (see _eval_event_producer).
+# The secured workflow from #935 uses `pull_request_target`; the legacy branch
+# uses `pull_request`. Exactly one must be active, and both share the same PR/head
+# supply adapter.
 EVENT_PRODUCERS: dict[str, dict] = {
-    "cross-model-review.yml": {"event": "pull_request", "max_stale_days": 3},
+    "cross-model-review.yml": {
+        "events": ["pull_request", "pull_request_target"],
+        "activities": ["opened", "synchronize"],
+        "max_stale_days": 3,
+    },
 }
 
 for _stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252.
@@ -212,23 +216,17 @@ def default_event_supply_runner(
     event: str,
     repository: str,
     token: str,
-) -> tuple[str | None, dict | None]:
-    """Return (newest triggering event ISO timestamp, latest completed run).
+    activities: tuple[str, ...] = ("opened", "synchronize"),
+) -> list[tuple[dict, dict | None]]:
+    """Return PR/head dispatch obligations and their exact-head candidate runs.
 
-    Two reads, one seam, so tests inject a single stub:
-
-      * event supply — the newest pull request CREATED on the repo. `created_at`
-        is used, not `updated_at`: the `opened` activity type dispatches
-        unconditionally, so a PR created inside the window is *proof* that a run
-        was due. `updated_at` also bumps on comments and label edits, which are
-        not triggers, and would demand runs that were never owed (a guard that
-        cries wolf is worse than none). The cost is that a window containing
-        only `synchronize` pushes reads as quiet — under-claiming, not
-        over-claiming.
-      * latest completed run of `workflow` for that event, on ANY branch. There
-        is deliberately no branch filter: a `pull_request` run is attributed to
-        the PR's head branch, so filtering on the default branch would find
-        nothing and every healthy loop would read as dead.
+    Every open pull request is evaluated, so one healthy PR cannot mask another.
+    `updated_at` is deliberately not evidence: comments, labels, merges, and
+    other non-dispatch activity all change it. The observable obligation is each
+    PR's current head SHA. A matching Actions run supplies the dispatch time; if
+    no run exists, the head commit date is the conservative head-correlated
+    lower bound. Both configured activities remain explicit because current API
+    state cannot soundly distinguish an opening head from a synchronized head.
     """
     if not repository or "/" not in repository:
         raise AdapterError(
@@ -236,40 +234,155 @@ def default_event_supply_runner(
         )
     if not token:
         raise AdapterError("event-supply proof requires the existing GITHUB_TOKEN")
-    if event != "pull_request":
+    if event not in {"pull_request", "pull_request_target"}:
         raise AdapterError(f"no event-supply adapter for event {event!r}")
+    if not activities or any(activity not in {"opened", "synchronize"}
+                             for activity in activities):
+        raise AdapterError(
+            f"unsupported pull_request activities for event supply: {activities!r}"
+        )
 
     repo_path = quote(repository, safe="/")
-    pulls = _github_get(
-        f"https://api.github.com/repos/{repo_path}/pulls?"
-        + urlencode({
-            "state": "all",
-            "sort": "created",
-            "direction": "desc",
-            "per_page": 1,
-        }),
-        token,
-        f"{event} supply on {repository}",
-    )
-    if not isinstance(pulls, list):
-        raise AdapterError(f"GitHub API returned malformed pull data for {repository}")
-    newest_event = None
-    if pulls and isinstance(pulls[0], dict):
-        newest_event = pulls[0].get("created_at")
-
-    payload = _github_get(
-        f"https://api.github.com/repos/{repo_path}/actions/workflows/"
-        f"{quote(workflow, safe='')}/runs?"
-        + urlencode({"event": event, "status": "completed", "per_page": 1}),
-        token,
-        f"{workflow} runs",
-    )
-    runs = payload.get("workflow_runs") if isinstance(payload, dict) else None
-    if not isinstance(runs, list):
-        raise AdapterError(
-            f"GitHub Actions API returned malformed run data for {workflow}"
+    pulls: list = []
+    page = 1
+    while True:
+        pull_page = _github_get(
+            f"https://api.github.com/repos/{repo_path}/pulls?"
+            + urlencode({
+                "state": "open",
+                "sort": "updated",
+                "direction": "desc",
+                "per_page": 100,
+                "page": page,
+            }),
+            token,
+            f"{event} supply on {repository} page {page}",
         )
-    return newest_event, (runs[0] if runs else None)
+        if not isinstance(pull_page, list):
+            raise AdapterError(
+                f"GitHub API returned malformed pull data for {repository}"
+            )
+        pulls.extend(pull_page)
+        if len(pull_page) < 100:
+            break
+        page += 1
+    if not pulls:
+        return []
+
+    supplies: list[tuple[dict, dict | None]] = []
+    target_runs: list | None = None
+    if event == "pull_request_target":
+        target_payload = _github_get(
+            f"https://api.github.com/repos/{repo_path}/actions/workflows/"
+            f"{quote(workflow, safe='')}/runs?"
+            + urlencode({"event": event, "per_page": 100}),
+            token,
+            f"{workflow} secured pull-request runs",
+        )
+        target_runs = (target_payload.get("workflow_runs")
+                       if isinstance(target_payload, dict) else None)
+        if not isinstance(target_runs, list):
+            raise AdapterError(
+                f"GitHub Actions API returned malformed run data for {workflow}"
+            )
+
+    for index, pull in enumerate(pulls):
+        if not isinstance(pull, dict):
+            raise AdapterError(
+                f"GitHub API returned malformed pull at index {index} for {repository}"
+            )
+        pull_number = pull.get("number")
+        created_at = _parse_iso(pull.get("created_at"))
+        head = pull.get("head")
+        head_sha = head.get("sha") if isinstance(head, dict) else None
+        if (not isinstance(pull_number, int) or isinstance(pull_number, bool)
+                or created_at is None
+                or not isinstance(head_sha, str) or not head_sha.strip()):
+            raise AdapterError(
+                f"GitHub API returned malformed pull at index {index} for "
+                f"{repository}: integer number, created_at, and head.sha are required"
+            )
+
+        if target_runs is None:
+            payload = _github_get(
+                f"https://api.github.com/repos/{repo_path}/actions/workflows/"
+                f"{quote(workflow, safe='')}/runs?"
+                + urlencode({
+                    "event": event,
+                    "head_sha": head_sha,
+                    "per_page": 1,
+                }),
+                token,
+                f"{workflow} runs for {head_sha}",
+            )
+            runs = payload.get("workflow_runs") if isinstance(payload, dict) else None
+            if not isinstance(runs, list):
+                raise AdapterError(
+                    f"GitHub Actions API returned malformed run data for {workflow}"
+                )
+            run = runs[0] if runs else None
+        else:
+            run = next((candidate for candidate in target_runs
+                        if isinstance(candidate, dict)
+                        and isinstance(candidate.get("pull_requests"), list)
+                        and any(
+                            isinstance(identity, dict)
+                            and identity.get("number") == pull_number
+                            and isinstance(identity.get("head"), dict)
+                            and identity["head"].get("sha") == head_sha
+                            for identity in candidate["pull_requests"]
+                        )), None)
+
+        if run is None:
+            commit = _github_get(
+                f"https://api.github.com/repos/{repo_path}/commits/"
+                f"{quote(head_sha, safe='')}",
+                token,
+                f"head commit {head_sha}",
+            )
+            commit_data = commit.get("commit") if isinstance(commit, dict) else None
+            committer = (commit_data.get("committer")
+                         if isinstance(commit_data, dict) else None)
+            commit_at_raw = (committer.get("date")
+                             if isinstance(committer, dict) else None)
+            commit_at = _parse_iso(commit_at_raw)
+            if commit_at is None:
+                raise AdapterError(
+                    f"GitHub API returned malformed head commit time for {head_sha}"
+                )
+            occurred_at = max(created_at, commit_at)
+        else:
+            if not isinstance(run, dict):
+                raise AdapterError(
+                    f"GitHub Actions API returned malformed first run for {workflow}"
+                )
+            occurred_at_raw = run.get("created_at") or run.get("run_started_at")
+            occurred_at = _parse_iso(occurred_at_raw)
+            if occurred_at is None:
+                raise AdapterError(
+                    f"GitHub Actions API returned malformed run time for {workflow}"
+                )
+            if run.get("pull_requests") == []:
+                associated_pulls = _github_get(
+                    f"https://api.github.com/repos/{repo_path}/commits/"
+                    f"{quote(head_sha, safe='')}/pulls",
+                    token,
+                    f"pull requests associated with {head_sha}",
+                )
+                if not isinstance(associated_pulls, list):
+                    raise AdapterError(
+                        f"GitHub API returned malformed commit pull data for {head_sha}"
+                    )
+                run = dict(run)
+                run["associated_pull_requests"] = associated_pulls
+
+        supplies.append(({
+            "activities": list(activities),
+            "occurred_at": occurred_at.isoformat(),
+            "pull_number": pull_number,
+            "head_sha": head_sha,
+        }, run))
+    return supplies
 
 
 # ---------------------------------------------------------------------------
@@ -371,6 +484,29 @@ def workflow_events(workflows_dir: Path, workflow: str) -> set[str] | None:
     if isinstance(on, str):
         return {on}
     return set()
+
+
+def workflow_event_activities(
+    workflows_dir: Path,
+    workflow: str,
+    event: str,
+) -> set[str] | None:
+    """Explicit activity types configured for a mapped workflow event."""
+    path = workflows_dir / workflow
+    if not path.exists():
+        return None
+    try:
+        doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"{workflow}: workflow YAML is invalid: {exc}") from exc
+    on = _on_block(doc)
+    config = on.get(event) if isinstance(on, dict) else None
+    if not isinstance(config, dict):
+        return set()
+    activities = config.get("types")
+    if not isinstance(activities, list):
+        return set()
+    return {str(activity) for activity in activities}
 
 
 def workflow_added_at(
@@ -592,20 +728,13 @@ def _eval_event_producer(
         a `pull_request` loop is expected to have run only when a pull request
         actually happened.
 
-    So `max_stale_days` does double duty as the width of the supply window and
-    the response tolerance:
-
-      * newest triggering event older than the window  -> QUIET. Nothing was
-        owed, so the guard says nothing. This is the "quiet but healthy" arm; a
-        repo with no PRs this week must not turn the board red.
-      * event inside the window, no completed run ever -> silent_green (red),
-        subject to the same newborn grace as #850.
-      * event inside the window, newest completed run older than the window
-        -> stale (red). This is the #844 shape: events kept arriving, the loop
-        stopped answering, and nothing enumerated it.
-      * newest completed run did not conclude 'success' -> failed_run (red),
-        matching _eval_workflow_run. For a PR loop this self-clears on the next
-        PR, so a one-off flake fades while a persistently broken loop stays red.
+    Each sampled pull request contributes its current PR/head identity, so one
+    answered PR cannot mask another unanswered one. Opening and synchronize stay
+    explicit as a candidate activity set: generic `updated_at` is not dispatch
+    evidence. A run answers only when both its PR number and head SHA match; a
+    newer global run for another PR is irrelevant. Queued, in-progress, absent,
+    or mismatched runs remain pending within `max_stale_days` and turn red only
+    after that response allowance. A correlated completed failure is red at once.
 
     LIMIT, stated plainly: this proves the loop was DISPATCHED and did not fail,
     not that its output was VALID. The specific #844 incident (runs green,
@@ -613,97 +742,221 @@ def _eval_event_producer(
     exists because #840 made that failure loud. Asserting the artifact itself
     needs per-workflow proof declarations in the registry — see the report.
     """
-    event = spec["event"]
     max_days = float(spec["max_stale_days"])
 
     actual_events = workflow_events(workflows_dir, workflow)
     if actual_events is None:
         return ("activation_mismatch",
                 "declared event-triggered producer workflow is missing")
-    if event not in actual_events:
+    declared_events = set(spec.get("events") or [])
+    supported_events = {"pull_request", "pull_request_target"}
+    if (not declared_events or not declared_events <= supported_events):
+        raise ConfigError(
+            f"{workflow}: event producer has invalid pull-request event candidates"
+        )
+    active_events = declared_events & actual_events
+    if len(active_events) != 1:
         return ("activation_mismatch",
-                f"declared as an `{event}` producer but the workflow's `on:` "
-                f"triggers are {sorted(actual_events)}")
+                f"expected exactly one of {sorted(declared_events)} but the "
+                f"workflow's `on:` triggers are {sorted(actual_events)}")
+    event = next(iter(active_events))
 
-    newest_event_iso, run = event_supply_runner(workflow, event, repository, token)
-    newest_event = _parse_iso(newest_event_iso)
-    if newest_event is None:
+    configured_activities = workflow_event_activities(
+        workflows_dir, workflow, event
+    )
+    declared_activities = set(spec.get("activities") or [])
+    if not declared_activities:
+        raise ConfigError(
+            f"{workflow}: event producer must declare pull_request activities"
+        )
+    if configured_activities != declared_activities:
+        return (
+            "activation_mismatch",
+            f"declared `{event}` activities {sorted(declared_activities)} do not "
+            f"match workflow activities {sorted(configured_activities or [])}",
+        )
+
+    supplies = event_supply_runner(
+        workflow,
+        event,
+        repository,
+        token,
+        tuple(sorted(declared_activities)),
+    )
+    if not isinstance(supplies, list):
+        raise AdapterError(
+            f"event-supply adapter returned invalid obligation collection for {workflow}"
+        )
+    if not supplies:
         return ("healthy",
                 f"quiet: no `{event}` event has ever occurred, so no run was owed "
                 "(event-triggered loops are judged by event supply, not by a clock)")
-    event_age = _age_days(newest_event, now)
 
-    if run is None:
-        kind, detail = ("silent_green",
-                        f"a `{event}` event arrived {event_age:.1f}d ago but the "
-                        "workflow has no completed run at all")
-        return _apply_newborn_grace(
-            kind, detail, workflow, max_days, now, repo_root, workflows_dir,
-            default_branch, git_runner,
+    results: list[tuple[str, str]] = []
+    for item in supplies:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            results.append((
+                "malformed_proof",
+                f"`{event}` supply contains a malformed obligation/run pair",
+            ))
+            continue
+        obligation, run = item
+        if not isinstance(obligation, dict):
+            results.append((
+                "malformed_proof",
+                f"`{event}` supply contains a non-object obligation",
+            ))
+            continue
+
+        activities = obligation.get("activities")
+        pull_number = obligation.get("pull_number")
+        head_sha = obligation.get("head_sha")
+        occurred_at = _parse_iso(obligation.get("occurred_at"))
+        if (not isinstance(activities, list)
+                or not activities
+                or any(not isinstance(activity, str) for activity in activities)
+                or set(activities) != declared_activities
+                or not isinstance(pull_number, int) or isinstance(pull_number, bool)
+                or not isinstance(head_sha, str) or not head_sha
+                or occurred_at is None):
+            results.append((
+                "malformed_proof",
+                f"latest `{event}` obligation has invalid activities, pull "
+                "identity, head SHA, or timestamp",
+            ))
+            continue
+
+        event_age = _age_days(occurred_at, now)
+        activity_label = "/".join(sorted(declared_activities))
+        obligation_label = (
+            f"PR #{pull_number} `{activity_label}` at {head_sha[:12]}"
         )
-    if not isinstance(run, dict):
-        raise AdapterError(f"event-supply adapter returned invalid run data for {workflow}")
+        if run is None:
+            if event_age <= max_days:
+                results.append((
+                    "pending",
+                    f"{obligation_label} has no run yet but is only "
+                    f"{event_age:.1f}d old (allowance {max_days:g}d)",
+                ))
+                continue
+            kind, detail = _apply_newborn_grace(
+                "silent_green",
+                f"{obligation_label} has no run after {event_age:.1f}d "
+                f"(allowance {max_days:g}d)",
+                workflow, max_days, now, repo_root, workflows_dir,
+                default_branch, git_runner,
+            )
+            results.append((kind, detail))
+            continue
+        if not isinstance(run, dict):
+            results.append((
+                "malformed_proof",
+                f"{obligation_label} candidate run is not an object",
+            ))
+            continue
 
-    conclusion = run.get("conclusion")
-    url = run.get("html_url") or "(no run URL)"
-    if conclusion != "success":
-        return ("failed_run",
-                f"newest completed `{event}` run concluded {conclusion!r}: {url}")
+        run_head_sha = run.get("head_sha")
+        run_pulls = run.get("pull_requests")
+        associated_pulls = run.get("associated_pull_requests", [])
+        identity_pulls = (
+            [*run_pulls, *associated_pulls]
+            if isinstance(run_pulls, list) and isinstance(associated_pulls, list)
+            else None
+        )
+        valid_identities = (
+            identity_pulls is not None
+            and all(
+                isinstance(run_pull, dict)
+                and isinstance(run_pull.get("number"), int)
+                and not isinstance(run_pull.get("number"), bool)
+                and (
+                    "head" not in run_pull
+                    or (
+                        isinstance(run_pull.get("head"), dict)
+                        and isinstance(run_pull["head"].get("sha"), str)
+                        and bool(run_pull["head"]["sha"])
+                    )
+                )
+                for run_pull in identity_pulls
+            )
+        )
+        if (not isinstance(run_head_sha, str) or not run_head_sha
+                or identity_pulls is None or not valid_identities):
+            results.append((
+                "malformed_proof",
+                f"{obligation_label} candidate run has malformed PR/head identity",
+            ))
+            continue
 
-    newest_run = _parse_iso(run.get("run_started_at") or run.get("created_at"))
-    if newest_run is None:
-        return ("malformed_proof",
-                f"newest completed `{event}` run has no parseable start timestamp")
-    run_age = _age_days(newest_run, now)
+        correlated = any(
+            run_pull["number"] == pull_number
+            and (
+                run_head_sha == head_sha
+                or (
+                    isinstance(run_pull.get("head"), dict)
+                    and run_pull["head"].get("sha") == head_sha
+                )
+            )
+            for run_pull in identity_pulls
+        )
+        status = run.get("status")
+        if status not in {"queued", "in_progress", "completed"}:
+            results.append((
+                "malformed_proof",
+                f"{obligation_label} candidate run has invalid status {status!r}",
+            ))
+            continue
+        url = run.get("html_url") or "(no run URL)"
 
-    # Compare the run to the EVENT it should have answered — not both to the clock.
-    #
-    # The first version of this adapter tested `event_age <= max_days AND run_age >
-    # max_days`, i.e. both against `now`. That makes the detection window exactly as wide
-    # as the gap between the dead loop's last run and the unanswered event, and then it
-    # closes: once the event ages past max_days the quiet arm returns healthy and a dead
-    # loop reads green FOREVER. Worked example — loop answers PR A at 09:00 and dies, PR B
-    # opens at 15:00, repo goes quiet: `stale` is true only between run_age=3d and
-    # event_age=3d, a six-hour window, and this guard runs once a day
-    # (ecosystem-freshness.yml, cron `15 13 * * *`). Evidence of death decayed at exactly
-    # the rate the obligation did. Caught in adversarial review before merge.
-    #
-    # Ordering has no window. An event newer than the newest run is unanswered, and stays
-    # unanswered until a run actually answers it, so the finding is STICKY: missing one
-    # daily sweep costs nothing. max_days stops being a detection threshold and becomes a
-    # pure response allowance — how long the loop may take to answer — which is what the
-    # registry field should have meant here all along. It also removes an unstated
-    # coupling: detection no longer requires max_days to exceed this guard's own cadence.
-    if newest_run >= newest_event:
-        return ("healthy",
-                f"answering `{event}` supply: newest successful run ({run_age:.1f}d ago) "
-                f"postdates the newest event ({event_age:.1f}d ago): {url}")
+        if not correlated:
+            kind = "pending" if event_age <= max_days else "stale"
+            results.append((
+                kind,
+                f"{obligation_label} has no correlated run after {event_age:.1f}d "
+                f"(allowance {max_days:g}d); candidate belongs to another PR/head: "
+                f"{url}",
+            ))
+            continue
+        if status in {"queued", "in_progress"}:
+            kind = "pending" if event_age <= max_days else "stale"
+            results.append((
+                kind,
+                f"{obligation_label} run is {status} after {event_age:.1f}d "
+                f"(allowance {max_days:g}d): {url}",
+            ))
+            continue
 
-    # The newest event is UNANSWERED. Two independent ways that becomes overdue, and the
-    # loop is dead if either holds — neither alone is sufficient:
-    #
-    #   unanswered_for : how long this event has gone unanswered (now - event). Grows
-    #                    without bound, so it catches a loop that died just before a final
-    #                    event and then went quiet — the case a lag-only test misses,
-    #                    because there the lag is fixed and small.
-    #   lag            : how far the run already trailed the event when it arrived
-    #                    (event - run). Catches a loop that has been behind for a long
-    #                    time even though its newest event is recent — the case an
-    #                    age-only test misses for up to the full allowance.
-    #
-    # Both are monotonic while the loop stays dead, so the finding is STICKY once it
-    # fires: unlike the previous `event_age <= max AND run_age > max` form, there is no
-    # window to miss and no path back to green except an actual answering run.
-    unanswered_for = event_age
-    lag = _age_days(newest_run, newest_event)
-    if unanswered_for > max_days or lag > max_days:
-        return ("stale",
-                f"a `{event}` event arrived {event_age:.1f}d ago and is still "
-                f"unanswered: the newest completed run started {run_age:.1f}d ago, "
-                f"{lag:.1f}d BEFORE that event (allowance {max_days:g}d): {url}")
-    return ("healthy",
-            f"a `{event}` event arrived {event_age:.1f}d ago and is not answered yet, "
-            f"still within the {max_days:g}d response allowance: {url}")
+        run_started = _parse_iso(run.get("run_started_at") or run.get("created_at"))
+        if run_started is None:
+            results.append((
+                "malformed_proof",
+                f"{obligation_label} completed run has no parseable timestamp",
+            ))
+            continue
+        conclusion = run.get("conclusion")
+        if conclusion != "success":
+            results.append((
+                "failed_run",
+                f"{obligation_label} run concluded {conclusion!r}: {url}",
+            ))
+            continue
+        results.append((
+            "healthy",
+            f"{obligation_label} has a correlated successful run "
+            f"({_age_days(run_started, now):.1f}d ago): {url}",
+        ))
+
+    priority = {
+        "malformed_proof": 4,
+        "failed_run": 3,
+        "stale": 3,
+        "silent_green": 3,
+        "pending": 1,
+        "newborn": 0,
+        "healthy": 0,
+    }
+    kind, detail = max(results, key=lambda result: priority.get(result[0], 5))
+    return kind, f"evaluated {len(results)} PR obligation(s): {detail}"
 
 
 # ---------------------------------------------------------------------------
