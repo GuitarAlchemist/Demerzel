@@ -19,6 +19,7 @@ Interface:
   now_iso()                         -> str          # the one true UTC stamp
   atomic_write(path, content)       -> None         # temp-file + os.replace
   validate(data, schema)            -> None         # raises on invalid; degrades if jsonschema absent
+  halt_state(path, now)             -> dict         # schema-backed, fail-closed HALT-ALL facts
   write_artifact(path, data, schema=...) -> Path    # validate (optional) then atomic-write JSON
   gh_json(args, *, run=...)         -> dict|list|None
   gh_text(args, *, ok_nonzero=..., run=...) -> str|None
@@ -85,6 +86,56 @@ def validate(data: object, schema: str) -> None:
         return
     spec = json.loads((SCHEMA_DIR / f"{schema}.schema.json").read_text(encoding="utf-8"))
     jsonschema.validate(data, spec)
+
+
+def halt_state(path: Path, now: datetime) -> dict:
+    """Return authoritative facts for one HALT-ALL marker.
+
+    Unlike the optional validation used by ordinary emitters, a present halt
+    marker must be validated. Unreadable data, schema failures, and an absent
+    jsonschema dependency all fail closed as an active halt. ``now`` is supplied
+    by the caller so expiry remains deterministic and evaluated at point of use.
+    """
+    try:
+        marker = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {"present": False, "valid": True, "active": False,
+                "reason": None, "errors": None, "marker": None}
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        return {"present": True, "valid": False, "active": True,
+                "reason": "halt_all_unreadable", "errors": str(exc), "marker": None}
+
+    try:
+        import jsonschema  # noqa: PLC0415 — mandatory only when a halt marker exists
+    except ImportError as exc:
+        return {"present": True, "valid": False, "active": True,
+                "reason": "halt_all_validation_unavailable", "errors": str(exc),
+                "marker": None}
+
+    try:
+        spec = json.loads(
+            (SCHEMA_DIR / "halt-all.schema.json").read_text(encoding="utf-8")
+        )
+        jsonschema.validate(marker, spec)
+    except (OSError, UnicodeError, json.JSONDecodeError, jsonschema.ValidationError,
+            jsonschema.SchemaError) as exc:
+        return {"present": True, "valid": False, "active": True,
+                "reason": "halt_all_invalid", "errors": str(exc), "marker": None}
+
+    active = True
+    errors = None
+    expires_at = marker.get("expires_at")
+    if expires_at:
+        try:
+            expiry = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+            active = not now > expiry
+        except (TypeError, ValueError) as exc:
+            # The schema constrains the representation but a calendar-invalid
+            # timestamp can still match its regex. Keep the halt active.
+            errors = str(exc)
+
+    return {"present": True, "valid": True, "active": active,
+            "reason": marker["reason"], "errors": errors, "marker": marker}
 
 
 def write_artifact(path: Path, data: object, *, schema: str | None = None) -> Path:

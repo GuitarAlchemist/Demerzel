@@ -1,4 +1,5 @@
 import json
+import io
 import tempfile
 import unittest
 import unittest.mock as mock
@@ -78,6 +79,17 @@ class TestHaltSeam(unittest.TestCase):
             rc, target = self._halt_in(d, scope="not-a-scope")
             self.assertEqual(rc, 2)  # schema-validation failure
             self.assertFalse(target.exists(), "invalid marker must never reach disk")
+
+    def test_status_uses_fail_closed_shared_reader(self):
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d) / "HALT-ALL"
+            target.write_text('{"expires_at":"2020-01-01T00:00:00Z"}', encoding="utf-8")
+            stderr = io.StringIO()
+            with mock.patch.object(h, "marker_path", return_value=target), \
+                 mock.patch("sys.stderr", stderr):
+                rc = h.cmd_status(mock.Mock())
+        self.assertEqual(rc, 0)
+        self.assertIn("halt_all_invalid", stderr.getvalue())
 
 
 if __name__ == "__main__":

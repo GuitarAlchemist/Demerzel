@@ -201,23 +201,18 @@ def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
           file=sys.stderr)
 
 
-def halt_active() -> tuple[bool, str]:
-    """Mirror run_ml_feedback_cycle: ~/.demerzel/HALT-ALL present and not expired."""
-    marker = Path.home() / ".demerzel" / "HALT-ALL"
-    if not marker.is_file():
+def halt_active(path: Path | None = None, now: datetime | None = None) -> tuple[bool, str]:
+    """Translate the shared HALT-ALL facts into this governor's stop decision."""
+    state = kit.halt_state(
+        path or Path.home() / ".demerzel" / "HALT-ALL",
+        now or datetime.now(timezone.utc),
+    )
+    if not state["active"]:
         return False, ""
-    try:
-        data = json.loads(marker.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return True, "HALT-ALL present but unreadable — treating as halted (fail-safe)"
-    exp = data.get("expires_at")
-    if exp:
-        try:
-            if datetime.fromisoformat(exp.replace("Z", "+00:00")) < datetime.now(timezone.utc):
-                return False, ""
-        except ValueError:
-            pass
-    return True, f"HALT-ALL in effect (reason: {data.get('reason', 'n/a')})"
+    if not state["valid"]:
+        return True, (f"HALT-ALL {state['reason']} — treating as halted (fail-safe): "
+                      f"{state['errors']}")
+    return True, f"HALT-ALL in effect (reason: {state['reason']})"
 
 
 def _haystack(issue: dict) -> str:
