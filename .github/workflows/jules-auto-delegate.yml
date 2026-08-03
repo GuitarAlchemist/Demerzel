@@ -57,7 +57,6 @@ concurrency:
 jobs:
   delegate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
       - name: Checkout governance state
@@ -79,6 +78,7 @@ jobs:
 
       - name: Select eligible issue + governance preflight
         id: gate
+        timeout-minutes: 5
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -211,6 +211,8 @@ jobs:
             exit 0
           fi
           echo "::notice::AIW budget gate allowed jules delegation for issue #$issue"
+          echo "issue=$issue" >> "$GITHUB_OUTPUT"
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
 
           # NOTE: no delegation marker here. This comment announces the ATTEMPT; the
           # marker that makes an issue permanently ineligible is written only after
@@ -220,12 +222,10 @@ jobs:
           # attests to had happened.
           gh issue comment "$issue" --repo "$REPO" --body "🤖 Attempting delegation of this \`ready-for-agent\` + \`worker:jules\` issue to Jules via the governed AFK workflow. Jules should open a PR targeting \`master\`; human/Demerzel review is still required before merge. If no confirmation comment follows this one, the delegation did **not** succeed and the issue stays eligible for retry."
 
-          echo "issue=$issue" >> "$GITHUB_OUTPUT"
-          echo "proceed=true" >> "$GITHUB_OUTPUT"
-
       - name: Build Jules prompt from the issue
         if: steps.gate.outputs.proceed == 'true'
         id: prompt
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -260,11 +260,41 @@ jobs:
       - name: Delegate to Jules
         id: jules
         if: steps.gate.outputs.proceed == 'true'
+        timeout-minutes: 5
         uses: google-labs-code/jules-action@v1.0.0
         with:
           prompt: ${{ steps.prompt.outputs.text }}
           jules_api_key: ${{ secrets.JULES_API_KEY }}
           starting_branch: master
+
+      # Run before any result-reporting network call. This deliberately does not
+      # trust gate outputs: GitHub can cancel the gate after reserve() writes the
+      # ledger but before it publishes outputs. The provider lookup recovers the
+      # sole open Jules job id from the locked ledger and is a no-op when none exists.
+      - name: Finalize AIW budget reservation
+        if: always()
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          python3 scripts/aiw_budget_gate.py --abandon-open-provider jules --reason "google-labs-code/jules-action@v1.0.0 exposes no verifiable provider cost receipt"
+
+      - name: Validate terminal AIW budget ledgers
+        if: always() && hashFiles('.octo/aiw-cycle-ledger.json') != ''
+        run: |
+          set -euo pipefail
+          test -f .octo/aiw-budget-ledger.json
+          test -f .octo/aiw-cycle-ledger.json
+
+      - name: Upload terminal AIW budget ledgers
+        if: always() && hashFiles('.octo/aiw-cycle-ledger.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: aiw-budget-ledgers-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .octo/aiw-budget-ledger.json
+            .octo/aiw-cycle-ledger.json
+          if-no-files-found: error
+          include-hidden-files: true
 
       # The delegation marker is written HERE, and only here — after the action above
       # actually succeeded. It is what makes an issue permanently ineligible for the
@@ -276,7 +306,8 @@ jobs:
       # A step with no `if:` does not run when an earlier step in the job failed, so
       # this is naturally gated on the delegation having worked.
       - name: Record confirmed delegation
-        if: steps.gate.outputs.proceed == 'true'
+        if: always() && steps.gate.outputs.proceed == 'true' && steps.jules.outcome == 'success'
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -289,7 +320,8 @@ jobs:
       # Fail loud and stay eligible. Without this the only signal that a delegation
       # failed is a red run nobody is watching, on an issue that looks delegated.
       - name: Report failed delegation
-        if: failure() && steps.gate.outputs.proceed == 'true'
+        if: always() && (failure() || cancelled()) && steps.gate.outputs.proceed == 'true' && steps.jules.outcome != 'success'
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}

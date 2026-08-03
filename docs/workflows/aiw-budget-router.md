@@ -240,6 +240,39 @@ preflight before invoking `google-labs-code/jules-action`:
   the issue remains re-runnable after approval;
 - **invalid (exit 2)** → the job fails closed.
 
+The workflow has no job-level timeout that can pre-empt cleanup. Each
+post-reservation step has its own bound, and an `always()` finalizer runs
+immediately after the Jules action, before any result-reporting network call.
+It deliberately does not depend on step outputs: cancellation can happen after
+the gate writes a reservation but before GitHub publishes those outputs.
+`--abandon-open-provider jules` instead recovers the sole open Jules job id from
+the locked cycle ledger. Zero matches is an idempotent no-op; multiple matches
+are ambiguous and fail closed without mutating either reservation.
+
+Because `google-labs-code/jules-action@v1.0.0` exposes no verifiable cost
+receipt, the finalizer abandons the reservation, never synthesizes a
+`--release-job`. The terminal cycle ledger therefore has no remaining Jules
+reservation, `active_packets: 0`, and the reserved estimate charged to
+`unverified_cost_usd` under `unreconciled`. A finalization error is not ignored;
+the job remains red. Jules success/failure reporting is keyed to the Jules step
+outcome rather than the aggregate job status, so a cleanup failure cannot turn
+an accepted delegation into a false retry marker.
+
+After finalization, a run that created a cycle ledger validates that both ledger
+files exist, then uploads `aiw-budget-ledgers-<run_id>-<run_attempt>` even when
+the finalizer failed. The upload action is pinned to an immutable SHA. The
+artifact explicitly includes hidden files but names only
+`.octo/aiw-budget-ledger.json` and `.octo/aiw-cycle-ledger.json`; no other
+`.octo/` state is published. It is audit evidence for that workflow attempt,
+not input to a later run.
+
+This lifecycle is deliberately **run-local**. The ledgers exist only on the
+current runner, no subsequent workflow downloads the artifact for admission,
+and this change does not create cumulative packet or cost caps across runners.
+A runner that is forcibly destroyed can still prevent both finalization and
+upload, but it cannot leave shared state locked because there is no shared
+ledger.
+
 `scripts/test_aiw_budget_consumer.py` guards this wiring so the gate cannot be
 silently unwired back into a declared-but-unconsumed artifact.
 

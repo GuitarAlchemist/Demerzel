@@ -731,9 +731,51 @@ class TestCliAbandonVerb(unittest.TestCase):
         self.assertEqual(2, self.cli(["--abandon-job", "no-such-job", "--reason", "x"]))
         self.assertIn("aiw-896-e", self.read_cycle()["reservations"])
 
+    def test_abandon_open_provider_is_idempotent_without_a_reservation(self):
+        self.assertEqual(0, self.cli([
+            "--abandon-open-provider", self.metered,
+            "--reason", "provider exposes no receipt",
+        ]))
+        result = json.loads(self.ledger.read_text(encoding="utf-8"))
+        self.assertEqual("no_reservation", result["decision"])
+        self.assertEqual(self.metered, result["provider"])
+
+    def test_abandon_open_provider_recovers_the_job_id_from_the_ledger(self):
+        self.reserve_approved("jules-issue-937-run-42", estimated_cost_usd=1.25)
+        self.assertEqual(0, self.cli([
+            "--abandon-open-provider", self.metered,
+            "--reason", "provider exposes no receipt",
+        ]))
+        cycle = self.read_cycle()
+        self.assertEqual({}, cycle["reservations"])
+        self.assertEqual(0, cycle["active_packets"])
+        self.assertAlmostEqual(0.0, cycle["reserved_cost_usd"])
+        self.assertAlmostEqual(1.25, cycle["unverified_cost_usd"])
+        self.assertAlmostEqual(0.0, cycle["actual_cost_usd"])
+        self.assertFalse(cycle["unreconciled"][0]["receipt_verified"])
+
+    def test_abandon_open_provider_fails_closed_when_multiple_jobs_match(self):
+        self.reserve_approved("jules-issue-937-run-42-a", estimated_cost_usd=0.25)
+        self.reserve_approved("jules-issue-937-run-42-b", estimated_cost_usd=0.25)
+        self.assertEqual(2, self.cli([
+            "--abandon-open-provider", self.metered,
+            "--reason", "provider exposes no receipt",
+        ]))
+        cycle = self.read_cycle()
+        self.assertEqual(2, cycle["active_packets"])
+        self.assertEqual(2, len(cycle["reservations"]))
+
     def test_release_and_abandon_cannot_be_requested_together(self):
         with self.assertRaises(SystemExit):
             self.cli(["--release-job", "a", "--abandon-job", "a", "--reason", "x"])
+
+    def test_provider_and_job_abandon_cannot_be_requested_together(self):
+        with self.assertRaises(SystemExit):
+            self.cli([
+                "--abandon-job", "a",
+                "--abandon-open-provider", self.metered,
+                "--reason", "x",
+            ])
 
     def test_abandon_unwedges_the_gate_for_every_other_lane(self):
         """The #896 acceptance criterion at the CLI: cap+1 approved metered runs
