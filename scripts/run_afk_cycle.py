@@ -2,6 +2,12 @@
 """
 Demerzel run_afk_cycle — the AFK implement-lane governor.
 
+Execution policy: manual-or-external.
+No GitHub Actions workflow schedules this driver. An operator or external harness
+owns cadence and invokes one bounded cycle after issue authorization, HALT, and
+budget preflight. Because provider runs can spend metered budget, no automatic
+freshness guard or self-starting schedule is wanted.
+
 Reads the `agent-implement` GitHub issue queue, honors HALT, classifies risk per
 policies/autonomous-loop-policy.yaml, and for each eligible (non-critical) issue
 invokes the agent-agnostic sandcastle harness (../afk-harness) which runs headless
