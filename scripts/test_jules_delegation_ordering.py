@@ -3,7 +3,7 @@
 Why this test exists (#925). `jules-auto-delegate.yml` writes a
 `<!-- jules-delegated -->` comment, and `has_delegation_marker` treats any issue
 carrying it as permanently ineligible for automatic delegation. The marker used to be
-written in the preflight step, before `google-labs-code/jules-action` ran at all — so a
+written in the preflight step, before the Jules create-session call ran at all — so a
 delegation that failed, no-opped, or was silently dropped by Jules still left behind a
 receipt saying it had succeeded.
 
@@ -29,7 +29,7 @@ except ImportError:  # pragma: no cover - yaml is installed in CI
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "jules-auto-delegate.yml"
 MARKER = "<!-- jules-delegated -->"
-JULES_ACTION = "google-labs-code/jules-action"
+JULES_ENDPOINT = "https://jules.googleapis.com/v1alpha/sessions"
 
 
 def _steps() -> list[dict]:
@@ -58,22 +58,27 @@ def _writes_marker(step: dict) -> bool:
     return False
 
 
+def _invokes_jules(step: dict) -> bool:
+    run = str(step.get("run", ""))
+    return (step.get("name") == "Delegate to Jules"
+            and "-X POST" in run
+            and JULES_ENDPOINT in run)
+
+
 @unittest.skipIf(yaml is None, "pyyaml not installed")
 class TestDelegationMarkerOrdering(unittest.TestCase):
     def test_workflow_is_parseable_and_invokes_jules(self):
-        """Guard the guard: if the action is renamed, the ordering test below is vacuous."""
+        """Guard the guard: if the provider step moves, ordering must be updated."""
         steps = _steps()
-        indexes = [i for i, s in enumerate(steps)
-                   if JULES_ACTION in str(s.get("uses", ""))]
+        indexes = [i for i, step in enumerate(steps) if _invokes_jules(step)]
         self.assertEqual(
             1, len(indexes),
-            f"expected exactly one {JULES_ACTION} step; found {len(indexes)}. "
-            "If the action moved or was renamed, update this test — do not delete it.")
+            f"expected exactly one POST to {JULES_ENDPOINT}; found {len(indexes)}. "
+            "If the provider step moved, update this test — do not delete it.")
 
     def test_marker_is_never_written_before_jules_runs(self):
         steps = _steps()
-        jules_at = next(i for i, s in enumerate(steps)
-                        if JULES_ACTION in str(s.get("uses", "")))
+        jules_at = next(i for i, step in enumerate(steps) if _invokes_jules(step))
 
         writers = [i for i, s in enumerate(steps) if _writes_marker(s)]
         self.assertTrue(
@@ -85,7 +90,7 @@ class TestDelegationMarkerOrdering(unittest.TestCase):
         self.assertEqual(
             [], early,
             f"step(s) {early} write the delegation marker before "
-            f"{JULES_ACTION} runs at step {jules_at}. A receipt written before the "
+            f"the Jules API call runs at step {jules_at}. A receipt written before the "
             "thing it attests to converts a failed delegation into a permanent record "
             "of a successful one, and the issue is then skipped forever (#925). "
             "Write the marker only after the delegation is confirmed.")

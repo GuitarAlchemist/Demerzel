@@ -231,7 +231,7 @@ automatically in `run_afk_cycle._budget_release`.
 
 `.github/workflows/jules-auto-delegate.yml` is the first live consumer of the gate.
 Jules is a `metered-cloud` provider, so the delegation job runs the reserve
-preflight before invoking `google-labs-code/jules-action`:
+preflight before invoking the Jules create-session REST endpoint:
 
 - **allow (exit 0)** → delegation proceeds;
 - **block (exit 1)** → the job comments on the issue that a committed
@@ -240,23 +240,66 @@ preflight before invoking `google-labs-code/jules-action`:
   the issue remains re-runnable after approval;
 - **invalid (exit 2)** → the job fails closed.
 
+Jules uses a two-phase approval handshake because GitHub reruns keep the original
+commit while fresh runs receive a new run id. Label and schedule events do not
+enter the paid job or its environment; only `workflow_dispatch` supplies the required
+`approval_id`:
+
+1. start a dispatch with an issue and a new 1–64 character approval id;
+2. the blocked run derives the stable job id
+   `jules-issue-<issue>-approval-<approval_id>` and comments the exact approval
+   JSON template, including the request SHA-256;
+3. replace the template placeholders and commit `.octo/aiw-approval.json`
+   through normal review;
+4. start a **fresh** dispatch (not a rerun) with the same issue and approval id;
+   the request identity is unchanged and the reviewed commit is now visible;
+5. immediately before the paid provider call, the workflow writes a
+   workflow-authored `jules-approval-attempted` marker for that approval id;
+   the provider is not invoked unless this durable write succeeds. The id
+   cannot be replayed, even with `force` or when later success reporting fails.
+   Any retry requires a new id and a newly reviewed artifact.
+
+If the checkout still contains an approval for a different id, phase one
+preserves it under the runner's temporary directory and removes it from the
+gate's canonical input path for that run. It cannot authorize the new request,
+but it also cannot make generation of the replacement template unreachable. A
+malformed committed approval still fails closed.
+
+Approval ids are validated before request construction and are included in the
+request fingerprint. When a request carries one, the gate requires the approval
+artifact's `approval_id` to match. The approval authorizes one invocation
+**attempt**, not one eventual success; this fails closed when the provider's API
+does not expose an idempotency key. Only markers authored by `github-actions`
+are accepted as consumption evidence, and a GitHub API read failure is distinct
+from marker absence, so neither an arbitrary commenter nor a transient read
+failure can spend or suppress authority.
+
+The job is attached to the `jules-paid-default-branch` GitHub environment,
+checks out the repository default branch explicitly, and refuses any event ref
+other than that branch. `JULES_PAID_API_KEY` belongs only in that environment;
+the environment's deployment-branch policy must allow the protected default
+branch only. This environment boundary is what prevents a manually selected,
+unreviewed workflow ref from receiving the paid credential.
+
 The workflow has no job-level timeout that can pre-empt cleanup. Each
 post-reservation step has its own bound, and an `always()` finalizer runs
-immediately after the Jules action, before any result-reporting network call.
+immediately after the Jules API call, before any result-reporting network call.
 It deliberately does not depend on step outputs: cancellation can happen after
 the gate writes a reservation but before GitHub publishes those outputs.
 `--abandon-open-provider jules` instead recovers the sole open Jules job id from
 the locked cycle ledger. Zero matches is an idempotent no-op; multiple matches
 are ambiguous and fail closed without mutating either reservation.
 
-Because `google-labs-code/jules-action@v1.0.0` exposes no verifiable cost
-receipt, the finalizer abandons the reservation, never synthesizes a
+Because the Jules create-session response exposes a session identity but no
+verifiable cost receipt, the finalizer abandons the reservation, never synthesizes a
 `--release-job`. The terminal cycle ledger therefore has no remaining Jules
 reservation, `active_packets: 0`, and the reserved estimate charged to
 `unverified_cost_usd` under `unreconciled`. A finalization error is not ignored;
-the job remains red. Jules success/failure reporting is keyed to the Jules step
-outcome rather than the aggregate job status, so a cleanup failure cannot turn
-an accepted delegation into a false retry marker.
+the job remains red. The provider step uses `curl --fail-with-body`, performs no
+POST retry (the endpoint exposes no idempotency key), and requires a valid
+`sessions/<id>` name plus a Jules session URL before reporting success. Result
+reporting is keyed to that step outcome rather than the aggregate job status,
+so a cleanup failure cannot turn a created session into a false retry marker.
 
 After finalization, a run that created a cycle ledger validates that both ledger
 files exist, then uploads `aiw-budget-ledgers-<run_id>-<run_attempt>` even when
@@ -273,14 +316,16 @@ A runner that is forcibly destroyed can still prevent both finalization and
 upload, but it cannot leave shared state locked because there is no shared
 ledger.
 
-`scripts/test_aiw_budget_consumer.py` guards this wiring so the gate cannot be
-silently unwired back into a declared-but-unconsumed artifact.
+`scripts/test_aiw_budget_consumer.py` guards the terminal wiring, and
+`scripts/test_jules_approval_handshake.py` guards stable identity, authority
+provenance, and replay prevention.
 
 ## Trust boundary
 
 The gate validates the approval (`.octo/aiw-approval.json`) and the receipt
 (`.octo/aiw-receipt.json`) by **field equality** — the approval must match the
-job id, provider, and request SHA-256; the receipt's `issuer` must equal the
+job id, provider, request SHA-256, and request approval id when present; the
+receipt's `issuer` must equal the
 policy's `trusted_receipt_issuer` and its actual cost must match the released
 amount. This is an **integrity** check, not an **authenticity** one: there is no
 cryptographic signature, so the gate cannot itself tell a genuine receipt from a
