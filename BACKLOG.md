@@ -69,7 +69,7 @@ follows its precondition chain, not its interest level.
   invalid report will start failing loudly. Run `--dry-run` against ix/tars/ga first
   and confirm the schema matches what `build_report` emits.*
 
-- [ ] **C2 — Add `halt_state()` to `demerzel_kit`, mirroring PowerShell's `Test-HaltAll`.**
+- [x] **C2 — Add `halt_state()` to `demerzel_kit`, mirroring PowerShell's `Test-HaltAll`.**
   `scripts/demerzel_kit.py`, `run_afk_cycle.py`, `run_ml_feedback_cycle.py`,
   `demerzel_halt.py`. ~60 lines, 4 files + 1 test. Do **after** C1.
   `run_afk_cycle.halt_active()` and `run_ml_feedback_cycle._halt_active()` are
