@@ -3,6 +3,11 @@
 Demerzel run_ml_feedback_cycle — the orchestrator that turns the four hand-run
 ML-feedback legs into ONE unattended, bounded self-improvement cycle.
 
+Execution policy: externally-scheduled.
+An operator-managed cron or Task Scheduler owns the mutating cycle's cadence.
+GitHub Actions `ml-governance-schedule.yml` is a read-only freshness tripwire and
+strict dry-run smoke; it never runs the mutating cycle.
+
 It runs, in dependency order, a single pass of pipelines/ml-feedback-loop.ixql
 (standing in for the absent IxQL executor):
 
@@ -17,10 +22,10 @@ It runs, in dependency order, a single pass of pipelines/ml-feedback-loop.ixql
                         bounded auto-apply or escalate to human review
   4. Summarize        — write one cycle summary to state/oversight/
 
-One invocation = one cycle. Cadence comes from whatever schedules this (cron /
-Task Scheduler), NOT from a cycle-count gate here — the ml-feedback policy defines
-no per-day cap, and WAKE-time count gates have wedged loops before. The only
-loop-level bound is the HALT switch; per-decision bounds live in the governor.
+One invocation = one cycle. Cadence belongs to the external operator scheduler,
+NOT to a cycle-count gate here — the ml-feedback policy defines no per-day cap,
+and WAKE-time count gates have wedged loops before. The only loop-level bound is
+the HALT switch; per-decision bounds live in the governor.
 
 Producers that find nothing to do exit 4 (no-op) and are reported as such, not as
 errors. A producer/harvest error is logged but does not abort the cycle (the
