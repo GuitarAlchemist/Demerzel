@@ -27,6 +27,9 @@ except ModuleNotFoundError:
     import ecosystem_freshness as ef
 
 NOW = datetime(2026, 7, 18, 12, 0, 0, tzinfo=timezone.utc)
+# Activation cutoff used by the adapter-level tests: old enough that none of
+# their fixtures are waived, so each test still exercises what it names.
+SINCE = datetime(2024, 1, 1, tzinfo=timezone.utc)
 
 
 def _iso(dt: datetime) -> str:
@@ -129,6 +132,28 @@ class EcosystemFreshnessTest(unittest.TestCase):
 
     def _one(self, findings: list[dict], workflow: str) -> dict:
         return next(f for f in findings if f["workflow"] == workflow)
+
+    @staticmethod
+    def _json_urlopen(payloads, seen):
+        """urlopen stub serving `payloads` in request order, recording requests."""
+        class Response:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode()
+
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            return Response(payloads[len(seen) - 1])
+
+        return fake_urlopen
 
     # ── tracer-bullet outcomes ────────────────────────────────────────────
 
@@ -526,10 +551,19 @@ class EcosystemFreshnessTest(unittest.TestCase):
     # Both directions matter — a genuinely dead loop must fire, and a quiet but
     # healthy one must stay silent.
 
+    # The activation cutoff is deliberately far older than any event age these
+    # tests use, so cutoff waiving never silently swallows a case that is meant
+    # to be about liveness. Cutoff behaviour has its own tests below.
+    ACTIVATION = "2024-01-01T00:00:00Z"
+
     EVENT_SPEC = {"reviewer.yml": {
         "events": ["pull_request", "pull_request_target"],
         "activities": ["opened", "synchronize"],
         "max_stale_days": 3,
+        "activation": {
+            "pull_request": ACTIVATION,
+            "pull_request_target": ACTIVATION,
+        },
     }}
 
     def _event_repo(self, events=("pull_request",)):
@@ -540,7 +574,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
     def _supply(self, event_age_days=None, run_age_days=None,
                 conclusion="success", pull_number=17,
                 obligation_sha="current-head", run_sha="current-head",
-                run_pull_number=17):
+                run_pull_number=17, pull_state="open"):
         """Stub the (current dispatch obligation, candidate run) seam."""
         event_iso = (
             None if event_age_days is None
@@ -551,6 +585,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "occurred_at": event_iso,
             "pull_number": pull_number,
             "head_sha": obligation_sha,
+            "pull_state": pull_state,
         }
         run = None if run_age_days is None else {
             "status": "completed",
@@ -908,6 +943,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         payloads = [
             [{
                 "number": 939,
+                "state": "open",
                 "created_at": "2026-07-18T09:00:00Z",
                 "updated_at": "2026-07-18T10:00:00Z",
                 "head": {"sha": "current-head"},
@@ -931,6 +967,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request",
                 "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
             )
         obligation, run = supplies[0]
         self.assertEqual(obligation, {
@@ -938,6 +975,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             "occurred_at": "2026-07-18T09:00:03+00:00",
             "pull_number": 939,
             "head_sha": "current-head",
+            "pull_state": "open",
         })
         self.assertEqual(run, {
             "id": 7,
@@ -951,7 +989,9 @@ class EcosystemFreshnessTest(unittest.TestCase):
 
         pulls_q = parse_qs(urlparse(seen[0].full_url).query)
         self.assertEqual(pulls_q, {
-            "state": ["open"], "sort": ["updated"],
+            # `all`, not `open`: a merge is not an answer, so a closed pull
+            # request keeps its unresolved obligation visible.
+            "state": ["all"], "sort": ["updated"],
             "direction": ["desc"], "per_page": ["100"], "page": ["1"],
         })
         runs_q = parse_qs(urlparse(seen[1].full_url).query)
@@ -987,6 +1027,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request",
                 "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
             )
         self.assertEqual(supplies, [])
         self.assertEqual(len(seen), 1)
@@ -1010,6 +1051,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         payloads = [
             [{
                 "number": 17,
+                "state": "closed",
                 "created_at": "2026-07-18T09:00:00Z",
                 "updated_at": "2026-07-18T10:00:00Z",
                 "head": {"sha": "merged-head"},
@@ -1033,6 +1075,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request",
                 "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
             )
         _, run = supplies[0]
         self.assertEqual(run["associated_pull_requests"], [{"number": 17}])
@@ -1057,6 +1100,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         payloads = [
             [{
                 "number": 17,
+                "state": "open",
                 "created_at": "2026-07-18T09:00:00Z",
                 # A comment or label may cause this update; it is not a dispatch.
                 "updated_at": "2026-07-20T10:00:00Z",
@@ -1081,6 +1125,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request",
                 "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
             )
         obligation, _ = supplies[0]
         self.assertEqual(obligation["activities"], ["opened", "synchronize"])
@@ -1105,6 +1150,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
         payloads = [
             [{
                 "number": 17,
+                "state": "open",
                 "created_at": "2026-07-18T09:00:00Z",
                 "updated_at": "2026-07-20T10:00:00Z",
                 "head": {"sha": "unanswered-head"},
@@ -1121,10 +1167,14 @@ class EcosystemFreshnessTest(unittest.TestCase):
             supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request",
                 "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
             )
         obligation, run = supplies[0]
         self.assertIsNone(run)
+        # Inside the GitHub-controlled [created_at, updated_at] envelope, so the
+        # commit date is an accepted refinement rather than an authority.
         self.assertEqual(obligation["occurred_at"], "2026-07-19T11:00:00+00:00")
+        self.assertNotIn("malformed_reason", obligation)
         self.assertIn("/commits/unanswered-head", seen[2].full_url)
 
     def test_pull_request_target_adapter_matches_nested_pr_head_identity(self):
@@ -1146,7 +1196,9 @@ class EcosystemFreshnessTest(unittest.TestCase):
         payloads = [
             [{
                 "number": 17,
+                "state": "open",
                 "created_at": "2026-07-18T09:00:00Z",
+                "updated_at": "2026-07-18T09:30:00Z",
                 "head": {"sha": "pr-head"},
             }],
             {"workflow_runs": [{
@@ -1171,6 +1223,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             supplies = ef.default_event_supply_runner(
                 "cross-model-review.yml", "pull_request_target",
                 "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
             )
         _, run = supplies[0]
         self.assertEqual(run["id"], 7)
@@ -1193,6 +1246,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
                 ef.default_event_supply_runner(
                     "cross-model-review.yml", "pull_request",
                     "GuitarAlchemist/Demerzel", "secret",
+                    ("opened", "synchronize"), SINCE,
                 )
 
     def test_event_supply_adapter_rejects_an_unparseable_pull_timestamp(self):
@@ -1206,6 +1260,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
             def read(self):
                 return json.dumps([{
                     "number": 17,
+                    "state": "open",
                     "created_at": "not-a-timestamp",
                     "updated_at": "2026-07-18T10:00:00Z",
                     "head": {"sha": "current-head"},
@@ -1216,6 +1271,7 @@ class EcosystemFreshnessTest(unittest.TestCase):
                 ef.default_event_supply_runner(
                     "cross-model-review.yml", "pull_request",
                     "GuitarAlchemist/Demerzel", "secret",
+                    ("opened", "synchronize"), SINCE,
                 )
 
     def test_event_supply_adapter_requires_repository_and_token(self):
@@ -1225,6 +1281,430 @@ class EcosystemFreshnessTest(unittest.TestCase):
             ef.default_event_supply_runner("w.yml", "pull_request", "o/r", "")
         with self.assertRaises(ef.AdapterError):
             ef.default_event_supply_runner("w.yml", "issues", "o/r", "t")
+
+    def test_event_supply_adapter_requires_an_activation_cutoff(self):
+        # Without a boundary the "relevant history" is unbounded and the waiver
+        # has no meaning; refuse rather than walk the whole archive.
+        with patch.object(ef, "urlopen",
+                          lambda *a, **k: self.fail("must not call API")):
+            with self.assertRaises(ef.AdapterError):
+                ef.default_event_supply_runner(
+                    "cross-model-review.yml", "pull_request",
+                    "GuitarAlchemist/Demerzel", "secret",
+                )
+
+    # ── obligations survive PR closure (adversarial review, defect 1) ──────
+    #
+    # Requesting only OPEN pull requests made the merge button an eraser: a PR
+    # whose head never got a correlated run vanished from the supply the moment
+    # it closed, and the monitor went green. Closing is not answering.
+
+    def _closed_obligation(self, days=4, head="unanswered-head"):
+        return {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=days)),
+            "pull_number": 17,
+            "head_sha": head,
+            "pull_state": "closed",
+        }
+
+    def test_unresolved_obligation_survives_its_pull_request_closing(self):
+        findings = self._event_findings(
+            lambda *args: [(self._closed_obligation(), None)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(
+            finding["kind"], "silent_green",
+            "closing a pull request must not discharge an obligation its head "
+            "never had a correlated run for")
+        self.assertIn("(closed)", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_closing_after_a_correlated_successful_run_is_not_an_alarm(self):
+        # The other direction: a PR that WAS answered and then merged is
+        # resolved, and resurrecting it would be pure cry-wolf.
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=4)),
+            "html_url": "https://example.test/answered",
+            "head_sha": "unanswered-head",
+            "pull_requests": [{"number": 17}],
+        }
+        findings = self._event_findings(
+            lambda *args: [(self._closed_obligation(), run)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_a_merged_pull_request_cannot_erase_its_unanswered_obligation(self):
+        """End-to-end oracle for the erasure defect, adapter through evaluator.
+
+        The stub HONOURS the `state` query the way GitHub does, so asking for
+        open pull requests really does return nothing. That is the whole bug: the
+        one PR in this repo is closed and its head never got a run, and querying
+        `state=open` made the supply empty, which the evaluator correctly reads as
+        "no event ever happened" — green. The obligation was never discharged;
+        it was deleted.
+        """
+        merged_pull = {
+            "number": 17,
+            "state": "closed",
+            "created_at": "2026-07-10T09:00:00Z",
+            "updated_at": "2026-07-12T10:00:00Z",
+            "head": {"sha": "merged-head"},
+        }
+
+        def state_honouring_urlopen(request, timeout):
+            query = parse_qs(urlparse(request.full_url).query)
+            if "/pulls?" in request.full_url:
+                requested = query.get("state", ["open"])[0]
+                pulls = [merged_pull] if requested == "all" else []
+                return self._json_urlopen([pulls], [])(request, timeout)
+            if "/runs?" in request.full_url:
+                return self._json_urlopen(
+                    [{"workflow_runs": []}], [])(request, timeout)
+            return self._json_urlopen(
+                [{"commit": {"committer": {"date": "2026-07-11T09:00:00Z"}}}],
+                [])(request, timeout)
+
+        with patch.object(ef, "urlopen", state_honouring_urlopen):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
+            )
+        self.assertEqual(
+            len(supplies), 1,
+            "a closed pull request whose head never ran must stay in the supply")
+        obligation, run = supplies[0]
+        self.assertIsNone(run)
+        self.assertEqual(obligation["pull_state"], "closed")
+
+        # …and the surviving obligation really does turn the board red.
+        findings = self._event_findings(lambda *args: supplies)
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "silent_green")
+        self.assertIn("(closed)", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    # ── bounded relevant history, not an unbounded archive walk ────────────
+
+    def test_pull_retrieval_stops_at_the_activation_cutoff(self):
+        seen = []
+        fresh = [{
+            "number": n,
+            "state": "open",
+            "created_at": "2026-07-17T00:00:00Z",
+            "updated_at": "2026-07-17T00:00:00Z",
+            "head": {"sha": f"h{n}"},
+        } for n in range(100)]
+        ancient = [{
+            "number": 999,
+            "state": "closed",
+            "created_at": "2023-01-01T00:00:00Z",
+            "updated_at": "2023-01-02T00:00:00Z",
+            "head": {"sha": "ancient"},
+        }]
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen([fresh, ancient], seen)):
+            pulls = ef._collect_relevant_pulls(
+                "GuitarAlchemist/Demerzel", "GuitarAlchemist/Demerzel",
+                "pull_request", "secret", SINCE,
+            )
+        self.assertEqual(len(pulls), 100, "pre-cutoff pulls must be dropped")
+        self.assertEqual(len(seen), 2, "retrieval must stop at the boundary")
+
+    def test_incomplete_pull_retrieval_is_adapter_error_not_absence(self):
+        fresh = [{
+            "number": n,
+            "state": "open",
+            "created_at": "2026-07-17T00:00:00Z",
+            "updated_at": "2026-07-17T00:00:00Z",
+            "head": {"sha": f"h{n}"},
+        } for n in range(100)]
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen([fresh] * 200, [])):
+            with self.assertRaises(ef.AdapterError):
+                ef._collect_relevant_pulls(
+                    "GuitarAlchemist/Demerzel", "GuitarAlchemist/Demerzel",
+                    "pull_request", "secret", SINCE,
+                )
+
+    # ── author-controlled commit dates cannot buy allowance (defect 2) ─────
+
+    def test_future_commit_timestamp_cannot_extend_the_allowance(self):
+        # A PR author controls the committer date. `2099-01-01` dated the
+        # obligation decades into the future, so `event_age` went negative, the
+        # obligation stayed forever "pending", and the guard never fired.
+        seen = []
+        payloads = [
+            [{
+                "number": 17,
+                "state": "open",
+                "created_at": "2026-06-01T09:00:00Z",
+                "updated_at": "2026-06-02T09:00:00Z",
+                "head": {"sha": "forged-head"},
+            }],
+            {"workflow_runs": []},
+            {"commit": {"committer": {"date": "2099-01-01T00:00:00Z"}}},
+        ]
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen(payloads, seen)):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
+            )
+        obligation, _ = supplies[0]
+        occurred_at = ef._parse_iso(obligation["occurred_at"])
+        self.assertLessEqual(
+            occurred_at, ef._parse_iso("2026-06-02T09:00:00Z"),
+            "the obligation must stay inside the GitHub-controlled envelope")
+        self.assertIn("malformed_reason", obligation)
+
+        # …and the evaluator reports it as bad evidence, not as a fresh event.
+        findings = self._event_findings(lambda *args: supplies)
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "malformed_proof")
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_future_observation_time_fails_closed(self):
+        # Whatever produced it — a forged commit, a broken clock, a GitHub
+        # timestamp this monitor cannot have observed — an obligation dated in
+        # the future is not proof and must never buy an unexpiring allowance.
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW + timedelta(days=26000)),
+            "pull_number": 17,
+            "head_sha": "future-head",
+            "pull_state": "open",
+        }
+        findings = self._event_findings(lambda *args: [(obligation, None)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "malformed_proof")
+        self.assertIn("future", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_clock_skew_does_not_manufacture_a_forged_timestamp(self):
+        # GitHub issues the timestamp, the runner owns the clock. A few seconds
+        # of NTP skew on a genuinely fresh event must not read as forgery — a
+        # guard that cries wolf is one people stop reading.
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW + timedelta(seconds=30)),
+            "pull_number": 17,
+            "head_sha": "just-pushed",
+            "pull_state": "open",
+        }
+        findings = self._event_findings(lambda *args: [(obligation, None)])
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"], "pending")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_adapter_rejects_an_implausible_github_pull_timeline(self):
+        # created_at newer than updated_at means the envelope this adapter
+        # bounds author-controlled timestamps against is itself untrustworthy.
+        payloads = [[{
+            "number": 17,
+            "state": "open",
+            "created_at": "2026-07-18T09:00:00Z",
+            "updated_at": "2026-07-17T09:00:00Z",
+            "head": {"sha": "current-head"},
+        }]]
+        with patch.object(ef, "urlopen", self._json_urlopen(payloads, [])):
+            with self.assertRaises(ef.AdapterError):
+                ef.default_event_supply_runner(
+                    "cross-model-review.yml", "pull_request",
+                    "GuitarAlchemist/Demerzel", "secret",
+                    ("opened", "synchronize"), SINCE,
+                )
+
+    # ── activation cutoff: no retroactive obligations (defect 3) ───────────
+
+    def _cutoff_spec(self, cutoff, event="pull_request"):
+        spec = json.loads(json.dumps(self.EVENT_SPEC))
+        spec["reviewer.yml"]["activation"][event] = cutoff
+        return spec
+
+    def _cutoff_findings(self, cutoff, supply):
+        self._event_repo()
+        return self._evaluate(
+            {"version": 1, "loops": []},
+            event_producers=self._cutoff_spec(cutoff),
+            event_supply_runner=supply,
+            git_runner=lambda args, cwd: "",
+        )
+
+    def test_pre_cutover_head_is_explicitly_waived(self):
+        # #935 flips the trigger to pull_request_target. Existing open heads
+        # predate that flip and CANNOT have such a run — changing `on:` does not
+        # replay opened/synchronize events. Demanding one manufactures an alarm
+        # no producer could ever answer.
+        stale_head = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=40)),
+            "pull_number": 17,
+            "head_sha": "pre-cutover-head",
+            "pull_state": "open",
+        }
+        findings = self._cutoff_findings(
+            _iso(NOW - timedelta(days=10)),
+            lambda *args: [(stale_head, None)],
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertIn("waived", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_post_cutover_absent_run_becomes_pending_then_stale(self):
+        cutoff = _iso(NOW - timedelta(days=10))
+
+        def head(age_days):
+            return {
+                "activities": ["opened", "synchronize"],
+                "occurred_at": _iso(NOW - timedelta(days=age_days)),
+                "pull_number": 17,
+                "head_sha": "post-cutover-head",
+                "pull_state": "open",
+            }
+
+        # Inside the 3d response allowance: pending, board stays green.
+        pending = self._cutoff_findings(
+            cutoff, lambda *args: [(head(1), None)])
+        self.assertEqual(self._one(pending, "reviewer.yml")["kind"], "pending")
+        self.assertEqual(ef.exit_code(pending), 0)
+
+        # Past it: no run ever arrived for a head that really did dispatch.
+        overdue = self._cutoff_findings(
+            cutoff, lambda *args: [(head(4), None)])
+        self.assertEqual(self._one(overdue, "reviewer.yml")["kind"],
+                         "silent_green")
+        self.assertEqual(ef.exit_code(overdue), 1)
+
+    def test_waiving_pre_cutover_heads_cannot_mask_a_post_cutover_one(self):
+        cutoff = _iso(NOW - timedelta(days=10))
+        waived = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=40)),
+            "pull_number": 1,
+            "head_sha": "pre-cutover-head",
+            "pull_state": "closed",
+        }
+        overdue = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=4)),
+            "pull_number": 2,
+            "head_sha": "post-cutover-head",
+            "pull_state": "open",
+        }
+        findings = self._cutoff_findings(
+            cutoff, lambda *args: [(waived, None), (overdue, None)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "silent_green")
+        self.assertIn("#2", finding["detail"])
+        self.assertIn("waived", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_active_event_without_an_activation_cutoff_is_config_error(self):
+        # The shipped `pull_request_target` state until #935 merges: refuse to
+        # judge rather than invent a boundary.
+        findings = self._cutoff_findings(
+            None, lambda *args: self.fail("must not call API"))
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "config_error")
+        self.assertEqual(ef.exit_code(findings), 2)
+
+    def test_future_activation_cutoff_is_config_error(self):
+        # A cutoff after `now` waives every obligation — a guard that reads
+        # green because it is blind is the exact failure this repo exists for.
+        findings = self._cutoff_findings(
+            _iso(NOW + timedelta(days=1)),
+            lambda *args: self.fail("must not call API"))
+        self.assertEqual(self._one(findings, "reviewer.yml")["kind"],
+                         "config_error")
+        self.assertEqual(ef.exit_code(findings), 2)
+
+    # ── pull_request_target correlation must paginate (defect 4) ───────────
+
+    def _target_run(self, run_id, number, head, created="2026-07-17T00:00:00Z"):
+        return {
+            "id": run_id,
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": created,
+            "run_started_at": created,
+            "head_sha": "base-head",
+            "pull_requests": [{"number": number, "head": {"sha": head}}],
+        }
+
+    def test_correlated_target_run_on_page_two_is_found(self):
+        # A single 100-run page is not the run history. With a busy repo the
+        # valid run falls onto page 2 and the obligation reads "no run" — an
+        # alarm indistinguishable from a genuinely dead loop.
+        seen = []
+        payloads = [
+            [{
+                "number": 17,
+                "state": "open",
+                "created_at": "2026-07-17T09:00:00Z",
+                "updated_at": "2026-07-17T09:30:00Z",
+                "head": {"sha": "pr-head"},
+            }],
+            {"workflow_runs": [
+                self._target_run(i, 900 + i, f"other-head-{i}")
+                for i in range(100)
+            ]},
+            {"workflow_runs": [self._target_run(7, 17, "pr-head")]},
+        ]
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen(payloads, seen)):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request_target",
+                "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
+            )
+        _, run = supplies[0]
+        self.assertIsNotNone(run, "a valid run on page 2 must not read as absent")
+        self.assertEqual(run["id"], 7)
+        self.assertEqual(
+            parse_qs(urlparse(seen[2].full_url).query)["page"], ["2"])
+
+    def test_incomplete_target_run_retrieval_is_adapter_error_not_absence(self):
+        full_page = {"workflow_runs": [
+            self._target_run(i, 900 + i, f"other-head-{i}") for i in range(100)
+        ]}
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen([full_page] * 200, [])):
+            with self.assertRaises(ef.AdapterError):
+                ef._collect_target_runs(
+                    "GuitarAlchemist/Demerzel", "cross-model-review.yml",
+                    "pull_request_target", "secret", SINCE,
+                )
+
+    def test_target_run_retrieval_stops_at_the_activation_cutoff(self):
+        seen = []
+        recent = {"workflow_runs": [
+            self._target_run(i, 900 + i, f"h{i}") for i in range(100)
+        ]}
+        recent["workflow_runs"][-1]["created_at"] = "2023-06-01T00:00:00Z"
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen([recent, recent], seen)):
+            runs = ef._collect_target_runs(
+                "GuitarAlchemist/Demerzel", "cross-model-review.yml",
+                "pull_request_target", "secret", SINCE,
+            )
+        self.assertEqual(len(runs), 100)
+        self.assertEqual(len(seen), 1, "retrieval must stop at the boundary")
+
+    def test_malformed_target_run_page_is_adapter_error(self):
+        with patch.object(ef, "urlopen",
+                          self._json_urlopen([{"workflow_runs": "nope"}], [])):
+            with self.assertRaises(ef.AdapterError):
+                ef._collect_target_runs(
+                    "GuitarAlchemist/Demerzel", "cross-model-review.yml",
+                    "pull_request_target", "secret", SINCE,
+                )
 
     def test_shipped_event_producers_match_live_workflow_yaml(self):
         # THE LIVE ORACLE for #844: cross-model-review.yml is on: pull_request,
@@ -1245,6 +1725,51 @@ class EcosystemFreshnessTest(unittest.TestCase):
             self.assertNotIn(wf, scheduled,
                              f"{wf} has a cron and belongs in the registry")
             self.assertGreater(spec["max_stale_days"], 0)
+
+            # Every candidate event must have an activation decision on record —
+            # an ISO instant, or an explicit None meaning "not activated yet".
+            # A missing key is an undeclared cutoff, which is how retroactive
+            # obligations get invented.
+            activation = spec.get("activation")
+            self.assertIsInstance(activation, dict, f"{wf} declares no activation")
+            for candidate in spec["events"]:
+                self.assertIn(candidate, activation,
+                              f"{wf} has no activation decision for {candidate}")
+                declared = activation[candidate]
+                if declared is None:
+                    continue
+                self.assertIsNotNone(
+                    ef._parse_iso(declared),
+                    f"{wf}: activation cutoff for {candidate} is unparseable",
+                )
+            # The ACTIVE event must carry a usable cutoff; a None there is the
+            # fail-closed state and must not reach production silently.
+            self.assertIsNotNone(
+                activation.get(active_event),
+                f"{wf}: `{active_event}` is the live trigger but has no "
+                "activation cutoff — see the #935 note on EVENT_PRODUCERS",
+            )
+
+    def test_shipped_pull_request_target_cutoff_is_explicitly_pending(self):
+        """The #935 dependency, asserted rather than remembered.
+
+        PR #935 migrates cross-model-review.yml to `pull_request_target`. Until
+        it merges, the cutover instant does not exist, so the declaration holds
+        None and _eval_event_producer refuses to judge that event. This test
+        fails the moment someone flips the trigger without recording the instant,
+        which is precisely when retroactive obligations would be invented.
+        """
+        spec = ef.EVENT_PRODUCERS["cross-model-review.yml"]
+        live = ef.workflow_events(
+            Path(ef.REPO) / ef.DEFAULT_WORKFLOWS_DIR, "cross-model-review.yml"
+        )
+        if "pull_request_target" in live:
+            self.assertIsNotNone(
+                spec["activation"]["pull_request_target"],
+                "the trigger migrated but its activation instant was not recorded",
+            )
+        else:
+            self.assertIsNone(spec["activation"]["pull_request_target"])
 
     def test_workflow_events_handles_every_on_shape(self):
         self.repo.write_event_workflow("mapping.yml", ["pull_request", "issues"])
@@ -1568,26 +2093,37 @@ class EcosystemFreshnessTest(unittest.TestCase):
         registry = ef.load_registry(
             repo / ef.DEFAULT_REGISTRY, repo / ef.DEFAULT_SCHEMA
         )
+        # The shipped activation cutoff is a real forward-moving instant, so this
+        # consistency check evaluates just after it rather than at the fixed NOW
+        # the behavioural tests share. Derived, not hardcoded, so it cannot rot.
+        declared = [
+            ef._parse_iso(value)
+            for spec in ef.EVENT_PRODUCERS.values()
+            for value in (spec.get("activation") or {}).values()
+            if isinstance(value, str)
+        ]
+        now = max([NOW, *(dt + timedelta(days=1) for dt in declared if dt)])
         findings = ef.evaluate(
             registry,
-            now=NOW,
+            now=now,
             workflows_dir=repo / ef.DEFAULT_WORKFLOWS_DIR,
             repo_root=repo,
-            git_runner=lambda args, cwd: _iso(NOW) + "\n",
+            git_runner=lambda args, cwd: _iso(now) + "\n",
             actions_runner=lambda *args: {
                 "conclusion": "success",
-                "run_started_at": _iso(NOW),
+                "run_started_at": _iso(now),
                 "html_url": "https://example.test/production-proof",
             },
             event_supply_runner=lambda *args: [({
                 "activities": ["opened", "synchronize"],
-                "occurred_at": _iso(NOW),
+                "occurred_at": _iso(now),
                 "pull_number": 939,
                 "head_sha": "production-head",
+                "pull_state": "open",
             }, {
                 "status": "completed",
                 "conclusion": "success",
-                "run_started_at": _iso(NOW),
+                "run_started_at": _iso(now),
                 "html_url": "https://example.test/production-event-proof",
                 "head_sha": "production-head",
                 "pull_requests": [{"number": 939}],

@@ -19,7 +19,10 @@ Event-triggered producers (#844) have no cron and so cannot be expressed in that
 registry at all — an `active` entry requires at least one cron expression, and
 the schema is closed to new fields. They are declared in EVENT_PRODUCERS below
 and judged against their EVENT SUPPLY rather than a clock: a `pull_request` loop
-is only expected to have run when a pull request actually happened. See
+is only expected to have run when a pull request actually happened. Supply is
+bounded below by a declared per-event ACTIVATION CUTOFF, because changing a
+workflow's trigger does not replay the events that predate it, and closing a pull
+request does not discharge an obligation its head never had a run for. See
 _eval_event_producer for the semantics and their stated limit.
 
 Findings and exit codes (a producer with a real problem must fail CI):
@@ -47,7 +50,7 @@ import glob as globmod
 import json
 import os
 import sys
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode
@@ -81,13 +84,59 @@ ALLOWED_MONITORS = {
 # The secured workflow from #935 uses `pull_request_target`; the legacy branch
 # uses `pull_request`. Exactly one must be active, and both share the same PR/head
 # supply adapter.
+#
+# `activation` is the ACTIVATION CUTOFF per event: the instant from which this
+# monitor may infer an obligation for that event. It exists because changing a
+# workflow's trigger does not synthesize `opened`/`synchronize` events for heads
+# that already exist — a head pushed before `pull_request_target` was ever
+# configured cannot have a `pull_request_target` run, and demanding one invents a
+# retroactive obligation the producer never owed. It is deliberately NOT derived
+# from the workflow file's creation (or last-modified) date: a file's git history
+# says when text changed, not when GitHub began dispatching that event, and
+# committer dates are author-controlled anyway.
+#
+# The source of truth is the activation decision itself, recorded here by the
+# human who activates enforcement, and every PR head observed before it is
+# explicitly waived as pre-cutover. It doubles as the relevant-history boundary
+# for retrieval, so the supply adapter never walks the whole PR archive.
+#
+#   pull_request         2026-08-03T00:00:00Z — the instant per-head obligation
+#     enforcement is activated. #844's event-supply binding has never run on the
+#     default branch (its commit is part of this change), so no head observed
+#     before activation has a recorded obligation and none may be inferred.
+#
+#   pull_request_target  None — GuitarAlchemist/Demerzel PR #935 performs the
+#     trigger migration and has not merged, so the cutover instant does not exist
+#     yet. `None` is not a hole: _eval_event_producer raises ConfigError (exit 2)
+#     if this event is ever the ACTIVE one without a cutoff, so the board goes red
+#     rather than fabricating obligations for pre-cutover heads. Whoever merges
+#     #935 replaces this None with that merge commit's instant on the default
+#     branch, in the same change that flips the trigger.
 EVENT_PRODUCERS: dict[str, dict] = {
     "cross-model-review.yml": {
         "events": ["pull_request", "pull_request_target"],
         "activities": ["opened", "synchronize"],
         "max_stale_days": 3,
+        "activation": {
+            "pull_request": "2026-08-03T00:00:00Z",
+            "pull_request_target": None,
+        },
     },
 }
+
+# Hard pagination ceilings for the event-supply adapter. Retrieval that has not
+# reached the activation cutoff within this many pages is INCOMPLETE, and
+# incomplete retrieval must never be read as "no run exists" — it raises
+# AdapterError (exit 2) instead. 100 items/page.
+_MAX_SUPPLY_PAGES = 20
+
+# Timestamps are issued by GitHub but compared against the runner's clock, so a
+# genuinely fresh event can read a hair "in the future" under NTP skew. Rejecting
+# those as forged would be pure cry-wolf. The tolerance is deliberately tiny
+# against a response allowance measured in days: it buys an attacker five minutes
+# of an allowance they can already refresh by pushing, while removing a false-red
+# that would train people to ignore this guard.
+_CLOCK_SKEW_TOLERANCE = timedelta(minutes=5)
 
 for _stream in (sys.stdout, sys.stderr):  # Windows consoles default to cp1252.
     if hasattr(_stream, "reconfigure"):
@@ -211,22 +260,152 @@ def _github_get(endpoint: str, token: str, what: str):
         ) from exc
 
 
+def _collect_relevant_pulls(
+    repo_path: str,
+    repository: str,
+    event: str,
+    token: str,
+    since: datetime,
+) -> list[dict]:
+    """Pull requests with GitHub-recorded activity at or after `since`.
+
+    `state=all`, not `state=open`. A merged or closed pull request does NOT
+    discharge an obligation whose head never got a correlated run: closing a PR
+    is not an answer to it, and only a correlated terminal run resolves an
+    obligation. Requesting open PRs alone let a merge erase the evidence and the
+    monitor turn green — the exact silent-green failure this guard exists for.
+
+    Survival is bounded, not unbounded: `since` is the activation cutoff, so the
+    archive is walked back to that instant and no further.
+
+    `updated_at` is used ONLY as this retrieval boundary, never as dispatch
+    evidence. Every head push bumps it, so a PR whose head moved after `since`
+    can never be paginated away; comments, labels and merges bump it too, which
+    is exactly why it is not proof that a dispatch happened.
+    """
+    pulls: list[dict] = []
+    page = 1
+    while True:
+        pull_page = _github_get(
+            f"https://api.github.com/repos/{repo_path}/pulls?"
+            + urlencode({
+                "state": "all",
+                "sort": "updated",
+                "direction": "desc",
+                "per_page": 100,
+                "page": page,
+            }),
+            token,
+            f"{event} supply on {repository} page {page}",
+        )
+        if not isinstance(pull_page, list):
+            raise AdapterError(
+                f"GitHub API returned malformed pull data for {repository}"
+            )
+        reached_boundary = False
+        for index, entry in enumerate(pull_page):
+            if not isinstance(entry, dict):
+                raise AdapterError(
+                    f"GitHub API returned malformed pull at index {index} for "
+                    f"{repository}"
+                )
+            updated_at = _parse_iso(entry.get("updated_at"))
+            if updated_at is None:
+                raise AdapterError(
+                    f"GitHub API returned malformed pull updated_at for "
+                    f"{repository}"
+                )
+            if updated_at < since:
+                reached_boundary = True
+                continue
+            pulls.append(entry)
+        if reached_boundary or len(pull_page) < 100:
+            return pulls
+        page += 1
+        if page > _MAX_SUPPLY_PAGES:
+            raise AdapterError(
+                f"{event} supply on {repository} did not reach the activation "
+                f"cutoff {since.isoformat()} within {_MAX_SUPPLY_PAGES} pages; "
+                "retrieval is incomplete and cannot be read as absence"
+            )
+
+
+def _collect_target_runs(
+    repo_path: str,
+    workflow: str,
+    event: str,
+    token: str,
+    since: datetime,
+) -> list:
+    """Every `pull_request_target` run back to the activation cutoff.
+
+    The newest page alone is not enough. `pull_request_target` runs cannot be
+    filtered by head SHA (they execute against the trusted BASE commit), so the
+    adapter correlates them client-side out of a listing — and a listing capped
+    at one page silently drops any valid run beyond the newest 100. Its
+    obligation then reads "no run", which is a fabricated alarm indistinguishable
+    from a real one.
+
+    Retrieval stops at the relevant-history boundary, and retrieval that cannot
+    reach it raises instead of reporting absence.
+    """
+    runs: list = []
+    page = 1
+    while True:
+        payload = _github_get(
+            f"https://api.github.com/repos/{repo_path}/actions/workflows/"
+            f"{quote(workflow, safe='')}/runs?"
+            + urlencode({"event": event, "per_page": 100, "page": page}),
+            token,
+            f"{workflow} secured pull-request runs page {page}",
+        )
+        page_runs = (payload.get("workflow_runs")
+                     if isinstance(payload, dict) else None)
+        if not isinstance(page_runs, list):
+            raise AdapterError(
+                f"GitHub Actions API returned malformed run data for {workflow}"
+            )
+        runs.extend(page_runs)
+        if len(page_runs) < 100:
+            return runs
+        oldest = page_runs[-1]
+        oldest_at = (
+            _parse_iso(oldest.get("created_at") or oldest.get("run_started_at"))
+            if isinstance(oldest, dict) else None
+        )
+        # An unparseable boundary timestamp is not permission to stop early; keep
+        # paging and let the ceiling below convert the ambiguity into a failure.
+        if oldest_at is not None and oldest_at < since:
+            return runs
+        page += 1
+        if page > _MAX_SUPPLY_PAGES:
+            raise AdapterError(
+                f"{workflow} `{event}` runs did not reach the activation cutoff "
+                f"{since.isoformat()} within {_MAX_SUPPLY_PAGES} pages; retrieval "
+                "is incomplete and cannot be read as absence"
+            )
+
+
 def default_event_supply_runner(
     workflow: str,
     event: str,
     repository: str,
     token: str,
     activities: tuple[str, ...] = ("opened", "synchronize"),
+    since: datetime | None = None,
 ) -> list[tuple[dict, dict | None]]:
     """Return PR/head dispatch obligations and their exact-head candidate runs.
 
-    Every open pull request is evaluated, so one healthy PR cannot mask another.
-    `updated_at` is deliberately not evidence: comments, labels, merges, and
-    other non-dispatch activity all change it. The observable obligation is each
-    PR's current head SHA. A matching Actions run supplies the dispatch time; if
-    no run exists, the head commit date is the conservative head-correlated
-    lower bound. Both configured activities remain explicit because current API
-    state cannot soundly distinguish an opening head from a synchronized head.
+    Every pull request with activity since the activation cutoff is evaluated —
+    open or closed — so neither one healthy PR nor a merge button can mask an
+    unanswered one. `updated_at` is deliberately not evidence: comments, labels,
+    merges, and other non-dispatch activity all change it. The observable
+    obligation is each PR's head SHA. A matching Actions run supplies the
+    dispatch time; if no run exists, the head commit date is used only as a hint
+    bounded by the GitHub-controlled `[created_at, updated_at]` envelope, because
+    the commit date is written by whoever authored the commit. Both configured
+    activities remain explicit because current API state cannot soundly
+    distinguish an opening head from a synchronized head.
     """
     if not repository or "/" not in repository:
         raise AdapterError(
@@ -241,66 +420,48 @@ def default_event_supply_runner(
         raise AdapterError(
             f"unsupported pull_request activities for event supply: {activities!r}"
         )
+    if since is None:
+        raise AdapterError(
+            f"event-supply proof requires an explicit activation cutoff for "
+            f"`{event}`; without one the relevant history has no boundary"
+        )
 
     repo_path = quote(repository, safe="/")
-    pulls: list = []
-    page = 1
-    while True:
-        pull_page = _github_get(
-            f"https://api.github.com/repos/{repo_path}/pulls?"
-            + urlencode({
-                "state": "open",
-                "sort": "updated",
-                "direction": "desc",
-                "per_page": 100,
-                "page": page,
-            }),
-            token,
-            f"{event} supply on {repository} page {page}",
-        )
-        if not isinstance(pull_page, list):
-            raise AdapterError(
-                f"GitHub API returned malformed pull data for {repository}"
-            )
-        pulls.extend(pull_page)
-        if len(pull_page) < 100:
-            break
-        page += 1
+    pulls = _collect_relevant_pulls(repo_path, repository, event, token, since)
     if not pulls:
         return []
 
     supplies: list[tuple[dict, dict | None]] = []
     target_runs: list | None = None
     if event == "pull_request_target":
-        target_payload = _github_get(
-            f"https://api.github.com/repos/{repo_path}/actions/workflows/"
-            f"{quote(workflow, safe='')}/runs?"
-            + urlencode({"event": event, "per_page": 100}),
-            token,
-            f"{workflow} secured pull-request runs",
+        target_runs = _collect_target_runs(
+            repo_path, workflow, event, token, since
         )
-        target_runs = (target_payload.get("workflow_runs")
-                       if isinstance(target_payload, dict) else None)
-        if not isinstance(target_runs, list):
-            raise AdapterError(
-                f"GitHub Actions API returned malformed run data for {workflow}"
-            )
 
     for index, pull in enumerate(pulls):
-        if not isinstance(pull, dict):
-            raise AdapterError(
-                f"GitHub API returned malformed pull at index {index} for {repository}"
-            )
         pull_number = pull.get("number")
         created_at = _parse_iso(pull.get("created_at"))
+        updated_at = _parse_iso(pull.get("updated_at"))
+        pull_state = pull.get("state")
         head = pull.get("head")
         head_sha = head.get("sha") if isinstance(head, dict) else None
         if (not isinstance(pull_number, int) or isinstance(pull_number, bool)
-                or created_at is None
+                or created_at is None or updated_at is None
+                or pull_state not in {"open", "closed"}
                 or not isinstance(head_sha, str) or not head_sha.strip()):
             raise AdapterError(
                 f"GitHub API returned malformed pull at index {index} for "
-                f"{repository}: integer number, created_at, and head.sha are required"
+                f"{repository}: integer number, created_at, updated_at, state, "
+                "and head.sha are required"
+            )
+        # GitHub never records a pull request as updated before it was created.
+        # If it appears to, the envelope this adapter bounds author-controlled
+        # timestamps against is itself untrustworthy — fail closed.
+        if created_at > updated_at:
+            raise AdapterError(
+                f"GitHub API returned an implausible pull timeline for "
+                f"#{pull_number} on {repository}: created_at is newer than "
+                "updated_at"
             )
 
         if target_runs is None:
@@ -333,6 +494,7 @@ def default_event_supply_runner(
                             for identity in candidate["pull_requests"]
                         )), None)
 
+        malformed_reason: str | None = None
         if run is None:
             commit = _github_get(
                 f"https://api.github.com/repos/{repo_path}/commits/"
@@ -350,7 +512,29 @@ def default_event_supply_runner(
                 raise AdapterError(
                     f"GitHub API returned malformed head commit time for {head_sha}"
                 )
-            occurred_at = max(created_at, commit_at)
+            # The committer date is written by whoever produced the commit, so it
+            # is NOT the authority for allowance aging. Dating an obligation from
+            # `2099-01-01` would hold it "pending" for decades and silence this
+            # guard for as long as the PR author likes.
+            #
+            # The GitHub-controlled envelope for when this head became the PR
+            # head is [created_at, updated_at]: the obligation cannot predate the
+            # pull request, and a head push always bumps updated_at. Inside that
+            # envelope the commit date is a useful refinement — it distinguishes a
+            # head pushed an hour ago from the day the PR was opened. Outside it,
+            # on the late side, it is not evidence but a forged clock, and forged
+            # evidence is reported as malformed proof (red) rather than clamped
+            # and believed.
+            if commit_at > updated_at:
+                malformed_reason = (
+                    f"head commit date {commit_at_raw!r} is newer than the pull "
+                    f"request's GitHub-recorded last activity "
+                    f"({pull.get('updated_at')!r}); an author-controlled commit "
+                    "date cannot extend the response allowance"
+                )
+                occurred_at = updated_at
+            else:
+                occurred_at = max(created_at, commit_at)
         else:
             if not isinstance(run, dict):
                 raise AdapterError(
@@ -376,12 +560,16 @@ def default_event_supply_runner(
                 run = dict(run)
                 run["associated_pull_requests"] = associated_pulls
 
-        supplies.append(({
+        obligation = {
             "activities": list(activities),
             "occurred_at": occurred_at.isoformat(),
             "pull_number": pull_number,
             "head_sha": head_sha,
-        }, run))
+            "pull_state": pull_state,
+        }
+        if malformed_reason:
+            obligation["malformed_reason"] = malformed_reason
+        supplies.append((obligation, run))
     return supplies
 
 
@@ -728,13 +916,22 @@ def _eval_event_producer(
         a `pull_request` loop is expected to have run only when a pull request
         actually happened.
 
-    Each sampled pull request contributes its current PR/head identity, so one
-    answered PR cannot mask another unanswered one. Opening and synchronize stay
-    explicit as a candidate activity set: generic `updated_at` is not dispatch
-    evidence. A run answers only when both its PR number and head SHA match; a
-    newer global run for another PR is irrelevant. Queued, in-progress, absent,
-    or mismatched runs remain pending within `max_stale_days` and turn red only
-    after that response allowance. A correlated completed failure is red at once.
+    Each sampled pull request contributes its PR/head identity, so one answered
+    PR cannot mask another unanswered one — and closing or merging a PR does not
+    discharge its obligation, because a merge is not an answer. Opening and
+    synchronize stay explicit as a candidate activity set: generic `updated_at`
+    is not dispatch evidence. A run answers only when both its PR number and head
+    SHA match; a newer global run for another PR is irrelevant. Queued,
+    in-progress, absent, or mismatched runs remain pending within
+    `max_stale_days` and turn red only after that response allowance. A
+    correlated completed failure is red at once.
+
+    Obligations are bounded below by the event's ACTIVATION CUTOFF (declared in
+    EVENT_PRODUCERS). Heads observed before it are explicitly waived: changing a
+    workflow's trigger does not synthesize `opened`/`synchronize` events for
+    heads that already exist, so demanding a run for them would manufacture
+    alarms no producer could ever answer. An event that is active on disk with no
+    declared cutoff is a ConfigError, not a free pass.
 
     LIMIT, stated plainly: this proves the loop was DISPATCHED and did not fail,
     not that its output was VALID. The specific #844 incident (runs green,
@@ -776,12 +973,41 @@ def _eval_event_producer(
             f"match workflow activities {sorted(configured_activities or [])}",
         )
 
+    # Activation cutoff for the SELECTED event. Absent or unusable is fail-closed:
+    # inferring obligations from an unknown activation instant is exactly the
+    # retroactive-obligation defect this boundary exists to prevent.
+    activation = spec.get("activation")
+    if not isinstance(activation, dict) or event not in activation:
+        raise ConfigError(
+            f"{workflow}: no activation cutoff is declared for `{event}`; an "
+            "event-triggered producer cannot be judged without the instant from "
+            "which it began owing runs"
+        )
+    cutoff_raw = activation[event]
+    cutoff = _parse_iso(cutoff_raw) if isinstance(cutoff_raw, str) else None
+    if cutoff is None:
+        raise ConfigError(
+            f"{workflow}: `{event}` is the active trigger but its activation "
+            f"cutoff is {cutoff_raw!r}. Changing a trigger does not synthesize "
+            "past events, so obligations must not be inferred before the instant "
+            "the trigger went live on the default branch. Record that instant "
+            "(or waive the event) in EVENT_PRODUCERS before this producer can be "
+            "judged"
+        )
+    if cutoff > now:
+        raise ConfigError(
+            f"{workflow}: `{event}` activation cutoff {cutoff.isoformat()} is in "
+            "the future, which would waive every obligation and leave this guard "
+            "reading green while blind"
+        )
+
     supplies = event_supply_runner(
         workflow,
         event,
         repository,
         token,
         tuple(sorted(declared_activities)),
+        cutoff,
     )
     if not isinstance(supplies, list):
         raise AdapterError(
@@ -789,10 +1015,12 @@ def _eval_event_producer(
         )
     if not supplies:
         return ("healthy",
-                f"quiet: no `{event}` event has ever occurred, so no run was owed "
+                f"quiet: no `{event}` event has occurred since the "
+                f"{cutoff.isoformat()} activation cutoff, so no run was owed "
                 "(event-triggered loops are judged by event supply, not by a clock)")
 
     results: list[tuple[str, str]] = []
+    waived = 0
     for item in supplies:
         if not isinstance(item, (list, tuple)) or len(item) != 2:
             results.append((
@@ -826,11 +1054,46 @@ def _eval_event_producer(
             ))
             continue
 
-        event_age = _age_days(occurred_at, now)
         activity_label = "/".join(sorted(declared_activities))
-        obligation_label = (
-            f"PR #{pull_number} `{activity_label}` at {head_sha[:12]}"
+        pull_state = obligation.get("pull_state")
+        state_label = (
+            f" ({pull_state})" if pull_state in {"open", "closed"} else ""
         )
+        obligation_label = (
+            f"PR #{pull_number}{state_label} `{activity_label}` at {head_sha[:12]}"
+        )
+
+        # A monitor cannot have observed an event that has not happened yet. A
+        # future observation time is a broken or forged clock, and believing it
+        # would grant an allowance that never expires.
+        if occurred_at > now + _CLOCK_SKEW_TOLERANCE:
+            results.append((
+                "malformed_proof",
+                f"{obligation_label} claims an observation time of "
+                f"{obligation.get('occurred_at')!r}, which is in the future; a "
+                "timestamp the monitor cannot have observed is not proof",
+            ))
+            continue
+
+        # Pre-cutover head: explicitly waived, never silently dropped. The count
+        # is reported in the summary so a waiver can be audited rather than
+        # mistaken for an absence of pull requests.
+        if occurred_at < cutoff:
+            waived += 1
+            continue
+
+        # Evidence the adapter could retrieve but not trust (see
+        # default_event_supply_runner) is red, not clamped-and-believed.
+        malformed_reason = obligation.get("malformed_reason")
+        if malformed_reason:
+            results.append((
+                "malformed_proof",
+                f"{obligation_label} has untrustworthy timing evidence: "
+                f"{malformed_reason}",
+            ))
+            continue
+
+        event_age = _age_days(occurred_at, now)
         if run is None:
             if event_age <= max_days:
                 results.append((
@@ -946,6 +1209,16 @@ def _eval_event_producer(
             f"({_age_days(run_started, now):.1f}d ago): {url}",
         ))
 
+    waiver_note = (
+        f" ({waived} pre-cutoff obligation(s) waived at {cutoff.isoformat()})"
+        if waived else ""
+    )
+    if not results:
+        return ("healthy",
+                f"quiet: every observed `{event}` obligation{waiver_note} "
+                "predates the activation cutoff and is explicitly waived — "
+                "changing a trigger does not synthesize past events")
+
     priority = {
         "malformed_proof": 4,
         "failed_run": 3,
@@ -956,7 +1229,7 @@ def _eval_event_producer(
         "healthy": 0,
     }
     kind, detail = max(results, key=lambda result: priority.get(result[0], 5))
-    return kind, f"evaluated {len(results)} PR obligation(s): {detail}"
+    return kind, f"evaluated {len(results)} PR obligation(s){waiver_note}: {detail}"
 
 
 # ---------------------------------------------------------------------------
