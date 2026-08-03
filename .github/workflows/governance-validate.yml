@@ -12,6 +12,7 @@ on:
       - 'schemas/**'
       - 'tests/behavioral/**'
       - 'README.md'
+      - 'BACKLOG.md'
       - 'governance-manifest.json'
       - 'scripts/**'
       - 'baml_src/**'
@@ -31,6 +32,7 @@ on:
       - 'schemas/**'
       - 'tests/behavioral/**'
       - 'README.md'
+      - 'BACKLOG.md'
       - 'governance-manifest.json'
       - 'scripts/**'
       # baml_src/ and baml_client/ trigger the `baml-drift` job below. Without them a
@@ -109,6 +111,29 @@ jobs:
         run: |
           if ! git diff --exit-code governance-manifest.json; then
             echo "::error::governance-manifest.json is stale. Run: python scripts/build_manifest.py"
+            exit 1
+          fi
+
+  # BACKLOG.md contains a marked block of mechanically derived repository facts.
+  # Regenerate it and diff the tracked file: status alone would also report unrelated
+  # untracked runner files and would not show the author what values became stale.
+  backlog-facts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate backlog facts
+        run: python scripts/backlog_facts.py
+
+      - name: Backlog facts must be up to date
+        run: |
+          if ! git diff --exit-code BACKLOG.md; then
+            echo "::error::BACKLOG.md facts are stale. Run: python scripts/backlog_facts.py"
             exit 1
           fi
 
