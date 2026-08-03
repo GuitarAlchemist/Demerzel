@@ -38,7 +38,7 @@ follows its precondition chain, not its interest level.
 
 ## Queue
 
-- [ ] 🔒 **C1 — Run the Python test suite in the oracle.**
+- [x] 🔒 **C1 — Run the Python test suite in the oracle.**
   `scripts/verify.ps1`. ~10 lines, 1 file. **Precondition for everything below.**
   **Human-driven — this edits the loop's own pass/fail criterion.** An autonomous
   cycle rewriting the oracle it will then be judged by is the sharpest
