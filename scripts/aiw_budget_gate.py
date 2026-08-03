@@ -385,6 +385,32 @@ def release(cycle_path: Path, job_id: str, actual_cost_usd: float,
         lock_path.unlink(missing_ok=True)
 
 
+def _abandon_in_cycle(cycle: dict[str, Any], job_id: str,
+                      reason: str) -> dict[str, Any]:
+    """Mutate one validated cycle while its caller holds the ledger lock."""
+    reservation = cycle["reservations"].get(job_id)
+    if reservation is None:
+        raise ValueError(f"no reservation for job: {job_id}")
+    estimate = _required_number(reservation, "estimated_cost_usd")
+
+    cycle["reservations"].pop(job_id)
+    cycle["reserved_cost_usd"] -= estimate
+    cycle["active_packets"] -= 1
+    cycle["unverified_cost_usd"] = cycle.get("unverified_cost_usd", 0) + estimate
+    entry = {
+        "job_id": job_id,
+        "provider": reservation.get("provider"),
+        "request_sha256": reservation.get("request_sha256"),
+        "charged_estimate_usd": estimate,
+        "receipt_verified": False,
+        "reason": str(reason)[:200],
+    }
+    cycle.setdefault("unreconciled", []).append(entry)
+    return {"decision": "abandoned", "job_id": job_id,
+            "charged_estimate_usd": estimate,
+            "receipt_verified": False, "reason": entry["reason"]}
+
+
 def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
     """Give up reconciling a reservation WITHOUT claiming its spend was verified.
 
@@ -420,30 +446,45 @@ def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
     lock_path = _lock(cycle_path)
     try:
         cycle = _read_cycle(cycle_path)
-        reservation = cycle["reservations"].get(job_id)
-        if reservation is None:
-            raise ValueError(f"no reservation for job: {job_id}")
-        estimate = _required_number(reservation, "estimated_cost_usd")
-
-        cycle["reservations"].pop(job_id)
-        cycle["reserved_cost_usd"] -= estimate
-        cycle["active_packets"] -= 1
-        cycle["unverified_cost_usd"] = cycle.get("unverified_cost_usd", 0) + estimate
-        entry = {
-            "job_id": job_id,
-            "provider": reservation.get("provider"),
-            "request_sha256": reservation.get("request_sha256"),
-            "charged_estimate_usd": estimate,
-            "receipt_verified": False,
-            "reason": str(reason)[:200],
-        }
-        cycle.setdefault("unreconciled", []).append(entry)
+        result = _abandon_in_cycle(cycle, job_id, reason)
         cycle_path.parent.mkdir(parents=True, exist_ok=True)
         cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
-                                        allow_nan=False) + "\n", encoding="utf-8")
-        return {"decision": "abandoned", "job_id": job_id,
-                "charged_estimate_usd": estimate,
-                "receipt_verified": False, "reason": entry["reason"]}
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def abandon_open_provider(cycle_path: Path, provider: str,
+                          reason: str) -> dict[str, Any]:
+    """Idempotently abandon the sole open reservation for one provider.
+
+    Workflow cleanup cannot trust step outputs: cancellation may occur after the
+    reservation is written but before GitHub publishes those outputs. Recovering
+    the job id from the locked ledger closes that window. Zero matches is a
+    successful no-op so the finalizer can run unconditionally; multiple matches
+    are ambiguous and fail closed without mutating either reservation.
+    """
+    if not provider:
+        raise ValueError("provider is required to abandon an open reservation")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        matches = [
+            job_id for job_id, reservation in cycle["reservations"].items()
+            if reservation.get("provider") == provider
+        ]
+        if not matches:
+            return {"decision": "no_reservation", "provider": provider}
+        if len(matches) != 1:
+            raise ValueError(
+                f"multiple open reservations for provider {provider}: "
+                + ", ".join(sorted(matches)))
+        result = _abandon_in_cycle(cycle, matches[0], reason)
+        cycle_path.parent.mkdir(parents=True, exist_ok=True)
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return result
     finally:
         lock_path.unlink(missing_ok=True)
 
@@ -551,6 +592,7 @@ def main(argv: list[str] | None = None) -> int:
     terminal = parser.add_mutually_exclusive_group()
     terminal.add_argument("--release-job")
     terminal.add_argument("--abandon-job")
+    terminal.add_argument("--abandon-open-provider")
     parser.add_argument("--actual-cost-usd", type=float)
     parser.add_argument("--reason")
     args = parser.parse_args(argv)
@@ -563,7 +605,13 @@ def main(argv: list[str] | None = None) -> int:
         _bind_canonical("--approval", args.approval, APPROVAL_PATH)
         _bind_canonical("--receipt", args.receipt, RECEIPT_PATH)
         policy = load_policy(POLICY_PATH)
-        if args.abandon_job:
+        if args.abandon_open_provider:
+            if not args.reason:
+                raise ValueError("--reason is required with --abandon-open-provider")
+            _provider(policy, args.abandon_open_provider)
+            result = abandon_open_provider(
+                CYCLE_LEDGER_PATH, args.abandon_open_provider, args.reason)
+        elif args.abandon_job:
             # The only honest way out of a metered reservation whose receipt does
             # not exist. `--release-job` demands a trusted receipt and a metered
             # provider's receipt cannot be self-issued, so without this verb an
@@ -598,7 +646,9 @@ def main(argv: list[str] | None = None) -> int:
     # consistent again -- but it prints as ABANDONED, never as RELEASED, and the
     # cycle ledger records it under `unreconciled` with receipt_verified: false.
     print(f"{result['decision'].upper()}: {LEDGER_PATH}")
-    return 0 if result["decision"] in {"allow", "released", "abandoned"} else 1
+    return 0 if result["decision"] in {
+        "allow", "released", "abandoned", "no_reservation"
+    } else 1
 
 
 if __name__ == "__main__":

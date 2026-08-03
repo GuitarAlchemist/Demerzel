@@ -11,6 +11,7 @@ return.
 
 from __future__ import annotations
 
+import re
 import unittest
 from pathlib import Path
 
@@ -19,6 +20,11 @@ WORKFLOW = (Path(__file__).resolve().parents[1]
             / ".github" / "workflows" / "jules-auto-delegate.yml")
 GATE_INVOKE = "python3 scripts/aiw_budget_gate.py"
 JULES_ACTION = "uses: google-labs-code/jules-action"
+FINALIZER_INVOKE = "python3 scripts/aiw_budget_gate.py --abandon-open-provider jules"
+UPLOAD_ACTION = "uses: actions/upload-artifact@"
+PINNED_UPLOAD_ACTION = (
+    "uses: actions/upload-artifact@"
+    "ea165f8d65b6e75b540449e92b4886f43607fa02")
 
 
 class AiwBudgetConsumerWiringTests(unittest.TestCase):
@@ -46,6 +52,82 @@ class AiwBudgetConsumerWiringTests(unittest.TestCase):
     def test_invalid_request_fails_closed(self) -> None:
         # exit 2 (invalid request/policy or non-canonical path) fails the job.
         self.assertIn("failing closed", self.text)
+
+    def test_finalizer_recovers_from_ledger_without_step_outputs(self) -> None:
+        self.assertIn(FINALIZER_INVOKE, self.text)
+        finalizer_at = self.text.find(FINALIZER_INVOKE)
+        finalizer_step = self.text[self.text.rfind("- name:", 0, finalizer_at):finalizer_at]
+        self.assertIn("if: always()", finalizer_step)
+        self.assertNotIn("steps.gate.outputs.reservation_open", finalizer_step)
+        self.assertNotIn("steps.gate.outputs.job_id", finalizer_step)
+
+    def test_jules_timeout_leaves_cleanup_margin(self) -> None:
+        action_at = self.text.find(JULES_ACTION)
+        record_at = self.text.find("- name: Record confirmed delegation")
+        self.assertNotEqual(action_at, -1, "jules-action step is missing")
+        action_step_at = self.text.rfind("- name:", 0, action_at)
+        step_timeout = re.search(
+            r"timeout-minutes:\s*(\d+)", self.text[action_step_at:record_at])
+        self.assertIsNotNone(step_timeout, "Jules needs its own step timeout")
+        job_header = self.text[
+            self.text.find("  delegate:"):self.text.find("    steps:")]
+        self.assertNotIn("timeout-minutes", job_header,
+                         "a global deadline can kill the budget finalizer")
+
+    def test_finalizer_is_guarded_and_runs_after_result_reporting(self) -> None:
+        jules_at = self.text.find(JULES_ACTION)
+        record_at = self.text.find("- name: Record confirmed delegation")
+        report_at = self.text.find("- name: Report failed delegation")
+        finalizer_at = self.text.find(FINALIZER_INVOKE)
+        self.assertNotEqual(finalizer_at, -1, "reservation finalizer is missing")
+        self.assertLess(jules_at, finalizer_at)
+        self.assertLess(finalizer_at, record_at,
+                        "finalization must precede fallible success reporting")
+        self.assertLess(finalizer_at, report_at,
+                        "finalization must precede fallible failure reporting")
+        finalizer_step = self.text[self.text.rfind("- name:", 0, finalizer_at):finalizer_at]
+        self.assertIn("if: always()", finalizer_step)
+        self.assertNotIn("continue-on-error", finalizer_step,
+                         "finalization errors must keep the job red")
+
+    def test_finalizer_never_forges_a_release_or_receipt(self) -> None:
+        self.assertIn(FINALIZER_INVOKE, self.text)
+        self.assertNotIn("--release-job", self.text)
+        self.assertNotIn("aiw-receipt", self.text)
+
+    def test_terminal_ledgers_are_uploaded_after_finalization(self) -> None:
+        finalizer_at = self.text.find(FINALIZER_INVOKE)
+        upload_at = self.text.find(UPLOAD_ACTION)
+        self.assertNotEqual(upload_at, -1, "terminal ledger upload is missing")
+        self.assertLess(finalizer_at, upload_at,
+                        "artifact must capture the post-finalization ledger")
+        upload_step = self.text[self.text.rfind("- name:", 0, upload_at):]
+        self.assertIn("if: always()", upload_step)
+        for ledger in (".octo/aiw-budget-ledger.json",
+                       ".octo/aiw-cycle-ledger.json"):
+            check_at = self.text.find(f"test -f {ledger}")
+            self.assertNotEqual(check_at, -1, f"{ledger} existence is not verified")
+            self.assertLess(check_at, upload_at,
+                            "both ledgers must be verified before upload")
+
+    def test_budget_artifact_is_unique_and_narrow(self) -> None:
+        upload_at = self.text.find(UPLOAD_ACTION)
+        self.assertNotEqual(upload_at, -1, "terminal ledger upload is missing")
+        upload_step = self.text[self.text.rfind("- name:", 0, upload_at):]
+        self.assertIn(PINNED_UPLOAD_ACTION, upload_step)
+        self.assertIn(
+            "name: aiw-budget-ledgers-${{ github.run_id }}-${{ github.run_attempt }}",
+            upload_step)
+        self.assertIn("include-hidden-files: true", upload_step)
+        path_block = re.search(
+            r"(?m)^          path: \|\n((?:            \S.*\n)+)", upload_step)
+        self.assertIsNotNone(path_block, "artifact needs an explicit path list")
+        self.assertEqual(
+            [".octo/aiw-budget-ledger.json", ".octo/aiw-cycle-ledger.json"],
+            [line.strip() for line in path_block.group(1).splitlines()],
+            "artifact must contain only the two budget ledgers")
+        self.assertNotRegex(upload_step, r"(?m)^\s+path:\s*\.octo/?\s*$",
+                            "never publish the entire hidden .octo directory")
 
 
 if __name__ == "__main__":
