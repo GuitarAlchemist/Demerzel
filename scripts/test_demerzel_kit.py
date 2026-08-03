@@ -3,6 +3,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock as mock
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -49,6 +51,80 @@ class TestValidate(unittest.TestCase):
                 sys.modules["jsonschema"] = real
             else:
                 sys.modules.pop("jsonschema", None)
+
+
+class TestHaltState(unittest.TestCase):
+    NOW = datetime(2026, 8, 3, tzinfo=timezone.utc)
+
+    @staticmethod
+    def _write(path, **overrides):
+        marker = {
+            "schema_version": 1,
+            "halted_at": "2026-08-03T00:00:00Z",
+            "reason": "operator stop",
+            **overrides,
+        }
+        path.write_text(json.dumps(marker), encoding="utf-8")
+
+    def test_absent_is_inactive(self):
+        with tempfile.TemporaryDirectory() as d:
+            state = kit.halt_state(Path(d) / "HALT-ALL", self.NOW)
+        self.assertEqual(
+            state,
+            {"present": False, "valid": True, "active": False,
+             "reason": None, "errors": None, "marker": None},
+        )
+
+    def test_valid_marker_is_active_until_expiry(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "HALT-ALL"
+            self._write(path, expires_at="2026-08-03T01:00:00Z")
+            active = kit.halt_state(path, self.NOW)
+            self._write(path, expires_at="2026-08-02T23:00:00Z")
+            expired = kit.halt_state(path, self.NOW)
+        self.assertTrue(active["valid"])
+        self.assertTrue(active["active"])
+        self.assertFalse(expired["active"])
+
+    def test_unreadable_invalid_and_unvalidated_markers_fail_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "HALT-ALL"
+            path.write_text("{", encoding="utf-8")
+            unreadable = kit.halt_state(path, self.NOW)
+
+            path.write_bytes(b"\xff")
+            invalid_encoding = kit.halt_state(path, self.NOW)
+
+            path.write_text('{"schema_version": 1}', encoding="utf-8")
+            invalid = kit.halt_state(path, self.NOW)
+
+            self._write(path)
+            real = sys.modules.get("jsonschema")
+            sys.modules["jsonschema"] = None
+            try:
+                unvalidated = kit.halt_state(path, self.NOW)
+            finally:
+                if real is not None:
+                    sys.modules["jsonschema"] = real
+                else:
+                    sys.modules.pop("jsonschema", None)
+
+        for state in (unreadable, invalid_encoding, invalid, unvalidated):
+            with self.subTest(reason=state["reason"]):
+                self.assertTrue(state["present"])
+                self.assertFalse(state["valid"])
+                self.assertTrue(state["active"])
+                self.assertIsNotNone(state["errors"])
+
+    def test_read_error_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "HALT-ALL"
+            self._write(path)
+            with mock.patch.object(Path, "read_text", side_effect=OSError("denied")):
+                state = kit.halt_state(path, self.NOW)
+        self.assertFalse(state["valid"])
+        self.assertTrue(state["active"])
+        self.assertIn("denied", state["errors"])
 
 
 class TestWriteArtifact(unittest.TestCase):

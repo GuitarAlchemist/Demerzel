@@ -218,29 +218,19 @@ def cmd_resume(_args: argparse.Namespace) -> int:
 
 def cmd_status(_args: argparse.Namespace) -> int:
     p = marker_path()
-    if not p.exists():
+    state = kit.halt_state(p, datetime.now(timezone.utc))
+    if not state["present"]:
         print("Status: NOT halted (no marker present)")
         return 0
-    try:
-        marker = json.loads(p.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"Status: marker present but UNREADABLE — {exc}", file=sys.stderr)
+    if not state["valid"]:
+        print(f"Status: marker present but INVALID ({state['reason']}): "
+              f"{state['errors']}", file=sys.stderr)
         return 0
-    errors = validate(marker)
-    if errors:
-        print("Status: marker present but INVALID:")
-        for e in errors:
-            print(f"  - {e}")
-        return 0
+    marker = state["marker"]
     expires = marker.get("expires_at")
-    if expires:
-        try:
-            exp_dt = datetime.fromisoformat(expires.replace("Z", "+00:00"))
-            if exp_dt < datetime.now(timezone.utc):
-                print(f"Status: marker present but EXPIRED at {expires} (consumers treat as absent)")
-                return 0
-        except ValueError:
-            pass
+    if not state["active"]:
+        print(f"Status: marker present but EXPIRED at {expires} (consumers treat as absent)")
+        return 0
     print("Status: HALTED")
     print(f"  halted_at: {marker.get('halted_at')}")
     print(f"  halted_by: {marker.get('halted_by')}")

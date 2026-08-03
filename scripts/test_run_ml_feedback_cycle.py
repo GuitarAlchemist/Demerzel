@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 import unittest.mock as mock
+from datetime import datetime, timezone
 from pathlib import Path
 import sys
 
@@ -29,9 +30,20 @@ class TestRunMLFeedbackCycle(unittest.TestCase):
 
     def test_halt_aborts_cycle(self):
         with mock.patch.object(r, "_halt_active", return_value=(True, "halted")), \
-             mock.patch.object(r, "_resolve_producers", return_value={"paths": {"p": "mock"}, "notes": {}}):
+             mock.patch.object(r, "_resolve_producers") as resolve:
             rc = r.main(["--dry-run"])
             self.assertEqual(rc, 3)
+            resolve.assert_not_called()
+
+    def test_schema_invalid_expired_marker_fails_closed(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "HALT-ALL"
+            path.write_text('{"expires_at":"2020-01-01T00:00:00Z"}', encoding="utf-8")
+            active, why = r._halt_active(
+                path, datetime(2026, 8, 3, tzinfo=timezone.utc)
+            )
+        self.assertTrue(active)
+        self.assertIn("halt_all_invalid", why)
 
     def test_run_ml_feedback_writes_artifact(self):
         with tempfile.TemporaryDirectory() as d:
