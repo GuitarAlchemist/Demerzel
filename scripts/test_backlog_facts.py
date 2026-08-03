@@ -107,6 +107,25 @@ class BacklogFactsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exactly one generated block"):
             backlog_facts.replace_generated_block("no markers\n", replacement)
 
+    def test_governance_workflow_enforces_backlog_fact_drift(self):
+        workflow = (
+            backlog_facts.ROOT / ".github" / "workflows" / "governance-validate.yml"
+        ).read_text(encoding="utf-8")
+
+        trigger_section = workflow.split("permissions:", 1)[0]
+        push_paths = trigger_section.split("  push:\n", 1)[1].split(
+            "  pull_request:\n", 1
+        )[0]
+        pull_request_paths = trigger_section.split("  pull_request:\n", 1)[1].split(
+            "  workflow_dispatch:\n", 1
+        )[0]
+
+        self.assertIn("      - 'BACKLOG.md'\n", push_paths)
+        self.assertIn("      - 'BACKLOG.md'\n", pull_request_paths)
+        self.assertIn("  backlog-facts:\n", workflow)
+        self.assertIn("python scripts/backlog_facts.py", workflow)
+        self.assertIn("git diff --exit-code BACKLOG.md", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
