@@ -20,6 +20,18 @@ function Assert-NativeSuccess([string]$what) {
     }
 }
 
+if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+    throw 'python is required to run the repository test suite'
+}
+
+Push-Location $root
+try {
+    python -m unittest discover -s scripts -p 'test_*.py'
+    Assert-NativeSuccess 'python unit tests'
+} finally {
+    Pop-Location
+}
+
 if (Test-Path -LiteralPath (Join-Path $root 'tree-sitter-ixql/package.json')) {
     Push-Location (Join-Path $root 'tree-sitter-ixql')
     try {

@@ -3,6 +3,11 @@
 Demerzel run_ml_feedback_cycle — the orchestrator that turns the four hand-run
 ML-feedback legs into ONE unattended, bounded self-improvement cycle.
 
+Execution policy: externally-scheduled.
+An operator-managed cron or Task Scheduler owns the mutating cycle's cadence.
+GitHub Actions `ml-governance-schedule.yml` is a read-only freshness tripwire and
+strict dry-run smoke; it never runs the mutating cycle.
+
 It runs, in dependency order, a single pass of pipelines/ml-feedback-loop.ixql
 (standing in for the absent IxQL executor):
 
@@ -17,10 +22,10 @@ It runs, in dependency order, a single pass of pipelines/ml-feedback-loop.ixql
                         bounded auto-apply or escalate to human review
   4. Summarize        — write one cycle summary to state/oversight/
 
-One invocation = one cycle. Cadence comes from whatever schedules this (cron /
-Task Scheduler), NOT from a cycle-count gate here — the ml-feedback policy defines
-no per-day cap, and WAKE-time count gates have wedged loops before. The only
-loop-level bound is the HALT switch; per-decision bounds live in the governor.
+One invocation = one cycle. Cadence belongs to the external operator scheduler,
+NOT to a cycle-count gate here — the ml-feedback policy defines no per-day cap,
+and WAKE-time count gates have wedged loops before. The only loop-level bound is
+the HALT switch; per-decision bounds live in the governor.
 
 Producers that find nothing to do exit 4 (no-op) and are reported as such, not as
 errors. A producer/harvest error is logged but does not abort the cycle (the
@@ -55,23 +60,18 @@ from pathlib import Path
 import demerzel_kit as kit
 
 
-def _halt_active() -> tuple[bool, str]:
-    """Mirror demerzel_halt.py: ~/.demerzel/HALT-ALL present and not expired."""
-    marker = Path.home() / ".demerzel" / "HALT-ALL"
-    if not marker.is_file():
+def _halt_active(path: Path | None = None, now: datetime | None = None) -> tuple[bool, str]:
+    """Translate the shared HALT-ALL facts into this cycle's stop decision."""
+    state = kit.halt_state(
+        path or Path.home() / ".demerzel" / "HALT-ALL",
+        now or datetime.now(timezone.utc),
+    )
+    if not state["active"]:
         return False, ""
-    try:
-        data = json.loads(marker.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return True, "HALT-ALL present but unreadable — treating as halted (fail-safe)"
-    exp = data.get("expires_at")
-    if exp:
-        try:
-            if datetime.fromisoformat(exp.replace("Z", "+00:00")) < datetime.now(timezone.utc):
-                return False, ""  # expired -> consumers treat as absent
-        except ValueError:
-            pass
-    return True, f"HALT-ALL in effect (reason: {data.get('reason', 'n/a')})"
+    if not state["valid"]:
+        return True, (f"HALT-ALL {state['reason']} — treating as halted (fail-safe): "
+                      f"{state['errors']}")
+    return True, f"HALT-ALL in effect (reason: {state['reason']})"
 
 
 def _run(label: str, cmd: list[str], dry: bool) -> dict:
@@ -144,6 +144,12 @@ def main(argv: list[str]) -> int:
                          "exits 0, so a smoke check could pass on an incoherent plan")
     args = ap.parse_args(argv)
 
+    # 0. HALT kill switch
+    halted, why = _halt_active()
+    if halted:
+        print(f"ABORT: {why}", file=sys.stderr)
+        return 3
+
     py = sys.executable
     ix_root = (args.repos_root / "ix").resolve()
     cache_dir = root / "state" / ".cache" / "ix-producers"
@@ -152,12 +158,6 @@ def main(argv: list[str]) -> int:
         print(f"error: could not resolve any ix producers (source={args.producer_source}, "
               f"ix={ix_root})", file=sys.stderr)
         return 1
-
-    # 0. HALT kill switch
-    halted, why = _halt_active()
-    if halted:
-        print(f"ABORT: {why}", file=sys.stderr)
-        return 3
 
     steps = []
     # 1. Harvest — compliance reports per consumer (feeds §3c)

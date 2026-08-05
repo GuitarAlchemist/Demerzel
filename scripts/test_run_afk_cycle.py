@@ -79,6 +79,29 @@ class TestDryRunNoLiveCalls(unittest.TestCase):
         audit.assert_not_called()        # dry-run writes nothing
 
 
+class TestHaltGate(unittest.TestCase):
+    def test_active_halt_stops_before_queue_budget_and_backend(self):
+        states = [
+            {"present": True, "valid": True, "active": True,
+             "reason": "operator stop", "errors": None, "marker": {}},
+            {"present": True, "valid": False, "active": True,
+             "reason": "halt_all_invalid", "errors": "bad marker", "marker": None},
+            {"present": True, "valid": False, "active": True,
+             "reason": "halt_all_unreadable", "errors": "denied", "marker": None},
+        ]
+        for state in states:
+            with self.subTest(reason=state["reason"]), \
+                 mock.patch.object(g.kit, "halt_state", return_value=state), \
+                 mock.patch.object(g, "_gh_queue") as queue, \
+                 mock.patch.object(g.budget, "load_policy") as load_policy, \
+                 mock.patch.object(g, "get_backend") as get_backend:
+                rc = g.main([])
+            self.assertEqual(rc, 3)
+            queue.assert_not_called()
+            load_policy.assert_not_called()
+            get_backend.assert_not_called()
+
+
 class TestParallelDispatch(unittest.TestCase):
     def test_live_processes_every_issue_once(self):
         issues = [{"number": n, "title": f"fix docs typo {n}", "body": "x", "labels": []}
@@ -579,7 +602,14 @@ class TestBudgetGate(unittest.TestCase):
             "as $0.00 VERIFIED spend forever. If release() cannot be satisfied "
             "honestly, abandon() is the answer -- see #896 and "
             "docs/solutions/harness/2026-07-29-a-guard-is-only-as-good-as-its-subject.md")
-        self.assertAlmostEqual(1.25, cycle["actual_cost_usd"], msg=forged)  # charged, not $0
+        # The estimate is charged, and charged to the bucket that says nobody
+        # verified it. Both halves matter: $0.00 anywhere means the spend was
+        # credited back, and a non-zero actual_cost_usd means an unreceipted
+        # charge is being reported as measured.
+        self.assertAlmostEqual(1.25, cycle["unverified_cost_usd"], msg=forged)
+        self.assertAlmostEqual(0.0, cycle["actual_cost_usd"], msg=forged)
+        self.assertAlmostEqual(
+            1.25, cycle["actual_cost_usd"] + cycle["unverified_cost_usd"], msg=forged)
         entry = cycle["unreconciled"][0]
         self.assertFalse(entry["receipt_verified"], msg=forged)
         self.assertEqual("anthropic-api", entry["provider"])

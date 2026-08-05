@@ -2,18 +2,15 @@ name: Auto-delegate ready-for-agent issues to Jules
 
 # Review-gated AFK automation for Demerzel.
 #
-# This workflow intentionally invokes Jules through the Jules API action instead
+# This workflow intentionally invokes Jules through its REST API instead
 # of relying on the native `jules` label. Bot/API-applied labels are not a
 # reliable trigger for Jules itself, while GitHub Actions can still build a
-# governed prompt and call google-labs-code/jules-action directly.
+# governed prompt and call the Jules REST API directly.
 #
-# Triggers:
-# - issues:labeled: immediate path when a maintainer applies `ready-for-agent`
-#   or `worker:jules`.
-# - workflow_dispatch: manual backstop for an exact issue number.
-# - schedule: listener backstop for labels applied by bots/API or labels that
-#   existed before this workflow was added. The scheduled run delegates at most
-#   one non-delegated open issue per run to avoid fan-out/backpressure.
+# Trigger policy:
+# - only workflow_dispatch enters the paid environment;
+# - issue-label and schedule events are retained as no-job compatibility events
+#   and can never receive credentials or synthesize paid authority.
 #
 # Eligibility:
 # - open issue must have BOTH `ready-for-agent` and `worker:jules`.
@@ -25,8 +22,8 @@ name: Auto-delegate ready-for-agent issues to Jules
 # Safety:
 # - no auto-merge;
 # - respects governance/state/afk-halt.json when present;
-# - requires JULES_API_KEY for API delegation;
-# - if JULES_API_KEY is absent, logs to Actions only and does not comment/spam issues;
+# - requires JULES_PAID_API_KEY in the protected GitHub environment;
+# - if the key is absent, logs to Actions only and does not comment/spam issues;
 # - keeps GitHub as the canonical control plane.
 
 on:
@@ -38,6 +35,10 @@ on:
         description: "Issue number to delegate"
         required: true
         type: number
+      approval_id:
+        description: "Stable reviewed approval id (phase 1 and phase 2 must use the same value)"
+        required: true
+        type: string
       force:
         description: "Delegate even if a Jules delegation marker already exists"
         required: false
@@ -56,12 +57,15 @@ concurrency:
 
 jobs:
   delegate:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    environment: jules-paid-default-branch
 
     steps:
       - name: Checkout governance state
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
       # aiw_budget_gate.py validates the budget policy against its schema and
       # REFUSES to run without jsonschema (a spend gate must not degrade open).
@@ -79,6 +83,7 @@ jobs:
 
       - name: Select eligible issue + governance preflight
         id: gate
+        timeout-minutes: 5
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -86,18 +91,47 @@ jobs:
           EVENT_LABEL: ${{ github.event.label.name || '' }}
           EVENT_ISSUE: ${{ github.event.issue.number || '' }}
           INPUT_ISSUE: ${{ inputs.issue_number || '' }}
+          APPROVAL_ID: ${{ inputs.approval_id || '' }}
           FORCE: ${{ inputs.force || false }}
-          HAS_KEY: ${{ secrets.JULES_API_KEY != '' }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REF_NAME: ${{ github.ref_name }}
+          HAS_KEY: ${{ secrets.JULES_PAID_API_KEY != '' }}
         run: |
           set -euo pipefail
 
           marker='<!-- jules-delegated -->'
           issue=''
 
+          if [ "$REF_NAME" != "$DEFAULT_BRANCH" ]; then
+            echo "::error::paid Jules dispatches must run from the default branch ($DEFAULT_BRANCH), not $REF_NAME"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          bot_comments() {
+            local n="$1"
+            gh api --paginate "repos/$REPO/issues/$n/comments?per_page=100" \
+              --jq '[.[] | select(.user.login == "github-actions[bot]") | .body] | join("\n")'
+          }
+
           has_delegation_marker() {
             local n="$1"
-            gh issue view "$n" --repo "$REPO" --json comments \
-              --jq '[.comments[].body] | join("\n")' | grep -Fq "$marker"
+            local comments
+            if ! comments=$(bot_comments "$n"); then
+              return 2
+            fi
+            grep -Fq "$marker" <<< "$comments"
+          }
+
+          has_approval_marker() {
+            local n="$1"
+            local approval_id="$2"
+            local approval_marker="<!-- jules-approval-attempted:${approval_id} -->"
+            local comments
+            if ! comments=$(bot_comments "$n"); then
+              return 2
+            fi
+            grep -Fq "$approval_marker" <<< "$comments"
           }
 
           issue_has_label() {
@@ -123,7 +157,13 @@ jobs:
             # Scheduled backstop: pick one Jules-routed ready issue that has not already been delegated.
             for n in $(gh issue list --repo "$REPO" --state open --label ready-for-agent --limit 50 --json number --jq '.[].number'); do
               labels=$(gh issue view "$n" --repo "$REPO" --json labels --jq '.labels[].name')
-              if issue_has_label "$labels" 'worker:jules' && ! has_delegation_marker "$n"; then
+              delegation_marker_rc=0
+              has_delegation_marker "$n" || delegation_marker_rc=$?
+              if [ "$delegation_marker_rc" -eq 2 ]; then
+                echo "::error::could not verify Jules delegation state for issue #$n — failing closed"
+                exit 1
+              fi
+              if issue_has_label "$labels" 'worker:jules' && [ "$delegation_marker_rc" -eq 1 ]; then
                 issue="$n"
                 break
               fi
@@ -148,10 +188,47 @@ jobs:
             exit 0
           fi
 
-          if [ "$FORCE" != "true" ] && has_delegation_marker "$issue"; then
-            echo "::notice::issue #$issue already has a Jules delegation marker — skipping"
+          # Paid authority is never inferred from labels or a schedule. An
+          # operator starts both phases with the same explicit stable id.
+          if [ -z "$APPROVAL_ID" ]; then
+            echo "::notice::Jules requires workflow_dispatch with an explicit approval_id; automatic trigger will not reserve or invoke paid work"
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
+          fi
+          if [[ ! "$APPROVAL_ID" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$ ]]; then
+            echo "::error::invalid approval_id; use 1-64 ASCII letters, digits, dot, underscore, or hyphen"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          # Consumption is independent of force. `force` may intentionally
+          # re-delegate an issue only with a newly reviewed approval id.
+          approval_marker_rc=0
+          has_approval_marker "$issue" "$APPROVAL_ID" || approval_marker_rc=$?
+          if [ "$approval_marker_rc" -eq 2 ]; then
+            echo "::error::could not verify Jules approval consumption for issue #$issue — failing closed"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          if [ "$approval_marker_rc" -eq 0 ]; then
+            echo "::error::approval id has already been consumed for issue #$issue: $APPROVAL_ID"
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          if [ "$FORCE" != "true" ]; then
+            delegation_marker_rc=0
+            has_delegation_marker "$issue" || delegation_marker_rc=$?
+            if [ "$delegation_marker_rc" -eq 2 ]; then
+              echo "::error::could not verify Jules delegation state for issue #$issue — failing closed"
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            if [ "$delegation_marker_rc" -eq 0 ]; then
+              echo "::notice::issue #$issue already has a Jules delegation marker — skipping"
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           fi
 
           halt_marker="governance/state/afk-halt.json"
@@ -177,7 +254,7 @@ jobs:
           fi
 
           if [ "$HAS_KEY" != "true" ]; then
-            echo "::notice::JULES_API_KEY not configured for $REPO — skipping API delegation for issue #$issue without commenting. Manual human-applied 'jules' label remains the fallback."
+            echo "::notice::JULES_PAID_API_KEY not configured in the protected jules-paid-default-branch environment for $REPO — skipping API delegation for issue #$issue without commenting."
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -191,9 +268,23 @@ jobs:
           #   exit 0 → allow, fall through to delegate
           #   exit 1 → block (governed outcome): comment, proceed=false, run stays green
           #   exit 2 → invalid request/policy: fail the job closed
+          approval_artifact=".octo/aiw-approval.json"
+          if [ -f "$approval_artifact" ]; then
+            if ! committed_approval_id=$(jq -er '.approval_id' "$approval_artifact"); then
+              echo "::error::invalid committed Jules approval artifact: approval_id is missing or invalid"
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            if [ "$committed_approval_id" != "$APPROVAL_ID" ]; then
+              # A previous one-shot approval is not authority for this request.
+              # Preserve it as run evidence but hide it from the canonical gate
+              # path so phase one can emit the new exact template.
+              mv "$approval_artifact" "$RUNNER_TEMP/stale-aiw-approval.json"
+            fi
+          fi
           req="$RUNNER_TEMP/aiw-jules-request.json"
-          job_id="jules-issue-${issue}-run-${GITHUB_RUN_ID}"
-          printf '{"job_id":"%s","provider":"jules","estimated_cost_usd":1.0,"estimated_total_tokens":150000,"estimated_model_calls":4,"estimated_retries":1,"estimated_runner_minutes":10}\n' "$job_id" > "$req"
+          job_id="jules-issue-${issue}-approval-${APPROVAL_ID}"
+          printf '{"job_id":"%s","provider":"jules","approval_id":"%s","estimated_cost_usd":1.0,"estimated_total_tokens":150000,"estimated_model_calls":4,"estimated_retries":1,"estimated_runner_minutes":10}\n' "$job_id" "$APPROVAL_ID" > "$req"
           set +e
           python3 scripts/aiw_budget_gate.py --request "$req"
           budget_rc=$?
@@ -204,28 +295,41 @@ jobs:
             exit 1
           fi
           if [ "$budget_rc" -ne 0 ]; then
-            reasons=$(jq -r '.reasons | join(", ")' .octo/aiw-budget-ledger.json 2>/dev/null || echo "budget policy")
-            gh issue comment "$issue" --repo "$REPO" --body "⛔ Delegation to **Jules** is **blocked by the AIW budget gate** (\`$reasons\`). Jules is a metered-cloud provider that requires explicit approval before any paid invocation. To authorize *this* delegation, commit a \`.octo/aiw-approval.json\` artifact bound to job_id \`$job_id\`, provider \`jules\`, and this request's SHA-256, then re-run. The \`ready-for-agent\`/\`worker:jules\` labels are kept and no delegation was performed."
+            reasons=$(jq -er '.reasons | join(", ")' .octo/aiw-budget-ledger.json)
+            request_sha=$(jq -er '.request_sha256' .octo/aiw-budget-ledger.json)
+            approval_template=$(jq -n \
+              --arg job_id "$job_id" \
+              --arg request_sha256 "$request_sha" \
+              --arg approval_id "$APPROVAL_ID" \
+              '{schema_version:"1.0",kind:"human-approval",decision:"approve",job_id:$job_id,provider:"jules",request_sha256:$request_sha256,approval_id:$approval_id,approver:"REPLACE_WITH_GITHUB_LOGIN",approved_at:"REPLACE_WITH_RFC3339_TIMESTAMP"}')
+            comment_body=$(printf '%s\n' \
+              "⛔ Delegation to **Jules** is **blocked by the AIW budget gate** (\`$reasons\`). No paid invocation occurred." \
+              "" \
+              "Commit the reviewed template below as \`.octo/aiw-approval.json\`, replace both \`REPLACE_*\` values, then start a **fresh** workflow dispatch with issue \`$issue\` and approval id \`$APPROVAL_ID\`. Do not rerun this workflow run: reruns keep the old commit." \
+              "" \
+              '```json' \
+              "$approval_template" \
+              '```' \
+              "" \
+              "The \`ready-for-agent\`/\`worker:jules\` labels are kept. This approval id authorizes exactly one paid invocation attempt and is consumed immediately before that attempt.")
+            gh issue comment "$issue" --repo "$REPO" --body "$comment_body"
             echo "::notice::AIW budget gate blocked jules delegation for issue #$issue ($reasons)"
             echo "proceed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "::notice::AIW budget gate allowed jules delegation for issue #$issue"
-
-          # NOTE: no delegation marker here. This comment announces the ATTEMPT; the
-          # marker that makes an issue permanently ineligible is written only after
-          # `Delegate to Jules` actually succeeds. See the step at the end of this job
-          # and #925 — six issues were marked delegated on 2026-06-30 and Jules never
-          # opened a single PR, because the receipt was written before the thing it
-          # attests to had happened.
-          gh issue comment "$issue" --repo "$REPO" --body "🤖 Attempting delegation of this \`ready-for-agent\` + \`worker:jules\` issue to Jules via the governed AFK workflow. Jules should open a PR targeting \`master\`; human/Demerzel review is still required before merge. If no confirmation comment follows this one, the delegation did **not** succeed and the issue stays eligible for retry."
-
           echo "issue=$issue" >> "$GITHUB_OUTPUT"
+          echo "approval_id=$APPROVAL_ID" >> "$GITHUB_OUTPUT"
           echo "proceed=true" >> "$GITHUB_OUTPUT"
+
+          # NOTE: no delegation or approval-consumption marker here. The prompt
+          # still has to build before the one-shot authority is consumed.
+          gh issue comment "$issue" --repo "$REPO" --body "🤖 Jules delegation passed governance preflight under approval id \`$APPROVAL_ID\`. No paid invocation has occurred yet; the one-shot approval will be consumed immediately before the provider call."
 
       - name: Build Jules prompt from the issue
         if: steps.gate.outputs.proceed == 'true'
         id: prompt
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -257,14 +361,92 @@ jobs:
             echo "JULES_EOF"
           } >> "$GITHUB_OUTPUT"
 
+      # Persist one-shot consumption before the paid provider call. If this
+      # write fails, the provider is not invoked. If Jules succeeds but later
+      # reporting fails, a fresh dispatch still sees this marker and cannot
+      # spend the same authority twice. This marker attests to an invocation
+      # attempt, not a successful delegation; #925's success marker stays below.
+      - name: Consume one-shot Jules approval
+        id: consume
+        if: steps.gate.outputs.proceed == 'true'
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          APPROVAL_ID: ${{ steps.gate.outputs.approval_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh issue comment "$ISSUE" --repo "$REPO" --body "🔒 Consumed one-shot approval id \`$APPROVAL_ID\` immediately before the Jules paid invocation ([run]($RUN_URL)). A retry requires a new reviewed approval id, whether this invocation succeeds or fails. <!-- jules-approval-attempted:$APPROVAL_ID -->"
+
       - name: Delegate to Jules
         id: jules
         if: steps.gate.outputs.proceed == 'true'
-        uses: google-labs-code/jules-action@v1.0.0
+        timeout-minutes: 5
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_PAID_API_KEY }}
+          JULES_PROMPT: ${{ steps.prompt.outputs.text }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          payload="$RUNNER_TEMP/jules-payload.json"
+          response="$RUNNER_TEMP/jules-session.json"
+          jq -n \
+            --arg prompt "$JULES_PROMPT" \
+            --arg title "Implement $REPO#$ISSUE" \
+            --arg source "sources/github/$REPO" \
+            --arg branch "$DEFAULT_BRANCH" \
+            '{prompt:$prompt,title:$title,sourceContext:{source:$source,githubRepoContext:{startingBranch:$branch}},requirePlanApproval:false,automationMode:"AUTO_CREATE_PR"}' \
+            > "$payload"
+
+          # There is deliberately no retry: the Jules create-session endpoint
+          # has no idempotency key. A network ambiguity consumes this approval
+          # and requires a new review instead of risking a duplicate paid job.
+          curl --fail-with-body --silent --show-error \
+            --connect-timeout 15 --max-time 240 \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-Goog-Api-Key: $JULES_API_KEY" \
+            --data-binary @"$payload" \
+            --output "$response" \
+            https://jules.googleapis.com/v1alpha/sessions
+
+          session_name=$(jq -er '.name | select(type == "string" and test("^sessions/[^/]+$"))' "$response")
+          session_url=$(jq -er '.url | select(type == "string" and startswith("https://jules.google.com/session/"))' "$response")
+          echo "session_name=$session_name" >> "$GITHUB_OUTPUT"
+          echo "session_url=$session_url" >> "$GITHUB_OUTPUT"
+
+      # Run before any result-reporting network call. This deliberately does not
+      # trust gate outputs: GitHub can cancel the gate after reserve() writes the
+      # ledger but before it publishes outputs. The provider lookup recovers the
+      # sole open Jules job id from the locked ledger and is a no-op when none exists.
+      - name: Finalize AIW budget reservation
+        if: always()
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          python3 scripts/aiw_budget_gate.py --abandon-open-provider jules --reason "Jules create-session response exposes identity but no verifiable provider cost receipt"
+
+      - name: Validate terminal AIW budget ledgers
+        if: always() && hashFiles('.octo/aiw-cycle-ledger.json') != ''
+        run: |
+          set -euo pipefail
+          test -f .octo/aiw-budget-ledger.json
+          test -f .octo/aiw-cycle-ledger.json
+
+      - name: Upload terminal AIW budget ledgers
+        if: always() && hashFiles('.octo/aiw-cycle-ledger.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          prompt: ${{ steps.prompt.outputs.text }}
-          jules_api_key: ${{ secrets.JULES_API_KEY }}
-          starting_branch: master
+          name: aiw-budget-ledgers-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .octo/aiw-budget-ledger.json
+            .octo/aiw-cycle-ledger.json
+          if-no-files-found: error
+          include-hidden-files: true
 
       # The delegation marker is written HERE, and only here — after the action above
       # actually succeeded. It is what makes an issue permanently ineligible for the
@@ -276,25 +458,44 @@ jobs:
       # A step with no `if:` does not run when an earlier step in the job failed, so
       # this is naturally gated on the delegation having worked.
       - name: Record confirmed delegation
-        if: steps.gate.outputs.proceed == 'true'
+        if: always() && steps.gate.outputs.proceed == 'true' && steps.jules.outcome == 'success'
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           ISSUE: ${{ steps.gate.outputs.issue }}
+          APPROVAL_ID: ${{ steps.gate.outputs.approval_id }}
+          SESSION_NAME: ${{ steps.jules.outputs.session_name }}
+          SESSION_URL: ${{ steps.jules.outputs.session_url }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
-          gh issue comment "$ISSUE" --repo "$REPO" --body "✅ Jules accepted the delegation ([run]($RUN_URL)). This marker makes the issue ineligible for further automatic delegation; re-delegate via \`workflow_dispatch\` with \`force: true\` if needed. <!-- jules-delegated -->"
+          gh issue comment "$ISSUE" --repo "$REPO" --body "✅ Jules created session [\`$SESSION_NAME\`]($SESSION_URL) ([workflow run]($RUN_URL)) under approval id \`$APPROVAL_ID\`. Intentional re-delegation requires \`force: true\`, a **new** approval id, and a newly reviewed approval artifact. <!-- jules-delegated --><!-- jules-approval:$APPROVAL_ID -->"
 
-      # Fail loud and stay eligible. Without this the only signal that a delegation
-      # failed is a red run nobody is watching, on an issue that looks delegated.
+      # Fail loud. The approval was consumed before the paid provider attempt;
+      # retrying requires a new review even when Jules itself fails.
       - name: Report failed delegation
-        if: failure() && steps.gate.outputs.proceed == 'true'
+        if: always() && (failure() || cancelled()) && steps.gate.outputs.proceed == 'true' && steps.consume.outcome == 'success' && steps.jules.outcome != 'success'
+        timeout-minutes: 2
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           ISSUE: ${{ steps.gate.outputs.issue }}
+          APPROVAL_ID: ${{ steps.gate.outputs.approval_id }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
-          gh issue comment "$ISSUE" --repo "$REPO" --body "❌ Delegation to Jules **failed** ([run]($RUN_URL)). No delegation marker was written, so this issue stays eligible and the scheduled listener will retry it. If this repeats, check \`JULES_API_KEY\` and the \`google-labs-code/jules-action\` step log."
+          gh issue comment "$ISSUE" --repo "$REPO" --body "❌ Jules did not return a valid created session after paid authority was consumed ([run]($RUN_URL)). The provider may or may not have received the call. Approval id \`$APPROVAL_ID\` remains consumed; retry only with a new reviewed approval id. Check the \`Delegate to Jules\` step log."
+
+      - name: Report pre-invocation failure
+        if: always() && (failure() || cancelled()) && steps.gate.outputs.proceed == 'true' && steps.consume.outcome != 'success'
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ steps.gate.outputs.issue }}
+          APPROVAL_ID: ${{ steps.gate.outputs.approval_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh issue comment "$ISSUE" --repo "$REPO" --body "❌ Jules was **not invoked** because the one-shot consumption record could not be persisted ([run]($RUN_URL)). No paid call occurred. A fresh dispatch may reuse approval id \`$APPROVAL_ID\` unless the issue already contains its \`jules-approval-attempted\` marker."

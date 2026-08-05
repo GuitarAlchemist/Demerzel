@@ -169,10 +169,16 @@ def _validate_approval(approval: dict[str, Any] | None, request: dict[str, Any],
         "provider": request.get("provider"),
         "request_sha256": request_sha256,
     }
+    request_approval_id = request.get("approval_id")
+    if request_approval_id is not None:
+        if not isinstance(request_approval_id, str) or not request_approval_id:
+            raise ValueError("request approval_id must be a non-empty string")
+        expected["approval_id"] = request_approval_id
     for name, value in expected.items():
         if approval.get(name) != value:
             raise ValueError(f"approval {name} does not match the request")
-    _required_string(approval, "approval_id")
+    if request_approval_id is None:
+        _required_string(approval, "approval_id")
     _required_string(approval, "approver")
     _timestamp(approval, "approved_at")
     return True
@@ -215,9 +221,14 @@ def _lock(path: Path):
 def _read_cycle(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {"reserved_cost_usd": 0.0, "actual_cost_usd": 0.0,
-                "active_packets": 0, "reservations": {}}
+                "unverified_cost_usd": 0.0, "active_packets": 0, "reservations": {}}
     value = _load(path)
-    for name in ("reserved_cost_usd", "actual_cost_usd", "active_packets"):
+    # Ledgers written before the verified/unverified split carry no
+    # `unverified_cost_usd`. Default it rather than rejecting them, but validate
+    # it once present so a garbage value still fails closed.
+    value.setdefault("unverified_cost_usd", 0.0)
+    for name in ("reserved_cost_usd", "actual_cost_usd", "unverified_cost_usd",
+                 "active_packets"):
         _required_number(value, name)
     reservations = value.get("reservations", {})
     if not isinstance(reservations, dict):
@@ -259,9 +270,14 @@ def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path,
                     "reasons": [], "reservation_reused": True,
                     "request_sha256": request_sha256,
                     "budget": {"estimated_cost_usd": reservation["estimated_cost_usd"]}}
+        # Unverified spend counts against the cycle cap exactly like receipted
+        # spend. Abandoned money is money we cannot prove we did NOT spend, so
+        # omitting this term here would turn the verified/unverified split into a
+        # spend-cap bypass: every abandonment would silently restore headroom.
         result = evaluate(policy, {**request,
                                    "cycle_spend_usd": (cycle["reserved_cost_usd"]
-                                                        + cycle["actual_cost_usd"]),
+                                                        + cycle["actual_cost_usd"]
+                                                        + cycle["unverified_cost_usd"]),
                                    "cycle_active_packets": cycle["active_packets"]},
                           approval=approval)
         if result["decision"] == "allow":
@@ -375,6 +391,32 @@ def release(cycle_path: Path, job_id: str, actual_cost_usd: float,
         lock_path.unlink(missing_ok=True)
 
 
+def _abandon_in_cycle(cycle: dict[str, Any], job_id: str,
+                      reason: str) -> dict[str, Any]:
+    """Mutate one validated cycle while its caller holds the ledger lock."""
+    reservation = cycle["reservations"].get(job_id)
+    if reservation is None:
+        raise ValueError(f"no reservation for job: {job_id}")
+    estimate = _required_number(reservation, "estimated_cost_usd")
+
+    cycle["reservations"].pop(job_id)
+    cycle["reserved_cost_usd"] -= estimate
+    cycle["active_packets"] -= 1
+    cycle["unverified_cost_usd"] = cycle.get("unverified_cost_usd", 0) + estimate
+    entry = {
+        "job_id": job_id,
+        "provider": reservation.get("provider"),
+        "request_sha256": reservation.get("request_sha256"),
+        "charged_estimate_usd": estimate,
+        "receipt_verified": False,
+        "reason": str(reason)[:200],
+    }
+    cycle.setdefault("unreconciled", []).append(entry)
+    return {"decision": "abandoned", "job_id": job_id,
+            "charged_estimate_usd": estimate,
+            "receipt_verified": False, "reason": entry["reason"]}
+
+
 def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
     """Give up reconciling a reservation WITHOUT claiming its spend was verified.
 
@@ -392,43 +434,63 @@ def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
     not authenticity — and reconcile metered spend at whatever the caller passed,
     forever, self-certified.
 
-    So this frees the slot and charges the RESERVED ESTIMATE to actual spend
-    instead. Pessimistic on purpose: we cannot prove the money was not spent, so
-    the cycle cost cap keeps counting it rather than crediting the cycle back to
-    zero. Unverified is not the same as free.
+    So this frees the slot and charges the RESERVED ESTIMATE to
+    ``unverified_cost_usd``. Pessimistic on purpose: we cannot prove the money was
+    not spent, so the cycle cost cap keeps counting it (see ``reserve``) rather
+    than crediting the cycle back to zero. Unverified is not the same as free.
 
-    The abandonment is recorded permanently under ``unreconciled`` so an operator
-    can see exactly which spend was never receipt-verified.
+    It is charged to a bucket of its own rather than to ``actual_cost_usd``
+    because the two numbers answer different questions. ``actual_cost_usd`` is
+    what a provider receipt attested; this is what we assumed in the absence of
+    one. Both bound the cycle identically, but an operator reading the ledger has
+    to be able to tell a measured total from an asserted one, and a headline that
+    silently mixes them cannot be audited. Per-job provenance is in
+    ``unreconciled`` regardless; this keeps the aggregate honest too.
     """
     if not job_id:
         raise ValueError("job_id is required to abandon")
     lock_path = _lock(cycle_path)
     try:
         cycle = _read_cycle(cycle_path)
-        reservation = cycle["reservations"].get(job_id)
-        if reservation is None:
-            raise ValueError(f"no reservation for job: {job_id}")
-        estimate = _required_number(reservation, "estimated_cost_usd")
-
-        cycle["reservations"].pop(job_id)
-        cycle["reserved_cost_usd"] -= estimate
-        cycle["active_packets"] -= 1
-        cycle["actual_cost_usd"] = cycle.get("actual_cost_usd", 0) + estimate
-        entry = {
-            "job_id": job_id,
-            "provider": reservation.get("provider"),
-            "request_sha256": reservation.get("request_sha256"),
-            "charged_estimate_usd": estimate,
-            "receipt_verified": False,
-            "reason": str(reason)[:200],
-        }
-        cycle.setdefault("unreconciled", []).append(entry)
+        result = _abandon_in_cycle(cycle, job_id, reason)
         cycle_path.parent.mkdir(parents=True, exist_ok=True)
         cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
-                                        allow_nan=False) + "\n", encoding="utf-8")
-        return {"decision": "abandoned", "job_id": job_id,
-                "charged_estimate_usd": estimate,
-                "receipt_verified": False, "reason": entry["reason"]}
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def abandon_open_provider(cycle_path: Path, provider: str,
+                          reason: str) -> dict[str, Any]:
+    """Idempotently abandon the sole open reservation for one provider.
+
+    Workflow cleanup cannot trust step outputs: cancellation may occur after the
+    reservation is written but before GitHub publishes those outputs. Recovering
+    the job id from the locked ledger closes that window. Zero matches is a
+    successful no-op so the finalizer can run unconditionally; multiple matches
+    are ambiguous and fail closed without mutating either reservation.
+    """
+    if not provider:
+        raise ValueError("provider is required to abandon an open reservation")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        matches = [
+            job_id for job_id, reservation in cycle["reservations"].items()
+            if reservation.get("provider") == provider
+        ]
+        if not matches:
+            return {"decision": "no_reservation", "provider": provider}
+        if len(matches) != 1:
+            raise ValueError(
+                f"multiple open reservations for provider {provider}: "
+                + ", ".join(sorted(matches)))
+        result = _abandon_in_cycle(cycle, matches[0], reason)
+        cycle_path.parent.mkdir(parents=True, exist_ok=True)
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return result
     finally:
         lock_path.unlink(missing_ok=True)
 
@@ -530,8 +592,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cycle-ledger", type=Path, default=CYCLE_LEDGER_PATH)
     parser.add_argument("--approval", type=Path, default=APPROVAL_PATH)
     parser.add_argument("--receipt", type=Path, default=RECEIPT_PATH)
-    parser.add_argument("--release-job")
+    # A reservation has exactly two terminal states and they are mutually
+    # exclusive: released against a trusted receipt, or abandoned. Naming both
+    # in one invocation is ambiguous about which one was intended.
+    terminal = parser.add_mutually_exclusive_group()
+    terminal.add_argument("--release-job")
+    terminal.add_argument("--abandon-job")
+    terminal.add_argument("--abandon-open-provider")
     parser.add_argument("--actual-cost-usd", type=float)
+    parser.add_argument("--reason")
     args = parser.parse_args(argv)
     try:
         # Policy and ledgers are pinned to canonical repository paths; the
@@ -542,7 +611,25 @@ def main(argv: list[str] | None = None) -> int:
         _bind_canonical("--approval", args.approval, APPROVAL_PATH)
         _bind_canonical("--receipt", args.receipt, RECEIPT_PATH)
         policy = load_policy(POLICY_PATH)
-        if args.release_job:
+        if args.abandon_open_provider:
+            if not args.reason:
+                raise ValueError("--reason is required with --abandon-open-provider")
+            _provider(policy, args.abandon_open_provider)
+            result = abandon_open_provider(
+                CYCLE_LEDGER_PATH, args.abandon_open_provider, args.reason)
+        elif args.abandon_job:
+            # The only honest way out of a metered reservation whose receipt does
+            # not exist. `--release-job` demands a trusted receipt and a metered
+            # provider's receipt cannot be self-issued, so without this verb an
+            # approved metered run had NO terminal state reachable by an operator:
+            # the reservation stayed open, active_packets never fell, and after
+            # cycle.max_parallel_packets such runs the gate blocked every lane
+            # including the free subscription one (#896). Abandon charges the
+            # reserved estimate as UNVERIFIED spend rather than inventing a cost.
+            if not args.reason:
+                raise ValueError("--reason is required with --abandon-job")
+            result = abandon(CYCLE_LEDGER_PATH, args.abandon_job, args.reason)
+        elif args.release_job:
             if args.actual_cost_usd is None:
                 raise ValueError("--actual-cost-usd is required with --release-job")
             receipt = _load(RECEIPT_PATH) if RECEIPT_PATH.exists() else None
@@ -561,8 +648,13 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
         print(f"aiw budget gate: {error}", file=sys.stderr)
         return 2
+    # ABANDONED exits 0 because the operator's action succeeded and the ledger is
+    # consistent again -- but it prints as ABANDONED, never as RELEASED, and the
+    # cycle ledger records it under `unreconciled` with receipt_verified: false.
     print(f"{result['decision'].upper()}: {LEDGER_PATH}")
-    return 0 if result["decision"] in {"allow", "released"} else 1
+    return 0 if result["decision"] in {
+        "allow", "released", "abandoned", "no_reservation"
+    } else 1
 
 
 if __name__ == "__main__":
