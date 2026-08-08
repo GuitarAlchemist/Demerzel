@@ -3,11 +3,7 @@
   "problems": [
     {
       "kind": "failed_run",
-      "workflow": "demerzel-discussion-lifecycle.yml"
-    },
-    {
-      "kind": "failed_run",
-      "workflow": "demerzel-showcase.yml"
+      "workflow": "demerzel-ideation.yml"
     },
     {
       "kind": "failed_run",
