@@ -3,6 +3,10 @@
   "problems": [
     {
       "kind": "failed_run",
+      "workflow": "demerzel-capability-expansion.yml"
+    },
+    {
+      "kind": "failed_run",
       "workflow": "demerzel-ideation.yml"
     },
     {
