@@ -66,6 +66,11 @@ class EpistemicResearchContractTests(unittest.TestCase):
                 mutate(proposal)
                 self.assertTrue(any(label in issue for issue in validate_proposal(proposal)))
 
+    def test_rejects_padded_text_even_with_matching_digest(self) -> None:
+        self.proposal["question"] = "  Which boundary is supported?  "
+        self._rematerialize()
+        self.assertTrue(any("question" in issue for issue in validate_proposal(self.proposal)))
+
     def test_rejects_declared_missing_field_and_provenance_controls(self) -> None:
         cases = [
             lambda proposal: proposal["hypotheses"][1].pop("falsifier"),

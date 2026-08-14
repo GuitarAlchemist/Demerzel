@@ -58,6 +58,10 @@ digits, and a trailing `Z` (for example `2026-08-14T17:30:00.000Z`). Equivalent
 RFC 3339 offsets are intentionally rejected so every conforming implementation
 hashes the same timestamp representation.
 
+All non-empty contract strings are materialized without leading or trailing
+whitespace. Internal whitespace remains meaningful. Receivers reject padded
+strings instead of silently changing content-addressed bytes.
+
 ## Why not OWL/BFO yet
 
 JSON Schema plus semantic validation gives this operational contract closed,
