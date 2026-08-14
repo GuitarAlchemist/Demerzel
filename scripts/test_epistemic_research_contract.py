@@ -67,9 +67,13 @@ class EpistemicResearchContractTests(unittest.TestCase):
                 self.assertTrue(any(label in issue for issue in validate_proposal(proposal)))
 
     def test_rejects_padded_text_even_with_matching_digest(self) -> None:
-        self.proposal["question"] = "  Which boundary is supported?  "
-        self._rematerialize()
-        self.assertTrue(any("question" in issue for issue in validate_proposal(self.proposal)))
+        original = copy.deepcopy(self.proposal)
+        for padding in ("  ", "\ufeff"):
+            with self.subTest(padding=ascii(padding)):
+                self.proposal = copy.deepcopy(original)
+                self.proposal["question"] = f"{padding}Which boundary is supported?{padding}"
+                self._rematerialize()
+                self.assertTrue(any("question" in issue for issue in validate_proposal(self.proposal)))
 
     def test_rejects_declared_missing_field_and_provenance_controls(self) -> None:
         cases = [

@@ -62,6 +62,11 @@ All non-empty contract strings are materialized without leading or trailing
 whitespace. Internal whitespace remains meaningful. Receivers reject padded
 strings instead of silently changing content-addressed bytes.
 
+For cross-language determinism, “whitespace” at this boundary is the explicit
+ECMAScript `String.prototype.trim()` set: U+0009–U+000D, U+0020, U+00A0,
+U+1680, U+2000–U+200A, U+2028, U+2029, U+202F, U+205F, U+3000, and U+FEFF.
+Receivers must not substitute their host language's default whitespace set.
+
 ## Why not OWL/BFO yet
 
 JSON Schema plus semantic validation gives this operational contract closed,

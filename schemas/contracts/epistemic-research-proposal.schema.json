@@ -152,11 +152,7 @@
     }
   },
   "$defs": {
-    "nonEmpty": {
-      "type": "string",
-      "minLength": 1,
-      "pattern": "^(?!\\s)[\\s\\S]*\\S$(?![\\s\\S])"
-    },
+    "nonEmpty": { "type": "string", "minLength": 1, "pattern": "\\S" },
     "canonicalTime": {
       "type": "string",
       "format": "date-time",

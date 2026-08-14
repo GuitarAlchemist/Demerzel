@@ -14,6 +14,11 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "schemas" / "contracts" / "epistemic-research-proposal.schema.json"
 MASS_KEYS = ("T", "P", "U", "D", "F", "C")
+ECMASCRIPT_TRIM_CHARS = (
+    "\u0009\u000a\u000b\u000c\u000d\u0020\u00a0\u1680"
+    "\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a"
+    "\u2028\u2029\u202f\u205f\u3000\ufeff"
+)
 
 
 def canonical_body(proposal: dict[str, Any]) -> bytes:
@@ -26,6 +31,17 @@ def canonical_body(proposal: dict[str, Any]) -> bytes:
         separators=(",", ":"),
         sort_keys=True,
     ).encode("utf-8")
+
+
+def iter_strings(value: Any, path: str = "$"):
+    if isinstance(value, str):
+        yield path, value
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            yield from iter_strings(item, f"{path}.{key}")
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            yield from iter_strings(item, f"{path}[{index}]")
 
 
 def validate_proposal(proposal: dict[str, Any]) -> list[str]:
@@ -45,6 +61,10 @@ def validate_proposal(proposal: dict[str, Any]) -> list[str]:
     messages = [f"{path}: {message}" for path, message in issues]
     if messages:
         return messages
+
+    for path, value in iter_strings(proposal):
+        if value != value.strip(ECMASCRIPT_TRIM_CHARS):
+            messages.append(f"{path}: leading or trailing ECMAScript whitespace is not canonical")
 
     hypothesis_ids = [item["id"] for item in proposal["hypotheses"]]
     if len(set(hypothesis_ids)) != len(hypothesis_ids):
