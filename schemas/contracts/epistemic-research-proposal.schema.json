@@ -28,8 +28,8 @@
     "status": { "const": "advisory" },
     "proposalId": { "type": "string", "pattern": "^erp-[a-f0-9]{64}$" },
     "revision": { "$ref": "#/$defs/revision" },
-    "createdAt": { "type": "string", "format": "date-time" },
-    "expiresAt": { "type": "string", "format": "date-time" },
+    "createdAt": { "$ref": "#/$defs/canonicalTime" },
+    "expiresAt": { "$ref": "#/$defs/canonicalTime" },
     "origin": {
       "type": "object",
       "additionalProperties": false,
@@ -152,7 +152,12 @@
     }
   },
   "$defs": {
-    "nonEmpty": { "type": "string", "minLength": 1 },
+    "nonEmpty": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "canonicalTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
     "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "mass": { "type": "integer", "minimum": 0, "maximum": 1000000 },
     "revision": {

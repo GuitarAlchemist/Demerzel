@@ -52,6 +52,12 @@ array order, encode compact JSON as UTF-8, and take SHA-256. The complete
 proposal uses `proposalId = "erp-" + digest` and records the same digest under
 `revision.digest`.
 
+`createdAt` and `expiresAt` use the single canonical form produced by
+JavaScript `Date.prototype.toISOString()`: UTC, exactly three fractional-second
+digits, and a trailing `Z` (for example `2026-08-14T17:30:00.000Z`). Equivalent
+RFC 3339 offsets are intentionally rejected so every conforming implementation
+hashes the same timestamp representation.
+
 ## Why not OWL/BFO yet
 
 JSON Schema plus semantic validation gives this operational contract closed,

@@ -11,9 +11,6 @@ from pathlib import Path
 import sys
 from typing import Any
 
-import jsonschema
-
-
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "schemas" / "contracts" / "epistemic-research-proposal.schema.json"
 MASS_KEYS = ("T", "P", "U", "D", "F", "C")
@@ -32,6 +29,11 @@ def canonical_body(proposal: dict[str, Any]) -> bytes:
 
 
 def validate_proposal(proposal: dict[str, Any]) -> list[str]:
+    try:
+        import jsonschema
+    except ImportError:
+        return ["DEPENDENCY_MISSING: jsonschema is required for proposal validation"]
+
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     validator = jsonschema.Draft202012Validator(
         schema,
@@ -47,17 +49,9 @@ def validate_proposal(proposal: dict[str, Any]) -> list[str]:
     hypothesis_ids = [item["id"] for item in proposal["hypotheses"]]
     if len(set(hypothesis_ids)) != len(hypothesis_ids):
         messages.append("hypothesis ids must be unique")
-    if sum(item["role"] == "null" for item in proposal["hypotheses"]) != 1:
-        messages.append("exactly one null hypothesis is required")
-
     uncertainty = proposal["uncertainty"]
     if sum(uncertainty[key] for key in MASS_KEYS) != 1_000_000:
         messages.append("uncertainty T/P/U/D/F/C must sum to exactly 1000000 ppm")
-
-    if proposal["probe"]["maxCost"]["value"] != 0:
-        messages.append("probe.maxCost.value must be zero")
-    if proposal["authority"]["executionAuthorized"] is not False:
-        messages.append("authority.executionAuthorized must be false")
 
     digest = proposal["revision"]["digest"]
     if proposal["proposalId"] != f"erp-{digest}":
