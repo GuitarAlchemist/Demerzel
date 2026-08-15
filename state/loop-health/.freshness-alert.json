@@ -3,6 +3,10 @@
   "problems": [
     {
       "kind": "failed_run",
+      "workflow": "cross-model-review.yml"
+    },
+    {
+      "kind": "failed_run",
       "workflow": "demerzel-capability-expansion.yml"
     },
     {
