@@ -11,6 +11,10 @@
     },
     {
       "kind": "failed_run",
+      "workflow": "demerzel-discussion-lifecycle.yml"
+    },
+    {
+      "kind": "failed_run",
       "workflow": "demerzel-ideation.yml"
     },
     {
