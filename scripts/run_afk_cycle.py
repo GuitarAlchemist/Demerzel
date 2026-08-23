@@ -67,12 +67,13 @@ import subprocess
 import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import aiw_budget_gate as budget  # noqa: E402  (fail-closed AIW budget preflight)
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
+import demerzel_halt as halt  # noqa: E402  (shared HALT-ALL reader seam)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
 from afk_backends import AFKBackend  # noqa: E402
 from afk_backends.registry import RegistryError, get_backend, provider_for  # noqa: E402
@@ -202,17 +203,9 @@ def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
 
 
 def halt_active(path: Path | None = None, now: datetime | None = None) -> tuple[bool, str]:
-    """Translate the shared HALT-ALL facts into this governor's stop decision."""
-    state = kit.halt_state(
-        path or Path.home() / ".demerzel" / "HALT-ALL",
-        now or datetime.now(timezone.utc),
-    )
-    if not state["active"]:
-        return False, ""
-    if not state["valid"]:
-        return True, (f"HALT-ALL {state['reason']} — treating as halted (fail-safe): "
-                      f"{state['errors']}")
-    return True, f"HALT-ALL in effect (reason: {state['reason']})"
+    """Thin decider over the shared HALT-ALL reader (demerzel_halt.is_active owns
+    the marker path, schema, expiry, and fail-safe semantics)."""
+    return halt.is_active(path.parent if path else None, now=now)
 
 
 def _haystack(issue: dict) -> str:
