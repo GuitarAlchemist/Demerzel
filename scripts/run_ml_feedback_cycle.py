@@ -54,24 +54,17 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
+import demerzel_halt as halt
 import demerzel_kit as kit
 
 
 def _halt_active(path: Path | None = None, now: datetime | None = None) -> tuple[bool, str]:
-    """Translate the shared HALT-ALL facts into this cycle's stop decision."""
-    state = kit.halt_state(
-        path or Path.home() / ".demerzel" / "HALT-ALL",
-        now or datetime.now(timezone.utc),
-    )
-    if not state["active"]:
-        return False, ""
-    if not state["valid"]:
-        return True, (f"HALT-ALL {state['reason']} — treating as halted (fail-safe): "
-                      f"{state['errors']}")
-    return True, f"HALT-ALL in effect (reason: {state['reason']})"
+    """Thin decider over the shared HALT-ALL reader (demerzel_halt.is_active owns
+    the marker path, schema, expiry, and fail-safe semantics)."""
+    return halt.is_active(path.parent if path else None, now=now)
 
 
 def _run(label: str, cmd: list[str], dry: bool) -> dict:
