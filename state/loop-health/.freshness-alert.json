@@ -11,10 +11,6 @@
     },
     {
       "kind": "failed_run",
-      "workflow": "demerzel-ideation.yml"
-    },
-    {
-      "kind": "failed_run",
       "workflow": "jules-auto-delegate.yml"
     },
     {
