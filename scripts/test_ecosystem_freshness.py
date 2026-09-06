@@ -1432,6 +1432,170 @@ class EcosystemFreshnessTest(unittest.TestCase):
                     "pull_request", "secret", SINCE,
                 )
 
+    # ── retrieval cost vs. sticky obligations (#963) ───────────────────────
+
+    def _routed_urlopen(self, pulls, seen, run_for_head=None):
+        """urlopen stub that answers by ENDPOINT, not by call order.
+
+        Order-indexed stubs cannot express "N pulls, therefore N run lookups",
+        which is exactly the cost shape #963 is about.
+        """
+        def fake_urlopen(request, timeout):
+            seen.append(request)
+            url = request.full_url
+            query = parse_qs(urlparse(url).query)
+            if "/pulls?" in url:
+                page = int(query.get("page", ["1"])[0])
+                payload = pulls if page == 1 else []
+            elif "/runs?" in url:
+                head = query.get("head_sha", [""])[0]
+                run = run_for_head(head) if run_for_head else None
+                payload = {"workflow_runs": [run] if run else []}
+            elif url.endswith("/pulls"):  # commits/{sha}/pulls association
+                payload = []
+            else:  # commits/{sha}
+                payload = {"commit": {"committer":
+                                      {"date": "2026-05-19T00:00:00Z"}}}
+            return self._json_urlopen([payload], [])(request, timeout)
+
+        return fake_urlopen
+
+    def test_supply_retrieval_cost_grows_with_the_number_of_pull_requests(self):
+        """Baseline: one listing request plus one run lookup PER pull request.
+
+        The activation cutoff is fixed forever, so the set of pull requests
+        "updated since the cutoff" only ever grows, and with it this request
+        count — the operational fuse #963 exists to bound. Recorded here as an
+        executable baseline so any bounding change has a number to beat.
+        """
+        def measure(pull_count):
+            seen = []
+            pulls = [{
+                "number": n,
+                "state": "open",
+                "created_at": "2026-07-17T00:00:00Z",
+                "updated_at": "2026-07-17T00:00:00Z",
+                "head": {"sha": f"h{n}"},
+            } for n in range(pull_count)]
+            run_for_head = lambda head: {
+                "id": 1,
+                "status": "completed",
+                "conclusion": "success",
+                "created_at": "2026-07-17T01:00:00Z",
+                "run_started_at": "2026-07-17T01:00:00Z",
+                "head_sha": head,
+                "pull_requests": [{"number": int(head[1:]),
+                                   "head": {"sha": head}}],
+            }
+            with patch.object(ef, "urlopen",
+                              self._routed_urlopen(pulls, seen, run_for_head)):
+                supplies = ef.default_event_supply_runner(
+                    "cross-model-review.yml", "pull_request",
+                    "GuitarAlchemist/Demerzel", "secret",
+                    ("opened", "synchronize"), SINCE,
+                )
+            self.assertEqual(len(supplies), pull_count)
+            return len(seen)
+
+        self.assertEqual(measure(10), 11)
+        self.assertEqual(measure(60), 61)
+        # …and the whole growth curve stays under the budget for a long time.
+        self.assertGreater(ef._MAX_SUPPLY_REQUESTS, 61)
+
+    def test_supply_retrieval_fails_closed_at_its_request_budget(self):
+        """Cost is bounded by failing loudly, never by retrieving less.
+
+        GITHUB_TOKEN's hourly ceiling would otherwise stop retrieval mid-flight
+        as an opaque 403. The budget fires first and says so — and it raises
+        rather than returning the obligations it managed to collect, because a
+        partial supply read as a complete one is silent green.
+        """
+        seen = []
+        pulls = [{
+            "number": n,
+            "state": "open",
+            "created_at": "2026-07-17T00:00:00Z",
+            "updated_at": "2026-07-17T00:00:00Z",
+            "head": {"sha": f"h{n}"},
+        } for n in range(10)]
+        with patch.object(ef, "_MAX_SUPPLY_REQUESTS", 4):
+            with patch.object(ef, "urlopen", self._routed_urlopen(pulls, seen)):
+                with self.assertRaises(ef.AdapterError) as caught:
+                    ef.default_event_supply_runner(
+                        "cross-model-review.yml", "pull_request",
+                        "GuitarAlchemist/Demerzel", "secret",
+                        ("opened", "synchronize"), SINCE,
+                    )
+        self.assertIn("budget", str(caught.exception))
+        self.assertIn("cannot be read as absence", str(caught.exception))
+        self.assertEqual(len(seen), 4, "the budget must stop the spending")
+
+    def test_request_budget_does_not_leak_across_evaluations(self):
+        # A module-level total would make the second daily loop inherit the
+        # first one's spending and fail for a cost it never incurred.
+        pulls = [{
+            "number": 1,
+            "state": "open",
+            "created_at": "2026-07-17T00:00:00Z",
+            "updated_at": "2026-07-17T00:00:00Z",
+            "head": {"sha": "h1"},
+        }]
+        with patch.object(ef, "_MAX_SUPPLY_REQUESTS", 3):
+            for _ in range(3):
+                with patch.object(ef, "urlopen",
+                                  self._routed_urlopen(pulls, [])):
+                    supplies = ef.default_event_supply_runner(
+                        "cross-model-review.yml", "pull_request",
+                        "GuitarAlchemist/Demerzel", "secret",
+                        ("opened", "synchronize"), SINCE,
+                    )
+                self.assertEqual(len(supplies), 1)
+
+    def test_unanswered_obligation_survives_beyond_any_moving_horizon(self):
+        """Sticky-red past PR closure AND past a proposed sliding window.
+
+        The tracer bullet floated in #963 —
+        `retrieval_floor = max(activation_cutoff, now - k * max_stale_days)` —
+        filters the pull listing on `updated_at`. This pull request's last
+        GitHub-recorded activity is far older than that horizon for any small
+        `k`, its head never got a run, and it is closed. Under a sliding floor
+        it would be paginated away and the board would read "no event has
+        occurred" — green — while the obligation is still unanswered.
+        """
+        max_stale_days = self.EVENT_SPEC["reviewer.yml"]["max_stale_days"]
+        horizon = NOW - timedelta(days=3 * max_stale_days)
+        updated_at = NOW - timedelta(days=60)
+        self.assertLess(
+            updated_at, horizon,
+            "fixture must sit beyond the proposed moving horizon to be a test")
+
+        seen = []
+        pulls = [{
+            "number": 17,
+            "state": "closed",
+            "created_at": _iso(NOW - timedelta(days=62)),
+            "updated_at": _iso(updated_at),
+            "head": {"sha": "abandoned-head"},
+        }]
+        with patch.object(ef, "urlopen", self._routed_urlopen(pulls, seen)):
+            supplies = ef.default_event_supply_runner(
+                "cross-model-review.yml", "pull_request",
+                "GuitarAlchemist/Demerzel", "secret",
+                ("opened", "synchronize"), SINCE,
+            )
+        self.assertEqual(
+            len(supplies), 1,
+            "an unanswered obligation must not age out of retrieval")
+        obligation, run = supplies[0]
+        self.assertIsNone(run)
+        self.assertEqual(obligation["pull_state"], "closed")
+
+        # …and it must still be RED end-to-end, not merely retrievable.
+        findings = self._event_findings(lambda *args: supplies)
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "silent_green")
+        self.assertEqual(ef.exit_code(findings), 1)
+
     # ── author-controlled commit dates cannot buy allowance (defect 2) ─────
 
     def test_future_commit_timestamp_cannot_extend_the_allowance(self):
