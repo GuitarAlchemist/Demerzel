@@ -1,7 +1,7 @@
 {
   "proposition": "Consumer repo integration is complete — all 3 repos have current submodules, state directories, governance CLAUDE.md sections, and persona definitions",
-  "truth_value": "T",
-  "confidence": 0.85,
+  "truth_value": "F",
+  "confidence": 0.95,
   "evidence": {
     "supporting": [
       {
@@ -20,14 +20,26 @@
         "source": "2026-03-18-session-work",
         "claim": "ga submodule updated (144 commits), state/ created, CLAUDE.md updated (18 policies), 7 agent personas defined, build fixed",
         "timestamp": "2026-03-18T00:00:00Z",
-        "reliability": 0.90
+        "reliability": 0.9
+      },
+      {
+        "source": "consumer-repo re-verification 2026-09-12",
+        "claim": "ix and tars remain integrated: each carries a governance/demerzel submodule, a governance/state directory and a governance section in CLAUDE.md. ix pins 706e656 (0 commits behind Demerzel master), tars pins c15360b (1 behind). ga also carries the submodule, governance/state and governance/personas.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.99
       }
     ],
-    "contradicting": []
+    "contradicting": [
+      {
+        "source": "consumer-repo re-verification 2026-09-12",
+        "claim": "ga's governance/demerzel submodule pins 25346b7 (2026-04-03), 791 commits behind Demerzel master; its last bump was 7647f9b5 on 2026-04-04. The 'current submodules' conjunct is false. Root cause: ga's submodule-auto-update.yml fails on every run. On large updates it runs `git log --oneline \"$CURRENT..$LATEST\" | head -15` under `-o pipefail`; head closes the pipe and git log dies of SIGPIPE (exit 141) after the branch push but before `gh pr create`. Same-day re-runs then fail non-fast-forward on the dated branch. Result: 52 orphan chore/update-demerzel-* branches on ga and zero update PRs ever opened. Demerzel's submodule-notify did raise ga issue #582 (2026-08-05, 736 behind), which is still open.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.99
+      }
+    ]
   },
-  "previous_value": "F",
-  "last_updated": "2026-03-23T00:00:00Z",
-  "refresh_note": "2026-03-23: PR #13 was closed because governance scaffolding was committed directly to ga main (commit 11abf7af). Contradiction resolved — all 3 repos now have governance on main branch. Confidence upgraded from 0.85 to 0.90.",
-  "confidence_override": 0.90,
-  "evaluated_by": "demerzel"
+  "previous_value": "T",
+  "last_updated": "2026-09-12T00:00:00Z",
+  "refresh_note": "2026-03-23: PR #13 was closed because governance scaffolding was committed directly to ga main (commit 11abf7af). Contradiction resolved — all 3 repos now have governance on main branch. Confidence upgraded from 0.85 to 0.90. | 2026-09-12: expired 173d and re-verified against the sibling repos. ix and tars are current; ga is 791 commits behind because its auto-update workflow dies of SIGPIPE before opening a PR. The conjunction is false, so T -> F. The March confidence_override (0.90) is removed as superseded.",
+  "evaluated_by": "demerzel/staleness-reclassification"
 }

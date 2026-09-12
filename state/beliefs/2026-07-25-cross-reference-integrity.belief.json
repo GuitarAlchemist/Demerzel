@@ -1,6 +1,6 @@
 {
   "proposition": "Demerzel cross-references between governance artifacts resolve correctly (behavioral tests, estimator pairings, policy references, and schema $refs)",
-  "truth_value": "C",
+  "truth_value": "P",
   "confidence": 0.8,
   "evidence": {
     "supporting": [
@@ -30,22 +30,22 @@
       },
       {
         "source": "substrate-audit re-evaluation 2026-09-12",
-        "claim": "Re-evaluated 2026-09-12. The naming-convention dissent is resolved, but the stale-artifact dissent is verified still standing (64 state files beyond the 7-day threshold, the named ones at 173-178d). Holding an affirmative verdict against standing verified dissent is the false confidence substrate_audit exists to catch, so the verdict moves to C (Contradictory) — matching what hari's substrate already resolves — until the stale artifacts have a producer.",
+        "claim": "Re-evaluated 2026-09-12. The naming-convention dissent is resolved, but the stale-artifact dissent is verified still standing (64 state files beyond the 7-day threshold, the named ones at 173-178d). Holding an affirmative verdict against standing verified dissent is the false confidence substrate_audit exists to catch, so the verdict moves to C (Contradictory) — matching what hari's substrate already resolves — until the stale artifacts have a producer. [CORRECTED 2026-09-12: the stale-artifact dissent this entry calls standing was mismeasured — see resolved_contradictions. The move to C was wrong and is reverted.]",
         "timestamp": "2026-09-12T00:00:00Z",
-        "reliability": 0.99
+        "reliability": 0.99,
+        "corrected_at": "2026-09-12T00:00:00Z"
+      },
+      {
+        "source": "staleness reclassification 2026-09-12",
+        "claim": "With the mismeasured staleness dissent retired, no standing evidence contests that cross-references resolve. The verdict returns to its pre-dissent P@0.8 rather than T: the policy-reference evidence is still a sample, and retiring a bad objection is not new support.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.9
       }
     ],
-    "contradicting": [
-      {
-        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-6-stale-artifacts-detection",
-        "claim": "STILL STANDING, re-measured 2026-09-12 and worse than when first recorded: 64 files under state/ carry a last_updated older than the 7-day threshold. Every file this item named in July remains stale — state/beliefs/2026-03-17-behavioral-test-coverage.belief.json and 2026-03-18-consumer-repo-integration-status.belief.json at 173d, the three 2026-03-17 state/evolution/*.evolution.json records at 178d. These artifacts have no producer refreshing them, so cross-references resolve to records that no longer describe the repository.",
-        "timestamp": "2026-09-12T00:00:00Z",
-        "reliability": 0.99
-      }
-    ]
+    "contradicting": []
   },
   "last_updated": "2026-09-12T00:00:00Z",
-  "evaluated_by": "demerzel/substrate-audit-reeval",
+  "evaluated_by": "demerzel/staleness-reclassification",
   "resolved_contradictions": [
     {
       "source": "/demerzel audit level 2 (2026-07-25) — audit-2-1-behavioral-test-coverage",
@@ -55,6 +55,15 @@
       "resolved_at": "2026-09-12T00:00:00Z",
       "resolution": "Superseded. The convention drift is gone: policies/governance-audit-policy.yaml now states the 'established tests/behavioral/*-cases.md convention' and checks for tests/behavioral/{name}-cases.md, which is what the repository uses.",
       "resolution_verified_by": "read policies/governance-audit-policy.yaml on 2026-09-12 (convention stated at line 8, check at line 112) against the actual tests/behavioral/*-cases.md filenames"
+    },
+    {
+      "source": "/demerzel audit level 2 (2026-07-25) — audit-2-6-stale-artifacts-detection",
+      "claim": "STILL STANDING, re-measured 2026-09-12 and worse than when first recorded: 64 files under state/ carry a last_updated older than the 7-day threshold. Every file this item named in July remains stale — state/beliefs/2026-03-17-behavioral-test-coverage.belief.json and 2026-03-18-consumer-repo-integration-status.belief.json at 173d, the three 2026-03-17 state/evolution/*.evolution.json records at 178d. These artifacts have no producer refreshing them, so cross-references resolve to records that no longer describe the repository.",
+      "timestamp": "2026-09-12T00:00:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Mismeasured, retired. The count applied the 7-day ACTIVE-artifact threshold to every file under state/, but policies/governance-audit-policy.yaml check audit-2-6 (1.1.0, reconciled 2026-07-28) holds historical state records — evolution logs, PDCA cycles, audit snapshots, archived records — to a 90-day threshold, reports exceedances as informational rather than failures, and says not to flag them merely for being referenced. Classified by lifecycle, the stale set is mostly terminal records: conscience signals carrying a RESOLVED outcome, a regret with status resolved, council and trigger event records, dated evolution snapshots. Separately, age does not contest this proposition at all: it asserts that references RESOLVE, and an old record still resolves. The one active artifact in the set, 2026-03-18-consumer-repo-integration-status, was re-evaluated on its own merits.",
+      "resolution_verified_by": "read policies/governance-audit-policy.yaml audit-2-6 on 2026-09-12; enumerated tracked state/**/*.json older than 7 days outside archived/ with their lifecycle fields (status, outcome, cycle_phase, assessment.recommendation)"
     }
   ]
 }
