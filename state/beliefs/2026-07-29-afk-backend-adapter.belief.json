@@ -24,9 +24,10 @@
       },
       {
         "source": "fix/local-backend-spend-attribution-877 (#895)",
-        "claim": "Changed the local (Podman sandcastle) backend provider from codex-cli to claude-code-cli in config/afk-backends.yaml. The local backend forwards ANTHROPIC_API_KEY and bills metered Claude API spend, so it must be gated as claude-code-cli rather than the free local-seat codex-cli. Updated docs and tests. Closes #863.",
+        "claim": "Changed the local (Podman sandcastle) backend provider from codex-cli to claude-code-cli in config/afk-backends.yaml. The local backend forwards ANTHROPIC_API_KEY and bills metered Claude API spend, so it must be gated as claude-code-cli rather than the free local-seat codex-cli. Updated docs and tests. Closes #863. [CORRECTED 2026-09-12: the gating rationale in this entry was wrong. state/driver/aiw-budget-policy.json declares BOTH claude-code-cli and codex-cli as tier 'local-seat' with requires_manual_approval false, so the swap changed no observable gate behaviour. The adapter change itself stands; only its stated justification was void.]",
         "timestamp": "2026-07-29T00:00:00Z",
-        "reliability": 0.99
+        "reliability": 0.99,
+        "corrected_at": "2026-09-12T00:00:00Z"
       },
       {
         "source": "feat/cloud-worker-backend-879 (#899)",
@@ -51,23 +52,36 @@
         "claim": "Implemented JunieBackend as a third-party desktop adapter in scripts/afk_backends/junie.py. It invokes the JetBrains Junie CLI in --headless mode in the ephemeral repo path, parses the resulting git state to detect the branch and commits created by the agent, and returns the AFK result contract. Added a registry entry in config/afk-backends.yaml with provider junie-cli, disabled by default. Added unit tests in scripts/test_junie_backend.py that mock subprocess.run and git interactions. All 411 unit tests pass.",
         "timestamp": "2026-07-29T23:17:00Z",
         "reliability": 0.98
-      }
-    ],
-    "contradicting": [
-      {
-        "source": "fix/afk-863-spend-attribution (#887)",
-        "claim": "CORRECTION to the #877/#895 entry above. That entry states the local backend 'must be gated as claude-code-cli rather than the free local-seat codex-cli'. This asserts a distinction that does not exist: state/driver/aiw-budget-policy.json declares BOTH claude-code-cli and codex-cli as tier 'local-seat' with requires_manual_approval false. The swap changed no observable behaviour -- provider_for('local') still returns a local-seat id, the gate still returns allow, and metered ANTHROPIC_API_KEY spend still clears it. #863 was closed on that basis and has been reopened. The adapter abstraction itself is real and works; only the attribution claim was false.",
-        "timestamp": "2026-07-29T04:45:00Z",
-        "reliability": 0.99
       },
       {
-        "source": "fix/afk-863-spend-attribution (#887)",
-        "claim": "CORRECTION to the #877/#895 supporting entry. It states the local backend 'must be gated as claude-code-cli rather than the free local-seat codex-cli'. That distinction does not exist: aiw-budget-policy.json declares BOTH as tier 'local-seat' with requires_manual_approval false, so provider_for('local') still returned a free-tier id and the gate still returned allow. #863 was closed on that basis. The #884 entry then wrote the same error into docs/workflows/aiw-operating-doctrine.md and policies/autonomous-loop-policy.yaml, whose own stated rule ('a backend that forwards a metered API key is attributed to that metered provider, not to a free local provider') the example contradicts. Corrected by attributing local to anthropic-api (metered-cloud, approval required). The adapter abstraction itself is real and works; only the attribution claims were false.",
-        "timestamp": "2026-07-29T13:00:00Z",
+        "source": "substrate-audit re-evaluation 2026-09-12",
+        "claim": "Re-evaluated 2026-09-12. The two dissenting items were corrections to a supporting entry's gating rationale, not objections to the proposition; their factual claim is confirmed (both local providers are tier 'local-seat', requires_manual_approval false). The supporting entry now carries the correction inline, and the proposition stands on the adapter contract, registry, and the Remote/Shell/Junie adapters.",
+        "timestamp": "2026-09-12T00:00:00Z",
         "reliability": 0.99
       }
-    ]
+    ],
+    "contradicting": []
   },
-  "last_updated": "2026-07-29T23:17:00Z",
-  "evaluated_by": "demerzel"
+  "last_updated": "2026-09-12T00:00:00Z",
+  "evaluated_by": "demerzel/substrate-audit-reeval",
+  "resolved_contradictions": [
+    {
+      "source": "fix/afk-863-spend-attribution (#887)",
+      "claim": "CORRECTION to the #877/#895 supporting entry. It states the local backend 'must be gated as claude-code-cli rather than the free local-seat codex-cli'. That distinction does not exist: aiw-budget-policy.json declares BOTH as tier 'local-seat' with requires_manual_approval false, so provider_for('local') still returned a free-tier id and the gate still returned allow. #863 was closed on that basis. The #884 entry then wrote the same error into docs/workflows/aiw-operating-doctrine.md and policies/autonomous-loop-policy.yaml, whose own stated rule ('a backend that forwards a metered API key is attributed to that metered provider, not to a free local provider') the example contradicts. Corrected by attributing local to anthropic-api (metered-cloud, approval required). The adapter abstraction itself is real and works; only the attribution claims were false.",
+      "timestamp": "2026-07-29T13:00:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Reclassified, not retired. This item is factually correct but it corrects the rationale of a supporting entry; it does not contest the proposition (that the AFK governor uses a backend-adapter abstraction), which 8 supporting entries establish independently. Filed under evidence.contradicting it made the substrate resolve the whole belief Contradictory. The supporting entry it targets now carries the correction.",
+      "resolution_verified_by": "read state/driver/aiw-budget-policy.json on 2026-09-12: providers[0] claude-code-cli and providers[1] codex-cli are both tier 'local-seat' with requires_manual_approval false, confirming the correction's claim"
+    },
+    {
+      "source": "fix/afk-863-spend-attribution (#887)",
+      "claim": "CORRECTION to the #877/#895 entry above. That entry states the local backend 'must be gated as claude-code-cli rather than the free local-seat codex-cli'. This asserts a distinction that does not exist: state/driver/aiw-budget-policy.json declares BOTH claude-code-cli and codex-cli as tier 'local-seat' with requires_manual_approval false. The swap changed no observable behaviour -- provider_for('local') still returns a local-seat id, the gate still returns allow, and metered ANTHROPIC_API_KEY spend still clears it. #863 was closed on that basis and has been reopened. The adapter abstraction itself is real and works; only the attribution claim was false.",
+      "timestamp": "2026-07-29T04:45:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Reclassified, not retired. This item is factually correct but it corrects the rationale of a supporting entry; it does not contest the proposition (that the AFK governor uses a backend-adapter abstraction), which 8 supporting entries establish independently. Filed under evidence.contradicting it made the substrate resolve the whole belief Contradictory. The supporting entry it targets now carries the correction.",
+      "resolution_verified_by": "read state/driver/aiw-budget-policy.json on 2026-09-12: providers[0] claude-code-cli and providers[1] codex-cli are both tier 'local-seat' with requires_manual_approval false, confirming the correction's claim"
+    }
+  ]
 }

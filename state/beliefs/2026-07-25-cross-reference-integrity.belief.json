@@ -1,6 +1,6 @@
 {
   "proposition": "Demerzel cross-references between governance artifacts resolve correctly (behavioral tests, estimator pairings, policy references, and schema $refs)",
-  "truth_value": "P",
+  "truth_value": "C",
   "confidence": 0.8,
   "evidence": {
     "supporting": [
@@ -27,23 +27,34 @@
         "claim": "logic/governance-evolution.schema.json $ref now points to /schemas/tetravalent-state and resolves. All other logic schemas use the same /schemas/ tetravalent reference. Contract schemas use relative integrity-fields.schema.json refs that resolve within schemas/contracts/.",
         "timestamp": "2026-07-25T00:00:00Z",
         "reliability": 0.95
+      },
+      {
+        "source": "substrate-audit re-evaluation 2026-09-12",
+        "claim": "Re-evaluated 2026-09-12. The naming-convention dissent is resolved, but the stale-artifact dissent is verified still standing (64 state files beyond the 7-day threshold, the named ones at 173-178d). Holding an affirmative verdict against standing verified dissent is the false confidence substrate_audit exists to catch, so the verdict moves to C (Contradictory) — matching what hari's substrate already resolves — until the stale artifacts have a producer.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.99
       }
     ],
     "contradicting": [
       {
-        "source": "/demerzel audit level 2 (2026-07-25) — audit-2-1-behavioral-test-coverage",
-        "claim": "Behavioral case files use the naming convention {persona}-cases.md, but policies/governance-audit-policy.yaml specifies the expected filenames as {persona}.test.md or {persona}.test.yaml. This is a convention drift between policy and repository practice.",
-        "timestamp": "2026-07-25T00:00:00Z",
-        "reliability": 0.9
-      },
-      {
         "source": "/demerzel audit level 2 (2026-07-25) — audit-2-6-stale-artifacts-detection",
-        "claim": "Several state files have not been updated in more than 7 days: state/beliefs/2026-03-17-behavioral-test-coverage.belief.json, state/beliefs/2026-03-18-consumer-repo-integration-status.belief.json, state/evolution/2026-03-17-alignment-policy.evolution.json, state/evolution/2026-03-17-asimov-constitution.evolution.json, state/evolution/2026-03-17-default-constitution.evolution.json, state/evolution/2026-03-20-memristive-markov.evolution.json, state/evolution/2026-04-03-visual-governance.evolution.json, and state/pdca/2026-03-17-behavioral-test-gap.pdca.json. These are stale relative to the policy's 7-day staleness threshold.",
-        "timestamp": "2026-07-25T00:00:00Z",
-        "reliability": 0.95
+        "claim": "STILL STANDING, re-measured 2026-09-12 and worse than when first recorded: 64 files under state/ carry a last_updated older than the 7-day threshold. Every file this item named in July remains stale — state/beliefs/2026-03-17-behavioral-test-coverage.belief.json and 2026-03-18-consumer-repo-integration-status.belief.json at 173d, the three 2026-03-17 state/evolution/*.evolution.json records at 178d. These artifacts have no producer refreshing them, so cross-references resolve to records that no longer describe the repository.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.99
       }
     ]
   },
-  "last_updated": "2026-07-25T00:00:00Z",
-  "evaluated_by": "demerzel"
+  "last_updated": "2026-09-12T00:00:00Z",
+  "evaluated_by": "demerzel/substrate-audit-reeval",
+  "resolved_contradictions": [
+    {
+      "source": "/demerzel audit level 2 (2026-07-25) — audit-2-1-behavioral-test-coverage",
+      "claim": "Behavioral case files use the naming convention {persona}-cases.md, but policies/governance-audit-policy.yaml specifies the expected filenames as {persona}.test.md or {persona}.test.yaml. This is a convention drift between policy and repository practice.",
+      "timestamp": "2026-07-25T00:00:00Z",
+      "reliability": 0.9,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Superseded. The convention drift is gone: policies/governance-audit-policy.yaml now states the 'established tests/behavioral/*-cases.md convention' and checks for tests/behavioral/{name}-cases.md, which is what the repository uses.",
+      "resolution_verified_by": "read policies/governance-audit-policy.yaml on 2026-09-12 (convention stated at line 8, check at line 112) against the actual tests/behavioral/*-cases.md filenames"
+    }
+  ]
 }
