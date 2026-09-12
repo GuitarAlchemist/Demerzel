@@ -5,7 +5,11 @@
   "plan": {
     "description": "Feed reviewer_b (council_emit.py) the linked-issue title/body (authorized intent) + the full post-change content of each changed file (<=10) + the diff, instead of only a truncated diff. Calibrate the prompt to judge the change itself (pre-authorized by the issue) and NOT block on facts unverifiable from the provided material (e.g. whether a referenced PR exists). Make verdict parsing read the explicit final 'Verdict:' line rather than a loose substring.",
     "success_criteria": "On a clean, internally-consistent low-risk change the council reaches APPROVE stably (>=4/5 samples); on a change with a real internal contradiction the council REJECTs and names the contradiction.",
-    "risks": ["A single LLM sample is non-deterministic on borderline changes", "Full-file context costs more tokens per review", "gh api --jq .content returns raw base64, not JSON"],
+    "risks": [
+      "A single LLM sample is non-deterministic on borderline changes",
+      "Full-file context costs more tokens per review",
+      "gh api --jq .content returns raw base64, not JSON"
+    ],
     "target_date": "2026-06-24"
   },
   "do": {
@@ -20,9 +24,11 @@
   "act": {
     "decision": "standardize",
     "rationale": "Full-file + intent context is now the council default on master. OPEN FOLLOW-UP (next PDCA if borderline flakiness appears operationally): a single LLM reviewer was stable on clean changes here, but the gate is a hard binary veto on one sample. If borderline PRs prove flaky across cycles, upgrade reviewer_b to an N-sample majority (or treat it as advisory below a confidence band) so non-determinism cannot block a correct change or pass a bad one. Monitor via state/oversight/afk-harvest-*.json and state/council/ verdicts.",
-    "acted_at": "2026-06-24T01:35:00Z"
+    "acted_at": "2026-06-24T01:35:00Z",
+    "outcome_verified": "2026-09-12: scripts/council_emit.py on master still has build_review_context (line 252) and final-line parse_verdict (line 111). The N-sample follow-up stays conditional on observed flakiness."
   },
   "created_at": "2026-06-24T01:35:00Z",
-  "last_updated": "2026-06-24T01:35:00Z",
-  "evaluated_by": "demerzel"
+  "last_updated": "2026-09-12T00:00:00Z",
+  "evaluated_by": "demerzel/pdca-triage-2026-09-12",
+  "outcome": "adopted"
 }
