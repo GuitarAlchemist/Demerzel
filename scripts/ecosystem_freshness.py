@@ -130,6 +130,30 @@ EVENT_PRODUCERS: dict[str, dict] = {
 # AdapterError (exit 2) instead. 100 items/page.
 _MAX_SUPPLY_PAGES = 20
 
+# Hard REQUEST ceiling for one event-supply evaluation (#963). The activation
+# cutoff is immutable, so the set of pull requests "updated since the cutoff"
+# only ever grows, and the adapter spends roughly two requests per pull request
+# in it. Measured read-only against GuitarAlchemist/Demerzel on the activation
+# day: 11 obligations, 22 requests, ~11s. At the repository's observed velocity
+# (~112 pull requests touched per 30 days) that reaches GITHUB_TOKEN's 1,000
+# requests/hour/repository primary rate limit within months, where it would
+# surface as an opaque mid-retrieval HTTP 403.
+#
+# This budget is ~27x the measured baseline and ~60% of the hourly token
+# allowance: high enough that no plausible month of activity trips it, low
+# enough to fire FIRST, as a legible "retrieval is no longer affordable" alarm
+# naming this constant, instead of the rate limiter firing illegibly.
+#
+# It bounds COST, never the obligation set: exceeding it raises AdapterError
+# (exit 2) exactly like _MAX_SUPPLY_PAGES, because retrieval that stopped early
+# is incomplete, and incomplete retrieval must never be read as absence. Note
+# what this deliberately does NOT do — it does not narrow the retrieval window
+# to keep the cost down. An obligation the monitor stops retrieving is an
+# obligation it silently forgets. For why the sliding retrieval floor proposed
+# in #963 cannot supply this bound without durable carry-forward state, see
+# `docs/architecture/event-supply-retrieval-bound.md`.
+_MAX_SUPPLY_REQUESTS = 600
+
 # Timestamps are issued by GitHub but compared against the runner's clock, so a
 # genuinely fresh event can read a hair "in the future" under NTP skew. Rejecting
 # those as forged would be pure cry-wolf. The tolerance is deliberately tiny
@@ -239,8 +263,35 @@ def default_actions_runner(
     return runs[0] if runs else None
 
 
-def _github_get(endpoint: str, token: str, what: str):
+class _RequestBudget:
+    """Requests one event-supply evaluation may spend before failing closed.
+
+    Counting lives here rather than in a module-level total so that the ceiling
+    is per-evaluation and testable without network: the unit suite asserts the
+    exact request count for a given supply shape.
+    """
+
+    def __init__(self, limit: int) -> None:
+        self.limit = limit
+        self.spent = 0
+
+    def spend(self, what: str) -> None:
+        self.spent += 1
+        if self.spent > self.limit:
+            raise AdapterError(
+                f"event-supply retrieval exceeded its {self.limit}-request "
+                f"budget at {what}; retrieval is incomplete and cannot be read "
+                "as absence. The activation cutoff is immutable by design, so "
+                "the pull requests to evaluate only accumulate — bounding this "
+                "needs durable carry-forward state, not a narrower window"
+            )
+
+
+def _github_get(endpoint: str, token: str, what: str,
+                budget: _RequestBudget | None = None):
     """Read-only authenticated GET against the GitHub API. Raises AdapterError."""
+    if budget is not None:
+        budget.spend(what)
     request = Request(endpoint, headers={
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
@@ -266,6 +317,7 @@ def _collect_relevant_pulls(
     event: str,
     token: str,
     since: datetime,
+    budget: _RequestBudget | None = None,
 ) -> list[dict]:
     """Pull requests with GitHub-recorded activity at or after `since`.
 
@@ -297,6 +349,7 @@ def _collect_relevant_pulls(
             }),
             token,
             f"{event} supply on {repository} page {page}",
+            budget,
         )
         if not isinstance(pull_page, list):
             raise AdapterError(
@@ -336,6 +389,7 @@ def _collect_target_runs(
     event: str,
     token: str,
     since: datetime,
+    budget: _RequestBudget | None = None,
 ) -> list:
     """Every `pull_request_target` run back to the activation cutoff.
 
@@ -358,6 +412,7 @@ def _collect_target_runs(
             + urlencode({"event": event, "per_page": 100, "page": page}),
             token,
             f"{workflow} secured pull-request runs page {page}",
+            budget,
         )
         page_runs = (payload.get("workflow_runs")
                      if isinstance(payload, dict) else None)
@@ -426,8 +481,11 @@ def default_event_supply_runner(
             f"`{event}`; without one the relevant history has no boundary"
         )
 
+    budget = _RequestBudget(_MAX_SUPPLY_REQUESTS)
     repo_path = quote(repository, safe="/")
-    pulls = _collect_relevant_pulls(repo_path, repository, event, token, since)
+    pulls = _collect_relevant_pulls(
+        repo_path, repository, event, token, since, budget
+    )
     if not pulls:
         return []
 
@@ -435,7 +493,7 @@ def default_event_supply_runner(
     target_runs: list | None = None
     if event == "pull_request_target":
         target_runs = _collect_target_runs(
-            repo_path, workflow, event, token, since
+            repo_path, workflow, event, token, since, budget
         )
 
     for index, pull in enumerate(pulls):
@@ -475,6 +533,7 @@ def default_event_supply_runner(
                 }),
                 token,
                 f"{workflow} runs for {head_sha}",
+                budget,
             )
             runs = payload.get("workflow_runs") if isinstance(payload, dict) else None
             if not isinstance(runs, list):
@@ -501,6 +560,7 @@ def default_event_supply_runner(
                 f"{quote(head_sha, safe='')}",
                 token,
                 f"head commit {head_sha}",
+                budget,
             )
             commit_data = commit.get("commit") if isinstance(commit, dict) else None
             committer = (commit_data.get("committer")
@@ -552,6 +612,7 @@ def default_event_supply_runner(
                     f"{quote(head_sha, safe='')}/pulls",
                     token,
                     f"pull requests associated with {head_sha}",
+                    budget,
                 )
                 if not isinstance(associated_pulls, list):
                     raise AdapterError(
