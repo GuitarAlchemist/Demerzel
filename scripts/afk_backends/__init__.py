@@ -65,7 +65,7 @@ class AFKBackend(ABC):
         """
 
     @abstractmethod
-    def invoke(self, issue: dict[str, Any], repo_path: str | None) -> dict:
+    def invoke(self, issue: dict[str, Any], repo_path: str | None, status_callback: Any = None) -> dict:
         """Run the backend for a single issue.
 
         Args:
@@ -73,6 +73,7 @@ class AFKBackend(ABC):
                 and labels. The backend must not mutate it.
             repo_path: Path to the ephemeral clone, or None if
                 needs_local_repo() returns False.
+            status_callback: Optional callable accepting a string to report progress.
 
         Returns:
             A dict with the exact keys:
