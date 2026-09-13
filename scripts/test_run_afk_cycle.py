@@ -450,11 +450,13 @@ class FakeClone:
         self.agent, self.tests = list(agent), list(tests)
         self.commits, self.dirty = [], False
         self.prompts, self.test_envs, self.git_calls = [], [], []
+        self.agent_envs = []
 
     def run(self, cmd, **kw):
         ns = type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
         if cmd[0] == "claude":
             self.prompts.append(cmd[2])
+            self.agent_envs.append(kw.get("env"))
             action = self.agent.pop(0)
             if action == "commit":
                 self.commits.append(f"feat: agent work {len(self.prompts)}")
@@ -547,6 +549,29 @@ class TestClaudeCodeRetryLoop(unittest.TestCase):
         for name in ("GITHUB_TOKEN", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "RULESET_BYPASS_SSH_KEY"):
             self.assertNotIn(name, env)
         self.assertEqual(env["PATH"], secrets["PATH"])
+
+    def test_agent_runs_without_governor_secrets_but_with_what_claude_needs(self):
+        fake = FakeClone(agent=["commit"], tests=[True])
+        secrets = {"GITHUB_TOKEN": "ghs_x", "ANTHROPIC_API_KEY": "sk-x", "OPENAI_API_KEY": "sk-y",
+                   "MISTRAL_API_KEY": "m", "RULESET_BYPASS_SSH_KEY": "k",
+                   "CLAUDE_CODE_MESSAGING_TOKEN": "parent-session", "CLAUDECODE": "1",
+                   "WMUX_PIPE_TOKEN": "w"}
+        needed = {"PATH": os.environ.get("PATH", "/usr/bin"), "USERPROFILE": "C:/Users/x",
+                  "APPDATA": "C:/Users/x/AppData/Roaming", "LOCALAPPDATA": "C:/Users/x/AppData/Local",
+                  "HTTPS_PROXY": "http://proxy:8080", "CLAUDE_CODE_OAUTH_TOKEN": "oauth",
+                  "CLAUDE_CODE_GIT_BASH_PATH": "C:/Git/bin/bash.exe"}
+        with mock.patch.dict(os.environ, {**secrets, **needed}):
+            fake.invoke()
+        env = fake.agent_envs[0]
+        for name in secrets:
+            self.assertNotIn(name, env)
+        for name, value in needed.items():
+            self.assertEqual(env.get(name), value, name)
+
+    def test_agent_allowlist_matches_names_case_insensitively(self):
+        from afk_backends.claude_code import _agent_env
+        env = _agent_env({"ProgramFiles(x86)": "C:/PF86", "Path": "C:/bin", "OpenAI_Api_Key": "sk"})
+        self.assertEqual(env, {"ProgramFiles(x86)": "C:/PF86", "Path": "C:/bin"})
 
     def test_test_output_cannot_close_its_own_fence(self):
         fake = FakeClone(agent=["commit", "commit"], tests=[False, True])
