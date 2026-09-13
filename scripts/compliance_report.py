@@ -23,6 +23,10 @@ Checks (real, mechanical — the runnable subset of governance-audit.ixql L1-L2)
   S1 schema files are valid JSON
   B1 belief staleness            (last_updated older than 7 days)
 
+Each check lives in its own module under scripts/compliance_checks/, which also
+owns run_checks() and the order the checks run in. This file keeps the report:
+severity rollup, schema shape, integrity fields, atomic write, CLI.
+
 Each failure becomes a violations[] entry mapped to a constitutional article /
 contributing rule, with a severity. overall_status is derived from the worst
 severity present. The report carries integrity fields with origin_repo = the
@@ -48,16 +52,18 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+# The checks parse governance YAML; importing pyyaml here too keeps the CLI's
+# fail-fast message, which reads better than an ImportError traceback.
 try:
-    import yaml  # pyyaml
+    import yaml  # noqa: F401
 except ImportError:  # pragma: no cover
     print("error: pyyaml required (pip install pyyaml)", file=sys.stderr)
     raise SystemExit(1)
 
-STALE_DAYS = 7
-PERSONA_REQUIRED = ["name", "version", "description", "role", "capabilities",
-                    "constraints", "voice", "affordances", "goal_directedness",
-                    "estimator_pairing"]
+try:  # package mode: `import scripts.compliance_report`
+    from .compliance_checks import run_checks
+except ImportError:  # direct script: `python scripts/compliance_report.py`
+    from compliance_checks import run_checks
 
 
 def _now() -> datetime:
@@ -66,143 +72,6 @@ def _now() -> datetime:
 
 def _now_iso() -> str:
     return _now().strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _is_semver(v) -> bool:
-    if not isinstance(v, str):
-        return False
-    parts = v.strip().strip('"').split(".")
-    return len(parts) == 3 and all(p.isdigit() for p in parts)
-
-
-def _load_yaml(path: Path):
-    """Parse the YAML front-matter only. Many governance files here are YAML+markdown
-    hybrids: a metadata block, then a standalone '---', then markdown prose (headings,
-    backticks, sentences) interleaved with illustrative YAML. Those bodies are NOT
-    meant to be machine-parsed, so we read only the front-matter (content before the
-    first standalone '---' line; whole file if there is none). Returns (dict, ok, err);
-    ok=False only when the front-matter itself is malformed (a real violation)."""
-    text = path.read_text(encoding="utf-8")
-    lines = text.splitlines()
-    cut = next((i for i, ln in enumerate(lines) if i > 0 and ln.strip() == "---"), None)
-    front = "\n".join(lines[:cut]) if cut is not None else text
-    try:
-        data = yaml.safe_load(front)
-        return (data if isinstance(data, dict) else {}), True, None
-    except yaml.YAMLError as exc:
-        return {}, False, str(exc).splitlines()[0]
-
-
-def _parse_ts(value):
-    if not isinstance(value, str):
-        return None
-    try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
-    except ValueError:
-        return None
-
-
-def _violation(article, description, severity):
-    return {"article": article, "description": description,
-            "severity": severity, "remediation_status": "pending"}
-
-
-def run_checks(mirror: Path) -> dict:
-    """Return {violations: [...], checked: {counts}}. Pure governance checks."""
-    violations, checked = [], {}
-
-    # Load personas + test basenames once.
-    personas = {}
-    for p in sorted((mirror / "personas").glob("*.persona.yaml")):
-        data, ok, err = _load_yaml(p)
-        if not ok:
-            violations.append(_violation("Article 7 - Auditability",
-                              f"persona {p.name} is not valid YAML: {err}", "high"))
-        personas[p] = data
-    checked["personas"] = len(personas)
-
-    test_files = list((mirror / "tests" / "behavioral").glob("*.md"))
-    test_blob = " ".join(t.stem for t in test_files)
-    checked["behavioral_tests"] = len(test_files)
-    persona_names = {(d or {}).get("name") for d in personas.values()}
-
-    for path, data in personas.items():
-        name = data.get("name") or path.stem
-        raw = path.read_text(encoding="utf-8").lower()
-        # P1 required fields (estimator_pairing handled separately, below, with waiver)
-        base = [k for k in PERSONA_REQUIRED if k != "estimator_pairing"]
-        missing = [k for k in base if k not in data or data.get(k) in (None, "", [])]
-        if missing:
-            violations.append(_violation(
-                "persona-requirements", f"persona '{name}' missing fields: {missing}",
-                "high" if "constraints" in missing else "medium"))
-        # P2 behavioral-test coverage
-        if name and name not in test_blob:
-            violations.append(_violation(
-                "contributing-rules", f"persona '{name}' has no behavioral test", "high"))
-        # P3 semver
-        if not _is_semver(data.get("version")):
-            violations.append(_violation(
-                "Article 7 - Auditability",
-                f"persona '{name}' version {data.get('version')!r} is not semver", "low"))
-        # P4 estimator_pairing: required UNLESS the file documents an explicit waiver
-        # (e.g. skeptical-auditor IS the neutral estimator others pair with).
-        ep = data.get("estimator_pairing")
-        ep_name = ep.get("persona") or ep.get("name") if isinstance(ep, dict) else ep
-        waived = ("no estimator_pairing" in raw or "no estimator pairing" in raw
-                  or "is the neutral estimator" in raw)
-        if not ep_name and not waived:
-            violations.append(_violation(
-                "persona-requirements", f"persona '{name}' has no estimator_pairing", "high"))
-        elif ep_name and ep_name not in persona_names:
-            violations.append(_violation(
-                "persona-requirements",
-                f"persona '{name}' estimator_pairing '{ep_name}' is not a known persona", "medium"))
-
-    # P3 policy semver
-    pol = list((mirror / "policies").glob("*.yaml"))
-    checked["policies"] = len(pol)
-    for p in pol:
-        data, ok, err = _load_yaml(p)
-        if not ok:
-            # Policies here are frequently prose-rich human docs (illustrative quotes,
-            # markdown). The framework's own audit does NOT require all policies to be
-            # strict YAML, so a parse failure is not a governance violation — skip.
-            continue
-        if "version" in data and not _is_semver(data.get("version")):
-            violations.append(_violation(
-                "Article 7 - Auditability",
-                f"policy {p.name} version {data.get('version')!r} is not semver", "low"))
-
-    # S1 schema files valid JSON
-    schemas = list((mirror / "schemas").glob("*.schema.json"))
-    checked["schemas"] = len(schemas)
-    for s in schemas:
-        try:
-            json.loads(s.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            violations.append(_violation(
-                "Article 7 - Auditability", f"schema {s.name} is not valid JSON", "critical"))
-
-    # B1 belief staleness
-    beliefs = list((mirror / "state" / "beliefs").glob("*.belief.json"))
-    checked["beliefs"] = len(beliefs)
-    now = _now()
-    stale = 0
-    for b in beliefs:
-        try:
-            ts = _parse_ts(json.loads(b.read_text(encoding="utf-8")).get("last_updated", ""))
-        except (json.JSONDecodeError, OSError):
-            continue
-        if ts and (now - ts).days > STALE_DAYS:
-            stale += 1
-    if stale:
-        violations.append(_violation(
-            "Article 8 - Observability",
-            f"{stale}/{len(beliefs)} beliefs are stale (> {STALE_DAYS}d since last_updated)",
-            "medium"))
-
-    return {"violations": violations, "checked": checked}
 
 
 def build_report(repo: str, result: dict, period_days: int) -> dict:

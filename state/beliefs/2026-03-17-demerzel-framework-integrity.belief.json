@@ -15,17 +15,27 @@
         "claim": "Framework expanded significantly since initial assessment: 24 policies (was 11), 18 grammars, 23 courses, 38 skills, 29 test suites, 13 Streeling departments. 197+ commits since last assessment. All artifacts versioned and schema-validated.",
         "timestamp": "2026-03-23T00:00:00Z",
         "reliability": 0.95
+      },
+      {
+        "source": "substrate-audit re-evaluation 2026-09-12",
+        "claim": "Re-verified 2026-09-12: the schema drift that contradicted structural completeness is resolved — 0/8 PDCA instances and 0/4 loop-state instances fail validation against their declared schemas.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.95
       }
     ],
-    "contradicting": [
-      {
-        "source": "/demerzel audit level 1 (2026-07-25)",
-        "claim": "The 2026-03-23 'all artifacts schema-validated' claim no longer holds: all 8 PDCA state instances and both loop state instances fail validation against their declared schemas (logic/kaizen-pdca-state.schema.json, logic/loop-state.schema.json) due to schema drift. Constitutions, personas, policies, contract schemas, tetravalent beliefs, and reconnaissance profiles remain intact and conformant.",
-        "timestamp": "2026-07-25T00:00:00Z",
-        "reliability": 0.99
-      }
-    ]
+    "contradicting": []
   },
-  "last_updated": "2026-07-25T00:00:00Z",
-  "evaluated_by": "demerzel"
+  "last_updated": "2026-09-12T00:00:00Z",
+  "evaluated_by": "demerzel/substrate-audit-reeval",
+  "resolved_contradictions": [
+    {
+      "source": "/demerzel audit level 1 (2026-07-25)",
+      "claim": "The 2026-03-23 'all artifacts schema-validated' claim no longer holds: all 8 PDCA state instances and both loop state instances fail validation against their declared schemas (logic/kaizen-pdca-state.schema.json, logic/loop-state.schema.json) due to schema drift. Constitutions, personas, policies, contract schemas, tetravalent beliefs, and reconnaissance profiles remain intact and conformant.",
+      "timestamp": "2026-07-25T00:00:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Superseded by the schema realignment recorded in the schema-conformance belief. The PDCA and loop-state schema drift this item described has been fixed: the schemas were rewritten to the real instance shape, and all instances now validate.",
+      "resolution_verified_by": "jsonschema Draft7 validation on 2026-09-12: state/pdca/*.pdca.json 0/8 fail against logic/kaizen-pdca-state.schema.json; state/loops/*.loop.json 0/4 fail against schemas/loop-state.schema.json"
+    }
+  ]
 }

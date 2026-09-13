@@ -39,7 +39,10 @@ Before reading the evolution log, verify it is fresh enough to compound from. Di
 
 Procedure:
 
-1. Find the newest mtime across `state/evolution/*.json` — call it `T_log`.
+1. Find when the log last changed in git — call it `T_log`:
+   `git log -1 --format=%cI -- 'state/evolution/*.evolution.json'`.
+   Do not use filesystem mtime: every clone, checkout and worktree resets it to
+   checkout time, so a months-stale log reads as minutes old and this check never fires.
 2. Run `git log --since="$T_log" --oneline` in the current repo. Repeat for sibling repos at `~/source/repos/{ix,hari,tars,ga}` (skip any that are not present).
 3. **Decision:**
    - If no new commits in any repo → log is fresh, proceed to Step 1.
