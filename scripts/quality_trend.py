@@ -11,6 +11,12 @@ cannot be recomputed from a stored delta, so each line here also carries the
 absolute counts (citation_count / violation_count / compliance_rate) that the
 next run reads back as its baseline. The schema stays flat and greppable.
 
+REBASELINE: each line records the metrics' citation_source. When it differs
+from the previous line's (hand-typed counts replaced by
+scripts/evolution_metrics.py, source "git-grep-v1"), the line carries
+rebaseline: true and delta_citations 0 — the jump is a change of measurement,
+not a change in citations.
+
 Constraints (from the skill): read-only w.r.t. evolution/ and beliefs/;
 append-only w.r.t. its own JSONL; makes no proposals; targets < 5s.
 """
@@ -82,19 +88,23 @@ def build_rows(evolution_dir: str, out_dir: str,
             age_days = (now - anchor).days if anchor else None
 
             prev = previous.get(artifact, {})
+            source = metrics.get("citation_source")
+            rebaseline = bool(prev) and prev.get("citation_source") != source
             rows.append({
                 "timestamp": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "artifact": artifact,
                 "citation_count": citation,
                 "violation_count": violation,
                 "compliance_rate": round(compliance, 4),
-                "delta_citations": citation - int(prev.get("citation_count", 0) or 0),
+                "delta_citations": 0 if rebaseline else citation - int(prev.get("citation_count", 0) or 0),
                 "delta_violations": violation - int(prev.get("violation_count", 0) or 0),
                 "delta_compliance": round(
                     compliance - float(prev.get("compliance_rate", 0.0) or 0.0), 4),
                 "age_days": age_days,
                 "effectiveness_from": prev.get("effectiveness_to"),
                 "effectiveness_to": eff_to,
+                "citation_source": source,
+                "rebaseline": rebaseline,
             })
         except Exception as exc:  # noqa: BLE001 — isolate, don't crash the feeder
             skips.append(f"{os.path.basename(path)}: {type(exc).__name__}: {exc}")
