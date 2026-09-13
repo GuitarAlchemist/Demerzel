@@ -37,6 +37,8 @@ from pathlib import Path
 
 import yaml
 
+import demerzel_kit
+
 TERMINAL, OPEN_WORK, LIVE_STATE = "terminal", "open_work", "live_state"
 PRIORITY_ORDER = ["critical", "high", "medium", "low"]
 
@@ -136,7 +138,7 @@ def category_newest(findings):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parent.parent))
+    ap.add_argument("--root", default=str(demerzel_kit.ROOT))
     ap.add_argument("--policy", default="policies/staleness-detection-policy.yaml")
     ap.add_argument("--strict", action="store_true", help="exit 1 when anything is stale")
     args = ap.parse_args(argv)
