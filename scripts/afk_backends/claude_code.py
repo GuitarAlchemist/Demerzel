@@ -23,14 +23,22 @@ import demerzel_kit as kit  # noqa: E402
 CLAUDE_CODE_TIMEOUT = 1800  # seconds for one headless `claude -p` agent run
 
 
+_ISSUE_END = "=== END UNTRUSTED ISSUE DATA ==="
+
+
+def _unfenced(text: str) -> str:
+    """Stop untrusted issue text from closing its own fence (see council_emit)."""
+    return text.replace(_ISSUE_END, "=== END UNTRUSTED ISSUE DATA (quoted) ===")
+
+
 def _claude_code_prompt(issue: dict) -> str:
     """The instruction handed to the headless Claude Code agent. The issue body
     already carries the full implementation spec (pattern + success criteria), so
     this only frames the autonomy contract: implement, test, commit — no push/PR
     (the governor owns those)."""
     num = issue.get("number")
-    title = issue.get('title', '')
-    body = issue.get('body', '')
+    title = _unfenced(str(issue.get('title', '')))
+    body = _unfenced(str(issue.get('body', '')))
     return (
         "You are an autonomous AFK engineer working in a fresh clone of the "
         "Demerzel governance repo, on a dedicated branch. Implement the issue "
@@ -54,7 +62,7 @@ def _claude_code_prompt(issue: dict) -> str:
         f"ISSUE ID: #{num}\n"
         f"TITLE: {title}\n"
         f"BODY:\n{body}\n"
-        "=== END UNTRUSTED ISSUE DATA ==="
+        f"{_ISSUE_END}"
     )
 
 
