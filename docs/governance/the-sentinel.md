@@ -1,6 +1,7 @@
 # The Sentinel
 
 **Status:** Governance specification v1.0, 2026-04-12.
+**Implementation:** ix `crates/ix-sentinel` (MVP 976b825, 2026-04-12; last touched 2026-04-26). The binary cites this spec as its lifecycle source. It has no tests, and Demerzel has no behavioral test for the Sentinel yet.
 **Origin:** Multi-AI meditation on "By asking a human to fix a thing, we remain in the copy and paste world." Three providers converged: the Sentinel is the bottleneck. Ship it first; The Crossing and the Remediation Amendment Protocol are consequences.
 
 ## Definition
