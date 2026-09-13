@@ -155,6 +155,13 @@ class ScanTests(unittest.TestCase):
         self.assertEqual(len(by_file), 1)
         self.assertEqual(sum(counts.values()), 1)
 
+    def test_dormant_category_is_counted_not_reported(self):
+        self.committed("state/pdca/open.pdca.json", {"cycle_phase": "plan"}, 134)
+        self.committed("state/evolution/x.evolution.json", {}, 45)
+        findings, counts = s.scan(self.repo.root, CATEGORIES, NOW, dormant={"pdca_cycles"})
+        self.assertEqual([f["file"] for f in findings], ["state/evolution/x.evolution.json"])
+        self.assertEqual((counts[s.DORMANT], counts[s.OPEN_WORK], counts[s.LIVE_STATE]), (1, 0, 1))
+
     def test_category_newest_is_the_youngest_file(self):
         self.committed("state/evolution/a.evolution.json", {}, 40)
         self.committed("state/evolution/b.evolution.json", {}, 16)
@@ -187,6 +194,28 @@ class MainTests(unittest.TestCase):
         self.assertIn(f"::warning file={rel}::stale open_work (pdca_cycles)", out)
         self.assertIn("1 stale", out)
         self.assertEqual(self.run_main(self.repo.root, "--strict")[0], 1)
+
+    def test_dormant_policy_entry_silences_its_category(self):
+        rel = "state/pdca/open.pdca.json"
+        self.repo.write(rel, {"cycle_phase": "plan"})
+        self.repo.commit(rel, 400, self.now)
+        policy = self.repo.write("dormant.json", {"artifact_categories": CATEGORIES,
+                                                  "dormant_categories": {"categories": [{"category": "pdca_cycles"}]}})
+        self.repo.commit(policy, 0, self.now)
+        self.policy = policy
+        code, out = self.run_main(self.repo.root, "--strict")
+        self.assertEqual(code, 0)
+        self.assertNotIn("::warning", out)
+        self.assertIn("1 dormant (not reported); 0 stale", out)
+
+    def test_misspelt_dormant_category_is_an_error_not_a_silent_no_op(self):
+        policy = self.repo.write("typo.json", {"artifact_categories": CATEGORIES,
+                                               "dormant_categories": {"categories": [{"category": "pdca_cycle"}]}})
+        self.repo.commit(policy, 0, self.now)
+        self.policy = policy
+        code, out = self.run_main(self.repo.root)
+        self.assertEqual(code, 2)
+        self.assertIn("pdca_cycle", out)
 
     def test_nothing_stale_passes_strict(self):
         rel = "state/pdca/fresh.pdca.json"

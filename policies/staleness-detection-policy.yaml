@@ -1,5 +1,5 @@
 name: staleness-detection-policy
-version: "1.3.0"
+version: "1.4.0"
 effective_date: "2026-09-13"
 description: Detect stale, unprocessed, or non-iterated state artifacts and prioritize their refresh. Now includes knowledge-topology lint for Streeling wiki health. Demerzel should never have blind spots about her own staleness.
 
@@ -49,10 +49,39 @@ lifecycle_scope:
     rules:
       - "Beliefs (state/beliefs/*.belief.json outside archived/)"
       - "Evolution log metrics (state/evolution/*.evolution.json) — consumed by quality_trend.py and /demerzel compound"
-      - "Indexes and catalogs that enumerate other artifacts"
+      - "Indexes and catalogs that enumerate other artifacts, when an artifact_categories entry names them (none does as of 1.4.0, so none is measured)"
       - "Health scores and digests"
   age_source: "Use the last commit time touching the file (git log -1 --format=%cI -- <path>), falling back to its last_updated field. Never filesystem mtime: every clone, checkout and worktree resets it."
   rationale: "Measured on master 706e656 (2026-09-12): 64 tracked state files outside archived/ were older than 7 days. Classified under this scope: 30 terminal (5 signals with an outcome, 1 resolved regret, 5 council verdicts, 9 trigger events, 10 research-cycle logs carrying a conclusion or reflection); 12 open work (8 PDCAs, none of which then carried an outcome, and 4 candidate intuitions); 22 live state (1 belief, 18 evolution-log files, 3 indexes). Treating all 64 as one population hid both the one false belief (consumer-repo-integration-status: ga 791 commits behind) and the frozen evolution metrics under a green quality-trend loop."
+
+# Dormant categories (added 1.4.0, 2026-09-13). The first mechanized run of this
+# policy (scripts/staleness_scan.py, Demerzel #1074, master baa891e) reported 52
+# stale files across 8 categories, each with nothing refreshed within threshold.
+# git history shows that 7 of them never had a recurring producer: most were
+# seeded once on 2026-03-17 and are otherwise written only when a skill is run by
+# hand. Reporting them on every scan yields warnings nobody can act on short of
+# scheduling metered LLM runs, which the owner declined. Their thresholds stay in
+# artifact_categories, so reviving one is a removal from this list.
+dormant_categories:
+  description: "Counted by the scan, not reported as stale. Anything that reads a dormant artifact must treat it as possibly outdated and check its commit age before relying on it."
+  revive_when: "A producer writes the category on a schedule or deterministically AND a consumer reads it. Remove the category from this list in the same change."
+  categories:
+    - category: conscience_digests
+      evidence: "2 commits (2026-03-17 to 2026-03-21). Written only by /demerzel report run by hand."
+    - category: conscience_weekly
+      evidence: "1 commit (2026-03-17). No producer. Its only reader, demerzel-ideation, was disabled on 2026-09-13."
+    - category: conscience_patterns
+      evidence: "1 commit (2026-03-17). No producer. demerzel-autofix and demerzel-ideation only count the files."
+    - category: intuition_signals
+      evidence: "1 commit (2026-03-17). No producer and no reader found. The 4 candidate intuitions are open work that is not being worked."
+    - category: health_scores
+      evidence: "5 commits (2026-03-20 to 2026-03-23). Written and read only by /demerzel drive run by hand."
+    - category: source_ingest_queue
+      evidence: "1 commit (2026-04-05). Written only by /demerzel-harvest run by hand."
+    - category: department_weights
+      evidence: "20 commits (2026-03-19 to 2026-05-02). Written by Seldon research-cycle skills (LLM runs), none since."
+    - category: grammar_weights
+      evidence: "Same files as department_weights."
 
 artifact_categories:
   - category: beliefs
@@ -199,7 +228,7 @@ detection_process:
 
   steps:
     - name: scan
-      action: "Walk all state/ directories; drop terminal records per lifecycle_scope; age the rest per lifecycle_scope.age_source (not filesystem mtime)"
+      action: "Walk all state/ directories; skip dormant_categories; drop terminal records per lifecycle_scope; age the rest per lifecycle_scope.age_source (not filesystem mtime)"
       output: "List of {file, category, days_stale, max_allowed, priority}"
 
     - name: classify

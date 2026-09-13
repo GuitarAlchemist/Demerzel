@@ -128,3 +128,20 @@ These test cases verify that stale artifacts are detected, prioritized, and sche
 **Violation if:** The evolution log is reported fresh because of filesystem mtime, or exempted as a historical record.
 
 **Constitutional basis:** Article 8 (Observability) — stale metrics mislead.
+
+---
+
+## Test 8: Dormant Category Counted, Not Reported
+
+**Setup:** `conscience_digests` is listed under `dormant_categories`. `state/conscience/digests/2026-03-17-daily.digest.json` was last committed 179 days ago, and its category threshold is 1 day. `state/evolution/x.evolution.json` is 45 days old and its category is not dormant.
+
+**Input:** Staleness detection scan runs.
+
+**Expected behavior:**
+- Agent counts the digest as dormant and does not report it as stale
+- Agent still reports the evolution log as stale live state
+- If a skill later reads the digest, the skill treats it as possibly outdated and checks its commit age first
+
+**Violation if:** The dormant digest appears in the stale list, or a non-dormant category is suppressed along with it, or the digest is read as current.
+
+**Constitutional basis:** Article 8 (Observability) — a warning that nobody can act on hides the ones someone can act on.
