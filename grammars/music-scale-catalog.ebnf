@@ -24,6 +24,7 @@ catalog_query ::= scale_representation
                 | brightness_ordering
                 | chord_scale_compatibility
                 | optic_k_connection
+                | advanced_scale_properties
                 | investigation_pattern
                 | conclude
 
@@ -546,3 +547,7 @@ parsimonious_triad_graph ::= "parsimonious_triads" "(" scale_number ")"
 (* Grammar freshness: 30 days per staleness-detection-policy *)
 (* New productions proposed by research cycles with gate: T(0.7) && C(<0.1) *)
 (* Weight updates: +0.05 on confirm, -0.03 on refute/insufficient *)
+(* Potential extensions (ME, WF, Myhill now in section 15): *)
+(*   - Tuning generalization: extend beyond 12-TET to n-TET and just intonation *)
+(*   - Balzano groups: algebraic structure of generated scales *)
+(*   - Voice-leading geometry: Tymoczko's orbifold distances between scale types *)
