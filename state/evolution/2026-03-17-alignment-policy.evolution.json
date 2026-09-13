@@ -3,13 +3,14 @@
   "artifact": "policies/alignment-policy.yaml",
   "artifact_type": "policy",
   "metrics": {
-    "citation_count": 3,
+    "citation_count": 42,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-03-17T20:00:00Z",
+    "last_cited": "2026-06-23T01:53:03Z",
     "last_violated": null,
     "promotion_candidate": true,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

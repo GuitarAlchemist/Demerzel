@@ -1,15 +1,19 @@
 {
   "id": "gel-the-sentinel-2026-04-30",
   "artifact": "docs/governance/the-sentinel-spec.md",
+  "citation_paths": [
+    "docs/governance/the-sentinel.md"
+  ],
   "artifact_type": "persona",
   "metrics": {
-    "citation_count": 1,
+    "citation_count": 0,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-04-29T00:00:00Z",
+    "last_cited": null,
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

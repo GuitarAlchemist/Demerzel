@@ -1,15 +1,21 @@
 {
   "id": "gel-ml-feedback-loop-2026-06-21",
   "artifact": "ml-feedback-loop",
+  "citation_paths": [
+    "scripts/run_ml_feedback_cycle.py",
+    "scripts/apply_ml_feedback.py",
+    "pipelines/ml-feedback-loop.ixql"
+  ],
   "artifact_type": "capability",
   "metrics": {
-    "citation_count": 1,
+    "citation_count": 6,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-06-21T00:00:00Z",
+    "last_cited": "2026-09-12T15:02:41Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {
