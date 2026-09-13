@@ -3,13 +3,14 @@
   "artifact": "scripts/afk_backends/",
   "artifact_type": "capability",
   "metrics": {
-    "citation_count": 0,
+    "citation_count": 6,
     "violation_count": 0,
     "compliance_rate": 0.0,
-    "last_cited": null,
+    "last_cited": "2026-09-13T15:42:14Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

@@ -3,13 +3,14 @@
   "artifact": "logic/kaizen-pdca-state.schema.json",
   "artifact_type": "schema",
   "metrics": {
-    "citation_count": 3,
+    "citation_count": 13,
     "violation_count": 0,
     "compliance_rate": 0.0,
-    "last_cited": "2026-07-25T00:00:00Z",
+    "last_cited": "2026-09-12T17:51:01Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

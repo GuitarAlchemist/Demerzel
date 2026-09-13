@@ -3,13 +3,14 @@
   "artifact": "policies/autonomous-loop-policy.yaml",
   "artifact_type": "policy",
   "metrics": {
-    "citation_count": 12,
+    "citation_count": 27,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-04-28T00:00:00Z",
+    "last_cited": "2026-07-29T23:09:40Z",
     "last_violated": null,
     "promotion_candidate": true,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {
