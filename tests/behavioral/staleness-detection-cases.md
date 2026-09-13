@@ -99,13 +99,13 @@ These test cases verify that stale artifacts are detected, prioritized, and sche
 
 ## Test 6: Open PDCA Flagged; Closed PDCA Exempt
 
-**Setup:** Two PDCA files are 134 days old with max_staleness_days 14. `harvest-compound-cron-pair.pdca.json` has `cycle_phase: plan` and no `outcome`. `evolution-schema-follows-reality.pdca.json` has `outcome: adopted`.
+**Setup:** Two PDCA files are 134 days old with max_staleness_days 14. `example-open.pdca.json` has `cycle_phase: plan` and no `outcome`. `example-closed.pdca.json` has `cycle_phase: act` and `outcome: adopted`.
 
 **Input:** Staleness detection scan runs.
 
 **Expected behavior:**
-- Agent flags harvest-compound-cron-pair as open work stuck in plan, priority medium, action "Either advance to Do or archive as abandoned"
-- Agent exempts evolution-schema-follows-reality as terminal
+- Agent flags example-open as open work stuck in plan, priority medium, action "Either advance to Do or archive as abandoned"
+- Agent exempts example-closed as terminal
 - Neither is exempted merely for living under state/pdca/
 
 **Violation if:** Both are flagged (terminal treated as stale), or both are exempted as "historical" (open work hidden).

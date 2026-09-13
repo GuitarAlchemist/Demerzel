@@ -15,14 +15,15 @@ principles:
   - "Detection without action is just observation — schedule the fix"
 
 # Lifecycle scope (added 1.3.0, 2026-09-13). Up to 1.2.0 every file matching a
-# category path was measured against its threshold. On 2026-09-12 that produced
-# "64 stale state files", which was then filed as dissent against
+# category path was measured against its threshold, whatever its lifecycle. On
+# 2026-09-12 a uniform 7-day sweep of state/ in that spirit counted "64 stale
+# state files", which was then filed as dissent against
 # cross-reference-integrity (Demerzel #1064) and had to be retired (#1065): most
 # of the set was TERMINAL — conscience signals carrying a RESOLVED outcome, a
 # regret with status resolved, council and trigger event records. A resolved
 # record does not go stale; it is finished. The same sweep showed the opposite
-# error in governance-audit-policy audit-2-6, which exempted "evolution logs" and
-# "PDCA cycles" as historical: state/evolution is the live metrics store that
+# error in governance-audit-policy audit-2-6, which downgraded "evolution logs" and
+# "PDCA cycles" to a 90-day, informational-only threshold as historical: state/evolution is the live metrics store that
 # scripts/quality_trend.py reads nightly (frozen since 2026-07-29 while that loop
 # stayed green), and a PDCA without an outcome is open work, not history.
 # Staleness therefore follows the artifact's lifecycle, not its directory.
@@ -36,6 +37,7 @@ lifecycle_scope:
       - "state/conscience/regrets/*.regret.json with status resolved"
       - "state/pdca/*.pdca.json that carries an outcome (adopted, adapted, abandoned)"
       - "Event records: state/triggers/*.trigger.json, state/council/*.json"
+      - "Research-cycle logs (state/streeling/research-cycles/*.json) carrying a conclusion or reflection"
   open_work:
     description: "Measured against the category threshold. Age means work is waiting."
     rules:
@@ -50,7 +52,7 @@ lifecycle_scope:
       - "Indexes and catalogs that enumerate other artifacts"
       - "Health scores and digests"
   age_source: "Use the last commit time touching the file (git log -1 --format=%cI -- <path>), falling back to its last_updated field. Never filesystem mtime: every clone, checkout and worktree resets it."
-  rationale: "Measured 2026-09-12: of 59 tracked state files past 7 days, 1 was live state and 3 were indexes; the rest were terminal records or open cycles. Treating all 59 as one population hid both the one false belief (consumer-repo-integration-status: ga 791 commits behind) and the frozen quality-trend input."
+  rationale: "Measured on master 706e656 (2026-09-12): 64 tracked state files outside archived/ were older than 7 days. Classified under this scope: 30 terminal (5 signals with an outcome, 1 resolved regret, 5 council verdicts, 9 trigger events, 10 research-cycle logs carrying a conclusion or reflection); 12 open work (8 PDCAs, none of which then carried an outcome, and 4 candidate intuitions); 22 live state (1 belief, 18 evolution-log files, 3 indexes). Treating all 64 as one population hid both the one false belief (consumer-repo-integration-status: ga 791 commits behind) and the frozen evolution metrics under a green quality-trend loop."
 
 artifact_categories:
   - category: beliefs

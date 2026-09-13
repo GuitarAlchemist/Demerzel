@@ -10,7 +10,8 @@ description: >
   threshold or archived/historical exemption). Version 1.2.0 (2026-09-13):
   audit-2-6 classifies state records by lifecycle as defined in
   staleness-detection-policy 1.3.0 lifecycle_scope instead of by directory —
-  1.1.0 exempted evolution logs and PDCA cycles as "historical" although the
+  1.1.0 held evolution logs and PDCA cycles to a 90-day informational-only
+  threshold as "historical" although the
   evolution log is live metrics and an outcome-less PDCA is open work.
 
 constitutional_basis:

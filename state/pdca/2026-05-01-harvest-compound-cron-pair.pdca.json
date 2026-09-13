@@ -20,7 +20,7 @@
   "check": {
     "success_criteria_met": false,
     "checked_at": "2026-09-13T00:00:00Z",
-    "evidence": "Never executed: no compound schedule exists, and the Friday 13:17 UTC job (streeling-daily.yml) is a read-only harvest to Discussions with contents: read. It cannot write state/evolution/. state/evolution/*.evolution.json has gone six Fridays without a commit (last 2026-07-29). The premise was also wrong about who produces evolution entries: git history shows every entry committed since July was recorded by the working session that shipped the change (e.g. 'state(afk): record ...', #873-#884), not by a harvest pass."
+    "evidence": "Never executed: no compound schedule exists, and the Friday 13:17 UTC job (streeling-daily.yml) is a read-only harvest to Discussions with contents: read. It cannot write state/evolution/. state/evolution/*.evolution.json has gone seven Fridays without a commit (last 2026-07-29). The premise was also wrong about who produces evolution entries: git history shows every entry committed since July was recorded by the working session that shipped the change (e.g. 'state(afk): record ...', #873-#884), not by a harvest pass."
   },
   "act": {
     "decision": "abandon",
