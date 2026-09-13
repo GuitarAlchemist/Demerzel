@@ -1,6 +1,6 @@
 {
   "id": "pdca-rust-dashboard-experiment",
-  "cycle_phase": "check",
+  "cycle_phase": "act",
   "hypothesis": "A Rust TUI/GUI app reading Demerzel's state/ directory can provide real-time governance visibility — belief health, evolution trends, compliance status — more effectively than manual file inspection",
   "plan": {
     "description": "Build a Rust app (likely in ix as a new crate ix-dashboard or standalone) that reads Demerzel state files and renders: belief dashboard (T/F/U/C with confidence), evolution timeline, cross-repo compliance matrix, PDCA tracker, gap alerts",
@@ -34,11 +34,13 @@
       "Add usage docs to templates/CLAUDE.md.snippet",
       "Plan egui/stretch goals for v1.1 (deferred, not blocking)"
     ],
-    "decided_at": "2026-03-21T00:00:00Z"
+    "decided_at": "2026-03-21T00:00:00Z",
+    "outcome_verified": "2026-09-12: crates/ix-dashboard is present on ix main (last touched 7bd124c, 2026-04-26). The egui stretch goal stays deferred."
   },
   "created_at": "2026-03-17T22:00:00Z",
-  "last_updated": "2026-03-21T00:00:00Z",
-  "evaluated_by": "demerzel",
+  "last_updated": "2026-09-12T00:00:00Z",
+  "evaluated_by": "demerzel/pdca-triage-2026-09-12",
   "experiment": true,
-  "work_type": "incubation"
+  "work_type": "incubation",
+  "outcome": "adopted"
 }
