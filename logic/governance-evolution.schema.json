@@ -15,6 +15,11 @@
       "type": "string",
       "description": "File path of the governance artifact being tracked (e.g., policies/scientific-objectivity-policy.yaml, constitutions/default.constitution.md)"
     },
+    "citation_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tracked paths whose mentions count as citations of this artifact, for entries whose artifact is not itself a tracked path. An empty list marks an artifact that lives outside this repository and cannot be measured here. Read by scripts/evolution_metrics.py."
+    },
     "artifact_type": {
       "type": "string",
       "enum": ["constitution", "policy", "persona", "schema", "contract", "meta", "capability", "skill", "runtime_code"],
@@ -27,7 +32,7 @@
         "citation_count": {
           "type": "integer",
           "minimum": 0,
-          "description": "Number of times this artifact has been cited in governance decisions, directives, or conflict resolutions"
+          "description": "Number of tracked files that mention the artifact (or its citation_paths), excluding its own files, archived/, state/evolution, state/quality-trend and the generated manifest. Computed by scripts/evolution_metrics.py when citation_source is git-grep-v1; hand-entered before 2026-09-13."
         },
         "violation_count": {
           "type": "integer",
@@ -43,7 +48,7 @@
         "last_cited": {
           "type": ["string", "null"],
           "format": "date-time",
-          "description": "Timestamp of most recent citation"
+          "description": "Commit time (UTC) of the newest commit that added or removed a mention; null when none ever did. Computed with citation_count."
         },
         "last_violated": {
           "type": ["string", "null"],
@@ -57,6 +62,11 @@
         "deprecation_candidate": {
           "type": "boolean",
           "description": "True if artifact is unused for extended period (e.g., 90+ days uncited)"
+        },
+        "citation_source": {
+          "type": "string",
+          "enum": ["git-grep-v1"],
+          "description": "How citation_count and last_cited were produced. Absent means hand-entered. scripts/quality_trend.py marks a change of source as a rebaseline."
         }
       }
     },

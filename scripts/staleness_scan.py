@@ -7,7 +7,10 @@ finished and never stale; open work and live state are measured against the
 category threshold, aged by git commit time. Until this script nothing ran
 that rule — a policy with no mechanism is a claim, not a check.
 
-For every file matching an `artifact_categories[].path` glob:
+For every file matching an `artifact_categories[].path` glob, except
+categories listed under `dormant_categories` and categories whose
+`freshness_source` is `producer_run` (both counted, never reported; the
+latter are guarded by their `freshness_guard` workflow instead):
 
   terminal    skipped: a signal or PDCA carrying an outcome, a regret with
               status resolved. (archived/ is never reached: the globs are
@@ -39,7 +42,7 @@ import yaml
 
 import demerzel_kit
 
-TERMINAL, OPEN_WORK, LIVE_STATE = "terminal", "open_work", "live_state"
+TERMINAL, OPEN_WORK, LIVE_STATE, DORMANT, PRODUCED = "terminal", "open_work", "live_state", "dormant", "produced"
 PRIORITY_ORDER = ["critical", "high", "medium", "low"]
 
 
@@ -92,10 +95,10 @@ def git_commit_time(root, rel):
     return parse_ts(out.stdout.strip()) if out.returncode == 0 else None
 
 
-def scan(root, categories, now, commit_time=git_commit_time):
+def scan(root, categories, now, commit_time=git_commit_time, dormant=frozenset()):
     """Return (findings, counts). Findings cover every non-terminal file; stale ones have stale=True."""
     findings = []
-    counts = {TERMINAL: 0, OPEN_WORK: 0, LIVE_STATE: 0}
+    counts = {TERMINAL: 0, OPEN_WORK: 0, LIVE_STATE: 0, DORMANT: 0, PRODUCED: 0}
     seen = set()
     for cat in categories:
         for path in sorted(root.glob(cat["path"])):
@@ -103,6 +106,12 @@ def scan(root, categories, now, commit_time=git_commit_time):
             if rel in seen or not path.is_file():
                 continue  # department_weights and grammar_weights share a glob
             seen.add(rel)
+            if cat["category"] in dormant:
+                counts[DORMANT] += 1
+                continue
+            if cat.get("freshness_source") == "producer_run":
+                counts[PRODUCED] += 1
+                continue
             data = load_json(path)
             life = lifecycle(cat["category"], data)
             counts[life] += 1
@@ -149,6 +158,11 @@ def main(argv=None):
     if not categories:
         print(f"::error::no artifact_categories in {args.policy}")
         return 2
+    dormant = {d["category"] for d in (policy.get("dormant_categories") or {}).get("categories") or []}
+    unknown = dormant - {c["category"] for c in categories}
+    if unknown:
+        print(f"::error::dormant_categories names no artifact category: {', '.join(sorted(unknown))}")
+        return 2
     try:
         if git_is_shallow(root):
             print("::error::shallow clone: every commit age would read as the checkout commit. "
@@ -158,7 +172,7 @@ def main(argv=None):
         print(f"::error::{e}")
         return 2
 
-    findings, counts = scan(root, categories, datetime.now(timezone.utc))
+    findings, counts = scan(root, categories, datetime.now(timezone.utc), dormant=dormant)
     stale = [f for f in findings if f["stale"]]
     for f in sorted(stale, key=lambda f: (PRIORITY_ORDER.index(f["priority"]), f["file"])):
         if f["days"] is None:
@@ -188,7 +202,11 @@ def main(argv=None):
             if days > limit:
                 print(f"  {cat}: newest file {days}d old (max {limit}d), {n} stale — nothing in this category refreshed within threshold")
     print(f"staleness_scan: {sum(counts.values())} files — {counts[TERMINAL]} terminal (exempt), "
-          f"{counts[OPEN_WORK]} open work, {counts[LIVE_STATE]} live state; {len(stale)} stale")
+          f"{counts[OPEN_WORK]} open work, {counts[LIVE_STATE]} live state, {counts[DORMANT]} dormant "
+          f"(not reported), {counts[PRODUCED]} produced (guarded by their producer run); {len(stale)} stale")
+    for cat in categories:
+        if cat.get("freshness_source") == "producer_run" and cat["category"] not in dormant:
+            print(f"  {cat['category']}: freshness is the producer run — see {cat.get('freshness_guard', '(no guard named)')}")
     return 1 if (args.strict and stale) else 0
 
 
