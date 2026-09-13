@@ -1,5 +1,5 @@
 name: governance-audit-policy
-version: "1.1.0"
+version: "1.2.0"
 effective_date: "2026-03-15"
 description: >
   Three-level governance validation checklist formalizing Tier 1 reconnaissance
@@ -7,7 +7,12 @@ description: >
   and architectural consistency. Version 1.1.0: aligns behavioral-test coverage
   with the established tests/behavioral/*-cases.md convention and distinguishes
   active artifacts (7-day staleness) from historical state records (90-day
-  threshold or archived/historical exemption).
+  threshold or archived/historical exemption). Version 1.2.0 (2026-09-13):
+  audit-2-6 classifies state records by lifecycle as defined in
+  staleness-detection-policy 1.3.0 lifecycle_scope instead of by directory —
+  1.1.0 held evolution logs and PDCA cycles to a 90-day informational-only
+  threshold as "historical" although the
+  evolution log is live metrics and an outcome-less PDCA is open work.
 
 constitutional_basis:
   - Article 7 (Auditability) — governance artifacts must be auditable and traceable
@@ -165,11 +170,15 @@ level_2_cross_reference_integrity:
         - Verify that personas correspond to active agents
         - Confirm that policies are still enforced
         - Report stale active content with recommended action (update, remove, or archive)
-        Historical state records (evolution logs, PDCA cycles, read-only audit snapshots,
-        archived beliefs):
-        - Use a 90-day staleness threshold
-        - Exempt if the file or enclosing directory is explicitly marked archived/historical
-        - Report exceeded historical records as informational (not a failure)
+        State records under state/ are classified by lifecycle per
+        staleness-detection-policy lifecycle_scope, not by directory:
+        - Terminal records (archived/, signals with an outcome, resolved regrets,
+          PDCAs with an outcome, trigger and council events) are exempt. Report nothing.
+        - Open work (PDCAs without an outcome, unprocessed signals, candidate
+          intuitions) and live state (beliefs, evolution log metrics, indexes)
+          use the category threshold from staleness-detection-policy and are
+          reported as stale active content.
+        - Read-only audit snapshots use a 90-day threshold, reported as informational.
         Do not flag historical records solely because they are referenced by read-only snapshots.
       severity_if_failed: medium
 

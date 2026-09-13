@@ -3,11 +3,23 @@
   "problems": [
     {
       "kind": "failed_run",
+      "workflow": "cross-model-review.yml"
+    },
+    {
+      "kind": "failed_run",
+      "workflow": "demerzel-capability-expansion.yml"
+    },
+    {
+      "kind": "failed_run",
       "workflow": "demerzel-ideation.yml"
     },
     {
       "kind": "failed_run",
       "workflow": "jules-auto-delegate.yml"
+    },
+    {
+      "kind": "failed_run",
+      "workflow": "ml-governance-schedule.yml"
     },
     {
       "kind": "failed_run",
