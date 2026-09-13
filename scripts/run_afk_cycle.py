@@ -75,6 +75,7 @@ import aiw_budget_gate as budget  # noqa: E402  (fail-closed AIW budget prefligh
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
 import demerzel_halt as halt  # noqa: E402  (shared HALT-ALL reader seam)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
+import galactic_bridge  # noqa: E402  (fleet claims ledger, ~/.agents/claims.jsonl)
 from afk_backends import AFKBackend  # noqa: E402
 from afk_backends.registry import RegistryError, get_backend, provider_for  # noqa: E402
 
@@ -514,6 +515,50 @@ def _run_harvest(dry: bool, today: str) -> int:
     return 0
 
 
+AFK_CLAIMS_REPO = "demerzel"
+
+
+def _claim_lane(issue: dict, session: str) -> tuple[bool, str | None]:
+    """Claim this issue's lane in the fleet claims ledger before any spend.
+
+    Returns (claimed, held_by). held_by is the conflict message when another
+    live session holds the lane: the issue must be skipped. The ledger is an
+    advisory collision-avoidance channel, not a lock server (Galactic Protocol),
+    so an unavailable ledger warns and proceeds unclaimed rather than halting
+    the lane. Uses galactic_bridge.Ledger for its lock and conflict check.
+    """
+    lane = f"afk-issue-{issue.get('number')}"
+    try:
+        galactic_bridge.Ledger().claim(
+            session, AFK_CLAIMS_REPO, lane,
+            note=f"AFK governor implementing issue #{issue.get('number')}")
+    except galactic_bridge.BridgeError as exc:
+        if str(exc).startswith("claim conflict"):
+            return False, str(exc)
+        print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}", file=sys.stderr)
+        return False, None
+    except OSError as exc:
+        print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}", file=sys.stderr)
+        return False, None
+    return True, None
+
+
+def _finish_claim(issue: dict, session: str, decision: dict, state: dict) -> None:
+    """Close the lane: done with the PR as evidence, otherwise released."""
+    lane = f"afk-issue-{issue.get('number')}"
+    try:
+        if state.get("status") == "completed" and decision.get("pr"):
+            galactic_bridge.Ledger().update_claim(
+                session, AFK_CLAIMS_REPO, lane, "done", evidence=decision["pr"],
+                note="AFK governor opened a PR")
+        else:
+            galactic_bridge.Ledger().update_claim(
+                session, AFK_CLAIMS_REPO, lane, "released",
+                note=f"AFK governor stopped: {decision.get('action')}")
+    except (galactic_bridge.BridgeError, OSError) as exc:
+        print(f"warn: could not close claim {lane}: {exc}", file=sys.stderr)
+
+
 def _process_issue(issue: dict, seq: int, today: str, backend: str,
                     adapter: AFKBackend) -> tuple[dict, dict]:
     """Live processing of ONE issue end-to-end (runs inside the thread pool).
@@ -537,6 +582,18 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
         _write_loop_state(state)
         return decision, state
 
+    # Claim the lane before any spend, so two governors (or a governor and an
+    # interactive session) never implement the same issue at once.
+    session = f"afk-{today}-{seq}"
+    claimed, held_by = _claim_lane(issue, session)
+    if held_by:
+        decision["action"] = "skip:lane-held"
+        decision["lane_holder"] = held_by
+        state["status"] = "halted"
+        state["halt_reason"] = held_by[:200]
+        _write_loop_state(state)
+        return decision, state
+
     # Budget preflight (#471): a worker is NEVER invoked without a granted
     # reservation. A blocked/errored preflight fails closed — no clone, no spend.
     allowed, budget_result = _budget_reserve(issue, backend)
@@ -545,6 +602,8 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
         decision["action"] = f"blocked:budget:{','.join(reasons)}"
         state["status"] = "halted"
         state["halt_reason"] = f"budget: {', '.join(reasons)}"
+        if claimed:
+            _finish_claim(issue, session, decision, state)
         _write_loop_state(state)
         return decision, state
 
@@ -599,6 +658,8 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
             shutil.rmtree(clone, ignore_errors=True)
         # Reconcile the reservation: local-seat backends carry no marginal spend.
         _budget_release(issue, actual_cost_usd=0.0)
+        if claimed:
+            _finish_claim(issue, session, decision, state)
 
     _write_loop_state(state)
     return decision, state

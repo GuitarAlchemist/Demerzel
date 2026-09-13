@@ -13,6 +13,27 @@ from afk_backends.remote import RemoteBackend
 from afk_backends.sandcastle import SandcastleBackend
 
 
+_CLAIMS_DIR = None
+_CLAIMS_ENV_BEFORE = None
+
+
+def setUpModule():
+    """_process_issue claims lanes in the fleet ledger. Point it at a scratch file
+    for every test in this module so no test writes the real ~/.agents/claims.jsonl."""
+    global _CLAIMS_DIR, _CLAIMS_ENV_BEFORE
+    _CLAIMS_DIR = tempfile.TemporaryDirectory()
+    _CLAIMS_ENV_BEFORE = os.environ.get("GALACTIC_CLAIMS_PATH")
+    os.environ["GALACTIC_CLAIMS_PATH"] = str(Path(_CLAIMS_DIR.name) / "claims.jsonl")
+
+
+def tearDownModule():
+    if _CLAIMS_ENV_BEFORE is None:
+        os.environ.pop("GALACTIC_CLAIMS_PATH", None)
+    else:
+        os.environ["GALACTIC_CLAIMS_PATH"] = _CLAIMS_ENV_BEFORE
+    _CLAIMS_DIR.cleanup()
+
+
 class TestClassifyRisk(unittest.TestCase):
     def test_constitution_is_critical(self):
         issue = {"title": "Update Asimov constitution Article 4",
@@ -750,3 +771,94 @@ class TestPolicyInvalidDistinctFromBlock(unittest.TestCase):
                                side_effect=g.budget.PolicyInvalid("bad policy")):
             rc = g.main(["--dry-run"])
         self.assertEqual(rc, 0)
+
+
+class TestLaneClaims(unittest.TestCase):
+    """The governor claims `afk-issue-<n>` in the fleet ledger before any spend and
+    closes it when the issue ends (#1071 B3: reuse galactic_bridge.Ledger's lock)."""
+
+    def setUp(self):
+        self._dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._dir.cleanup)
+        self.claims = Path(self._dir.name) / "claims.jsonl"
+        patcher = mock.patch.dict(os.environ, {"GALACTIC_CLAIMS_PATH": str(self.claims)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def rows(self):
+        if not self.claims.exists():
+            return []
+        return [json.loads(line) for line in self.claims.read_text(encoding="utf-8").splitlines() if line]
+
+    def run_issue(self, adapter_result=None, budget_allowed=True, pr="https://github.com/x/y/pull/1"):
+        adapter = mock.Mock()
+        adapter.needs_local_repo.return_value = True
+        adapter.invoke.return_value = adapter_result or {"branch": "agent/issue-77", "commits": ["x"], "blocked": None}
+        issue = {"number": 77, "title": "fix docs typo", "body": "x", "labels": []}
+        with mock.patch.object(g, "_budget_reserve",
+                               return_value=(budget_allowed, {"decision": "allow" if budget_allowed else "block",
+                                                              "reasons": ["cap"]})) as reserve, \
+             mock.patch.object(g, "_budget_release"), \
+             mock.patch.object(g, "_prepare_clone", return_value="/tmp/clone"), \
+             mock.patch.object(g, "_open_pr", return_value=pr), \
+             mock.patch.object(g.shutil, "rmtree"), \
+             mock.patch.object(g, "_write_loop_state"):
+            decision, state = g._process_issue(issue, seq=3, today="2026-09-13", backend="claude-code",
+                                               adapter=adapter)
+        return decision, state, adapter, reserve
+
+    def test_completed_issue_is_claimed_then_done_with_the_pr_as_evidence(self):
+        decision, state, _, _ = self.run_issue()
+        self.assertEqual(state["status"], "completed")
+        rows = self.rows()
+        self.assertEqual([r["status"] for r in rows], ["claimed", "done"])
+        self.assertEqual({r["lane"] for r in rows}, {"afk-issue-77"})
+        self.assertEqual({r["session"] for r in rows}, {"afk-2026-09-13-3"})
+        self.assertEqual(rows[1]["evidence"], "https://github.com/x/y/pull/1")
+
+    def test_blocked_issue_releases_its_claim(self):
+        decision, _, _, _ = self.run_issue(adapter_result={"branch": None, "commits": [], "blocked": "no commits"})
+        rows = self.rows()
+        self.assertEqual([r["status"] for r in rows], ["claimed", "released"])
+        self.assertIn("blocked:no commits", rows[1]["note"])
+
+    def test_budget_denial_releases_the_claim_without_invoking(self):
+        decision, _, adapter, _ = self.run_issue(budget_allowed=False)
+        adapter.invoke.assert_not_called()
+        self.assertEqual([r["status"] for r in self.rows()], ["claimed", "released"])
+
+    def test_lane_held_by_another_session_is_skipped_before_any_spend(self):
+        g.galactic_bridge.Ledger().claim("interactive-session", "demerzel", "afk-issue-77", note="mine")
+        decision, state, adapter, reserve = self.run_issue()
+        adapter.invoke.assert_not_called()
+        reserve.assert_not_called()
+        self.assertEqual(decision["action"], "skip:lane-held")
+        self.assertIn("interactive-session", decision["lane_holder"])
+        self.assertEqual(state["status"], "halted")
+        self.assertEqual(len(self.rows()), 1)  # the other session's claim, untouched
+
+    def test_unavailable_ledger_warns_and_proceeds_unclaimed(self):
+        with mock.patch.object(g.galactic_bridge.Ledger, "claim",
+                               side_effect=g.galactic_bridge.BridgeError("timed out acquiring the Galactic ledger lock")), \
+             mock.patch.object(g.galactic_bridge.Ledger, "update_claim") as update, \
+             mock.patch("sys.stderr") as err:
+            decision, state, adapter, _ = self.run_issue()
+        adapter.invoke.assert_called_once()
+        update.assert_not_called()
+        self.assertEqual(state["status"], "completed")
+        self.assertIn("proceeding unclaimed", "".join(str(c) for c in err.write.call_args_list))
+
+    def test_claim_is_released_when_the_adapter_raises(self):
+        adapter_error = mock.Mock(side_effect=RuntimeError("boom"))
+        with mock.patch.object(g, "_budget_reserve", return_value=(True, {"decision": "allow"})), \
+             mock.patch.object(g, "_budget_release"), \
+             mock.patch.object(g, "_prepare_clone", return_value="/tmp/clone"), \
+             mock.patch.object(g.shutil, "rmtree"), \
+             mock.patch.object(g, "_write_loop_state"):
+            adapter = mock.Mock()
+            adapter.needs_local_repo.return_value = True
+            adapter.invoke = adapter_error
+            decision, state = g._process_issue({"number": 77, "title": "t", "body": "x", "labels": []},
+                                               seq=3, today="2026-09-13", backend="claude-code", adapter=adapter)
+        self.assertEqual(decision["action"], "error:RuntimeError")
+        self.assertEqual([r["status"] for r in self.rows()], ["claimed", "released"])
