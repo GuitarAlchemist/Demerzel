@@ -26,14 +26,14 @@ from __future__ import annotations
 
 import re
 import unittest
-from pathlib import Path
+import demerzel_kit
 
 try:
     import yaml
 except ImportError:  # pragma: no cover - pyyaml is installed in CI
     yaml = None
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = demerzel_kit.ROOT
 WORKFLOWS = REPO_ROOT / ".github" / "workflows"
 ACTIONS_EXPRESSION_RE = re.compile(r"\$\{\{.*?\}\}")
 SECRET_LOOKUP_RE = re.compile(r"\bsecrets\s*(?:\.|\[)")
