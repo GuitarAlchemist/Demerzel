@@ -1,15 +1,19 @@
 {
   "id": "gel-harness-engineering-2026-04-30",
   "artifact": "docs/governance/harness-engineering-direction.md",
+  "citation_paths": [
+    "docs/governance/harness-engineering.md"
+  ],
   "artifact_type": "capability",
   "metrics": {
-    "citation_count": 8,
+    "citation_count": 1,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-04-29T00:00:00Z",
+    "last_cited": "2026-04-11T18:37:58Z",
     "last_violated": null,
     "promotion_candidate": true,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

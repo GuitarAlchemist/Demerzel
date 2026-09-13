@@ -1,15 +1,20 @@
 {
   "id": "gel-autonomous-driver",
   "artifact": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+  "citation_paths": [
+    ".claude/skills/demerzel-drive/",
+    "policies/autonomous-loop-policy.yaml"
+  ],
   "artifact_type": "skill",
   "metrics": {
-    "citation_count": 1,
+    "citation_count": 27,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-03-20T05:20:00Z",
+    "last_cited": "2026-07-29T23:09:40Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": true
+    "deprecation_candidate": true,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

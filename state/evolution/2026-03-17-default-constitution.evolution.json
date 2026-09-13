@@ -3,13 +3,14 @@
   "artifact": "constitutions/default.constitution.md",
   "artifact_type": "constitution",
   "metrics": {
-    "citation_count": 11,
+    "citation_count": 47,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-03-17T20:00:00Z",
+    "last_cited": "2026-07-29T03:21:48Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {
