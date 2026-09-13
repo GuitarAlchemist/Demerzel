@@ -1551,6 +1551,52 @@ class EcosystemFreshnessTest(unittest.TestCase):
                     )
                 self.assertEqual(len(supplies), 1)
 
+    def test_every_supply_request_is_charged_to_the_budget(self):
+        """No GitHub GET on the supply path may escape the request budget.
+
+        Mutation-checked: dropping `budget` from the commit-association lookup
+        or from the pull_request_target run listing left the suite green, so
+        the fuse could undercount and GITHUB_TOKEN's rate limit fire first.
+        """
+        real_spend = ef._RequestBudget.spend
+        charged = []
+
+        def counting_spend(budget, what):
+            charged.append(what)
+            return real_spend(budget, what)
+
+        pulls = [{
+            "number": n,
+            "state": "open",
+            "created_at": "2026-07-17T00:00:00Z",
+            "updated_at": "2026-07-17T00:00:00Z",
+            "head": {"sha": f"h{n}"},
+        } for n in range(3)]
+        # An empty `pull_requests` forces the commit-association lookup on the
+        # pull_request path, and matches no pull on the pull_request_target path.
+        unassociated = lambda head: {
+            "id": 1,
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-07-17T01:00:00Z",
+            "run_started_at": "2026-07-17T01:00:00Z",
+            "head_sha": head,
+            "pull_requests": [],
+        }
+        for event in ("pull_request", "pull_request_target"):
+            with self.subTest(event=event):
+                seen = []
+                charged.clear()
+                with patch.object(ef._RequestBudget, "spend", counting_spend),                         patch.object(ef, "urlopen",
+                                     self._routed_urlopen(pulls, seen, unassociated)):
+                    ef.default_event_supply_runner(
+                        "cross-model-review.yml", event,
+                        "GuitarAlchemist/Demerzel", "secret",
+                        ("opened", "synchronize"), SINCE,
+                    )
+                self.assertGreater(len(seen), len(pulls) + 1)
+                self.assertEqual(len(charged), len(seen))
+
     def test_unanswered_obligation_survives_beyond_any_moving_horizon(self):
         """Sticky-red past PR closure AND past a proposed sliding window.
 
