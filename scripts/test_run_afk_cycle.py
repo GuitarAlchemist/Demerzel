@@ -15,15 +15,19 @@ from afk_backends.sandcastle import SandcastleBackend
 
 _CLAIMS_DIR = None
 _CLAIMS_ENV_BEFORE = None
+_GAIA_ENV_BEFORE = None
 
 
 def setUpModule():
     """_process_issue claims lanes in the fleet ledger. Point it at a scratch file
     for every test in this module so no test writes the real ~/.agents/claims.jsonl."""
-    global _CLAIMS_DIR, _CLAIMS_ENV_BEFORE
+    global _CLAIMS_DIR, _CLAIMS_ENV_BEFORE, _GAIA_ENV_BEFORE
     _CLAIMS_DIR = tempfile.TemporaryDirectory()
     _CLAIMS_ENV_BEFORE = os.environ.get("GALACTIC_CLAIMS_PATH")
     os.environ["GALACTIC_CLAIMS_PATH"] = str(Path(_CLAIMS_DIR.name) / "claims.jsonl")
+    # ...and the governor heartbeats in Gaia: never the real %LOCALAPPDATA% store.
+    _GAIA_ENV_BEFORE = os.environ.get("GAIA_STORE")
+    os.environ["GAIA_STORE"] = str(Path(_CLAIMS_DIR.name) / "gaia.sqlite3")
 
 
 def tearDownModule():
@@ -31,6 +35,10 @@ def tearDownModule():
         os.environ.pop("GALACTIC_CLAIMS_PATH", None)
     else:
         os.environ["GALACTIC_CLAIMS_PATH"] = _CLAIMS_ENV_BEFORE
+    if _GAIA_ENV_BEFORE is None:
+        os.environ.pop("GAIA_STORE", None)
+    else:
+        os.environ["GAIA_STORE"] = _GAIA_ENV_BEFORE
     _CLAIMS_DIR.cleanup()
 
 
@@ -899,7 +907,8 @@ class TestLaneClaims(unittest.TestCase):
         self._dir = tempfile.TemporaryDirectory()
         self.addCleanup(self._dir.cleanup)
         self.claims = Path(self._dir.name) / "claims.jsonl"
-        patcher = mock.patch.dict(os.environ, {"GALACTIC_CLAIMS_PATH": str(self.claims)})
+        patcher = mock.patch.dict(os.environ, {"GALACTIC_CLAIMS_PATH": str(self.claims),
+                                               "GAIA_STORE": str(Path(self._dir.name) / "gaia.sqlite3")})
         patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -931,7 +940,8 @@ class TestLaneClaims(unittest.TestCase):
         rows = self.rows()
         self.assertEqual([r["status"] for r in rows], ["claimed", "done"])
         self.assertEqual({r["lane"] for r in rows}, {"afk-issue-77"})
-        self.assertEqual({r["session"] for r in rows}, {"afk-2026-09-13-3"})
+        self.assertEqual(len({r["session"] for r in rows}), 1)
+        self.assertTrue(rows[0]["session"].startswith("afk-2026-09-13-3-"))
         self.assertEqual(rows[1]["evidence"], "https://github.com/x/y/pull/1")
 
     def test_blocked_issue_releases_its_claim(self):
@@ -944,6 +954,7 @@ class TestLaneClaims(unittest.TestCase):
         decision, _, adapter, _ = self.run_issue(budget_allowed=False)
         adapter.invoke.assert_not_called()
         self.assertEqual([r["status"] for r in self.rows()], ["claimed", "released"])
+        self.assertEqual(self.gaia_sessions(), [])
 
     def test_lane_held_by_another_session_is_skipped_before_any_spend(self):
         g.galactic_bridge.Ledger().claim("interactive-session", "demerzel", "afk-issue-77", note="mine")
@@ -980,3 +991,114 @@ class TestLaneClaims(unittest.TestCase):
                                                seq=3, today="2026-09-13", backend="claude-code", adapter=adapter)
         self.assertEqual(decision["action"], "error:RuntimeError")
         self.assertEqual([r["status"] for r in self.rows()], ["claimed", "released"])
+
+    # -- stale lanes: a governor killed mid-issue (no expiry in the ledger) ----
+
+    DEAD = "afk-2026-09-12-1-deadbeef"
+
+    def store(self):
+        store = g.gaia_bus.Store()
+        self.addCleanup(store.close)
+        return store
+
+    def gaia_sessions(self):
+        return [r[0] for r in self.store()._connect().execute("SELECT session FROM sessions")]
+
+    def test_lane_held_by_a_dead_governor_is_reclaimed(self):
+        g.galactic_bridge.Ledger().claim(self.DEAD, "demerzel", "afk-issue-77", note="killed")
+        decision, state, adapter, _ = self.run_issue()
+        adapter.invoke.assert_called_once()
+        self.assertEqual(state["status"], "completed")
+        rows = self.rows()
+        self.assertEqual([(r["session"] == self.DEAD, r["status"]) for r in rows],
+                         [(True, "claimed"), (True, "released"), (False, "claimed"), (False, "done")])
+        self.assertIn("no Gaia heartbeat", rows[1]["note"])
+
+    def test_lane_held_by_a_live_governor_is_respected(self):
+        self.store().heartbeat(self.DEAD)
+        g.galactic_bridge.Ledger().claim(self.DEAD, "demerzel", "afk-issue-77", note="working")
+        decision, _, adapter, reserve = self.run_issue()
+        adapter.invoke.assert_not_called()
+        reserve.assert_not_called()
+        self.assertEqual(decision["action"], "skip:lane-held")
+        self.assertEqual(len(self.rows()), 1)
+        self.assertEqual(self.gaia_sessions(), [self.DEAD])  # the skipper ended its own session
+
+    def test_governor_silent_past_the_window_counts_as_dead(self):
+        store = self.store()
+        store._now = lambda: g.gaia_bus.time.time() - g.gaia_bus.HEARTBEAT_WINDOW_S - 1
+        store.heartbeat(self.DEAD)
+        g.galactic_bridge.Ledger().claim(self.DEAD, "demerzel", "afk-issue-77", note="killed")
+        decision, state, _, _ = self.run_issue()
+        self.assertEqual(state["status"], "completed")
+
+    def test_unreachable_gaia_fails_closed_on_a_held_lane(self):
+        g.galactic_bridge.Ledger().claim(self.DEAD, "demerzel", "afk-issue-77", note="killed")
+        with mock.patch.object(g.gaia_bus.Store, "is_live",
+                               side_effect=g.gaia_bus.BusUnreachable("down")):
+            decision, _, adapter, _ = self.run_issue()
+        adapter.invoke.assert_not_called()
+        self.assertEqual(decision["action"], "skip:lane-held")
+
+    def test_governor_is_live_while_working_and_ended_after(self):
+        seen = {}
+
+        def invoke(issue, clone):
+            rows = self.rows()
+            seen["session"] = rows[-1]["session"]
+            seen["live"] = self.store().is_live(seen["session"])
+            return {"branch": "agent/issue-77", "commits": ["x"], "blocked": None}
+
+        adapter_result = mock.Mock()
+        with mock.patch.object(g, "_budget_reserve", return_value=(True, {"decision": "allow"})), \
+             mock.patch.object(g, "_budget_release"), \
+             mock.patch.object(g, "_prepare_clone", return_value="/tmp/clone"), \
+             mock.patch.object(g, "_open_pr", return_value="https://github.com/x/y/pull/1"), \
+             mock.patch.object(g.shutil, "rmtree"), \
+             mock.patch.object(g, "_write_loop_state"):
+            adapter_result.needs_local_repo.return_value = True
+            adapter_result.invoke.side_effect = invoke
+            g._process_issue({"number": 77, "title": "t", "body": "x", "labels": []},
+                             seq=3, today="2026-09-13", backend="claude-code", adapter=adapter_result)
+        self.assertTrue(seen["live"])
+        self.assertFalse(self.store().is_live(seen["session"]))
+
+    def test_heartbeat_repeats_while_the_lane_is_held(self):
+        beats = []
+        real = g.gaia_bus.Store.heartbeat
+
+        def counting(store, session):
+            beats.append(session)
+            return real(store, session)
+
+        def slow_invoke(issue, clone):
+            deadline = g.gaia_bus.time.time() + 5
+            while len(beats) < 3 and g.gaia_bus.time.time() < deadline:
+                g.gaia_bus.time.sleep(0.01)
+            return {"branch": "agent/issue-77", "commits": ["x"], "blocked": None}
+
+        with mock.patch.object(g, "AFK_HEARTBEAT_S", 0.01), \
+             mock.patch.object(g.gaia_bus.Store, "heartbeat", counting):
+            adapter = mock.Mock()
+            adapter.needs_local_repo.return_value = True
+            adapter.invoke.side_effect = slow_invoke
+            with mock.patch.object(g, "_budget_reserve", return_value=(True, {"decision": "allow"})), \
+                 mock.patch.object(g, "_budget_release"), \
+                 mock.patch.object(g, "_prepare_clone", return_value="/tmp/clone"), \
+                 mock.patch.object(g, "_open_pr", return_value="https://github.com/x/y/pull/1"), \
+                 mock.patch.object(g.shutil, "rmtree"), \
+                 mock.patch.object(g, "_write_loop_state"):
+                g._process_issue({"number": 77, "title": "t", "body": "x", "labels": []},
+                                 seq=3, today="2026-09-13", backend="claude-code", adapter=adapter)
+        self.assertGreaterEqual(len(beats), 3)
+
+    def test_sessions_are_unique_across_runs_on_the_same_day(self):
+        self.run_issue()
+        self.run_issue()
+        claimed = [r["session"] for r in self.rows() if r["status"] == "claimed"]
+        self.assertEqual(len(claimed), 2)
+        self.assertNotEqual(claimed[0], claimed[1])
+
+    def test_interactive_holder_is_never_reclaimed_even_without_heartbeat(self):
+        self.assertFalse(g._holder_is_dead("interactive-session"))
+        self.assertTrue(g._holder_is_dead(self.DEAD))

@@ -66,6 +66,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
+import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
@@ -76,6 +78,7 @@ import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
 import demerzel_halt as halt  # noqa: E402  (shared HALT-ALL reader seam)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
 import galactic_bridge  # noqa: E402  (fleet claims ledger, ~/.agents/claims.jsonl)
+import gaia_bus  # noqa: E402  (session liveness: a killed governor stops heartbeating)
 from afk_backends import AFKBackend  # noqa: E402
 from afk_backends.registry import RegistryError, get_backend, provider_for  # noqa: E402
 
@@ -516,6 +519,69 @@ def _run_harvest(dry: bool, today: str) -> int:
 
 
 AFK_CLAIMS_REPO = "demerzel"
+AFK_HEARTBEAT_S = 5 * 60  # refresh well inside gaia_bus.HEARTBEAT_WINDOW_S (30 min)
+AFK_SESSION_PREFIX = "afk-"
+
+
+class _GaiaLiveness:
+    """Keeps the governor's session live in Gaia while it may hold a lane.
+
+    The claims ledger has no expiry, so a governor killed mid-issue would hold
+    `afk-issue-<n>` forever. Instead of a TTL (lane durations are bimodal; any
+    fixed number is wrong for one mode), the holder heartbeats and a later
+    governor treats a silent AFK holder as dead. The first beat is synchronous so
+    liveness exists before the claim row does.
+    """
+
+    def __init__(self, session: str):
+        self.session = session
+        self._stop = threading.Event()
+        self._thread = threading.Thread(target=self._run, name=f"gaia-{session}", daemon=True)
+
+    def _beat(self) -> None:
+        store = gaia_bus.Store()
+        try:
+            store.heartbeat(self.session)
+        except gaia_bus.GaiaError as exc:
+            print(f"warn: gaia heartbeat failed for {self.session}: {exc}", file=sys.stderr)
+        finally:
+            store.close()
+
+    def _run(self) -> None:
+        while not self._stop.wait(AFK_HEARTBEAT_S):
+            self._beat()
+
+    def start(self) -> None:
+        self._beat()
+        self._thread.start()
+
+    def stop(self) -> None:
+        if self._stop.is_set():
+            return
+        self._stop.set()
+        self._thread.join(timeout=10)
+        store = gaia_bus.Store()
+        try:
+            store.release_session(self.session)
+        except gaia_bus.GaiaError as exc:
+            print(f"warn: could not end gaia session {self.session}: {exc}", file=sys.stderr)
+        finally:
+            store.close()
+
+
+def _holder_is_dead(holder: str) -> bool:
+    """Only another AFK governor's claim can be judged dead: AFK sessions are the
+    ones that heartbeat for their lanes, so an interactive holder is never
+    reclaimed. An unreachable bus fails closed (the holder counts as live)."""
+    if not holder.startswith(AFK_SESSION_PREFIX):
+        return False
+    store = gaia_bus.Store()
+    try:
+        return not store.is_live(holder)
+    except gaia_bus.GaiaError:
+        return False
+    finally:
+        store.close()
 
 
 def _claim_lane(issue: dict, session: str) -> tuple[bool, str | None]:
@@ -528,19 +594,33 @@ def _claim_lane(issue: dict, session: str) -> tuple[bool, str | None]:
     the lane. Uses galactic_bridge.Ledger for its lock and conflict check.
     """
     lane = f"afk-issue-{issue.get('number')}"
+    note = f"AFK governor implementing issue #{issue.get('number')}"
+    ledger = galactic_bridge.Ledger()
     try:
-        galactic_bridge.Ledger().claim(
-            session, AFK_CLAIMS_REPO, lane,
-            note=f"AFK governor implementing issue #{issue.get('number')}")
+        try:
+            ledger.claim(session, AFK_CLAIMS_REPO, lane, note=note)
+            return True, None
+        except galactic_bridge.BridgeError as exc:
+            if not str(exc).startswith("claim conflict"):
+                print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}",
+                      file=sys.stderr)
+                return False, None
+            conflict = str(exc)
+        current = ledger.current_claim(AFK_CLAIMS_REPO, lane)
+        holder = current["session"] if current else ""
+        if not _holder_is_dead(holder):
+            return False, conflict
+        # A killed governor: reclaim atomically (a racing governor gets a conflict).
+        ledger.reclaim(session, AFK_CLAIMS_REPO, lane, holder,
+                       note=f"{note}; {holder} has no Gaia heartbeat in "
+                            f"{gaia_bus.HEARTBEAT_WINDOW_S // 60} min")
+        print(f"info: reclaimed {lane} from dead governor {holder}", file=sys.stderr)
+        return True, None
     except galactic_bridge.BridgeError as exc:
-        if str(exc).startswith("claim conflict"):
-            return False, str(exc)
-        print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}", file=sys.stderr)
-        return False, None
+        return False, str(exc)
     except OSError as exc:
         print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}", file=sys.stderr)
         return False, None
-    return True, None
 
 
 def _finish_claim(issue: dict, session: str, decision: dict, state: dict) -> None:
@@ -584,8 +664,14 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
 
     # Claim the lane before any spend, so two governors (or a governor and an
     # interactive session) never implement the same issue at once.
-    session = f"afk-{today}-{seq}"
+    # Unique per run: seq is only the issue's position in this run's queue, so two
+    # runs on the same day would otherwise share a session and never conflict.
+    session = f"{AFK_SESSION_PREFIX}{today}-{seq}-{uuid.uuid4().hex[:8]}"
+    liveness = _GaiaLiveness(session)
+    liveness.start()
     claimed, held_by = _claim_lane(issue, session)
+    if not claimed:
+        liveness.stop()
     if held_by:
         decision["action"] = "skip:lane-held"
         decision["lane_holder"] = held_by
@@ -604,6 +690,7 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
         state["halt_reason"] = f"budget: {', '.join(reasons)}"
         if claimed:
             _finish_claim(issue, session, decision, state)
+            liveness.stop()
         _write_loop_state(state)
         return decision, state
 
@@ -660,6 +747,7 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str,
         _budget_release(issue, actual_cost_usd=0.0)
         if claimed:
             _finish_claim(issue, session, decision, state)
+            liveness.stop()
 
     _write_loop_state(state)
     return decision, state
