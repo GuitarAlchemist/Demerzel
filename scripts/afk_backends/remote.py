@@ -64,7 +64,9 @@ class RemoteBackend(AFKBackend):
     def needs_local_repo(self) -> bool:
         return False
 
-    def invoke(self, issue: dict[str, Any], repo_path: str | None) -> dict:
+    def invoke(self, issue: dict[str, Any], repo_path: str | None, status_callback: Any = None) -> dict:
+        if status_callback:
+            status_callback("connecting to remote worker")
         endpoint = self._endpoint()
         if not endpoint:
             return {"branch": None, "commits": [],

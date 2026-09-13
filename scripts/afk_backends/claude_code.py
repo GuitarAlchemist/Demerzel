@@ -83,7 +83,7 @@ class ClaudeCodeBackend(AFKBackend):
     def needs_local_repo(self) -> bool:
         return True
 
-    def invoke(self, issue: dict[str, Any], repo_path: str | None) -> dict:
+    def invoke(self, issue: dict[str, Any], repo_path: str | None, status_callback: Any = None) -> dict:
         """Run headless Claude Code in repo_path and return branch/commits/blocked."""
         if repo_path is None:
             return {"branch": None, "commits": [],
@@ -91,6 +91,8 @@ class ClaudeCodeBackend(AFKBackend):
         num = issue.get("number")
         branch = f"agent/issue-{num}"
         try:
+            if status_callback:
+                status_callback("preparing checkout")
             subprocess.run(["git", "-C", repo_path, "checkout", "-b", branch],
                              capture_output=True, text=True, timeout=30, check=True)
             base = subprocess.run(["git", "-C", repo_path, "rev-parse", "HEAD"],
@@ -114,6 +116,9 @@ class ClaudeCodeBackend(AFKBackend):
                         "=== END TEST OUTPUT ==="
                     )
 
+                if status_callback:
+                    status_callback(f"running agent (attempt {current_attempt}/{max_attempts})")
+
                 cmd = ["claude", "-p", prompt,
                        "--output-format", "json",
                        "--allowedTools", "Edit", "Write", "Read", "Grep", "Glob",
@@ -132,6 +137,8 @@ class ClaudeCodeBackend(AFKBackend):
                                    capture_output=True, text=True, timeout=60)
 
                 # Run tests
+                if status_callback:
+                    status_callback(f"running tests (attempt {current_attempt}/{max_attempts})")
                 passed, test_log = _run_tests_locally(repo_path)
                 if passed:
                     print(f"AFK: attempt {current_attempt} succeeded. Verification tests passed!", file=sys.stderr)
@@ -140,6 +147,7 @@ class ClaudeCodeBackend(AFKBackend):
                 print(f"AFK: attempt {current_attempt} failed verification tests. Retrying...", file=sys.stderr)
                 last_test_output = test_log[:5000]  # truncate to avoid prompt bloating
                 current_attempt += 1
+
             else:
                 blocked_reason = f"Verification tests failed after {max_attempts} attempts. Last log: {last_test_output[:200]}"
 
@@ -157,6 +165,8 @@ class ClaudeCodeBackend(AFKBackend):
                     "blocked": f"claude-code made no commits: {tail}"}
 
         # Perform the squashing
+        if status_callback:
+            status_callback("squashing commits")
         subprocess.run(["git", "-C", repo_path, "reset", "--soft", base],
                        capture_output=True, text=True, timeout=60)
         subprocess.run(["git", "-C", repo_path, "commit", "-m",
