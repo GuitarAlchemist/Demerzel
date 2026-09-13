@@ -25,16 +25,21 @@
       "type": "gap_identified",
       "context": "The Sentinel needs: (1) behavioral test in tests/behavioral/the-sentinel-cases.md, (2) schema conformance check against schemas/persona.schema.json, (3) at least one consumer wiring (likely ix sentrux peer or hari swarm bridge). Per CLAUDE.md persona-requirements rule, missing test blocks effectiveness assessment.",
       "timestamp": "2026-04-30T00:00:00Z"
+    },
+    {
+      "type": "cross_repo_validation",
+      "context": "Correction, 2026-09-13. The first measured citation count (scripts/evolution_metrics.py, #1077) is 0, which reads as 'nothing uses this spec'. That is true only inside Demerzel: the metric cannot see sibling repositories. ix crates/ix-sentinel implements the spec and cites demerzel/docs/governance/the-sentinel.md in its module doc and help text. Its MVP (ix 976b825) landed on 2026-04-12, the same day as the spec, so the 2026-04-30 gap 'no consumer wiring' was already wrong when written. What remains true: the crate has no tests and has not changed since 2026-04-26, and there is no tests/behavioral/the-sentinel-cases.md.",
+      "timestamp": "2026-09-13T00:00:00Z"
     }
   ],
   "assessment": {
     "effectiveness": {
-      "proposition": "Spec landed cleanly but no consumer or test yet — too early to assess. State remains U until first invocation provides evidence.",
+      "proposition": "The spec has a consumer in ix (crates/ix-sentinel), untested and untouched since 2026-04-26, and no Demerzel behavioral test. State stays U until the consumer runs under test and provides evidence.",
       "truth_value": "U",
       "confidence": 0.5
     },
     "recommendation": "investigate"
   },
   "created_at": "2026-04-30T00:00:00Z",
-  "last_updated": "2026-04-30T00:00:00Z"
+  "last_updated": "2026-09-13T00:00:00Z"
 }
