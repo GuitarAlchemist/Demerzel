@@ -48,7 +48,7 @@ lifecycle_scope:
     description: "Measured against the category threshold. Age means the artifact may no longer describe the repository."
     rules:
       - "Beliefs (state/beliefs/*.belief.json outside archived/)"
-      - "Evolution log metrics (state/evolution/*.evolution.json) — consumed by quality_trend.py and /demerzel compound"
+      - "Evolution log metrics (state/evolution/*.evolution.json) — consumed by quality_trend.py and /demerzel compound; freshness is the nightly producer run (see artifact_categories freshness_source)"
       - "Indexes and catalogs that enumerate other artifacts, when an artifact_categories entry names them (none does as of 1.4.0, so none is measured)"
       - "Health scores and digests"
   age_source: "Use the last commit time touching the file (git log -1 --format=%cI -- <path>), falling back to its last_updated field. Never filesystem mtime: every clone, checkout and worktree resets it."
@@ -126,6 +126,15 @@ artifact_categories:
   - category: evolution_log
     path: "state/evolution/*.evolution.json"
     max_staleness_days: 14
+    # Since 1.4.0 the citation metrics are computed nightly by
+    # scripts/evolution_metrics.py (demerzel-quality-trend.yml), which rewrites a
+    # file only when a value changes. A stable artifact therefore keeps an old
+    # commit time while its producer is alive, so file age says nothing. The run
+    # itself is guarded: the producer runs before quality_trend.py in the same
+    # job, and demerzel-quality-trend-freshness.yml goes red when no new
+    # quality-trend line lands. The scan counts these files as produced.
+    freshness_source: producer_run
+    freshness_guard: ".github/workflows/demerzel-quality-trend-freshness.yml"
     refresh_action: "Re-assess artifact effectiveness via /demerzel evolve"
     priority: medium
 

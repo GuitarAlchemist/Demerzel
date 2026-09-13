@@ -162,6 +162,15 @@ class ScanTests(unittest.TestCase):
         self.assertEqual([f["file"] for f in findings], ["state/evolution/x.evolution.json"])
         self.assertEqual((counts[s.DORMANT], counts[s.OPEN_WORK], counts[s.LIVE_STATE]), (1, 0, 1))
 
+    def test_produced_category_is_counted_not_aged(self):
+        self.committed("state/evolution/stable.evolution.json", {}, 60)
+        self.committed("state/pdca/open.pdca.json", {"cycle_phase": "plan"}, 60)
+        cats = [dict(c, freshness_source="producer_run") if c["category"] == "evolution_log" else c
+                for c in CATEGORIES]
+        findings, counts = s.scan(self.repo.root, cats, NOW)
+        self.assertEqual([f["file"] for f in findings], ["state/pdca/open.pdca.json"])
+        self.assertEqual((counts[s.PRODUCED], counts[s.OPEN_WORK]), (1, 1))
+
     def test_category_newest_is_the_youngest_file(self):
         self.committed("state/evolution/a.evolution.json", {}, 40)
         self.committed("state/evolution/b.evolution.json", {}, 16)
@@ -206,7 +215,18 @@ class MainTests(unittest.TestCase):
         code, out = self.run_main(self.repo.root, "--strict")
         self.assertEqual(code, 0)
         self.assertNotIn("::warning", out)
-        self.assertIn("1 dormant (not reported); 0 stale", out)
+        self.assertIn("1 dormant (not reported), 0 produced", out)
+        self.assertIn("; 0 stale", out)
+
+    def test_produced_category_names_its_guard(self):
+        cats = [dict(c, freshness_source="producer_run", freshness_guard="guard.yml")
+                if c["category"] == "evolution_log" else c for c in CATEGORIES]
+        policy = self.repo.write("produced.json", {"artifact_categories": cats})
+        self.repo.commit(policy, 0, self.now)
+        self.policy = policy
+        code, out = self.run_main(self.repo.root)
+        self.assertEqual(code, 0)
+        self.assertIn("evolution_log: freshness is the producer run — see guard.yml", out)
 
     def test_misspelt_dormant_category_is_an_error_not_a_silent_no_op(self):
         policy = self.repo.write("typo.json", {"artifact_categories": CATEGORIES,

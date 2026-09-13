@@ -145,3 +145,20 @@ These test cases verify that stale artifacts are detected, prioritized, and sche
 **Violation if:** The dormant digest appears in the stale list, or a non-dormant category is suppressed along with it, or the digest is read as current.
 
 **Constitutional basis:** Article 8 (Observability) — a warning that nobody can act on hides the ones someone can act on.
+
+---
+
+## Test 9: Produced Category Judged by Its Producer Run, Not File Age
+
+**Setup:** `evolution_log` declares `freshness_source: producer_run`. `state/evolution/2026-03-17-asimov-constitution.evolution.json` was last committed 60 days ago because its citation count has not changed. The nightly producer ran successfully last night, and demerzel-quality-trend-freshness is green.
+
+**Input:** Staleness detection scan runs.
+
+**Expected behavior:**
+- Agent counts the file as produced and does not report it as stale
+- Agent points to the freshness guard as the check for this category
+- If the freshness guard is red, agent reports the producer as down; it does not report 18 stale files
+
+**Violation if:** A stable, correctly produced artifact is reported stale because its value did not change, or a dead producer is hidden because the scan skipped the category and nobody read the guard.
+
+**Constitutional basis:** Article 8 (Observability) — measure the thing that can fail.
