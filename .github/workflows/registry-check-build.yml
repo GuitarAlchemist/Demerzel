@@ -1,0 +1,67 @@
+name: Registry Check Build
+
+# Proves that a PR changing the registry checker's build inputs still builds.
+#
+# registry-check.yml reads IX_SHA, the toolchain and .github/registry-check/
+# from the default branch, so a bump only takes effect after merge. This
+# unprivileged `pull_request` job builds the PR's own versions first, the
+# same way (`--locked`, pinned toolchain, fresh cargo home, no cache), then
+# smoke-runs the binary on the registry against itself. It is not the gate
+# and uses no secrets.
+
+on:
+  pull_request:
+    paths:
+      - '.github/registry-check/**'
+      - '.github/workflows/registry-check.yml'
+      - '.github/workflows/registry-check-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: registry-check-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Read pins from the PR's registry-check.yml
+        id: pins
+        run: |
+          set -euo pipefail
+          wf=.github/workflows/registry-check.yml
+          ix_sha=$(sed -n 's/^  IX_SHA: *\([0-9a-f]\{40\}\) *$/\1/p' "$wf")
+          toolchain=$(sed -n 's/^  RUST_TOOLCHAIN: *\([0-9][0-9.]*\) *$/\1/p' "$wf")
+          if [ "$(printf '%s\n' "$ix_sha" | wc -l)" != 1 ] || [ -z "$ix_sha" ] \
+            || [ "$(printf '%s\n' "$toolchain" | wc -l)" != 1 ] || [ -z "$toolchain" ]; then
+            echo "::error::Expected exactly one IX_SHA (40 hex) and one RUST_TOOLCHAIN in $wf."
+            exit 1
+          fi
+          echo "ix_sha=$ix_sha" >> "$GITHUB_OUTPUT"
+          echo "toolchain=$toolchain" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout ix-registry-check source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: GuitarAlchemist/ix
+          ref: ${{ steps.pins.outputs.ix_sha }}
+          path: ix-src
+          persist-credentials: false
+
+      - name: Build with the vendored manifest
+        env:
+          RUST_TOOLCHAIN: ${{ steps.pins.outputs.toolchain }}
+          CARGO_HOME: ${{ runner.temp }}/cargo-home
+          CARGO_TARGET_DIR: ${{ runner.temp }}/registry-check-target
+        run: |
+          set -euo pipefail
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --no-self-update
+          cargo "+$RUST_TOOLCHAIN" build --locked --release \
+            --manifest-path .github/registry-check/Cargo.toml
+          "$CARGO_TARGET_DIR/release/ix-registry-check" \
+            --old schemas/capability-registry.json --new schemas/capability-registry.json

@@ -21,13 +21,19 @@ name: Registry Check
 # data with `git show` and parsed by a checker built from a pinned ix commit
 # with a locked dependency set and a pinned toolchain, without any cache.
 # The token is read-only, no secrets are used, and checkouts do not persist
-# credentials.
+# credentials. Checker output is printed with workflow commands disabled
+# and HTML-escaped in the job summary.
 #
 # The job runs on every PR into the default branch (no `paths:` filter) so it
-# can be a required check: PRs that do not touch the gated files pass
-# quickly. `edited` is included so retargeting a PR re-runs the check. The
-# job is never skipped on `edited`, because a skipped run would replace an
-# earlier failure with a passing conclusion.
+# can be a required check. Whether the checker runs is decided from git
+# objects: the registry and allowlist entries in the PR's merge commit versus
+# the default branch tip. The build is skipped only when both are identical.
+# `edited` is included so retargeting a PR re-runs the check. The job is
+# never skipped on `edited`, because a skipped run would replace an earlier
+# failure with a passing conclusion.
+#
+# .github/workflows/registry-check-build.yml builds the vendored manifest on
+# PRs that change it, before it lands here.
 
 on:
   pull_request_target:
@@ -54,46 +60,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Decide whether gated files changed
-        id: scope
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          set -euo pipefail
-          # If the PR diff does not touch the registry, the merge keeps the
-          # default branch's registry, so there is nothing to compare. Any
-          # doubt about the file listing (head moved, list truncated or
-          # inconsistent) runs the full check instead.
-          info=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '"\(.head.sha) \(.changed_files)"')
-          read -r api_head changed <<< "$info"
-          listing=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" \
-            --jq '.[] | "F\t\(.filename)", (.previous_filename // empty | "P\t\(.)")')
-          listed=$(printf '%s\n' "$listing" | grep -c '^F' || true)
-          relevant=false
-          if [ "$api_head" != "$HEAD_SHA" ] || [ "$changed" -ge 3000 ] || [ "$listed" != "$changed" ]; then
-            relevant=true
-          elif printf '%s\n' "$listing" | cut -f2- | grep -qxF \
-              -e schemas/capability-registry.json \
-              -e schemas/capability-registry.allowlist \
-              -e .github/workflows/registry-check.yml; then
-            relevant=true
-          fi
-          if [ "$relevant" = false ]; then
-            echo "No gated file changed in this PR; nothing to check."
-          fi
-          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
-
       - name: Checkout default branch
-        if: steps.scope.outputs.relevant == 'true'
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
 
-      - name: Extract baseline and merged registries
-        if: steps.scope.outputs.relevant == 'true'
+      - name: Bind merge commit and extract registries
+        id: extract
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -141,8 +114,31 @@ jobs:
             echo "::error::No up-to-date merge commit for head $HEAD_SHA on $DEFAULT_BRANCH. Re-run the job, or push again if the PR has a newer head."
             exit 1
           fi
-
           baseline=refs/remotes/pr/default
+
+          # Relevance comes from the objects the check would compare, not from
+          # the PR's file listing (which can disagree with the merge result).
+          # `git ls-tree` gives mode, type and object id; any difference,
+          # including a path present on one side only, runs the check. A
+          # registry missing on the default branch also runs it. Any git
+          # error fails the step.
+          relevant=false
+          for path in schemas/capability-registry.json schemas/capability-registry.allowlist; do
+            at_baseline=$(git ls-tree "$baseline" -- "$path")
+            at_merge=$(git ls-tree "$merged" -- "$path")
+            if [ "$at_baseline" != "$at_merge" ]; then
+              relevant=true
+            fi
+          done
+          if [ -z "$(git ls-tree "$baseline" -- schemas/capability-registry.json)" ]; then
+            relevant=true
+          fi
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          if [ "$relevant" = false ]; then
+            echo "Registry and allowlist are identical in the merge commit and on $DEFAULT_BRANCH; nothing to check."
+            exit 0
+          fi
+
           if ! git show "$baseline:schemas/capability-registry.json" > "$OUT/old.json" 2>/dev/null; then
             echo "::notice::$DEFAULT_BRANCH has no capability registry; nothing to compare against."
             echo '{}' > "$OUT/old.json"
@@ -159,7 +155,7 @@ jobs:
           echo "REGISTRY_DIR=$OUT" >> "$GITHUB_ENV"
 
       - name: Checkout ix-registry-check source at pinned commit
-        if: steps.scope.outputs.relevant == 'true'
+        if: steps.extract.outputs.relevant == 'true'
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           repository: GuitarAlchemist/ix
@@ -168,7 +164,7 @@ jobs:
           persist-credentials: false
 
       - name: Build ix-registry-check
-        if: steps.scope.outputs.relevant == 'true'
+        if: steps.extract.outputs.relevant == 'true'
         env:
           # Fresh cargo home and target: crate sources are downloaded and
           # verified against Cargo.lock checksums on every run.
@@ -182,9 +178,14 @@ jobs:
           echo "CHECKER=$CARGO_TARGET_DIR/release/ix-registry-check" >> "$GITHUB_ENV"
 
       - name: Check for breaking changes
-        if: steps.scope.outputs.relevant == 'true'
+        if: steps.extract.outputs.relevant == 'true'
         run: |
           set -uo pipefail
+          # Registry names come from the PR. Disable workflow commands while
+          # anything derived from them is printed.
+          token=$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
+          echo "::stop-commands::$token"
+
           report="$REGISTRY_DIR/report.txt"
           args=(--old "$REGISTRY_DIR/old.json" --new "$REGISTRY_DIR/new.json")
           if [ -n "${ALLOWLIST:-}" ]; then
@@ -208,7 +209,7 @@ jobs:
               | select(all($p[]; (type != "string") or (startswith("_") | not)))
               | select(($n | try getpath($p) catch null) != ($old | getpath($p)))
               | ["github"] + ($p | map(tostring)) | join(".")
-            ' "$REGISTRY_DIR/old.json"); then
+            ' "$REGISTRY_DIR/old.json" 2>> "$report"); then
             github_changed=$(printf '%s\n' "$github_changed" | grep -v '^$' || true)
             github_breaks=$(printf '%s\n' "$github_changed" | grep -vxF -f "$allowed" || true)
             github_allowed=$(printf '%s\n' "$github_changed" | grep -xF -f "$allowed" || true)
@@ -231,10 +232,14 @@ jobs:
           fi
 
           cat "$report"
+          # <pre> ends only at a literal </pre>; escaping & < > keeps the
+          # report inside it.
           {
             echo "### Capability registry check (exit $rc)"
-            echo '```'
-            cat "$report"
-            echo '```'
+            echo
+            echo "<pre>"
+            sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' "$report"
+            echo "</pre>"
           } >> "$GITHUB_STEP_SUMMARY"
+          echo "::$token::"
           exit "$rc"

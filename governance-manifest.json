@@ -14,7 +14,7 @@
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
-    "workflow": 30
+    "workflow": 31
   },
   "inventory": {
     "constitution": [
@@ -1364,6 +1364,10 @@
       {
         "name": "qa-tribunal",
         "path": ".github/workflows/qa-tribunal.yml"
+      },
+      {
+        "name": "registry-check-build",
+        "path": ".github/workflows/registry-check-build.yml"
       },
       {
         "name": "registry-check",
