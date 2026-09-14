@@ -2,8 +2,9 @@
 """Claude Code desktop backend for the AFK implement lane.
 
 Runs a headless `claude -p` agent in an ephemeral clone, billing the interactive
-subscription by stripping ANTHROPIC_API_KEY from the child environment. This is
-the default AFK backend.
+subscription: the agent's environment is an allowlist that never carries
+ANTHROPIC_API_KEY (nor any other credential of the governor's). This is the
+default AFK backend.
 
 After each agent run the governor runs the clone's unit tests itself, in an
 environment stripped to an allowlist (no credentials). On failure the agent is
@@ -39,6 +40,23 @@ _TEST_ENV_ALLOW = frozenset({
     "TEMP", "TMP", "TMPDIR", "HOME", "USERPROFILE", "USERNAME", "USER", "LOGNAME",
     "LANG", "LC_ALL",
     "PYTHONIOENCODING", "PYTHONUTF8",
+})
+
+# The agent itself acts on the same untrusted issue body, so it gets the test
+# allowlist plus only what `claude` needs to start, authenticate and reach the
+# API: Windows profile/program dirs (config, credentials, Git Bash discovery),
+# proxy/CA settings, git identity, and Claude Code's own subscription settings.
+# Deliberately explicit names, not a CLAUDE_CODE_* prefix: a parent session
+# exports CLAUDE_CODE_MESSAGING_TOKEN and session ids that must not leak in.
+# ANTHROPIC_API_KEY is absent by design - it would switch billing to metered API.
+_AGENT_ENV_ALLOW = _TEST_ENV_ALLOW | frozenset({
+    "APPDATA", "LOCALAPPDATA", "PROGRAMDATA", "ALLUSERSPROFILE", "PUBLIC",
+    "PROGRAMFILES", "PROGRAMFILES(X86)", "PROGRAMW6432", "COMMONPROGRAMFILES",
+    "HOMEDRIVE", "HOMEPATH", "COMPUTERNAME", "USERDOMAIN", "OS",
+    "PROCESSOR_ARCHITECTURE", "NUMBER_OF_PROCESSORS", "TERM",
+    "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "NODE_EXTRA_CA_CERTS", "SSL_CERT_FILE",
+    "GIT_AUTHOR_NAME", "GIT_AUTHOR_EMAIL", "GIT_COMMITTER_NAME", "GIT_COMMITTER_EMAIL",
+    "CLAUDE_CONFIG_DIR", "CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_CODE_GIT_BASH_PATH",
 })
 
 
@@ -91,6 +109,11 @@ _TEST_OUTPUT_END = "=== END UNTRUSTED TEST OUTPUT ==="
 def _test_env(environ: dict[str, str]) -> dict[str, str]:
     """The environment for the verification test run: allowlisted names only."""
     return {k: v for k, v in environ.items() if k.upper() in _TEST_ENV_ALLOW}
+
+
+def _agent_env(environ: dict[str, str]) -> dict[str, str]:
+    """The environment for the headless agent: allowlisted names only."""
+    return {k: v for k, v in environ.items() if k.upper() in _AGENT_ENV_ALLOW}
 
 
 def _run_tests(repo_path: str) -> tuple[bool, str]:
@@ -155,7 +178,7 @@ class ClaudeCodeBackend(AFKBackend):
                              capture_output=True, text=True, timeout=30, check=True)
             base = subprocess.run(["git", "-C", repo_path, "rev-parse", "HEAD"],
                                   capture_output=True, text=True, timeout=30).stdout.strip()
-            env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
+            env = _agent_env(dict(os.environ))
             test_output = ""
             for attempt in range(1, MAX_ATTEMPTS + 1):
                 cmd = ["claude", "-p", _claude_code_prompt(issue) + _retry_note(attempt, test_output),
