@@ -24,13 +24,16 @@ The Markov model represents lifecycle history as transition probabilities. The s
 - `pr.ready_for_review`
 - `pr.merge_candidate`
 - `pr.merged`
-- `pr.rejected` (absorbing state)
-- `issue.stuck` (absorbing state)
+- `pr.rejected`
+- `issue.stuck` (issue-side stale state)
+- `pr.stuck_draft` / `pr.stuck_ready`: a PR with no lifecycle event for the stale window, split by origin because GitHub cannot merge a draft
+
+`pr.merged` and `pr.rejected` are the absorbing states. Stuck states are transient: stuck PRs are later merged or closed (see `state/markov/*.markov-transitions.json`).
 
 ### Model Variants
 1. **Lifecycle Markov Chain:** Predicts the next state and time-to-transition for a generic issue or PR.
 2. **Capability-Stream Markov Chain:** Conditioned on the worker and capability stream (e.g., Jules doing docs vs. Claude doing code).
-3. **Absorbing-State Analysis:** Evaluates the probability of reaching `pr.merged` versus `pr.rejected` or `issue.stuck`.
+3. **Absorbing-State Analysis:** Evaluates the probability of reaching `pr.merged` versus `pr.rejected`, and how much mass is still unresolved (open) at the snapshot.
 
 ### Example Output (Markov Transition)
 ```yaml
