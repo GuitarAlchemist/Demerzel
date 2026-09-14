@@ -1,30 +1,35 @@
 {
   "proposition": "Remediation-strategy effectiveness is tracked from PDCA outcomes; fragile strategies stay human-gated.",
   "truth_value": "P",
-  "confidence": 0.86,
+  "confidence": 0.9,
   "evidence": {
     "supporting": [
       {
-        "source": "ml-feedback-recommendation 1df435b3-cfd9-4524-b267-82a1835b0309",
-        "claim": "Across 6 outcome-bearing PDCA records: proactive=0.333(n=3), standardize=1.0(n=3). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
-        "timestamp": "2026-09-12T15:04:29Z",
-        "reliability": 0.86
+        "source": "ml-feedback-recommendation f56f3931-3d0d-43af-b30e-b155af51a2d7",
+        "claim": "Across 8 outcome-bearing PDCA records: abandon=0.0(n=2), proactive=0.0(n=2), standardize=1.0(n=4). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
+        "timestamp": "2026-09-14T03:19:12Z",
+        "reliability": 0.9
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-09-12T15:04:29Z",
+  "last_updated": "2026-09-14T03:19:13Z",
   "evaluated_by": "demerzel",
   "strategy_success_rates": {
+    "abandon": {
+      "success_rate": 0.0,
+      "attempts": 2,
+      "successes": 0
+    },
     "proactive": {
-      "success_rate": 0.333,
-      "attempts": 3,
-      "successes": 1
+      "success_rate": 0.0,
+      "attempts": 2,
+      "successes": 0
     },
     "standardize": {
       "success_rate": 1.0,
-      "attempts": 3,
-      "successes": 3
+      "attempts": 4,
+      "successes": 4
     }
   },
   "prior_strategy_success_rates": {
@@ -41,13 +46,20 @@
   },
   "advisory_escalation_changes": [
     {
+      "strategy": "abandon",
+      "success_rate": 0.0,
+      "n": 2,
+      "change": "keep manual / high-risk (do not auto-remediate)",
+      "requires_human_approval": true
+    },
+    {
       "strategy": "proactive",
-      "success_rate": 0.333,
-      "n": 3,
+      "success_rate": 0.0,
+      "n": 2,
       "change": "keep manual / high-risk (do not auto-remediate)",
       "requires_human_approval": true
     }
   ],
   "risk_classes_modified": 0,
-  "source_recommendation": "1df435b3-cfd9-4524-b267-82a1835b0309"
+  "source_recommendation": "f56f3931-3d0d-43af-b30e-b155af51a2d7"
 }
