@@ -82,7 +82,7 @@ Demerzel/
 | Streeling departments | 23 | `state/streeling/departments/*.department.json` |
 | Course tracks | 21 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
-| GitHub workflows | 29 | `.github/workflows/*.yml` |
+| GitHub workflows | 30 | `.github/workflows/*.yml` |
 
 ## Key concepts
 
@@ -144,11 +144,12 @@ Artifacts are consumed by agents via:
 
 ## CI workflows
 
-29 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
+30 GitHub workflows under [`.github/workflows/`](./.github/workflows/). Notable:
 
 - [`qa-tribunal.yml`](./.github/workflows/qa-tribunal.yml) — repository-dispatch emitter (Phase 0).
 - [`governance-validate.yml`](./.github/workflows/governance-validate.yml) — schema + grammar validation.
 - [`agent-blackbox.yml`](./.github/workflows/agent-blackbox.yml) — risk-report cross-model review.
+- [`registry-check.yml`](./.github/workflows/registry-check.yml) — breaking-change gate for `schemas/capability-registry.json` (ix-registry-check).
 - [`streeling-daily.yml`](./.github/workflows/streeling-daily.yml) — hexavalent course-state evolution.
 - [`karpathy-cherny-discipline.yml`](./.github/workflows/karpathy-cherny-discipline.yml) — session-digest + `/correct` discipline enforcement.
 - [`demerzel-discussion-responder.yml`](./.github/workflows/demerzel-discussion-responder.yml) — auto-responder for GitHub Discussions across the ecosystem.

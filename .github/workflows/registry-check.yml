@@ -1,0 +1,144 @@
+name: Registry Check
+
+# Breaking-change gate for schemas/capability-registry.json.
+#
+# Compares the registry on the base branch with the registry the PR would
+# merge, using `ix-registry-check` from GuitarAlchemist/ix. Removing a repo,
+# a tool category or a tool name is breaking and fails the job, unless its
+# dotted path is listed in schemas/capability-registry.allowlist.
+#
+# Why pull_request_target (#641: a PR must not weaken the guardrail that
+# gates it). With `pull_request`, the workflow file, the ix pin and the
+# allowlist would all be read from the PR itself, so a PR could allowlist
+# its own removal or delete the check. With `pull_request_target` this
+# file comes from the base branch, and so do the ix pin and the allowlist
+# below. Changing any of them takes a separate PR that is merged first.
+#
+# pull_request_target runs with base-repository privileges, so this job
+# never checks out, builds or executes PR code. The PR's registry is read
+# as data with `git show` and parsed by a checker built from a pinned ix
+# commit. The token is read-only, no secrets are used, and checkouts do
+# not persist credentials.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'schemas/capability-registry.json'
+      - 'schemas/capability-registry.allowlist'
+      - '.github/workflows/registry-check.yml'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: registry-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # ix commit the checker is built from. Bump in a dedicated PR.
+  IX_SHA: 73b78bf0d5eccf04e56973bde556ec01a8c342d2
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Extract base and merged registries
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          OUT: ${{ runner.temp }}/registry
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUT"
+
+          # refs/pull/N/merge is the PR merged into the current base tip:
+          # parent 1 is the base, the commit itself is what merging yields.
+          # GitHub recomputes it asynchronously and leaves a stale one behind
+          # when the PR conflicts, so only accept it once the API reports the
+          # PR mergeable with that exact merge commit for this head. Never
+          # check it out.
+          merged=""
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            info=$(gh api "repos/$REPO/pulls/$PR_NUMBER" \
+              --jq '"\(.mergeable) \(.merge_commit_sha) \(.head.sha)"') || info="null null null"
+            read -r mergeable merge_sha api_head <<< "$info"
+            if [ "$mergeable" = false ]; then
+              echo "::error::PR conflicts with the base branch. Resolve conflicts, then push again."
+              exit 1
+            fi
+            if [ "$mergeable" = true ] && [ "$api_head" = "$HEAD_SHA" ] \
+              && git fetch --no-tags --depth=2 origin "+refs/pull/$PR_NUMBER/merge:refs/remotes/pr/merge" \
+              && [ "$(git rev-parse refs/remotes/pr/merge)" = "$merge_sha" ] \
+              && [ "$(git rev-parse 'refs/remotes/pr/merge^2')" = "$HEAD_SHA" ]; then
+              merged=refs/remotes/pr/merge
+              break
+            fi
+            sleep 6
+          done
+          if [ -z "$merged" ]; then
+            echo "::error::No up-to-date merge commit for head $HEAD_SHA. Re-run the job, or push again if the PR has a newer head."
+            exit 1
+          fi
+
+          if ! git show "$merged^1:schemas/capability-registry.json" > "$OUT/old.json" 2>/dev/null; then
+            echo "::notice::Base branch has no capability registry; nothing to compare against."
+            echo '{}' > "$OUT/old.json"
+          fi
+          # Deleting or moving the registry removes every capability at once.
+          if ! git show "$merged:schemas/capability-registry.json" > "$OUT/new.json" 2>/dev/null; then
+            echo "::error::schemas/capability-registry.json is missing after merge. Moving or deleting the registry is a breaking change."
+            exit 1
+          fi
+          # Allowlist comes from the base side only: a PR cannot allow its own break.
+          if git show "$merged^1:schemas/capability-registry.allowlist" > "$OUT/allowlist" 2>/dev/null; then
+            echo "ALLOWLIST=$OUT/allowlist" >> "$GITHUB_ENV"
+          fi
+          echo "REGISTRY_DIR=$OUT" >> "$GITHUB_ENV"
+
+      - name: Checkout ix-registry-check at pinned commit
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: GuitarAlchemist/ix
+          ref: ${{ env.IX_SHA }}
+          path: ix-src
+          persist-credentials: false
+
+      - name: Cache cargo
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.cargo/registry
+            ix-src/target
+          key: registry-check-${{ runner.os }}-${{ env.IX_SHA }}
+
+      - name: Build ix-registry-check
+        working-directory: ix-src
+        run: cargo build --release -p ix-registry-check --bin ix-registry-check
+
+      - name: Check for breaking changes
+        run: |
+          set -uo pipefail
+          args=(--old "$REGISTRY_DIR/old.json" --new "$REGISTRY_DIR/new.json")
+          if [ -n "${ALLOWLIST:-}" ]; then
+            args+=(--allowlist "$ALLOWLIST")
+          fi
+          ix-src/target/release/ix-registry-check "${args[@]}" > "$REGISTRY_DIR/report.txt" 2>&1
+          rc=$?
+          cat "$REGISTRY_DIR/report.txt"
+          {
+            echo "### Capability registry check (exit $rc)"
+            echo '```'
+            cat "$REGISTRY_DIR/report.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$rc"
