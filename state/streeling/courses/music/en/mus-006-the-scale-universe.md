@@ -286,7 +286,7 @@ The Zeitler criteria are **heuristics**, not definitions. Counterexamples abound
 
 - The **chromatic scale** has 12 consecutive semitones (violates criterion 4) — clearly a real scale
 - **Single-note "drones"** violate the 5-note minimum — clearly a real musical structure
-- **Blues scales** sometimes use gaps of 3 semitones cleverly (minor pentatonic has a gap from Bb to C)
+- **Blues scales** sometimes use gaps of 3 semitones cleverly (C minor pentatonic has 3-semitone gaps from C to Eb and from G to Bb)
 - **Gagaku scales**, microtonal scales, and other non-Western systems do not fit 12-TET at all
 
 The criteria are **culture-specific** — they describe scales that fit European tonal and modal practice. They are a useful filter, not a universal truth.
