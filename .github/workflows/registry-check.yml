@@ -12,9 +12,10 @@ name: Registry Check
 # Why pull_request_target (#641: a PR must not weaken the guardrail that
 # gates it). With `pull_request`, the workflow file, the ix pin and the
 # allowlist would all be read from the PR itself. With `pull_request_target`
-# this file and the build manifest come from the default branch, and this job
-# also reads the baseline registry and the allowlist from the default branch
-# tip. Changing any of them takes a separate PR that is merged first.
+# this file comes from the default branch (or from the commit a ruleset pins),
+# the build manifest from the same commit as this file, and the baseline
+# registry and the allowlist from the default branch tip. Changing any of
+# them takes a separate PR that is merged first.
 #
 # pull_request_target runs with base-repository privileges, so this job
 # never checks out, builds or executes PR code. The PR's registry is read as
@@ -28,9 +29,17 @@ name: Registry Check
 # can be a required check. Whether the checker runs is decided from git
 # objects: the registry and allowlist entries in the PR's merge commit versus
 # the default branch tip. The build is skipped only when both are identical.
+# A PR that changes the git attributes the merge commit assigns to the
+# registry fails before that comparison, because attributes change what a
+# checkout writes without changing the blob.
 # `edited` is included so retargeting a PR re-runs the check. The job is
 # never skipped on `edited`, because a skipped run would replace an earlier
 # failure with a passing conclusion.
+#
+# Limits. Attribute sources outside the repository (a consumer's
+# .git/info/attributes, core.attributesFile, core.autocrlf) are invisible
+# here, and so is a consumer that ignores a jq parse error: consumers of the
+# registry must fail on unreadable input themselves.
 #
 # .github/workflows/registry-check-build.yml builds the vendored manifest on
 # PRs that change it, before it lands here.
@@ -60,9 +69,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout default branch
+      # The build manifest must come from the same commit as this file. When
+      # a ruleset runs this workflow pinned to a commit, that commit is not
+      # the default branch tip, and a manifest read from the tip could build
+      # something else. The baseline registry and allowlist are still read
+      # from the freshly fetched default branch tip below.
+      - name: Checkout this workflow's commit
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          ref: ${{ github.workflow_sha }}
           persist-credentials: false
 
       - name: Bind merge commit and extract registries
@@ -84,12 +99,21 @@ jobs:
           # the PR conflicts. Accept it only when the API reports the PR
           # mergeable into the default branch with that exact merge commit
           # for this head, and its first parent is the default branch tip.
-          # Never check it out.
+          # Never check it out. A failed API call, or one without a base ref,
+          # is retried; only a real base ref other than the default branch
+          # fails at once.
           merged=""
+          api_read=false
           for attempt in 1 2 3 4 5 6 7 8 9 10; do
             info=$(gh api "repos/$REPO/pulls/$PR_NUMBER" \
-              --jq '"\(.mergeable) \(.merge_commit_sha) \(.head.sha) \(.base.ref)"') || info="null null null null"
-            read -r mergeable merge_sha api_head base_ref <<< "$info"
+              --jq '"\(.mergeable) \(.merge_commit_sha) \(.head.sha) \(.base.ref)"') || info=""
+            read -r mergeable merge_sha api_head base_ref <<< "${info:-null null null null}"
+            if [ -z "$base_ref" ] || [ "$base_ref" = null ]; then
+              echo "::warning::Could not read PR #$PR_NUMBER from the GitHub API (attempt $attempt of 10)."
+              sleep 6
+              continue
+            fi
+            api_read=true
             if [ "$base_ref" != "$DEFAULT_BRANCH" ]; then
               echo "::error::This gate only evaluates PRs into $DEFAULT_BRANCH."
               exit 1
@@ -110,11 +134,28 @@ jobs:
             fi
             sleep 6
           done
+          if [ "$api_read" = false ]; then
+            echo "::error::The GitHub API did not return PR #$PR_NUMBER in 10 attempts. Re-run the job."
+            exit 1
+          fi
           if [ -z "$merged" ]; then
             echo "::error::No up-to-date merge commit for head $HEAD_SHA on $DEFAULT_BRANCH. Re-run the job, or push again if the PR has a newer head."
             exit 1
           fi
           baseline=refs/remotes/pr/default
+
+          # Git attributes (e.g. working-tree-encoding, eol, filter) change
+          # what a checkout writes for the registry without changing its
+          # blob, so the blob comparison below cannot see them. Fail when the
+          # attributes that .gitattributes files in the merge commit assign
+          # to the registry differ from the default branch. `--source` reads
+          # them from each commit's tree, not from this checkout.
+          attrs_baseline=$(git check-attr --source="$baseline" -a -- schemas/capability-registry.json)
+          attrs_merge=$(git check-attr --source="$merged" -a -- schemas/capability-registry.json)
+          if [ "$attrs_baseline" != "$attrs_merge" ]; then
+            echo "::error::This PR changes the git attributes of schemas/capability-registry.json (.gitattributes). That changes what consumers check out without changing the registry blob. A maintainer has to review such a change and merge it past this check."
+            exit 1
+          fi
 
           # Relevance comes from the objects the check would compare, not from
           # the PR's file listing (which can disagree with the merge result).
