@@ -10,16 +10,16 @@
       "workflow": "demerzel-capability-expansion.yml"
     },
     {
-      "kind": "stale",
-      "workflow": "demerzel-discussion-lifecycle.yml"
-    },
-    {
       "kind": "failed_run",
       "workflow": "demerzel-ideation.yml"
     },
     {
       "kind": "failed_run",
       "workflow": "jules-auto-delegate.yml"
+    },
+    {
+      "kind": "stale",
+      "workflow": "streeling-daily.yml"
     },
     {
       "kind": "failed_run",
