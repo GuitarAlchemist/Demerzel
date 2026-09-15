@@ -21,7 +21,7 @@ After completing this course, you will be able to:
 
 - Represent any scale as a 12-bit binary number and convert it to a decimal integer
 - Explain why there are exactly 4,096 mathematically possible scales in 12-tone equal temperament
-- Compute the modes of any scale using circular left shifts (bit rotations)
+- Compute the modes of any scale using circular shifts (bit rotations)
 - Distinguish between the total count (4,096) and the count under various equivalences (prime forms, Forte classes)
 - Apply Zeitler's criteria to filter the universe down to "musically real" scales
 - Compute interval vectors, brightness, and symmetry properties from a scale's integer
@@ -143,7 +143,9 @@ To find the next mode of a scale:
 2. Remove it, shift the remaining pattern down
 3. Wrap the old root around to the top
 
-More precisely, the modal rotation is a **circular left shift** by the distance to the next scale tone. In a 12-bit system, "wrapping around" means bits that shift off the left edge reappear on the right.
+More precisely, the modal rotation is a **circular right shift** by the distance, in semitones, from the old root to the new root: each pitch class p becomes (p − n) mod 12, so the new root lands on bit 0. In a 12-bit system, "wrapping around" means bits that shift off the right edge reappear on the left. A circular right shift by n is the same as a circular left shift by 12 − n.
+
+Be careful with the direction: a circular **left** shift by n adds n to every pitch class, which **transposes** the scale up instead of changing its mode. Shifting C major (2741) left by 2 gives D major (2774); shifting it right by 2 gives D Dorian moved down to C, that is C Dorian (1709).
 
 ### Example: The Modes of Major
 
@@ -159,7 +161,7 @@ The major scale pattern has intervals 2-2-1-2-2-2-1 (seven notes). Its seven mod
 | Aeolian (Natural Minor) | 6 | 2-1-2-2-1-2-2 |
 | Locrian | 7 | 1-2-2-1-2-2-2 |
 
-These are **not seven different scales.** They are seven rotations of the same underlying pattern. When you play C Dorian on a piano, you are playing the white keys starting from D.
+These are **not seven different scales.** They are seven rotations of the same underlying pattern. When you play D Dorian on a piano, you are playing the white keys starting from D.
 
 ### Computing Rotations as Bit Operations
 
@@ -170,9 +172,12 @@ rotate_left(scale, n):
     shifted = (scale << n) & 0xFFF        # shift left, mask to 12 bits
     wrapped = scale >> (12 - n)           # bits that fell off
     return shifted | wrapped               # combine
+
+mode(scale, n):                           # n = semitones from old root to new root
+    return rotate_left(scale, (12 - n) % 12)   # = circular right shift by n
 ```
 
-Applied to the major scale (2741), rotating by the correct number of positions produces each mode's integer representation.
+Applied to the major scale (2741), `mode(2741, n)` for n = 0, 2, 4, 5, 7, 9, 11 produces each mode's integer representation on C: Ionian 2741, Dorian 1709, Phrygian 1451, Lydian 2773, Mixolydian 1717, Aeolian 1453, Locrian 1387. (`rotate_left(2741, n)` would give the major scales on D, E, F... instead.)
 
 ### Practice Exercise
 
@@ -186,8 +191,8 @@ Hint: the rotation amount equals the number of semitones between the old root an
 
 Answer sketch:
 - C harmonic minor = 2477 (binary: 100110101101)
-- Rotate left by 2 semitones (D is 2 semitones above C) → 2nd mode
-- Rotate left by 3 semitones (Eb is 3 semitones above C) → 3rd mode
+- Rotate right by 2 semitones (D is 2 semitones above C) → 2nd mode on C: C Db Eb F Gb A Bb = 1643
+- Rotate right by 3 semitones (Eb is 3 semitones above C) → 3rd mode on C: C D E F G# A B = 2869
 
 The seven modes of harmonic minor are all rotations of the integer 2477.
 
@@ -215,7 +220,7 @@ In the 1970s, Allen Forte formalized a further equivalence: treating a scale and
 - **Major scale** (2-2-1-2-2-2-1) inverts to **Phrygian** (1-2-2-2-1-2-2) — wait, that IS a mode of major.
 - But most scales have inversions that are NOT in the same modal family.
 
-Under **T/I equivalence** (Transposition + Inversion), Forte identified **224 distinct set classes** for cardinalities 3 through 9. Including all cardinalities from 0 to 12, the total count is slightly higher.
+Under **T/I equivalence** (Transposition + Inversion), Forte's table lists **208 distinct set classes** for cardinalities 3 through 9. Adding the 16 classes with 0, 1, 2, 10, 11 or 12 notes gives **224 set classes** across all cardinalities from 0 to 12.
 
 The **Forte number** (e.g., "7-35" for the diatonic/major scale) is a standardized naming system where:
 - First number = cardinality (number of notes)
@@ -498,7 +503,7 @@ Music set theory uses a taxonomy of **equivalence relations** to describe how tw
 
 Under combined T and I equivalence (the standard Forte taxonomy), the 4,096 scales collapse to **224 distinct classes**. These classes form the foundation of 20th-century music set theory.
 
-Each Forte class has a canonical prime form (the lexicographically smallest representative after normalization). Forte's 1973 book **"The Structure of Atonal Music"** tabulates all 224 classes with their interval vectors, symmetries, and Z-relations.
+Each Forte class has a canonical prime form (the lexicographically smallest representative after normalization). Forte's 1973 book **"The Structure of Atonal Music"** tabulates the 208 classes with 3 to 9 notes with their interval vectors, symmetries, and Z-relations; the remaining 16 classes (0, 1, 2, 10, 11 and 12 notes) complete the 224.
 
 ### GA's 216-Dimensional Vector Space
 
@@ -577,7 +582,7 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 
 - 12-tone equal temperament as the Western tuning standard is empirically documented in piano tuning and orchestral practice since the 19th century
 - Pitch-class set theory and the 4,096 scale enumeration originate in Milton Babbitt's combinatorial work (1950s) and were formalized by Allen Forte in *The Structure of Atonal Music* (1973)
-- The 224 set classes under T/I equivalence are enumerated and tabulated in Forte (1973) and remain the standard taxonomy
+- The 224 set classes under T/I equivalence (all cardinalities, 0 to 12; OEIS A000029 counts them as the 224 binary bracelets with 12 beads) include the 208 classes of 3 to 9 notes tabulated in Forte (1973), which remain the standard taxonomy
 - Zeitler's scale criteria come from William Zeitler's exhaustive cataloging project (*All The Scales*, 2011 and companion website), representing a practical filter on the universe
 - Scale geometry and neighborhood relationships are explored in Dmitri Tymoczko's *A Geometry of Music* (2011), which formalizes voice-leading distances between chords and scales
 - The 216-dimensional GA feature-space representation is an implementation choice of Guitar Alchemist, extending classical pitch-class set theory with performance and harmonic-function metadata
