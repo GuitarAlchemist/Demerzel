@@ -211,7 +211,7 @@ Under modal equivalence:
 - The 6-note whole-tone scale has only 1 unique rotation (it maps to itself) → 1 prime form
 - The 12-note chromatic scale is its own prime form
 
-**Counting prime forms:** Of the 4,096 scales, approximately **352** are structurally unique under rotation. The exact count depends on conventions (whether to include the empty scale, single-note scales, etc.).
+**Counting prime forms:** Of the 4,096 scales, exactly **352** are structurally unique under rotation, counting every cardinality from the empty scale to the chromatic scale (the 352 binary necklaces with 12 beads, OEIS A000031).
 
 ### Forte Classes — Ignoring Rotation AND Inversion
 
@@ -241,9 +241,9 @@ Thus there are only **two whole-tone scales** in the entire universe, and they a
 | Equivalence | Count | What Is Equated |
 |-------------|-------|-----------------|
 | None (raw) | 4,096 | All subsets of 12 pitch classes |
-| Transposition (T) | ~352 prime forms | Rotations of same pattern |
+| Transposition (T) | 352 prime forms | Rotations of same pattern |
 | Transposition + Inversion (T/I) | 224 Forte classes | Above, plus mirror images |
-| T/I + Complementation | ~158 | Above, plus scale+complement pairs |
+| T/I + Complementation | 122 | Above, plus scale+complement pairs |
 
 ### Practice Exercise
 
@@ -258,7 +258,7 @@ Answers:
 1. 010101010101 = 1365
 2. Rotate left 2: still 010101010101 = 1365 (same scale)
 3. Rotate left 1: 101010101010 = 2730 (the other whole-tone scale)
-4. A scale with N notes has at most N modes, but if the scale has rotational symmetry (maps to itself under rotation by k semitones where k < 12), it has fewer unique modes. The whole-tone scale has 12/6 = 2 rotational symmetry period, so all rotations produce one of two states.
+4. A scale with N notes has at most N modes, but if the scale has rotational symmetry (maps to itself under rotation by k semitones where k < 12), it has fewer unique modes. The whole-tone scale maps to itself under rotation by 2 semitones, so all six of its modes are the same scale, and its rotations by any number of semitones produce only two distinct scales (1365 and 2730).
 
 ---
 
@@ -304,7 +304,7 @@ Answers:
 1. C major: violates none — passes all criteria
 2. C chromatic: violates criterion 3 (12 notes, exceeds max of 8) and criterion 4 (12 consecutive semitones)
 3. Gap scale: violates criterion 2 (gap from F to B is 6 semitones) and criterion 3 (only 3 notes)
-4. Cluster scale: violates criterion 4 (5 consecutive semitones) and criterion 3 (only 5 notes, at the edge)
+4. Cluster scale: violates criterion 4 (5 consecutive semitones) and criterion 2 (gap of 8 semitones from E up to the next C); its 5 notes satisfy criterion 3
 
 ---
 
@@ -449,7 +449,7 @@ Pitch classes: 0, 1, 2, 4, 6, 8, 11
 Notes from C: C, C#, D, E, F#, G#, B
 ```
 
-This satisfies Zeitler (root present, gaps small, 7 notes, short clusters) but is not a commonly named scale. Play it on guitar. Listen. Give it a name.
+This passes three Zeitler criteria (root present, largest gap 3 semitones, 7 notes) but fails criterion 4: B, C, C#, D are four consecutive semitones, wrapping from B around to C. It is not a commonly named scale either. The criteria are heuristics, so play it on guitar anyway. Listen. Give it a name.
 
 ### The Exploration Protocol
 
@@ -463,7 +463,7 @@ This is how new music gets discovered. The universe is there; the mapping is mec
 
 ### Practice Exercise
 
-Take the scale integer **1709** (Hungarian-sounding).
+Take the scale integer **1709** (C Dorian).
 
 1. Convert it to binary and identify the pitch classes
 2. Write out the scale starting on C
@@ -546,7 +546,7 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 | **Prime form** | The canonical representative of a scale family under equivalence |
 | **Forte number** | A standardized label (e.g., 7-35) for a pitch-class set class |
 | **Interval vector** | A 6-tuple counting occurrences of each interval class in a scale |
-| **Interval class** | An interval reduced modulo octave AND inversion (so 1 and 11 are both class 1, etc. — actually wait, intervals 1-6 and their complements 11-6 collapse to classes 1-6) |
+| **Interval class** | An interval reduced modulo the octave and inversion: n and 12 − n semitones are the same class (1 and 11 are both class 1, 5 and 7 both class 5), giving classes 1 to 6 |
 | **Brightness** | The sum of pitch classes in a scale (proxy for sharpness/flatness) |
 | **Symmetry (rotational)** | A scale's property of mapping to itself under rotation |
 | **Chirality** | A scale's asymmetry under inversion |

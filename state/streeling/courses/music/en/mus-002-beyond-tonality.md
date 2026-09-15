@@ -167,7 +167,7 @@ The interval vector is a 6-element list counting how many of each interval class
 - Count: ic1=0, ic2=0, ic3=1, ic4=1, ic5=1, ic6=0
 - **Interval vector: [001110]**
 
-Notice: the major triad and the minor triad share the same interval vector [001110] because they are inversionally related. This is why they belong to the same set class: **3-11**.
+Notice: the major triad and the minor triad share the same interval vector [001110] because they are inversionally related, and inversion preserves interval classes. Being inversionally related is also why they belong to the same set class, **3-11**. The converse does not hold: two sets with the same interval vector need not belong to the same set class (see Z-relations below).
 
 **Forte Numbers:**
 
@@ -349,7 +349,7 @@ Post-tonal theory is not a rejection of tonal theory — it is a generalization.
 
 **Set Theory as a Tool for Jazz Voicing Analysis:**
 
-Jazz harmony is notoriously complex: extensions, alterations, polychords, upper-structure triads. Traditional tonal analysis struggles to describe a chord like **G7alt(b9,#9,b13)**. But set-class analysis reduces it to a pitch-class set and identifies its set class directly. The chord above has pitch classes {7, 11, 5, 9, 10, 3}; its prime form is a specific hexachord whose interval vector characterizes its sonority.
+Jazz harmony is notoriously complex: extensions, alterations, polychords, upper-structure triads. Traditional tonal analysis struggles to describe a chord like **G7alt(b9,#9,b13)**. But set-class analysis reduces it to a pitch-class set and identifies its set class directly. The chord above has pitch classes {7, 11, 5, 8, 10, 3}; its prime form is a specific hexachord whose interval vector characterizes its sonority.
 
 This gives jazz theorists a language that cuts across chord-symbol conventions. Two chords with different chord symbols might belong to the same set class and therefore share the same interval content. Two chords with similar symbols might belong to different set classes. Set theory reveals the actual sonority underneath the notation.
 
