@@ -27,7 +27,9 @@
       "on_draft": "sticky; the PR becomes pr.merge_candidate when flipped ready"
     },
     "absorption_censoring": "p_unresolved is PRs still open at as_of; compare outcomes with p_merged_given_resolved",
-    "ready_flips_note": "most draft->ready flips are scripted: see ready_flips.merged_within_60s"
+    "ready_flips_note": "most draft->ready flips are scripted: see ready_flips.merged_within_60s",
+    "absorption_is_chain_implied": "absorption is what the first-order chain fitted to transitions implies, not what happened: every PR in a state gets that state's average next-step mix, whatever its history. Observed outcomes differ where history matters (all 17 stuck_draft PRs later flipped ready merged, so stuck_draft merges 17/21 = 0.810 of resolved PRs against the implied 0.752). Read observed_outcomes for what happened; stuck_draft has only 21 resolved PRs, so neither figure is precise to three decimals",
+    "observed_outcomes_note": "final state at as_of of the PRs whose lifecycle visits each state, same lifecycle rules and stale window; open is right-censoring. Not emitted by the ix example yet: computed from the same fixture by the independent re-implementation used to review ix#343, which reproduces every other number in this file exactly"
   },
   "prs": 1255,
   "transitions": [
@@ -339,6 +341,43 @@
       "p_unresolved": 0.20715096824334567,
       "p_merged_given_resolved": 0.707786484399421,
       "sample_size": 35
+    }
+  ],
+  "observed_outcomes": [
+    {
+      "state": "pr.draft",
+      "prs_visiting": 172,
+      "merged": 135,
+      "rejected": 19,
+      "open": 18
+    },
+    {
+      "state": "pr.ready_for_review",
+      "prs_visiting": 1210,
+      "merged": 1110,
+      "rejected": 82,
+      "open": 18
+    },
+    {
+      "state": "pr.merge_candidate",
+      "prs_visiting": 100,
+      "merged": 98,
+      "rejected": 2,
+      "open": 0
+    },
+    {
+      "state": "pr.stuck_draft",
+      "prs_visiting": 34,
+      "merged": 17,
+      "rejected": 4,
+      "open": 13
+    },
+    {
+      "state": "pr.stuck_ready",
+      "prs_visiting": 44,
+      "merged": 24,
+      "rejected": 11,
+      "open": 9
     }
   ],
   "ready_flips": {

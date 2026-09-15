@@ -28,12 +28,12 @@ The Markov model represents lifecycle history as transition probabilities. The s
 - `issue.stuck` (issue-side stale state)
 - `pr.stuck_draft` / `pr.stuck_ready`: a PR with no lifecycle event for the stale window, split by origin because GitHub cannot merge a draft
 
-`pr.merged` and `pr.rejected` are the absorbing states. Stuck states are transient: stuck PRs are later merged or closed (see `state/markov/*.markov-transitions.json`).
+`pr.merged` and `pr.rejected` are modelled as the absorbing states. For `pr.rejected` this is a modelling choice, not something the first snapshot tests: its fetch drops every close event of a PR that ended merged, so a closed PR that was reopened and later merged never shows `pr.rejected` (ix#343 follow-up). Stuck states are transient: a stuck PR can still be merged or closed later, but many are still open at the snapshot (13 of 34 `pr.stuck_draft` and 9 of 44 `pr.stuck_ready` PRs in `state/markov/2026-09-14-pr-lifecycle.markov-transitions.json`).
 
 ### Model Variants
 1. **Lifecycle Markov Chain:** Predicts the next state and time-to-transition for a generic issue or PR.
 2. **Capability-Stream Markov Chain:** Conditioned on the worker and capability stream (e.g., Jules doing docs vs. Claude doing code).
-3. **Absorbing-State Analysis:** Evaluates the probability of reaching `pr.merged` versus `pr.rejected`, and how much mass is still unresolved (open) at the snapshot.
+3. **Absorbing-State Analysis:** Evaluates the probability of reaching `pr.merged` versus `pr.rejected`, and how much mass is still unresolved (open) at the snapshot. These are the values the first-order chain *implies*, and they ignore how a PR reached the state; publish observed outcomes next to them. In the first snapshot all 17 stuck drafts that were later flipped ready merged, so `pr.stuck_draft` merges 17 of 21 resolved PRs (0.810) against the implied 0.752.
 
 ### Example Output (Markov Transition)
 ```yaml
