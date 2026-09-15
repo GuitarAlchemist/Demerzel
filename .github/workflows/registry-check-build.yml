@@ -42,6 +42,16 @@ jobs:
             echo "::error::Expected exactly one IX_SHA (40 hex) and one RUST_TOOLCHAIN in $wf."
             exit 1
           fi
+          # A job- or step-level env, a differently indented or quoted key, or
+          # a GITHUB_ENV write would override the workflow-level value parsed
+          # above. Every line that assigns either name (case-insensitive,
+          # `name:` or `name=`) must be one of the two lines parsed above.
+          assigned=$(grep -inE "(ix_sha|rust_toolchain)[\"']?[[:space:]]*[:=]" "$wf" || true)
+          parsed=$(grep -nE '^  (IX_SHA: *[0-9a-f]{40}|RUST_TOOLCHAIN: *[0-9][0-9.]*) *$' "$wf")
+          if [ "$assigned" != "$parsed" ]; then
+            echo "::error::IX_SHA and RUST_TOOLCHAIN may only be set once each, in the workflow-level env of $wf."
+            exit 1
+          fi
           echo "ix_sha=$ix_sha" >> "$GITHUB_OUTPUT"
           echo "toolchain=$toolchain" >> "$GITHUB_OUTPUT"
 
