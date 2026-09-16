@@ -161,10 +161,14 @@ jobs:
           # what a checkout writes for the registry without changing its
           # blob, so the blob comparison below cannot see them. Fail when the
           # attributes that .gitattributes files in the merge commit assign
-          # to the registry differ from the default branch. `--source` reads
-          # them from each commit's tree, not from this checkout.
-          attrs_baseline=$(git check-attr --source="$baseline" -a -- schemas/capability-registry.json)
-          attrs_merge=$(git check-attr --source="$merged" -a -- schemas/capability-registry.json)
+          # to the registry differ from the default branch. Only attributes
+          # that change the checked-out bytes are compared (a macro such as
+          # `binary` shows up through its expansion to `text`); diff, merge,
+          # export and linguist attributes are not. `--source` reads them
+          # from each commit's tree, not from this checkout.
+          checkout_attrs="text eol crlf working-tree-encoding filter ident"
+          attrs_baseline=$(git check-attr --source="$baseline" $checkout_attrs -- schemas/capability-registry.json)
+          attrs_merge=$(git check-attr --source="$merged" $checkout_attrs -- schemas/capability-registry.json)
           if [ "$attrs_baseline" != "$attrs_merge" ]; then
             echo "::error::This PR changes the git attributes of schemas/capability-registry.json (.gitattributes). That changes what consumers check out without changing the registry blob. A maintainer has to review such a change and merge it past this check."
             exit 1
