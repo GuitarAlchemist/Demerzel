@@ -3,10 +3,10 @@
 #
 # ix does not commit a Cargo.lock, so building inside the ix workspace would
 # resolve dependencies fresh on every run. This manifest compiles the
-# checker's sources from the pinned ix checkout (ix-src/, at IX_SHA) against
-# the Cargo.lock next to it, with `--locked`. The dependency list mirrors
-# crates/ix-registry-check/Cargo.toml at IX_SHA; update both files together
-# when bumping IX_SHA.
+# checker's sources from the pinned ix checkout (ix-src/, at IX_SHA from
+# pins.env) against the Cargo.lock next to it, with `--locked`. The
+# dependency list mirrors crates/ix-registry-check/Cargo.toml at IX_SHA;
+# update this file, Cargo.lock and pins.env together when bumping IX_SHA.
 
 [package]
 name = "ix-registry-check"
