@@ -268,7 +268,7 @@ De las 4096 posibilidades matemáticas, la mayoría no son útiles para la músi
 
 ### Los criterios de Zeitler
 
-William Zeitler, en su exhaustivo trabajo de catalogación, propuso cuatro criterios para que una escala sea «real»:
+El catálogo exhaustivo de William Zeitler (allthescales.org) define una escala mediante los criterios 1 y 2; este módulo añade los criterios 3 y 4 como filtros adicionales:
 
 1. **La tónica está presente** — el bit 0 debe estar activo. Una escala debe contener su propia tónica. Esto elimina 2048 escalas (la mitad del universo).
 
@@ -278,7 +278,7 @@ William Zeitler, en su exhaustivo trabajo de catalogación, propuso cuatro crite
 
 4. **Ningún grupo de más de 3 semitonos consecutivos** — cuatro o más notas cromáticas seguidas forman un clúster cromático que pierde el carácter de escala.
 
-Aplicar los cuatro criterios reduce las 4096 escalas a aproximadamente **1490 escalas «legítimas»**. Siguen siendo muchísimas más que el repertorio conocido de escalas con nombre.
+Los criterios 1 y 2 reducen por sí solos las 4096 escalas a exactamente **1490**, el recuento de Zeitler. Aplicar los cuatro criterios tal como se enuncian aquí deja **716**. Siguen siendo muchísimas más que el repertorio conocido de escalas con nombre.
 
 ### Por qué estos criterios son pautas, no leyes
 
@@ -303,7 +303,7 @@ Para cada una de las escalas siguientes, determina qué criterios de Zeitler inc
 Respuestas:
 1. Do mayor: no incumple ninguno — cumple todos los criterios
 2. Do cromática: incumple el criterio 3 (12 notas, supera el máximo de 8) y el criterio 4 (12 semitonos consecutivos)
-3. Escala con hueco: incumple el criterio 2 (el salto de Fa a Si es de 6 semitonos) y el criterio 3 (solo 3 notas)
+3. Escala con hueco: incumple el criterio 2 (saltos de 5 semitonos de Do a Fa y de 6 de Fa a Si) y el criterio 3 (solo 3 notas)
 4. Escala en clúster: incumple el criterio 4 (5 semitonos consecutivos) y el criterio 2 (salto de 8 semitonos de Mi hasta el Do siguiente); sus 5 notas cumplen el criterio 3
 
 ---
@@ -397,7 +397,7 @@ Nota: mucha clase 5 (cuartas/quintas justas) y ausencia de la clase 6 (tritono) 
 
 Los libros de teoría musical cubren quizá **200 escalas con nombre**: mayor, menor, modos, pentatónicas, menor armónica y melódica y sus modos, disminuida, tonos enteros, blues, escalas bebop, un puñado de «exóticas» (húngara, bizantina, etc.) y los modos de Messiaen.
 
-Eso deja **aproximadamente 3800 escalas sin nombre** que cumplen los criterios básicos de Zeitler. La inmensa mayoría del universo de las escalas es territorio inexplorado.
+Eso deja **aproximadamente 1300 escalas sin nombre** entre las 1490 que cumplen los criterios básicos de Zeitler (unas 500 entre las 716 que superan los cuatro). La inmensa mayoría del universo de las escalas es territorio inexplorado.
 
 ### Cómo explorar
 
@@ -476,9 +476,9 @@ Pista: 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ## 8. Conexión con OPTIC-K
 
-La teoría de conjuntos musical usa una taxonomía de **relaciones de equivalencia** para describir cómo dos colecciones de notas pueden considerarse «la misma». La regla mnemotécnica OPTIC-K las reúne todas. El marco de los enteros de escala hace que estas equivalencias sean calculables.
+La teoría de conjuntos musical usa una taxonomía de **relaciones de equivalencia** para describir cómo dos colecciones de notas pueden considerarse «la misma». La regla mnemotécnica OPTIC las reúne todas. El marco de los enteros de escala hace que estas equivalencias sean calculables.
 
-### Las seis equivalencias
+### Las cinco equivalencias
 
 | Letra | Nombre | Significado | Operación |
 |--------|------|---------|-----------|
@@ -487,9 +487,8 @@ La teoría de conjuntos musical usa una taxonomía de **relaciones de equivalenc
 | **T** | Transposición | El mismo patrón empezando en otra tónica | Rotación modular |
 | **I** | Inversión | Imagen especular alrededor de un pivote | Invertir el orden de los intervalos |
 | **C** | Cardinalidad | Número de clases de altura distintas | POPCOUNT del entero |
-| **K** | (Forma alternativa) | — | Calculada a partir de una K-net o similar |
 
-(La «K» de OPTIC-K se refiere a veces a la equivalencia de cardinalidad y a veces a una estructura concreta de Kuusisto/Lewin, según la fuente.)
+(OPTIC, sin K, designa las cinco equivalencias definidas por Callender, Quinn y Tymoczko, «Generalized Voice-Leading Spaces», *Science* 320, 2008. La «-K» pertenece al embedding OPTIC-K de Guitar Alchemist, no a ese artículo.)
 
 ### Dónde vive cada equivalencia en el marco
 
@@ -586,6 +585,6 @@ La teoría musical no tenía por qué ser difusa. La teoría de conjuntos de cla
 - Los criterios de escalas de Zeitler proceden del proyecto de catalogación exhaustiva de William Zeitler (*All The Scales*, 2011, y su sitio web complementario), y representan un filtro práctico sobre el universo
 - La geometría de las escalas y las relaciones de vecindad se exploran en *A Geometry of Music* (2011) de Dmitri Tymoczko, que formaliza las distancias de conducción de voces entre acordes y escalas
 - La representación de GA en un espacio de características de 216 dimensiones es una decisión de implementación de Guitar Alchemist, que amplía la teoría clásica de conjuntos de clases de altura con metadatos de interpretación y de función armónica
-- Las relaciones de equivalencia OPTIC-K se remontan a *Generalized Musical Intervals and Transformations* (1987) de David Lewin y a su posterior sistematización en la pedagogía de la teoría musical
-- Fuentes: Forte (1973); Tymoczko (2011); Lewin (1987); Rahn, *Basic Atonal Theory* (1980); catálogo de escalas de Zeitler (2011)
+- Las relaciones de equivalencia OPTIC se definen en Clifton Callender, Ian Quinn y Dmitri Tymoczko, «Generalized Voice-Leading Spaces», *Science* 320 (2008): 346–348; *Generalized Musical Intervals and Transformations* (1987) de David Lewin pertenece a la tradición transformacional, distinta
+- Fuentes: Forte (1973); Tymoczko (2011); Callender, Quinn y Tymoczko (2008); Lewin (1987); Rahn, *Basic Atonal Theory* (1980); catálogo de escalas de Zeitler (2011)
 - Estado de creencia: T(0.85) F(0.03) U(0.08) C(0.04)

@@ -268,7 +268,7 @@ Sur les 4 096 possibilités mathématiques, la plupart ne sont pas utiles en mus
 
 ### Les critères de Zeitler
 
-William Zeitler, dans son travail de catalogage exhaustif, a proposé quatre critères pour qu'une gamme soit « réelle » :
+Le catalogue exhaustif de William Zeitler (allthescales.org) définit une gamme par les critères 1 et 2 ci-dessous ; ce module y ajoute les critères 3 et 4 comme filtres supplémentaires :
 
 1. **La fondamentale est présente** — le bit 0 doit être à 1. Une gamme doit contenir sa propre tonique. Cela élimine 2 048 gammes (la moitié de l'univers).
 
@@ -278,7 +278,7 @@ William Zeitler, dans son travail de catalogage exhaustif, a proposé quatre cri
 
 4. **Aucun agrégat de plus de 3 demi-tons consécutifs** — quatre notes chromatiques ou plus à la suite forment un cluster chromatique qui perd son caractère de gamme.
 
-L'application des quatre critères réduit les 4 096 gammes à environ **1 490 gammes « légitimes »**. C'est encore bien plus que le répertoire familier des gammes qui portent un nom.
+Les critères 1 et 2 réduisent à eux seuls les 4 096 gammes à exactement **1 490**, le compte de Zeitler. L'application des quatre critères tels qu'énoncés ici en laisse **716**. C'est encore bien plus que le répertoire familier des gammes qui portent un nom.
 
 ### Pourquoi ces critères sont des lignes directrices, pas des lois
 
@@ -303,7 +303,7 @@ Pour chacune des gammes suivantes, déterminez quels critères de Zeitler elle e
 Réponses :
 1. Do majeur : n'en enfreint aucun — satisfait tous les critères
 2. Do chromatique : enfreint le critère 3 (12 notes, au-delà du maximum de 8) et le critère 4 (12 demi-tons consécutifs)
-3. Gamme à écart : enfreint le critère 2 (l'écart de Fa à Si est de 6 demi-tons) et le critère 3 (seulement 3 notes)
+3. Gamme à écart : enfreint le critère 2 (écarts de 5 demi-tons de Do à Fa et de 6 de Fa à Si) et le critère 3 (seulement 3 notes)
 4. Gamme en cluster : enfreint le critère 4 (5 demi-tons consécutifs) et le critère 2 (écart de 8 demi-tons de Mi jusqu'au Do suivant) ; ses 5 notes satisfont le critère 3
 
 ---
@@ -397,7 +397,7 @@ Remarque : forte présence de la classe 5 (quartes/quintes justes) et absence de
 
 Les manuels de théorie musicale couvrent peut-être **200 gammes nommées** : majeure, mineure, modes, pentatoniques, mineures harmonique et mélodique et leurs modes, diminuée, par tons, blues, gammes bebop, une poignée de gammes « exotiques » (hongroise, byzantine, etc.) et les modes de Messiaen.
 
-Il reste donc **environ 3 800 gammes sans nom** qui satisfont les critères de base de Zeitler. L'immense majorité de l'univers des gammes est un territoire inexploré.
+Il reste donc **environ 1 300 gammes sans nom** parmi les 1 490 qui satisfont les critères de base de Zeitler (environ 500 parmi les 716 qui passent les quatre). L'immense majorité de l'univers des gammes est un territoire inexploré.
 
 ### Comment explorer
 
@@ -476,9 +476,9 @@ Indice : 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ## 8. Lien avec OPTIC-K
 
-La théorie des ensembles musicaux utilise une taxonomie de **relations d'équivalence** pour décrire comment deux collections de notes peuvent être considérées comme « identiques ». Le moyen mnémotechnique OPTIC-K les rassemble toutes. Le cadre des entiers de gammes rend ces équivalences calculables.
+La théorie des ensembles musicaux utilise une taxonomie de **relations d'équivalence** pour décrire comment deux collections de notes peuvent être considérées comme « identiques ». Le moyen mnémotechnique OPTIC les rassemble toutes. Le cadre des entiers de gammes rend ces équivalences calculables.
 
-### Les six équivalences
+### Les cinq équivalences
 
 | Lettre | Nom | Signification | Opération |
 |--------|------|---------|-----------|
@@ -487,9 +487,8 @@ La théorie des ensembles musicaux utilise une taxonomie de **relations d'équiv
 | **T** | Transposition | Même motif commençant sur une fondamentale différente | Rotation modulaire |
 | **I** | Inversion | Image miroir autour d'un pivot | Inverser l'ordre des intervalles |
 | **C** | Cardinalité | Nombre de classes de hauteur distinctes | POPCOUNT de l'entier |
-| **K** | (Forme alternative) | — | Calculée à partir d'un K-net ou équivalent |
 
-(Le « K » d'OPTIC-K désigne parfois l'équivalence de cardinalité, parfois une structure précise de Kuusisto/Lewin, selon la source.)
+(OPTIC, sans K, désigne les cinq équivalences définies par Callender, Quinn et Tymoczko, « Generalized Voice-Leading Spaces », *Science* 320, 2008. Le « -K » appartient à l'embedding OPTIC-K de Guitar Alchemist, pas à cet article.)
 
 ### Où chaque équivalence se situe dans le cadre
 
@@ -586,6 +585,6 @@ La théorie musicale n'avait pas besoin d'être floue. La théorie des ensembles
 - Les critères de gammes de Zeitler proviennent du projet de catalogage exhaustif de William Zeitler (*All The Scales*, 2011, et le site web qui l'accompagne), et représentent un filtre pratique sur l'univers
 - La géométrie des gammes et les relations de voisinage sont explorées dans *A Geometry of Music* (2011) de Dmitri Tymoczko, qui formalise les distances de conduite des voix entre accords et gammes
 - La représentation de GA dans un espace de caractéristiques à 216 dimensions est un choix d'implémentation de Guitar Alchemist, qui étend la théorie classique des ensembles de classes de hauteur avec des métadonnées d'exécution et de fonction harmonique
-- Les relations d'équivalence OPTIC-K remontent à *Generalized Musical Intervals and Transformations* (1987) de David Lewin et à leur systématisation ultérieure dans la pédagogie de la théorie musicale
-- Sources : Forte (1973) ; Tymoczko (2011) ; Lewin (1987) ; Rahn, *Basic Atonal Theory* (1980) ; catalogue de gammes de Zeitler (2011)
+- Les relations d'équivalence OPTIC sont définies dans Clifton Callender, Ian Quinn et Dmitri Tymoczko, « Generalized Voice-Leading Spaces », *Science* 320 (2008) : 346–348 ; *Generalized Musical Intervals and Transformations* (1987) de David Lewin relève de la tradition transformationnelle, distincte
+- Sources : Forte (1973) ; Tymoczko (2011) ; Callender, Quinn et Tymoczko (2008) ; Lewin (1987) ; Rahn, *Basic Atonal Theory* (1980) ; catalogue de gammes de Zeitler (2011)
 - État de croyance : T(0.85) F(0.03) U(0.08) C(0.04)

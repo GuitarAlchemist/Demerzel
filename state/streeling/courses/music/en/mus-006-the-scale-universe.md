@@ -268,7 +268,7 @@ Of the 4,096 mathematical possibilities, most are not useful for music. A scale 
 
 ### The Zeitler Criteria
 
-William Zeitler, in his exhaustive cataloging work, proposed four criteria for a scale to be "real":
+William Zeitler's exhaustive catalog (allthescales.org) defines a scale by criteria 1 and 2 below; this module adds criteria 3 and 4 as further filters:
 
 1. **The root is present** — bit 0 must be set. A scale must contain its own tonic. This eliminates 2,048 scales (half the universe).
 
@@ -278,7 +278,7 @@ William Zeitler, in his exhaustive cataloging work, proposed four criteria for a
 
 4. **No cluster longer than 3 consecutive semitones** — four or more chromatic notes in a row create a chromatic cluster that loses scalar character.
 
-Applying all four criteria reduces the 4,096 scales to approximately **1,490 "legitimate" scales**. This is still vastly more than the familiar repertoire of named scales.
+Criteria 1 and 2 alone reduce the 4,096 scales to exactly **1,490**, Zeitler's own count. Applying all four criteria as stated here leaves **716**. This is still vastly more than the familiar repertoire of named scales.
 
 ### Why These Criteria Are Guidelines, Not Laws
 
@@ -303,7 +303,7 @@ For each of the following scales, determine which Zeitler criteria (if any) it v
 Answers:
 1. C major: violates none — passes all criteria
 2. C chromatic: violates criterion 3 (12 notes, exceeds max of 8) and criterion 4 (12 consecutive semitones)
-3. Gap scale: violates criterion 2 (gap from F to B is 6 semitones) and criterion 3 (only 3 notes)
+3. Gap scale: violates criterion 2 (gaps of 5 semitones from C to F and 6 from F to B) and criterion 3 (only 3 notes)
 4. Cluster scale: violates criterion 4 (5 consecutive semitones) and criterion 2 (gap of 8 semitones from E up to the next C); its 5 notes satisfy criterion 3
 
 ---
@@ -397,7 +397,7 @@ Note: heavy on class 5 (perfect 4ths/5ths) and absent class 6 (tritone) and clas
 
 Music theory textbooks cover perhaps **200 named scales**: major, minor, modes, pentatonics, harmonic and melodic minor and their modes, diminished, whole-tone, blues, bebop scales, a handful of "exotic" (Hungarian, Byzantine, etc.), and the Messiaen modes.
 
-That leaves **approximately 3,800 unnamed scales** that satisfy basic Zeitler criteria. The vast majority of the scale universe is unexplored territory.
+That leaves **roughly 1,300 unnamed scales** among the 1,490 that satisfy Zeitler's basic criteria (about 500 among the 716 that pass all four). The vast majority of the scale universe is unexplored territory.
 
 ### How to Explore
 
@@ -476,9 +476,9 @@ Hint: 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ## 8. Connection to OPTIC-K
 
-Music set theory uses a taxonomy of **equivalence relations** to describe how two note collections might be considered "the same." The mnemonic OPTIC-K captures them all. The scale-integer framework makes these equivalences computable.
+Music set theory uses a taxonomy of **equivalence relations** to describe how two note collections might be considered "the same." The mnemonic OPTIC captures them all. The scale-integer framework makes these equivalences computable.
 
-### The Six Equivalences
+### The Five Equivalences
 
 | Letter | Name | Meaning | Operation |
 |--------|------|---------|-----------|
@@ -487,9 +487,8 @@ Music set theory uses a taxonomy of **equivalence relations** to describe how tw
 | **T** | Transposition | Same pattern starting on different root | Modular rotation |
 | **I** | Inversion | Mirror image around a pivot | Reverse interval order |
 | **C** | Cardinality | Number of distinct pitch classes | POPCOUNT of integer |
-| **K** | (Alternate form) | — | Computed from K-net or similar |
 
-(The "K" in OPTIC-K sometimes refers to cardinality equivalence or to a specific Kuusisto/Lewin structure, depending on source.)
+(OPTIC, without a K, is the set of five equivalences defined by Callender, Quinn and Tymoczko, "Generalized Voice-Leading Spaces", *Science* 320, 2008. The "-K" belongs to Guitar Alchemist's OPTIC-K embedding, not to that paper.)
 
 ### Where Each Equivalence Lives in the Framework
 
@@ -586,6 +585,6 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 - Zeitler's scale criteria come from William Zeitler's exhaustive cataloging project (*All The Scales*, 2011 and companion website), representing a practical filter on the universe
 - Scale geometry and neighborhood relationships are explored in Dmitri Tymoczko's *A Geometry of Music* (2011), which formalizes voice-leading distances between chords and scales
 - The 216-dimensional GA feature-space representation is an implementation choice of Guitar Alchemist, extending classical pitch-class set theory with performance and harmonic-function metadata
-- OPTIC-K equivalence relations trace to David Lewin's *Generalized Musical Intervals and Transformations* (1987) and subsequent systematization in music theory pedagogy
-- Sources: Forte (1973); Tymoczko (2011); Lewin (1987); Rahn, *Basic Atonal Theory* (1980); Zeitler scale catalog (2011)
+- The OPTIC equivalence relations are defined in Clifton Callender, Ian Quinn and Dmitri Tymoczko, "Generalized Voice-Leading Spaces", *Science* 320 (2008): 346–348; David Lewin's *Generalized Musical Intervals and Transformations* (1987) is the separate transformational tradition
+- Sources: Forte (1973); Tymoczko (2011); Callender, Quinn & Tymoczko (2008); Lewin (1987); Rahn, *Basic Atonal Theory* (1980); Zeitler scale catalog (2011)
 - Belief state: T(0.85) F(0.03) U(0.08) C(0.04)
