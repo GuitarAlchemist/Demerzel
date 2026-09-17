@@ -292,8 +292,8 @@ Cross-validation with GPT-4o confirmed:
 
 ## Cross-References
 
-- Prerequisite: `state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md`
-- Prerequisite: `state/streeling/courses/cybernetics/en/CYB-002-active-dampening-cross-repo-oscillation.md`
+- Prerequisite: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`
+- Prerequisite: `state/streeling/courses/cybernetics/en/cyb-002-active-dampening-cross-repo-oscillation.md`
 - Grammar: `grammars/sci-cybernetics.ebnf` (Section 6, Requisite Variety)
 - Department: `state/streeling/departments/cybernetics.department.json`
 - Policy: `policies/seldon-plan-policy.yaml`

@@ -11,7 +11,7 @@
       "department": "cybernetics",
       "date": "2026-03-22",
       "course_produced": true,
-      "course_path": "state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md"
+      "course_path": "state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md"
     },
     {
       "question_hash": "a7c2e1f09b3d4a5e6c8f0d1b2a3e4f5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1",
@@ -22,7 +22,7 @@
       "department": "cybernetics",
       "date": "2026-03-23",
       "course_produced": true,
-      "course_path": "state/streeling/courses/cybernetics/en/CYB-002-active-dampening-cross-repo-oscillation.md"
+      "course_path": "state/streeling/courses/cybernetics/en/cyb-002-active-dampening-cross-repo-oscillation.md"
     },
     {
       "question_hash": "b8d3f2a10c4e5b6f7d9a1e2c3b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2",
@@ -33,7 +33,7 @@
       "department": "cybernetics",
       "date": "2026-03-23",
       "course_produced": true,
-      "course_path": "state/streeling/courses/cybernetics/en/CYB-003-measuring-variety-ratio-quantitatively.md"
+      "course_path": "state/streeling/courses/cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md"
     },
     {
       "question_hash": "902f4459a3526d5a2e4a7fb4dc4c64e52e53de40e7c43bb02367cf8840cd5f36",
