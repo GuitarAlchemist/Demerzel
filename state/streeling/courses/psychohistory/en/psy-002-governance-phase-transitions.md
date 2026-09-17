@@ -196,8 +196,8 @@ Using the current Demerzel governance state:
 ## Further Reading
 
 - [PSY-001: Introduction to Fractal Compounding](psy-001-intro-fractal-compounding.md) — prerequisite on D_c and ERGOL/LOLLI
-- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/CYB-003-measuring-variety-ratio-quantitatively.md) — the order parameter
-- [CYB-001: VSM and AI Governance Mapping](../../cybernetics/en/CYB-001-vsm-ai-governance-mapping.md) — structural prerequisites
+- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the order parameter
+- [CYB-001: VSM and AI Governance Mapping](../../cybernetics/en/cyb-001-vsm-ai-governance-mapping.md) — structural prerequisites
 - Statistical mechanics of phase transitions (Landau theory, order parameters, critical exponents)
 - Asimov's Foundation — psychohistory predicts aggregate trends, not individual events
 
