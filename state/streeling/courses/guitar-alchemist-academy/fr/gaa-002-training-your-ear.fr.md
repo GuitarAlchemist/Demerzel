@@ -75,7 +75,7 @@ Commencez par les intervalles les plus difficiles à confondre :
 | Intervalle | Demi-tons | Chanson repère | Référence à la guitare |
 |----------|-----------|-------------|-----------------|
 | Octave (P8) | 12 | « Somewhere Over the Rainbow » (deux premières notes) | Même corde, 12e case |
-| Quinte juste (P5) | 7 | « Twinkle Twinkle Little Star » (deux premières notes) | De la fondamentale à la quinte d'un power chord |
+| Quinte juste (P5) | 7 | « Twinkle Twinkle Little Star » (2e et 3e notes, « -kle twin- ») | De la fondamentale à la quinte d'un power chord |
 | Quarte juste (P4) | 5 | « Here Comes the Bride » (deux premières notes) | Cordes à vide voisines (sauf Sol-Si) |
 
 Ces trois intervalles ont une qualité creuse et ouverte caractéristique. L'octave sonne comme « la même note plus haut ». La quinte sonne stable et puissante — c'est la base de tous les power chords que vous jouerez. La quarte a une qualité flottante, dans l'attente.
@@ -88,7 +88,7 @@ Ces intervalles déterminent si la musique sonne joyeuse ou triste, fluide ou te
 |----------|-----------|-------------|-----------|
 | Tierce majeure (M3) | 4 | « Oh When the Saints » (deux premières notes) | Lumineux, joyeux |
 | Tierce mineure (m3) | 3 | « Greensleeves » (deux premières notes) | Sombre, triste |
-| Seconde majeure (M2) | 2 | « Happy Birthday » (deux premières notes) | Monter d'un degré de gamme |
+| Seconde majeure (M2) | 2 | « Happy Birthday » (2e et 3e notes, « -py birth- ») | Monter d'un degré de gamme |
 | Seconde mineure (m2) | 1 | Thème des « Dents de la mer » (deux premières notes) | Tendu, chromatique, inquiétant |
 
 Les tierces sont la paire la plus importante à distinguer. Une tierce majeure rend un accord majeur (joyeux). Une tierce mineure rend un accord mineur (triste). Entraîner votre oreille à distinguer instantanément M3 de m3 est l'investissement le plus rentable que vous puissiez faire en éducation de l'oreille.
@@ -99,7 +99,7 @@ Les tierces sont la paire la plus importante à distinguer. Une tierce majeure r
 |----------|-----------|-------------|-----------|
 | Triton (A4/d5) | 6 | Thème des « Simpson » (deux premières notes) | Instable, dissonant, veut se résoudre |
 | Sixte majeure (M6) | 9 | « My Bonnie Lies Over the Ocean » (deux premières notes) | Saut large et lumineux |
-| Sixte mineure (m6) | 8 | « The Entertainer » (deux premières notes du thème principal) | Saut large et plus sombre |
+| Sixte mineure (m6) | 8 | « The Entertainer » (3e et 4e notes du thème principal, Mi montant au Do) | Saut large et plus sombre |
 | Septième majeure (M7) | 11 | « Take On Me » (deux premières notes du refrain) | Tension extrême, presque une octave |
 | Septième mineure (m7) | 10 | « Somewhere » de West Side Story (« There's a... ») | Blues, qui s'étire vers le haut |
 
@@ -127,7 +127,7 @@ Entraînez votre oreille à ressentir cette différence au plus profond. Les acc
 |---------|-------------------|-----------|----------------|
 | Majeur | M3 + m3 | Lumineux, stable | Mi majeur ouvert |
 | Mineur | m3 + M3 | Sombre, stable | Mi mineur ouvert |
-| Diminué | m3 + m3 | Tendu, qui s'effondre | x-x-4-5-4-x (Ddim) |
+| Diminué | m3 + m3 | Tendu, qui s'effondre | x-x-0-1-3-1 (Ddim) |
 | Augmenté | M3 + M3 | Étrange, flottant, non résolu | x-x-2-1-1-0 (Eaug) |
 
 Les accords diminués donnent l'impression de se rétracter vers l'intérieur — tout se contracte. Les accords augmentés donnent l'impression de s'étirer vers l'extérieur — rien ne se résout.

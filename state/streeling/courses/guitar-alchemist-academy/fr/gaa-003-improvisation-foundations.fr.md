@@ -193,17 +193,17 @@ La boîte 1 est la maison, mais la maison n'est pas le monde entier. La pentaton
 | 1 | 5-8 | Forme de E | 6e et 1re cordes, 5e case |
 | 2 | 7-10 | Forme de D | 4e corde, 7e case |
 | 3 | 9-12 | Forme de C | 5e corde, 12e case |
-| 4 | 12-15 | Forme de A | 5e corde, 12e case ; 6e corde, 12e case |
-| 5 | 2-5 | Forme de G | 6e corde, 3e case (repasse sous la boîte 1) |
+| 4 | 12-15 | Forme de A | 5e corde, 12e case ; 3e corde, 14e case |
+| 5 | 2-5 | Forme de G | 6e et 1re cordes, 5e case ; 3e corde, 2e case (repasse sous la boîte 1) |
 
 **Liaisons par glissé :** La façon la plus simple de passer d'une boîte à l'autre est de glisser sur une seule corde. Jouez une note dans la boîte 1, glissez jusqu'à la note correspondante de la boîte 2 sur la même corde. Votre oreille suit le glissé, si bien que le changement de position sonne voulu plutôt qu'accidentel. Entraînez-vous à glisser sur la 3e corde (Sol) : de la 5e à la 7e case, vous passez de la boîte 1 au territoire de la boîte 2.
 
 **Motifs à trois notes par corde :** Au lieu de la pentatonique standard à deux notes par corde, réorganisez les mêmes notes en groupes de trois par corde. Cela permet un aller-retour plus rapide au médiator et des sauts d'intervalles plus larges :
 
 ```
-e|---5--7--8----|
-B|---5--7--8----|
-G|---5--7-------|
+e|-------------------------8--10--12--|
+B|-------------5--8--10---------------|
+G|--2--5--7---------------------------|
 ```
 
 Les motifs à trois notes par corde s'étendent naturellement sur plusieurs boîtes, brisant le confinement rectangulaire d'une position unique.
@@ -280,15 +280,15 @@ Le lydien est le mode le plus lumineux — éthéré, flottant, onirique. En La 
 
 Pour improviser en lydien : jouez la gamme majeure, mais haussez le 4e degré. Mettez la #4 en valeur sur les temps forts. Le lydien sonne comme la « réponse » à une question que la gamme majeure ne peut pas résoudre. Les compositeurs de musique de film (John Williams, Howard Shore) l'utilisent pour l'émerveillement et la transcendance.
 
-**Notes à éviter :**
+**Notes hors du mode :**
 
-En improvisation modale, certaines notes sapent le caractère du mode. On les appelle « notes à éviter » — non parce qu'elles sont interdites, mais parce que s'y poser sur les temps forts brouille l'identité du mode :
+En improvisation modale, certaines notes sapent le caractère du mode : les notes d'un mode voisin, qui remplacent la note caractéristique du vôtre. Elles ne sont pas interdites, mais s'y poser sur les temps forts brouille l'identité du mode. (Ce ne sont pas des « notes à éviter » au sens de la théorie accord-gamme de mus-005, qui désigne des notes de la gamme qui frottent avec l'accord.)
 
 - En dorien : la b6 (Fa naturel) — elle tire vers l'éolien
 - En mixolydien : la septième naturelle (Sol#) — elle tire vers l'ionien (majeur)
 - En lydien : la quarte naturelle (Ré naturel) — elle tire vers l'ionien
 
-Les notes à éviter peuvent apparaître comme notes de passage sur les temps faibles. Elles ne posent problème que lorsqu'elles sont mises en valeur.
+Ces notes peuvent apparaître comme notes de passage chromatiques sur les temps faibles. Elles ne posent problème que lorsqu'elles sont mises en valeur.
 
 **Vamps modaux :**
 
@@ -332,11 +332,11 @@ Les phrases qui commencent avant ou après la barre de mesure donnent l'impressi
 
 **Hémiole (aperçu) :**
 
-L'hémiole est la superposition d'un groupement de 3 temps sur une mesure à 4 temps (ou l'inverse). Jouez un motif répété de 3 notes en 4/4 : le motif tourne à contre-courant de la pulsation, créant une tension polyrythmique qui se résout quand les deux cycles se réalignent (tous les 12 temps). C'est une technique avancée, mais même une seule phrase en hémiole dans un solo par ailleurs carré crée un moment de magie rythmique.
+L'hémiole (du grec « un et demi ») est le rapport 3:2 : trois notes dans le temps de deux, comme lorsqu'on entend ensemble 6/8 (deux noires pointées) et 3/4 (trois noires). Un rythme croisé voisin est un motif répété de 3 notes en 4/4 : le motif tourne à contre-courant de la pulsation, créant une tension polyrythmique qui se résout quand les deux cycles se réalignent (tous les 12 temps). C'est une technique avancée, mais même une seule phrase de ce type dans un solo par ailleurs carré crée un moment de magie rythmique.
 
 ### Exercice pratique
 
-Prenez une seule phrase de la boîte 1 (4 notes, rythme libre). Jouez-la en partant du temps 1. Puis du temps 2. Puis du temps 3. Puis du temps 4. Puis du « et » du temps 1. Remarquez comme le ressenti change à chaque décalage, alors que les notes sont identiques. Ensuite, essayez un motif répété de 3 notes (par exemple La-Do-Ré, La-Do-Ré, La-Do-Ré...) en 4/4. Comptez à voix haute et sentez le moment où le motif se réaligne sur le temps 1 — c'est l'hémiole.
+Prenez une seule phrase de la boîte 1 (4 notes, rythme libre). Jouez-la en partant du temps 1. Puis du temps 2. Puis du temps 3. Puis du temps 4. Puis du « et » du temps 1. Remarquez comme le ressenti change à chaque décalage, alors que les notes sont identiques. Ensuite, essayez un motif répété de 3 notes (par exemple La-Do-Ré, La-Do-Ré, La-Do-Ré...) en 4/4. Comptez à voix haute et sentez le moment où le motif se réaligne sur le temps 1 — c'est un rythme croisé 3 contre 4 ; l'hémiole est la même idée en 3:2.
 
 ---
 
@@ -456,7 +456,7 @@ Lancez un backing track en La mineur (tempo moyen, bluesy). Enregistrez-vous en 
 | **Syncope** | Accentuer les temps faibles ou les contretemps pour créer une tension rythmique et un élan vers l'avant |
 | **Comping** | Apporter un accompagnement rythmique et harmonique à un soliste, ce qui est en soi un acte d'improvisation |
 | **Échanger des quatre** | Alterner des solos improvisés de 4 mesures entre musiciens dans un contexte de concert de jazz |
-| **Hémiole** | La superposition d'un groupement de 3 sur une mesure à 4 (ou l'inverse), qui crée une tension polyrythmique |
+| **Hémiole** | Le rapport 3:2 (trois notes dans le temps de deux), comme 6/8 contre 3/4, qui crée une tension polyrythmique |
 | **Autoroute** | Un modèle mental du manche comme un chemin continu plutôt que des positions en boîtes isolées |
 
 ---

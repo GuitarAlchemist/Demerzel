@@ -193,17 +193,17 @@ La caja 1 es tu casa, pero la casa no es el mundo entero. La pentatónica menor 
 | 1 | 5-8 | Forma de E | Cuerdas 6.ª y 1.ª, traste 5 |
 | 2 | 7-10 | Forma de D | Cuerda 4.ª, traste 7 |
 | 3 | 9-12 | Forma de C | Cuerda 5.ª, traste 12 |
-| 4 | 12-15 | Forma de A | Cuerda 5.ª, traste 12; cuerda 6.ª, traste 12 |
-| 5 | 2-5 | Forma de G | Cuerda 6.ª, traste 3 (queda por debajo de la caja 1) |
+| 4 | 12-15 | Forma de A | Cuerda 5.ª, traste 12; cuerda 3.ª, traste 14 |
+| 5 | 2-5 | Forma de G | Cuerdas 6.ª y 1.ª, traste 5; cuerda 3.ª, traste 2 (queda por debajo de la caja 1) |
 
 **Conexiones con slide:** La manera más sencilla de moverse entre cajas es deslizarse por una sola cuerda. Toca una nota en la caja 1 y deslízate hasta la nota correspondiente de la caja 2 en la misma cuerda. Tu oído sigue el deslizamiento, así que el cambio de posición suena intencionado y no accidental. Practica deslizarte por la 3.ª cuerda (Sol): del traste 5 al traste 7 pasas de la caja 1 al territorio de la caja 2.
 
 **Patrones de tres notas por cuerda:** En lugar de la pentatónica estándar de dos notas por cuerda, reorganiza las mismas notas en grupos de tres por cuerda. Esto permite una púa alternada más rápida y saltos interválicos más amplios:
 
 ```
-e|---5--7--8----|
-B|---5--7--8----|
-G|---5--7-------|
+e|-------------------------8--10--12--|
+B|-------------5--8--10---------------|
+G|--2--5--7---------------------------|
 ```
 
 Los patrones de tres notas por cuerda abarcan de forma natural varias cajas y rompen el encierro rectangular de una sola posición.
@@ -280,15 +280,15 @@ El lidio es el modo más brillante: etéreo, flotante, onírico. En La lidio: La
 
 Para improvisar en lidio: toca la escala mayor, pero eleva el 4.º grado. Destaca la #4 en los tiempos fuertes. El lidio suena como la «respuesta» a una pregunta que la escala mayor no puede resolver. Los compositores de cine (John Williams, Howard Shore) lo usan para el asombro y la trascendencia.
 
-**Notas a evitar:**
+**Notas fuera del modo:**
 
-En la improvisación modal, ciertas notas socavan el carácter del modo. Se llaman «notas a evitar», no porque estén prohibidas, sino porque detenerse en ellas en los tiempos fuertes oscurece la identidad del modo:
+En la improvisación modal, ciertas notas socavan el carácter del modo: las notas de un modo vecino, que sustituyen a la nota característica del tuyo. No están prohibidas, pero detenerse en ellas en los tiempos fuertes oscurece la identidad del modo. (No son «notas a evitar» en el sentido de la teoría acorde-escala de mus-005, que designa notas de la escala que chocan con el acorde).
 
 - En dórico: la b6 (Fa natural), que tira hacia el eólico
 - En mixolidio: la séptima natural (Sol#), que tira hacia el jónico (mayor)
 - En lidio: la cuarta natural (Re natural), que tira hacia el jónico
 
-Las notas a evitar pueden aparecer como notas de paso en los tiempos débiles. Solo son un problema cuando se destacan.
+Estas notas pueden aparecer como notas de paso cromáticas en los tiempos débiles. Solo son un problema cuando se destacan.
 
 **Vamps modales:**
 
@@ -332,11 +332,11 @@ Las frases que empiezan antes o después de la barra de compás crean la sensaci
 
 **Hemiola (avance):**
 
-La hemiola es la superposición de una agrupación de 3 tiempos sobre un compás de 4 tiempos (o al revés). Toca un patrón repetido de 3 notas en 4/4: el patrón gira a contracorriente del pulso y crea una tensión polirrítmica que se resuelve cuando los dos ciclos vuelven a alinearse (cada 12 tiempos). Es una técnica avanzada, pero incluso una sola frase en hemiola dentro de un solo por lo demás recto crea un momento de magia rítmica.
+La hemiola (del griego «uno y medio») es la proporción 3:2: tres notas en el tiempo de dos, como cuando suenan a la vez 6/8 (dos negras con puntillo) y 3/4 (tres negras). Un ritmo cruzado cercano es un patrón repetido de 3 notas en 4/4: el patrón gira a contracorriente del pulso y crea una tensión polirrítmica que se resuelve cuando los dos ciclos vuelven a alinearse (cada 12 tiempos). Es una técnica avanzada, pero incluso una sola frase así dentro de un solo por lo demás recto crea un momento de magia rítmica.
 
 ### Ejercicio práctico
 
-Toma una sola frase de la caja 1 (4 notas, cualquier ritmo). Tócala empezando en el tiempo 1. Luego en el tiempo 2. Luego en el tiempo 3. Luego en el tiempo 4. Luego en el «y» del tiempo 1. Fíjate en cómo cambia la sensación con cada desplazamiento, aunque las notas sean idénticas. Después, prueba un patrón repetido de 3 notas (por ejemplo, La-Do-Re, La-Do-Re, La-Do-Re...) en 4/4. Cuenta en voz alta y siente cuándo el patrón vuelve a alinearse con el tiempo 1: eso es la hemiola.
+Toma una sola frase de la caja 1 (4 notas, cualquier ritmo). Tócala empezando en el tiempo 1. Luego en el tiempo 2. Luego en el tiempo 3. Luego en el tiempo 4. Luego en el «y» del tiempo 1. Fíjate en cómo cambia la sensación con cada desplazamiento, aunque las notas sean idénticas. Después, prueba un patrón repetido de 3 notas (por ejemplo, La-Do-Re, La-Do-Re, La-Do-Re...) en 4/4. Cuenta en voz alta y siente cuándo el patrón vuelve a alinearse con el tiempo 1: eso es un ritmo cruzado de 3 contra 4; la hemiola es la misma idea en 3:2.
 
 ---
 
@@ -456,7 +456,7 @@ Pon una pista de acompañamiento en La menor (tempo medio, con sabor a blues). G
 | **Síncopa** | Acentuar los tiempos débiles o los contratiempos para crear tensión rítmica e impulso hacia delante |
 | **Comping** | Aportar acompañamiento rítmico y armónico a un solista, lo que es en sí mismo un acto de improvisación |
 | **Intercambiar cuatros** | Alternar solos improvisados de 4 compases entre músicos en un contexto de actuación de jazz |
-| **Hemiola** | La superposición de una agrupación de 3 sobre un compás de 4 (o al revés), que crea tensión polirrítmica |
+| **Hemiola** | La proporción 3:2 (tres notas en el tiempo de dos), como 6/8 contra 3/4, que crea tensión polirrítmica |
 | **Autopista** | Un modelo mental del mástil como un camino continuo en lugar de posiciones en cajas aisladas |
 
 ---

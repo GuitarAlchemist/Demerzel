@@ -193,17 +193,17 @@ Box 1 is home, but home is not the whole world. The minor pentatonic has five po
 | 1 | 5-8 | E shape | 6th and 1st strings, 5th fret |
 | 2 | 7-10 | D shape | 4th string, 7th fret |
 | 3 | 9-12 | C shape | 5th string, 12th fret |
-| 4 | 12-15 | A shape | 5th string, 12th fret; 6th string, 12th fret |
-| 5 | 2-5 | G shape | 6th string, 3rd fret (wraps below Box 1) |
+| 4 | 12-15 | A shape | 5th string, 12th fret; 3rd string, 14th fret |
+| 5 | 2-5 | G shape | 6th and 1st strings, 5th fret; 3rd string, 2nd fret (wraps below Box 1) |
 
 **Slide Connections:** The simplest way to move between boxes is to slide on a single string. Play a note in Box 1, slide up to the corresponding note in Box 2 on the same string. Your ear follows the slide, so the position shift sounds intentional rather than accidental. Practice sliding on the 3rd (G) string: 5th fret to 7th fret takes you from Box 1 into Box 2 territory.
 
 **Three-Note-Per-String Patterns:** Instead of the standard two-notes-per-string pentatonic, rearrange the same notes into three-per-string groupings. This enables faster alternate picking and wider intervallic leaps:
 
 ```
-e|---5--7--8----|
-B|---5--7--8----|
-G|---5--7-------|
+e|-------------------------8--10--12--|
+B|-------------5--8--10---------------|
+G|--2--5--7---------------------------|
 ```
 
 Three-note-per-string patterns naturally span multiple boxes, breaking the rectangular confinement of a single position.
@@ -280,15 +280,15 @@ Lydian is the brightest mode — ethereal, floating, dreamlike. In A Lydian: A-B
 
 To improvise in Lydian: play the major scale but raise the 4th degree. Emphasize the #4 on strong beats. Lydian sounds like the "answer" to a question the major scale cannot resolve. Film composers (John Williams, Howard Shore) use it for wonder and transcendence.
 
-**Avoid Notes:**
+**Notes Outside the Mode:**
 
-In modal improvisation, certain notes undermine the modal character. These are called "avoid notes" — not because they are forbidden, but because resting on them on strong beats obscures the mode's identity:
+In modal improvisation, certain notes undermine the modal character: the notes of a neighboring mode, which replace your mode's characteristic note. They are not forbidden, but resting on them on strong beats obscures the mode's identity. (They are not "avoid notes" in the chord-scale sense of mus-005, which are notes inside the scale that clash with the chord.)
 
 - In Dorian: the b6 (F natural) — it pulls toward Aeolian
 - In Mixolydian: the natural 7th (G#) — it pulls toward Ionian (major)
 - In Lydian: the natural 4th (D natural) — it pulls toward Ionian
 
-Avoid notes can appear as passing tones on weak beats. They become problems only when emphasized.
+These notes can appear as chromatic passing tones on weak beats. They become problems only when emphasized.
 
 **Modal Vamps:**
 
@@ -332,11 +332,11 @@ Phrases that start before or after the barline create a sense of floating above 
 
 **Hemiola (Preview):**
 
-Hemiola is the superimposition of a 3-beat grouping over a 4-beat meter (or vice versa). Play a repeating 3-note pattern over 4/4 time: the pattern cycles against the beat, creating a polyrhythmic tension that resolves when the two cycles realign (every 12 beats). This is an advanced technique, but even a single hemiola phrase within an otherwise straight solo creates a moment of rhythmic magic.
+Hemiola (Greek for "one and a half") is the 3:2 ratio: three notes in the time of two, as when 6/8 (two dotted quarters) and 3/4 (three quarters) are heard together. A related cross-rhythm is a repeating 3-note pattern over 4/4 time: the pattern cycles against the beat, creating a polyrhythmic tension that resolves when the two cycles realign (every 12 beats). This is an advanced technique, but even a single such phrase within an otherwise straight solo creates a moment of rhythmic magic.
 
 ### Practice Exercise
 
-Take a single phrase from Box 1 (4 notes, any rhythm). Play it starting on beat 1. Then start it on beat 2. Then beat 3. Then beat 4. Then the "and" of beat 1. Notice how the feel changes with each displacement, even though the notes are identical. Next, try a 3-note repeating pattern (e.g., A-C-D, A-C-D, A-C-D...) over 4/4 time. Count aloud and feel when the pattern realigns with beat 1 — that is hemiola.
+Take a single phrase from Box 1 (4 notes, any rhythm). Play it starting on beat 1. Then start it on beat 2. Then beat 3. Then beat 4. Then the "and" of beat 1. Notice how the feel changes with each displacement, even though the notes are identical. Next, try a 3-note repeating pattern (e.g., A-C-D, A-C-D, A-C-D...) over 4/4 time. Count aloud and feel when the pattern realigns with beat 1 — that is a 3-against-4 cross-rhythm; hemiola is the same idea at 3:2.
 
 ---
 
@@ -456,7 +456,7 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 | **Syncopation** | Accenting weak beats or off-beats to create rhythmic tension and forward momentum |
 | **Comping** | Providing rhythmic and harmonic accompaniment to a soloist, itself an act of improvisation |
 | **Trading fours** | Alternating 4-bar improvised solos between musicians in a jazz performance context |
-| **Hemiola** | The superimposition of a grouping of 3 over a meter of 4 (or vice versa), creating polyrhythmic tension |
+| **Hemiola** | The 3:2 ratio (three notes in the time of two), as in 6/8 against 3/4, creating polyrhythmic tension |
 | **Highway** | A mental model of the fretboard as a continuous path rather than isolated box positions |
 
 ---

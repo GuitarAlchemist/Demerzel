@@ -75,7 +75,7 @@ Start with the intervals that are hardest to confuse:
 | Interval | Half Steps | Song Anchor | Guitar Reference |
 |----------|-----------|-------------|-----------------|
 | Octave (P8) | 12 | "Somewhere Over the Rainbow" (first two notes) | Same string, 12th fret |
-| Perfect 5th (P5) | 7 | "Twinkle Twinkle Little Star" (first two notes) | Power chord root to 5th |
+| Perfect 5th (P5) | 7 | "Twinkle Twinkle Little Star" (2nd to 3rd note, "-kle twin-") | Power chord root to 5th |
 | Perfect 4th (P4) | 5 | "Here Comes the Bride" (first two notes) | Adjacent open strings (except G-B) |
 
 These three intervals have a distinctive hollow, open quality. The octave sounds like the "same note higher." The fifth sounds stable and powerful — it is the foundation of every power chord you will ever play. The fourth has a floating, expectant quality.
@@ -88,7 +88,7 @@ These intervals define whether music sounds happy or sad, smooth or tense:
 |----------|-----------|-------------|-----------|
 | Major 3rd (M3) | 4 | "Oh When the Saints" (first two notes) | Bright, happy |
 | Minor 3rd (m3) | 3 | "Greensleeves" (first two notes) | Dark, sad |
-| Major 2nd (M2) | 2 | "Happy Birthday" (first two notes) | Stepping up a scale |
+| Major 2nd (M2) | 2 | "Happy Birthday" (2nd to 3rd note, "-py birth-") | Stepping up a scale |
 | Minor 2nd (m2) | 1 | "Jaws" theme (first two notes) | Tense, chromatic, creepy |
 
 The thirds are the most important pair to distinguish. A major third makes a chord major (happy). A minor third makes a chord minor (sad). Training your ear to instantly distinguish M3 from m3 is the single highest-value ear training investment you can make.
@@ -99,7 +99,7 @@ The thirds are the most important pair to distinguish. A major third makes a cho
 |----------|-----------|-------------|-----------|
 | Tritone (A4/d5) | 6 | "The Simpsons" theme (first two notes) | Unstable, dissonant, wants to resolve |
 | Major 6th (M6) | 9 | "My Bonnie Lies Over the Ocean" (first two notes) | Wide, bright leap |
-| Minor 6th (m6) | 8 | "The Entertainer" (first two notes of main theme) | Wide, darker leap |
+| Minor 6th (m6) | 8 | "The Entertainer" (3rd to 4th note of the main theme, E up to C) | Wide, darker leap |
 | Major 7th (M7) | 11 | "Take On Me" (first two notes of chorus) | Extreme tension, almost an octave |
 | Minor 7th (m7) | 10 | "Somewhere" from West Side Story ("There's a...") | Bluesy, reaching |
 
@@ -127,7 +127,7 @@ Train your ear to feel this difference viscerally. Major chords feel settled, su
 |---------|-------------------|-----------|----------------|
 | Major | M3 + m3 | Bright, stable | Open E major |
 | Minor | m3 + M3 | Dark, stable | Open E minor |
-| Diminished | m3 + m3 | Tense, collapsing | x-x-4-5-4-x (Ddim) |
+| Diminished | m3 + m3 | Tense, collapsing | x-x-0-1-3-1 (Ddim) |
 | Augmented | M3 + M3 | Eerie, floating, unresolved | x-x-2-1-1-0 (Eaug) |
 
 Diminished chords sound like they are shrinking inward — everything contracts. Augmented chords sound like they are stretching outward — nothing resolves.
