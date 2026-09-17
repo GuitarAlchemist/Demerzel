@@ -85,7 +85,7 @@ The bare "7" always means dominant. You must write "maj7" to get a major seventh
 `C/E` means "C major chord with E in the bass." The note after the slash is the bass note, not necessarily a chord tone. Common uses:
 
 - Inversions: `C/E` (first inversion), `C/G` (second inversion)
-- Polychords implied: `Db/C` = Db triad over C bass (creates a Cmaj7#11 sound)
+- Polychords implied: `Db/C` = Db triad over C bass (Db, F and Ab over C are b9, 11 and b13 — a Phrygian colour; the Lydian one is `D/C`)
 - Pedal tones: `Dm7/G` = creates a G11 sound without stating G as root
 
 ### Practice Exercise
@@ -101,7 +101,7 @@ Read the following chord symbols and spell out the notes. Do not use your instru
 
 Answers:
 1. F A C E G B (F major with major 7th, 9th, #11th)
-2. Bb D Ab B/Cb Eb/D# Gb (dominant with all altered upper extensions)
+2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominant with all altered upper extensions: b9, #9, #11, b13)
 3. Eb Gb Bb Db F Ab (minor 7th with 11th)
 4. Ab C Eb Gb Bb Db F (dominant 7th with 9th, 11th implicit, 13th)
 5. D F Ab C (minor triad with flatted 5th and minor 7th)
@@ -122,7 +122,7 @@ In C major:
   ii7         V7         Imaj7
 ```
 
-Why does this work? Each chord resolves to the next by the strongest root motion in tonal music — descending fifths (D→G→C). The voice leading is equally powerful: the 3rd of Dm7 (F) resolves down to the 3rd of G7 (B is not F, but the 7th of Dm7, C, becomes the 7th relationship). More precisely:
+Why does this work? Each chord resolves to the next by the strongest root motion in tonal music — descending fifths (D→G→C). The voice leading is equally powerful: at each change the guide tones either fall a half step or stay put. More precisely:
 
 - The **7th of ii** (C) steps down to the **3rd of V** (B)
 - The **3rd of V** (B) steps up to the **root of I** (C)
@@ -163,18 +163,18 @@ The turnaround — the last bars of a form that lead back to the top — is the 
 Here is the chord progression to **"All The Things You Are"** (Kern/Hammerstein). Circle every ii-V-I (major or minor). Mark whether each resolves or is left hanging:
 
 ```
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dm7    | G7     | Cmaj7  |
-Cm7   | Fm7    | Bb7    | Ebmaj7 |
-Abmaj7| Am7    | D7     | Gmaj7  |
-Am7   | D7     | Gmaj7  |        |
-F#m7  | B7     | Emaj7  | C7alt  |
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dbm7   | Cm7    | Bdim7  |
-Bbm7  | Eb7    | Abmaj7 |        |
+A1  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | G7     | Cmaj7  | Cmaj7  |
+A2  | Cm7    | Fm7    | Bb7    | Ebmaj7 |
+    | Abmaj7 | D7     | Gmaj7  | Gmaj7  |
+B   | Am7    | D7     | Gmaj7  | Gmaj7  |
+    | F#m7   | B7     | Emaj7  | C7alt  |
+A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dbm7   | Cm7    | Bdim7  |
+    | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-You should find at least six ii-V-I progressions in three different keys, plus several ii-V's that resolve deceptively or chain into the next key area.
+The form is 36 bars: eight, eight, eight, then a twelve-bar last A. You should find at least six ii-V-I progressions in four different keys, plus several ii-V's that resolve deceptively or chain into the next key area.
 
 ---
 
@@ -189,17 +189,17 @@ The root, 3rd, and 7th are the **essential tones** that define a chord's quality
 **Root on 6th string:**
 
 ```
-Dm7:        G7:         Cmaj7:
-e ----      e ----      e ----
-B ----      B ----      B ----
-G ----      G ----      G ----
-D ----      D ----      D ----
-A --5--     A ----      A --3--
-E --x--     E --3--     E --x--
-   1 b3 b7     1 3 b7      1 3 7
+Dm7:         G7:          Cmaj7:
+e ----       e ----       e ----
+B ----       B ----       B ----
+G --10--     G --4--      G --9--
+D --10--     D --3--      D --9--
+A ----       A ----       A ----
+E --10--     E --3--      E --8--
+   1 b7 b3      1 b7 3       1 7 3
 ```
 
-(Actual fret positions depend on root location; the concept is root-3rd-7th on adjacent strings.)
+(Read from the bottom up: root on the 6th string, 7th on the 4th, 3rd on the 3rd — the 5th string is skipped. The shape moves as a unit, so the same fingering at another fret gives the same chord type on another root.)
 
 **Root on 5th string:**
 
@@ -222,7 +222,7 @@ A --3-- (C, the root)
 E ----
 ```
 
-Drop-2 voicings exist on four string sets:
+Drop-2 voicings exist on three string sets:
 
 | String Set | Range | Best For |
 |-----------|-------|----------|
@@ -498,7 +498,7 @@ The beauty of upper structures is that you play a **simple triad** — something
 
 ### Practice Exercise
 
-Build quartal voicings from every degree of D Dorian (D E F G A B C) on string set 4-3-2-1. Stack three perfect fourths from each starting note. Write out the four notes of each voicing and identify the resulting chord quality (some will be familiar tertian chords in disguise).
+Build quartal voicings from every degree of D Dorian (D E F G A B C) on string set 4-3-2-1. Stack three fourths taken from inside the mode — most are perfect, but the one from F to B is a tritone, and every voicing that reaches across it inherits that tritone. Write out the four notes of each voicing and identify the resulting chord quality (some will be familiar tertian chords in disguise).
 
 Then: over a C7 vamp, play D major triad, Ab major triad, and Eb major triad shapes in the upper register while a bass note of C sustains. Listen to how each upper structure changes the color of the dominant chord.
 
@@ -538,15 +538,15 @@ The harmonic rhythm is blistering: two chords per measure at a fast tempo, with 
 **"Countdown"** demonstrates how Coltrane Changes work as a reharmonization technique. The original tune is "Tune Up" by Miles Davis:
 
 ```
-Tune Up:   Em7  | A7   | Dmaj7 | Dmaj7 |
-Countdown: Em7  | F7 Bbmaj7 | Db7 Gbmaj7 | A7 Dmaj7 |
+Tune Up:   | Em7     | A7          | Dmaj7      | Dmaj7 |
+Countdown: | Em7 F7  | Bbmaj7 Db7  | Gbmaj7 A7  | Dmaj7 |
 ```
 
 Coltrane replaces the simple ii-V-I with a chain of V-I's descending by major thirds:
 
 - From the target (Dmaj7), he backs up through the major-third cycle: Dmaj7 ← Gbmaj7 ← Bbmaj7
 - Each key center is preceded by its V7: A7→D, Db7→Gb, F7→Bb
-- The result: three ii-V-I resolutions compressed into four bars
+- The result: the original ii, then three V-I resolutions, compressed into four bars
 
 ### The Geometry
 
@@ -593,7 +593,7 @@ Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
 
 1. Write out the three major-third key centers for a ii-V-I in **F major** (target: Fmaj7).
 2. Reharmonize `Gm7 | C7 | Fmaj7` using the Coltrane cycle, inserting V7→I pairs for each key center.
-3. Play through your reharmonization slowly on guitar, using shell voicings. Focus on the bass motion — it should move in a pattern of descending major thirds connected by ascending half steps (the V7 roots).
+3. Play through your reharmonization slowly on guitar, using shell voicings. Focus on the bass motion — the key centres fall by major thirds, and each is reached from its V7 a fourth below, so the roots alternate up a perfect fourth (V7 to I) and up a minor third (I to the next V7).
 
 ---
 
