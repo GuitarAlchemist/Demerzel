@@ -127,7 +127,7 @@ A 2x increase in signal rate over 3 cycles is a strong indicator that the system
 
 ### Signal 6: Variety Ratio as Order Parameter
 
-From cybernetics (CYB-003), the variety ratio measures whether governance has sufficient complexity to handle its environment:
+From cybernetics (CYB-003), the ratio of regulatory response variety to disturbance variety (the Ashby's Law check) measures whether governance has sufficient complexity to handle its environment. It is not CYB-003's dimensional ratio R = V_amplifiers / V_attenuators, whose regulatory value is healthy below 1.0 by design:
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -181,7 +181,7 @@ Using the current Demerzel governance state:
 
 3. Count the policies in `policies/` and the health score. Estimate the current marginal return of the last policy added.
 
-4. **Thought experiment:** If all four consumer repos suddenly achieve 100% compliance, what phase transition does that represent? Is it desirable?
+4. **Thought experiment:** If all three consumer repos (ix, tars, ga) suddenly achieve 100% compliance, what phase transition does that represent? Is it desirable?
 
 ---
 

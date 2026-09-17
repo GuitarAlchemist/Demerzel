@@ -12,7 +12,7 @@ Does Stafford Beer's Viable System Model (VSM) provide a complete structural map
 
 ## Summary
 
-The Viable System Model maps structurally to AI governance frameworks with high fidelity. All five VSM systems plus System 3* have clear counterparts in Demerzel's architecture. Three significant gaps emerge that require adaptation beyond classical VSM.
+The Viable System Model maps structurally to AI governance frameworks with high fidelity. All five VSM systems plus System 3* have clear counterparts in Demerzel's architecture. Four significant gaps emerge (three in section 2, the missing algedonic channel in section 4) that require adaptation beyond classical VSM.
 
 ## VSM-to-Demerzel Mapping
 

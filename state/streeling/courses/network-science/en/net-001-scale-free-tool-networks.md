@@ -96,7 +96,7 @@ As the ecosystem grows, preferential attachment predicts that:
 Scale-free topology has profound implications:
 
 ### Resilience
-- **Attack tolerance:** Scale-free networks are robust to random node failures. If a random low-degree repo goes down, the network barely notices.
+- **Error tolerance:** Scale-free networks are robust to random node failures. If a random low-degree repo goes down, the network barely notices.
 - **Attack vulnerability:** But they are fragile to *targeted* hub failure. If the governance hub goes down, the entire ecosystem loses coordination.
 
 ### Governance Design

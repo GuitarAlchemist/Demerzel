@@ -209,16 +209,16 @@ Shells on the 5th string keep the voicing in a comfortable middle register. The 
 
 Take a close-position four-note chord and "drop" the second-highest note down an octave. This spreads the voicing across four adjacent strings — perfect for guitar.
 
-**Close position Cmaj7:** B-E-G-C (top to bottom: C-G-E-B in ascending order, then rearrange with second from top dropped)
+**Close position Cmaj7:** G-B-C-E (low to high, second inversion). Drop the second note from the top (C) an octave to get C-G-B-E, with the root in the bass.
 
 **Drop-2 Cmaj7 (string set 5-4-3-2):**
 
 ```
 e ----
-B --0-- (B, the 7th)
-G --0-- (G, the 5th)
-D --2-- (E, the 3rd — dropped from close position)
-A --3-- (C, the root)
+B --5-- (E, the 3rd)
+G --4-- (B, the 7th)
+D --5-- (G, the 5th)
+A --3-- (C, the root — dropped from close position)
 E ----
 ```
 
@@ -339,7 +339,7 @@ With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
 
 A diminished 7th chord can substitute for a dominant 7th chord a half step below any of its four notes (because dim7 is symmetric — every note is a minor third from the next).
 
-**Bdim7 can substitute for:** C7, Eb7, Gb7, or A7 (dominant chords rooted a half step above each diminished chord tone: B, D, F, Ab).
+**Bdim7 can substitute for:** G7, Bb7, Db7, or E7 (dominant chords rooted a half step below each diminished chord tone: Ab, B, D, F). Bdim7 is each of these chords' 7b9 without its root.
 
 ### Passing Diminished Chords
 
@@ -392,12 +392,12 @@ Chord-scale theory assigns a scale to each chord, providing a pool of melody not
 | Chord Quality | Scale | Source | Avoid Notes |
 |--------------|-------|--------|-------------|
 | **Imaj7** | Ionian (major) | Major scale | 4 (F in C) |
-| **Imaj7#11** | Lydian | Melodic minor on 4th degree | None |
-| **ii-7** | Dorian | Major scale from 2nd degree | None (b6 adds color) |
+| **Imaj7#11** | Lydian | Major scale from 4th degree | None |
+| **ii-7** | Dorian | Major scale from 2nd degree | None (natural 6 adds color) |
 | **V7** (resolving) | Mixolydian | Major scale from 5th degree | 4 (but usable as passing tone) |
 | **V7#11** | Lydian Dominant | Melodic minor from 4th degree | None |
 | **V7alt** | Altered | Melodic minor from 7th degree | None |
-| **ii-7b5** | Locrian | Major scale from 7th degree | 2 (natural 9) — or use Locrian #2 |
+| **ii-7b5** | Locrian | Major scale from 7th degree | b2 (b9) — or use Locrian #2 (natural 9) |
 | **i-7** | Dorian | — | — |
 | **bVII7** (backdoor) | Lydian Dominant | — | — |
 | **dim7** | Diminished (half-whole) | Symmetric | — |
@@ -510,7 +510,7 @@ Then: over a C7 vamp, play D major triad, Ab major triad, and Eb major triad sha
 
 In 1959, John Coltrane introduced a substitution system that divides the octave into three equal parts (major thirds): **B - G - Eb** (or equivalently, any three notes a major third apart). This creates three tonal centers equidistant from each other.
 
-The cycle: Starting from any key, move down a major third, then down another major third, arriving back where you started:
+The cycle: Starting from any key, move down a major third three times, arriving back where you started:
 
 ```
 C → Ab → E → C  (descending major thirds)
@@ -556,9 +556,10 @@ The Coltrane cycle is a **triangle inscribed in the circle of fifths** — three
        C
    F       G
  Bb           D
-  Eb         A
-    Ab     E
-       B(Db)
+Eb             A
+ Ab           E
+   Db      B
+       F#
 
 Triangle 1: C - E - Ab
 Triangle 2: D - F# - Bb
@@ -566,7 +567,7 @@ Triangle 3: Eb - G - B  ← Giant Steps triangle
 Triangle 4: F - A - Db
 ```
 
-There are only four distinct major-third triangles. Each divides the twelve tones into three groups of four.
+There are only four distinct major-third triangles. Together they divide the twelve tones into four groups of three.
 
 ### Applying Coltrane Changes to Any ii-V-I
 

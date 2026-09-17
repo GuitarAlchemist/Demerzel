@@ -62,7 +62,7 @@ terminal state. It is **pathological** when it generates tokens without generati
 
 ## 3. Six Required Properties of a Governed Loop
 
-These properties are necessary and sufficient for a bounded, auditable iteration:
+These six properties make an iteration bounded and auditable. A loop that must be paused and resumed also needs serializable state (sections 2 and 6):
 
 ### Property 1: Hard Iteration Cap
 A maximum iteration count enforced by the framework, not the model. When reached: halt,
@@ -178,7 +178,7 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 ## Key Takeaways
 
 - An LLM cannot reliably detect its own infinite loops — termination must be external
-- A governed loop has exactly six properties: hard cap, progress test, external criterion, checkpoint, dedup, external exit decision
+- A governed loop has six properties: hard cap, progress test, external criterion, checkpoint, dedup, external exit decision — plus serializable state if it must be paused and resumed
 - The Demerzel framework implements these in seldon-plan, demerzel-drive, and Ralph Loop
 - Article 9 (Bounded Autonomy) is the constitutional basis — bounds are predefined, extension requires escalation
 
