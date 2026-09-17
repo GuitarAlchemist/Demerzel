@@ -184,7 +184,7 @@ The drama of sonata form comes from the second theme appearing in the "wrong" ke
 
 ### Guitar Application
 
-- **Giuliani Sonata Op. 15:** A textbook Classical sonata form movement for guitar. The first movement follows sonata form strictly. Listen for the first theme in A major, a transition, a second theme in E major, development through various keys, then recapitulation with both themes now in A major.
+- **Giuliani Sonata Op. 15:** A textbook Classical sonata form movement for guitar. The first movement follows sonata form strictly. Listen for the first theme in C major, a transition, a second theme in G major, development through various keys, then recapitulation with both themes now in C major.
 - **Sor Grand Sonata Op. 22:** Sor's most ambitious solo guitar work. The first movement is a large-scale sonata form with a substantial development section. This piece proves that the guitar can sustain Classical-era forms at full weight.
 
 When you study or perform a sonata form movement, mark the boundaries between sections in your score. Knowing where the development starts changes how you phrase every measure.
@@ -417,7 +417,7 @@ In sonata form, the development section often passes through multiple keys — n
 
 - Phrase, period, and sentence definitions follow William Caplin, *Classical Form: A Theory of Formal Functions for the Instrumental Music of Haydn, Mozart, and Beethoven* (Oxford, 1998) — the standard modern theory of Classical-era phrase structure
 - Sonata form analysis follows Charles Rosen, *Sonata Forms* (Norton, 1980) — the canonical treatment of sonata form as a flexible principle rather than a fixed template
-- Popular music form analysis follows Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blues Eyes"* (Oxford, 2009) — rigorous application of formal analysis to rock and pop repertoire
+- Popular music form analysis follows Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blue Eyes"* (Oxford, 2009) — rigorous application of formal analysis to rock and pop repertoire
 - Guitar repertoire references drawn from standard pedagogical canon: Sor etudes (Op. 6, Op. 31), Villa-Lobos Five Preludes, Bach lute/cello transcriptions, Giuliani sonatas
 - Cadence typology and harmonic-formal interaction consistent with Aldwell & Schachter, *Harmony and Voice Leading*
 - Chaconne/passacaglia distinction acknowledged as contested — modern scholarship (Silbiger, Hudson) shows Baroque composers used terms interchangeably

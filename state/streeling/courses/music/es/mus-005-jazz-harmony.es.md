@@ -209,16 +209,16 @@ Los shells con la fundamental en la 5.ª cuerda mantienen el voicing en un regis
 
 Toma un acorde de cuatro notas en posición cerrada y "deja caer" una octava la segunda nota más aguda. Esto reparte el voicing en cuatro cuerdas adyacentes — perfecto para la guitarra.
 
-**Cmaj7 en posición cerrada:** B-E-G-C (de arriba abajo: C-G-E-B en orden ascendente, luego se reordena bajando la segunda desde arriba)
+**Cmaj7 en posición cerrada:** G-B-C-E (de grave a agudo, segunda inversión). Baja una octava la segunda nota desde arriba (C) para obtener C-G-B-E, con la fundamental en el bajo.
 
 **Cmaj7 en drop-2 (grupo de cuerdas 5-4-3-2):**
 
 ```
 e ----
-B --0-- (B, the 7th)
-G --0-- (G, the 5th)
-D --2-- (E, the 3rd — dropped from close position)
-A --3-- (C, the root)
+B --5-- (E, the 3rd)
+G --4-- (B, the 7th)
+D --5-- (G, the 5th)
+A --3-- (C, the root — dropped from close position)
 E ----
 ```
 
@@ -339,7 +339,7 @@ With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
 
 Un acorde de séptima disminuida puede sustituir a un acorde de séptima de dominante situado un semitono por debajo de cualquiera de sus cuatro notas (porque el dim7 es simétrico — cada nota está a una tercera menor de la siguiente).
 
-**Bdim7 puede sustituir a:** C7, Eb7, Gb7 o A7 (acordes de dominante cuya fundamental está un semitono por encima de cada nota del acorde disminuido: B, D, F, Ab).
+**Bdim7 puede sustituir a:** G7, Bb7, Db7 o E7 (acordes de dominante cuya fundamental está un semitono por debajo de cada nota del acorde disminuido: Ab, B, D, F). Bdim7 es el 7b9 de cada uno de ellos, sin su fundamental.
 
 ### Acordes disminuidos de paso
 
@@ -392,12 +392,12 @@ La teoría acorde-escala asigna una escala a cada acorde, lo que proporciona un 
 | Calidad de acorde | Escala | Origen | Notas a evitar |
 |--------------|-------|--------|-------------|
 | **Imaj7** | Jónico (mayor) | Escala mayor | 4 (F en Do) |
-| **Imaj7#11** | Lidio | Menor melódica sobre el 4.º grado | Ninguna |
-| **ii-7** | Dórico | Escala mayor desde el 2.º grado | Ninguna (la b6 añade color) |
+| **Imaj7#11** | Lidio | Escala mayor desde el 4.º grado | Ninguna |
+| **ii-7** | Dórico | Escala mayor desde el 2.º grado | Ninguna (la 6.ª natural añade color) |
 | **V7** (que resuelve) | Mixolidio | Escala mayor desde el 5.º grado | 4 (pero utilizable como nota de paso) |
 | **V7#11** | Lidio dominante | Menor melódica desde el 4.º grado | Ninguna |
 | **V7alt** | Alterada | Menor melódica desde el 7.º grado | Ninguna |
-| **ii-7b5** | Locrio | Escala mayor desde el 7.º grado | 2 (9.ª natural) — o usa el locrio #2 |
+| **ii-7b5** | Locrio | Escala mayor desde el 7.º grado | b2 (b9) — o usa el locrio #2 (9.ª natural) |
 | **i-7** | Dórico | — | — |
 | **bVII7** (backdoor) | Lidio dominante | — | — |
 | **dim7** | Disminuida (semitono-tono) | Simétrica | — |
@@ -510,7 +510,7 @@ Después: sobre un vamp de C7, toca formas de tríada de D mayor, Ab mayor y Eb 
 
 En 1959, John Coltrane introdujo un sistema de sustitución que divide la octava en tres partes iguales (terceras mayores): **B - G - Eb** (o, de forma equivalente, tres notas cualesquiera a una tercera mayor de distancia). Esto crea tres centros tonales equidistantes entre sí.
 
-El ciclo: empezando desde cualquier tonalidad, baja una tercera mayor, luego otra tercera mayor, y vuelves al punto de partida:
+El ciclo: empezando desde cualquier tonalidad, baja una tercera mayor tres veces y vuelves al punto de partida:
 
 ```
 C → Ab → E → C  (descending major thirds)
@@ -556,9 +556,10 @@ El ciclo de Coltrane es un **triángulo inscrito en el círculo de quintas** —
        C
    F       G
  Bb           D
-  Eb         A
-    Ab     E
-       B(Db)
+Eb             A
+ Ab           E
+   Db      B
+       F#
 
 Triangle 1: C - E - Ab
 Triangle 2: D - F# - Bb
@@ -566,7 +567,7 @@ Triangle 3: Eb - G - B  ← Giant Steps triangle
 Triangle 4: F - A - Db
 ```
 
-Solo hay cuatro triángulos de terceras mayores distintos. Cada uno divide los doce sonidos en tres grupos de cuatro.
+Solo hay cuatro triángulos de terceras mayores distintos. Juntos dividen los doce sonidos en cuatro grupos de tres.
 
 ### Aplicar los Coltrane Changes a cualquier ii-V-I
 

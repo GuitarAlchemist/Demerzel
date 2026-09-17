@@ -184,7 +184,7 @@ Le drame de la forme sonate vient de ce que le second thème apparaît dans la �
 
 ### Application à la guitare
 
-- **Sonate op. 15 de Giuliani :** un mouvement en forme sonate classique d'école pour la guitare. Le premier mouvement suit strictement la forme sonate. Écoutez le premier thème en La majeur, une transition, un second thème en Mi majeur, le développement à travers diverses tonalités, puis la réexposition avec les deux thèmes désormais en La majeur.
+- **Sonate op. 15 de Giuliani :** un mouvement en forme sonate classique d'école pour la guitare. Le premier mouvement suit strictement la forme sonate. Écoutez le premier thème en Do majeur, une transition, un second thème en Sol majeur, le développement à travers diverses tonalités, puis la réexposition avec les deux thèmes désormais en Do majeur.
 - **Grande Sonate op. 22 de Sor :** l'œuvre pour guitare seule la plus ambitieuse de Sor. Le premier mouvement est une forme sonate de grande envergure avec une section de développement substantielle. Cette pièce prouve que la guitare peut porter les formes de l'époque classique dans toute leur ampleur.
 
 Lorsque vous étudiez ou jouez un mouvement en forme sonate, marquez les frontières entre les sections sur votre partition. Savoir où commence le développement change la façon dont vous phrasez chaque mesure.
@@ -417,7 +417,7 @@ Dans la forme sonate, la section de développement traverse souvent plusieurs to
 
 - Les définitions de la phrase, de la période et de la phrase-sentence suivent William Caplin, *Classical Form: A Theory of Formal Functions for the Instrumental Music of Haydn, Mozart, and Beethoven* (Oxford, 1998) — la théorie moderne de référence de la structure des phrases à l'époque classique
 - L'analyse de la forme sonate suit Charles Rosen, *Sonata Forms* (Norton, 1980) — le traitement canonique de la forme sonate comme principe souple plutôt que comme modèle figé
-- L'analyse des formes de la musique populaire suit Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blues Eyes"* (Oxford, 2009) — une application rigoureuse de l'analyse formelle au répertoire rock et pop
+- L'analyse des formes de la musique populaire suit Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blue Eyes"* (Oxford, 2009) — une application rigoureuse de l'analyse formelle au répertoire rock et pop
 - Références au répertoire de guitare tirées du canon pédagogique standard : études de Sor (op. 6, op. 31), Cinq Préludes de Villa-Lobos, transcriptions de Bach (luth/violoncelle), sonates de Giuliani
 - Typologie des cadences et interaction harmonie-forme conformes à Aldwell & Schachter, *Harmony and Voice Leading*
 - Distinction chaconne/passacaille reconnue comme contestée — les travaux modernes (Silbiger, Hudson) montrent que les compositeurs baroques employaient les termes de manière interchangeable

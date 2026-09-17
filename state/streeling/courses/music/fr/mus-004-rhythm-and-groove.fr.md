@@ -136,11 +136,11 @@ Chaque valeur de note dure la moitié de la valeur immédiatement plus longue :
 | Valeur de note | Durée en 4/4 | Symbole |
 |-----------|-----------------|--------|
 | Ronde | 4 temps | ○ |
-| Blanche | 2 temps | ♩ avec hampe |
+| Blanche | 2 temps | ○ avec hampe |
 | Noire | 1 temps | ♩ |
 | Croche | 1/2 temps | ♪ |
 | Double croche | 1/4 de temps | ♬ |
-| Triple croche | 1/8 de temps | (à double barre de ligature) |
+| Triple croche | 1/8 de temps | (à triple barre de ligature) |
 
 Cet arbre de divisions par deux signifie que toute figure rythmique se décompose en unités liées par des facteurs de 2.
 
@@ -429,8 +429,8 @@ Trois temps contre quatre — les deux regroupements ne tombent ensemble que tou
 
 ```
 12 subdivisions:  1  2  3  4  5  6  7  8  9 10 11 12
-4 grouping:       X     X        X        X  (every 3)
-3 grouping:       X        X        X        X  (every 4)
+4 grouping:       X        X        X        X  (every 3)
+3 grouping:       X           X           X     (every 4)
 Align at:         X (only at beat 1 of each cycle)
 ```
 
@@ -451,7 +451,7 @@ Le rock progressif et la musique classique moderne utilisent abondamment les deu
 
 ### Application à la guitare
 
-Beaucoup de guitaristes trouvent les polyrythmies plus faciles à sentir qu'à compter. Un point d'entrée pratique : grattez des noires avec la main droite tout en tapant des triolets du pied. Une fois que vous tenez les deux simultanément, vous ressentez la polyrythmie 4:3 dans votre corps.
+Beaucoup de guitaristes trouvent les polyrythmies plus faciles à sentir qu'à compter. Un point d'entrée pratique : grattez des noires avec la main droite tout en tapant des triolets de noires du pied (trois coups réguliers pour deux coups grattés). Une fois que vous tenez les deux simultanément, vous ressentez la polyrythmie 3:2 dans votre corps.
 
 ### Exercice pratique
 
@@ -492,7 +492,7 @@ Pour l'auditeur, l'effet est une sensation d'élan asymétrique — la musique r
 
 ### Exercice pratique
 
-Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en noires à 100 BPM. Sans vous arrêter, réinterprétez vos noires comme des croches pointées dans une 4/4 plus rapide (où la nouvelle noire = l'ancienne croche pointée). C'est une modulation métrique : même pulsation physique, signification métrique différente. Sentez comment votre corps comprend les mêmes notes comme appartenant à un tempo plus rapide.
+Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en noires à 100 BPM. Sans vous arrêter, réinterprétez vos noires comme des croches pointées dans une 4/4 plus lente (où la nouvelle croche pointée = l'ancienne noire : la nouvelle noire est à 75 BPM). C'est une modulation métrique : même pulsation physique, signification métrique différente. Sentez comment votre corps comprend les mêmes notes comme appartenant à un tempo plus lent.
 
 ---
 
@@ -530,7 +530,7 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 **2. Comptez le rythme du motif en doubles croches suivant, en 4/4, avec les syllabes standard : X-_-X-X-_-X-_-X (où X = jouer, _ = silence, sur un temps).**
 > Les syllabes sont « 1 e and a » pour un temps. Ce motif sur un temps se lit donc « 1 - and a » (on joue sur 1, &, a, et silence sur e). Sur un temps complet : jouer sur « 1 », silence sur « e », jouer sur « and », jouer sur « a ». Étendu à toute la mesure : « 1 - & a 2 - & a 3 - & a 4 - & a » avec le même motif d'accentuation.
 
-**3. Si le swing jazz standard utilise un ratio d'environ 60:40 pour les paires de croches, et un shuffle appuyé un ratio de 67:33 (ternaire), quelle différence concrète l'auditeur entend-il ?**
+**3. Si le swing jazz standard utilise un ratio d'environ 60:40 pour les paires de croches, et le swing appuyé un ratio de 67:33 (ternaire), quelle différence concrète l'auditeur entend-il ?**
 > À 60:40, le swing est relativement détendu — la première croche est légèrement plus longue, mais sans exagération. À 67:33, on a la pleine division ternaire, où la première note est exactement deux fois plus longue que la seconde. Les auditeurs perçoivent le 60:40 comme fluide et élégant (cool jazz, bebop), tandis que le 67:33 sonne rebondissant et plus lourd (blues, shuffles gospel). Le ratio 67:33 crée un balancement « pointé » net ; le 60:40 est plus discret.
 
 **4. Décrivez un motif de Travis picking de base : quelle main joue quoi, et quels temps sont couverts.**

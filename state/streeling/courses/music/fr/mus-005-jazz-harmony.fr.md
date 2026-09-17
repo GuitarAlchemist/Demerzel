@@ -209,16 +209,16 @@ Les shells avec la fondamentale sur la 5e corde gardent le voicing dans un regis
 
 Prenez un accord de quatre notes en position serrée et « faites tomber » la deuxième note la plus haute d'une octave. Cela répartit le voicing sur quatre cordes adjacentes — parfait pour la guitare.
 
-**Cmaj7 en position serrée :** B-E-G-C (de haut en bas : C-G-E-B en ordre ascendant, puis réarrangement avec la deuxième note depuis le haut abaissée)
+**Cmaj7 en position serrée :** G-B-C-E (du grave à l'aigu, deuxième renversement). Abaissez d'une octave la deuxième note depuis le haut (C) pour obtenir C-G-B-E, avec la fondamentale à la basse.
 
 **Cmaj7 en drop-2 (jeu de cordes 5-4-3-2) :**
 
 ```
 e ----
-B --0-- (B, the 7th)
-G --0-- (G, the 5th)
-D --2-- (E, the 3rd — dropped from close position)
-A --3-- (C, the root)
+B --5-- (E, the 3rd)
+G --4-- (B, the 7th)
+D --5-- (G, the 5th)
+A --3-- (C, the root — dropped from close position)
 E ----
 ```
 
@@ -339,7 +339,7 @@ With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
 
 Un accord de septième diminuée peut se substituer à un accord de septième de dominante situé un demi-ton sous l'une quelconque de ses quatre notes (parce que le dim7 est symétrique — chaque note est à une tierce mineure de la suivante).
 
-**Bdim7 peut se substituer à :** C7, Eb7, Gb7 ou A7 (accords de dominante dont la fondamentale est un demi-ton au-dessus de chaque note de l'accord diminué : B, D, F, Ab).
+**Bdim7 peut se substituer à :** G7, Bb7, Db7 ou E7 (accords de dominante dont la fondamentale est un demi-ton au-dessous de chaque note de l'accord diminué : Ab, B, D, F). Bdim7 est le 7b9 de chacun de ces accords, sans sa fondamentale.
 
 ### Accords diminués de passage
 
@@ -392,12 +392,12 @@ La théorie accord-gamme attribue une gamme à chaque accord, ce qui fournit un 
 | Qualité d'accord | Gamme | Origine | Notes à éviter |
 |--------------|-------|--------|-------------|
 | **Imaj7** | Ionien (majeur) | Gamme majeure | 4 (F en Do) |
-| **Imaj7#11** | Lydien | Mineur mélodique sur le 4e degré | Aucune |
-| **ii-7** | Dorien | Gamme majeure depuis le 2e degré | Aucune (la b6 ajoute de la couleur) |
+| **Imaj7#11** | Lydien | Gamme majeure depuis le 4e degré | Aucune |
+| **ii-7** | Dorien | Gamme majeure depuis le 2e degré | Aucune (la 6te naturelle ajoute de la couleur) |
 | **V7** (qui se résout) | Mixolydien | Gamme majeure depuis le 5e degré | 4 (mais utilisable comme note de passage) |
 | **V7#11** | Lydien dominant | Mineur mélodique depuis le 4e degré | Aucune |
 | **V7alt** | Altéré | Mineur mélodique depuis le 7e degré | Aucune |
-| **ii-7b5** | Locrien | Gamme majeure depuis le 7e degré | 2 (9e naturelle) — ou utiliser le locrien #2 |
+| **ii-7b5** | Locrien | Gamme majeure depuis le 7e degré | b2 (b9) — ou utiliser le locrien #2 (9e naturelle) |
 | **i-7** | Dorien | — | — |
 | **bVII7** (backdoor) | Lydien dominant | — | — |
 | **dim7** | Diminuée (demi-ton/ton) | Symétrique | — |
@@ -510,7 +510,7 @@ Ensuite : sur un vamp de C7, jouez des formes de triades de D majeur, Ab majeur 
 
 En 1959, John Coltrane a introduit un système de substitution qui divise l'octave en trois parties égales (tierces majeures) : **B - G - Eb** (ou, de manière équivalente, trois notes quelconques à une tierce majeure d'écart). Cela crée trois centres tonaux équidistants les uns des autres.
 
-Le cycle : en partant de n'importe quelle tonalité, descendez d'une tierce majeure, puis d'une autre tierce majeure, et vous revenez à votre point de départ :
+Le cycle : en partant de n'importe quelle tonalité, descendez trois fois d'une tierce majeure, et vous revenez à votre point de départ :
 
 ```
 C → Ab → E → C  (descending major thirds)
@@ -556,9 +556,10 @@ Le cycle de Coltrane est un **triangle inscrit dans le cycle des quintes** — t
        C
    F       G
  Bb           D
-  Eb         A
-    Ab     E
-       B(Db)
+Eb             A
+ Ab           E
+   Db      B
+       F#
 
 Triangle 1: C - E - Ab
 Triangle 2: D - F# - Bb
@@ -566,7 +567,7 @@ Triangle 3: Eb - G - B  ← Giant Steps triangle
 Triangle 4: F - A - Db
 ```
 
-Il n'existe que quatre triangles de tierces majeures distincts. Chacun divise les douze sons en trois groupes de quatre.
+Il n'existe que quatre triangles de tierces majeures distincts. Ensemble, ils divisent les douze sons en quatre groupes de trois.
 
 ### Appliquer les Coltrane Changes à n'importe quel ii-V-I
 

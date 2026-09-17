@@ -104,7 +104,7 @@ A **cadence** is a harmonic punctuation mark — the way a musical phrase comes 
 
 This is the strongest possible ending — the period at the end of a definitive statement. The bass moves from scale degree 5 up to 1 (or down a fifth), and the melody resolves to the tonic.
 
-**Guitar example (G major):** D → G, with the high G string ringing as the melody note.
+**Guitar example (G major):** D → G, with the high G (3rd fret, high E string) ringing as the melody note.
 
 #### Imperfect Authentic Cadence (IAC)
 
@@ -193,10 +193,10 @@ Play this slowly on guitar, one note at a time, and listen for each resolution:
 
 ```
 D7 chord:          G chord:
-e|--1-- (C)   →   e|--3-- (G)    C falls to B (on the B string: open)
-B|--1-- (F#)  →   B|--0-- (B)    F# would resolve to G, but here
-G|--2-- (A)   →   G|--0-- (G)    we hear the full chord redistribution
-D|--0-- (D)   →   D|--0-- (D→G bass)
+e|--2-- (F#)  →   e|--3-- (G)    F# rises a half step to G
+B|--1-- (C)   →   B|--0-- (B)    C falls a half step to B
+G|--2-- (A)   →   G|--0-- (G)    A moves down a step to G
+D|--0-- (D)   →   D|--0-- (D)    D stays (common tone)
 ```
 
 In practice on guitar, the voice leading is distributed across the chord shape rather than following strict four-part writing. But the principle holds: the tension notes find their targets.
@@ -300,10 +300,10 @@ In G major:
 | V (D) | D | V7/V = A7 | A-C#-E-G | C# |
 | vi (Em) | E | V7/vi = B7 | B-D#-F#-A | D# |
 | ii (Am) | A | V7/ii = E7 | E-G#-B-D | G# |
-| IV (C) | C | V7/IV = D7 | D-F#-A-C | (already diatonic!) |
+| IV (C) | C | V7/IV = G7 | G-B-D-F | F |
 | iii (Bm) | B | V7/iii = F#7 | F#-A#-C#-E | A#, C# |
 
-Note: V7/IV looks identical to V7, so it is usually only labeled as a secondary dominant when the IV chord follows in a context where it sounds like a local resolution rather than a predominant.
+Note: V7/IV is the tonic triad with a minor seventh added (I7). Its F natural turns the tonic into a dominant pointing at C, so it is heard as a secondary dominant rather than as a colored tonic.
 
 ### Guitar Example — A Chain of Secondary Dominants
 

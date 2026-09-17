@@ -136,11 +136,11 @@ Each note value is half the duration of the next longer one:
 | Note Value | Duration in 4/4 | Symbol |
 |-----------|-----------------|--------|
 | Whole note | 4 beats | ○ |
-| Half note | 2 beats | ♩ with stem |
+| Half note | 2 beats | ○ with stem |
 | Quarter note | 1 beat | ♩ |
 | Eighth note | 1/2 beat | ♪ |
 | Sixteenth note | 1/4 beat | ♬ |
-| Thirty-second note | 1/8 beat | (beamed twice) |
+| Thirty-second note | 1/8 beat | (three beams) |
 
 This halving tree means any rhythmic figure is decomposable into units that relate by factors of 2.
 
@@ -429,8 +429,8 @@ Three beats against four — each grouping lands together only every 12 subdivis
 
 ```
 12 subdivisions:  1  2  3  4  5  6  7  8  9 10 11 12
-4 grouping:       X     X        X        X  (every 3)
-3 grouping:       X        X        X        X  (every 4)
+4 grouping:       X        X        X        X  (every 3)
+3 grouping:       X           X           X     (every 4)
 Align at:         X (only at beat 1 of each cycle)
 ```
 
@@ -451,7 +451,7 @@ Progressive rock and modern classical music use both techniques heavily. African
 
 ### Guitar Application
 
-Many guitarists find polyrhythms easier to feel than to count. A practical entry point: strum quarter notes with the picking hand while tapping triplets with your foot. Once you can hold both simultaneously, you are feeling 4:3 polyrhythm in your body.
+Many guitarists find polyrhythms easier to feel than to count. A practical entry point: strum quarter notes with the picking hand while tapping quarter-note triplets with your foot (three evenly spaced taps across every two strums). Once you can hold both simultaneously, you are feeling a 3:2 polyrhythm in your body.
 
 ### Practice Exercise
 
@@ -492,7 +492,7 @@ For the listener, the effect is a sense of asymmetric drive — the music refuse
 
 ### Practice Exercise
 
-Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100 BPM. Without stopping, reinterpret your quarter notes as dotted eighths in a faster 4/4 (where the new quarter = old dotted eighth). This is a metric modulation: same physical pulse, different metric meaning. Feel how your body understands the same notes as belonging to a faster tempo.
+Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100 BPM. Without stopping, reinterpret your quarter notes as dotted eighths in a slower 4/4 (where the new dotted eighth = old quarter, so the new quarter is at 75 BPM). This is a metric modulation: same physical pulse, different metric meaning. Feel how your body understands the same notes as belonging to a slower tempo.
 
 ---
 
@@ -530,7 +530,7 @@ Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100
 **2. Count the rhythm of the following 16th-note pattern in 4/4 using the standard syllables: X-_-X-X-_-X-_-X (where X = play, _ = rest, over one beat).**
 > The syllables are "1 e and a" for one beat. So this pattern over one beat reads "1 - and a" (playing on 1, &, a, and rest on e). Over a full beat: play on "1", rest on "e", play on "and", play on "a". Extended across the measure: "1 - & a 2 - & a 3 - & a 4 - & a" with the same accent pattern.
 
-**3. If standard jazz swing uses approximately a 60:40 ratio for eighth-note pairs, and a hard shuffle uses 67:33 (triplet-based), what is the practical difference a listener hears?**
+**3. If standard jazz swing uses approximately a 60:40 ratio for eighth-note pairs, and hard swing uses 67:33 (triplet-based), what is the practical difference a listener hears?**
 > At 60:40, the swing is relatively relaxed — the first eighth is slightly longer but not exaggerated. At 67:33, the feel is the full triplet division where the first note is exactly twice as long as the second. Listeners hear the 60:40 as smooth and elegant (cool jazz, bebop), while 67:33 sounds bouncy and heavier (blues, gospel shuffles). The 67:33 ratio creates a clear "dotted" lilt; the 60:40 is more understated.
 
 **4. Describe a basic Travis picking pattern in terms of which hand plays what, and which beats are covered.**

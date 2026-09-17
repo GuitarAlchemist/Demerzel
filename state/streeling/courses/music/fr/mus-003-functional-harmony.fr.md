@@ -104,7 +104,7 @@ Une **cadence** est un signe de ponctuation harmonique — la manière dont une 
 
 C'est la conclusion la plus forte possible — le point final d'une affirmation définitive. La basse va du degré 5 vers le haut jusqu'au degré 1 (ou descend d'une quinte), et la mélodie se résout sur la tonique.
 
-**Exemple à la guitare (Sol majeur) :** D → G, avec la corde aiguë de Sol qui résonne comme note de mélodie.
+**Exemple à la guitare (Sol majeur) :** D → G, avec le Sol aigu (3e case, corde de Mi aigu) qui résonne comme note de mélodie.
 
 #### Cadence imparfaite (IAC)
 
@@ -193,10 +193,10 @@ Jouez ceci lentement à la guitare, une note à la fois, en écoutant chaque ré
 
 ```
 D7 chord:          G chord:
-e|--1-- (C)   →   e|--3-- (G)    C falls to B (on the B string: open)
-B|--1-- (F#)  →   B|--0-- (B)    F# would resolve to G, but here
-G|--2-- (A)   →   G|--0-- (G)    we hear the full chord redistribution
-D|--0-- (D)   →   D|--0-- (D→G bass)
+e|--2-- (F#)  →   e|--3-- (G)    F# rises a half step to G
+B|--1-- (C)   →   B|--0-- (B)    C falls a half step to B
+G|--2-- (A)   →   G|--0-- (G)    A moves down a step to G
+D|--0-- (D)   →   D|--0-- (D)    D stays (common tone)
 ```
 
 En pratique, à la guitare, la conduite des voix se répartit sur la forme d'accord au lieu de suivre une écriture stricte à quatre voix. Mais le principe tient : les notes de tension trouvent leurs cibles.
@@ -300,10 +300,10 @@ En Sol majeur :
 | V (D) | D | V7/V = A7 | A-C#-E-G | C# |
 | vi (Em) | E | V7/vi = B7 | B-D#-F#-A | D# |
 | ii (Am) | A | V7/ii = E7 | E-G#-B-D | G# |
-| IV (C) | C | V7/IV = D7 | D-F#-A-C | (déjà diatonique !) |
+| IV (C) | C | V7/IV = G7 | G-B-D-F | F |
 | iii (Bm) | B | V7/iii = F#7 | F#-A#-C#-E | A#, C# |
 
-Remarque : V7/IV a exactement l'apparence de V7, c'est pourquoi on ne l'étiquette généralement comme dominante secondaire que lorsque l'accord de IV suit dans un contexte où il sonne comme une résolution locale plutôt que comme une prédominante.
+Remarque : V7/IV est l'accord de tonique auquel on ajoute une septième mineure (I7). Son Fa bécarre transforme la tonique en dominante tournée vers C : on l'entend donc comme une dominante secondaire plutôt que comme une tonique colorée.
 
 ### Exemple à la guitare — une chaîne de dominantes secondaires
 

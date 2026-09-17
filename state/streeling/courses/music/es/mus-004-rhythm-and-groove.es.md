@@ -136,11 +136,11 @@ Cada figura dura la mitad que la inmediatamente más larga:
 | Figura | Duración en 4/4 | Símbolo |
 |-----------|-----------------|--------|
 | Redonda | 4 tiempos | ○ |
-| Blanca | 2 tiempos | ♩ con plica |
+| Blanca | 2 tiempos | ○ con plica |
 | Negra | 1 tiempo | ♩ |
 | Corchea | 1/2 tiempo | ♪ |
 | Semicorchea | 1/4 de tiempo | ♬ |
-| Fusa | 1/8 de tiempo | (con doble barra) |
+| Fusa | 1/8 de tiempo | (con triple barra) |
 
 Este árbol de divisiones a la mitad significa que cualquier figura rítmica se puede descomponer en unidades que se relacionan por factores de 2.
 
@@ -429,8 +429,8 @@ Tres tiempos contra cuatro — las dos agrupaciones solo coinciden cada 12 subdi
 
 ```
 12 subdivisions:  1  2  3  4  5  6  7  8  9 10 11 12
-4 grouping:       X     X        X        X  (every 3)
-3 grouping:       X        X        X        X  (every 4)
+4 grouping:       X        X        X        X  (every 3)
+3 grouping:       X           X           X     (every 4)
 Align at:         X (only at beat 1 of each cycle)
 ```
 
@@ -451,7 +451,7 @@ El rock progresivo y la música clásica moderna usan ambas técnicas intensamen
 
 ### Aplicación a la guitarra
 
-Muchos guitarristas encuentran las polirritmias más fáciles de sentir que de contar. Un punto de entrada práctico: rasguea negras con la mano que pulsa mientras marcas tresillos con el pie. Cuando puedas mantener ambas cosas a la vez, estarás sintiendo la polirritmia 4:3 en tu cuerpo.
+Muchos guitarristas encuentran las polirritmias más fáciles de sentir que de contar. Un punto de entrada práctico: rasguea negras con la mano que pulsa mientras marcas tresillos de negra con el pie (tres golpes regulares por cada dos rasgueos). Cuando puedas mantener ambas cosas a la vez, estarás sintiendo la polirritmia 3:2 en tu cuerpo.
 
 ### Ejercicio práctico
 
@@ -492,7 +492,7 @@ Para el oyente, el efecto es una sensación de impulso asimétrico — la músic
 
 ### Ejercicio práctico
 
-Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BPM. Sin parar, reinterpreta tus negras como corcheas con puntillo en un 4/4 más rápido (donde la nueva negra = la antigua corchea con puntillo). Esto es una modulación métrica: el mismo pulso físico, un significado métrico distinto. Siente cómo tu cuerpo entiende las mismas notas como pertenecientes a un tempo más rápido.
+Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BPM. Sin parar, reinterpreta tus negras como corcheas con puntillo en un 4/4 más lento (donde la nueva corchea con puntillo = la antigua negra, así que la nueva negra va a 75 BPM). Esto es una modulación métrica: el mismo pulso físico, un significado métrico distinto. Siente cómo tu cuerpo entiende las mismas notas como pertenecientes a un tempo más lento.
 
 ---
 
@@ -530,7 +530,7 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 **2. Cuenta el ritmo del siguiente patrón de semicorcheas en 4/4 con las sílabas estándar: X-_-X-X-_-X-_-X (donde X = tocar, _ = silencio, sobre un tiempo).**
 > Las sílabas son "1 e and a" para un tiempo. Así que este patrón sobre un tiempo se lee "1 - and a" (tocando en 1, &, a, y silencio en e). Sobre un tiempo completo: tocar en "1", silencio en "e", tocar en "and", tocar en "a". Extendido a todo el compás: "1 - & a 2 - & a 3 - & a 4 - & a" con el mismo patrón de acentos.
 
-**3. Si el swing de jazz estándar usa aproximadamente una proporción de 60:40 para los pares de corcheas, y un shuffle marcado usa 67:33 (basado en tresillos), ¿qué diferencia práctica oye el oyente?**
+**3. Si el swing de jazz estándar usa aproximadamente una proporción de 60:40 para los pares de corcheas, y el swing marcado usa 67:33 (basado en tresillos), ¿qué diferencia práctica oye el oyente?**
 > A 60:40, el swing es relativamente relajado — la primera corchea es algo más larga, pero sin exagerar. A 67:33, el feeling es la división completa de tresillo, en la que la primera nota dura exactamente el doble que la segunda. Los oyentes perciben el 60:40 como suave y elegante (cool jazz, bebop), mientras que el 67:33 suena saltarín y más pesado (blues, shuffles de gospel). La proporción 67:33 crea un balanceo "con puntillo" claro; la 60:40 es más discreta.
 
 **4. Describe un patrón básico de Travis picking: qué mano toca qué y qué tiempos se cubren.**

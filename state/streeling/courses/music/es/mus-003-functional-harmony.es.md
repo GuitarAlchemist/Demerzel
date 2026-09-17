@@ -104,7 +104,7 @@ Una **cadencia** es un signo de puntuación armónico — la forma en que una fr
 
 Es el final más fuerte posible — el punto final de una afirmación definitiva. El bajo va del grado 5 hacia arriba hasta el 1 (o baja una quinta), y la melodía resuelve en la tónica.
 
-**Ejemplo en la guitarra (Sol mayor):** D → G, con la cuerda aguda de Sol sonando como nota de la melodía.
+**Ejemplo en la guitarra (Sol mayor):** D → G, con el Sol agudo (traste 3, cuerda de Mi aguda) sonando como nota de la melodía.
 
 #### Cadencia auténtica imperfecta (IAC)
 
@@ -193,10 +193,10 @@ Toca esto despacio en la guitarra, nota a nota, y escucha cada resolución:
 
 ```
 D7 chord:          G chord:
-e|--1-- (C)   →   e|--3-- (G)    C falls to B (on the B string: open)
-B|--1-- (F#)  →   B|--0-- (B)    F# would resolve to G, but here
-G|--2-- (A)   →   G|--0-- (G)    we hear the full chord redistribution
-D|--0-- (D)   →   D|--0-- (D→G bass)
+e|--2-- (F#)  →   e|--3-- (G)    F# rises a half step to G
+B|--1-- (C)   →   B|--0-- (B)    C falls a half step to B
+G|--2-- (A)   →   G|--0-- (G)    A moves down a step to G
+D|--0-- (D)   →   D|--0-- (D)    D stays (common tone)
 ```
 
 En la práctica, en la guitarra, la conducción de voces se reparte por la forma del acorde en lugar de seguir una escritura estricta a cuatro voces. Pero el principio se mantiene: las notas de tensión encuentran sus destinos.
@@ -300,10 +300,10 @@ En Sol mayor:
 | V (D) | D | V7/V = A7 | A-C#-E-G | C# |
 | vi (Em) | E | V7/vi = B7 | B-D#-F#-A | D# |
 | ii (Am) | A | V7/ii = E7 | E-G#-B-D | G# |
-| IV (C) | C | V7/IV = D7 | D-F#-A-C | (¡ya es diatónica!) |
+| IV (C) | C | V7/IV = G7 | G-B-D-F | F |
 | iii (Bm) | B | V7/iii = F#7 | F#-A#-C#-E | A#, C# |
 
-Nota: V7/IV es idéntico en apariencia a V7, así que normalmente solo se etiqueta como dominante secundaria cuando el acorde de IV le sigue en un contexto en el que suena como una resolución local y no como un predominante.
+Nota: V7/IV es el acorde de tónica con una séptima menor añadida (I7). Su Fa natural convierte la tónica en una dominante que apunta a C, así que se oye como dominante secundaria y no como una tónica coloreada.
 
 ### Ejemplo en la guitarra — una cadena de dominantes secundarias
 

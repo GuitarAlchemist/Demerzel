@@ -184,7 +184,7 @@ El drama de la forma sonata proviene de que el segundo tema aparece en la tonali
 
 ### Aplicación a la guitarra
 
-- **Sonata Op. 15 de Giuliani:** un movimiento en forma sonata clásica de manual para guitarra. El primer movimiento sigue estrictamente la forma sonata. Escucha el primer tema en La mayor, una transición, un segundo tema en Mi mayor, el desarrollo por varias tonalidades y luego la reexposición con ambos temas ya en La mayor.
+- **Sonata Op. 15 de Giuliani:** un movimiento en forma sonata clásica de manual para guitarra. El primer movimiento sigue estrictamente la forma sonata. Escucha el primer tema en Do mayor, una transición, un segundo tema en Sol mayor, el desarrollo por varias tonalidades y luego la reexposición con ambos temas ya en Do mayor.
 - **Gran Sonata Op. 22 de Sor:** la obra para guitarra sola más ambiciosa de Sor. El primer movimiento es una forma sonata a gran escala con una sección de desarrollo sustancial. Esta pieza demuestra que la guitarra puede sostener las formas de la época clásica con todo su peso.
 
 Cuando estudies o interpretes un movimiento en forma sonata, marca en la partitura los límites entre secciones. Saber dónde empieza el desarrollo cambia cómo fraseas cada compás.
@@ -417,7 +417,7 @@ En la forma sonata, la sección de desarrollo suele pasar por varias tonalidades
 
 - Las definiciones de frase, período y oración siguen a William Caplin, *Classical Form: A Theory of Formal Functions for the Instrumental Music of Haydn, Mozart, and Beethoven* (Oxford, 1998) — la teoría moderna de referencia sobre la estructura de frases de la época clásica
 - El análisis de la forma sonata sigue a Charles Rosen, *Sonata Forms* (Norton, 1980) — el tratamiento canónico de la forma sonata como principio flexible y no como plantilla fija
-- El análisis de las formas de la música popular sigue a Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blues Eyes"* (Oxford, 2009) — una aplicación rigurosa del análisis formal al repertorio de rock y pop
+- El análisis de las formas de la música popular sigue a Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blue Eyes"* (Oxford, 2009) — una aplicación rigurosa del análisis formal al repertorio de rock y pop
 - Referencias al repertorio de guitarra tomadas del canon pedagógico estándar: estudios de Sor (Op. 6, Op. 31), Cinco Preludios de Villa-Lobos, transcripciones de Bach para laúd/violonchelo, sonatas de Giuliani
 - Tipología de cadencias e interacción armónico-formal coherentes con Aldwell & Schachter, *Harmony and Voice Leading*
 - La distinción chacona/passacaglia se reconoce como discutida — la investigación moderna (Silbiger, Hudson) muestra que los compositores barrocos usaban los términos indistintamente
