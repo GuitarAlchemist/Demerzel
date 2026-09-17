@@ -79,5 +79,5 @@ Consumer repos generate conscience signals (discomfort, regret, anticipatory war
 
 - [Asimov Constitution](../../constitutions/asimov.constitution.md)
 - [Galactic Protocol](../../contracts/galactic-protocol.md)
-- [VSM Course CYB-001](../../state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md)
+- [VSM Course CYB-001](../../state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md)
 - [Demerzel Mandate](../../constitutions/demerzel-mandate.md)
