@@ -95,7 +95,7 @@ Les six types de messages du Galactic Protocol (directive, knowledge-package, co
 
 **Théorie du contrôle :** Après des corrections échouées à répétition, le contrôleur augmente exponentiellement le temps d'attente avant de réessayer, ce qui évite l'épuisement des ressources et laisse au système le temps de se stabiliser.
 
-**Application à la gouvernance :** Si une directive est émise et que la conformité n'est pas atteinte après un cycle, attendre 2 cycles avant de la réémettre. En cas de non-conformité persistante, attendre 4 cycles. Cela évite que Demerzel ne martèle un dépôt qui a peut-être besoin de changements structurels (et non de simples correctifs rapides).
+**Application à la gouvernance :** Si une directive est émise et que la conformité n'est pas atteinte après un cycle, la réémettre au cycle suivant. En cas de non-conformité persistante, attendre 2 cycles, puis 4. Cela évite que Demerzel ne martèle un dépôt qui a peut-être besoin de changements structurels (et non de simples correctifs rapides).
 
 **Mise en œuvre :**
 - Première non-conformité : réémettre la directive au cycle suivant

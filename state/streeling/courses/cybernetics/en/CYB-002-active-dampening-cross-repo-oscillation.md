@@ -95,7 +95,7 @@ The Galactic Protocol's six message types (directive, knowledge-package, complia
 
 **Control theory:** After repeated failed corrections, the controller increases wait time exponentially before retrying, preventing resource exhaustion and giving the system time to stabilize.
 
-**Governance application:** If a directive is issued and compliance is not achieved after one cycle, wait 2 cycles before re-issuing. If still non-compliant, wait 4 cycles. This prevents Demerzel from hammering a repo that may need structural changes (not just quick fixes).
+**Governance application:** If a directive is issued and compliance is not achieved after one cycle, re-issue it at the next cycle. If still non-compliant, wait 2 cycles, then 4. This prevents Demerzel from hammering a repo that may need structural changes (not just quick fixes).
 
 **Implementation:**
 - First non-compliance: re-issue directive next cycle

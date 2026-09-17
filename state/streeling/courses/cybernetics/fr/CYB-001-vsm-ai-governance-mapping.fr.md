@@ -12,7 +12,7 @@ Le modèle du système viable (VSM) de Stafford Beer fournit-il une correspondan
 
 ## Résumé
 
-Le modèle du système viable correspond structurellement aux cadres de gouvernance de l'IA avec une grande fidélité. Les cinq systèmes du VSM, ainsi que le Système 3*, ont des équivalents clairs dans l'architecture de Demerzel. Trois lacunes importantes apparaissent, qui exigent une adaptation au-delà du VSM classique.
+Le modèle du système viable correspond structurellement aux cadres de gouvernance de l'IA avec une grande fidélité. Les cinq systèmes du VSM, ainsi que le Système 3*, ont des équivalents clairs dans l'architecture de Demerzel. Quatre lacunes importantes apparaissent (trois dans la section 2, le canal algédonique manquant dans la section 4), qui exigent une adaptation au-delà du VSM classique.
 
 ## Correspondance VSM-Demerzel
 

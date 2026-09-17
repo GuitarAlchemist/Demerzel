@@ -12,7 +12,7 @@
 
 ## Resumen
 
-El modelo de sistema viable se corresponde estructuralmente con los marcos de gobernanza de la IA con gran fidelidad. Los cinco sistemas del VSM, más el Sistema 3*, tienen equivalentes claros en la arquitectura de Demerzel. Aparecen tres brechas significativas que requieren una adaptación más allá del VSM clásico.
+El modelo de sistema viable se corresponde estructuralmente con los marcos de gobernanza de la IA con gran fidelidad. Los cinco sistemas del VSM, más el Sistema 3*, tienen equivalentes claros en la arquitectura de Demerzel. Aparecen cuatro brechas significativas (tres en la sección 2 y el canal algedónico ausente en la sección 4) que requieren una adaptación más allá del VSM clásico.
 
 ## Correspondencia VSM-Demerzel
 

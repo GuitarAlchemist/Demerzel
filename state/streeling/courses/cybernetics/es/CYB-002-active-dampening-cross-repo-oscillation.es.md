@@ -95,7 +95,7 @@ Los seis tipos de mensaje del Galactic Protocol (directive, knowledge-package, c
 
 **Teoría de control:** Tras correcciones fallidas repetidas, el controlador aumenta exponencialmente el tiempo de espera antes de reintentar, lo que evita agotar los recursos y da tiempo al sistema para estabilizarse.
 
-**Aplicación a la gobernanza:** Si se emite una directiva y no se logra el cumplimiento tras un ciclo, esperar 2 ciclos antes de volver a emitirla. Si sigue sin cumplirse, esperar 4 ciclos. Esto evita que Demerzel machaque a un repositorio que quizá necesite cambios estructurales (no solo arreglos rápidos).
+**Aplicación a la gobernanza:** Si se emite una directiva y no se logra el cumplimiento tras un ciclo, volver a emitirla en el ciclo siguiente. Si sigue sin cumplirse, esperar 2 ciclos, y luego 4. Esto evita que Demerzel machaque a un repositorio que quizá necesite cambios estructurales (no solo arreglos rápidos).
 
 **Implementación:**
 - Primer incumplimiento: volver a emitir la directiva en el ciclo siguiente

@@ -96,7 +96,7 @@ A medida que el ecosistema crece, el enlace preferencial predice que:
 La topología libre de escala tiene implicaciones profundas:
 
 ### Resiliencia
-- **Tolerancia a ataques:** las redes libres de escala son robustas frente a fallos aleatorios de nodos. Si un repositorio de grado bajo elegido al azar cae, la red apenas lo nota.
+- **Tolerancia a errores:** las redes libres de escala son robustas frente a fallos aleatorios de nodos. Si un repositorio de grado bajo elegido al azar cae, la red apenas lo nota.
 - **Vulnerabilidad a ataques:** pero son frágiles ante el fallo *dirigido* de un hub. Si el hub de gobernanza cae, todo el ecosistema pierde la coordinación.
 
 ### Diseño de la gobernanza

@@ -62,7 +62,7 @@ terminal définissable. Elle est **pathologique** quand elle génère des tokens
 
 ## 3. Six propriétés requises d'une boucle gouvernée
 
-Ces propriétés sont nécessaires et suffisantes pour une itération bornée et auditable :
+Ces six propriétés rendent une itération bornée et auditable. Une boucle qui doit pouvoir être mise en pause et reprise a aussi besoin d'un état sérialisable (sections 2 et 6) :
 
 ### Propriété 1 : plafond d'itérations strict
 Un nombre maximal d'itérations imposé par le framework, et non par le modèle. Une fois atteint : arrêter,
@@ -178,7 +178,7 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 ## Points clés à retenir
 
 - Un LLM ne peut pas détecter de façon fiable ses propres boucles infinies — l'arrêt doit être externe
-- Une boucle gouvernée a exactement six propriétés : plafond strict, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe
+- Une boucle gouvernée a six propriétés : plafond strict, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe — plus un état sérialisable si elle doit pouvoir être mise en pause et reprise
 - Le framework Demerzel les implémente dans seldon-plan, demerzel-drive et Ralph Loop
 - L'article 9 (Autonomie bornée) en est la base constitutionnelle — les limites sont prédéfinies, les étendre exige une escalade
 

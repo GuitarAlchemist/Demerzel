@@ -127,7 +127,7 @@ Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le syst
 
 ### Signal 6 : le ratio de variété comme paramètre d'ordre
 
-D'après la cybernétique (CYB-003), le ratio de variété mesure si la gouvernance a une complexité suffisante pour faire face à son environnement :
+D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations (la vérification de la loi d'Ashby) mesure si la gouvernance a une complexité suffisante pour faire face à son environnement. Ce n'est pas le ratio dimensionnel R = V_amplifiers / V_attenuators de CYB-003, dont la valeur régulatrice est saine en dessous de 1.0 par construction :
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -181,7 +181,7 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
 
 3. Comptez les politiques dans `policies/` et relevez le score de santé. Estimez le rendement marginal actuel de la dernière politique ajoutée.
 
-4. **Expérience de pensée :** Si les quatre dépôts consommateurs atteignaient soudain 100 % de conformité, quelle transition de phase cela représenterait-il ? Est-ce souhaitable ?
+4. **Expérience de pensée :** Si les trois dépôts consommateurs (ix, tars, ga) atteignaient soudain 100 % de conformité, quelle transition de phase cela représenterait-il ? Est-ce souhaitable ?
 
 ---
 

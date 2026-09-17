@@ -127,7 +127,7 @@ Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuert
 
 ### Señal 6: el cociente de variedad como parámetro de orden
 
-Desde la cibernética (CYB-003), el cociente de variedad mide si la gobernanza tiene la complejidad suficiente para manejar su entorno:
+Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones (la comprobación de la ley de Ashby) mide si la gobernanza tiene la complejidad suficiente para manejar su entorno. No es el cociente dimensional R = V_amplifiers / V_attenuators de CYB-003, cuyo valor regulatorio es sano por debajo de 1.0 por diseño:
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -181,7 +181,7 @@ Usando el estado actual de la gobernanza de Demerzel:
 
 3. Cuenta las políticas de `policies/` y toma la puntuación de salud. Estima el rendimiento marginal actual de la última política añadida.
 
-4. **Experimento mental:** Si los cuatro repositorios consumidores alcanzaran de repente el 100 % de cumplimiento, ¿qué transición de fase representaría eso? ¿Es deseable?
+4. **Experimento mental:** Si los tres repositorios consumidores (ix, tars, ga) alcanzaran de repente el 100 % de cumplimiento, ¿qué transición de fase representaría eso? ¿Es deseable?
 
 ---
 

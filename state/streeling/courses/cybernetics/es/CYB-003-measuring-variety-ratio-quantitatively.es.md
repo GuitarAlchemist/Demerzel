@@ -159,10 +159,10 @@ El cociente de variedad solo cuenta la mitad de la historia. También debemos me
 | Fuente | Estimación (N) | Variedad V |
 |--------|-------------|-----------|
 | Repositorios consumidores (ix, tars, ga) | 3 | 1.58 bits |
-| Combinaciones de estados de los repositorios (3 repositorios x ~10 estados cada uno) | 30 | 4.91 bits |
+| Combinaciones de estados de los repositorios (3 repositorios x ~10 estados cada uno) | 10^3 = 1000 | 9.97 bits |
 | Cambios del entorno externo (bibliotecas, API, modelos) | ~100 | 6.64 bits |
 
-**Variedad total de perturbaciones externas:** V_D_ext = **6.64 bits** (dominada por los cambios del entorno)
+**Variedad total de perturbaciones externas:** V_D_ext = **9.97 bits** (dominada por las combinaciones de estados de los repositorios)
 
 ### Perturbaciones internas (V_D_int)
 | Fuente | Estimación (N) | Variedad V |
@@ -182,16 +182,16 @@ V(regulatory response) >= V(disturbance)
 ```
 
 - V_R_amp = 6.32 bits
-- V_D = max(V_D_ext, V_D_int) = 9.38 bits
-- **Brecha: 9.38 - 6.32 = 3.06 bits**
+- V_D = max(V_D_ext, V_D_int) = 9.97 bits
+- **Brecha: 9.97 - 6.32 = 3.65 bits**
 
-Esto significa que el sistema regulatorio se enfrenta a aproximadamente 2^3.06 = 8x más variedad de perturbaciones de la que puede producir en variedad de respuestas. La brecha se absorbe mediante:
+Esto significa que el sistema regulatorio se enfrenta a aproximadamente 2^3.65 ≈ 12.6x más variedad de perturbaciones de la que puede producir en variedad de respuestas. La brecha se absorbe mediante:
 
 1. **Escalado a humanos**: el sistema de umbrales de confianza deriva las decisiones difíciles a humanos, tomando prestada su variedad
 2. **Prevalencia constitucional**: las leyes de Asimov reducen las decisiones complejas a una elección binaria (seguro/inseguro), lo que disminuye la variedad requerida
 3. **Ciclo PDCA**: el procesamiento secuencial convierte perturbaciones paralelas en colas manejables
 
-Son mecanismos legítimos de absorción de variedad, pero la brecha de 3 bits sugiere que Demerzel debería vigilar si la complejidad de las interacciones entre políticas crece más rápido que la capacidad regulatoria.
+Son mecanismos legítimos de absorción de variedad, pero la brecha de 3.65 bits sugiere que Demerzel debería vigilar si la complejidad de las interacciones entre políticas crece más rápido que la capacidad regulatoria.
 
 ## Protocolo de medición
 
@@ -256,7 +256,7 @@ La validación cruzada con GPT-4o confirmó:
 2. **El modelo aditivo (sumar log-variedades) es válido** para dimensiones independientes, pero demasiado simplista cuando los componentes interactúan. La separación en dimensiones (conductual, estructural, regulatoria) lo resuelve tratando cada dimensión de forma independiente.
 3. **GPT-4o calculó un cociente compuesto ingenuo de -2.8**, tratando amplificadores y atenuadores como una única suma aditiva. Esto es incorrecto: una variedad negativa carece de sentido (no se pueden tener menos de cero estados distinguibles). El modelo por dimensiones evita este error.
 4. **Ambos modelos coinciden en que R_regulatory < 1.0 es lo esperado** para un sistema de gobernanza. La gobernanza es intrínsecamente atenuadora.
-5. **La brecha regulatoria de 3 bits** es un hallazgo nuevo que no aparece en el análisis de GPT-4o. Surge de calcular por separado la variedad de las perturbaciones, algo que GPT-4o no hizo.
+5. **La brecha regulatoria de 3.65 bits** es un hallazgo nuevo que no aparece en el análisis de GPT-4o. Surge de calcular por separado la variedad de las perturbaciones, algo que GPT-4o no hizo.
 
 **Confianza de la validación cruzada: 0.85** (T: ambos modelos coinciden en los fundamentos; el refinamiento por dimensiones aporta valor más allá del análisis de GPT-4o)
 
@@ -264,7 +264,7 @@ La validación cruzada con GPT-4o confirmó:
 
 1. **Seguir los cocientes de variedad en cada ciclo**: añadir una instantánea de variedad a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Vigilar la deriva de los cocientes por dimensión.
 2. **Añadir puertas de calidad estructurales**: el cociente estructural (17.00) está por encima del rango saludable. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones para aumentar la atenuación sin reducir la generatividad.
-3. **Vigilar la brecha regulatoria de 3 bits**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente de perturbación interna. A medida que crezcan las políticas, esta brecha se ampliará de forma cuadrática. Considerar agrupar las políticas u organizarlas jerárquicamente.
+3. **Vigilar la brecha regulatoria de 3.65 bits**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente de perturbación interna. A medida que crezcan las políticas, el número de pares crecerá de forma cuadrática, pero su variedad log2(n(n-1)/2) solo crecerá de forma logarítmica, unos 2 bits cada vez que se duplique el número de políticas; supera el término de los estados de los repositorios (9.97 bits) a partir de 46 políticas. Considerar agrupar las políticas u organizarlas jerárquicamente.
 4. **El escalado a humanos es un puente de variedad**: el sistema de umbrales de confianza (Artículo 6: Escalado) es el mecanismo principal de Demerzel para absorber la variedad que supera su capacidad regulatoria. Es una característica, no una limitación.
 5. **Hacer evolucionar la sección 6 de la gramática**: la sección de variedad requerida de la gramática `sci-cybernetics.ebnf` (líneas 78-82) debería ampliarse con producciones de medición cuantitativa.
 
@@ -286,7 +286,7 @@ La validación cruzada con GPT-4o confirmó:
 
 ## Preguntas de seguimiento para el ciclo 004
 
-1. ¿Puede cerrarse la brecha regulatoria de 3 bits mediante una agrupación jerárquica de políticas (reduciendo las interacciones por pares de O(n^2) a O(n log n))?
+1. ¿Puede cerrarse la brecha regulatoria de 3.65 bits mediante una agrupación jerárquica de políticas (reduciendo las interacciones por pares de O(n^2) a O(n log n))?
 2. ¿Cómo debería seguirse el uso de las producciones de gramática para detectar producciones muertas y orientar la atenuación estructural?
 3. ¿Cuál es la relación, desde la teoría de la información, entre la lógica tetravalente de Demerzel (T/F/U/C) y la entropía de Shannon? ¿Lleva U (Unknown) más bits que T (True)?
 

@@ -159,10 +159,10 @@ Le ratio de variété ne raconte que la moitié de l'histoire. Il faut aussi mes
 | Source | Estimation (N) | Variété V |
 |--------|-------------|-----------|
 | Dépôts consommateurs (ix, tars, ga) | 3 | 1.58 bits |
-| Combinaisons d'états des dépôts (3 dépôts x ~10 états chacun) | 30 | 4.91 bits |
+| Combinaisons d'états des dépôts (3 dépôts x ~10 états chacun) | 10^3 = 1000 | 9.97 bits |
 | Changements de l'environnement externe (bibliothèques, API, modèles) | ~100 | 6.64 bits |
 
-**Variété totale des perturbations externes :** V_D_ext = **6.64 bits** (dominée par les changements d'environnement)
+**Variété totale des perturbations externes :** V_D_ext = **9.97 bits** (dominée par les combinaisons d'états des dépôts)
 
 ### Perturbations internes (V_D_int)
 | Source | Estimation (N) | Variété V |
@@ -182,16 +182,16 @@ V(regulatory response) >= V(disturbance)
 ```
 
 - V_R_amp = 6.32 bits
-- V_D = max(V_D_ext, V_D_int) = 9.38 bits
-- **Écart : 9.38 - 6.32 = 3.06 bits**
+- V_D = max(V_D_ext, V_D_int) = 9.97 bits
+- **Écart : 9.97 - 6.32 = 3.65 bits**
 
-Cela signifie que le système régulateur fait face à environ 2^3.06 = 8x plus de variété de perturbations qu'il ne peut produire de variété de réponses. L'écart est absorbé par :
+Cela signifie que le système régulateur fait face à environ 2^3.65 ≈ 12.6x plus de variété de perturbations qu'il ne peut produire de variété de réponses. L'écart est absorbé par :
 
 1. **L'escalade vers des humains** — le système de seuils de confiance oriente les décisions difficiles vers des humains, en empruntant leur variété
 2. **La primauté constitutionnelle** — les lois d'Asimov ramènent les décisions complexes à un choix binaire (sûr/dangereux), ce qui réduit la variété requise
 3. **Le cycle PDCA** — le traitement séquentiel convertit des perturbations parallèles en files d'attente gérables
 
-Ce sont des mécanismes légitimes d'absorption de la variété, mais l'écart de 3 bits suggère que Demerzel devrait surveiller si la complexité des interactions entre politiques croît plus vite que la capacité de régulation.
+Ce sont des mécanismes légitimes d'absorption de la variété, mais l'écart de 3.65 bits suggère que Demerzel devrait surveiller si la complexité des interactions entre politiques croît plus vite que la capacité de régulation.
 
 ## Protocole de mesure
 
@@ -256,7 +256,7 @@ La validation croisée avec GPT-4o a confirmé :
 2. **Le modèle additif (somme des log-variétés) est valide** pour des dimensions indépendantes, mais trop simpliste quand les composants interagissent. La séparation en dimensions (comportementale, structurelle, régulatrice) y répond en traitant chaque dimension indépendamment.
 3. **GPT-4o a calculé un ratio composite naïf de -2.8**, en traitant amplificateurs et atténuateurs comme une seule somme additive. C'est incorrect — une variété négative n'a pas de sens (on ne peut pas avoir moins de zéro état distinguable). Le modèle par dimensions évite cette erreur.
 4. **Les deux modèles s'accordent sur le fait que R_regulatory < 1.0 est attendu** pour un système de gouvernance. La gouvernance est intrinsèquement atténuatrice.
-5. **L'écart régulateur de 3 bits** est un résultat nouveau, absent de l'analyse de GPT-4o. Il découle du calcul séparé de la variété des perturbations, que GPT-4o n'a pas effectué.
+5. **L'écart régulateur de 3.65 bits** est un résultat nouveau, absent de l'analyse de GPT-4o. Il découle du calcul séparé de la variété des perturbations, que GPT-4o n'a pas effectué.
 
 **Confiance de la validation croisée : 0.85** (T — les deux modèles s'accordent sur les fondamentaux ; l'affinement par dimensions apporte une valeur au-delà de l'analyse de GPT-4o)
 
@@ -264,7 +264,7 @@ La validation croisée avec GPT-4o a confirmé :
 
 1. **Suivre les ratios de variété à chaque cycle** — Ajouter un instantané de variété à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Surveiller la dérive des ratios par dimension.
 2. **Ajouter des portes de qualité structurelles** — Le ratio structurel (17.00) est au-dessus de la plage saine. Introduire des exigences de couverture de tests des grammaires et un suivi de l'usage des productions pour augmenter l'atténuation sans réduire la générativité.
-3. **Surveiller l'écart régulateur de 3 bits** — La complexité des interactions entre politiques (666 combinaisons deux à deux à partir de 37 politiques) est la principale source de perturbation interne. À mesure que les politiques augmentent, cet écart se creusera de façon quadratique. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
+3. **Surveiller l'écart régulateur de 3.65 bits** — La complexité des interactions entre politiques (666 combinaisons deux à deux à partir de 37 politiques) est la principale source de perturbation interne. À mesure que les politiques augmentent, le nombre de paires croît de façon quadratique, mais sa variété log2(n(n-1)/2) ne croît que de façon logarithmique, d'environ 2 bits chaque fois que le nombre de politiques double ; elle dépasse le terme des états des dépôts (9.97 bits) à partir de 46 politiques. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
 4. **L'escalade vers des humains est un pont de variété** — Le système de seuils de confiance (Article 6 : Escalade) est le principal mécanisme de Demerzel pour absorber la variété qui dépasse sa capacité de régulation. C'est une fonctionnalité, pas une limite.
 5. **Faire évoluer la section 6 de la grammaire** — La section sur la variété requise de la grammaire `sci-cybernetics.ebnf` (lignes 78-82) devrait être enrichie de productions de mesure quantitative.
 
@@ -286,7 +286,7 @@ La validation croisée avec GPT-4o a confirmé :
 
 ## Questions de suivi pour le cycle 004
 
-1. L'écart régulateur de 3 bits peut-il être comblé par un regroupement hiérarchique des politiques (en réduisant les interactions deux à deux de O(n^2) à O(n log n)) ?
+1. L'écart régulateur de 3.65 bits peut-il être comblé par un regroupement hiérarchique des politiques (en réduisant les interactions deux à deux de O(n^2) à O(n log n)) ?
 2. Comment suivre l'usage des productions de grammaire pour détecter les productions mortes et éclairer l'atténuation structurelle ?
 3. Quelle est la relation, du point de vue de la théorie de l'information, entre la logique tétravalente de Demerzel (T/F/U/C) et l'entropie de Shannon — U (Unknown) porte-t-il plus de bits que T (True) ?
 

@@ -96,7 +96,7 @@ Même dans ce petit écosystème, on voit la structure en hub : **Demerzel est l
 La topologie sans échelle a des implications profondes :
 
 ### Résilience
-- **Tolérance aux attaques :** les réseaux sans échelle sont robustes face aux défaillances aléatoires de nœuds. Si un dépôt de faible degré pris au hasard tombe en panne, le réseau le remarque à peine.
+- **Tolérance aux erreurs :** les réseaux sans échelle sont robustes face aux défaillances aléatoires de nœuds. Si un dépôt de faible degré pris au hasard tombe en panne, le réseau le remarque à peine.
 - **Vulnérabilité aux attaques :** mais ils sont fragiles face à la défaillance *ciblée* d'un hub. Si le hub de gouvernance tombe, tout l'écosystème perd sa coordination.
 
 ### Conception de la gouvernance

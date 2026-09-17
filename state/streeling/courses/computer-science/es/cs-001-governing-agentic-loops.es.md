@@ -62,7 +62,7 @@ terminal definible. Es **patológico** cuando genera tokens sin generar transici
 
 ## 3. Seis propiedades requeridas de un bucle gobernado
 
-Estas propiedades son necesarias y suficientes para una iteración acotada y auditable:
+Estas seis propiedades hacen que una iteración sea acotada y auditable. Un bucle que deba poder pausarse y reanudarse necesita además un estado serializable (secciones 2 y 6):
 
 ### Propiedad 1: límite estricto de iteraciones
 Un número máximo de iteraciones impuesto por el framework, no por el modelo. Al alcanzarlo: detenerse,
@@ -178,7 +178,7 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 ## Conclusiones clave
 
 - Un LLM no puede detectar de forma fiable sus propios bucles infinitos: la terminación debe ser externa
-- Un bucle gobernado tiene exactamente seis propiedades: límite estricto, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa
+- Un bucle gobernado tiene seis propiedades: límite estricto, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa, más un estado serializable si debe poder pausarse y reanudarse
 - El framework Demerzel las implementa en seldon-plan, demerzel-drive y Ralph Loop
 - El artículo 9 (Autonomía acotada) es la base constitucional: los límites están predefinidos y ampliarlos requiere escalado
 
