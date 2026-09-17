@@ -323,7 +323,7 @@ Hans Werner Henze's two sonatas on characters from Shakespeare are among the mos
 
 **Britten — *Nocturnal after John Dowland, Op. 70* (1963):**
 
-Britten's masterpiece for solo guitar takes a theme by the Renaissance composer John Dowland and subjects it to eight variations of increasing distance from tonality. The early variations feel unsettled but recognizable; middle variations dissolve into free atonal textures; the final variation (a passacaglia) returns to tonal clarity. The piece is a journey through post-tonal techniques that resolves back into common-practice harmony — a reconciliation rather than a rejection.
+Britten's masterpiece for solo guitar takes a theme by the Renaissance composer John Dowland and subjects it to eight variations of increasing distance from tonality. The early variations feel unsettled but recognizable; middle variations dissolve into free atonal textures; the eighth and last of them is a passacaglia, and only after it does Dowland's song *Come, Heavy Sleep* arrive whole, in plain tonal clarity. The piece is a journey through post-tonal techniques that resolves back into common-practice harmony — a reconciliation rather than a rejection.
 
 **Building an Atonal Etude — Practical Method:**
 

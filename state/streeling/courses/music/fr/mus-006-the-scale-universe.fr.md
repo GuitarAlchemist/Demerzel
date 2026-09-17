@@ -286,7 +286,7 @@ Les critères de Zeitler sont des **heuristiques**, pas des définitions. Les co
 
 - La **gamme chromatique** a 12 demi-tons consécutifs (elle enfreint le critère 4) — c'est clairement une vraie gamme
 - Les **« bourdons » d'une seule note** enfreignent le minimum de 5 notes — c'est clairement une vraie structure musicale
-- Les **gammes blues** utilisent parfois habilement des écarts de 3 demi-tons (la pentatonique mineure de Do a des écarts de 3 demi-tons de Do à Mib et de Sol à Sib)
+- Les **gammes tritoniques et tétratoniques**, courantes dans les répertoires africains et dans les musiques folkloriques anciennes, laissent des écarts que le critère 2 interdit (Do–Mib–Sol avance de 3, puis 4, puis 5 demi-tons de Sol à Do) — ce sont clairement de vraies gammes
 - Les **gammes du gagaku**, les gammes microtonales et d'autres systèmes non occidentaux ne rentrent pas du tout dans le 12-TET
 
 Les critères sont **propres à une culture** — ils décrivent des gammes adaptées à la pratique tonale et modale européenne. Ce sont un filtre utile, pas une vérité universelle.

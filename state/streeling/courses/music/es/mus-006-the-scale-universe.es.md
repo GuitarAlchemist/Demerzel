@@ -286,7 +286,7 @@ Los criterios de Zeitler son **heurísticas**, no definiciones. Abundan los cont
 
 - La **escala cromática** tiene 12 semitonos consecutivos (incumple el criterio 4) — y es claramente una escala real
 - Los **«bordones» de una sola nota** incumplen el mínimo de 5 notas — y son claramente una estructura musical real
-- Las **escalas de blues** a veces usan con ingenio saltos de 3 semitonos (la pentatónica menor de Do tiene saltos de 3 semitonos de Do a Mib y de Sol a Sib)
+- Las **escalas tritónicas y tetratónicas**, habituales en repertorios africanos y en el folclore antiguo, dejan saltos que el criterio 2 prohíbe (Do–Mib–Sol avanza 3, luego 4 y luego 5 semitonos de Sol a Do) — son claramente escalas reales
 - Las **escalas del gagaku**, las escalas microtonales y otros sistemas no occidentales no encajan en absoluto en el 12-TET
 
 Los criterios son **específicos de una cultura** — describen escalas que encajan en la práctica tonal y modal europea. Son un filtro útil, no una verdad universal.

@@ -323,7 +323,7 @@ Les deux sonates de Hans Werner Henze sur des personnages de Shakespeare compten
 
 **Britten — *Nocturnal after John Dowland, op. 70* (1963) :**
 
-Le chef-d'œuvre de Britten pour guitare seule reprend un thème du compositeur de la Renaissance John Dowland et le soumet à huit variations qui s'éloignent de plus en plus de la tonalité. Les premières variations semblent instables mais reconnaissables ; les variations centrales se dissolvent en textures atonales libres ; la dernière variation (une passacaille) revient à la clarté tonale. La pièce est un voyage à travers les techniques post-tonales qui se résout dans l'harmonie de la pratique commune — une réconciliation plutôt qu'un rejet.
+Le chef-d'œuvre de Britten pour guitare seule reprend un thème du compositeur de la Renaissance John Dowland et le soumet à huit variations qui s'éloignent de plus en plus de la tonalité. Les premières variations semblent instables mais reconnaissables ; les variations centrales se dissolvent en textures atonales libres ; la huitième et dernière d'entre elles est une passacaille, et c'est seulement après elle que la chanson de Dowland *Come, Heavy Sleep* arrive entière, en pleine clarté tonale. La pièce est un voyage à travers les techniques post-tonales qui se résout dans l'harmonie de la pratique commune — une réconciliation plutôt qu'un rejet.
 
 **Construire une étude atonale — méthode pratique :**
 
