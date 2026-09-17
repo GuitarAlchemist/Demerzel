@@ -38,7 +38,7 @@ Debussy, Mahler, Strauss et Scriabine ont poursuivi cette expansion chromatique.
 
 **L'émancipation de la dissonance selon Schoenberg :**
 
-Arnold Schoenberg a répondu à la question par une affirmation radicale en 1908 : **la dissonance n'a pas besoin de se résoudre**. Dans la théorie traditionnelle, la consonance était « naturelle » et la dissonance un écart qui devait être corrigé. Schoenberg soutenait qu'il s'agissait d'une convention historique, pas d'une loi acoustique. Dissonance et consonance ne sont pas des opposés — ce sont des points sur un continuum, et les compositeurs devraient être libres d'utiliser n'importe quelle sonorité comme un événement stable.
+Arnold Schoenberg a répondu à la question dans sa musique dès 1908, puis a nommé ce principe « émancipation de la dissonance » (essai « Opinion or Insight? », 1926, repris dans *Style and Idea*) : **la dissonance n'a pas besoin de se résoudre**. Dans la théorie traditionnelle, la consonance était « naturelle » et la dissonance un écart qui devait être corrigé. Schoenberg soutenait qu'il s'agissait d'une convention historique, pas d'une loi acoustique. Dissonance et consonance ne sont pas des opposés — ce sont des points sur un continuum, et les compositeurs devraient être libres d'utiliser n'importe quelle sonorité comme un événement stable.
 
 Cette émancipation de la dissonance a brisé la dernière contrainte de la tonalité. Les *Trois pièces pour piano, op. 11* (1909) de Schoenberg sont souvent citées comme la première œuvre « atonale ». Pas d'armure. Pas de résolution sur une tonique. Des hauteurs organisées par une logique motivique et registrale plutôt que par l'harmonie fonctionnelle.
 
@@ -232,7 +232,7 @@ Soit P0 = [0, 1, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10] (une série fabriquée).
 
 Une matrice dodécaphonique est une façon compacte d'afficher les 48 formes de la série :
 
-- Les **lignes** (de gauche à droite) sont les 12 transpositions de P, étiquetées P0 à P11 d'après leur première classe de hauteur.
+- Les **lignes** (de gauche à droite) sont les 12 transpositions de P, étiquetées P0 à P11 d'après leur niveau de transposition par rapport à P0 (leur première classe de hauteur quand P0 commence sur 0).
 - Les **lignes lues de droite à gauche** sont les rétrogrades (R0 à R11).
 - Les **colonnes** (de haut en bas) sont les 12 transpositions de I, étiquetées d'après leur première classe de hauteur.
 - Les **colonnes lues de bas en haut** sont les rétrogrades des inversions.
@@ -305,7 +305,7 @@ Une succession de classes d'ensembles au fil d'une pièce peut créer un mouveme
 
 **Distribution des registres :**
 
-Dans la musique atonale, le registre porte souvent une signification structurelle. Webern était célèbre pour répartir les notes d'un même accord ou d'une même ligne mélodique entre des registres extrêmes — un phénomène appelé **Klangfarbenmelodie** (mélodie de timbres). Résultat : l'auditeur perçoit la pièce autant à travers l'espace et le timbre qu'à travers la hauteur. L'analyse post-tonale doit tenir compte de l'endroit où les notes sont placées, et pas seulement des classes de hauteur qui apparaissent.
+Dans la musique atonale, le registre porte souvent une signification structurelle. Webern était célèbre pour répartir les notes d'un même accord ou d'une même ligne mélodique entre des registres extrêmes, et pour faire passer une ligne d'un instrument à l'autre — ce second procédé s'appelle **Klangfarbenmelodie** (mélodie de timbres, terme de Schoenberg à la dernière page de son *Harmonielehre*, 1911). Résultat : l'auditeur perçoit la pièce autant à travers l'espace et le timbre qu'à travers la hauteur. L'analyse post-tonale doit tenir compte de l'endroit où les notes sont placées, et pas seulement des classes de hauteur qui apparaissent.
 
 **Les échos tonaux de Berg :**
 
@@ -361,7 +361,7 @@ C'est immédiatement utile aux guitaristes : pour choisir un voicing d'un accord
 
 **OPTIC/K et équivalence des classes de hauteur :**
 
-En théorie néo-riemannienne et transformationnelle, les équivalences de conduite des voix sont décrites par les relations **OPTIC** :
+En théorie musicale géométrique (Callender, Quinn et Tymoczko, *Science*, 2008), les équivalences de conduite des voix sont décrites par les relations **OPTIC** :
 - Équivalence d'**O**ctave : deux hauteurs à l'octave l'une de l'autre sont identiques.
 - **P**ermutation : réordonner à l'intérieur d'une octave ne change pas l'identité.
 - **T**ransposition : deux accords liés par un même intervalle sont équivalents.
@@ -402,7 +402,7 @@ La relation **K** ajoute une couche supplémentaire (l'équivalence à l'apparte
 ## Auto-évaluation
 
 **1. Qu'entendait Schoenberg par « l'émancipation de la dissonance », et pourquoi fut-ce un tournant historique ?**
-> Schoenberg a affirmé en 1908 que les sonorités dissonantes n'ont pas besoin de se résoudre sur des consonances — que la distinction entre consonance et dissonance est une convention historique, pas une loi acoustique. Ce fut un tournant, car cela levait la dernière contrainte de la tonalité de la pratique commune (l'obligation de résoudre la tension), ouvrant la voie à une composition atonale où n'importe quelle sonorité pouvait constituer un événement structurel stable.
+> Schoenberg a soutenu — dans sa musique dès 1908, puis explicitement dans son essai « Opinion or Insight? » de 1926 — que les sonorités dissonantes n'ont pas besoin de se résoudre sur des consonances — que la distinction entre consonance et dissonance est une convention historique, pas une loi acoustique. Ce fut un tournant, car cela levait la dernière contrainte de la tonalité de la pratique commune (l'obligation de résoudre la tension), ouvrant la voie à une composition atonale où n'importe quelle sonorité pouvait constituer un événement structurel stable.
 
 **2. Calculez la forme première de l'ensemble {Ré, Fa, La, Do} (un accord de Ré mineur septième). Montrez la forme normale et une vérification par inversion.**
 > Classes de hauteur : {2, 5, 9, 0} → ordre croissant {0, 2, 5, 9}. Rotations et étendues :

@@ -38,7 +38,7 @@ Debussy, Mahler, Strauss y Scriabin continuaron esta expansión cromática. Los 
 
 **La emancipación de la disonancia de Schoenberg:**
 
-Arnold Schoenberg respondió a la pregunta con una afirmación radical en 1908: **la disonancia no necesita resolver**. En la teoría tradicional, la consonancia era «natural» y la disonancia una desviación que debía corregirse. Schoenberg sostuvo que eso era una convención histórica, no una ley acústica. Disonancia y consonancia no son opuestos — son puntos de un continuo, y los compositores deberían ser libres de usar cualquier sonoridad como un evento estable.
+Arnold Schoenberg respondió a la pregunta en su música desde 1908, y más tarde llamó a este principio «emancipación de la disonancia» (ensayo «Opinion or Insight?», 1926, recogido en *Style and Idea*): **la disonancia no necesita resolver**. En la teoría tradicional, la consonancia era «natural» y la disonancia una desviación que debía corregirse. Schoenberg sostuvo que eso era una convención histórica, no una ley acústica. Disonancia y consonancia no son opuestos — son puntos de un continuo, y los compositores deberían ser libres de usar cualquier sonoridad como un evento estable.
 
 Esta emancipación de la disonancia rompió la última restricción de la tonalidad. Las *Tres piezas para piano, op. 11* (1909) de Schoenberg se citan a menudo como la primera obra «atonal». Sin armadura. Sin resolución en una tónica. Alturas organizadas por una lógica motívica y de registro en lugar de por la armonía funcional.
 
@@ -232,7 +232,7 @@ Sea P0 = [0, 1, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10] (una serie inventada).
 
 Una matriz dodecafónica es una forma compacta de mostrar las 48 formas de la serie:
 
-- Las **filas** (de izquierda a derecha) son las 12 transposiciones de P, etiquetadas de P0 a P11 según su primera clase de altura.
+- Las **filas** (de izquierda a derecha) son las 12 transposiciones de P, etiquetadas de P0 a P11 según su nivel de transposición respecto de P0 (su primera clase de altura cuando P0 empieza en 0).
 - Las **filas leídas de derecha a izquierda** son las retrógradas (R0 a R11).
 - Las **columnas** (de arriba abajo) son las 12 transposiciones de I, etiquetadas según su primera clase de altura.
 - Las **columnas leídas de abajo arriba** son las retrógradas de las inversiones.
@@ -305,7 +305,7 @@ Una sucesión de clases de conjuntos a lo largo de una pieza puede crear un movi
 
 **Distribución de registros:**
 
-En la música atonal, el registro suele tener un significado estructural. Webern era famoso por repartir las notas de un mismo acorde o de una misma línea melódica entre registros extremos — un fenómeno llamado **Klangfarbenmelodie** (melodía de timbres). El resultado: el oyente percibe la pieza tanto a través del espacio y el timbre como a través de la altura. El análisis postonal debe tener en cuenta dónde se colocan las notas, no solo qué clases de altura aparecen.
+En la música atonal, el registro suele tener un significado estructural. Webern era famoso por repartir las notas de un mismo acorde o de una misma línea melódica entre registros extremos, y por hacer pasar una línea de un instrumento a otro — este segundo procedimiento se llama **Klangfarbenmelodie** (melodía de timbres, término de Schoenberg en la última página de su *Harmonielehre*, 1911). El resultado: el oyente percibe la pieza tanto a través del espacio y el timbre como a través de la altura. El análisis postonal debe tener en cuenta dónde se colocan las notas, no solo qué clases de altura aparecen.
 
 **Los ecos tonales de Berg:**
 
@@ -361,7 +361,7 @@ Esto es útil de inmediato para los guitarristas: al elegir un voicing para un a
 
 **OPTIC/K y la equivalencia de clases de altura:**
 
-En la teoría neorriemanniana y transformacional, las equivalencias de conducción de voces se describen mediante las relaciones **OPTIC**:
+En la teoría musical geométrica (Callender, Quinn y Tymoczko, *Science*, 2008), las equivalencias de conducción de voces se describen mediante las relaciones **OPTIC**:
 - Equivalencia de **O**ctava: dos alturas separadas por una octava son la misma.
 - **P**ermutación: reordenar dentro de una octava no cambia la identidad.
 - **T**ransposición: dos acordes relacionados por un mismo intervalo son equivalentes.
@@ -402,7 +402,7 @@ La relación **K** añade una capa más (la equivalencia salvo pertenencia a una
 ## Autoevaluación
 
 **1. ¿Qué quería decir Schoenberg con «la emancipación de la disonancia» y por qué fue un punto de inflexión histórico?**
-> Schoenberg afirmó en 1908 que las sonoridades disonantes no necesitan resolver en consonancias — que la distinción entre consonancia y disonancia es una convención histórica, no una ley acústica. Fue un punto de inflexión porque eliminó la última restricción de la tonalidad de la práctica común (la obligación de resolver la tensión) y abrió la puerta a una composición atonal en la que cualquier sonoridad podía funcionar como un evento estructural estable.
+> Schoenberg sostuvo — en su música desde 1908 y, con ese nombre, en su ensayo «Opinion or Insight?» de 1926 — que las sonoridades disonantes no necesitan resolver en consonancias — que la distinción entre consonancia y disonancia es una convención histórica, no una ley acústica. Fue un punto de inflexión porque eliminó la última restricción de la tonalidad de la práctica común (la obligación de resolver la tensión) y abrió la puerta a una composición atonal en la que cualquier sonoridad podía funcionar como un evento estructural estable.
 
 **2. Calcula la forma prima del conjunto {Re, Fa, La, Do} (un acorde de Re menor séptima). Muestra la forma normal y una comprobación de la inversión.**
 > Clases de altura: {2, 5, 9, 0} → ascendente {0, 2, 5, 9}. Rotaciones y extensiones:

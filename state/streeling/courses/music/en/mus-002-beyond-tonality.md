@@ -38,7 +38,7 @@ Debussy, Mahler, Strauss, and Scriabin continued this chromatic expansion. Chord
 
 **Schoenberg's Emancipation of Dissonance:**
 
-Arnold Schoenberg answered the question with a radical claim in 1908: **dissonance does not need to resolve**. In traditional theory, consonance was "natural" and dissonance was a deviation that must be corrected. Schoenberg argued this was a historical convention, not an acoustic law. Dissonance and consonance are not opposites — they are points on a continuum, and composers should be free to use any sonority as a stable event.
+Arnold Schoenberg answered the question in his music from 1908 on, and later named the principle the "emancipation of the dissonance" (essay "Opinion or Insight?", 1926, in *Style and Idea*): **dissonance does not need to resolve**. In traditional theory, consonance was "natural" and dissonance was a deviation that must be corrected. Schoenberg argued this was a historical convention, not an acoustic law. Dissonance and consonance are not opposites — they are points on a continuum, and composers should be free to use any sonority as a stable event.
 
 This emancipation of dissonance broke the last constraint of tonality. Schoenberg's *Three Piano Pieces, Op. 11* (1909) is often cited as the first "atonal" work. No key signature. No resolution to a tonic. Pitches organized by motivic and registral logic rather than functional harmony.
 
@@ -232,7 +232,7 @@ Let P0 = [0, 1, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10] (a fabricated row).
 
 A twelve-tone matrix is a compact way to display all 48 row forms:
 
-- **Rows** (left to right) are the 12 transpositions of P, labeled P0 through P11 by their first pitch class.
+- **Rows** (left to right) are the 12 transpositions of P, labeled P0 through P11 by their transposition level from P0 (their first pitch class when P0 starts on 0).
 - **Rows read right to left** are retrogrades (R0 through R11).
 - **Columns** (top to bottom) are the 12 transpositions of I, labeled by their first pitch class.
 - **Columns read bottom to top** are retrograde inversions.
@@ -305,7 +305,7 @@ A sequence of set classes across a piece can create large-scale structural motio
 
 **Registral Distribution:**
 
-In atonal music, register often carries structural meaning. Webern was famous for distributing the notes of a single chord or melodic line across extreme registers — a phenomenon called **Klangfarbenmelodie** (tone-color melody). The result: the listener perceives the piece as much through space and timbre as through pitch. Post-tonal analysis must consider where notes are placed, not just which pitch classes appear.
+In atonal music, register often carries structural meaning. Webern was famous for distributing the notes of a single chord or melodic line across extreme registers, and for passing a line from instrument to instrument — the latter is **Klangfarbenmelodie** (tone-color melody, Schoenberg's term from the last page of his *Harmonielehre*, 1911). The result: the listener perceives the piece as much through space and timbre as through pitch. Post-tonal analysis must consider where notes are placed, not just which pitch classes appear.
 
 **Berg's Tonal Echoes:**
 
@@ -361,7 +361,7 @@ This is immediately useful for guitarists: when choosing a voicing for an ambigu
 
 **OPTIC/K and Pitch-Class Equivalence:**
 
-In neo-Riemannian and transformational theory, voice-leading equivalences are described by the **OPTIC** relations:
+In geometric music theory (Callender, Quinn and Tymoczko, *Science*, 2008), voice-leading equivalences are described by the **OPTIC** relations:
 - **O**ctave equivalence: two pitches an octave apart are the same.
 - **P**ermutation: reordering within an octave does not change identity.
 - **T**ransposition: two chords related by a single interval are equivalent.
@@ -402,7 +402,7 @@ The **K** relation adds a further layer (considering equivalence up to set-class
 ## Self-Check Assessment
 
 **1. What did Schoenberg mean by "the emancipation of dissonance," and why was it a historical turning point?**
-> Schoenberg claimed in 1908 that dissonant sonorities do not need to resolve to consonances — that the distinction between consonance and dissonance is historical convention, not an acoustic law. It was a turning point because it removed the last constraint of common-practice tonality (the obligation to resolve tension), opening the door to atonal composition where any sonority could stand as a stable structural event.
+> Schoenberg held — in his music from 1908 on, and by name in his 1926 essay "Opinion or Insight?" — that dissonant sonorities do not need to resolve to consonances — that the distinction between consonance and dissonance is historical convention, not an acoustic law. It was a turning point because it removed the last constraint of common-practice tonality (the obligation to resolve tension), opening the door to atonal composition where any sonority could stand as a stable structural event.
 
 **2. Compute the prime form of the set {D, F, A, C} (a D minor 7th chord). Show the normal form and one inversion check.**
 > Pitch classes: {2, 5, 9, 0} → ascending {0, 2, 5, 9}. Rotations and spans:
