@@ -530,7 +530,7 @@ Then experiment with harmonic rhythm: play the same progression with one chord p
 > E7 = V7/vi (targets Am). D7 = V7/V (targets G). Both are secondary dominants creating a descending-fifths chain: E7 → Am → D7 → G → C.
 
 **4. Why is the ii-V-I progression stronger than IV-V-I, even though both follow PD → D → T?**
-> The ii chord provides smoother voice leading into V. In the move from ii to V, most voices move by step (common tones and half steps), while IV to V creates more disjunct motion. Additionally, ii-V-I forms a cycle-of-fifths root motion (down a 5th, down a 5th), which is the strongest root progression pattern in tonal music.
+> The ii chord provides smoother voice leading into V. In the move from ii to V, the two chords share notes that can be held (D and F of Dm7 are the 5th and 7th of G7), while IV and V have no note in common, so every upper voice has to move. Additionally, ii-V-I forms a cycle-of-fifths root motion (down a 5th, down a 5th), which is the strongest root progression pattern in tonal music.
 
 **Pass criteria:** Given any diatonic chord progression in a major key, assign Roman numerals, label functions (T/PD/D), identify cadences, and spot secondary dominants with their targets.
 
@@ -541,7 +541,7 @@ Then experiment with harmonic rhythm: play the same progression with one chord p
 - Hugo Riemann's *Vereinfachte Harmonielehre* (1893) established the three-function model (T/S/D) that all modern functional harmony descends from
 - Kostka & Payne, *Tonal Harmony* (7th ed., 2013) — standard undergraduate text for diatonic and chromatic harmony
 - Aldwell & Schachter, *Harmony and Voice Leading* (4th ed., 2011) — authoritative treatment of voice-leading principles and phrase structure
-- The tritone resolution mechanism is acoustically grounded in combination tones and frequency-ratio convergence
+- The tritone's resolution is a voice-leading convention of common-practice tonality — the contrary stepwise motion described in Kostka & Payne and in Aldwell & Schachter — not an acoustic necessity
 - Secondary dominant and modulation pedagogy follows the graduated approach: diatonic → tonicization → modulation
 - Sources: Streeling Department of Music curriculum, Western harmony pedagogy consensus
 - Belief state: T(0.85) F(0.03) U(0.08) C(0.04)
