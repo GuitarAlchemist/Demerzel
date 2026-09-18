@@ -314,7 +314,7 @@ Once a scale is an integer, all its musical properties become computable. You do
 
 ### Interval Vector
 
-An **interval vector** counts how many times each interval class appears in the scale. There are six interval classes (1 through 6 semitones; the tritone is its own inverse, and intervals 7-11 are complements of 1-5).
+An **interval vector** counts how many times each interval class appears in the scale. The vector has six entries, one per interval class from 1 to 6 semitones (the tritone is its own inverse, and intervals 7-11 are complements of 1-5).
 
 For the **C major scale** (C D E F G A B):
 
@@ -545,7 +545,7 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 | **Prime form** | The canonical representative of a scale family under equivalence |
 | **Forte number** | A standardized label (e.g., 7-35) for a pitch-class set class |
 | **Interval vector** | A 6-tuple counting occurrences of each interval class in a scale |
-| **Interval class** | An interval reduced modulo the octave and inversion: n and 12 − n semitones are the same class (1 and 11 are both class 1, 5 and 7 both class 5), giving classes 1 to 6 |
+| **Interval class** | An interval reduced modulo the octave and inversion: n and 12 − n semitones are the same class (1 and 11 are both class 1, 5 and 7 both class 5). Class 0 is the unison, so the classes an interval vector counts run 1 to 6 |
 | **Brightness** | The sum of pitch classes in a scale (proxy for sharpness/flatness) |
 | **Symmetry (rotational)** | A scale's property of mapping to itself under rotation |
 | **Chirality** | A scale's asymmetry under inversion |

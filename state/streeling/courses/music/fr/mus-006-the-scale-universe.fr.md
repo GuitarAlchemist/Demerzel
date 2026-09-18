@@ -314,7 +314,7 @@ Dès qu'une gamme est un entier, toutes ses propriétés musicales deviennent ca
 
 ### Vecteur d'intervalles
 
-Un **vecteur d'intervalles** compte combien de fois chaque classe d'intervalles apparaît dans la gamme. Il existe six classes d'intervalles (de 1 à 6 demi-tons ; le triton est son propre renversement, et les intervalles 7-11 sont les compléments de 1-5).
+Un **vecteur d'intervalles** compte combien de fois chaque classe d'intervalles apparaît dans la gamme. Le vecteur a six entrées, une par classe d'intervalles de 1 à 6 demi-tons (le triton est son propre renversement, et les intervalles 7-11 sont les compléments de 1-5).
 
 Pour la **gamme de Do majeur** (Do Ré Mi Fa Sol La Si) :
 
@@ -545,7 +545,7 @@ La théorie musicale n'avait pas besoin d'être floue. La théorie des ensembles
 | **Forme première** | Le représentant canonique d'une famille de gammes sous une équivalence |
 | **Nombre de Forte** | Une étiquette normalisée (par ex. 7-35) pour une classe d'ensembles de classes de hauteur |
 | **Vecteur d'intervalles** | Un 6-uplet qui compte les occurrences de chaque classe d'intervalles dans une gamme |
-| **Classe d'intervalles** | Un intervalle réduit modulo l'octave et le renversement : n et 12 − n demi-tons forment la même classe (1 et 11 sont tous deux de classe 1, 5 et 7 tous deux de classe 5), ce qui donne les classes 1 à 6 |
+| **Classe d'intervalles** | Un intervalle réduit modulo l'octave et le renversement : n et 12 − n demi-tons forment la même classe (1 et 11 sont tous deux de classe 1, 5 et 7 tous deux de classe 5). La classe 0 est l'unisson, si bien que les classes comptées par un vecteur d'intervalles vont de 1 à 6 |
 | **Luminosité** | La somme des classes de hauteur d'une gamme (indicateur de dièses/bémols) |
 | **Symétrie (de rotation)** | Propriété d'une gamme qui se transforme en elle-même par rotation |
 | **Chiralité** | L'asymétrie d'une gamme sous l'inversion |

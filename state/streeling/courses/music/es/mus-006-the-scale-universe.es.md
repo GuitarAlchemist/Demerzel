@@ -314,7 +314,7 @@ Una vez que una escala es un entero, todas sus propiedades musicales se vuelven 
 
 ### Vector interválico
 
-Un **vector interválico** cuenta cuántas veces aparece cada clase interválica en la escala. Hay seis clases interválicas (de 1 a 6 semitonos; el tritono es su propia inversión, y los intervalos 7-11 son complementos de 1-5).
+Un **vector interválico** cuenta cuántas veces aparece cada clase interválica en la escala. El vector tiene seis entradas, una por clase interválica de 1 a 6 semitonos (el tritono es su propia inversión, y los intervalos 7-11 son complementos de 1-5).
 
 Para la **escala de Do mayor** (Do Re Mi Fa Sol La Si):
 
@@ -545,7 +545,7 @@ La teoría musical no tenía por qué ser difusa. La teoría de conjuntos de cla
 | **Forma prima** | El representante canónico de una familia de escalas bajo una equivalencia |
 | **Número de Forte** | Una etiqueta normalizada (p. ej., 7-35) para una clase de conjuntos de clases de altura |
 | **Vector interválico** | Una 6-tupla que cuenta las apariciones de cada clase interválica en una escala |
-| **Clase interválica** | Un intervalo reducido módulo la octava y la inversión: n y 12 − n semitonos son la misma clase (1 y 11 son ambos clase 1, 5 y 7 ambos clase 5), lo que da las clases 1 a 6 |
+| **Clase interválica** | Un intervalo reducido módulo la octava y la inversión: n y 12 − n semitonos son la misma clase (1 y 11 son ambos clase 1, 5 y 7 ambos clase 5). La clase 0 es el unísono, de modo que las clases que cuenta un vector interválico van de 1 a 6 |
 | **Brillo** | La suma de las clases de altura de una escala (indicador de sostenidos/bemoles) |
 | **Simetría (rotacional)** | Propiedad de una escala que se transforma en sí misma bajo rotación |
 | **Quiralidad** | La asimetría de una escala bajo inversión |
