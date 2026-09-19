@@ -38,7 +38,7 @@ Debussy, Mahler, Strauss, and Scriabin continued this chromatic expansion. Chord
 
 **Schoenberg's Emancipation of Dissonance:**
 
-Arnold Schoenberg answered the question with a radical claim in 1908: **dissonance does not need to resolve**. In traditional theory, consonance was "natural" and dissonance was a deviation that must be corrected. Schoenberg argued this was a historical convention, not an acoustic law. Dissonance and consonance are not opposites — they are points on a continuum, and composers should be free to use any sonority as a stable event.
+Arnold Schoenberg answered the question in his music from 1908 on, and later named the principle the "emancipation of the dissonance" (essay "Opinion or Insight?", 1926, in *Style and Idea*): **dissonance does not need to resolve**. In traditional theory, consonance was "natural" and dissonance was a deviation that must be corrected. Schoenberg argued this was a historical convention, not an acoustic law. Dissonance and consonance are not opposites — they are points on a continuum, and composers should be free to use any sonority as a stable event.
 
 This emancipation of dissonance broke the last constraint of tonality. Schoenberg's *Three Piano Pieces, Op. 11* (1909) is often cited as the first "atonal" work. No key signature. No resolution to a tonic. Pitches organized by motivic and registral logic rather than functional harmony.
 
@@ -85,7 +85,7 @@ Given a set of pitches, the **normal form** is the most compact ordering of the 
 1. Arrange the pitch classes in ascending order around the chromatic circle.
 2. Consider each rotation of the set.
 3. Choose the rotation with the smallest span from first to last element.
-4. If multiple rotations tie, choose the one most packed toward the left (smallest second element, then third, etc.).
+4. If multiple rotations tie, compare their **intervals measured from the first element** (transpose each rotation to start on 0), not the pitch-class numbers themselves. Forte's rule picks the rotation most packed to the left: smallest interval from the first to the second element, then from the first to the third, etc. Rahn's rule, used by most current tables (e.g., Open Music Theory), compares from the right: smallest interval from the first to the next-to-last element, then from the first to the one before it, etc. The two rules agree on every set in this module; they give different prime forms for only 6 of the 224 set classes (e.g., 5-20: Rahn (01568), Forte (01378)).
 
 **Example:** The set {E, G#, C} = {4, 8, 0}. Rotations (as intervals from first to last around the circle):
 - 0, 4, 8: span = 8
@@ -98,14 +98,13 @@ All rotations are symmetric (it is an augmented triad). By convention, we choose
 
 The **prime form** is the most abstract representation of a set class — it removes distinctions of transposition AND inversion. To find the prime form:
 
-1. Compute the normal form.
-2. Compute the inversion's normal form (invert the set around 0 by negating each element mod 12, then normalize).
-3. Choose whichever of the two is more left-packed.
-4. Transpose so that the first element is 0.
+1. Compute the normal form and transpose it so that the first element is 0.
+2. Compute the inversion's normal form (invert the set around 0 by negating each element mod 12, then normalize) and transpose it so that the first element is 0.
+3. Choose whichever of the two is more packed, using the same tie-breaking rule as for the normal form.
 
-Prime forms are written in square brackets: [0,3,7] for the minor triad, [0,4,7] for the major triad.
+Pitch-class sets in normal form are written in square brackets, e.g. [0,4,7]; prime forms, which name a whole set class, are written in parentheses without commas: (037) is the prime form of both the major and the minor triad.
 
-**Wait — are major and minor triads different set classes?** Yes, but their prime forms are related by inversion: [0,3,7] (minor) inverts to [0,4,7] (major). In Forte's classification, both belong to set class **3-11**, because the system considers inversion-equivalent sets as one class. In practice: [0,3,7] is the canonical prime form for the 3-11 set class.
+**Wait — are major and minor triads different set classes?** Under transposition alone, yes: no transposition turns C major [0,4,7] into a minor triad. But the set classes of post-tonal theory (Forte's) are defined up to transposition **and** inversion, and inverting C major [0,4,7] around 0 gives F minor [5,8,0]. So major and minor triads belong to the **same set class, 3-11**, with the single prime form (037). Catalogs that separate inversionally related forms (transposition-only "Tn-types") label the minor form [0,3,7] 3-11A and the major form [0,4,7] 3-11B.
 
 ### Practice Exercise
 
@@ -131,10 +130,10 @@ Your task:
   - (7, 9, 11, 14, 16): span = 9
   - (9, 11, 14, 16, 19): span = 10
   - (11, 14, 16, 19, 21): span = 10
-- Tied rotations: (2,4,7,9,11) and (7,9,11,2,4). Compare second elements: 4 vs. 9. Choose 4. Normal form: {2, 4, 7, 9, 11}.
-- Transpose to start at 0: subtract 2 from each → {0, 2, 5, 7, 9}.
-- Check inversion: invert {0,2,5,7,9} → {0,-2,-5,-7,-9} mod 12 = {0, 10, 7, 5, 3}. Reorder: {0, 3, 5, 7, 10}. This is more left-packed than {0,2,5,7,9}? Compare: second elements 2 vs. 3 — {0,2,5,7,9} wins (2 < 3).
-- **Prime form: [0,2,5,7,9]** — this is set class 5-35, the **pentatonic/diatonic subset** (the anhemitonic pentatonic scale). The guitar's open strings form a pentatonic set class.
+- Tied rotations: (2,4,7,9,11) and (7,9,11,2,4). Compare their intervals from the first element, not the pitch classes: (2,4,7,9,11) → 0, 2, 5, 7, 9 and (7,9,11,14,16) → 0, 2, 4, 7, 9. From the left, the second elements tie (2 vs. 2) and the third decide (4 < 5); from the right, the next-to-last elements tie (7 vs. 7) and the ones before decide (4 < 5). Both rules choose (7,9,11,2,4). Normal form: [7, 9, 11, 2, 4] (G, A, B, D, E).
+- Transpose to start at 0: subtract 7 from each → [0, 2, 4, 7, 9].
+- Check inversion: invert {2,4,7,9,11} → {10, 8, 5, 3, 1}. Ascending: {1, 3, 5, 8, 10}. Its tied rotations (span 9) are (1,3,5,8,10) → 0, 2, 4, 7, 9 and (8,10,1,3,5) → 0, 2, 5, 7, 9; the more packed one gives [0, 2, 4, 7, 9] again, the same as the original: this set class is inversionally symmetric.
+- **Prime form: (02479)** — this is set class 5-35, the **pentatonic/diatonic subset** (the anhemitonic pentatonic scale). The guitar's open strings form a pentatonic set class: G major pentatonic, G A B D E.
 
 ---
 
@@ -168,16 +167,16 @@ The interval vector is a 6-element list counting how many of each interval class
 - Count: ic1=0, ic2=0, ic3=1, ic4=1, ic5=1, ic6=0
 - **Interval vector: [001110]**
 
-Notice: the major triad and the minor triad share the same interval vector [001110] because they are inversionally related. This is why they belong to the same set class: **3-11**.
+Notice: the major triad and the minor triad share the same interval vector [001110] because they are inversionally related, and inversion preserves interval classes. Being inversionally related is also why they belong to the same set class, **3-11**. The converse does not hold: two sets with the same interval vector need not belong to the same set class (see Z-relations below).
 
 **Forte Numbers:**
 
 Allen Forte (1973) cataloged every possible set class from 3 to 9 notes and assigned each a number. The format is **cardinality-ordinal**:
 
 - **3-11:** The 11th set class of cardinality 3 — the major/minor triad.
-- **3-12:** The augmented triad [0,4,8], interval vector [000300].
-- **4-20:** The major 7th chord [0,1,5,8], interval vector [101220].
-- **3-1:** The chromatic trichord [0,1,2], interval vector [210000].
+- **3-12:** The augmented triad (048), interval vector [000300].
+- **4-20:** The major 7th chord (0158), interval vector [101220].
+- **3-1:** The chromatic trichord (012), interval vector [210000].
 - **6-Z28 / 6-Z49:** Z-related hexachords (see below).
 
 The ordinal numbers reflect an ordering Forte chose based on interval content, roughly from most compact (lowest ordinals) to most dispersed.
@@ -198,7 +197,7 @@ Compute the interval vector for **Esus4** on the guitar. Esus4 consists of E, A,
 - Count: ic1=0, ic2=1, ic3=0, ic4=0, ic5=2, ic6=0
 - **Interval vector: [010020]**
 
-This set class contains one major-2nd interval and two perfect-4th/5th intervals. Its prime form is [0,2,7], set class **3-9**. This is the quartal trichord — a sound central to jazz voicings (e.g., McCoy Tyner's left-hand comping) and 20th-century orchestral writing (Copland, Hindemith).
+This set class contains one major-2nd interval and two perfect-4th/5th intervals. Its prime form is (027), set class **3-9**. This is the quartal trichord — a sound central to jazz voicings (e.g., McCoy Tyner's left-hand comping) and 20th-century orchestral writing (Copland, Hindemith).
 
 ---
 
@@ -233,7 +232,7 @@ Let P0 = [0, 1, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10] (a fabricated row).
 
 A twelve-tone matrix is a compact way to display all 48 row forms:
 
-- **Rows** (left to right) are the 12 transpositions of P, labeled P0 through P11 by their first pitch class.
+- **Rows** (left to right) are the 12 transpositions of P, labeled P0 through P11 by their transposition level from P0 (their first pitch class when P0 starts on 0).
 - **Rows read right to left** are retrogrades (R0 through R11).
 - **Columns** (top to bottom) are the 12 transpositions of I, labeled by their first pitch class.
 - **Columns read bottom to top** are retrograde inversions.
@@ -302,11 +301,11 @@ The cell functions like a Wagnerian leitmotif but at the pitch-class level rathe
 
 **Set-Class Progressions:**
 
-A sequence of set classes across a piece can create large-scale structural motion. For example, a piece might begin with small, chromatic set classes (3-1 [0,1,2]) and gradually expand to larger, more diatonic set classes (5-35 [0,2,4,7,9]). Or vice versa: a journey from consonance to dissonance, or from tension to release, without relying on tonal cadence.
+A sequence of set classes across a piece can create large-scale structural motion. For example, a piece might begin with small, chromatic set classes (3-1, (012)) and gradually expand to larger, more diatonic set classes (5-35, (02479)). Or vice versa: a journey from consonance to dissonance, or from tension to release, without relying on tonal cadence.
 
 **Registral Distribution:**
 
-In atonal music, register often carries structural meaning. Webern was famous for distributing the notes of a single chord or melodic line across extreme registers — a phenomenon called **Klangfarbenmelodie** (tone-color melody). The result: the listener perceives the piece as much through space and timbre as through pitch. Post-tonal analysis must consider where notes are placed, not just which pitch classes appear.
+In atonal music, register often carries structural meaning. Webern was famous for distributing the notes of a single chord or melodic line across extreme registers, and for passing a line from instrument to instrument — the latter is **Klangfarbenmelodie** (tone-color melody, Schoenberg's term from the last page of his *Harmonielehre*, 1911). The result: the listener perceives the piece as much through space and timbre as through pitch. Post-tonal analysis must consider where notes are placed, not just which pitch classes appear.
 
 **Berg's Tonal Echoes:**
 
@@ -324,13 +323,13 @@ Hans Werner Henze's two sonatas on characters from Shakespeare are among the mos
 
 **Britten — *Nocturnal after John Dowland, Op. 70* (1963):**
 
-Britten's masterpiece for solo guitar takes a theme by the Renaissance composer John Dowland and subjects it to eight variations of increasing distance from tonality. The early variations feel unsettled but recognizable; middle variations dissolve into free atonal textures; the final variation (a passacaglia) returns to tonal clarity. The piece is a journey through post-tonal techniques that resolves back into common-practice harmony — a reconciliation rather than a rejection.
+Britten's masterpiece for solo guitar takes a theme by the Renaissance composer John Dowland and subjects it to eight variations of increasing distance from tonality. The early variations feel unsettled but recognizable; middle variations dissolve into free atonal textures; the eighth and last of them is a passacaglia, and only after it does Dowland's song *Come, Heavy Sleep* arrive whole, in plain tonal clarity. The piece is a journey through post-tonal techniques that resolves back into common-practice harmony — a reconciliation rather than a rejection.
 
 **Building an Atonal Etude — Practical Method:**
 
 Here is a process for composing a short atonal guitar etude using a trichord cell:
 
-1. **Choose a trichord cell.** Example: set class 3-3 [0,1,4] — a chromatic cluster plus a third. In pitches: C, C#, E.
+1. **Choose a trichord cell.** Example: set class 3-3 (014) — a chromatic cluster plus a third. In pitches: C, C#, E.
 2. **Map it to CAGED positions.** Find [0,1,4] transpositions that fall naturally under each of the five CAGED shapes. At position V (5th fret): A, Bb, C#. At position III: G, Ab, B. And so on.
 3. **Compose phrases that cycle through positions.** Each phrase states the cell in one position, then transitions to the next. The cell's identity is preserved while the fretboard location shifts.
 4. **Vary register, dynamics, articulation.** Apply free-atonal registral distribution: play some cells compressed, others spread across two octaves.
@@ -350,7 +349,7 @@ Post-tonal theory is not a rejection of tonal theory — it is a generalization.
 
 **Set Theory as a Tool for Jazz Voicing Analysis:**
 
-Jazz harmony is notoriously complex: extensions, alterations, polychords, upper-structure triads. Traditional tonal analysis struggles to describe a chord like **G7alt(b9,#9,b13)**. But set-class analysis reduces it to a pitch-class set and identifies its set class directly. The chord above has pitch classes {7, 11, 5, 9, 10, 3}; its prime form is a specific hexachord whose interval vector characterizes its sonority.
+Jazz harmony is notoriously complex: extensions, alterations, polychords, upper-structure triads. Traditional tonal analysis struggles to describe a chord like **G7alt(b9,#9,b13)**. But set-class analysis reduces it to a pitch-class set and identifies its set class directly. The chord above has pitch classes {7, 11, 5, 8, 10, 3}; its prime form is a specific hexachord whose interval vector characterizes its sonority.
 
 This gives jazz theorists a language that cuts across chord-symbol conventions. Two chords with different chord symbols might belong to the same set class and therefore share the same interval content. Two chords with similar symbols might belong to different set classes. Set theory reveals the actual sonority underneath the notation.
 
@@ -362,7 +361,7 @@ This is immediately useful for guitarists: when choosing a voicing for an ambigu
 
 **OPTIC/K and Pitch-Class Equivalence:**
 
-In neo-Riemannian and transformational theory, voice-leading equivalences are described by the **OPTIC** relations:
+In geometric music theory (Callender, Quinn and Tymoczko, *Science*, 2008), voice-leading equivalences are described by the **OPTIC** relations:
 - **O**ctave equivalence: two pitches an octave apart are the same.
 - **P**ermutation: reordering within an octave does not change identity.
 - **T**ransposition: two chords related by a single interval are equivalent.
@@ -403,7 +402,7 @@ The **K** relation adds a further layer (considering equivalence up to set-class
 ## Self-Check Assessment
 
 **1. What did Schoenberg mean by "the emancipation of dissonance," and why was it a historical turning point?**
-> Schoenberg claimed in 1908 that dissonant sonorities do not need to resolve to consonances — that the distinction between consonance and dissonance is historical convention, not an acoustic law. It was a turning point because it removed the last constraint of common-practice tonality (the obligation to resolve tension), opening the door to atonal composition where any sonority could stand as a stable structural event.
+> Schoenberg held — in his music from 1908 on, and by name in his 1926 essay "Opinion or Insight?" — that dissonant sonorities do not need to resolve to consonances — that the distinction between consonance and dissonance is historical convention, not an acoustic law. It was a turning point because it removed the last constraint of common-practice tonality (the obligation to resolve tension), opening the door to atonal composition where any sonority could stand as a stable structural event.
 
 **2. Compute the prime form of the set {D, F, A, C} (a D minor 7th chord). Show the normal form and one inversion check.**
 > Pitch classes: {2, 5, 9, 0} → ascending {0, 2, 5, 9}. Rotations and spans:
@@ -411,8 +410,8 @@ The **K** relation adds a further layer (considering equivalence up to set-class
 > - (2, 5, 9, 0+12=12): span = 10
 > - (5, 9, 12, 14): span = 9
 > - (9, 12, 14, 17): span = 8 — smallest!
-> Normal form: {9, 0, 2, 5}. Transpose to start at 0: subtract 9 → {0, 3, 5, 8}. Inversion: {0, -3, -5, -8} mod 12 = {0, 9, 7, 4} → reorder {0, 4, 7, 9}. Compare {0,3,5,8} vs {0,4,7,9}: second element 3 < 4, so {0,3,5,8} is more left-packed.
-> **Prime form: [0,3,5,8]** — set class 4-26, the minor 7th / minor-triad-plus-7 sonority.
+> Normal form: [9, 0, 2, 5]. Transpose to start at 0: subtract 9 → [0, 3, 5, 8]. Inversion: invert {0, 2, 5, 9} → {0, 10, 7, 3}, ascending {0, 3, 7, 10}. Normalize it too (do not just reorder it): the rotation (7, 10, 12, 15) has the smallest span (8), so its normal form is [7, 10, 0, 3], transposed to start at 0 → [0, 3, 5, 8]. The inversion gives the same result: this set class is inversionally symmetric.
+> **Prime form: (0358)** — set class 4-26, the minor 7th / minor-triad-plus-7 sonority.
 
 **3. Given P0 = [0, 1, 4, 9, 5, 11, 2, 7, 6, 10, 3, 8], derive I0 (inversion starting on 0). Show the formula used.**
 > Formula: I0[k] = (0 - P0[k]) mod 12 = (-P0[k]) mod 12.

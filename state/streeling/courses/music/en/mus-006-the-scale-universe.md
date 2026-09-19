@@ -21,7 +21,7 @@ After completing this course, you will be able to:
 
 - Represent any scale as a 12-bit binary number and convert it to a decimal integer
 - Explain why there are exactly 4,096 mathematically possible scales in 12-tone equal temperament
-- Compute the modes of any scale using circular left shifts (bit rotations)
+- Compute the modes of any scale using circular shifts (bit rotations)
 - Distinguish between the total count (4,096) and the count under various equivalences (prime forms, Forte classes)
 - Apply Zeitler's criteria to filter the universe down to "musically real" scales
 - Compute interval vectors, brightness, and symmetry properties from a scale's integer
@@ -143,7 +143,9 @@ To find the next mode of a scale:
 2. Remove it, shift the remaining pattern down
 3. Wrap the old root around to the top
 
-More precisely, the modal rotation is a **circular left shift** by the distance to the next scale tone. In a 12-bit system, "wrapping around" means bits that shift off the left edge reappear on the right.
+More precisely, the modal rotation is a **circular right shift** by the distance, in semitones, from the old root to the new root: each pitch class p becomes (p − n) mod 12, so the new root lands on bit 0. In a 12-bit system, "wrapping around" means bits that shift off the right edge reappear on the left. A circular right shift by n is the same as a circular left shift by 12 − n.
+
+Be careful with the direction: a circular **left** shift by n adds n to every pitch class, which **transposes** the scale up instead of changing its mode. Shifting C major (2741) left by 2 gives D major (2774); shifting it right by 2 gives D Dorian moved down to C, that is C Dorian (1709).
 
 ### Example: The Modes of Major
 
@@ -159,7 +161,7 @@ The major scale pattern has intervals 2-2-1-2-2-2-1 (seven notes). Its seven mod
 | Aeolian (Natural Minor) | 6 | 2-1-2-2-1-2-2 |
 | Locrian | 7 | 1-2-2-1-2-2-2 |
 
-These are **not seven different scales.** They are seven rotations of the same underlying pattern. When you play C Dorian on a piano, you are playing the white keys starting from D.
+These are **not seven different scales.** They are seven rotations of the same underlying pattern. When you play D Dorian on a piano, you are playing the white keys starting from D.
 
 ### Computing Rotations as Bit Operations
 
@@ -170,9 +172,12 @@ rotate_left(scale, n):
     shifted = (scale << n) & 0xFFF        # shift left, mask to 12 bits
     wrapped = scale >> (12 - n)           # bits that fell off
     return shifted | wrapped               # combine
+
+mode(scale, n):                           # n = semitones from old root to new root
+    return rotate_left(scale, (12 - n) % 12)   # = circular right shift by n
 ```
 
-Applied to the major scale (2741), rotating by the correct number of positions produces each mode's integer representation.
+Applied to the major scale (2741), `mode(2741, n)` for n = 0, 2, 4, 5, 7, 9, 11 produces each mode's integer representation on C: Ionian 2741, Dorian 1709, Phrygian 1451, Lydian 2773, Mixolydian 1717, Aeolian 1453, Locrian 1387. (`rotate_left(2741, n)` would give the major scales on D, E, F... instead.)
 
 ### Practice Exercise
 
@@ -186,8 +191,8 @@ Hint: the rotation amount equals the number of semitones between the old root an
 
 Answer sketch:
 - C harmonic minor = 2477 (binary: 100110101101)
-- Rotate left by 2 semitones (D is 2 semitones above C) → 2nd mode
-- Rotate left by 3 semitones (Eb is 3 semitones above C) → 3rd mode
+- Rotate right by 2 semitones (D is 2 semitones above C) → 2nd mode on C: C Db Eb F Gb A Bb = 1643
+- Rotate right by 3 semitones (Eb is 3 semitones above C) → 3rd mode on C: C D E F G# A B = 2869
 
 The seven modes of harmonic minor are all rotations of the integer 2477.
 
@@ -206,7 +211,7 @@ Under modal equivalence:
 - The 6-note whole-tone scale has only 1 unique rotation (it maps to itself) → 1 prime form
 - The 12-note chromatic scale is its own prime form
 
-**Counting prime forms:** Of the 4,096 scales, approximately **352** are structurally unique under rotation. The exact count depends on conventions (whether to include the empty scale, single-note scales, etc.).
+**Counting prime forms:** Of the 4,096 scales, exactly **352** are structurally unique under rotation, counting every cardinality from the empty scale to the chromatic scale (the 352 binary necklaces with 12 beads, OEIS A000031).
 
 ### Forte Classes — Ignoring Rotation AND Inversion
 
@@ -215,7 +220,7 @@ In the 1970s, Allen Forte formalized a further equivalence: treating a scale and
 - **Major scale** (2-2-1-2-2-2-1) inverts to **Phrygian** (1-2-2-2-1-2-2) — wait, that IS a mode of major.
 - But most scales have inversions that are NOT in the same modal family.
 
-Under **T/I equivalence** (Transposition + Inversion), Forte identified **224 distinct set classes** for cardinalities 3 through 9. Including all cardinalities from 0 to 12, the total count is slightly higher.
+Under **T/I equivalence** (Transposition + Inversion), Forte's table lists **208 distinct set classes** for cardinalities 3 through 9. Adding the 16 classes with 0, 1, 2, 10, 11 or 12 notes gives **224 set classes** across all cardinalities from 0 to 12.
 
 The **Forte number** (e.g., "7-35" for the diatonic/major scale) is a standardized naming system where:
 - First number = cardinality (number of notes)
@@ -236,9 +241,9 @@ Thus there are only **two whole-tone scales** in the entire universe, and they a
 | Equivalence | Count | What Is Equated |
 |-------------|-------|-----------------|
 | None (raw) | 4,096 | All subsets of 12 pitch classes |
-| Transposition (T) | ~352 prime forms | Rotations of same pattern |
+| Transposition (T) | 352 prime forms | Rotations of same pattern |
 | Transposition + Inversion (T/I) | 224 Forte classes | Above, plus mirror images |
-| T/I + Complementation | ~158 | Above, plus scale+complement pairs |
+| T/I + Complementation | 122 | Above, plus scale+complement pairs |
 
 ### Practice Exercise
 
@@ -253,7 +258,7 @@ Answers:
 1. 010101010101 = 1365
 2. Rotate left 2: still 010101010101 = 1365 (same scale)
 3. Rotate left 1: 101010101010 = 2730 (the other whole-tone scale)
-4. A scale with N notes has at most N modes, but if the scale has rotational symmetry (maps to itself under rotation by k semitones where k < 12), it has fewer unique modes. The whole-tone scale has 12/6 = 2 rotational symmetry period, so all rotations produce one of two states.
+4. A scale with N notes has at most N modes, but if the scale has rotational symmetry (maps to itself under rotation by k semitones where k < 12), it has fewer unique modes. The whole-tone scale maps to itself under rotation by 2 semitones, so all six of its modes are the same scale, and its rotations by any number of semitones produce only two distinct scales (1365 and 2730).
 
 ---
 
@@ -263,7 +268,7 @@ Of the 4,096 mathematical possibilities, most are not useful for music. A scale 
 
 ### The Zeitler Criteria
 
-William Zeitler, in his exhaustive cataloging work, proposed four criteria for a scale to be "real":
+William Zeitler's exhaustive catalog (allthescales.org) defines a scale by criteria 1 and 2 below; this module adds criteria 3 and 4 as further filters:
 
 1. **The root is present** — bit 0 must be set. A scale must contain its own tonic. This eliminates 2,048 scales (half the universe).
 
@@ -273,7 +278,7 @@ William Zeitler, in his exhaustive cataloging work, proposed four criteria for a
 
 4. **No cluster longer than 3 consecutive semitones** — four or more chromatic notes in a row create a chromatic cluster that loses scalar character.
 
-Applying all four criteria reduces the 4,096 scales to approximately **1,490 "legitimate" scales**. This is still vastly more than the familiar repertoire of named scales.
+Criteria 1 and 2 alone reduce the 4,096 scales to exactly **1,490**, Zeitler's own count. Applying all four criteria as stated here leaves **716**. This is still vastly more than the familiar repertoire of named scales.
 
 ### Why These Criteria Are Guidelines, Not Laws
 
@@ -281,7 +286,7 @@ The Zeitler criteria are **heuristics**, not definitions. Counterexamples abound
 
 - The **chromatic scale** has 12 consecutive semitones (violates criterion 4) — clearly a real scale
 - **Single-note "drones"** violate the 5-note minimum — clearly a real musical structure
-- **Blues scales** sometimes use gaps of 3 semitones cleverly (minor pentatonic has a gap from Bb to C)
+- **Tritonic and tetratonic scales**, common in African and early folk repertoires, leave gaps that criterion 2 forbids (C–Eb–G steps 3, 4 and then 5 from G back to C) — clearly real scales
 - **Gagaku scales**, microtonal scales, and other non-Western systems do not fit 12-TET at all
 
 The criteria are **culture-specific** — they describe scales that fit European tonal and modal practice. They are a useful filter, not a universal truth.
@@ -298,8 +303,8 @@ For each of the following scales, determine which Zeitler criteria (if any) it v
 Answers:
 1. C major: violates none — passes all criteria
 2. C chromatic: violates criterion 3 (12 notes, exceeds max of 8) and criterion 4 (12 consecutive semitones)
-3. Gap scale: violates criterion 2 (gap from F to B is 6 semitones) and criterion 3 (only 3 notes)
-4. Cluster scale: violates criterion 4 (5 consecutive semitones) and criterion 3 (only 5 notes, at the edge)
+3. Gap scale: violates criterion 2 (gaps of 5 semitones from C to F and 6 from F to B) and criterion 3 (only 3 notes)
+4. Cluster scale: violates criterion 4 (5 consecutive semitones) and criterion 2 (gap of 8 semitones from E up to the next C); its 5 notes satisfy criterion 3
 
 ---
 
@@ -309,7 +314,7 @@ Once a scale is an integer, all its musical properties become computable. You do
 
 ### Interval Vector
 
-An **interval vector** counts how many times each interval class appears in the scale. There are six interval classes (1 through 6 semitones; the tritone is its own inverse, and intervals 7-11 are complements of 1-5).
+An **interval vector** counts how many times each interval class appears in the scale. The vector has six entries, one per interval class from 1 to 6 semitones (the tritone is its own inverse, and intervals 7-11 are complements of 1-5).
 
 For the **C major scale** (C D E F G A B):
 
@@ -392,7 +397,7 @@ Note: heavy on class 5 (perfect 4ths/5ths) and absent class 6 (tritone) and clas
 
 Music theory textbooks cover perhaps **200 named scales**: major, minor, modes, pentatonics, harmonic and melodic minor and their modes, diminished, whole-tone, blues, bebop scales, a handful of "exotic" (Hungarian, Byzantine, etc.), and the Messiaen modes.
 
-That leaves **approximately 3,800 unnamed scales** that satisfy basic Zeitler criteria. The vast majority of the scale universe is unexplored territory.
+That leaves **roughly 1,300 unnamed scales** among the 1,490 that satisfy Zeitler's basic criteria (about 500 among the 716 that pass all four). The vast majority of the scale universe is unexplored territory.
 
 ### How to Explore
 
@@ -444,7 +449,7 @@ Pitch classes: 0, 1, 2, 4, 6, 8, 11
 Notes from C: C, C#, D, E, F#, G#, B
 ```
 
-This satisfies Zeitler (root present, gaps small, 7 notes, short clusters) but is not a commonly named scale. Play it on guitar. Listen. Give it a name.
+This passes three Zeitler criteria (root present, largest gap 3 semitones, 7 notes) but fails criterion 4: B, C, C#, D are four consecutive semitones, wrapping from B around to C. It is not a commonly named scale either. The criteria are heuristics, so play it on guitar anyway. Listen. Give it a name.
 
 ### The Exploration Protocol
 
@@ -458,7 +463,7 @@ This is how new music gets discovered. The universe is there; the mapping is mec
 
 ### Practice Exercise
 
-Take the scale integer **1709** (Hungarian-sounding).
+Take the scale integer **1709** (C Dorian).
 
 1. Convert it to binary and identify the pitch classes
 2. Write out the scale starting on C
@@ -471,9 +476,9 @@ Hint: 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ## 8. Connection to OPTIC-K
 
-Music set theory uses a taxonomy of **equivalence relations** to describe how two note collections might be considered "the same." The mnemonic OPTIC-K captures them all. The scale-integer framework makes these equivalences computable.
+Music set theory uses a taxonomy of **equivalence relations** to describe how two note collections might be considered "the same." The mnemonic OPTIC captures them all. The scale-integer framework makes these equivalences computable.
 
-### The Six Equivalences
+### The Five Equivalences
 
 | Letter | Name | Meaning | Operation |
 |--------|------|---------|-----------|
@@ -482,9 +487,8 @@ Music set theory uses a taxonomy of **equivalence relations** to describe how tw
 | **T** | Transposition | Same pattern starting on different root | Modular rotation |
 | **I** | Inversion | Mirror image around a pivot | Reverse interval order |
 | **C** | Cardinality | Number of distinct pitch classes | POPCOUNT of integer |
-| **K** | (Alternate form) | — | Computed from K-net or similar |
 
-(The "K" in OPTIC-K sometimes refers to cardinality equivalence or to a specific Kuusisto/Lewin structure, depending on source.)
+(OPTIC, without a K, is the set of five equivalences defined by Callender, Quinn and Tymoczko, "Generalized Voice-Leading Spaces", *Science* 320, 2008. The "-K" belongs to Guitar Alchemist's OPTIC-K embedding, not to that paper.)
 
 ### Where Each Equivalence Lives in the Framework
 
@@ -498,7 +502,7 @@ Music set theory uses a taxonomy of **equivalence relations** to describe how tw
 
 Under combined T and I equivalence (the standard Forte taxonomy), the 4,096 scales collapse to **224 distinct classes**. These classes form the foundation of 20th-century music set theory.
 
-Each Forte class has a canonical prime form (the lexicographically smallest representative after normalization). Forte's 1973 book **"The Structure of Atonal Music"** tabulates all 224 classes with their interval vectors, symmetries, and Z-relations.
+Each Forte class has a canonical prime form (the lexicographically smallest representative after normalization). Forte's 1973 book **"The Structure of Atonal Music"** tabulates the 208 classes with 3 to 9 notes with their interval vectors, symmetries, and Z-relations; the remaining 16 classes (0, 1, 2, 10, 11 and 12 notes) complete the 224.
 
 ### GA's 216-Dimensional Vector Space
 
@@ -541,7 +545,7 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 | **Prime form** | The canonical representative of a scale family under equivalence |
 | **Forte number** | A standardized label (e.g., 7-35) for a pitch-class set class |
 | **Interval vector** | A 6-tuple counting occurrences of each interval class in a scale |
-| **Interval class** | An interval reduced modulo octave AND inversion (so 1 and 11 are both class 1, etc. — actually wait, intervals 1-6 and their complements 11-6 collapse to classes 1-6) |
+| **Interval class** | An interval reduced modulo the octave and inversion: n and 12 − n semitones are the same class (1 and 11 are both class 1, 5 and 7 both class 5). Class 0 is the unison, so the classes an interval vector counts run 1 to 6 |
 | **Brightness** | The sum of pitch classes in a scale (proxy for sharpness/flatness) |
 | **Symmetry (rotational)** | A scale's property of mapping to itself under rotation |
 | **Chirality** | A scale's asymmetry under inversion |
@@ -577,10 +581,10 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 
 - 12-tone equal temperament as the Western tuning standard is empirically documented in piano tuning and orchestral practice since the 19th century
 - Pitch-class set theory and the 4,096 scale enumeration originate in Milton Babbitt's combinatorial work (1950s) and were formalized by Allen Forte in *The Structure of Atonal Music* (1973)
-- The 224 set classes under T/I equivalence are enumerated and tabulated in Forte (1973) and remain the standard taxonomy
+- The 224 set classes under T/I equivalence (all cardinalities, 0 to 12; OEIS A000029 counts them as the 224 binary bracelets with 12 beads) include the 208 classes of 3 to 9 notes tabulated in Forte (1973), which remain the standard taxonomy
 - Zeitler's scale criteria come from William Zeitler's exhaustive cataloging project (*All The Scales*, 2011 and companion website), representing a practical filter on the universe
 - Scale geometry and neighborhood relationships are explored in Dmitri Tymoczko's *A Geometry of Music* (2011), which formalizes voice-leading distances between chords and scales
 - The 216-dimensional GA feature-space representation is an implementation choice of Guitar Alchemist, extending classical pitch-class set theory with performance and harmonic-function metadata
-- OPTIC-K equivalence relations trace to David Lewin's *Generalized Musical Intervals and Transformations* (1987) and subsequent systematization in music theory pedagogy
-- Sources: Forte (1973); Tymoczko (2011); Lewin (1987); Rahn, *Basic Atonal Theory* (1980); Zeitler scale catalog (2011)
+- The OPTIC equivalence relations are defined in Clifton Callender, Ian Quinn and Dmitri Tymoczko, "Generalized Voice-Leading Spaces", *Science* 320 (2008): 346–348; David Lewin's *Generalized Musical Intervals and Transformations* (1987) is the separate transformational tradition
+- Sources: Forte (1973); Tymoczko (2011); Callender, Quinn & Tymoczko (2008); Lewin (1987); Rahn, *Basic Atonal Theory* (1980); Zeitler scale catalog (2011)
 - Belief state: T(0.85) F(0.03) U(0.08) C(0.04)
