@@ -14,7 +14,7 @@
       "workflow": "demerzel-discussion-lifecycle.yml"
     },
     {
-      "kind": "failed_run",
+      "kind": "stale",
       "workflow": "demerzel-ideation.yml"
     },
     {
