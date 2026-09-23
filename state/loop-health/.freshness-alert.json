@@ -2,7 +2,7 @@
   "alert": "ecosystem-freshness",
   "problems": [
     {
-      "kind": "failed_run",
+      "kind": "stale",
       "workflow": "cross-model-review.yml"
     },
     {
@@ -14,7 +14,7 @@
       "workflow": "demerzel-discussion-lifecycle.yml"
     },
     {
-      "kind": "stale",
+      "kind": "failed_run",
       "workflow": "demerzel-ideation.yml"
     },
     {
