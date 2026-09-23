@@ -725,6 +725,31 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertEqual(finding["kind"], "healthy")
         self.assertEqual(ef.exit_code(findings), 0)
 
+    def test_head_sha_alone_correlates_a_run_for_a_closed_unmerged_pull(self):
+        # A pull closed without merging, branch deleted: GitHub empties the
+        # run's `pull_requests` and `/commits/{sha}/pulls` recovers nothing, so
+        # the head_sha is the only identity left. It is enough.
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "abandoned-head",
+            "pull_state": "closed",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/abandoned-pr-run",
+            "head_sha": "abandoned-head",
+            "pull_requests": [],
+            "associated_pull_requests": [],
+        }
+        findings = self._event_findings(lambda *args: [(obligation, run)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
+
     def test_recent_absent_run_is_pending_within_response_allowance(self):
         obligation = {
             "activities": ["opened", "synchronize"],
