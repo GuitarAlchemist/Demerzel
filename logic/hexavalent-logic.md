@@ -136,7 +136,7 @@ belief:
 
 When an agent must act on a belief:
 
-1. **T (True)**: Proceed autonomously (confidence >= 0.9)
+1. **T (True)**: Proceed; how much autonomy follows the confidence ladder in [`confidence-thresholds.yaml`](confidence-thresholds.yaml) (autonomously only at confidence >= 0.9)
 2. **P (Probable)**: Proceed with caution, schedule verification, note assumption in audit log
 3. **U (Unknown)**: Gather evidence — query sources, run tests, ask human
 4. **D (Doubtful)**: Hold action, investigate further before proceeding, flag for review
@@ -168,16 +168,24 @@ When an agent must act on a belief:
 
 ### Who Assigns a Value
 
-A model reading evidence may *advise* on a value. Three boundaries stay with
-deterministic checks:
+A model reading evidence may *advise* on a value. Three boundaries stay outside
+the model:
 
-- **U vs F/D: an existence check.** Whether the artefact, field, log or check
-  run exists is looked up, not inferred. Absence is U, never F or D. A model's F
-  or D does not mean "refuted" until the refuting record has been found.
-- **T vs P: the confidence ladder.** T is reached through
-  [`confidence-thresholds.yaml`](confidence-thresholds.yaml) (`autonomous`,
-  >= 0.9), not by a model's label: evidence can be uniformly supporting and the
-  belief still P.
+- **U vs F/D: an existence check.** Whether the evidence exists is looked up,
+  not inferred. If no relevant evidence could be obtained, the value is U, never
+  F or D. Two kinds of proposition are refuted by the lookup itself. For an
+  existence claim ("the field exists"), an exhaustive lookup that finds nothing
+  is F. For a completeness claim ("every persona has a test"), one counterexample
+  found is F, while an exhaustive search that finds no counterexample supports it.
+  A model's F or D does not mean "refuted" until the refuting record, the empty
+  exhaustive lookup, or the counterexample has been found.
+- **T vs P: a recorded sufficiency judgement.** T means the verification the
+  proposition needs has been done; it is not a model's label. `confidence`
+  measures the assignment, and the ladder in
+  [`confidence-thresholds.yaml`](confidence-thresholds.yaml) governs *action*,
+  not the value. Beliefs can be T at 0.8 or P at
+  0.9. Whoever records P should say which verification is missing, because
+  that is not recoverable from supporting evidence alone.
 - **C: an explicit transition.** C -> T or C -> F is a recorded resolution
   (above), never a classifier quietly picking one of two strong opposing records.
 
@@ -185,7 +193,9 @@ Measured on `jev-1.13.0` (2026-09-24/25, pre-registered, 376 calls): on 58
 synthetic cases absence was answered F or D in 4 to 7 of 10, depending on how U
 was worded, and no wording fixed it without pushing P into U. Two opposing
 strong records collapsed to F in 4 of 10 until told not to pick a side. On the
-8 beliefs in `state/beliefs/`, two recorded P came back T. There were no false
+8 beliefs in `state/beliefs/`, two recorded P came back T (one at 0.29 confidence);
+b02 lists only supporting evidence and does not say what verification is missing.
+There were no false
 T on the synthetic cases, and no F, D or C on the real beliefs.
 Evidence: [learn#18](https://github.com/spareilleux/learn/pull/18).
 
