@@ -173,16 +173,17 @@ the model:
 
 - **U vs F/D: an existence check.** Whether the evidence exists is looked up,
   not inferred. If no relevant evidence could be obtained, the value is U, never
-  F or D. The exception is a proposition that itself asserts existence or
-  completeness ("the field exists", "every persona has a test"). There, an
-  exhaustive lookup that finds nothing is refuting evidence, and the value is F.
-  A model's F or D does not mean "refuted" until the refuting record, or that
-  exhaustive lookup, has been found.
+  F or D. Two kinds of proposition are refuted by the lookup itself. For an
+  existence claim ("the field exists"), an exhaustive lookup that finds nothing
+  is F. For a completeness claim ("every persona has a test"), one counterexample
+  found is F, while an exhaustive search that finds no counterexample supports it.
+  A model's F or D does not mean "refuted" until the refuting record, the empty
+  exhaustive lookup, or the counterexample has been found.
 - **T vs P: a recorded sufficiency judgement.** T means the verification the
   proposition needs has been done; it is not a model's label. `confidence`
   measures the assignment, and the ladder in
-  [`confidence-thresholds.yaml`](confidence-thresholds.yaml) governs *action*
-  (see Governance Thresholds), not the value. Beliefs can be T at 0.8 or P at
+  [`confidence-thresholds.yaml`](confidence-thresholds.yaml) governs *action*,
+  not the value. Beliefs can be T at 0.8 or P at
   0.9. Whoever records P should say which verification is missing, because
   that is not recoverable from supporting evidence alone.
 - **C: an explicit transition.** C -> T or C -> F is a recorded resolution
