@@ -168,16 +168,23 @@ When an agent must act on a belief:
 
 ### Who Assigns a Value
 
-A model reading evidence may *advise* on a value. Three boundaries stay with
-deterministic checks:
+A model reading evidence may *advise* on a value. Three boundaries stay outside
+the model:
 
-- **U vs F/D: an existence check.** Whether the artefact, field, log or check
-  run exists is looked up, not inferred. Absence is U, never F or D. A model's F
-  or D does not mean "refuted" until the refuting record has been found.
-- **T vs P: the confidence ladder.** T is reached through
-  [`confidence-thresholds.yaml`](confidence-thresholds.yaml) (`autonomous`,
-  >= 0.9), not by a model's label: evidence can be uniformly supporting and the
-  belief still P.
+- **U vs F/D: an existence check.** Whether the evidence exists is looked up,
+  not inferred. If no relevant evidence could be obtained, the value is U, never
+  F or D. The exception is a proposition that itself asserts existence or
+  completeness ("the field exists", "every persona has a test"). There, an
+  exhaustive lookup that finds nothing is refuting evidence, and the value is F.
+  A model's F or D does not mean "refuted" until the refuting record, or that
+  exhaustive lookup, has been found.
+- **T vs P: a recorded sufficiency judgement.** T means the verification the
+  proposition needs has been done; it is not a model's label. `confidence`
+  measures the assignment, and the ladder in
+  [`confidence-thresholds.yaml`](confidence-thresholds.yaml) governs *action*
+  (see Governance Thresholds), not the value. Beliefs can be T at 0.8 or P at
+  0.9. Whoever records P should say which verification is missing, because
+  that is not recoverable from supporting evidence alone.
 - **C: an explicit transition.** C -> T or C -> F is a recorded resolution
   (above), never a classifier quietly picking one of two strong opposing records.
 
@@ -185,7 +192,9 @@ Measured on `jev-1.13.0` (2026-09-24/25, pre-registered, 376 calls): on 58
 synthetic cases absence was answered F or D in 4 to 7 of 10, depending on how U
 was worded, and no wording fixed it without pushing P into U. Two opposing
 strong records collapsed to F in 4 of 10 until told not to pick a side. On the
-8 beliefs in `state/beliefs/`, two recorded P came back T. There were no false
+8 beliefs in `state/beliefs/`, two recorded P came back T (one at 0.29 confidence);
+b02 lists only supporting evidence and does not say what verification is missing.
+There were no false
 T on the synthetic cases, and no F, D or C on the real beliefs.
 Evidence: [learn#18](https://github.com/spareilleux/learn/pull/18).
 
