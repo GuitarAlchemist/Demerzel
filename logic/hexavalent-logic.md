@@ -136,7 +136,7 @@ belief:
 
 When an agent must act on a belief:
 
-1. **T (True)**: Proceed autonomously (confidence >= 0.9)
+1. **T (True)**: Proceed; how much autonomy follows the confidence ladder in [`confidence-thresholds.yaml`](confidence-thresholds.yaml) (autonomously only at confidence >= 0.9)
 2. **P (Probable)**: Proceed with caution, schedule verification, note assumption in audit log
 3. **U (Unknown)**: Gather evidence — query sources, run tests, ask human
 4. **D (Doubtful)**: Hold action, investigate further before proceeding, flag for review
