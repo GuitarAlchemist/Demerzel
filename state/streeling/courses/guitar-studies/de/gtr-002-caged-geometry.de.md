@@ -26,15 +26,17 @@ version: "1.0.0"
 
 Jeder Gitarrist lernt diese fünf offenen Dur-Akkorde früh. Jeder hat einen eigenen geometrischen Fingerabdruck:
 
+Die Diagramme lesen sich von Saite 6 (tiefes E) bis Saite 1 (hohes E); `x` markiert eine Saite, die nicht gespielt wird.
+
 ### C-Form
 ```
-x 3 2 0 1 0    Saiten: 5-4-3-2-1
+x 3 2 0 1 0    Saiten: 6-5-4-3-2-1
   G 3 5 G 3    Intervalle: Grundton-gr.3-r.5-Grundton-gr.3
 ```
 
 ### A-Form
 ```
-x 0 2 2 2 0    Saiten: 5-4-3-2-1
+x 0 2 2 2 0    Saiten: 6-5-4-3-2-1
   G 5 G 3 5    Intervalle: Grundton-r.5-Grundton-gr.3-r.5
 ```
 
@@ -52,7 +54,7 @@ G 5 G 3 5 G    Intervalle: Grundton-r.5-Grundton-gr.3-r.5-Grundton
 
 ### D-Form
 ```
-x x 0 2 3 2    Saiten: 4-3-2-1
+x x 0 2 3 2    Saiten: 6-5-4-3-2-1
     G 5 G 3    Intervalle: Grundton-r.5-Grundton-gr.3
 ```
 
