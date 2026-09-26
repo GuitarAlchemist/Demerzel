@@ -1,0 +1,30 @@
+{
+  "schema": "continuity.successor-transition-receipt/1",
+  "workIdentity": "1111111111111111111111111111111111111111111111111111111111111111",
+  "workGeneration": 0,
+  "successorSlot": "review-successor",
+  "successor": {
+    "actorRef": "act-0002",
+    "sessionRef": "session-generation-1",
+    "sessionGeneration": 1
+  },
+  "commitmentDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+  "incomingReviewDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+  "decisionDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+  "decision": "ACCEPTED_FOR_NEXT_STAGE",
+  "outputArtifact": {
+    "mediaType": "application/json",
+    "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "bytes": 128
+  },
+  "consumptionDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+  "consumption": {
+    "consumerIdentity": "demerzel-contract-consumer",
+    "consumedAtRef": "7777777777777777777777777777777777777777777777777777777777777777",
+    "ordinal": 0
+  },
+  "authority": {
+    "effects": []
+  },
+  "receiptDigest": "7222b292a29e519eb081e9ffd08fe9c8d366e857ad2243074e78750a8972128e"
+}
