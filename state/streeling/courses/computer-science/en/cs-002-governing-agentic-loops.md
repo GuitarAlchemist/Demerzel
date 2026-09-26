@@ -37,8 +37,8 @@ guarantee it. The guarantee must come from the framework.
 ### The Halting Parallel
 
 Alan Turing proved (1936) that no algorithm can decide for all programs whether they will halt.
-An LLM-in-a-loop faces the same problem: the system running the loop cannot reliably determine
-whether that loop will terminate. The check must be external.
+No general procedure can settle it for an arbitrary agent loop either. So termination is imposed
+rather than detected: a framework-enforced cap makes the loop halt by construction.
 
 **Implication:** Any agentic framework that relies on the model to declare its own completion
 is unsound by construction.
@@ -76,13 +76,16 @@ cap_behavior: halt_and_escalate
 
 ### Property 2: Progress Test
 Each iteration must produce a measurable state change. The framework compares state hashes
-before and after each step. If `hash(state_n) == hash(state_n-1)`, the loop is stalled.
+before and after each step. If `hash(state_n) == hash(state_n-1)`, the loop is stalled. Hash the
+fields that carry the result, not the iteration counter — that one differs at every step, so the
+stall test would never fire. And a stall test catches repetition, not drift: a loop that keeps
+changing without converging is stopped by the cap and the external criterion, not here.
 
 ```python
-def progress_test(state_before, state_after):
-    return hash(state_before) != hash(state_after)
+def stall_test(state_before, state_after):
+    return hash(state_before) == hash(state_after)
 
-if not progress_test(prev_state, curr_state):
+if stall_test(prev_state, curr_state):
     raise StallDetected("No state change — possible infinite loop")
 ```
 

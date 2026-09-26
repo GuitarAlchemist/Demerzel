@@ -296,7 +296,7 @@ Through-composed form matches the text or narrative directly — the music follo
 
 - **Kansas, "Carry On Wayward Son":** Verse-chorus with a distinctive bridge and an instrumental section — progressive rock expanding pop forms.
 - **Robert Johnson, "Cross Road Blues":** Classic 12-bar blues, the form that shaped most rock guitar vocabulary.
-- **Autumn Leaves (Jazz Standard):** AABA-adjacent form (actually 32 bars in AB or ABAC depending on arrangement), one of the first jazz standards every guitarist learns.
+- **Autumn Leaves (Jazz Standard):** AABC over 32 bars — four eight-bar sections, the second a repeat of the first, one of the first jazz standards every guitarist learns.
 
 ---
 
@@ -331,7 +331,7 @@ Usually several of these align at the same point. When three or four formal sign
 Villa-Lobos's Prelude No. 1 (from the Five Preludes, 1940) is one of the most-played classical guitar pieces. Its form is a clear ternary:
 
 - **A section (measures 1-18):** Homage to the Brazilian country dweller. Slow, lyrical melody on the low strings, arpeggiated accompaniment. Key: E minor. Ends with a half cadence leading into the B section.
-- **B section (measures 19-52):** Faster, more agitated. Chromatic melodic motion, arpeggiated texture in a higher register, modulations through related keys. This is the contrasting middle.
+- **B section (measures 19-52):** Faster (*più mosso*), more agitated. Chromatic melodic motion, arpeggiated texture in a higher register, and a turn to E major — the parallel major of the A section, which is the real source of the contrast. This is the contrasting middle.
 - **A section return (measures 53-end):** The opening material returns, nearly identical, closing the piece with symmetry. The return gives emotional payoff — we are home.
 
 Label this piece as A B A. Listen to it with this map in hand and notice how the return of A at measure 53 lands — the relief, the inevitability. That is form working on the listener.
