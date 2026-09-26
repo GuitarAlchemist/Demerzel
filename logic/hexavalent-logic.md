@@ -160,8 +160,8 @@ T follows the ladder, but merges its last two rungs into `< 0.5`. P sits one
 rung stricter than the ladder. U and C escalate from 0.5 upward and stop below;
 D and F never act. Where a cell and the ladder disagree, the stricter action
 wins, in the order Proceed < Proceed with note < Confirm first < Escalate <
-Do not act. Today that overrides the table in one place only: T below 0.3 is
-"Do not act", not "Escalate".
+Do not act. For example, T below the ladder's `do_not_act` rung is "Do not
+act", not "Escalate".
 
 ### Transition Rules
 
