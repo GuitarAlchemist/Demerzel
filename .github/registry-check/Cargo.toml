@@ -1,0 +1,33 @@
+# Standalone build manifest for ix-registry-check, used by
+# .github/workflows/registry-check.yml.
+#
+# ix does not commit a Cargo.lock, so building inside the ix workspace would
+# resolve dependencies fresh on every run. This manifest compiles the
+# checker's sources from the pinned ix checkout (ix-src/, at IX_SHA from
+# pins.env) against the Cargo.lock next to it, with `--locked`. The
+# dependency list mirrors crates/ix-registry-check/Cargo.toml at IX_SHA;
+# update this file, Cargo.lock and pins.env together when bumping IX_SHA.
+
+[package]
+name = "ix-registry-check"
+version = "0.1.0"
+edition = "2021"
+publish = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+
+[workspace]
+
+[lib]
+path = "../../ix-src/crates/ix-registry-check/src/lib.rs"
+
+[[bin]]
+name = "ix-registry-check"
+path = "../../ix-src/crates/ix-registry-check/src/main.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
