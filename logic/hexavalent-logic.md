@@ -154,6 +154,15 @@ When an agent must act on a belief:
 | F | Do not act | Do not act | Do not act | Do not act |
 | C | Escalate | Escalate | Escalate | Do not act |
 
+This table is a per-value overlay on the canonical ladder in
+[`confidence-thresholds.yaml`](confidence-thresholds.yaml), not a copy of it.
+T follows the ladder, but merges its last two rungs into `< 0.5`. P sits one
+rung stricter than the ladder. U and C escalate from 0.5 upward and stop below;
+D and F never act. Where a cell and the ladder disagree, the stricter action
+wins, in the order Proceed < Proceed with note < Confirm first < Escalate <
+Do not act. Today that overrides the table in one place only: T below 0.3 is
+"Do not act", not "Escalate".
+
 ### Transition Rules
 
 - **U -> P**: Partial evidence gathered supporting truth
