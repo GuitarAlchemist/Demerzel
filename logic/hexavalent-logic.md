@@ -158,7 +158,7 @@ This table is a per-value overlay on the canonical ladder in
 [`confidence-thresholds.yaml`](confidence-thresholds.yaml), not a copy of it.
 Columns are named rungs of that file, so retuning a rung moves them too. T
 follows the ladder, but merges everything below `ask_confirmation`. P sits one
-rung stricter than the ladder. U and C escalate from 0.5 upward and stop below;
+rung stricter than the ladder. U and C escalate at `ask_confirmation` and above and stop below it;
 D and F never act. Where a cell and the ladder disagree, the stricter action
 wins, in the order Proceed < Proceed with note < Confirm first < Escalate <
 Do not act. For example, T below the ladder's `do_not_act` rung is "Do not
