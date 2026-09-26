@@ -22,10 +22,6 @@
       "workflow": "jules-auto-delegate.yml"
     },
     {
-      "kind": "stale",
-      "workflow": "qa-tribunal.yml"
-    },
-    {
       "kind": "failed_run",
       "workflow": "substrate-audit.yml"
     }
