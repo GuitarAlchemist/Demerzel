@@ -145,8 +145,8 @@ When an agent must act on a belief:
 
 ### Governance Thresholds
 
-| Truth Value | Confidence >= 0.9 | Confidence >= 0.7 | Confidence >= 0.5 | Confidence < 0.5 |
-|-------------|-------------------|-------------------|-------------------|-------------------|
+| Truth Value | At `autonomous` | At `with_note` | At `ask_confirmation` | Below `ask_confirmation` |
+|-------------|-----------------|----------------|-----------------------|--------------------------|
 | T | Proceed | Proceed with note | Confirm first | Escalate |
 | P | Proceed with note | Confirm first | Escalate | Do not act |
 | U | Escalate | Escalate | Escalate | Do not act |
@@ -156,7 +156,8 @@ When an agent must act on a belief:
 
 This table is a per-value overlay on the canonical ladder in
 [`confidence-thresholds.yaml`](confidence-thresholds.yaml), not a copy of it.
-T follows the ladder, but merges its last two rungs into `< 0.5`. P sits one
+Columns are named rungs of that file, so retuning a rung moves them too. T
+follows the ladder, but merges everything below `ask_confirmation`. P sits one
 rung stricter than the ladder. U and C escalate from 0.5 upward and stop below;
 D and F never act. Where a cell and the ladder disagree, the stricter action
 wins, in the order Proceed < Proceed with note < Confirm first < Escalate <
