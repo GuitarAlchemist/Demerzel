@@ -1,7 +1,7 @@
 ---
 module_id: mat-003-floating-point-conditioning
 department: mathematics
-course: Fundamentos del cálculo numérico
+course: Aritmética de punto flotante y condicionamiento
 level: intermediate
 alchemical_stage: albedo
 prerequisites: [mat-001-proof-strategies]
@@ -12,7 +12,7 @@ version: "1.0.0"
 
 # Aritmética de punto flotante y condicionamiento — Cuando una computadora pierde dígitos
 
-> **Departamento de Matemáticas** | Etapa: Albedo (Intermedio) | Duración: 45 minutos
+> **Departamento de Matemáticas** | Etapa: Albedo (Intermedio) | Duración estimada: 45 minutos
 
 ## Objetivos
 
@@ -138,22 +138,79 @@ La matriz de Hilbert H_n es la matriz n × n con entradas 1 / (i + j − 1). Es 
 - Su inversa exacta tiene **entradas enteras** (Choi 1983), lo que da una referencia exacta para medir los errores.
 - κ₂(H_n) crece como (1 + √2)^(4n) / √n, aproximadamente e^(3.5n) (Todd 1954): cada fila y columna adicional lo multiplica por unos (1 + √2)^4 ≈ 34.
 - La H_n *almacenada* ya no es H_n, porque entradas como 1/3 se redondean. Por el §4, incluso un algoritmo perfecto hereda entonces un error de hasta aproximadamente κ · u.
+- Para una matriz simétrica, κ∞ / n ≤ κ₂ ≤ κ∞, donde κ∞ usa la norma del máximo de las sumas por filas. Esta **banda** es un teorema, así que puede juzgar un κ₂ calculado.
 
-**Protocolo.** Para n = 2 a 12, un laboratorio de Learn que fija IX en `e35138b9` construye H_n, calcula κ₂ con la `svd` de IX, invierte H_n con `inverse` y con `pseudo_inverse`, mide los residuos y el error respecto de la inversa entera exacta, y registra el primer n, si existe, para el que `inverse` devuelve `Singular`.
+**Protocolo.** El laboratorio de Learn [`code/streeling-mathematics`](https://github.com/spareilleux/learn/tree/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics) fija IX en `e35138b9`. Sus predicciones se escribieron y se registraron con hash antes de cualquier compilación ([`preregistration.md`](https://github.com/spareilleux/learn/blob/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics/preregistration.md), SHA-256 `a70179d8a698f835aec724181066823368f0b38f76fe8dcb994494495e412f20`). Para n = 2 a 16 construye fl(H_n) y las mismas matrices multiplicadas por 2^-20 y 2^20. Multiplicar por una potencia de dos es exacto en punto flotante binario, así que cambia la escala y no el condicionamiento. Para cada matriz registra:
+- `kappa_inf`: κ∞(H_n), a partir de la inversa entera exacta; `kappa_2`: σ₁ / σ_n según la `svd` de IX; `band`: si `kappa_2` está dentro de la banda;
+- `inverse`: la respuesta de IX, `ok` o `Singular`; `fwd_err`: su error hacia adelante ‖X − H_n⁻¹‖∞ / ‖H_n⁻¹‖∞ respecto de la inversa exacta; `residual`: ‖H_n X − I‖∞;
+- `rank`: el rango con la tolerancia de `ix_svd`, σ₁ · 10^-10; `pinv_res`: el residuo de ese `pseudo_inverse` truncado; `pinv0_fwd`: el error hacia adelante de `pseudo_inverse(0.0)`.
 
-**Predicciones, escritas antes de la ejecución:**
-1. κ₂ calculado a partir de `svd` crece aproximadamente de forma geométrica en n.
-2. El número de dígitos correctos de la inversa calculada disminuye aproximadamente como 16 − log₁₀ κ₂.
-3. Cualquier veredicto `Singular` para H_n refleja el umbral de pivote absoluto del §5, no una singularidad real, ya que H_n es invertible para todo n.
+**Medido** en Windows 11 x86-64 (rustc 1.94.0), copiado de [`expected/mat003_conditioning.txt`](https://github.com/spareilleux/learn/blob/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics/expected/mat003_conditioning.txt) (SHA-256 `6d2a9590b9a37577dd1c4b670d23dbfca55a8fef529e590a246ffa33c675bedb`):
 
-<!-- MAT003-LAB-RESULTS: pending. Fill only by pasting the Learn lab output and cite its artefact hash. -->
-> **Resultados medidos pendientes.** La tabla de valores medidos se copiará de la ejecución del laboratorio de Learn, con el hash de su artefacto, antes de la publicación. Ningún número de esta sección se estima a mano.
+```text
+ n  kappa_inf  kappa_2    band  inverse   fwd_err   residual  rank  pinv_res  pinv0_fwd
+ 2  2.70e1     1.93e1     ok    ok        2.96e-16  0.00e0       2  4.44e-16  4.44e-16
+ 3  7.48e2     5.24e2     ok    ok        5.97e-15  1.51e-14     3  3.02e-14  5.64e-15
+ 4  2.84e4     1.55e4     ok    ok        5.55e-14  5.19e-13     4  1.28e-12  1.59e-13
+ 5  9.44e5     4.77e5     ok    ok        7.26e-13  1.14e-11     5  3.84e-11  4.79e-12
+ 6  2.91e7     1.50e7     ok    ok        8.89e-11  9.57e-10     6  7.61e-10  1.62e-10
+ 7  9.85e8     4.75e8     ok    ok        3.02e-9   5.51e-8      7  1.01e-8   2.22e-9
+ 8  3.39e10    1.53e10    ok    ok        4.82e-9   1.04e-6      7  1.39e0    5.78e-8
+ 9  1.10e12    4.93e11    ok    ok        3.05e-6   2.54e-4      8  1.36e0    2.55e-4
+10  3.54e13    2.10e12    out   ok        1.10e-4   9.91e-3      8  1.47e0    1.00e0
+11  1.23e15    2.72e12    out   Singular  -         -            8  1.66e0    1.00e0
+12  4.12e16    1.51e12    out   Singular  -         -            9  1.52e0    1.00e0
+13  1.32e18    4.31e12    out   Singular  -         -            9  1.83e0    1.00e0
+14  4.54e19    7.66e13    out   Singular  -         -           11  3.62e0    1.00e0
+15  1.54e21    1.26e14    out   Singular  -         -            9  1.90e0    1.00e0
+16  5.06e22    9.71e14    out   Singular  -         -            9  1.98e0    1.00e0
+```
+
+```text
+Refusal boundary, by scale (the true kappa does not change with scale)
+  scale 1      first Singular: 11             worst accepted fwd_err: 1.10e-4 at n = 10
+  scale 2^-20  first Singular: 6              worst accepted fwd_err: 7.26e-13 at n = 5
+  scale 2^20   first Singular: none up to 16  worst accepted fwd_err: 1.04e0 at n = 14
+  scale 1 verdicts: 2:ok 3:ok 4:ok 5:ok 6:ok 7:ok 8:ok 9:ok 10:ok 11:S 12:S 13:S 14:S 15:S 16:S
+
+Scaling by 2^k is exact in binary floating point; is the answer?
+  inverse(2^k H) == inverse(H) / 2^k bit for bit: 13 of 13 accepted pairs
+  IX kappa_2 bit-identical at the three scales: 5 of 15
+
+Controls
+  I * 2^-40: kappa = 1, inverse Singular
+  I * 2^-39: kappa = 1, inverse ok, inverse == I * 2^39: true
+  [[1,2],[2,4]]: inverse Singular, rank(sigma_1 * 1e-10) = 1
+  exact H_3^-1 = [[9, -36, 30], [-36, 192, -180], [30, -180, 180]], H_3 * H_3^-1 == I exactly: Some(true)
+  checker on a wrong inverse (I for H_3^-1): residual 1.42e0
+```
+
+**Predicciones prerregistradas y veredictos:**
+
+| Predicción | Medido | Veredicto |
+|---|---|---|
+| `inverse(H_n)` devuelve `Singular` por primera vez en n = 11 | primer `Singular` en n = 11, y luego para todo n hasta 16 | confirmada |
+| El rechazo sigue a la escala, no al condicionamiento | I · 2^-40 (κ = 1) rechazada, I · 2^-39 aceptada; 2^-20 · H_n rechazada desde n = 6; 2^20 · H_n nunca rechazada hasta n = 16, con un error hacia adelante de 1.04e0 en n = 14 | confirmada |
+| Toda inversa aceptada tiene un error hacia adelante ≤ n · κ∞ · u | se cumple; el peor es 1.10e-4, en n = 10 | confirmada |
+| `inverse(2^k H_n)` = `inverse(H_n)` / 2^k, bit a bit | 13 de 13 pares aceptados | confirmada |
+| `rank(σ₁ · 10^-10)` baja de n por primera vez en n = 8 | rango 7 en n = 8; el residuo truncado es al menos 1.36 desde ahí | confirmada |
+| El κ₂ de IX se mantiene dentro de la banda hasta n = 11 | dentro solo para n = 2 a 9; por debajo de κ∞ / n desde n = 10 | **refutada** |
+| El κ₂ de IX es idéntico bit a bit en las tres escalas | 5 de 15 tamaños | **refutada** |
+
+**Lo que muestra la ejecución:**
+- La frontera `Singular` la fija el umbral de pivote absoluto, no la matriz. Las mismas matrices, solo reescaladas, se rechazan desde n = 6 o nunca. En la escala 2^20, `inverse` responde en n = 14 con un error hacia adelante de 1.04e0 — ningún dígito correcto — sin señalar ningún error.
+- Un número de condición también se calcula en punto flotante. Como la banda es un teorema, un κ₂ menor que κ∞ / n no puede ser el número de condición de H_n: desde n = 10, el valor calculado con la `svd` de IX no es κ₂(H_n), y la columna `rank` ya no es monótona: 11 en n = 14, luego 9 en n = 15. La ejecución no dice más que eso.
+- El κ₂ de IX cambia con un reescalado exacto en todos los tamaños salvo 5 de 15. La causa **no está identificada**; queda como una reproducción abierta para IX, sin explicarla ni corregirla aquí.
+- `pseudo_inverse(0.0)`, que conserva todos los valores singulares, tiene un error hacia adelante de 1.00e0 desde n = 10: tampoco tiene ningún dígito correcto.
+- La regla práctica del §4 sigue siendo teoría, no una ley medida: los errores medidos quedan por debajo de n · κ∞ · u, y en n = 10 (κ∞ = 3.54e13) el error es 1.10e-4.
+
+**Plataformas.** Los números se midieron en una sola máquina. Después, la CI alojada volvió a ejecutar el laboratorio en Linux x86-64, Windows x86-64 y macOS arm64 (rustc 1.98.1; [PR n.º 24 de Learn](https://github.com/spareilleux/learn/pull/24), [ejecución 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) y reprodujo esta salida byte a byte, incluido un resumen (digest) de los bits en bruto de cada valor calculado (`0ffcce71a1dffe45`). Una salida idéntica muestra que el cálculo es **reproducible** en esas plataformas. No muestra que sea **correcto**: la corrección se juzga respecto de la inversa exacta y de la banda del teorema, y según ese criterio el κ₂ de IX falla desde n = 10 en todas las plataformas por igual.
 
 ### Ejercicio práctico
 
 Usando κ₂(H_n) ≈ e^(3.5n) y la regla práctica del §4, estima el tamaño n a partir del cual una inversa calculada de H_n ya no tiene ningún dígito fiable.
 
-> *Solución:* Ningún dígito sobrevive cuando κ₂ llega a aproximadamente 1/u ≈ 10^16. Resolver e^(3.5n) = 10^16 da n = 16 · ln 10 / 3.5 ≈ 36.8 / 3.5 ≈ 10.5. La ley de crecimiento oculta un factor constante y el término 1 / √n, así que es una estimación de orden de magnitud; la tabla medida indica dónde ocurre realmente.
+> *Solución:* Ningún dígito sobrevive cuando κ₂ llega a aproximadamente 1/u ≈ 10^16. Resolver e^(3.5n) = 10^16 da n = 16 · ln 10 / 3.5 ≈ 36.8 / 3.5 ≈ 10.5. La ley de crecimiento oculta un factor constante y el término 1 / √n, así que es solo un orden de magnitud. En la tabla medida, κ∞ supera 10^16 por primera vez en n = 12 (4.12e16), con el κ₂ verdadero entre κ∞ / n y κ∞; `inverse` todavía responde en n = 10 con un error hacia adelante de 1.10e-4 y rechaza desde n = 11.
 
 ---
 
@@ -161,6 +218,7 @@ Usando κ₂(H_n) ≈ e^(3.5n) y la regla práctica del §4, estima el tamaño n
 
 - **Comparar flotantes calculados con `==`.** Compara con una tolerancia derivada del problema, y hazla relativa cuando la escala varía.
 - **Confiar en un residuo pequeño.** Un residuo pequeño r = b − A x̂ no significa un error pequeño: por el teorema del §4 con Δb = −r, el error relativo puede llegar a κ(A) · ‖r‖ / ‖b‖.
+- **Confiar en un número de condición calculado cercano a 1/u.** κ también se calcula en punto flotante: en el experimento del §6, el κ₂ de IX para H_n cae por debajo de la cota inferior del teorema desde n = 10.
 - **Leer «no singular» como «bien condicionada».** Un umbral de pivote absoluto, como el de `inverse`, mide la escala, no el condicionamiento.
 - **Invertir para resolver.** Calcular A⁻¹ y luego A⁻¹ b cuesta más trabajo que resolver A x = b directamente y suele ser menos preciso; formar XᵀX eleva κ al cuadrado.
 - **Creer los dígitos impresos.** Imprimir 17 dígitos no los hace correctos; log₁₀ κ de ellos pueden ser ruido.
@@ -210,6 +268,6 @@ Usando κ₂(H_n) ≈ e^(3.5n) y la regla práctica del §4, estima el tamaño n
 - J. Todd, 1954, National Bureau of Standards Applied Mathematics Series 39: el crecimiento del número de condición de las matrices de Hilbert
 - M.-D. Choi, «Tricks or Treats with the Hilbert Matrix», *American Mathematical Monthly* 90(5), 1983: las entradas enteras de la inversa
 - Código fuente de IX en el commit `e35138b9d4c707d48f802649a7fcb3f7fc94934d`: cada hecho de código del §5 enlaza a su línea
-- Mediciones: pendientes del laboratorio de Learn `code/streeling-mathematics/`, que fija IX en el mismo commit
+- Mediciones: laboratorio de Learn `code/streeling-mathematics/` en el commit `c8135fa508fcb9d35593e8dedbb925c44282b3a2` (PR n.º 24 de Learn), que fija IX en el mismo commit; SHA-256 de la salida esperada `6d2a9590b9a37577dd1c4b670d23dbfca55a8fef529e590a246ffa33c675bedb`, SHA-256 del prerregistro `a70179d8a698f835aec724181066823368f0b38f76fe8dcb994494495e412f20`; medido en Windows 11 x86-64 (rustc 1.94.0), salida reproducida por la CI alojada en Linux, Windows y macOS (ejecución 36335008098)
 - Procedencia: redactado a mano por una sesión de Claude Code (Opus 5.5) a partir del plan de currículo de Streeling, no producido por el pipeline de cursos Seldon; en revisión
-- Estado de creencia: T(0.80) F(0.02) U(0.15) C(0.03)
+- Estado de creencia: T(0.85) F(0.02) U(0.10) C(0.03)
