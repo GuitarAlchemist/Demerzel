@@ -138,10 +138,10 @@ The Hilbert matrix H_n is the n × n matrix with entries 1 / (i + j − 1). It i
 - Its exact inverse has **integer entries** (Choi 1983), which gives an exact reference to measure errors against.
 - κ₂(H_n) grows like (1 + √2)^(4n) / √n, roughly e^(3.5n) (Todd 1954): each extra row and column multiplies it by about (1 + √2)^4 ≈ 34.
 - The *stored* H_n is already not H_n, because entries such as 1/3 are rounded. By §4, even a perfect algorithm then inherits an error of up to about κ · u.
-- For a symmetric matrix, κ∞ / n ≤ κ₂ ≤ κ∞, where κ∞ uses the maximum-row-sum norm. This **band** is a theorem, so it can judge a computed κ₂.
+- For a symmetric matrix A, κ∞(A) / n ≤ κ₂(A) ≤ κ∞(A), where κ∞ uses the maximum-row-sum norm. This **band** is a theorem about the norms of **one and the same** matrix.
 
 **Protocol.** The Learn lab [`code/streeling-mathematics`](https://github.com/spareilleux/learn/tree/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics) pins IX at `e35138b9`. Its predictions were written and hashed before any compile ([`preregistration.md`](https://github.com/spareilleux/learn/blob/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics/preregistration.md), SHA-256 `a70179d8a698f835aec724181066823368f0b38f76fe8dcb994494495e412f20`). For n = 2 to 16 it builds fl(H_n) and the same matrices multiplied by 2^-20 and 2^20. Multiplying by a power of two is exact in binary floating point, so it changes the scale and not the conditioning. For each matrix it records:
-- `kappa_inf`: κ∞(H_n), from the exact integer inverse; `kappa_2`: σ₁ / σ_n from IX's `svd`; `band`: whether `kappa_2` lies in the band;
+- `kappa_inf`: κ∞ of the exact H_n, from the exact integer inverse; `kappa_2`: σ₁ / σ_n from IX's `svd` of the stored fl(H_n); `band`: whether `kappa_2` lies between `kappa_inf` / n and `kappa_inf`. **Correction:** these two columns describe two different matrices, so `band` is a mixed comparison, not the theorem above;
 - `inverse`: IX's answer, `ok` or `Singular`; `fwd_err`: its forward error ‖X − H_n⁻¹‖∞ / ‖H_n⁻¹‖∞ against the exact inverse; `residual`: ‖H_n X − I‖∞;
 - `rank`: the rank at the `ix_svd` tolerance σ₁ · 10^-10; `pinv_res`: the residual of that truncated `pseudo_inverse`; `pinv0_fwd`: the forward error of `pseudo_inverse(0.0)`.
 
@@ -194,17 +194,17 @@ Controls
 | Every accepted inverse has a forward error ≤ n · κ∞ · u | holds; the worst is 1.10e-4, at n = 10 | confirmed |
 | `inverse(2^k H_n)` = `inverse(H_n)` / 2^k, bit for bit | 13 of 13 accepted pairs | confirmed |
 | `rank(σ₁ · 10^-10)` first drops below n at n = 8 | rank 7 at n = 8; the truncated residual is at least 1.36 from there on | confirmed |
-| IX's κ₂ stays inside the band up to n = 11 | inside for n = 2 to 9 only; below κ∞ / n from n = 10 | **refuted** |
+| IX's κ₂ stays inside the band up to n = 11 | inside for n = 2 to 9 only; below κ∞ / n from n = 10 | **refuted** as pre-registered, but the band mixes H_n and fl(H_n): see the correction below |
 | IX's κ₂ is bit-identical at the three scales | 5 of 15 sizes | **refuted** |
 
 **What the run shows:**
 - The `Singular` boundary is set by the absolute pivot threshold, not by the matrix. The same matrices, only rescaled, are refused from n = 6 or never refused at all. At scale 2^20, `inverse` answers at n = 14 with a forward error of 1.04e0 — no correct digit — and raises no error.
-- A condition number is itself computed in floating point. Because the band is a theorem, a κ₂ below κ∞ / n cannot be the condition number of H_n: from n = 10, the value computed from IX's `svd` is not κ₂(H_n), and the `rank` column is no longer monotone: 11 at n = 14, then 9 at n = 15. The run does not say more than that.
+- **Correction.** An earlier version of this lesson read the `band` failures as proof that IX's `svd` returns a wrong κ₂. A review pointed out that the band compares κ∞ of the exact H_n with the κ₂ that IX computes for the stored fl(H_n), while the theorem only relates norms of one matrix. For an ill-conditioned H_n, rounding the entries can change the condition number substantially. So the fact that `kappa_2` falls below `kappa_inf` / n from n = 10 is an **observation**: the reported value is not κ₂(H_n), but the run cannot tell how much of the gap comes from rounding the input and how much from the SVD. Settling it would need a reference for the same stored matrix, such as κ of fl(H_n) computed in higher precision, which this lab does not have. The `rank` column is no longer monotone either (11 at n = 14, then 9 at n = 15), which is also only an observation.
 - IX's κ₂ changes under an exact rescaling for all but 5 of the 15 sizes. The cause is **not identified**; it is left as an open reproduction for IX, not explained or fixed here.
 - `pseudo_inverse(0.0)`, which keeps every singular value, has a forward error of 1.00e0 from n = 10: no correct digit either.
 - The rule of thumb of §4 remains theory, not a measured law: the measured errors stay below n · κ∞ · u, and at n = 10 (κ∞ = 3.54e13) the error is 1.10e-4.
 
-**Platforms.** The numbers were measured on one machine. Hosted CI then reran the lab on Linux x86-64, Windows x86-64 and macOS arm64 (rustc 1.98.1; [Learn PR #24](https://github.com/spareilleux/learn/pull/24), [run 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) and reproduced this output byte for byte, including a digest of the raw bits of every computed value (`0ffcce71a1dffe45`). Identical output shows that the computation is **reproducible** on those platforms. It does not show that it is **correct**: correctness is judged against the exact inverse and the theorem band, and by that standard IX's κ₂ fails from n = 10 on every platform alike.
+**Platforms.** The numbers were measured on one machine. Hosted CI then reran the lab on Linux x86-64, Windows x86-64 and macOS arm64 (rustc 1.98.1; [Learn PR #24](https://github.com/spareilleux/learn/pull/24), [run 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) and reproduced this output byte for byte, including a digest of the raw bits of every computed value (`0ffcce71a1dffe45`). Identical output shows that the computation is **reproducible** on those platforms. It does not show that it is **correct**: correctness needs an independent reference for the same problem, such as the exact inverse behind `fwd_err`, and identical output only means that every platform makes exactly the same errors.
 
 ### Practice Exercise
 
@@ -218,7 +218,7 @@ Using κ₂(H_n) ≈ e^(3.5n) and the rule of thumb of §4, estimate the size n 
 
 - **Comparing computed floats with `==`.** Compare with a tolerance chosen from the problem, and make it relative when the scale varies.
 - **Trusting a small residual.** A small residual r = b − A x̂ does not mean a small error: by the theorem of §4 with Δb = −r, the relative error can be as large as κ(A) · ‖r‖ / ‖b‖.
-- **Trusting a computed condition number near 1/u.** κ is computed in floating point too: in the experiment of §6, IX's κ₂ for H_n falls below the theorem's lower bound from n = 10.
+- **Trusting a computed condition number near 1/u.** κ is computed in floating point too, from rounded input: in §6, the κ₂ that IX reports for the stored fl(H_n) is below the lower bound for the exact H_n from n = 10. It is therefore not the condition number of the problem you meant, whatever the share of rounding and of the SVD in the gap.
 - **Reading "not singular" as "well conditioned".** An absolute pivot threshold, like the one in `inverse`, measures scale, not conditioning.
 - **Inverting to solve.** Computing A⁻¹ and then A⁻¹ b does more work than solving A x = b directly and is usually less accurate; forming XᵀX squares κ.
 - **Believing printed digits.** Printing 17 digits does not make them correct; log₁₀ κ of them may be noise.
@@ -254,7 +254,7 @@ Using κ₂(H_n) ≈ e^(3.5n) and the rule of thumb of §4, estimate the size n 
 > ‖Δx‖ / ‖x‖ ≤ ‖A‖ · ‖A⁻¹‖ · ‖Δb‖ / ‖b‖. Proof: Δx = A⁻¹ Δb gives ‖Δx‖ ≤ ‖A⁻¹‖ ‖Δb‖, and b = A x gives 1 / ‖x‖ ≤ ‖A‖ / ‖b‖; multiply the two.
 
 **4. IX's `inverse` returns a matrix without error. Does that mean the result is accurate?**
-> No. `inverse` only refuses when a pivot falls below the absolute threshold 10^-12. A matrix with a large κ and larger pivots is inverted silently, and the result can lose about log₁₀ κ digits. Compute κ₂ from `svd` to know.
+> No. `inverse` only refuses when a pivot falls below the absolute threshold 10^-12. A matrix with a large κ and larger pivots is inverted silently, and the result can lose about log₁₀ κ digits. A κ₂ computed with IX's `svd` is only a diagnostic, not a proof of accuracy: near 1/u that estimate can itself be unreliable (§6). Check against an independent reference, such as a known exact inverse or an independently validated condition estimate, before trusting the digits.
 
 **Pass criteria:** Explain the binary64 grid and the standard model, distinguish forward from backward error, prove the κ(A) bound, and use κ to predict and explain digit loss, including in IX's `inverse`.
 

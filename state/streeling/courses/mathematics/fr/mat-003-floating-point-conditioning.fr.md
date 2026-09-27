@@ -138,10 +138,10 @@ La matrice de Hilbert H_n est la matrice n × n de coefficients 1 / (i + j − 1
 - Son inverse exacte a des **coefficients entiers** (Choi 1983), ce qui fournit une référence exacte pour mesurer les erreurs.
 - κ₂(H_n) croît comme (1 + √2)^(4n) / √n, soit environ e^(3,5n) (Todd 1954) : chaque ligne et colonne supplémentaire le multiplie par environ (1 + √2)^4 ≈ 34.
 - La H_n *stockée* n'est déjà plus H_n, car des coefficients comme 1/3 sont arrondis. D'après le §4, même un algorithme parfait hérite alors d'une erreur pouvant atteindre environ κ · u.
-- Pour une matrice symétrique, κ∞ / n ≤ κ₂ ≤ κ∞, où κ∞ utilise la norme du maximum des sommes de lignes. Cette **bande** est un théorème : elle peut donc juger un κ₂ calculé.
+- Pour une matrice symétrique A, κ∞(A) / n ≤ κ₂(A) ≤ κ∞(A), où κ∞ utilise la norme du maximum des sommes de lignes. Cette **bande** est un théorème sur les normes d'**une seule et même** matrice.
 
 **Protocole.** Le laboratoire Learn [`code/streeling-mathematics`](https://github.com/spareilleux/learn/tree/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics) épingle IX à `e35138b9`. Ses prédictions ont été écrites et hachées avant toute compilation ([`preregistration.md`](https://github.com/spareilleux/learn/blob/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics/preregistration.md), SHA-256 `a70179d8a698f835aec724181066823368f0b38f76fe8dcb994494495e412f20`). Pour n = 2 à 16, il construit fl(H_n) et les mêmes matrices multipliées par 2^-20 et 2^20. Multiplier par une puissance de deux est exact en virgule flottante binaire : cela change l'échelle, pas le conditionnement. Pour chaque matrice, il consigne :
-- `kappa_inf` : κ∞(H_n), à partir de l'inverse entière exacte ; `kappa_2` : σ₁ / σ_n selon la `svd` d'IX ; `band` : si `kappa_2` est dans la bande ;
+- `kappa_inf` : κ∞ de la H_n exacte, à partir de l'inverse entière exacte ; `kappa_2` : σ₁ / σ_n selon la `svd` d'IX appliquée à la fl(H_n) stockée ; `band` : si `kappa_2` est entre `kappa_inf` / n et `kappa_inf`. **Correction :** ces deux colonnes décrivent deux matrices différentes, donc `band` est une comparaison mixte, pas le théorème ci-dessus ;
 - `inverse` : la réponse d'IX, `ok` ou `Singular` ; `fwd_err` : son erreur directe ‖X − H_n⁻¹‖∞ / ‖H_n⁻¹‖∞ par rapport à l'inverse exacte ; `residual` : ‖H_n X − I‖∞ ;
 - `rank` : le rang à la tolérance de `ix_svd`, σ₁ · 10^-10 ; `pinv_res` : le résidu de ce `pseudo_inverse` tronqué ; `pinv0_fwd` : l'erreur directe de `pseudo_inverse(0.0)`.
 
@@ -194,17 +194,17 @@ Controls
 | Toute inverse acceptée a une erreur directe ≤ n · κ∞ · u | vérifié ; la pire est 1.10e-4, à n = 10 | confirmée |
 | `inverse(2^k H_n)` = `inverse(H_n)` / 2^k, bit à bit | 13 paires acceptées sur 13 | confirmée |
 | `rank(σ₁ · 10^-10)` passe sous n pour la première fois à n = 8 | rang 7 à n = 8 ; le résidu tronqué vaut au moins 1.36 à partir de là | confirmée |
-| Le κ₂ d'IX reste dans la bande jusqu'à n = 11 | dans la bande pour n = 2 à 9 seulement ; sous κ∞ / n dès n = 10 | **réfutée** |
+| Le κ₂ d'IX reste dans la bande jusqu'à n = 11 | dans la bande pour n = 2 à 9 seulement ; sous κ∞ / n dès n = 10 | **réfutée** telle que préenregistrée, mais la bande mélange H_n et fl(H_n) : voir la correction ci-dessous |
 | Le κ₂ d'IX est identique bit à bit aux trois échelles | 5 tailles sur 15 | **réfutée** |
 
 **Ce que montre l'exécution :**
 - La frontière `Singular` est fixée par le seuil de pivot absolu, pas par la matrice. Les mêmes matrices, seulement remises à l'échelle, sont refusées dès n = 6 ou jamais refusées. À l'échelle 2^20, `inverse` répond à n = 14 avec une erreur directe de 1.04e0 — aucun chiffre correct — sans signaler d'erreur.
-- Un conditionnement se calcule lui aussi en virgule flottante. Comme la bande est un théorème, un κ₂ inférieur à κ∞ / n ne peut pas être le conditionnement de H_n : dès n = 10, la valeur calculée avec la `svd` d'IX n'est pas κ₂(H_n), et la colonne `rank` n'est plus monotone : 11 à n = 14, puis 9 à n = 15. L'exécution n'en dit pas plus.
+- **Correction.** Une version antérieure de cette leçon lisait les sorties de bande comme la preuve que la `svd` d'IX renvoie un κ₂ faux. Une revue a fait remarquer que la bande compare κ∞ de la H_n exacte au κ₂ qu'IX calcule pour la fl(H_n) stockée, alors que le théorème ne relie que les normes d'une même matrice. Pour une H_n mal conditionnée, arrondir les coefficients peut changer nettement le conditionnement. Le fait que `kappa_2` passe sous `kappa_inf` / n dès n = 10 est donc une **observation** : la valeur rapportée n'est pas κ₂(H_n), mais l'exécution ne permet pas de dire quelle part de l'écart vient de l'arrondi de l'entrée et quelle part de la SVD. Trancher demanderait une référence pour la même matrice stockée, comme le κ de fl(H_n) calculé en précision supérieure, que ce laboratoire n'a pas. La colonne `rank` n'est plus monotone non plus (11 à n = 14, puis 9 à n = 15), ce qui n'est aussi qu'une observation.
 - Le κ₂ d'IX change sous une remise à l'échelle exacte pour toutes les tailles sauf 5 sur 15. La cause **n'est pas identifiée** ; elle reste une reproduction ouverte pour IX, ni expliquée ni corrigée ici.
 - `pseudo_inverse(0.0)`, qui garde toutes les valeurs singulières, a une erreur directe de 1.00e0 dès n = 10 : aucun chiffre correct non plus.
 - La règle empirique du §4 reste de la théorie, pas une loi mesurée : les erreurs mesurées restent sous n · κ∞ · u, et à n = 10 (κ∞ = 3.54e13) l'erreur vaut 1.10e-4.
 
-**Plateformes.** Les nombres ont été mesurés sur une seule machine. La CI hébergée a ensuite relancé le laboratoire sous Linux x86-64, Windows x86-64 et macOS arm64 (rustc 1.98.1 ; [PR Learn n° 24](https://github.com/spareilleux/learn/pull/24), [exécution 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) et a reproduit cette sortie octet pour octet, y compris un condensat des bits bruts de chaque valeur calculée (`0ffcce71a1dffe45`). Une sortie identique montre que le calcul est **reproductible** sur ces plateformes. Elle ne montre pas qu'il est **correct** : la justesse se juge par rapport à l'inverse exacte et à la bande du théorème, et selon ce critère le κ₂ d'IX échoue dès n = 10, sur toutes les plateformes à l'identique.
+**Plateformes.** Les nombres ont été mesurés sur une seule machine. La CI hébergée a ensuite relancé le laboratoire sous Linux x86-64, Windows x86-64 et macOS arm64 (rustc 1.98.1 ; [PR Learn n° 24](https://github.com/spareilleux/learn/pull/24), [exécution 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) et a reproduit cette sortie octet pour octet, y compris un condensat des bits bruts de chaque valeur calculée (`0ffcce71a1dffe45`). Une sortie identique montre que le calcul est **reproductible** sur ces plateformes. Elle ne montre pas qu'il est **correct** : la justesse demande une référence indépendante pour le même problème, comme l'inverse exacte derrière `fwd_err`, et une sortie identique signifie seulement que chaque plateforme commet exactement les mêmes erreurs.
 
 ### Exercice pratique
 
@@ -218,7 +218,7 @@ En utilisant κ₂(H_n) ≈ e^(3,5n) et la règle empirique du §4, estimez la t
 
 - **Comparer des flottants calculés avec `==`.** Comparez avec une tolérance tirée du problème, et rendez-la relative quand l'échelle varie.
 - **Se fier à un petit résidu.** Un petit résidu r = b − A x̂ ne signifie pas une petite erreur : d'après le théorème du §4 avec Δb = −r, l'erreur relative peut atteindre κ(A) · ‖r‖ / ‖b‖.
-- **Se fier à un conditionnement calculé proche de 1/u.** κ se calcule lui aussi en virgule flottante : dans l'expérience du §6, le κ₂ d'IX pour H_n passe sous la borne inférieure du théorème dès n = 10.
+- **Se fier à un conditionnement calculé proche de 1/u.** κ se calcule lui aussi en virgule flottante, à partir d'une entrée arrondie : au §6, le κ₂ qu'IX rapporte pour la fl(H_n) stockée passe sous la borne inférieure de la H_n exacte dès n = 10. Ce n'est donc pas le conditionnement du problème visé, quelle que soit la part de l'arrondi et de la SVD dans l'écart.
 - **Lire « non singulière » comme « bien conditionnée ».** Un seuil de pivot absolu, comme celui d'`inverse`, mesure l'échelle, pas le conditionnement.
 - **Inverser pour résoudre.** Calculer A⁻¹ puis A⁻¹ b demande plus de travail que résoudre A x = b directement et est généralement moins précis ; former XᵀX élève κ au carré.
 - **Croire les chiffres affichés.** Afficher 17 chiffres ne les rend pas corrects ; log₁₀ κ d'entre eux peuvent être du bruit.
@@ -254,7 +254,7 @@ En utilisant κ₂(H_n) ≈ e^(3,5n) et la règle empirique du §4, estimez la t
 > ‖Δx‖ / ‖x‖ ≤ ‖A‖ · ‖A⁻¹‖ · ‖Δb‖ / ‖b‖. Démonstration : Δx = A⁻¹ Δb donne ‖Δx‖ ≤ ‖A⁻¹‖ ‖Δb‖, et b = A x donne 1 / ‖x‖ ≤ ‖A‖ / ‖b‖ ; on multiplie les deux.
 
 **4. La fonction `inverse` d'IX renvoie une matrice sans erreur. Le résultat est-il pour autant précis ?**
-> Non. `inverse` ne refuse que lorsqu'un pivot passe sous le seuil absolu 10^-12. Une matrice au grand κ et aux pivots plus grands est inversée en silence, et le résultat peut perdre environ log₁₀ κ chiffres. Calculez κ₂ avec `svd` pour le savoir.
+> Non. `inverse` ne refuse que lorsqu'un pivot passe sous le seuil absolu 10^-12. Une matrice au grand κ et aux pivots plus grands est inversée en silence, et le résultat peut perdre environ log₁₀ κ chiffres. Un κ₂ calculé avec la `svd` d'IX n'est qu'un diagnostic, pas une preuve de précision : près de 1/u, cette estimation peut elle-même être peu fiable (§6). Vérifiez avec une référence indépendante, comme une inverse exacte connue ou une estimation du conditionnement validée indépendamment, avant de vous fier aux chiffres.
 
 **Critères de réussite :** Expliquer la grille binary64 et le modèle standard, distinguer l'erreur directe de l'erreur inverse, démontrer la borne sur κ(A), et utiliser κ pour prédire et expliquer la perte de chiffres, y compris dans la fonction `inverse` d'IX.
 

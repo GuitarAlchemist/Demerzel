@@ -138,10 +138,10 @@ La matriz de Hilbert H_n es la matriz n × n con entradas 1 / (i + j − 1). Es 
 - Su inversa exacta tiene **entradas enteras** (Choi 1983), lo que da una referencia exacta para medir los errores.
 - κ₂(H_n) crece como (1 + √2)^(4n) / √n, aproximadamente e^(3.5n) (Todd 1954): cada fila y columna adicional lo multiplica por unos (1 + √2)^4 ≈ 34.
 - La H_n *almacenada* ya no es H_n, porque entradas como 1/3 se redondean. Por el §4, incluso un algoritmo perfecto hereda entonces un error de hasta aproximadamente κ · u.
-- Para una matriz simétrica, κ∞ / n ≤ κ₂ ≤ κ∞, donde κ∞ usa la norma del máximo de las sumas por filas. Esta **banda** es un teorema, así que puede juzgar un κ₂ calculado.
+- Para una matriz simétrica A, κ∞(A) / n ≤ κ₂(A) ≤ κ∞(A), donde κ∞ usa la norma del máximo de las sumas por filas. Esta **banda** es un teorema sobre las normas de **una misma** matriz.
 
 **Protocolo.** El laboratorio de Learn [`code/streeling-mathematics`](https://github.com/spareilleux/learn/tree/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics) fija IX en `e35138b9`. Sus predicciones se escribieron y se registraron con hash antes de cualquier compilación ([`preregistration.md`](https://github.com/spareilleux/learn/blob/c8135fa508fcb9d35593e8dedbb925c44282b3a2/code/streeling-mathematics/preregistration.md), SHA-256 `a70179d8a698f835aec724181066823368f0b38f76fe8dcb994494495e412f20`). Para n = 2 a 16 construye fl(H_n) y las mismas matrices multiplicadas por 2^-20 y 2^20. Multiplicar por una potencia de dos es exacto en punto flotante binario, así que cambia la escala y no el condicionamiento. Para cada matriz registra:
-- `kappa_inf`: κ∞(H_n), a partir de la inversa entera exacta; `kappa_2`: σ₁ / σ_n según la `svd` de IX; `band`: si `kappa_2` está dentro de la banda;
+- `kappa_inf`: κ∞ de la H_n exacta, a partir de la inversa entera exacta; `kappa_2`: σ₁ / σ_n según la `svd` de IX aplicada a la fl(H_n) almacenada; `band`: si `kappa_2` está entre `kappa_inf` / n y `kappa_inf`. **Corrección:** estas dos columnas describen dos matrices distintas, así que `band` es una comparación mixta, no el teorema anterior;
 - `inverse`: la respuesta de IX, `ok` o `Singular`; `fwd_err`: su error hacia adelante ‖X − H_n⁻¹‖∞ / ‖H_n⁻¹‖∞ respecto de la inversa exacta; `residual`: ‖H_n X − I‖∞;
 - `rank`: el rango con la tolerancia de `ix_svd`, σ₁ · 10^-10; `pinv_res`: el residuo de ese `pseudo_inverse` truncado; `pinv0_fwd`: el error hacia adelante de `pseudo_inverse(0.0)`.
 
@@ -194,17 +194,17 @@ Controls
 | Toda inversa aceptada tiene un error hacia adelante ≤ n · κ∞ · u | se cumple; el peor es 1.10e-4, en n = 10 | confirmada |
 | `inverse(2^k H_n)` = `inverse(H_n)` / 2^k, bit a bit | 13 de 13 pares aceptados | confirmada |
 | `rank(σ₁ · 10^-10)` baja de n por primera vez en n = 8 | rango 7 en n = 8; el residuo truncado es al menos 1.36 desde ahí | confirmada |
-| El κ₂ de IX se mantiene dentro de la banda hasta n = 11 | dentro solo para n = 2 a 9; por debajo de κ∞ / n desde n = 10 | **refutada** |
+| El κ₂ de IX se mantiene dentro de la banda hasta n = 11 | dentro solo para n = 2 a 9; por debajo de κ∞ / n desde n = 10 | **refutada** tal como se prerregistró, pero la banda mezcla H_n y fl(H_n): ver la corrección más abajo |
 | El κ₂ de IX es idéntico bit a bit en las tres escalas | 5 de 15 tamaños | **refutada** |
 
 **Lo que muestra la ejecución:**
 - La frontera `Singular` la fija el umbral de pivote absoluto, no la matriz. Las mismas matrices, solo reescaladas, se rechazan desde n = 6 o nunca. En la escala 2^20, `inverse` responde en n = 14 con un error hacia adelante de 1.04e0 — ningún dígito correcto — sin señalar ningún error.
-- Un número de condición también se calcula en punto flotante. Como la banda es un teorema, un κ₂ menor que κ∞ / n no puede ser el número de condición de H_n: desde n = 10, el valor calculado con la `svd` de IX no es κ₂(H_n), y la columna `rank` ya no es monótona: 11 en n = 14, luego 9 en n = 15. La ejecución no dice más que eso.
+- **Corrección.** Una versión anterior de esta lección interpretaba las salidas de la banda como prueba de que la `svd` de IX devuelve un κ₂ erróneo. Una revisión señaló que la banda compara κ∞ de la H_n exacta con el κ₂ que IX calcula para la fl(H_n) almacenada, mientras que el teorema solo relaciona normas de una misma matriz. Para una H_n mal condicionada, redondear las entradas puede cambiar notablemente el número de condición. Por eso, que `kappa_2` quede por debajo de `kappa_inf` / n desde n = 10 es una **observación**: el valor reportado no es κ₂(H_n), pero la ejecución no permite saber qué parte de la diferencia viene del redondeo de la entrada y qué parte de la SVD. Decidirlo requeriría una referencia para la misma matriz almacenada, como el κ de fl(H_n) calculado con mayor precisión, que este laboratorio no tiene. La columna `rank` tampoco es monótona (11 en n = 14, luego 9 en n = 15), lo que también es solo una observación.
 - El κ₂ de IX cambia con un reescalado exacto en todos los tamaños salvo 5 de 15. La causa **no está identificada**; queda como una reproducción abierta para IX, sin explicarla ni corregirla aquí.
 - `pseudo_inverse(0.0)`, que conserva todos los valores singulares, tiene un error hacia adelante de 1.00e0 desde n = 10: tampoco tiene ningún dígito correcto.
 - La regla práctica del §4 sigue siendo teoría, no una ley medida: los errores medidos quedan por debajo de n · κ∞ · u, y en n = 10 (κ∞ = 3.54e13) el error es 1.10e-4.
 
-**Plataformas.** Los números se midieron en una sola máquina. Después, la CI alojada volvió a ejecutar el laboratorio en Linux x86-64, Windows x86-64 y macOS arm64 (rustc 1.98.1; [PR n.º 24 de Learn](https://github.com/spareilleux/learn/pull/24), [ejecución 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) y reprodujo esta salida byte a byte, incluido un resumen (digest) de los bits en bruto de cada valor calculado (`0ffcce71a1dffe45`). Una salida idéntica muestra que el cálculo es **reproducible** en esas plataformas. No muestra que sea **correcto**: la corrección se juzga respecto de la inversa exacta y de la banda del teorema, y según ese criterio el κ₂ de IX falla desde n = 10 en todas las plataformas por igual.
+**Plataformas.** Los números se midieron en una sola máquina. Después, la CI alojada volvió a ejecutar el laboratorio en Linux x86-64, Windows x86-64 y macOS arm64 (rustc 1.98.1; [PR n.º 24 de Learn](https://github.com/spareilleux/learn/pull/24), [ejecución 36335008098](https://github.com/spareilleux/learn/actions/runs/36335008098)) y reprodujo esta salida byte a byte, incluido un resumen (digest) de los bits en bruto de cada valor calculado (`0ffcce71a1dffe45`). Una salida idéntica muestra que el cálculo es **reproducible** en esas plataformas. No muestra que sea **correcto**: la corrección requiere una referencia independiente para el mismo problema, como la inversa exacta detrás de `fwd_err`, y una salida idéntica solo significa que todas las plataformas cometen exactamente los mismos errores.
 
 ### Ejercicio práctico
 
@@ -218,7 +218,7 @@ Usando κ₂(H_n) ≈ e^(3.5n) y la regla práctica del §4, estima el tamaño n
 
 - **Comparar flotantes calculados con `==`.** Compara con una tolerancia derivada del problema, y hazla relativa cuando la escala varía.
 - **Confiar en un residuo pequeño.** Un residuo pequeño r = b − A x̂ no significa un error pequeño: por el teorema del §4 con Δb = −r, el error relativo puede llegar a κ(A) · ‖r‖ / ‖b‖.
-- **Confiar en un número de condición calculado cercano a 1/u.** κ también se calcula en punto flotante: en el experimento del §6, el κ₂ de IX para H_n cae por debajo de la cota inferior del teorema desde n = 10.
+- **Confiar en un número de condición calculado cercano a 1/u.** κ también se calcula en punto flotante, a partir de una entrada redondeada: en el §6, el κ₂ que IX reporta para la fl(H_n) almacenada queda por debajo de la cota inferior de la H_n exacta desde n = 10. Por tanto, no es el número de condición del problema que se quería resolver, sea cual sea el peso del redondeo y de la SVD en la diferencia.
 - **Leer «no singular» como «bien condicionada».** Un umbral de pivote absoluto, como el de `inverse`, mide la escala, no el condicionamiento.
 - **Invertir para resolver.** Calcular A⁻¹ y luego A⁻¹ b cuesta más trabajo que resolver A x = b directamente y suele ser menos preciso; formar XᵀX eleva κ al cuadrado.
 - **Creer los dígitos impresos.** Imprimir 17 dígitos no los hace correctos; log₁₀ κ de ellos pueden ser ruido.
@@ -254,7 +254,7 @@ Usando κ₂(H_n) ≈ e^(3.5n) y la regla práctica del §4, estima el tamaño n
 > ‖Δx‖ / ‖x‖ ≤ ‖A‖ · ‖A⁻¹‖ · ‖Δb‖ / ‖b‖. Demostración: Δx = A⁻¹ Δb da ‖Δx‖ ≤ ‖A⁻¹‖ ‖Δb‖, y b = A x da 1 / ‖x‖ ≤ ‖A‖ / ‖b‖; se multiplican ambas.
 
 **4. La función `inverse` de IX devuelve una matriz sin error. ¿Significa eso que el resultado es preciso?**
-> No. `inverse` solo se niega cuando un pivote cae por debajo del umbral absoluto 10^-12. Una matriz con un κ grande y pivotes mayores se invierte en silencio, y el resultado puede perder unos log₁₀ κ dígitos. Calcula κ₂ con `svd` para saberlo.
+> No. `inverse` solo se niega cuando un pivote cae por debajo del umbral absoluto 10^-12. Una matriz con un κ grande y pivotes mayores se invierte en silencio, y el resultado puede perder unos log₁₀ κ dígitos. Un κ₂ calculado con la `svd` de IX es solo un diagnóstico, no una prueba de precisión: cerca de 1/u esa estimación puede ser poco fiable en sí misma (§6). Contrasta con una referencia independiente, como una inversa exacta conocida o una estimación del número de condición validada de forma independiente, antes de fiarte de los dígitos.
 
 **Criterio de aprobación:** Explicar la cuadrícula binary64 y el modelo estándar, distinguir el error hacia adelante del error hacia atrás, demostrar la cota de κ(A), y usar κ para predecir y explicar la pérdida de dígitos, incluso en la función `inverse` de IX.
 
