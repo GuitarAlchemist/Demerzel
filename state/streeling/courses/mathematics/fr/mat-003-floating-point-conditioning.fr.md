@@ -27,11 +27,11 @@ Après cette leçon, vous serez capable de :
 
 ## 1. Les nombres qu'un ordinateur peut stocker
 
-Un ordinateur ne stocke pas les nombres réels. Il en stocke un ensemble **fini**. Le format courant, **binary64** de la norme IEEE 754 (`f64` en Rust, `double` en C), code un nombre sur 64 bits : 1 bit de signe, 11 bits d'exposant et 52 bits de fraction. Avec le 1 de tête implicite, chaque nombre stocké porte **53 bits significatifs**, soit environ 16 chiffres décimaux.
+Un ordinateur ne stocke pas les nombres réels. Il en stocke un ensemble **fini**. Le format courant, **binary64** de la norme IEEE 754 (`f64` en Rust, `double` en C), code un nombre sur 64 bits : 1 bit de signe, 11 bits d'exposant et 52 bits de fraction. Avec le 1 de tête implicite, chaque nombre stocké **normal** porte **53 bits significatifs**, soit environ 16 chiffres décimaux. Les minuscules nombres **sous-normaux** proches de zéro renoncent à ce 1 de tête et en ont moins.
 
 Les nombres stockés ne sont pas régulièrement espacés. Entre 1 et 2, ils sont distants de 2^-52 ; entre 2 et 4, deux fois plus ; et ainsi de suite. Deux quantités décrivent cette grille :
 - L'**epsilon machine** ε = 2^-52 ≈ 2,2 × 10^-16 est l'écart entre 1 et le nombre stocké suivant.
-- L'**unité d'arrondi** u = ε/2 = 2^-53 ≈ 1,1 × 10^-16 est la plus grande erreur relative commise quand un réel (dans l'intervalle représentable) est arrondi au nombre stocké le plus proche.
+- L'**unité d'arrondi** u = ε/2 = 2^-53 ≈ 1,1 × 10^-16 est la plus grande erreur relative commise quand un réel du **domaine normal** est arrondi au nombre stocké le plus proche. En dessous, parmi les sous-normaux, l'erreur relative peut être bien plus grande : 2^-1075 est arrondi à 0, soit une erreur relative de 1.
 
 Un nombre n'est stocké exactement que s'il est une fraction dont le dénominateur est une puissance de deux (et s'il tient dans l'intervalle et dans les 53 bits). **0,1 = 1/10 ne l'est pas** : son dénominateur contient le facteur 5, donc son développement binaire ne s'arrête jamais, tout comme 1/3 = 0,333… en décimal. L'ordinateur stocke à la place le nombre binary64 le plus proche. C'est pourquoi `0.1 + 0.2 == 0.3` n'est pas un test sûr : chaque littéral est arrondi, la somme est arrondie à nouveau, et rien ne garantit que le résultat tombe sur le même nombre stocké que 0,3.
 
@@ -229,9 +229,9 @@ En utilisant κ₂(H_n) ≈ e^(3,5n) et la règle empirique du §4, estimez la t
 
 | Terme | Définition |
 |------|-----------|
-| **binary64** | Le format flottant 64 bits de la norme IEEE 754 : 53 bits significatifs, environ 16 chiffres décimaux |
+| **binary64** | Le format flottant 64 bits de la norme IEEE 754 : 53 bits significatifs pour les nombres normaux, environ 16 chiffres décimaux |
 | **Epsilon machine (ε)** | L'écart entre 1 et le nombre stocké suivant : 2^-52 en binary64 |
-| **Unité d'arrondi (u)** | La plus grande erreur relative de l'arrondi au plus proche : u = ε/2 = 2^-53 |
+| **Unité d'arrondi (u)** | La plus grande erreur relative de l'arrondi au plus proche dans le domaine normal : u = ε/2 = 2^-53 |
 | **Cancellation** | Perte de chiffres corrects lors de la soustraction de nombres presque égaux qui portent déjà des erreurs |
 | **Erreur directe** | La distance entre la réponse calculée et la vraie réponse |
 | **Erreur inverse** | La plus petite perturbation de l'entrée pour laquelle la réponse calculée est exacte |

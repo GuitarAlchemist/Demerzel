@@ -27,11 +27,11 @@ After this lesson, you will be able to:
 
 ## 1. Numbers a Computer Can Store
 
-A computer does not store real numbers. It stores a **finite** set of them. The usual format, IEEE 754 **binary64** (`f64` in Rust, `double` in C), packs a number into 64 bits: 1 sign bit, 11 exponent bits and 52 fraction bits. With the implicit leading 1, every stored number carries **53 significant bits**, about 16 decimal digits.
+A computer does not store real numbers. It stores a **finite** set of them. The usual format, IEEE 754 **binary64** (`f64` in Rust, `double` in C), packs a number into 64 bits: 1 sign bit, 11 exponent bits and 52 fraction bits. With the implicit leading 1, every **normal** stored number carries **53 significant bits**, about 16 decimal digits. The tiny **subnormal** numbers near zero give up that leading 1 and have fewer.
 
 The stored numbers are not evenly spaced. Between 1 and 2 they are 2^-52 apart; between 2 and 4, twice as far apart; and so on. Two quantities describe this grid:
 - **Machine epsilon** ε = 2^-52 ≈ 2.2 × 10^-16 is the gap between 1 and the next stored number.
-- **Unit roundoff** u = ε/2 = 2^-53 ≈ 1.1 × 10^-16 is the largest relative error made when a real number (within range) is rounded to the nearest stored one.
+- **Unit roundoff** u = ε/2 = 2^-53 ≈ 1.1 × 10^-16 is the largest relative error made when a real number in the **normal range** is rounded to the nearest stored one. Below that range, among the subnormals, the relative error can be much larger: 2^-1075 rounds to 0, a relative error of 1.
 
 A number is stored exactly only if it is a fraction whose denominator is a power of two (and it fits the range and the 53 bits). **0.1 = 1/10 is not**: its denominator contains the factor 5, so its binary expansion never ends, just as 1/3 = 0.333… never ends in decimal. The computer stores the nearest binary64 number instead. This is why `0.1 + 0.2 == 0.3` is not a safe test: each literal is rounded, the sum is rounded again, and nothing guarantees that the result lands on the same stored number as 0.3.
 
@@ -229,9 +229,9 @@ Using κ₂(H_n) ≈ e^(3.5n) and the rule of thumb of §4, estimate the size n 
 
 | Term | Definition |
 |------|-----------|
-| **binary64** | The IEEE 754 64-bit floating-point format: 53 significant bits, about 16 decimal digits |
+| **binary64** | The IEEE 754 64-bit floating-point format: 53 significant bits for normal numbers, about 16 decimal digits |
 | **Machine epsilon (ε)** | The gap between 1 and the next stored number: 2^-52 in binary64 |
-| **Unit roundoff (u)** | The largest relative error of rounding to nearest: u = ε/2 = 2^-53 |
+| **Unit roundoff (u)** | The largest relative error of rounding to nearest in the normal range: u = ε/2 = 2^-53 |
 | **Cancellation** | Loss of correct digits when subtracting nearly equal numbers that already carry errors |
 | **Forward error** | The distance between the computed answer and the true answer |
 | **Backward error** | The smallest input perturbation for which the computed answer is exact |

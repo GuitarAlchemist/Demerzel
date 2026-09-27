@@ -27,11 +27,11 @@ Al terminar esta lección, serás capaz de:
 
 ## 1. Los números que una computadora puede almacenar
 
-Una computadora no almacena números reales. Almacena un conjunto **finito** de ellos. El formato habitual, **binary64** de la norma IEEE 754 (`f64` en Rust, `double` en C), codifica un número en 64 bits: 1 bit de signo, 11 bits de exponente y 52 bits de fracción. Con el 1 inicial implícito, cada número almacenado lleva **53 bits significativos**, unos 16 dígitos decimales.
+Una computadora no almacena números reales. Almacena un conjunto **finito** de ellos. El formato habitual, **binary64** de la norma IEEE 754 (`f64` en Rust, `double` en C), codifica un número en 64 bits: 1 bit de signo, 11 bits de exponente y 52 bits de fracción. Con el 1 inicial implícito, cada número almacenado **normal** lleva **53 bits significativos**, unos 16 dígitos decimales. Los diminutos números **subnormales** cercanos a cero renuncian a ese 1 inicial y tienen menos.
 
 Los números almacenados no están espaciados de manera uniforme. Entre 1 y 2 están separados por 2^-52; entre 2 y 4, el doble; y así sucesivamente. Dos cantidades describen esta cuadrícula:
 - El **épsilon de máquina** ε = 2^-52 ≈ 2.2 × 10^-16 es la distancia entre 1 y el siguiente número almacenado.
-- La **unidad de redondeo** u = ε/2 = 2^-53 ≈ 1.1 × 10^-16 es el mayor error relativo que se comete al redondear un real (dentro del rango) al número almacenado más cercano.
+- La **unidad de redondeo** u = ε/2 = 2^-53 ≈ 1.1 × 10^-16 es el mayor error relativo que se comete al redondear un real del **rango normal** al número almacenado más cercano. Por debajo, entre los subnormales, el error relativo puede ser mucho mayor: 2^-1075 se redondea a 0, un error relativo de 1.
 
 Un número se almacena exactamente solo si es una fracción cuyo denominador es una potencia de dos (y cabe en el rango y en los 53 bits). **0.1 = 1/10 no lo es**: su denominador contiene el factor 5, así que su desarrollo binario nunca termina, igual que 1/3 = 0.333… nunca termina en decimal. La computadora almacena en su lugar el número binary64 más cercano. Por eso `0.1 + 0.2 == 0.3` no es una prueba segura: cada literal se redondea, la suma se redondea de nuevo, y nada garantiza que el resultado caiga en el mismo número almacenado que 0.3.
 
@@ -229,9 +229,9 @@ Usando κ₂(H_n) ≈ e^(3.5n) y la regla práctica del §4, estima el tamaño n
 
 | Término | Definición |
 |------|-----------|
-| **binary64** | El formato de punto flotante de 64 bits de IEEE 754: 53 bits significativos, unos 16 dígitos decimales |
+| **binary64** | El formato de punto flotante de 64 bits de IEEE 754: 53 bits significativos para los números normales, unos 16 dígitos decimales |
 | **Épsilon de máquina (ε)** | La distancia entre 1 y el siguiente número almacenado: 2^-52 en binary64 |
-| **Unidad de redondeo (u)** | El mayor error relativo del redondeo al más cercano: u = ε/2 = 2^-53 |
+| **Unidad de redondeo (u)** | El mayor error relativo del redondeo al más cercano en el rango normal: u = ε/2 = 2^-53 |
 | **Cancelación** | Pérdida de dígitos correctos al restar números casi iguales que ya llevan errores |
 | **Error hacia adelante** | La distancia entre la respuesta calculada y la respuesta verdadera |
 | **Error hacia atrás** | La menor perturbación de la entrada para la que la respuesta calculada es exacta |
