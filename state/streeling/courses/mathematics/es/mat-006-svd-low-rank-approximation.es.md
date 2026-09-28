@@ -32,11 +32,11 @@ Al terminar esta lección, serás capaz de:
 
 A = U Σ Vᵀ,
 
-donde U (m × m) y V (n × n) son ortogonales, y Σ (m × n) es nula salvo en su diagonal, cuyas entradas σ₁ ≥ σ₂ ≥ … ≥ 0 son los **valores singulares**. Las columnas de V son los **vectores singulares derechos**, las de U los **vectores singulares izquierdos**, y A vᵢ = σᵢ uᵢ.
+donde U (m × m) y V (n × n) son ortogonales, y Σ (m × n) es nula salvo en su diagonal, cuyas entradas σ₁ ≥ σ₂ ≥ … ≥ 0 son los **valores singulares**. Las columnas de V son los **vectores singulares derechos**, las de U los **vectores singulares izquierdos**, y A vᵢ = σᵢ uᵢ para i ≤ min(m, n); cuando n > m, las columnas restantes de V cumplen A vᵢ = 0.
 
-Leída de derecha a izquierda: Vᵀ gira la entrada, Σ la estira a lo largo de los ejes de coordenadas, y U gira el resultado. La esfera unidad se convierte en un elipsoide cuyos semiejes miden σᵢ y apuntan en la dirección de los uᵢ. Con k = min(m, n), la **SVD reducida** conserva solo las k primeras columnas de U y de V; es la forma que devuelve IX.
+Leída de derecha a izquierda: Vᵀ gira la entrada, Σ la estira a lo largo de los ejes de coordenadas, y U gira el resultado. Cuando A tiene rango de columnas completo, la esfera unidad se convierte en un elipsoide cuyos semiejes miden σᵢ y apuntan en la dirección de los uᵢ. Con k = min(m, n), la **SVD reducida** conserva solo las k primeras columnas de U y de V; es la forma que devuelve IX.
 
-La SVD se deduce del teorema espectral de MAT-005. La matriz AᵀA es simétrica, y xᵀAᵀAx = ‖Ax‖² ≥ 0, así que sus valores propios λᵢ son reales y no negativos. Tomemos una base ortonormal v₁, …, vₙ de vectores propios, ordenados de modo que λ₁ ≥ λ₂ ≥ … ≥ λₙ, y pongamos σᵢ = √λᵢ. Para i ≠ j, (A vᵢ) · (A vⱼ) = vᵢᵀAᵀA vⱼ = λⱼ (vᵢ · vⱼ) = 0, y ‖A vᵢ‖² = λᵢ = σᵢ². Así, los vectores uᵢ = A vᵢ / σᵢ, para σᵢ > 0, son ortonormales, y A vᵢ = σᵢ uᵢ; completar los uᵢ hasta una base ortonormal da A V = U Σ, es decir, A = U Σ Vᵀ.
+La SVD se deduce del teorema espectral de MAT-005. La matriz AᵀA es simétrica, y xᵀAᵀAx = ‖Ax‖² ≥ 0, así que sus valores propios λᵢ son reales y no negativos. Tomemos una base ortonormal v₁, …, vₙ de vectores propios, ordenados de modo que λ₁ ≥ λ₂ ≥ … ≥ λₙ, y pongamos σᵢ = √λᵢ. Para i ≠ j, (A vᵢ) · (A vⱼ) = vᵢᵀAᵀA vⱼ = λⱼ (vᵢ · vⱼ) = 0, y ‖A vᵢ‖² = λᵢ = σᵢ². Así, los vectores uᵢ = A vᵢ / σᵢ, para σᵢ > 0, son ortonormales, y A vᵢ = σᵢ uᵢ. Todo otro vᵢ cumple ‖A vᵢ‖² = λᵢ = 0, así que A vᵢ = 0; cuando n > m, esto incluye al menos los n − m últimos, ya que AᵀA tiene rango como mucho m. Completar los uᵢ hasta una base ortonormal de ℝᵐ y poner σ₁, …, σₖ, con k = min(m, n), en la diagonal de Σ da A V = U Σ, es decir, A = U Σ Vᵀ.
 
 A diferencia de los valores propios (MAT-005 §1), los valores singulares existen siempre y son reales y no negativos, para toda matriz: cuadrada o no, simétrica o no.
 
@@ -101,7 +101,7 @@ Una biblioteca declara nulo todo valor singular inferior a 10^-10. ¿Qué rango 
 
 ## 5. Calcular la SVD con Jacobi unilateral
 
-El **método de Jacobi unilateral** (Hestenes, 1958) nunca forma AᵀA, cuyo número de condición es el cuadrado del de A cuando A tiene rango de columnas completo (MAT-003). Gira pares de columnas de la propia A, lo que multiplica A por la derecha por rotaciones planas, hasta que todas las columnas son ortogonales. En ese momento A V = W, donde V es el producto de las rotaciones y las columnas de W son ortogonales: sus normas son los valores singulares, y las columnas normalizadas forman U.
+El **método de Jacobi unilateral** (Hestenes, 1958) nunca forma AᵀA, cuyo número de condición es el cuadrado del de A cuando A tiene rango de columnas completo (MAT-003). Gira pares de columnas de la propia A, lo que multiplica A por la derecha por rotaciones planas, hasta que todas las columnas son ortogonales. En ese momento A V = W, donde V es el producto de las rotaciones y las columnas de W son ortogonales: sus normas son los valores singulares, con n − m ceros más cuando n > m, ya que como mucho m de ellas pueden ser no nulas. Normalizar las columnas de norma no nula da las columnas correspondientes de U; una columna de norma 0 no se puede normalizar, y el resto de U se completa con vectores ortonormales cualesquiera.
 
 Para dos columnas a_p y a_q, la rotación es la rotación de Jacobi de MAT-005 §4 aplicada a la matriz 2 × 2 [[a_p · a_p, a_p · a_q], [a_p · a_q, a_q · a_q]], un bloque de AᵀA calculado solo a partir de las dos columnas. Tras la rotación, las dos columnas son ortogonales. Como en MAT-005, una rotación posterior puede estropear una anterior, así que el método barre todos los pares repetidamente.
 
@@ -205,7 +205,7 @@ Supón que el paso 2 confirma que los valores singulares de s · A son proporcio
 |------|-----------|
 | **Descomposición en valores singulares** | A = U Σ Vᵀ, con U y V ortogonales y Σ diagonal con entradas σ₁ ≥ σ₂ ≥ … ≥ 0 |
 | **Valores singulares** | Las entradas diagonales de Σ: las raíces cuadradas de los valores propios de AᵀA |
-| **Vectores singulares izquierdos y derechos** | Las columnas uᵢ de U y vᵢ de V, con A vᵢ = σᵢ uᵢ |
+| **Vectores singulares izquierdos y derechos** | Las columnas uᵢ de U y vᵢ de V, con A vᵢ = σᵢ uᵢ para i ≤ min(m, n) |
 | **SVD reducida** | La SVD que conserva solo las min(m, n) primeras columnas de U y de V |
 | **Norma de Frobenius** | ‖A‖_F, la raíz cuadrada de la suma de los cuadrados de todas las entradas, igual a √(σ₁² + σ₂² + …) |
 | **Truncamiento de rango k** | A_k = σ₁u₁v₁ᵀ + … + σₖuₖvₖᵀ |

@@ -32,11 +32,11 @@ Après cette leçon, vous serez capable de :
 
 A = U Σ Vᵀ,
 
-où U (m × m) et V (n × n) sont orthogonales, et Σ (m × n) est nulle sauf sur sa diagonale, dont les coefficients σ₁ ≥ σ₂ ≥ … ≥ 0 sont les **valeurs singulières**. Les colonnes de V sont les **vecteurs singuliers à droite**, celles de U les **vecteurs singuliers à gauche**, et A vᵢ = σᵢ uᵢ.
+où U (m × m) et V (n × n) sont orthogonales, et Σ (m × n) est nulle sauf sur sa diagonale, dont les coefficients σ₁ ≥ σ₂ ≥ … ≥ 0 sont les **valeurs singulières**. Les colonnes de V sont les **vecteurs singuliers à droite**, celles de U les **vecteurs singuliers à gauche**, et A vᵢ = σᵢ uᵢ pour i ≤ min(m, n) ; quand n > m, les colonnes restantes de V vérifient A vᵢ = 0.
 
-Lue de droite à gauche : Vᵀ tourne l'entrée, Σ l'étire le long des axes de coordonnées, et U tourne le résultat. La sphère unité devient un ellipsoïde dont les demi-axes ont pour longueurs les σᵢ et pour directions les uᵢ. Avec k = min(m, n), la **SVD réduite** ne garde que les k premières colonnes de U et de V ; c'est la forme que renvoie IX.
+Lue de droite à gauche : Vᵀ tourne l'entrée, Σ l'étire le long des axes de coordonnées, et U tourne le résultat. Quand A est de rang colonne plein, la sphère unité devient un ellipsoïde dont les demi-axes ont pour longueurs les σᵢ et pour directions les uᵢ. Avec k = min(m, n), la **SVD réduite** ne garde que les k premières colonnes de U et de V ; c'est la forme que renvoie IX.
 
-La SVD découle du théorème spectral de MAT-005. La matrice AᵀA est symétrique, et xᵀAᵀAx = ‖Ax‖² ≥ 0, donc ses valeurs propres λᵢ sont réelles et positives ou nulles. Prenons une base orthonormée v₁, …, vₙ de vecteurs propres, rangés de sorte que λ₁ ≥ λ₂ ≥ … ≥ λₙ, et posons σᵢ = √λᵢ. Pour i ≠ j, (A vᵢ) · (A vⱼ) = vᵢᵀAᵀA vⱼ = λⱼ (vᵢ · vⱼ) = 0, et ‖A vᵢ‖² = λᵢ = σᵢ². Les vecteurs uᵢ = A vᵢ / σᵢ, pour σᵢ > 0, sont donc orthonormés, et A vᵢ = σᵢ uᵢ ; compléter les uᵢ en une base orthonormée donne A V = U Σ, c'est-à-dire A = U Σ Vᵀ.
+La SVD découle du théorème spectral de MAT-005. La matrice AᵀA est symétrique, et xᵀAᵀAx = ‖Ax‖² ≥ 0, donc ses valeurs propres λᵢ sont réelles et positives ou nulles. Prenons une base orthonormée v₁, …, vₙ de vecteurs propres, rangés de sorte que λ₁ ≥ λ₂ ≥ … ≥ λₙ, et posons σᵢ = √λᵢ. Pour i ≠ j, (A vᵢ) · (A vⱼ) = vᵢᵀAᵀA vⱼ = λⱼ (vᵢ · vⱼ) = 0, et ‖A vᵢ‖² = λᵢ = σᵢ². Les vecteurs uᵢ = A vᵢ / σᵢ, pour σᵢ > 0, sont donc orthonormés, et A vᵢ = σᵢ uᵢ. Tout autre vᵢ vérifie ‖A vᵢ‖² = λᵢ = 0, donc A vᵢ = 0 ; quand n > m, c'est le cas au moins des n − m derniers, puisque AᵀA est de rang au plus m. Compléter les uᵢ en une base orthonormée de ℝᵐ et placer σ₁, …, σₖ, avec k = min(m, n), sur la diagonale de Σ donne A V = U Σ, c'est-à-dire A = U Σ Vᵀ.
 
 Contrairement aux valeurs propres (MAT-005 §1), les valeurs singulières existent toujours et sont réelles et positives ou nulles, pour toute matrice : carrée ou non, symétrique ou non.
 
@@ -101,7 +101,7 @@ Une bibliothèque déclare nulle toute valeur singulière inférieure à 10^-10.
 
 ## 5. Calculer la SVD par Jacobi unilatéral
 
-La **méthode de Jacobi unilatérale** (Hestenes, 1958) ne forme jamais AᵀA, dont le conditionnement est le carré de celui de A quand A est de rang colonne plein (MAT-003). Elle fait tourner des couples de colonnes de A elle-même, ce qui multiplie A à droite par des rotations planes, jusqu'à ce que toutes les colonnes soient orthogonales. À ce stade A V = W, où V est le produit des rotations et où les colonnes de W sont orthogonales : leurs normes sont les valeurs singulières, et les colonnes normalisées forment U.
+La **méthode de Jacobi unilatérale** (Hestenes, 1958) ne forme jamais AᵀA, dont le conditionnement est le carré de celui de A quand A est de rang colonne plein (MAT-003). Elle fait tourner des couples de colonnes de A elle-même, ce qui multiplie A à droite par des rotations planes, jusqu'à ce que toutes les colonnes soient orthogonales. À ce stade A V = W, où V est le produit des rotations et où les colonnes de W sont orthogonales : leurs normes sont les valeurs singulières, avec n − m zéros de plus quand n > m, puisqu'au plus m d'entre elles peuvent être non nulles. Normaliser les colonnes de norme non nulle donne les colonnes correspondantes de U ; une colonne de norme 0 ne peut pas être normalisée, et le reste de U se complète par des vecteurs orthonormés quelconques.
 
 Pour deux colonnes a_p et a_q, la rotation est la rotation de Jacobi de MAT-005 §4 appliquée à la matrice 2 × 2 [[a_p · a_p, a_p · a_q], [a_p · a_q, a_q · a_q]], un bloc de AᵀA calculé à partir des deux colonnes seules. Après la rotation, les deux colonnes sont orthogonales. Comme dans MAT-005, une rotation ultérieure peut défaire une rotation antérieure, donc la méthode balaie tous les couples à plusieurs reprises.
 
@@ -205,7 +205,7 @@ Supposons que l'étape 2 confirme que les valeurs singulières de s · A sont pr
 |------|-----------|
 | **Décomposition en valeurs singulières** | A = U Σ Vᵀ, avec U et V orthogonales et Σ diagonale de coefficients σ₁ ≥ σ₂ ≥ … ≥ 0 |
 | **Valeurs singulières** | Les coefficients diagonaux de Σ : les racines carrées des valeurs propres de AᵀA |
-| **Vecteurs singuliers à gauche et à droite** | Les colonnes uᵢ de U et vᵢ de V, avec A vᵢ = σᵢ uᵢ |
+| **Vecteurs singuliers à gauche et à droite** | Les colonnes uᵢ de U et vᵢ de V, avec A vᵢ = σᵢ uᵢ pour i ≤ min(m, n) |
 | **SVD réduite** | La SVD qui ne garde que les min(m, n) premières colonnes de U et de V |
 | **Norme de Frobenius** | ‖A‖_F, la racine carrée de la somme des carrés de tous les coefficients, égale à √(σ₁² + σ₂² + …) |
 | **Troncature de rang k** | A_k = σ₁u₁v₁ᵀ + … + σₖuₖvₖᵀ |

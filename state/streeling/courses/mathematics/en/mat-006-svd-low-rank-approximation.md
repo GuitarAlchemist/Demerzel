@@ -32,11 +32,11 @@ After this lesson, you will be able to:
 
 A = U Σ Vᵀ,
 
-where U (m × m) and V (n × n) are orthogonal, and Σ (m × n) is zero except for its diagonal entries σ₁ ≥ σ₂ ≥ … ≥ 0, the **singular values**. The columns of V are the **right singular vectors**, those of U the **left singular vectors**, and A vᵢ = σᵢ uᵢ.
+where U (m × m) and V (n × n) are orthogonal, and Σ (m × n) is zero except for its diagonal entries σ₁ ≥ σ₂ ≥ … ≥ 0, the **singular values**. The columns of V are the **right singular vectors**, those of U the **left singular vectors**, and A vᵢ = σᵢ uᵢ for i ≤ min(m, n); when n > m, the remaining columns of V satisfy A vᵢ = 0.
 
-Read from right to left: Vᵀ turns the input, Σ stretches it along the coordinate axes, and U turns the result. The unit sphere becomes an ellipsoid whose semi-axes have lengths σᵢ and point along the uᵢ. With k = min(m, n), the **thin SVD** keeps only the first k columns of U and V; it is the form IX returns.
+Read from right to left: Vᵀ turns the input, Σ stretches it along the coordinate axes, and U turns the result. When A has full column rank, the unit sphere becomes an ellipsoid whose semi-axes have lengths σᵢ and point along the uᵢ. With k = min(m, n), the **thin SVD** keeps only the first k columns of U and V; it is the form IX returns.
 
-The SVD follows from the spectral theorem of MAT-005. The matrix AᵀA is symmetric, and xᵀAᵀAx = ‖Ax‖² ≥ 0, so its eigenvalues λᵢ are real and non-negative. Take an orthonormal basis v₁, …, vₙ of its eigenvectors, ordered so that λ₁ ≥ λ₂ ≥ … ≥ λₙ, and set σᵢ = √λᵢ. For i ≠ j, (A vᵢ) · (A vⱼ) = vᵢᵀAᵀA vⱼ = λⱼ (vᵢ · vⱼ) = 0, and ‖A vᵢ‖² = λᵢ = σᵢ². So the vectors uᵢ = A vᵢ / σᵢ, for σᵢ > 0, are orthonormal, and A vᵢ = σᵢ uᵢ; completing the uᵢ to an orthonormal basis gives A V = U Σ, that is A = U Σ Vᵀ.
+The SVD follows from the spectral theorem of MAT-005. The matrix AᵀA is symmetric, and xᵀAᵀAx = ‖Ax‖² ≥ 0, so its eigenvalues λᵢ are real and non-negative. Take an orthonormal basis v₁, …, vₙ of its eigenvectors, ordered so that λ₁ ≥ λ₂ ≥ … ≥ λₙ, and set σᵢ = √λᵢ. For i ≠ j, (A vᵢ) · (A vⱼ) = vᵢᵀAᵀA vⱼ = λⱼ (vᵢ · vⱼ) = 0, and ‖A vᵢ‖² = λᵢ = σᵢ². So the vectors uᵢ = A vᵢ / σᵢ, for σᵢ > 0, are orthonormal, and A vᵢ = σᵢ uᵢ. Every other vᵢ has ‖A vᵢ‖² = λᵢ = 0, so A vᵢ = 0; when n > m, this covers at least the last n − m of them, since AᵀA has rank at most m. Completing the uᵢ to an orthonormal basis of ℝᵐ and putting σ₁, …, σₖ, with k = min(m, n), on the diagonal of Σ gives A V = U Σ, that is A = U Σ Vᵀ.
 
 Unlike eigenvalues (MAT-005 §1), singular values always exist and are real and non-negative, for every matrix: square or not, symmetric or not.
 
@@ -101,7 +101,7 @@ A library declares every singular value below 10^-10 to be zero. Which rank does
 
 ## 5. Computing the SVD by One-Sided Jacobi
 
-The **one-sided Jacobi method** (Hestenes, 1958) never forms AᵀA, whose condition number is the square of that of A when A has full column rank (MAT-003). It rotates pairs of columns of A itself, which multiplies A on the right by plane rotations, until all the columns are orthogonal. At that point A V = W, where V is the product of the rotations and the columns of W are orthogonal: their norms are the singular values, and the normalised columns form U.
+The **one-sided Jacobi method** (Hestenes, 1958) never forms AᵀA, whose condition number is the square of that of A when A has full column rank (MAT-003). It rotates pairs of columns of A itself, which multiplies A on the right by plane rotations, until all the columns are orthogonal. At that point A V = W, where V is the product of the rotations and the columns of W are orthogonal: their norms are the singular values, with n − m extra zeros when n > m, since at most m of them can be nonzero. Normalising the columns of nonzero norm gives the corresponding columns of U; a column of norm 0 cannot be normalised, and the rest of U is completed with any orthonormal vectors.
 
 For two columns a_p and a_q, the rotation is the Jacobi rotation of MAT-005 §4 applied to the 2 × 2 matrix [[a_p · a_p, a_p · a_q], [a_p · a_q, a_q · a_q]], a block of AᵀA computed from the two columns alone. After the rotation the two columns are orthogonal. As in MAT-005, a later rotation can spoil an earlier one, so the method sweeps over all the pairs repeatedly.
 
@@ -205,7 +205,7 @@ Suppose step 2 confirms that the singular values of s · A are proportional to s
 |------|-----------|
 | **Singular value decomposition** | A = U Σ Vᵀ, with U and V orthogonal and Σ diagonal with entries σ₁ ≥ σ₂ ≥ … ≥ 0 |
 | **Singular values** | The diagonal entries of Σ: the square roots of the eigenvalues of AᵀA |
-| **Left and right singular vectors** | The columns uᵢ of U and vᵢ of V, with A vᵢ = σᵢ uᵢ |
+| **Left and right singular vectors** | The columns uᵢ of U and vᵢ of V, with A vᵢ = σᵢ uᵢ for i ≤ min(m, n) |
 | **Thin SVD** | The SVD keeping only the first min(m, n) columns of U and V |
 | **Frobenius norm** | ‖A‖_F, the square root of the sum of the squares of all the entries, equal to √(σ₁² + σ₂² + …) |
 | **Rank-k truncation** | A_k = σ₁u₁v₁ᵀ + … + σₖuₖvₖᵀ |
