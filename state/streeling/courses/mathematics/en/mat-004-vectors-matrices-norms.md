@@ -119,7 +119,7 @@ The **p-norms** on Rⁿ are ‖x‖ₚ = (|x₁|ᵖ + … + |xₙ|ᵖ)^(1/p), fo
 - ‖x‖₂ = √(9 + 16) = 5, the Euclidean length;
 - ‖x‖∞ = 4, the largest component.
 
-For p ≥ 1 the triangle inequality holds: that is **Minkowski's inequality**. For p < 1 the same formula still gives a number, but not a norm.
+For p ≥ 1 the triangle inequality holds: that is **Minkowski's inequality**. For 0 < p < 1 the same formula still gives a number, but not a norm.
 
 A matrix also has norms. The one **induced** by a vector norm is ‖A‖ = max ‖A x‖ / ‖x‖ over x ≠ 0, the largest factor by which A stretches a vector. It is the norm behind the condition number of MAT-003.
 
@@ -179,7 +179,7 @@ pub fn minkowski(a: &Array1<f64>, b: &Array1<f64>, p: f64) -> Result<f64, MathEr
 }
 ```
 
-The guard encodes §5: it keeps `minkowski` where Minkowski's inequality holds. The p = 1/2 counterexample therefore cannot be computed with IX's `minkowski`, which returns an error; it is a computation by hand, as in the §5 exercise.
+The guard encodes §5: it rejects every p below 1, where the formula is not a norm. It lets two non-finite values through, though: `f64::NAN`, because every comparison with NaN is false, after which the powers return NaN in general, which is not a distance; and p = ∞, as the exercise below shows. The p = 1/2 counterexample therefore cannot be computed with IX's `minkowski`, which returns an error; it is a computation by hand, as in the §5 exercise.
 
 The tests check examples, not properties. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compares `minkowski` with p = 2 and `euclidean` on one pair of points, (0, 0) and (3, 4); the other distance tests also use one or two fixed pairs each. No test in `distance.rs` states the triangle inequality or another norm axiom. Elsewhere in IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) states it for the GPU crate's own Euclidean distance matrix, but checks a single triple of points. As MAT-001 explains, such examples can refute a property but cannot prove it.
 
@@ -217,7 +217,7 @@ Step 1 checks every triple of the grid. Does it prove the triangle inequality fo
 - **Calling every map "linear".** A linear map sends 0 to 0; a translation does not.
 - **Computing large determinants by cofactor expansion.** The cost grows like n!; elimination costs of the order of n³.
 - **Reading a small determinant as "almost singular".** det(10^-1 · I₂₀) = 10^-20, yet this matrix only scales by 10^-1 and has condition number 1 (MAT-003).
-- **Treating any distance formula as a metric.** The p-formula with p < 1 and the cosine distance both break the triangle inequality.
+- **Treating any distance formula as a metric.** The p-formula with 0 < p < 1 and the cosine distance both break the triangle inequality.
 - **Substituting p = ∞ into a formula.** A limit is not a value of the formula: use the ∞-norm itself.
 
 ---
@@ -251,7 +251,7 @@ Step 1 checks every triple of the grid. Does it prove the triangle inequality fo
 > If the largest component in absolute value is xₖ, then ‖x‖∞² = xₖ² ≤ x₁² + … + xₙ² = ‖x‖₂². And ‖x‖₁² = (|x₁| + … + |xₙ|)² is the sum of the squares xᵢ² plus the products 2|xᵢ||xⱼ|, which are ≥ 0, so ‖x‖₁² ≥ ‖x‖₂². Taking square roots of these non-negative numbers gives the claim.
 
 **4. IX's `minkowski` refuses p = 1/2. Is that a limitation or a guarantee?**
-> A guarantee: below p = 1 the formula breaks the triangle inequality (§5), so refusing it keeps every result a genuine distance. The guard does not cover p = ∞, which it lets through and for which the formula returns 1 whatever the points (§6).
+> A guarantee: below p = 1 the formula is not a norm (§5), and refusing it keeps those results out. The guard does not cover the non-finite values: it lets p = ∞ through, for which the formula returns 1 whatever the points, and `f64::NAN`, for which it returns NaN in general (§6).
 
 **Pass criteria:** Write vectors in a basis, build the matrix of a linear map, multiply matrices and explain why the order matters, read and count the cost of a determinant, and use the norm axioms to tell a norm from a formula that is not one, including in IX's distance functions.
 

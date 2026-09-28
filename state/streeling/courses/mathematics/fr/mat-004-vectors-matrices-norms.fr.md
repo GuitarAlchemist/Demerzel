@@ -119,7 +119,7 @@ Les **normes p** sur Rⁿ sont ‖x‖ₚ = (|x₁|ᵖ + … + |xₙ|ᵖ)^(1/p),
 - ‖x‖₂ = √(9 + 16) = 5, la longueur euclidienne ;
 - ‖x‖∞ = 4, la plus grande composante.
 
-Pour p ≥ 1, l'inégalité triangulaire est vraie : c'est l'**inégalité de Minkowski**. Pour p < 1, la même formule donne encore un nombre, mais pas une norme.
+Pour p ≥ 1, l'inégalité triangulaire est vraie : c'est l'**inégalité de Minkowski**. Pour 0 < p < 1, la même formule donne encore un nombre, mais pas une norme.
 
 Une matrice a aussi des normes. Celle qui est **subordonnée** à une norme vectorielle est ‖A‖ = max ‖A x‖ / ‖x‖ sur les x ≠ 0, le plus grand facteur par lequel A étire un vecteur. C'est la norme qui sous-tend le conditionnement de MAT-003.
 
@@ -179,7 +179,7 @@ pub fn minkowski(a: &Array1<f64>, b: &Array1<f64>, p: f64) -> Result<f64, MathEr
 }
 ```
 
-Cette garde traduit le §5 : elle maintient `minkowski` là où l'inégalité de Minkowski est vraie. Le contre-exemple avec p = 1/2 ne peut donc pas être calculé avec la fonction `minkowski` d'IX, qui renvoie une erreur ; c'est un calcul à la main, comme dans l'exercice du §5.
+Cette garde traduit le §5 : elle rejette tout p inférieur à 1, où la formule n'est pas une norme. Elle laisse pourtant passer deux valeurs non finies : `f64::NAN`, car toute comparaison avec NaN est fausse, après quoi les puissances renvoient NaN en général, qui n'est pas une distance ; et p = ∞, comme le montre l'exercice ci-dessous. Le contre-exemple avec p = 1/2 ne peut donc pas être calculé avec la fonction `minkowski` d'IX, qui renvoie une erreur ; c'est un calcul à la main, comme dans l'exercice du §5.
 
 Les tests vérifient des exemples, pas des propriétés. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compare `minkowski` avec p = 2 et `euclidean` sur un seul couple de points, (0, 0) et (3, 4) ; les autres tests de distance utilisent eux aussi un ou deux couples fixés chacun. Aucun test de `distance.rs` n'énonce l'inégalité triangulaire ni un autre axiome de norme. Ailleurs dans IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) l'énonce pour la matrice de distances euclidiennes propre au crate GPU, mais ne vérifie qu'un seul triplet de points. Comme l'explique MAT-001, de tels exemples peuvent réfuter une propriété mais pas la démontrer.
 
@@ -217,7 +217,7 @@ L'étape 1 vérifie chaque triplet de la grille. Démontre-t-elle l'inégalité 
 - **Qualifier toute application de « linéaire ».** Une application linéaire envoie 0 sur 0 ; une translation, non.
 - **Calculer de grands déterminants par développement en cofacteurs.** Le coût croît comme n! ; l'élimination coûte de l'ordre de n³.
 - **Lire un petit déterminant comme « presque singulier ».** det(10^-1 · I₂₀) = 10^-20, et pourtant cette matrice ne fait que multiplier par 10^-1 et a un conditionnement de 1 (MAT-003).
-- **Prendre toute formule de distance pour une métrique.** La formule p avec p < 1 et la distance cosinus violent toutes deux l'inégalité triangulaire.
+- **Prendre toute formule de distance pour une métrique.** La formule p avec 0 < p < 1 et la distance cosinus violent toutes deux l'inégalité triangulaire.
 - **Remplacer p par ∞ dans une formule.** Une limite n'est pas une valeur de la formule : utilisez la norme ∞ elle-même.
 
 ---
@@ -251,7 +251,7 @@ L'étape 1 vérifie chaque triplet de la grille. Démontre-t-elle l'inégalité 
 > Si la plus grande composante en valeur absolue est xₖ, alors ‖x‖∞² = xₖ² ≤ x₁² + … + xₙ² = ‖x‖₂². Et ‖x‖₁² = (|x₁| + … + |xₙ|)² est la somme des carrés xᵢ² et des produits 2|xᵢ||xⱼ|, qui sont ≥ 0, donc ‖x‖₁² ≥ ‖x‖₂². En prenant les racines carrées de ces nombres positifs, on obtient l'énoncé.
 
 **4. La fonction `minkowski` d'IX refuse p = 1/2. Est-ce une limitation ou une garantie ?**
-> Une garantie : en dessous de p = 1, la formule viole l'inégalité triangulaire (§5), donc la refuser garantit que chaque résultat est une vraie distance. La garde ne couvre pas p = ∞, qu'elle laisse passer et pour lequel la formule renvoie 1 quels que soient les points (§6).
+> Une garantie : en dessous de p = 1, la formule n'est pas une norme (§5), et la refuser écarte ces résultats. La garde ne couvre pas les valeurs non finies : elle laisse passer p = ∞, pour lequel la formule renvoie 1 quels que soient les points, et `f64::NAN`, pour lequel elle renvoie NaN en général (§6).
 
 **Critères de réussite :** Écrire des vecteurs dans une base, construire la matrice d'une application linéaire, multiplier des matrices et expliquer pourquoi l'ordre compte, lire un déterminant et compter son coût, et utiliser les axiomes de norme pour distinguer une norme d'une formule qui n'en est pas une, y compris dans les fonctions de distance d'IX.
 

@@ -119,7 +119,7 @@ Las **normas p** en Rⁿ son ‖x‖ₚ = (|x₁|ᵖ + … + |xₙ|ᵖ)^(1/p), p
 - ‖x‖₂ = √(9 + 16) = 5, la longitud euclidiana;
 - ‖x‖∞ = 4, la mayor componente.
 
-Para p ≥ 1 se cumple la desigualdad triangular: es la **desigualdad de Minkowski**. Para p < 1 la misma fórmula sigue dando un número, pero no una norma.
+Para p ≥ 1 se cumple la desigualdad triangular: es la **desigualdad de Minkowski**. Para 0 < p < 1 la misma fórmula sigue dando un número, pero no una norma.
 
 Una matriz también tiene normas. La **inducida** por una norma vectorial es ‖A‖ = max ‖A x‖ / ‖x‖ sobre los x ≠ 0, el mayor factor por el que A estira un vector. Es la norma que está detrás del número de condición de MAT-003.
 
@@ -179,7 +179,7 @@ pub fn minkowski(a: &Array1<f64>, b: &Array1<f64>, p: f64) -> Result<f64, MathEr
 }
 ```
 
-Esta guarda traduce el §5: mantiene `minkowski` donde se cumple la desigualdad de Minkowski. Por eso el contraejemplo con p = 1/2 no puede calcularse con la función `minkowski` de IX, que devuelve un error; es un cálculo a mano, como en el ejercicio del §5.
+Esta guarda traduce el §5: rechaza todo p menor que 1, donde la fórmula no es una norma. Sin embargo, deja pasar dos valores no finitos: `f64::NAN`, porque toda comparación con NaN es falsa, tras lo cual las potencias devuelven NaN en general, que no es una distancia; y p = ∞, como muestra el ejercicio siguiente. Por eso el contraejemplo con p = 1/2 no puede calcularse con la función `minkowski` de IX, que devuelve un error; es un cálculo a mano, como en el ejercicio del §5.
 
 Las pruebas comprueban ejemplos, no propiedades. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compara `minkowski` con p = 2 y `euclidean` en un solo par de puntos, (0, 0) y (3, 4); las demás pruebas de distancia también usan uno o dos pares fijos cada una. Ninguna prueba de `distance.rs` enuncia la desigualdad triangular ni otro axioma de norma. En otra parte de IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) la enuncia para la matriz de distancias euclidianas propia del crate de GPU, pero solo comprueba una terna de puntos. Como explica MAT-001, esos ejemplos pueden refutar una propiedad, pero no demostrarla.
 
@@ -217,7 +217,7 @@ El paso 1 comprueba cada terna de la cuadrícula. ¿Demuestra la desigualdad tri
 - **Llamar «lineal» a cualquier aplicación.** Una aplicación lineal envía 0 a 0; una traslación, no.
 - **Calcular determinantes grandes por desarrollo en cofactores.** El costo crece como n!; la eliminación cuesta del orden de n³.
 - **Leer un determinante pequeño como «casi singular».** det(10^-1 · I₂₀) = 10^-20, y sin embargo esta matriz solo multiplica por 10^-1 y tiene número de condición 1 (MAT-003).
-- **Tomar cualquier fórmula de distancia por una métrica.** La fórmula p con p < 1 y la distancia coseno violan ambas la desigualdad triangular.
+- **Tomar cualquier fórmula de distancia por una métrica.** La fórmula p con 0 < p < 1 y la distancia coseno violan ambas la desigualdad triangular.
 - **Sustituir p por ∞ en una fórmula.** Un límite no es un valor de la fórmula: usa la propia norma ∞.
 
 ---
@@ -251,7 +251,7 @@ El paso 1 comprueba cada terna de la cuadrícula. ¿Demuestra la desigualdad tri
 > Si la mayor componente en valor absoluto es xₖ, entonces ‖x‖∞² = xₖ² ≤ x₁² + … + xₙ² = ‖x‖₂². Y ‖x‖₁² = (|x₁| + … + |xₙ|)² es la suma de los cuadrados xᵢ² más los productos 2|xᵢ||xⱼ|, que son ≥ 0, así que ‖x‖₁² ≥ ‖x‖₂². Tomando raíces cuadradas de estos números no negativos se obtiene el enunciado.
 
 **4. La función `minkowski` de IX rechaza p = 1/2. ¿Es una limitación o una garantía?**
-> Una garantía: por debajo de p = 1 la fórmula viola la desigualdad triangular (§5), así que rechazarla asegura que cada resultado sea una distancia de verdad. La guarda no cubre p = ∞, que deja pasar y para el que la fórmula devuelve 1 sean cuales sean los puntos (§6).
+> Una garantía: por debajo de p = 1 la fórmula no es una norma (§5), y rechazarla deja fuera esos resultados. La guarda no cubre los valores no finitos: deja pasar p = ∞, para el que la fórmula devuelve 1 sean cuales sean los puntos, y `f64::NAN`, para el que devuelve NaN en general (§6).
 
 **Criterio de aprobación:** Escribir vectores en una base, construir la matriz de una aplicación lineal, multiplicar matrices y explicar por qué importa el orden, leer un determinante y contar su costo, y usar los axiomas de norma para distinguir una norma de una fórmula que no lo es, incluso en las funciones de distancia de IX.
 
