@@ -96,13 +96,13 @@ Para A = diag(3, 1) y x = (1, 1/10), calcula R(x) y su distancia al valor propio
 
 En 1846, Jacobi propuso diagonalizar una matriz simétrica mediante una sucesión de rotaciones planas. Cada paso elige un par de índices p < q y reemplaza A por JᵀAJ, donde J gira el plano de las coordenadas p y q un ángulo elegido para anular la nueva entrada a_pq. Como J es ortogonal, JᵀAJ tiene los mismos valores propios que A.
 
-Para el bloque 2 × 2 [[a_pp, a_pq], [a_pq, a_qq]] con a_pq ≠ 0, tomemos θ = (a_qq − a_pp) / (2a_pq). La tangente t del ángulo de rotación es una raíz de t² + 2θt − 1 = 0, y la raíz de menor valor absoluto, t = sign(θ) / (|θ| + √(1 + θ²)), mantiene pequeña la rotación. Con c = 1/√(1 + t²) y s = t c, la rotación da las nuevas entradas diagonales
+Para el bloque 2 × 2 [[a_pp, a_pq], [a_pq, a_qq]] con a_pq ≠ 0, tomemos θ = (a_qq − a_pp) / (2a_pq). La tangente t del ángulo de rotación es una raíz de t² + 2θt − 1 = 0, y la raíz de menor valor absoluto, t = 1 / (θ + √(1 + θ²)) cuando θ ≥ 0 y t = 1 / (θ − √(1 + θ²)) cuando θ < 0, mantiene pequeña la rotación. Con c = 1/√(1 + t²) y s = t c, la rotación da las nuevas entradas diagonales
 
 a_pp − t a_pq y a_qq + t a_pq,
 
 y un cero en la posición (p, q).
 
-Por qué converge el método: una semejanza ortogonal conserva la suma de los cuadrados de todas las entradas. La rotación convierte las dos entradas fuera de la diagonal a_pq en ceros y pasa su peso a la diagonal, así que la suma de los cuadrados fuera de la diagonal baja exactamente 2a_pq². Una rotación posterior puede volver a hacer no nula una entrada ya anulada; por eso el **método de Jacobi cíclico** recorre todos los pares una y otra vez. La suma fuera de la diagonal sigue disminuyendo, y el método converge, al final de forma cuadrática (Golub y Van Loan, cap. 8). El producto V = J₁J₂J₃… de las rotaciones contiene los vectores propios en sus columnas.
+Por qué converge el método: una semejanza ortogonal conserva la suma de los cuadrados de todas las entradas. La rotación convierte las dos entradas fuera de la diagonal a_pq en ceros y pasa su peso a la diagonal, así que la suma de los cuadrados fuera de la diagonal baja exactamente 2a_pq². Una rotación posterior puede volver a hacer no nula una entrada ya anulada; por eso el **método de Jacobi cíclico** recorre todos los pares una y otra vez. La suma fuera de la diagonal sigue disminuyendo, y el método converge; cuando los valores propios son distintos, la convergencia acaba siendo cuadrática (Golub y Van Loan, cap. 8). El producto V = J₁J₂J₃… de las rotaciones contiene los vectores propios en sus columnas.
 
 ### Ejercicio práctico
 
@@ -114,7 +114,7 @@ Aplica una rotación de Jacobi a A = [[5, 2], [2, 2]].
 
 ## 5. Valores propios múltiples
 
-Cuando un valor propio se repite, su **subespacio propio**, el conjunto de todos los v con A v = λ v, tiene dimensión mayor que 1; para una matriz simétrica, esa dimensión es igual a la multiplicidad. Toda base ortonormal del subespacio propio es entonces un conjunto de vectores propios igual de correcto.
+Para una matriz simétrica, cuando un valor propio se repite, su **subespacio propio**, el conjunto de todos los v con A v = λ v, tiene una dimensión igual a la multiplicidad, es decir, mayor que 1. Sin simetría esto puede fallar: el cizallamiento del §1 tiene el valor propio doble 1 pero un subespacio propio de dimensión 1. Toda base ortonormal del subespacio propio es entonces un conjunto de vectores propios igual de correcto.
 
 Tomemos B = I + J, donde J es la matriz 3 × 3 de unos. Como J (1, 1, 1) = 3 · (1, 1, 1), y J v = 0 siempre que las componentes de v sumen 0, B tiene el valor propio 4 para (1, 1, 1) y el valor propio doble 1 en todo el plano de los vectores cuyas componentes suman 0. Dos vectores ortonormales cualesquiera de ese plano son una respuesta correcta.
 

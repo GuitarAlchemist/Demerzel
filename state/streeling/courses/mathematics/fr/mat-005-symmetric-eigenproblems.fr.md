@@ -96,13 +96,13 @@ Pour A = diag(3, 1) et x = (1, 1/10), calculez R(x) et sa distance à la valeur 
 
 En 1846, Jacobi a proposé de diagonaliser une matrice symétrique par une suite de rotations planes. Chaque étape choisit un couple d'indices p < q et remplace A par JᵀAJ, où J fait tourner le plan des coordonnées p et q d'un angle choisi pour annuler le nouveau coefficient a_pq. Comme J est orthogonale, JᵀAJ a les mêmes valeurs propres que A.
 
-Pour le bloc 2 × 2 [[a_pp, a_pq], [a_pq, a_qq]] avec a_pq ≠ 0, posons θ = (a_qq − a_pp) / (2a_pq). La tangente t de l'angle de rotation est une racine de t² + 2θt − 1 = 0, et la racine de plus petite valeur absolue, t = sign(θ) / (|θ| + √(1 + θ²)), garde la rotation petite. Avec c = 1/√(1 + t²) et s = t c, la rotation donne les nouveaux coefficients diagonaux
+Pour le bloc 2 × 2 [[a_pp, a_pq], [a_pq, a_qq]] avec a_pq ≠ 0, posons θ = (a_qq − a_pp) / (2a_pq). La tangente t de l'angle de rotation est une racine de t² + 2θt − 1 = 0, et la racine de plus petite valeur absolue, t = 1 / (θ + √(1 + θ²)) quand θ ≥ 0 et t = 1 / (θ − √(1 + θ²)) quand θ < 0, garde la rotation petite. Avec c = 1/√(1 + t²) et s = t c, la rotation donne les nouveaux coefficients diagonaux
 
 a_pp − t a_pq et a_qq + t a_pq,
 
 et un zéro en position (p, q).
 
-Pourquoi la méthode converge : une similitude orthogonale conserve la somme des carrés de tous les coefficients. La rotation change les deux coefficients hors diagonale a_pq en zéros et reporte leur poids sur la diagonale, donc la somme des carrés hors de la diagonale baisse d'exactement 2a_pq². Une rotation ultérieure peut rendre non nul un coefficient déjà annulé ; la **méthode de Jacobi cyclique** balaie donc tous les couples à plusieurs reprises. La somme hors diagonale décroît quand même, et la méthode converge, finalement de façon quadratique (Golub et Van Loan, ch. 8). Le produit V = J₁J₂J₃… des rotations contient les vecteurs propres dans ses colonnes.
+Pourquoi la méthode converge : une similitude orthogonale conserve la somme des carrés de tous les coefficients. La rotation change les deux coefficients hors diagonale a_pq en zéros et reporte leur poids sur la diagonale, donc la somme des carrés hors de la diagonale baisse d'exactement 2a_pq². Une rotation ultérieure peut rendre non nul un coefficient déjà annulé ; la **méthode de Jacobi cyclique** balaie donc tous les couples à plusieurs reprises. La somme hors diagonale décroît quand même, et la méthode converge ; quand les valeurs propres sont distinctes, la convergence devient finalement quadratique (Golub et Van Loan, ch. 8). Le produit V = J₁J₂J₃… des rotations contient les vecteurs propres dans ses colonnes.
 
 ### Exercice pratique
 
@@ -114,7 +114,7 @@ Appliquez une rotation de Jacobi à A = [[5, 2], [2, 2]].
 
 ## 5. Valeurs propres multiples
 
-Quand une valeur propre se répète, son **sous-espace propre**, l'ensemble des v tels que A v = λ v, est de dimension supérieure à 1 ; pour une matrice symétrique, cette dimension est égale à la multiplicité. Toute base orthonormée du sous-espace propre est alors un ensemble de vecteurs propres tout aussi correct.
+Pour une matrice symétrique, quand une valeur propre se répète, son **sous-espace propre**, l'ensemble des v tels que A v = λ v, a une dimension égale à la multiplicité, donc supérieure à 1. Sans symétrie, cela peut échouer : le cisaillement du §1 a la valeur propre double 1 mais un sous-espace propre de dimension 1. Toute base orthonormée du sous-espace propre est alors un ensemble de vecteurs propres tout aussi correct.
 
 Prenons B = I + J, où J est la matrice 3 × 3 remplie de uns. Comme J (1, 1, 1) = 3 · (1, 1, 1), et J v = 0 dès que les composantes de v ont une somme nulle, B a la valeur propre 4 pour (1, 1, 1) et la valeur propre double 1 sur tout le plan des vecteurs dont les composantes ont une somme nulle. Deux vecteurs orthonormés quelconques de ce plan sont une réponse correcte.
 

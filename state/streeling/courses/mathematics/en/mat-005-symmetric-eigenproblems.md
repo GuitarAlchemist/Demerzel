@@ -96,13 +96,13 @@ For A = diag(3, 1) and x = (1, 1/10), compute R(x) and its distance to the eigen
 
 In 1846, Jacobi proposed to diagonalise a symmetric matrix by a sequence of plane rotations. Each step picks a pair of indices p < q and replaces A by JᵀAJ, where J rotates the plane of the coordinates p and q by an angle chosen to make the new entry a_pq zero. Since J is orthogonal, JᵀAJ has the same eigenvalues as A.
 
-For the 2 × 2 block [[a_pp, a_pq], [a_pq, a_qq]] with a_pq ≠ 0, set θ = (a_qq − a_pp) / (2a_pq). The tangent t of the rotation angle is a root of t² + 2θt − 1 = 0, and the root of smaller absolute value, t = sign(θ) / (|θ| + √(1 + θ²)), keeps the rotation small. With c = 1/√(1 + t²) and s = t c, the rotation gives the new diagonal entries
+For the 2 × 2 block [[a_pp, a_pq], [a_pq, a_qq]] with a_pq ≠ 0, set θ = (a_qq − a_pp) / (2a_pq). The tangent t of the rotation angle is a root of t² + 2θt − 1 = 0, and the root of smaller absolute value, t = 1 / (θ + √(1 + θ²)) when θ ≥ 0 and t = 1 / (θ − √(1 + θ²)) when θ < 0, keeps the rotation small. With c = 1/√(1 + t²) and s = t c, the rotation gives the new diagonal entries
 
 a_pp − t a_pq and a_qq + t a_pq,
 
 and a zero in position (p, q).
 
-Why the method converges: an orthogonal similarity keeps the sum of the squares of all the entries. The rotation turns the two off-diagonal entries a_pq into zeros and moves their weight to the diagonal, so the sum of the squares off the diagonal drops by exactly 2a_pq². A later rotation can make a zeroed entry nonzero again, so the **cyclic Jacobi method** sweeps over all the pairs repeatedly; the off-diagonal sum still decreases, and the method converges, eventually quadratically (Golub and Van Loan, ch. 8). The product V = J₁J₂J₃… of the rotations holds the eigenvectors as its columns.
+Why the method converges: an orthogonal similarity keeps the sum of the squares of all the entries. The rotation turns the two off-diagonal entries a_pq into zeros and moves their weight to the diagonal, so the sum of the squares off the diagonal drops by exactly 2a_pq². A later rotation can make a zeroed entry nonzero again, so the **cyclic Jacobi method** sweeps over all the pairs repeatedly; the off-diagonal sum still decreases, and the method converges; when the eigenvalues are distinct, the convergence is eventually quadratic (Golub and Van Loan, ch. 8). The product V = J₁J₂J₃… of the rotations holds the eigenvectors as its columns.
 
 ### Practice Exercise
 
@@ -114,7 +114,7 @@ Apply one Jacobi rotation to A = [[5, 2], [2, 2]].
 
 ## 5. Repeated Eigenvalues
 
-When an eigenvalue repeats, its **eigenspace**, the set of all v with A v = λ v, has dimension greater than 1; for a symmetric matrix, the dimension equals the multiplicity. Every orthonormal basis of the eigenspace is then an equally correct set of eigenvectors.
+For a symmetric matrix, when an eigenvalue repeats, its **eigenspace**, the set of all v with A v = λ v, has a dimension equal to the multiplicity, so greater than 1. Without symmetry this can fail: the shear of §1 has the double eigenvalue 1 but a one-dimensional eigenspace. Every orthonormal basis of the eigenspace is then an equally correct set of eigenvectors.
 
 Take B = I + J, where J is the 3 × 3 matrix of ones. Since J (1, 1, 1) = 3 · (1, 1, 1), and J v = 0 whenever the entries of v sum to 0, B has the eigenvalue 4 for (1, 1, 1) and the double eigenvalue 1 on the whole plane of the vectors whose entries sum to 0. Any two orthonormal vectors of that plane are a correct answer.
 
