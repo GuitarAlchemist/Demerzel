@@ -27,7 +27,7 @@ Al terminar esta lección, serás capaz de:
 
 ## 1. Los axiomas
 
-Un modelo de probabilidad tiene un **espacio muestral** Ω, el conjunto de resultados posibles; **sucesos**, que son subconjuntos de Ω; y una probabilidad P que cumple los **axiomas de Kolmogórov**:
+Un modelo de probabilidad tiene un **espacio muestral** Ω, el conjunto de resultados posibles; una familia de **sucesos**, subconjuntos de Ω que forman una **σ-álgebra**; y una probabilidad P, definida sobre los sucesos, que cumple los **axiomas de Kolmogórov**. Una σ-álgebra contiene Ω, el complemento de cada uno de sus elementos y la unión de cada sucesión de sus elementos, y por tanto también sus intersecciones y diferencias. Cuando Ω es finito o numerable, la σ-álgebra puede ser el conjunto de todos los subconjuntos de Ω. Cuando Ω no es numerable, puede tener que ser más pequeña: la probabilidad uniforme en los reales entre 0 y 1 no se puede extender a todos los subconjuntos sin dejar de ser invariante por traslaciones módulo 1 (construcción de Vitali). Los axiomas son:
 1. P(A) ≥ 0 para todo suceso A.
 2. P(Ω) = 1.
 3. Para sucesos disjuntos dos a dos A₁, A₂, …, P(A₁ ∪ A₂ ∪ …) = P(A₁) + P(A₂) + ….
@@ -186,7 +186,7 @@ El paso 2 predice 0.727 con un margen de 0.005 para 10^5 extracciones. ¿De dón
 
 | Término | Definición |
 |------|-----------|
-| **Espacio muestral** | El conjunto Ω de resultados posibles; los sucesos son sus subconjuntos |
+| **Espacio muestral** | El conjunto Ω de resultados posibles; los sucesos son subconjuntos suyos que forman una σ-álgebra |
 | **Axiomas de Kolmogórov** | P(A) ≥ 0, P(Ω) = 1, y la aditividad sobre sucesos disjuntos |
 | **Probabilidad condicional** | P(A \| B) = P(A ∩ B)/P(B), para P(B) > 0 |
 | **Independencia** | P(A ∩ B) = P(A) P(B): saber uno de los sucesos no cambia la probabilidad del otro |

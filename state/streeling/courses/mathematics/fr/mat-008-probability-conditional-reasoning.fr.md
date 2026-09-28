@@ -27,7 +27,7 @@ Après cette leçon, vous serez capable de :
 
 ## 1. Les axiomes
 
-Un modèle probabiliste comporte un **univers** Ω, l'ensemble des issues possibles ; des **événements**, qui sont des parties de Ω ; et une probabilité P qui vérifie les **axiomes de Kolmogorov** :
+Un modèle probabiliste comporte un **univers** Ω, l'ensemble des issues possibles ; une famille d'**événements**, des parties de Ω qui forment une **tribu** (ou σ-algèbre) ; et une probabilité P, définie sur les événements, qui vérifie les **axiomes de Kolmogorov**. Une tribu contient Ω, le complémentaire de chacun de ses éléments et la réunion de toute suite de ses éléments, donc aussi leurs intersections et leurs différences. Quand Ω est fini ou dénombrable, la tribu peut être l'ensemble de toutes les parties de Ω. Quand Ω n'est pas dénombrable, elle peut devoir être plus petite : la probabilité uniforme sur les réels compris entre 0 et 1 ne peut pas être prolongée à toutes les parties en restant invariante par translation modulo 1 (construction de Vitali). Les axiomes sont :
 1. P(A) ≥ 0 pour tout événement A.
 2. P(Ω) = 1.
 3. Pour des événements deux à deux disjoints A₁, A₂, …, P(A₁ ∪ A₂ ∪ …) = P(A₁) + P(A₂) + ….
@@ -186,7 +186,7 @@ L'étape 2 prédit 0,727 à 0,005 près pour 10^5 tirages. D'où vient cette mar
 
 | Terme | Définition |
 |------|-----------|
-| **Univers** | L'ensemble Ω des issues possibles ; les événements en sont des parties |
+| **Univers** | L'ensemble Ω des issues possibles ; les événements en sont des parties qui forment une tribu |
 | **Axiomes de Kolmogorov** | P(A) ≥ 0, P(Ω) = 1, et l'additivité sur les événements disjoints |
 | **Probabilité conditionnelle** | P(A \| B) = P(A ∩ B)/P(B), pour P(B) > 0 |
 | **Indépendance** | P(A ∩ B) = P(A) P(B) : apprendre l'un des événements ne change pas la probabilité de l'autre |

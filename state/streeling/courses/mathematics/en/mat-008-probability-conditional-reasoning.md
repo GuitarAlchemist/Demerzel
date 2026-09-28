@@ -27,7 +27,7 @@ After this lesson, you will be able to:
 
 ## 1. The Axioms
 
-A probability model has a **sample space** Ω, the set of possible outcomes; **events**, which are subsets of Ω; and a probability P that satisfies **Kolmogorov's axioms**:
+A probability model has a **sample space** Ω, the set of possible outcomes; a collection of **events**, subsets of Ω that form a **σ-algebra**; and a probability P, defined on the events, that satisfies **Kolmogorov's axioms**. A σ-algebra contains Ω, the complement of each of its sets and the union of each sequence of its sets, and so also their intersections and differences. When Ω is finite or countable, the σ-algebra can be the set of all subsets of Ω. When Ω is uncountable, it may have to be smaller: the uniform probability on the real numbers between 0 and 1 cannot be extended to every subset while staying unchanged under shifts modulo 1 (Vitali's construction). The axioms are:
 1. P(A) ≥ 0 for every event A.
 2. P(Ω) = 1.
 3. For pairwise disjoint events A₁, A₂, …, P(A₁ ∪ A₂ ∪ …) = P(A₁) + P(A₂) + ….
@@ -186,7 +186,7 @@ Step 2 predicts 0.727 within 0.005 for 10^5 draws. Where does that margin come f
 
 | Term | Definition |
 |------|-----------|
-| **Sample space** | The set Ω of possible outcomes; events are its subsets |
+| **Sample space** | The set Ω of possible outcomes; events are subsets of it that form a σ-algebra |
 | **Kolmogorov's axioms** | P(A) ≥ 0, P(Ω) = 1, and additivity over disjoint events |
 | **Conditional probability** | P(A \| B) = P(A ∩ B)/P(B), for P(B) > 0 |
 | **Independence** | P(A ∩ B) = P(A) P(B): learning one event does not change the probability of the other |
