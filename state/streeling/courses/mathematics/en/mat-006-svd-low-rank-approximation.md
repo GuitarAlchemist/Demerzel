@@ -75,7 +75,7 @@ Keeping the first k terms gives the **rank-k truncation** A_k.
 
 **Eckart–Young–Mirsky theorem.** For every matrix X of rank at most k, ‖A − X‖₂ ≥ σₖ₊₁ and ‖A − X‖_F ≥ √(σₖ₊₁² + σₖ₊₂² + …), with equality for X = A_k.
 
-The error of the truncation itself is easy to read: A − A_k = σₖ₊₁uₖ₊₁vₖ₊₁ᵀ + … is again written as an SVD, so its 2-norm is its largest singular value σₖ₊₁, and its Frobenius norm is the square root of the sum of the squares of its singular values. The hard part of the theorem is that no other matrix of rank k does better; the Research Basis gives the proofs. Two consequences follow: the error decreases as k grows and reaches 0 at k = rank A, and a matrix is "nearly of rank k" exactly when σₖ₊₁ is small compared with σ₁. This is what compression, denoising and latent semantic analysis use.
+The error of the truncation itself is easy to read: A − A_k = σₖ₊₁uₖ₊₁vₖ₊₁ᵀ + … is again written as an SVD, so its 2-norm is its largest singular value σₖ₊₁, and its Frobenius norm is the square root of the sum of the squares of its singular values. The hard part of the theorem is that no other matrix of rank k does better; the Research Basis gives the proofs. Two consequences follow: the error decreases as k grows and reaches 0 at k = rank A, and a matrix is "nearly of rank k" in the 2-norm exactly when σₖ₊₁ is small compared with σ₁; in the Frobenius norm, the whole tail √(σₖ₊₁² + σₖ₊₂² + …) must be small compared with ‖A‖_F. This is what compression, denoising and latent semantic analysis use.
 
 ### Practice Exercise
 
@@ -101,7 +101,7 @@ A library declares every singular value below 10^-10 to be zero. Which rank does
 
 ## 5. Computing the SVD by One-Sided Jacobi
 
-The **one-sided Jacobi method** (Hestenes, 1958) never forms AᵀA, whose condition number is the square of that of A (MAT-003). It rotates pairs of columns of A itself, which multiplies A on the right by plane rotations, until all the columns are orthogonal. At that point A V = W, where V is the product of the rotations and the columns of W are orthogonal: their norms are the singular values, and the normalised columns form U.
+The **one-sided Jacobi method** (Hestenes, 1958) never forms AᵀA, whose condition number is the square of that of A when A has full column rank (MAT-003). It rotates pairs of columns of A itself, which multiplies A on the right by plane rotations, until all the columns are orthogonal. At that point A V = W, where V is the product of the rotations and the columns of W are orthogonal: their norms are the singular values, and the normalised columns form U.
 
 For two columns a_p and a_q, the rotation is the Jacobi rotation of MAT-005 §4 applied to the 2 × 2 matrix [[a_p · a_p, a_p · a_q], [a_p · a_q, a_q · a_q]], a block of AᵀA computed from the two columns alone. After the rotation the two columns are orthogonal. As in MAT-005, a later rotation can spoil an earlier one, so the method sweeps over all the pairs repeatedly.
 
@@ -189,7 +189,7 @@ Suppose step 2 confirms that the singular values of s · A are proportional to s
 
 ## 8. Common Pitfalls
 
-- **Computing singular values as square roots of the eigenvalues of AᵀA.** Forming AᵀA squares the condition number, and the small singular values lose accuracy first.
+- **Computing singular values as square roots of the eigenvalues of AᵀA.** Forming AᵀA squares the condition number of a matrix of full column rank, and the small singular values lose accuracy first.
 - **Using an absolute rank threshold.** It measures the scale of the matrix, not its rank.
 - **Trusting the singular values alone.** U and V can be broken while the singular values are right: test A = U Σ Vᵀ.
 - **Testing a known quantity with a loose bound.** When a theorem gives the exact error, a test with a bound almost twice as large lets errors through.

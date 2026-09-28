@@ -75,7 +75,7 @@ Garder les k premiers termes donne la **troncature de rang k** A_k.
 
 **Théorème d'Eckart–Young–Mirsky.** Pour toute matrice X de rang au plus k, ‖A − X‖₂ ≥ σₖ₊₁ et ‖A − X‖_F ≥ √(σₖ₊₁² + σₖ₊₂² + …), avec égalité pour X = A_k.
 
-L'erreur de la troncature elle-même se lit facilement : A − A_k = σₖ₊₁uₖ₊₁vₖ₊₁ᵀ + … est encore écrite comme une SVD, donc sa norme 2 est sa plus grande valeur singulière σₖ₊₁, et sa norme de Frobenius la racine carrée de la somme des carrés de ses valeurs singulières. La partie difficile du théorème est qu'aucune autre matrice de rang k ne fait mieux ; les Bases de recherche donnent les démonstrations. Deux conséquences en découlent : l'erreur décroît quand k augmente et atteint 0 en k = rang A, et une matrice est « presque de rang k » exactement quand σₖ₊₁ est petite devant σ₁. C'est ce qu'utilisent la compression, le débruitage et l'analyse sémantique latente.
+L'erreur de la troncature elle-même se lit facilement : A − A_k = σₖ₊₁uₖ₊₁vₖ₊₁ᵀ + … est encore écrite comme une SVD, donc sa norme 2 est sa plus grande valeur singulière σₖ₊₁, et sa norme de Frobenius la racine carrée de la somme des carrés de ses valeurs singulières. La partie difficile du théorème est qu'aucune autre matrice de rang k ne fait mieux ; les Bases de recherche donnent les démonstrations. Deux conséquences en découlent : l'erreur décroît quand k augmente et atteint 0 en k = rang A, et une matrice est « presque de rang k » en norme 2 exactement quand σₖ₊₁ est petite devant σ₁ ; en norme de Frobenius, c'est toute la queue √(σₖ₊₁² + σₖ₊₂² + …) qui doit être petite devant ‖A‖_F. C'est ce qu'utilisent la compression, le débruitage et l'analyse sémantique latente.
 
 ### Exercice pratique
 
@@ -101,7 +101,7 @@ Une bibliothèque déclare nulle toute valeur singulière inférieure à 10^-10.
 
 ## 5. Calculer la SVD par Jacobi unilatéral
 
-La **méthode de Jacobi unilatérale** (Hestenes, 1958) ne forme jamais AᵀA, dont le conditionnement est le carré de celui de A (MAT-003). Elle fait tourner des couples de colonnes de A elle-même, ce qui multiplie A à droite par des rotations planes, jusqu'à ce que toutes les colonnes soient orthogonales. À ce stade A V = W, où V est le produit des rotations et où les colonnes de W sont orthogonales : leurs normes sont les valeurs singulières, et les colonnes normalisées forment U.
+La **méthode de Jacobi unilatérale** (Hestenes, 1958) ne forme jamais AᵀA, dont le conditionnement est le carré de celui de A quand A est de rang colonne plein (MAT-003). Elle fait tourner des couples de colonnes de A elle-même, ce qui multiplie A à droite par des rotations planes, jusqu'à ce que toutes les colonnes soient orthogonales. À ce stade A V = W, où V est le produit des rotations et où les colonnes de W sont orthogonales : leurs normes sont les valeurs singulières, et les colonnes normalisées forment U.
 
 Pour deux colonnes a_p et a_q, la rotation est la rotation de Jacobi de MAT-005 §4 appliquée à la matrice 2 × 2 [[a_p · a_p, a_p · a_q], [a_p · a_q, a_q · a_q]], un bloc de AᵀA calculé à partir des deux colonnes seules. Après la rotation, les deux colonnes sont orthogonales. Comme dans MAT-005, une rotation ultérieure peut défaire une rotation antérieure, donc la méthode balaie tous les couples à plusieurs reprises.
 
@@ -189,7 +189,7 @@ Supposons que l'étape 2 confirme que les valeurs singulières de s · A sont pr
 
 ## 8. Pièges courants
 
-- **Calculer les valeurs singulières comme racines carrées des valeurs propres de AᵀA.** Former AᵀA élève le conditionnement au carré, et les petites valeurs singulières perdent leur précision en premier.
+- **Calculer les valeurs singulières comme racines carrées des valeurs propres de AᵀA.** Former AᵀA élève au carré le conditionnement d'une matrice de rang colonne plein, et les petites valeurs singulières perdent leur précision en premier.
 - **Utiliser un seuil de rang absolu.** Il mesure l'échelle de la matrice, pas son rang.
 - **Se fier aux seules valeurs singulières.** U et V peuvent être fausses alors que les valeurs singulières sont justes : testez A = U Σ Vᵀ.
 - **Tester une quantité connue avec une borne lâche.** Quand un théorème donne l'erreur exacte, un test avec une borne presque deux fois plus grande laisse passer des erreurs.

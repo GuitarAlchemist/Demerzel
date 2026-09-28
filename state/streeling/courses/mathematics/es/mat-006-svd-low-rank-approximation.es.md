@@ -75,7 +75,7 @@ Conservar los k primeros términos da el **truncamiento de rango k** A_k.
 
 **Teorema de Eckart–Young–Mirsky.** Para toda matriz X de rango como mucho k, ‖A − X‖₂ ≥ σₖ₊₁ y ‖A − X‖_F ≥ √(σₖ₊₁² + σₖ₊₂² + …), con igualdad para X = A_k.
 
-El error del propio truncamiento se lee fácilmente: A − A_k = σₖ₊₁uₖ₊₁vₖ₊₁ᵀ + … vuelve a estar escrita como una SVD, así que su norma 2 es su mayor valor singular σₖ₊₁, y su norma de Frobenius la raíz cuadrada de la suma de los cuadrados de sus valores singulares. La parte difícil del teorema es que ninguna otra matriz de rango k lo hace mejor; la Base de investigación da las demostraciones. Se siguen dos consecuencias: el error disminuye al crecer k y llega a 0 en k = rango A, y una matriz es «casi de rango k» exactamente cuando σₖ₊₁ es pequeño frente a σ₁. Es lo que usan la compresión, la eliminación de ruido y el análisis semántico latente.
+El error del propio truncamiento se lee fácilmente: A − A_k = σₖ₊₁uₖ₊₁vₖ₊₁ᵀ + … vuelve a estar escrita como una SVD, así que su norma 2 es su mayor valor singular σₖ₊₁, y su norma de Frobenius la raíz cuadrada de la suma de los cuadrados de sus valores singulares. La parte difícil del teorema es que ninguna otra matriz de rango k lo hace mejor; la Base de investigación da las demostraciones. Se siguen dos consecuencias: el error disminuye al crecer k y llega a 0 en k = rango A, y una matriz es «casi de rango k» en norma 2 exactamente cuando σₖ₊₁ es pequeño frente a σ₁; en norma de Frobenius, es toda la cola √(σₖ₊₁² + σₖ₊₂² + …) la que debe ser pequeña frente a ‖A‖_F. Es lo que usan la compresión, la eliminación de ruido y el análisis semántico latente.
 
 ### Ejercicio práctico
 
@@ -101,7 +101,7 @@ Una biblioteca declara nulo todo valor singular inferior a 10^-10. ¿Qué rango 
 
 ## 5. Calcular la SVD con Jacobi unilateral
 
-El **método de Jacobi unilateral** (Hestenes, 1958) nunca forma AᵀA, cuyo número de condición es el cuadrado del de A (MAT-003). Gira pares de columnas de la propia A, lo que multiplica A por la derecha por rotaciones planas, hasta que todas las columnas son ortogonales. En ese momento A V = W, donde V es el producto de las rotaciones y las columnas de W son ortogonales: sus normas son los valores singulares, y las columnas normalizadas forman U.
+El **método de Jacobi unilateral** (Hestenes, 1958) nunca forma AᵀA, cuyo número de condición es el cuadrado del de A cuando A tiene rango de columnas completo (MAT-003). Gira pares de columnas de la propia A, lo que multiplica A por la derecha por rotaciones planas, hasta que todas las columnas son ortogonales. En ese momento A V = W, donde V es el producto de las rotaciones y las columnas de W son ortogonales: sus normas son los valores singulares, y las columnas normalizadas forman U.
 
 Para dos columnas a_p y a_q, la rotación es la rotación de Jacobi de MAT-005 §4 aplicada a la matriz 2 × 2 [[a_p · a_p, a_p · a_q], [a_p · a_q, a_q · a_q]], un bloque de AᵀA calculado solo a partir de las dos columnas. Tras la rotación, las dos columnas son ortogonales. Como en MAT-005, una rotación posterior puede estropear una anterior, así que el método barre todos los pares repetidamente.
 
@@ -189,7 +189,7 @@ Supón que el paso 2 confirma que los valores singulares de s · A son proporcio
 
 ## 8. Errores comunes
 
-- **Calcular los valores singulares como raíces cuadradas de los valores propios de AᵀA.** Formar AᵀA eleva al cuadrado el número de condición, y los valores singulares pequeños pierden precisión primero.
+- **Calcular los valores singulares como raíces cuadradas de los valores propios de AᵀA.** Formar AᵀA eleva al cuadrado el número de condición de una matriz de rango de columnas completo, y los valores singulares pequeños pierden precisión primero.
 - **Usar un umbral de rango absoluto.** Mide la escala de la matriz, no su rango.
 - **Fiarse solo de los valores singulares.** U y V pueden estar mal mientras los valores singulares son correctos: comprueba A = U Σ Vᵀ.
 - **Probar una cantidad conocida con una cota holgada.** Cuando un teorema da el error exacto, una prueba con una cota casi el doble de grande deja pasar errores.
