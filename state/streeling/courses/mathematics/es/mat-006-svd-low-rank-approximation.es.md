@@ -89,7 +89,7 @@ Da la mejor aproximación de rango 1 de A = diag(3, 2, 1) y su error en ambas no
 
 En aritmética de punto flotante, un valor singular que es cero en aritmética exacta sale en general como un número diminuto no nulo. «El rango es el número de σ no nulos» debe convertirse entonces en «el número de σ por encima de una tolerancia», y la tolerancia debe ser **relativa** a σ₁: multiplicar A por 10^6 multiplica cada valor singular por 10^6 y no cambia el rango. Una convención habitual, la de `matrix_rank` de NumPy, es max(m, n) · σ₁ · ε, donde ε = 2^-52 es el épsilon de máquina de MAT-003. Una tolerancia absoluta mide la escala de la matriz, no su rango.
 
-La misma tolerancia gobierna la **pseudoinversa** A⁺ = V Σ⁺ Uᵀ, donde Σ⁺ invierte los valores singulares por encima de la tolerancia y pone los demás a 0; A⁺b es la solución de mínimos cuadrados de norma mínima. Ahí la elección cuenta doblemente: un valor singular conservado justo por encima de la tolerancia aporta el término enorme 1/σ.
+La misma tolerancia gobierna la **pseudoinversa** A⁺ = V Σ⁺ Uᵀ, donde Σ⁺ invierte los valores singulares por encima de la tolerancia y pone los demás a 0. Cuando solo se descartan valores singulares que son cero en aritmética exacta, A⁺b es la solución de mínimos cuadrados de norma mínima. Cuando la tolerancia descarta también valores pequeños no nulos, A⁺ es la pseudoinversa de la matriz truncada, y A⁺b resuelve ese problema truncado, no el original. Ahí la elección cuenta doblemente: un valor singular conservado justo por encima de la tolerancia aporta el término enorme 1/σ.
 
 ### Ejercicio práctico
 

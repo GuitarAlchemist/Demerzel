@@ -89,7 +89,7 @@ Give the best rank-1 approximation of A = diag(3, 2, 1) and its error in both no
 
 In floating-point arithmetic, a singular value that is zero in exact arithmetic usually comes out as a tiny nonzero number. "The rank is the number of nonzero σ" must then become "the number of σ above a tolerance", and the tolerance must be **relative** to σ₁: multiplying A by 10^6 multiplies every singular value by 10^6 and does not change the rank. A common convention, the one of NumPy's `matrix_rank`, is max(m, n) · σ₁ · ε, where ε = 2^-52 is the machine epsilon of MAT-003. An absolute tolerance measures the scale of the matrix, not its rank.
 
-The same tolerance governs the **pseudo-inverse** A⁺ = V Σ⁺ Uᵀ, where Σ⁺ inverts the singular values above the tolerance and sets the others to 0; A⁺b is the least-squares solution of smallest norm. There the choice matters twice: a singular value kept just above the tolerance contributes the huge term 1/σ.
+The same tolerance governs the **pseudo-inverse** A⁺ = V Σ⁺ Uᵀ, where Σ⁺ inverts the singular values above the tolerance and sets the others to 0. When only singular values that are zero in exact arithmetic are discarded, A⁺b is the least-squares solution of smallest norm. When the tolerance also discards small nonzero ones, A⁺ is the pseudo-inverse of the truncated matrix, and A⁺b solves that truncated problem, not the original one. There the choice matters twice: a singular value kept just above the tolerance contributes the huge term 1/σ.
 
 ### Practice Exercise
 

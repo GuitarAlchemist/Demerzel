@@ -89,7 +89,7 @@ Donnez la meilleure approximation de rang 1 de A = diag(3, 2, 1) et son erreur d
 
 En arithmétique flottante, une valeur singulière nulle en arithmétique exacte sort en général comme un minuscule nombre non nul. « Le rang est le nombre de σ non nulles » doit alors devenir « le nombre de σ au-dessus d'une tolérance », et la tolérance doit être **relative** à σ₁ : multiplier A par 10^6 multiplie chaque valeur singulière par 10^6 et ne change pas le rang. Une convention courante, celle de `matrix_rank` de NumPy, est max(m, n) · σ₁ · ε, où ε = 2^-52 est l'epsilon machine de MAT-003. Une tolérance absolue mesure l'échelle de la matrice, pas son rang.
 
-La même tolérance gouverne la **pseudo-inverse** A⁺ = V Σ⁺ Uᵀ, où Σ⁺ inverse les valeurs singulières au-dessus de la tolérance et met les autres à 0 ; A⁺b est la solution des moindres carrés de plus petite norme. Là, le choix compte doublement : une valeur singulière gardée juste au-dessus de la tolérance apporte le terme énorme 1/σ.
+La même tolérance gouverne la **pseudo-inverse** A⁺ = V Σ⁺ Uᵀ, où Σ⁺ inverse les valeurs singulières au-dessus de la tolérance et met les autres à 0. Quand seules les valeurs singulières nulles en arithmétique exacte sont écartées, A⁺b est la solution des moindres carrés de plus petite norme. Quand la tolérance écarte aussi de petites valeurs non nulles, A⁺ est la pseudo-inverse de la matrice tronquée, et A⁺b résout ce problème tronqué, pas le problème d'origine. Là, le choix compte doublement : une valeur singulière gardée juste au-dessus de la tolérance apporte le terme énorme 1/σ.
 
 ### Exercice pratique
 
