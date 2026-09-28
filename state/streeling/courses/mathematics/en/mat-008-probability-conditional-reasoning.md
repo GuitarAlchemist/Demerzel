@@ -27,12 +27,12 @@ After this lesson, you will be able to:
 
 ## 1. The Axioms
 
-A probability model has a **sample space** Ω, the set of possible outcomes; a collection of **events**, subsets of Ω that form a **σ-algebra**; and a probability P, defined on the events, that satisfies **Kolmogorov's axioms**. A σ-algebra contains Ω, the complement of each of its sets and the union of each sequence of its sets, and so also their intersections and differences. When Ω is finite or countable, the σ-algebra can be the set of all subsets of Ω. When Ω is uncountable, it may have to be smaller: the uniform probability on the real numbers between 0 and 1 cannot be extended to every subset while staying unchanged under shifts modulo 1 (Vitali's construction). The axioms are:
+A probability model has a **sample space** Ω, the set of possible outcomes; a collection of **events**, subsets of Ω that form a **σ-algebra**; and a probability P, defined on the events, that satisfies **Kolmogorov's axioms**. A σ-algebra contains Ω, the complement of each of its sets and the union of each sequence of its sets, and so also the intersection of each sequence of its sets and the difference of any two of them. When Ω is finite or countable, the σ-algebra can be the set of all subsets of Ω. When Ω is uncountable, it may have to be smaller: the uniform probability on the real numbers between 0 and 1 cannot be extended to every subset while staying unchanged under shifts modulo 1 (Vitali's construction). The axioms are:
 1. P(A) ≥ 0 for every event A.
 2. P(Ω) = 1.
 3. For pairwise disjoint events A₁, A₂, …, P(A₁ ∪ A₂ ∪ …) = P(A₁) + P(A₂) + ….
 
-Everything else follows. Since A and its complement are disjoint and fill Ω, P(not A) = 1 − P(A), and P(∅) = 0. If A ⊆ B, then P(A) ≤ P(B). Splitting A ∪ B into disjoint pieces gives **inclusion–exclusion**: P(A ∪ B) = P(A) + P(B) − P(A ∩ B). When Ω is finite and its outcomes are equally likely, P(A) = |A|/|Ω|, and probability is counting.
+Everything else follows. Taking every Aᵢ = ∅ in axiom 3 gives P(∅) = 0, so axiom 3 also holds for finitely many disjoint events. Since A and its complement are disjoint and fill Ω, P(not A) = 1 − P(A). If A ⊆ B, then P(A) ≤ P(B). Splitting A ∪ B into disjoint pieces gives **inclusion–exclusion**: P(A ∪ B) = P(A) + P(B) − P(A ∩ B). When Ω is finite and its outcomes are equally likely, P(A) = |A|/|Ω|, and probability is counting.
 
 ### Practice Exercise
 

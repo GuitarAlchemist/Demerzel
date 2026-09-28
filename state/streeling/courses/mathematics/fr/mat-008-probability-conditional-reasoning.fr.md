@@ -27,12 +27,12 @@ Après cette leçon, vous serez capable de :
 
 ## 1. Les axiomes
 
-Un modèle probabiliste comporte un **univers** Ω, l'ensemble des issues possibles ; une famille d'**événements**, des parties de Ω qui forment une **tribu** (ou σ-algèbre) ; et une probabilité P, définie sur les événements, qui vérifie les **axiomes de Kolmogorov**. Une tribu contient Ω, le complémentaire de chacun de ses éléments et la réunion de toute suite de ses éléments, donc aussi leurs intersections et leurs différences. Quand Ω est fini ou dénombrable, la tribu peut être l'ensemble de toutes les parties de Ω. Quand Ω n'est pas dénombrable, elle peut devoir être plus petite : la probabilité uniforme sur les réels compris entre 0 et 1 ne peut pas être prolongée à toutes les parties en restant invariante par translation modulo 1 (construction de Vitali). Les axiomes sont :
+Un modèle probabiliste comporte un **univers** Ω, l'ensemble des issues possibles ; une famille d'**événements**, des parties de Ω qui forment une **tribu** (ou σ-algèbre) ; et une probabilité P, définie sur les événements, qui vérifie les **axiomes de Kolmogorov**. Une tribu contient Ω, le complémentaire de chacun de ses éléments et la réunion de toute suite de ses éléments, donc aussi l'intersection de toute suite de ses éléments et la différence de deux quelconques d'entre eux. Quand Ω est fini ou dénombrable, la tribu peut être l'ensemble de toutes les parties de Ω. Quand Ω n'est pas dénombrable, elle peut devoir être plus petite : la probabilité uniforme sur les réels compris entre 0 et 1 ne peut pas être prolongée à toutes les parties en restant invariante par translation modulo 1 (construction de Vitali). Les axiomes sont :
 1. P(A) ≥ 0 pour tout événement A.
 2. P(Ω) = 1.
 3. Pour des événements deux à deux disjoints A₁, A₂, …, P(A₁ ∪ A₂ ∪ …) = P(A₁) + P(A₂) + ….
 
-Tout le reste en découle. Comme A et son complémentaire sont disjoints et remplissent Ω, P(non A) = 1 − P(A), et P(∅) = 0. Si A ⊆ B, alors P(A) ≤ P(B). Découper A ∪ B en morceaux disjoints donne l'**inclusion–exclusion** : P(A ∪ B) = P(A) + P(B) − P(A ∩ B). Quand Ω est fini et que ses issues sont équiprobables, P(A) = |A|/|Ω|, et calculer une probabilité revient à compter.
+Tout le reste en découle. Prendre tous les Aᵢ égaux à ∅ dans l'axiome 3 donne P(∅) = 0, si bien que l'axiome 3 vaut aussi pour un nombre fini d'événements disjoints. Comme A et son complémentaire sont disjoints et remplissent Ω, P(non A) = 1 − P(A). Si A ⊆ B, alors P(A) ≤ P(B). Découper A ∪ B en morceaux disjoints donne l'**inclusion–exclusion** : P(A ∪ B) = P(A) + P(B) − P(A ∩ B). Quand Ω est fini et que ses issues sont équiprobables, P(A) = |A|/|Ω|, et calculer une probabilité revient à compter.
 
 ### Exercice pratique
 

@@ -27,12 +27,12 @@ Al terminar esta lección, serás capaz de:
 
 ## 1. Los axiomas
 
-Un modelo de probabilidad tiene un **espacio muestral** Ω, el conjunto de resultados posibles; una familia de **sucesos**, subconjuntos de Ω que forman una **σ-álgebra**; y una probabilidad P, definida sobre los sucesos, que cumple los **axiomas de Kolmogórov**. Una σ-álgebra contiene Ω, el complemento de cada uno de sus elementos y la unión de cada sucesión de sus elementos, y por tanto también sus intersecciones y diferencias. Cuando Ω es finito o numerable, la σ-álgebra puede ser el conjunto de todos los subconjuntos de Ω. Cuando Ω no es numerable, puede tener que ser más pequeña: la probabilidad uniforme en los reales entre 0 y 1 no se puede extender a todos los subconjuntos sin dejar de ser invariante por traslaciones módulo 1 (construcción de Vitali). Los axiomas son:
+Un modelo de probabilidad tiene un **espacio muestral** Ω, el conjunto de resultados posibles; una familia de **sucesos**, subconjuntos de Ω que forman una **σ-álgebra**; y una probabilidad P, definida sobre los sucesos, que cumple los **axiomas de Kolmogórov**. Una σ-álgebra contiene Ω, el complemento de cada uno de sus elementos y la unión de cada sucesión de sus elementos, y por tanto también la intersección de cada sucesión de sus elementos y la diferencia de dos cualesquiera de ellos. Cuando Ω es finito o numerable, la σ-álgebra puede ser el conjunto de todos los subconjuntos de Ω. Cuando Ω no es numerable, puede tener que ser más pequeña: la probabilidad uniforme en los reales entre 0 y 1 no se puede extender a todos los subconjuntos sin dejar de ser invariante por traslaciones módulo 1 (construcción de Vitali). Los axiomas son:
 1. P(A) ≥ 0 para todo suceso A.
 2. P(Ω) = 1.
 3. Para sucesos disjuntos dos a dos A₁, A₂, …, P(A₁ ∪ A₂ ∪ …) = P(A₁) + P(A₂) + ….
 
-Todo lo demás se deduce. Como A y su complemento son disjuntos y llenan Ω, P(no A) = 1 − P(A), y P(∅) = 0. Si A ⊆ B, entonces P(A) ≤ P(B). Partir A ∪ B en trozos disjuntos da la **inclusión–exclusión**: P(A ∪ B) = P(A) + P(B) − P(A ∩ B). Cuando Ω es finito y sus resultados son equiprobables, P(A) = |A|/|Ω|, y calcular una probabilidad es contar.
+Todo lo demás se deduce. Tomar todos los Aᵢ iguales a ∅ en el axioma 3 da P(∅) = 0, así que el axioma 3 vale también para un número finito de sucesos disjuntos. Como A y su complemento son disjuntos y llenan Ω, P(no A) = 1 − P(A). Si A ⊆ B, entonces P(A) ≤ P(B). Partir A ∪ B en trozos disjuntos da la **inclusión–exclusión**: P(A ∪ B) = P(A) + P(B) − P(A ∩ B). Cuando Ω es finito y sus resultados son equiprobables, P(A) = |A|/|Ω|, y calcular una probabilidad es contar.
 
 ### Ejercicio práctico
 
