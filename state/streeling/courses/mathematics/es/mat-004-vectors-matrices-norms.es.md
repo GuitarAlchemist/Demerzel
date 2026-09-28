@@ -95,7 +95,7 @@ Para matrices más grandes, el **desarrollo en cofactores** por la primera fila 
 
 det A = Σⱼ (−1)ʲ⁺¹ a₁ⱼ det A₁ⱼ,
 
-donde A₁ⱼ es A sin su primera fila ni su columna j. Es una definición correcta pero un algoritmo costoso. La **eliminación gaussiana** calcula el mismo número como producto de los pivotes, con un número de operaciones del orden de n³.
+donde A₁ⱼ es A sin su primera fila ni su columna j. Es una definición correcta pero un algoritmo costoso. La **eliminación gaussiana** necesita un número de operaciones del orden de n³. Suma a una fila un múltiplo de otra, lo que no cambia el determinante, e intercambia filas, lo que cambia su signo. Así, det A es el producto de los pivotes, multiplicado por −1 por cada intercambio de filas: para [[0, 1], [1, 0]], un intercambio da los pivotes 1 y 1, y det = −1.
 
 ### Ejercicio práctico
 
@@ -181,7 +181,7 @@ pub fn minkowski(a: &Array1<f64>, b: &Array1<f64>, p: f64) -> Result<f64, MathEr
 
 Esta guarda traduce el §5: mantiene `minkowski` donde se cumple la desigualdad de Minkowski. Por eso el contraejemplo con p = 1/2 no puede calcularse con la función `minkowski` de IX, que devuelve un error; es un cálculo a mano, como en el ejercicio del §5.
 
-Las pruebas comprueban ejemplos, no propiedades. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compara `minkowski` con p = 2 y `euclidean` en un solo par de puntos, (0, 0) y (3, 4); las demás pruebas de distancia también usan uno o dos pares fijos cada una. Ninguna prueba de `distance.rs` enuncia la desigualdad triangular ni otro axioma de norma. En otra parte de IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) la enuncia para la matriz de distancias euclidianas propia del crate de GPU, pero solo comprueba una terna de puntos. Como explica MAT-002, esos ejemplos pueden refutar una propiedad, pero no demostrarla.
+Las pruebas comprueban ejemplos, no propiedades. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compara `minkowski` con p = 2 y `euclidean` en un solo par de puntos, (0, 0) y (3, 4); las demás pruebas de distancia también usan uno o dos pares fijos cada una. Ninguna prueba de `distance.rs` enuncia la desigualdad triangular ni otro axioma de norma. En otra parte de IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) la enuncia para la matriz de distancias euclidianas propia del crate de GPU, pero solo comprueba una terna de puntos. Como explica MAT-001, esos ejemplos pueden refutar una propiedad, pero no demostrarla.
 
 **No toda «distancia» es una métrica.** [`cosine_distance`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L72) devuelve 1 − cos θ, donde θ es el ángulo entre los vectores. No cumple la desigualdad triangular: para x = (1, 0), y = (1, 1) y z = (0, 1), da d(x, z) = 1, pero d(x, y) + d(y, z) = 2 − √2 ≈ 0.59.
 
@@ -207,7 +207,7 @@ La guarda de `minkowski` rechaza p < 1, pero deja pasar p = ∞ (`f64::INFINITY`
 
 El paso 1 comprueba cada terna de la cuadrícula. ¿Demuestra la desigualdad triangular para estas distancias en R²?
 
-> *Solución:* No. La cuadrícula tiene 25 puntos, mientras que R² es infinito, así que la comprobación solo es exhaustiva sobre un subconjunto finito (MAT-002). Lo que demuestra la desigualdad es la desigualdad de Minkowski, para todo p ≥ 1. La comprobación prueba otra cosa: que el código de IX calcula estas distancias sin un error tan grande como para romper la desigualdad en esos puntos.
+> *Solución:* No. La cuadrícula tiene 25 puntos, mientras que R² es infinito, así que la comprobación solo es exhaustiva sobre un subconjunto finito (MAT-001). Lo que demuestra la desigualdad es la desigualdad de Minkowski, para todo p ≥ 1. La comprobación prueba otra cosa: que el código de IX calcula estas distancias sin un error tan grande como para romper la desigualdad en esos puntos.
 
 ---
 

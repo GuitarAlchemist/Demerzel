@@ -95,7 +95,7 @@ For larger matrices, the **cofactor expansion** along the first row reduces an n
 
 det A = Σⱼ (−1)ʲ⁺¹ a₁ⱼ det A₁ⱼ,
 
-where A₁ⱼ is A with its first row and column j removed. It is a correct definition but an expensive algorithm. **Gaussian elimination** computes the same number as the product of the pivots, with a number of operations of the order of n³.
+where A₁ⱼ is A with its first row and column j removed. It is a correct definition but an expensive algorithm. **Gaussian elimination** needs a number of operations of the order of n³. It adds multiples of one row to another, which leaves the determinant unchanged, and exchanges rows, which changes its sign. So det A is the product of the pivots, times −1 for each row exchange: for [[0, 1], [1, 0]], one exchange gives the pivots 1 and 1, and det = −1.
 
 ### Practice Exercise
 
@@ -181,7 +181,7 @@ pub fn minkowski(a: &Array1<f64>, b: &Array1<f64>, p: f64) -> Result<f64, MathEr
 
 The guard encodes §5: it keeps `minkowski` where Minkowski's inequality holds. The p = 1/2 counterexample therefore cannot be computed with IX's `minkowski`, which returns an error; it is a computation by hand, as in the §5 exercise.
 
-The tests check examples, not properties. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compares `minkowski` with p = 2 and `euclidean` on one pair of points, (0, 0) and (3, 4); the other distance tests also use one or two fixed pairs each. No test in `distance.rs` states the triangle inequality or another norm axiom. Elsewhere in IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) states it for the GPU crate's own Euclidean distance matrix, but checks a single triple of points. As MAT-002 explains, such examples can refute a property but cannot prove it.
+The tests check examples, not properties. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compares `minkowski` with p = 2 and `euclidean` on one pair of points, (0, 0) and (3, 4); the other distance tests also use one or two fixed pairs each. No test in `distance.rs` states the triangle inequality or another norm axiom. Elsewhere in IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) states it for the GPU crate's own Euclidean distance matrix, but checks a single triple of points. As MAT-001 explains, such examples can refute a property but cannot prove it.
 
 **Not every "distance" is a metric.** [`cosine_distance`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L72) returns 1 − cos θ, where θ is the angle between the vectors. It does not satisfy the triangle inequality: for x = (1, 0), y = (1, 1) and z = (0, 1), it gives d(x, z) = 1, but d(x, y) + d(y, z) = 2 − √2 ≈ 0.59.
 
@@ -207,7 +207,7 @@ The guard in `minkowski` rejects p < 1, but it lets p = ∞ (`f64::INFINITY`) th
 
 Step 1 checks every triple of the grid. Does it prove the triangle inequality for these distances on R²?
 
-> *Solution:* No. The grid has 25 points, while R² is infinite, so the check is exhaustive on a finite subset only (MAT-002). What proves the inequality is Minkowski's inequality, for every p ≥ 1. The check tests something else: that IX's code computes these distances without an error large enough to break the inequality on those points.
+> *Solution:* No. The grid has 25 points, while R² is infinite, so the check is exhaustive on a finite subset only (MAT-001). What proves the inequality is Minkowski's inequality, for every p ≥ 1. The check tests something else: that IX's code computes these distances without an error large enough to break the inequality on those points.
 
 ---
 

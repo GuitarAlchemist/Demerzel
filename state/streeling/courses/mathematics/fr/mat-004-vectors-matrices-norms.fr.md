@@ -95,7 +95,7 @@ Pour des matrices plus grandes, le **développement en cofacteurs** selon la pre
 
 det A = Σⱼ (−1)ʲ⁺¹ a₁ⱼ det A₁ⱼ,
 
-où A₁ⱼ est A privée de sa première ligne et de sa colonne j. C'est une définition correcte mais un algorithme coûteux. L'**élimination de Gauss** calcule le même nombre comme produit des pivots, avec un nombre d'opérations de l'ordre de n³.
+où A₁ⱼ est A privée de sa première ligne et de sa colonne j. C'est une définition correcte mais un algorithme coûteux. L'**élimination de Gauss** demande un nombre d'opérations de l'ordre de n³. Elle ajoute à une ligne un multiple d'une autre, ce qui ne change pas le déterminant, et échange des lignes, ce qui change son signe. Ainsi det A est le produit des pivots, multiplié par −1 pour chaque échange de lignes : pour [[0, 1], [1, 0]], un échange donne les pivots 1 et 1, et det = −1.
 
 ### Exercice pratique
 
@@ -181,7 +181,7 @@ pub fn minkowski(a: &Array1<f64>, b: &Array1<f64>, p: f64) -> Result<f64, MathEr
 
 Cette garde traduit le §5 : elle maintient `minkowski` là où l'inégalité de Minkowski est vraie. Le contre-exemple avec p = 1/2 ne peut donc pas être calculé avec la fonction `minkowski` d'IX, qui renvoie une erreur ; c'est un calcul à la main, comme dans l'exercice du §5.
 
-Les tests vérifient des exemples, pas des propriétés. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compare `minkowski` avec p = 2 et `euclidean` sur un seul couple de points, (0, 0) et (3, 4) ; les autres tests de distance utilisent eux aussi un ou deux couples fixés chacun. Aucun test de `distance.rs` n'énonce l'inégalité triangulaire ni un autre axiome de norme. Ailleurs dans IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) l'énonce pour la matrice de distances euclidiennes propre au crate GPU, mais ne vérifie qu'un seul triplet de points. Comme l'explique MAT-002, de tels exemples peuvent réfuter une propriété mais pas la démontrer.
+Les tests vérifient des exemples, pas des propriétés. [`test_minkowski_equals_euclidean`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L116) compare `minkowski` avec p = 2 et `euclidean` sur un seul couple de points, (0, 0) et (3, 4) ; les autres tests de distance utilisent eux aussi un ou deux couples fixés chacun. Aucun test de `distance.rs` n'énonce l'inégalité triangulaire ni un autre axiome de norme. Ailleurs dans IX, [`test_cpu_triangle_inequality`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-gpu/src/distance.rs#L193) l'énonce pour la matrice de distances euclidiennes propre au crate GPU, mais ne vérifie qu'un seul triplet de points. Comme l'explique MAT-001, de tels exemples peuvent réfuter une propriété mais pas la démontrer.
 
 **Toute « distance » n'est pas une métrique.** [`cosine_distance`](https://github.com/GuitarAlchemist/ix/blob/e35138b9d4c707d48f802649a7fcb3f7fc94934d/crates/ix-math/src/distance.rs#L72) renvoie 1 − cos θ, où θ est l'angle entre les vecteurs. Elle ne vérifie pas l'inégalité triangulaire : pour x = (1, 0), y = (1, 1) et z = (0, 1), elle donne d(x, z) = 1, mais d(x, y) + d(y, z) = 2 − √2 ≈ 0,59.
 
@@ -207,7 +207,7 @@ La garde de `minkowski` rejette p < 1, mais laisse passer p = ∞ (`f64::INFINIT
 
 L'étape 1 vérifie chaque triplet de la grille. Démontre-t-elle l'inégalité triangulaire pour ces distances sur R² ?
 
-> *Solution :* Non. La grille a 25 points, alors que R² est infini : la vérification n'est exhaustive que sur un sous-ensemble fini (MAT-002). Ce qui démontre l'inégalité, c'est l'inégalité de Minkowski, pour tout p ≥ 1. La vérification teste autre chose : que le code d'IX calcule ces distances sans erreur assez grande pour violer l'inégalité sur ces points.
+> *Solution :* Non. La grille a 25 points, alors que R² est infini : la vérification n'est exhaustive que sur un sous-ensemble fini (MAT-001). Ce qui démontre l'inégalité, c'est l'inégalité de Minkowski, pour tout p ≥ 1. La vérification teste autre chose : que le code d'IX calcule ces distances sans erreur assez grande pour violer l'inégalité sur ces points.
 
 ---
 
