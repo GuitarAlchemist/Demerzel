@@ -43,7 +43,7 @@ IX's unit test for Welch's test uses the samples (1, 2, 3, 4, 5) and (2, 3, 4, 5
 
 ## 2. Confidence Intervals and p-Values
 
-By the central limit theorem, X̄ is approximately normal for large n whatever the distribution of the Xᵢ, as long as σ is finite. Then X̄ ± 1.96 σ/√n is an approximate **95% confidence interval**: before the data are drawn, the probability that this random interval contains μ is 0.95. When s replaces σ, the multiplier comes from Student's t distribution with n − 1 degrees of freedom, and it is larger for small n.
+By the central limit theorem, X̄ is approximately normal for large n whatever the distribution of the Xᵢ, as long as σ is finite. Then X̄ ± 1.96 σ/√n is an approximate **95% confidence interval**: before the data are drawn, the probability that this random interval contains μ is 0.95. If the Xᵢ are normal and s replaces σ, (X̄ − μ)/(s/√n) follows Student's t distribution with n − 1 degrees of freedom exactly, so the multiplier comes from it, and it is larger for small n. For other distributions the t interval is only approximate, and on small samples its coverage can fall short of 95%.
 
 The 95% belongs to the procedure, not to one interval. Once the data are in, a given interval contains μ or it does not. "μ lies in [a, b] with probability 0.95" is the statement of a Bayesian credible interval, read from a posterior distribution as in MAT-008, and it needs a prior.
 
@@ -70,7 +70,7 @@ An **exact** test computes the p-value from the finite null distribution. An **a
 
 With three observations per sample, can an exact two-sided rank test give p < 0.05? What is its p-value for complete separation?
 
-> *Solution:* No. Under H₀, each of the C(6, 3) = 20 rank sets of the first sample has the probability 1/20. Complete separation gives U = 0 or U = 9, one arrangement each, so its two-sided p-value is 2/20 = 0.1, and every other outcome gives a larger one. Complete separation is also the only way to get D = 1 in the Kolmogorov–Smirnov test, whose exact p-value is then 2/20 = 0.1 as well. A comparison of three against three cannot reach 0.05, whatever the data.
+> *Solution:* No. Under H₀, each of the C(6, 3) = 20 rank sets of the first sample has the probability 1/20. Complete separation gives U = 0 or U = 9, one arrangement each, so its two-sided p-value is 2/20 = 0.1, and every other outcome gives a larger one. Complete separation is also the only way to get D = 1 in the Kolmogorov–Smirnov test, whose exact p-value is then 2/20 = 0.1 as well. An exact two-sided rank test of three against three cannot reach 0.05, whatever the data. Welch's test can, since its p-value comes from a normal model rather than from counting arrangements.
 
 ---
 
@@ -146,7 +146,7 @@ fn normal_sf(z: f64) -> f64 {
 
 For (0, 1, 2) against (10, 11, 12), D = 1 and N = 3 · 3/6 = 3/2. Compute the p-value of IX's formula, 2 e^(−2t²) with t = (√N + 0.12 + 0.11/√N) · D, since the next terms of the series are negligible here, and compare it with the exact p-value of §3.
 
-> *Solution:* √(3/2) ≈ 1.225, so t ≈ 1.225 + 0.12 + 0.090 ≈ 1.435, 2t² ≈ 4.12, and 2 e^(−4.12) ≈ 0.033. The next term, 2 e^(−8t²), is about 10^-7. The exact p-value is 2/20 = 0.1: the formula reports significance at 0.05 for a comparison that §3 showed can never reach it. This is arithmetic on the code, not a run; §7 checks it.
+> *Solution:* √(3/2) ≈ 1.225, so t ≈ 1.225 + 0.12 + 0.090 ≈ 1.435, 2t² ≈ 4.12, and 2 e^(−4.12) ≈ 0.033. The next term, 2 e^(−8t²), is about 10^-7. The exact p-value is 2/20 = 0.1: the formula reports significance at 0.05 where §3 showed that the exact test never can. This is arithmetic on the code, not a run; §7 checks it.
 
 ---
 
@@ -174,7 +174,7 @@ Step 2 predicts a mean within 0.1 of 1 over 1000 seeds. Where does that margin c
 
 - **Reporting an estimate without its uncertainty.** A mean without a standard error or an interval cannot be compared with anything.
 - **Reading a p-value as the probability that the null hypothesis is true.** It is computed by assuming that hypothesis.
-- **Reading "not significant" as "no effect".** A small sample may lack the power to detect anything: three against three can never reach 0.05.
+- **Reading "not significant" as "no effect".** A small sample may lack the power to detect anything: an exact two-sided rank test of three against three can never reach 0.05.
 - **Choosing the test after seeing the data.** Fix the test, the metric and the threshold first, or correct for the number of tests.
 - **Trusting asymptotic p-values on tiny samples.** Count the exact null distribution when the samples are small.
 - **Treating fold scores as independent.** Their spread divided by √k can understate the uncertainty of the cross-validated mean.

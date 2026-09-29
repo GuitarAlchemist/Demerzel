@@ -43,7 +43,7 @@ La prueba unitaria de IX para la prueba de Welch usa las muestras (1, 2, 3, 4, 5
 
 ## 2. Intervalos de confianza y valores p
 
-Por el teorema central del límite, X̄ es aproximadamente normal para n grande, sea cual sea la distribución de las Xᵢ, siempre que σ sea finita. Entonces X̄ ± 1.96 σ/√n es un **intervalo de confianza del 95%** aproximado: antes de extraer los datos, la probabilidad de que este intervalo aleatorio contenga μ es 0.95. Cuando s sustituye a σ, el multiplicador sale de la distribución t de Student con n − 1 grados de libertad, y es mayor para n pequeño.
+Por el teorema central del límite, X̄ es aproximadamente normal para n grande, sea cual sea la distribución de las Xᵢ, siempre que σ sea finita. Entonces X̄ ± 1.96 σ/√n es un **intervalo de confianza del 95%** aproximado: antes de extraer los datos, la probabilidad de que este intervalo aleatorio contenga μ es 0.95. Si las Xᵢ son normales y s sustituye a σ, (X̄ − μ)/(s/√n) sigue exactamente la distribución t de Student con n − 1 grados de libertad, así que el multiplicador sale de ella, y es mayor para n pequeño. Para otras distribuciones, el intervalo t es solo aproximado, y en muestras pequeñas su cobertura puede quedar por debajo del 95%.
 
 El 95% pertenece al procedimiento, no a un intervalo concreto. Una vez obtenidos los datos, un intervalo dado contiene μ o no la contiene. «μ está en [a, b] con probabilidad 0.95» es el enunciado de un intervalo de credibilidad bayesiano, leído en una distribución a posteriori como en MAT-008, y necesita una distribución a priori.
 
@@ -70,7 +70,7 @@ Una prueba **exacta** calcula el valor p a partir de la distribución nula finit
 
 Con tres observaciones por muestra, ¿puede una prueba de rangos exacta bilateral dar p < 0.05? ¿Cuál es su valor p para una separación completa?
 
-> *Solución:* No. Bajo H₀, cada uno de los C(6, 3) = 20 conjuntos de rangos de la primera muestra tiene la probabilidad 1/20. La separación completa da U = 0 o U = 9, una disposición cada uno, así que su valor p bilateral es 2/20 = 0.1, y cualquier otro resultado da uno mayor. La separación completa es también la única manera de obtener D = 1 en la prueba de Kolmogórov–Smirnov, cuyo valor p exacto es entonces también 2/20 = 0.1. Una comparación de tres contra tres no puede llegar a 0.05, sean cuales sean los datos.
+> *Solución:* No. Bajo H₀, cada uno de los C(6, 3) = 20 conjuntos de rangos de la primera muestra tiene la probabilidad 1/20. La separación completa da U = 0 o U = 9, una disposición cada uno, así que su valor p bilateral es 2/20 = 0.1, y cualquier otro resultado da uno mayor. La separación completa es también la única manera de obtener D = 1 en la prueba de Kolmogórov–Smirnov, cuyo valor p exacto es entonces también 2/20 = 0.1. Una prueba de rangos exacta bilateral de tres contra tres no puede llegar a 0.05, sean cuales sean los datos. La prueba de Welch sí puede, porque su valor p sale de un modelo normal y no de contar disposiciones.
 
 ---
 
@@ -146,7 +146,7 @@ fn normal_sf(z: f64) -> f64 {
 
 Para (0, 1, 2) contra (10, 11, 12), D = 1 y N = 3 · 3/6 = 3/2. Calcula el valor p de la fórmula de IX, 2 e^(−2t²) con t = (√N + 0.12 + 0.11/√N) · D, ya que los términos siguientes de la serie son aquí despreciables, y compáralo con el valor p exacto del §3.
 
-> *Solución:* √(3/2) ≈ 1.225, así que t ≈ 1.225 + 0.12 + 0.090 ≈ 1.435, 2t² ≈ 4.12, y 2 e^(−4.12) ≈ 0.033. El término siguiente, 2 e^(−8t²), vale unos 10^-7. El valor p exacto es 2/20 = 0.1: la fórmula declara significación al 0.05 para una comparación que, como mostró el §3, nunca puede alcanzarla. Esto es aritmética sobre el código, no una ejecución; el §7 lo comprueba.
+> *Solución:* √(3/2) ≈ 1.225, así que t ≈ 1.225 + 0.12 + 0.090 ≈ 1.435, 2t² ≈ 4.12, y 2 e^(−4.12) ≈ 0.033. El término siguiente, 2 e^(−8t²), vale unos 10^-7. El valor p exacto es 2/20 = 0.1: la fórmula declara significación al 0.05 donde, como mostró el §3, la prueba exacta nunca puede. Esto es aritmética sobre el código, no una ejecución; el §7 lo comprueba.
 
 ---
 
@@ -174,7 +174,7 @@ El paso 2 predice una media a menos de 0.1 de 1 sobre 1000 semillas. ¿De dónde
 
 - **Comunicar una estimación sin su incertidumbre.** Una media sin error estándar ni intervalo no se puede comparar con nada.
 - **Leer un valor p como la probabilidad de que la hipótesis nula sea cierta.** Se calcula suponiendo esa hipótesis.
-- **Leer «no significativo» como «sin efecto».** Una muestra pequeña puede carecer de potencia para detectar nada: tres contra tres nunca llega a 0.05.
+- **Leer «no significativo» como «sin efecto».** Una muestra pequeña puede carecer de potencia para detectar nada: una prueba de rangos exacta bilateral de tres contra tres nunca llega a 0.05.
 - **Elegir la prueba después de ver los datos.** Fijar antes la prueba, la métrica y el umbral, o corregir por el número de pruebas.
 - **Fiarse de valores p asintóticos con muestras diminutas.** Contar la distribución nula exacta cuando las muestras son pequeñas.
 - **Tratar las puntuaciones de los pliegues como independientes.** Su desviación típica dividida entre √k puede subestimar la incertidumbre de la media de validación cruzada.

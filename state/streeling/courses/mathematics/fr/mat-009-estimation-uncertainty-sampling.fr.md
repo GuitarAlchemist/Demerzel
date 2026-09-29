@@ -43,7 +43,7 @@ Le test unitaire d'IX pour le test de Welch utilise les échantillons (1, 2, 3, 
 
 ## 2. Intervalles de confiance et valeurs p
 
-Par le théorème central limite, X̄ est approximativement normale pour n grand, quelle que soit la loi des Xᵢ, pourvu que σ soit finie. Alors X̄ ± 1,96 σ/√n est un **intervalle de confiance à 95 %** approché : avant le tirage des données, la probabilité que cet intervalle aléatoire contienne μ vaut 0,95. Quand s remplace σ, le multiplicateur vient de la loi t de Student à n − 1 degrés de liberté, et il est plus grand pour n petit.
+Par le théorème central limite, X̄ est approximativement normale pour n grand, quelle que soit la loi des Xᵢ, pourvu que σ soit finie. Alors X̄ ± 1,96 σ/√n est un **intervalle de confiance à 95 %** approché : avant le tirage des données, la probabilité que cet intervalle aléatoire contienne μ vaut 0,95. Si les Xᵢ sont normales et que s remplace σ, (X̄ − μ)/(s/√n) suit exactement la loi t de Student à n − 1 degrés de liberté, donc le multiplicateur vient de cette loi, et il est plus grand pour n petit. Pour d'autres lois, l'intervalle t n'est qu'approché, et sur de petits échantillons sa couverture peut rester sous 95 %.
 
 Les 95 % appartiennent à la procédure, pas à un intervalle donné. Une fois les données connues, un intervalle donné contient μ ou ne le contient pas. « μ est dans [a, b] avec la probabilité 0,95 » est l'énoncé d'un intervalle de crédibilité bayésien, lu sur une loi a posteriori comme dans MAT-008, et il demande une loi a priori.
 
@@ -70,7 +70,7 @@ Un test **exact** calcule la valeur p à partir de la loi nulle finie. Un test *
 
 Avec trois observations par échantillon, un test de rangs exact bilatéral peut-il donner p < 0,05 ? Quelle est sa valeur p pour une séparation complète ?
 
-> *Solution :* Non. Sous H₀, chacun des C(6, 3) = 20 ensembles de rangs du premier échantillon a la probabilité 1/20. La séparation complète donne U = 0 ou U = 9, une disposition chacune, donc sa valeur p bilatérale vaut 2/20 = 0,1, et toute autre issue en donne une plus grande. La séparation complète est aussi la seule façon d'obtenir D = 1 dans le test de Kolmogorov–Smirnov, dont la valeur p exacte vaut alors elle aussi 2/20 = 0,1. Une comparaison de trois contre trois ne peut pas atteindre 0,05, quelles que soient les données.
+> *Solution :* Non. Sous H₀, chacun des C(6, 3) = 20 ensembles de rangs du premier échantillon a la probabilité 1/20. La séparation complète donne U = 0 ou U = 9, une disposition chacune, donc sa valeur p bilatérale vaut 2/20 = 0,1, et toute autre issue en donne une plus grande. La séparation complète est aussi la seule façon d'obtenir D = 1 dans le test de Kolmogorov–Smirnov, dont la valeur p exacte vaut alors elle aussi 2/20 = 0,1. Un test de rangs exact bilatéral de trois contre trois ne peut pas atteindre 0,05, quelles que soient les données. Le test de Welch le peut, car sa valeur p vient d'un modèle normal et non d'un dénombrement des dispositions.
 
 ---
 
@@ -146,7 +146,7 @@ fn normal_sf(z: f64) -> f64 {
 
 Pour (0, 1, 2) contre (10, 11, 12), D = 1 et N = 3 · 3/6 = 3/2. Calculez la valeur p de la formule d'IX, 2 e^(−2t²) avec t = (√N + 0,12 + 0,11/√N) · D, puisque les termes suivants de la série sont ici négligeables, et comparez-la avec la valeur p exacte du §3.
 
-> *Solution :* √(3/2) ≈ 1,225, donc t ≈ 1,225 + 0,12 + 0,090 ≈ 1,435, 2t² ≈ 4,12, et 2 e^(−4,12) ≈ 0,033. Le terme suivant, 2 e^(−8t²), vaut environ 10^-7. La valeur p exacte vaut 2/20 = 0,1 : la formule annonce une significativité à 0,05 pour une comparaison dont le §3 a montré qu'elle ne peut jamais l'atteindre. C'est de l'arithmétique sur le code, pas une exécution ; le §7 le vérifie.
+> *Solution :* √(3/2) ≈ 1,225, donc t ≈ 1,225 + 0,12 + 0,090 ≈ 1,435, 2t² ≈ 4,12, et 2 e^(−4,12) ≈ 0,033. Le terme suivant, 2 e^(−8t²), vaut environ 10^-7. La valeur p exacte vaut 2/20 = 0,1 : la formule annonce une significativité à 0,05 là où le §3 a montré que le test exact ne le peut jamais. C'est de l'arithmétique sur le code, pas une exécution ; le §7 le vérifie.
 
 ---
 
@@ -174,7 +174,7 @@ L'étape 2 prédit une moyenne à moins de 0,1 de 1 sur 1000 graines. D'où vien
 
 - **Rapporter une estimation sans son incertitude.** Une moyenne sans erreur type ni intervalle ne se compare à rien.
 - **Lire une valeur p comme la probabilité que l'hypothèse nulle soit vraie.** Elle se calcule en supposant cette hypothèse.
-- **Lire « non significatif » comme « aucun effet ».** Un petit échantillon peut manquer de puissance pour détecter quoi que ce soit : trois contre trois ne peut jamais atteindre 0,05.
+- **Lire « non significatif » comme « aucun effet ».** Un petit échantillon peut manquer de puissance pour détecter quoi que ce soit : un test de rangs exact bilatéral de trois contre trois ne peut jamais atteindre 0,05.
 - **Choisir le test après avoir vu les données.** Fixer d'abord le test, la métrique et le seuil, ou corriger pour le nombre de tests.
 - **Faire confiance aux valeurs p asymptotiques sur de tout petits échantillons.** Dénombrer la loi nulle exacte quand les échantillons sont petits.
 - **Traiter les scores des plis comme indépendants.** Leur écart-type divisé par √k peut sous-estimer l'incertitude de la moyenne de validation croisée.
