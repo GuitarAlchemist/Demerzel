@@ -20,7 +20,7 @@ Al terminar esta lección, podrás:
 - Definir el sesgo, la varianza y el error cuadrático medio de un estimador, y mostrar por qué la varianza muestral divide entre n − 1
 - Decir qué afirman un intervalo de confianza y un valor p, y qué no afirman
 - Elegir entre la prueba t de Welch, la prueba de Mann–Whitney y la prueba de Kolmogórov–Smirnov, y calcular un valor p exacto con muestras pequeñas contando
-- Estimar el error con datos nuevos mediante validación cruzada de k pliegues, y decir por qué la dispersión de las puntuaciones de los pliegues subestima su incertidumbre
+- Estimar el error con datos nuevos mediante validación cruzada de k pliegues, y decir por qué la dispersión de las puntuaciones de los pliegues puede subestimar su incertidumbre
 - Tratar la semilla, el generador y su versión como parte de la especificación de un experimento, y decir qué garantizan las funciones de muestreo, de validación cruzada y de prueba de IX
 
 ---
@@ -78,7 +78,7 @@ Con tres observaciones por muestra, ¿puede una prueba de rangos exacta bilatera
 
 El error de un modelo sobre los datos con los que se ajustó es optimista, porque el ajuste ya se ha adaptado a su ruido. La **validación cruzada de k pliegues** estima el error con datos nuevos: reparte las n observaciones en k pliegues, ajusta el modelo k veces, cada vez con k − 1 pliegues, y lo puntúa en el pliegue apartado, de modo que cada observación se puntúa una vez, por un modelo que no la ha visto. Los pliegues **estratificados** mantienen en cada pliegue las proporciones de clases de la muestra entera.
 
-De la construcción se siguen dos precauciones. Las k puntuaciones no son independientes, ya que dos conjuntos de entrenamiento cualesquiera comparten k − 2 pliegues, así que la desviación típica de las puntuaciones de los pliegues dividida entre √k subestima la incertidumbre de su media; Bengio y Grandvalet mostraron que ningún estimador de esa varianza es insesgado para toda distribución. Y la validación cruzada estima el error de un solo procedimiento: elegir el mejor de muchos modelos con los mismos pliegues y comunicar su puntuación la vuelve a hacer optimista, cosa que evita la validación cruzada anidada.
+De la construcción se siguen dos precauciones. Las k puntuaciones no son independientes, ya que dos conjuntos de entrenamiento cualesquiera comparten k − 2 pliegues, así que la desviación típica de las puntuaciones de los pliegues dividida entre √k las trata como independientes y puede subestimar la incertidumbre de su media; Bengio y Grandvalet mostraron que ningún estimador de esa varianza es insesgado para toda distribución. Y la validación cruzada estima el error de un solo procedimiento: elegir el mejor de muchos modelos con los mismos pliegues y comunicar su puntuación la vuelve a hacer optimista, cosa que evita la validación cruzada anidada.
 
 También importa cómo se combinan las puntuaciones de los pliegues. La media de las exactitudes de los pliegues pesa igual cada pliegue, y la exactitud de las predicciones reunidas pesa igual cada observación. Coinciden cuando los pliegues tienen el mismo tamaño.
 
@@ -177,7 +177,7 @@ El paso 2 predice una media a menos de 0.1 de 1 sobre 1000 semillas. ¿De dónde
 - **Leer «no significativo» como «sin efecto».** Una muestra pequeña puede carecer de potencia para detectar nada: tres contra tres nunca llega a 0.05.
 - **Elegir la prueba después de ver los datos.** Fijar antes la prueba, la métrica y el umbral, o corregir por el número de pruebas.
 - **Fiarse de valores p asintóticos con muestras diminutas.** Contar la distribución nula exacta cuando las muestras son pequeñas.
-- **Tratar las puntuaciones de los pliegues como independientes.** Su dispersión subestima la incertidumbre de la media de validación cruzada.
+- **Tratar las puntuaciones de los pliegues como independientes.** Su desviación típica dividida entre √k puede subestimar la incertidumbre de la media de validación cruzada.
 - **Tratar una semilla como toda la especificación.** Anotar también el generador, la versión de la biblioteca y el orden de las extracciones, y comunicar los resultados sobre varias semillas.
 - **Escribir una prueba que su alternativa también supera.** Una cota lo bastante amplia para aceptar a la vez H ≈ 0.5 y H ≈ 1 no comprueba ninguno de los dos.
 
@@ -229,7 +229,7 @@ El paso 2 predice una media a menos de 0.1 de 1 sobre 1000 semillas. ¿De dónde
 - M. A. Stephens, «Use of the Kolmogorov–Smirnov, Cramér–von Mises and related statistics without extensive tables», *Journal of the Royal Statistical Society B* 32, 1970: la corrección para muestras pequeñas
 - M. Abramowitz e I. A. Stegun, *Handbook of Mathematical Functions*, National Bureau of Standards, 1964, fórmula 7.1.26: la aproximación de erf
 - W. H. Press, S. A. Teukolsky, W. T. Vetterling y B. P. Flannery, *Numerical Recipes*, 3.ª ed., Cambridge University Press, 2007: la rutina de Kolmogórov–Smirnov que sigue IX
-- Y. Bengio e Y. Grandvalet, «No unbiased estimator of the variance of K-fold cross-validation», *Journal of Machine Learning Research* 5, 2004: por qué la dispersión de las puntuaciones de los pliegues subestima la incertidumbre
+- Y. Bengio e Y. Grandvalet, «No unbiased estimator of the variance of K-fold cross-validation», *Journal of Machine Learning Research* 5, 2004: por qué ninguna estimación de la incertidumbre de una media de validación cruzada es insesgada para toda distribución
 - A. Gelman y E. Loken, «The garden of forking paths», 2013: el análisis que depende de los datos
 - A. A. Anis y E. H. Lloyd, «The expected value of the adjusted rescaled Hurst range of independent normal summands», *Biometrika* 63, 1976: el comportamiento del rango reescalado con muestras pequeñas
 - La documentación de `rand` 0.9 y de `rand_chacha` 0.9, citada en el §6: la portabilidad de los generadores con semilla

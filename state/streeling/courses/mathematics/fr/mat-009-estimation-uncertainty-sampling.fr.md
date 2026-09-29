@@ -20,7 +20,7 @@ version: "1.0.0"
 - Définir le biais, la variance et l'erreur quadratique moyenne d'un estimateur, et montrer pourquoi la variance empirique divise par n − 1
 - Dire ce qu'affirment un intervalle de confiance et une valeur p, et ce qu'ils n'affirment pas
 - Choisir entre le test t de Welch, le test de Mann–Whitney et le test de Kolmogorov–Smirnov, et calculer une valeur p exacte sur de petits échantillons en comptant
-- Estimer l'erreur sur de nouvelles données par validation croisée à k plis, et dire pourquoi la dispersion des scores des plis sous-estime son incertitude
+- Estimer l'erreur sur de nouvelles données par validation croisée à k plis, et dire pourquoi la dispersion des scores des plis peut sous-estimer son incertitude
 - Traiter la graine, le générateur et sa version comme des éléments de la spécification d'une expérience, et dire ce que garantissent les fonctions d'échantillonnage, de validation croisée et de test d'IX
 
 ---
@@ -78,7 +78,7 @@ Avec trois observations par échantillon, un test de rangs exact bilatéral peut
 
 L'erreur d'un modèle sur les données sur lesquelles il a été ajusté est optimiste, car l'ajustement s'est déjà adapté à leur bruit. La **validation croisée à k plis** estime l'erreur sur de nouvelles données : elle partage les n observations en k plis, ajuste le modèle k fois, chaque fois sur k − 1 plis, et le note sur le pli laissé de côté, de sorte que chaque observation est notée une fois, par un modèle qui ne l'a pas vue. Des plis **stratifiés** gardent dans chaque pli les proportions de classes de l'échantillon entier.
 
-Deux précautions découlent de la construction. Les k scores ne sont pas indépendants, puisque deux ensembles d'entraînement partagent k − 2 plis, donc l'écart-type des scores des plis divisé par √k sous-estime l'incertitude de leur moyenne ; Bengio et Grandvalet ont montré qu'aucun estimateur de cette variance n'est sans biais pour toute loi. Et la validation croisée estime l'erreur d'une seule procédure : choisir le meilleur de nombreux modèles sur les mêmes plis et rapporter son score rend le score à nouveau optimiste, ce qu'évite la validation croisée imbriquée.
+Deux précautions découlent de la construction. Les k scores ne sont pas indépendants, puisque deux ensembles d'entraînement partagent k − 2 plis, donc l'écart-type des scores des plis divisé par √k les traite comme indépendants et peut sous-estimer l'incertitude de leur moyenne ; Bengio et Grandvalet ont montré qu'aucun estimateur de cette variance n'est sans biais pour toute loi. Et la validation croisée estime l'erreur d'une seule procédure : choisir le meilleur de nombreux modèles sur les mêmes plis et rapporter son score rend le score à nouveau optimiste, ce qu'évite la validation croisée imbriquée.
 
 La façon de combiner les scores des plis compte aussi. La moyenne des exactitudes des plis pèse chaque pli également, et l'exactitude des prédictions mises en commun pèse chaque observation également. Elles coïncident quand les plis ont la même taille.
 
@@ -177,7 +177,7 @@ L'étape 2 prédit une moyenne à moins de 0,1 de 1 sur 1000 graines. D'où vien
 - **Lire « non significatif » comme « aucun effet ».** Un petit échantillon peut manquer de puissance pour détecter quoi que ce soit : trois contre trois ne peut jamais atteindre 0,05.
 - **Choisir le test après avoir vu les données.** Fixer d'abord le test, la métrique et le seuil, ou corriger pour le nombre de tests.
 - **Faire confiance aux valeurs p asymptotiques sur de tout petits échantillons.** Dénombrer la loi nulle exacte quand les échantillons sont petits.
-- **Traiter les scores des plis comme indépendants.** Leur dispersion sous-estime l'incertitude de la moyenne de validation croisée.
+- **Traiter les scores des plis comme indépendants.** Leur écart-type divisé par √k peut sous-estimer l'incertitude de la moyenne de validation croisée.
 - **Traiter une graine comme toute la spécification.** Noter aussi le générateur, la version de la bibliothèque et l'ordre des tirages, et rapporter les résultats sur plusieurs graines.
 - **Écrire un test que son alternative réussit aussi.** Une borne assez large pour accepter à la fois H ≈ 0,5 et H ≈ 1 ne vérifie ni l'un ni l'autre.
 
@@ -229,7 +229,7 @@ L'étape 2 prédit une moyenne à moins de 0,1 de 1 sur 1000 graines. D'où vien
 - M. A. Stephens, « Use of the Kolmogorov–Smirnov, Cramér–von Mises and related statistics without extensive tables », *Journal of the Royal Statistical Society B* 32, 1970 : la correction pour petits échantillons
 - M. Abramowitz et I. A. Stegun, *Handbook of Mathematical Functions*, National Bureau of Standards, 1964, formule 7.1.26 : l'approximation d'erf
 - W. H. Press, S. A. Teukolsky, W. T. Vetterling et B. P. Flannery, *Numerical Recipes*, 3e éd., Cambridge University Press, 2007 : la routine de Kolmogorov–Smirnov que suit IX
-- Y. Bengio et Y. Grandvalet, « No unbiased estimator of the variance of K-fold cross-validation », *Journal of Machine Learning Research* 5, 2004 : pourquoi la dispersion des scores des plis sous-estime l'incertitude
+- Y. Bengio et Y. Grandvalet, « No unbiased estimator of the variance of K-fold cross-validation », *Journal of Machine Learning Research* 5, 2004 : pourquoi aucune estimation de l'incertitude d'une moyenne de validation croisée n'est sans biais pour toute loi
 - A. Gelman et E. Loken, « The garden of forking paths », 2013 : l'analyse qui dépend des données
 - A. A. Anis et E. H. Lloyd, « The expected value of the adjusted rescaled Hurst range of independent normal summands », *Biometrika* 63, 1976 : le comportement de l'étendue normalisée sur de petits échantillons
 - La documentation de `rand` 0.9 et de `rand_chacha` 0.9, citée au §6 : la portabilité des générateurs à graine

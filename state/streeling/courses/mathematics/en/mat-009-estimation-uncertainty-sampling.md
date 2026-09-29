@@ -20,7 +20,7 @@ After this lesson, you will be able to:
 - Define the bias, variance and mean squared error of an estimator, and show why the sample variance divides by n − 1
 - Say what a confidence interval and a p-value claim, and what they do not
 - Choose between Welch's t-test, the Mann–Whitney test and the Kolmogorov–Smirnov test, and compute an exact small-sample p-value by counting
-- Estimate error on new data by k-fold cross-validation, and say why the spread of the fold scores understates its uncertainty
+- Estimate error on new data by k-fold cross-validation, and say why the spread of the fold scores can understate its uncertainty
 - Treat the seed, the generator and its version as part of an experiment's specification, and say what IX's sampling, cross-validation and test functions guarantee
 
 ---
@@ -78,7 +78,7 @@ With three observations per sample, can an exact two-sided rank test give p < 0.
 
 A model's error on the data it was fitted to is optimistic, since the fit has already adapted to their noise. **k-fold cross-validation** estimates the error on new data: it splits the n observations into k folds, fits the model k times, each time on k − 1 folds, and scores it on the fold left out, so that every observation is scored once, by a model that did not see it. **Stratified** folds keep the class proportions of the whole sample in each fold.
 
-Two cautions follow from the construction. The k scores are not independent, since any two training sets share k − 2 folds, so the standard deviation of the fold scores divided by √k understates the uncertainty of their mean; Bengio and Grandvalet showed that no estimator of that variance is unbiased for every distribution. And cross-validation estimates the error of one procedure: choosing the best of many models on the same folds and reporting its score makes the score optimistic again, which nested cross-validation avoids.
+Two cautions follow from the construction. The k scores are not independent, since any two training sets share k − 2 folds, so the standard deviation of the fold scores divided by √k treats them as independent and can understate the uncertainty of their mean; Bengio and Grandvalet showed that no estimator of that variance is unbiased for every distribution. And cross-validation estimates the error of one procedure: choosing the best of many models on the same folds and reporting its score makes the score optimistic again, which nested cross-validation avoids.
 
 How the fold scores are combined also matters. The mean of the fold accuracies weights each fold equally, and the accuracy of the pooled predictions weights each observation equally. They agree when the folds have the same size.
 
@@ -177,7 +177,7 @@ Step 2 predicts a mean within 0.1 of 1 over 1000 seeds. Where does that margin c
 - **Reading "not significant" as "no effect".** A small sample may lack the power to detect anything: three against three can never reach 0.05.
 - **Choosing the test after seeing the data.** Fix the test, the metric and the threshold first, or correct for the number of tests.
 - **Trusting asymptotic p-values on tiny samples.** Count the exact null distribution when the samples are small.
-- **Treating fold scores as independent.** Their spread understates the uncertainty of the cross-validated mean.
+- **Treating fold scores as independent.** Their spread divided by √k can understate the uncertainty of the cross-validated mean.
 - **Treating a seed as the whole specification.** Record the generator, the library version and the order of the draws, and report results over several seeds.
 - **Writing a test that its alternative also passes.** A bound wide enough to accept both H ≈ 0.5 and H ≈ 1 checks neither.
 
@@ -229,7 +229,7 @@ Step 2 predicts a mean within 0.1 of 1 over 1000 seeds. Where does that margin c
 - M. A. Stephens, "Use of the Kolmogorov–Smirnov, Cramér–von Mises and related statistics without extensive tables", *Journal of the Royal Statistical Society B* 32, 1970: the small-sample correction
 - M. Abramowitz and I. A. Stegun, *Handbook of Mathematical Functions*, National Bureau of Standards, 1964, formula 7.1.26: the erf approximation
 - W. H. Press, S. A. Teukolsky, W. T. Vetterling and B. P. Flannery, *Numerical Recipes*, 3rd ed., Cambridge University Press, 2007: the Kolmogorov–Smirnov routine that IX follows
-- Y. Bengio and Y. Grandvalet, "No unbiased estimator of the variance of K-fold cross-validation", *Journal of Machine Learning Research* 5, 2004: why the spread of fold scores understates uncertainty
+- Y. Bengio and Y. Grandvalet, "No unbiased estimator of the variance of K-fold cross-validation", *Journal of Machine Learning Research* 5, 2004: why no estimate of the uncertainty of a cross-validated mean is unbiased for every distribution
 - A. Gelman and E. Loken, "The garden of forking paths", 2013: data-dependent analysis
 - A. A. Anis and E. H. Lloyd, "The expected value of the adjusted rescaled Hurst range of independent normal summands", *Biometrika* 63, 1976: the small-sample behaviour of the rescaled range
 - The documentation of `rand` 0.9 and `rand_chacha` 0.9, linked in §6: the portability of seeded generators
