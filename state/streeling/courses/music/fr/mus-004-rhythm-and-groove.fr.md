@@ -386,7 +386,13 @@ Compte : 1 & 2 & 3 & 4 &
 Notes :  M M M M M M X M   (M = étouffé, X = ouvert/résonnant)
 ```
 
-La variante en doubles croches (triolets au galop « bas-bas-haut ») est le fondement de la guitare rythmique metal.
+La variante en doubles croches, le galop, est le fondement de la guitare rythmique metal. Ce n'est pas un triolet : chaque temps contient une croche et deux doubles croches, long-bref-bref, sur « 1 & a », jouées bas-bas-haut pendant que la main garde son mouvement en doubles croches et saute le « e » :
+
+```
+Compte :   1 e & a 2 e & a
+Jeu :      X . X X X . X X   (croche + deux doubles croches par temps)
+Médiator : D   D U D   D U
+```
 
 ### Le skank reggae
 

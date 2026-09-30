@@ -386,7 +386,13 @@ Cuenta: 1 & 2 & 3 & 4 &
 Notas:  M M M M M M X M   (M = apagado, X = al aire/resonando)
 ```
 
-La variante en semicorcheas (tresillos al galope "abajo-abajo-arriba") es la base de la guitarra rítmica del metal.
+La variante en semicorcheas, el galope, es la base de la guitarra rítmica del metal. No es un tresillo: cada tiempo contiene una corchea y dos semicorcheas, largo-corto-corto, en "1 & a", tocadas abajo-abajo-arriba mientras la mano mantiene su movimiento en semicorcheas y se salta la "e":
+
+```
+Cuenta:   1 e & a 2 e & a
+Suena:    X . X X X . X X   (corchea + dos semicorcheas por tiempo)
+Púa:      D   D U D   D U
+```
 
 ### El skank del reggae
 

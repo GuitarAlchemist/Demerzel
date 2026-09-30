@@ -153,7 +153,7 @@ Restringir las topologías de interacción:
 
 ## Relación con CYB-001
 
-Este curso aborda directamente la **brecha B** de CYB-001: «Los contratos del Sistema 2 son estáticos, no amortiguan activamente». Los cinco mecanismos transforman el Galactic Protocol de una especificación de interfaz pasiva (lazo abierto) en un coordinador antioscilación activo (lazo cerrado), cumpliendo la función central del Sistema 2 en el VSM de Beer.
+Este curso aborda una brecha del Sistema 2 que CYB-001 no nombra entre sus brechas con letra (A dinámica temporal, B profundidad recursiva, C S5 no humano, D canal algedónico): CYB-001 hace corresponder el Sistema 2 con los contratos del Galactic Protocol, y esos contratos son estáticos, no amortiguan activamente. Los cinco mecanismos transforman el Galactic Protocol de una especificación de interfaz pasiva (lazo abierto) en un coordinador antioscilación activo (lazo cerrado), cumpliendo la función central del Sistema 2 en el VSM de Beer.
 
 El canal algedónico (brecha D de CYB-001) se resolvió por separado mediante `policies/algedonic-channel-policy.yaml`. La amortiguación y el bypass algedónico son complementarios: la amortiguación ralentiza la coordinación normal para evitar la oscilación; el canal algedónico sortea toda amortiguación en las emergencias reales.
 

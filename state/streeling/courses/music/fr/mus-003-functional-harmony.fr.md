@@ -62,7 +62,7 @@ Les accords de dominante créent la plus forte attraction de retour vers la toni
 | Dominante | V | D |
 | Accord diminué sur la sensible | viio | F#dim |
 
-L'accord de **V** est le moteur de la musique tonale. Le **viio** en est la forme incomplète — il contient le même triton mais n'a pas la fondamentale de la dominante, ce qui le rend moins stable et fait qu'on l'utilise avec plus de parcimonie.
+L'accord de **V** est le moteur de la musique tonale. Le **viio** est une forme incomplète de **V7** (D F# A C en sol majeur) : il contient le triton de V7, F#–C (voir « Le triton dans V7 » plus bas), mais n'a pas la fondamentale de la dominante, ce qui le rend moins stable et fait qu'on l'utilise avec plus de parcimonie.
 
 ### Le cycle fonctionnel
 
@@ -203,7 +203,7 @@ En pratique, à la guitare, la conduite des voix se répartit sur la forme d'acc
 
 ### Pourquoi c'est important
 
-Chaque résolution de la dominante vers la tonique dans toute la musique tonale occidentale — des chorals de Bach aux turnarounds de blues en passant par les accroches pop — est portée par cette même résolution du triton. Quand vous entendez un V7-I et ressentez de la satisfaction, vous entendez le mouvement contraire faire s'effondrer un triton en consonance.
+Chaque résolution V7–I ou viio–I dans la musique tonale occidentale — des chorals de Bach aux turnarounds de blues en passant par les accroches pop — porte cette même résolution du triton ; un simple enchaînement d'accords parfaits V–I n'a pas de triton et n'attire que par sa sensible. Quand vous entendez un V7-I et ressentez de la satisfaction, vous entendez le mouvement contraire faire s'effondrer un triton en consonance.
 
 ### Exercice pratique
 

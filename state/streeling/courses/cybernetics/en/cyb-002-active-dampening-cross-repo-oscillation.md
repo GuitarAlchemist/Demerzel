@@ -153,7 +153,7 @@ Constrain interaction topologies:
 
 ## Relationship to CYB-001
 
-This course directly addresses **Gap B** from CYB-001: "System 2 contracts are static, not actively dampening." The five mechanisms transform the Galactic Protocol from a passive interface specification (open-loop) into an active anti-oscillation coordinator (closed-loop), fulfilling System 2's core function in Beer's VSM.
+This course addresses a System 2 gap that CYB-001 does not name among its lettered gaps (A temporal dynamics, B recursive depth, C non-human S5, D the algedonic channel): CYB-001 maps System 2 to the Galactic Protocol contracts, and those contracts are static, not actively dampening. The five mechanisms transform the Galactic Protocol from a passive interface specification (open-loop) into an active anti-oscillation coordinator (closed-loop), fulfilling System 2's core function in Beer's VSM.
 
 The algedonic channel (CYB-001 Gap D) was resolved separately via `policies/algedonic-channel-policy.yaml`. Dampening and algedonic bypass are complementary: dampening slows normal coordination to prevent oscillation; the algedonic channel bypasses all dampening for genuine emergencies.
 

@@ -49,15 +49,15 @@ Fondamentale  +  Qualité  +  Extensions/Altérations  +  Note de basse
 
 La **qualité** encode la triade et la septième :
 
-| Symbole | Signification | Tierce | Septième |
-|--------|---------|-------|---------|
-| (rien) ou `maj` | Accord parfait majeur | Tierce majeure | — |
-| `m` ou `min` ou `-` | Accord parfait mineur | Tierce mineure | — |
-| `7` | Septième de dominante | Tierce majeure | Septième mineure |
-| `maj7` ou `M7` ou triangle | Septième majeure | Tierce majeure | Septième majeure |
-| `m7` ou `min7` ou `-7` | Septième mineure | Tierce mineure | Septième mineure |
-| `m7b5` ou demi-diminué | Demi-diminué | Tierce mineure | Septième mineure (b5) |
-| `dim7` ou `o7` | Septième diminuée | Tierce mineure | Septième diminuée |
+| Symbole | Signification | Tierce | Quinte | Septième |
+|--------|---------|-------|-------|---------|
+| (rien) ou `maj` | Accord parfait majeur | Tierce majeure | Quinte juste | — |
+| `m` ou `min` ou `-` | Accord parfait mineur | Tierce mineure | Quinte juste | — |
+| `7` | Septième de dominante | Tierce majeure | Quinte juste | Septième mineure |
+| `maj7` ou `M7` ou triangle | Septième majeure | Tierce majeure | Quinte juste | Septième majeure |
+| `m7` ou `min7` ou `-7` | Septième mineure | Tierce mineure | Quinte juste | Septième mineure |
+| `m7b5` ou demi-diminué | Demi-diminué | Tierce mineure | Quinte diminuée (b5) | Septième mineure |
+| `dim7` ou `o7` | Septième diminuée | Tierce mineure | Quinte diminuée (b5) | Septième diminuée |
 
 Les **extensions** ajoutent des notes supérieures (9, 11, 13). Le nombre le plus élevé implique toutes les notes impaires inférieures :
 

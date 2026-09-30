@@ -386,7 +386,13 @@ Count:  1 & 2 & 3 & 4 &
 Notes:  M M M M M M X M   (M = muted, X = open/ringing)
 ```
 
-The 16th-note variant (galloping triplets "down-down-up") is the foundation of metal rhythm guitar.
+The 16th-note variant, the gallop, is the foundation of metal rhythm guitar. It is not a triplet: each beat holds an eighth and two sixteenths, long-short-short, on "1 & a", picked down-down-up while the hand keeps its 16th-note motion and skips the "e":
+
+```
+Count:  1 e & a 2 e & a
+Play:   X . X X X . X X   (eighth + two sixteenths per beat)
+Pick:   D   D U D   D U
+```
 
 ### Reggae Skank
 

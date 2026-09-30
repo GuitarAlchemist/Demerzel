@@ -62,7 +62,7 @@ Dominant chords create the strongest pull back to the tonic. They contain the **
 | Dominant | V | D |
 | Leading-tone diminished | viio | F#dim |
 
-The **V** chord is the engine of tonal music. The **viio** is its incomplete form — it contains the same tritone but lacks the dominant's root, making it less stable and used more sparingly.
+The **V** chord is the engine of tonal music. The **viio** is an incomplete form of **V7** (D F# A C in G major): it contains V7's tritone, F#–C (see "The Tritone Within V7" below), but lacks the dominant's root, making it less stable and used more sparingly.
 
 ### The Functional Cycle
 
@@ -203,7 +203,7 @@ In practice on guitar, the voice leading is distributed across the chord shape r
 
 ### Why This Matters
 
-Every instance of dominant-to-tonic resolution in all of Western tonal music — from Bach chorales to blues turnarounds to pop hooks — is driven by this same tritone resolution. When you hear a V7-I and feel satisfaction, you are hearing contrary motion collapsing a tritone into consonance.
+Every V7–I and viio–I resolution in Western tonal music — from Bach chorales to blues turnarounds to pop hooks — carries this same tritone resolution; a plain V–I triad motion has no tritone and pulls through its leading tone alone. When you hear a V7-I and feel satisfaction, you are hearing contrary motion collapsing a tritone into consonance.
 
 ### Practice Exercise
 

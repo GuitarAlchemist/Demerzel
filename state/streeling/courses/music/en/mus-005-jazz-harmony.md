@@ -49,15 +49,15 @@ Root  +  Quality  +  Extensions/Alterations  +  Slash Bass
 
 **Quality** encodes the triad and seventh:
 
-| Symbol | Meaning | Third | Seventh |
-|--------|---------|-------|---------|
-| (nothing) or `maj` | Major triad | Major 3rd | — |
-| `m` or `min` or `-` | Minor triad | Minor 3rd | — |
-| `7` | Dominant seventh | Major 3rd | Minor 7th |
-| `maj7` or `M7` or triangle | Major seventh | Major 3rd | Major 7th |
-| `m7` or `min7` or `-7` | Minor seventh | Minor 3rd | Minor 7th |
-| `m7b5` or half-diminished | Half-diminished | Minor 3rd | Minor 7th (b5) |
-| `dim7` or `o7` | Diminished seventh | Minor 3rd | Diminished 7th |
+| Symbol | Meaning | Third | Fifth | Seventh |
+|--------|---------|-------|-------|---------|
+| (nothing) or `maj` | Major triad | Major 3rd | Perfect 5th | — |
+| `m` or `min` or `-` | Minor triad | Minor 3rd | Perfect 5th | — |
+| `7` | Dominant seventh | Major 3rd | Perfect 5th | Minor 7th |
+| `maj7` or `M7` or triangle | Major seventh | Major 3rd | Perfect 5th | Major 7th |
+| `m7` or `min7` or `-7` | Minor seventh | Minor 3rd | Perfect 5th | Minor 7th |
+| `m7b5` or half-diminished | Half-diminished | Minor 3rd | Diminished 5th (b5) | Minor 7th |
+| `dim7` or `o7` | Diminished seventh | Minor 3rd | Diminished 5th (b5) | Diminished 7th |
 
 **Extensions** add upper chord tones (9, 11, 13). The highest number implies all odd-numbered tones below it:
 

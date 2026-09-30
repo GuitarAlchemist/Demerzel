@@ -49,15 +49,15 @@ Fundamental  +  Calidad  +  Extensiones/Alteraciones  +  Nota del bajo
 
 La **calidad** codifica la tríada y la séptima:
 
-| Símbolo | Significado | Tercera | Séptima |
-|--------|---------|-------|---------|
-| (nada) o `maj` | Tríada mayor | Tercera mayor | — |
-| `m` o `min` o `-` | Tríada menor | Tercera menor | — |
-| `7` | Séptima de dominante | Tercera mayor | Séptima menor |
-| `maj7` o `M7` o triángulo | Séptima mayor | Tercera mayor | Séptima mayor |
-| `m7` o `min7` o `-7` | Séptima menor | Tercera menor | Séptima menor |
-| `m7b5` o semidisminuido | Semidisminuido | Tercera menor | Séptima menor (b5) |
-| `dim7` o `o7` | Séptima disminuida | Tercera menor | Séptima disminuida |
+| Símbolo | Significado | Tercera | Quinta | Séptima |
+|--------|---------|-------|-------|---------|
+| (nada) o `maj` | Tríada mayor | Tercera mayor | Quinta justa | — |
+| `m` o `min` o `-` | Tríada menor | Tercera menor | Quinta justa | — |
+| `7` | Séptima de dominante | Tercera mayor | Quinta justa | Séptima menor |
+| `maj7` o `M7` o triángulo | Séptima mayor | Tercera mayor | Quinta justa | Séptima mayor |
+| `m7` o `min7` o `-7` | Séptima menor | Tercera menor | Quinta justa | Séptima menor |
+| `m7b5` o semidisminuido | Semidisminuido | Tercera menor | Quinta disminuida (b5) | Séptima menor |
+| `dim7` o `o7` | Séptima disminuida | Tercera menor | Quinta disminuida (b5) | Séptima disminuida |
 
 Las **extensiones** añaden notas superiores (9, 11, 13). El número más alto implica todas las notas impares por debajo:
 

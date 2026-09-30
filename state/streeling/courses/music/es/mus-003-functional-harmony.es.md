@@ -62,7 +62,7 @@ Los acordes de dominante crean la atracción más fuerte de vuelta a la tónica.
 | Dominante | V | D |
 | Disminuido sobre la sensible | viio | F#dim |
 
-El acorde de **V** es el motor de la música tonal. El **viio** es su forma incompleta — contiene el mismo tritono pero le falta la fundamental de la dominante, lo que lo hace menos estable y hace que se use con más moderación.
+El acorde de **V** es el motor de la música tonal. El **viio** es una forma incompleta de **V7** (D F# A C en sol mayor): contiene el tritono de V7, F#–C (véase «El tritono dentro de V7» más abajo), pero le falta la fundamental de la dominante, lo que lo hace menos estable y hace que se use con más moderación.
 
 ### El ciclo funcional
 
@@ -203,7 +203,7 @@ En la práctica, en la guitarra, la conducción de voces se reparte por la forma
 
 ### Por qué importa
 
-Cada resolución de dominante a tónica en toda la música tonal occidental — de los corales de Bach a los turnarounds del blues y los ganchos del pop — está impulsada por esta misma resolución del tritono. Cuando oyes un V7-I y sientes satisfacción, estás oyendo el movimiento contrario colapsar un tritono en consonancia.
+Cada resolución V7–I o viio–I en la música tonal occidental — de los corales de Bach a los turnarounds del blues y los ganchos del pop — lleva esta misma resolución del tritono; un simple enlace de tríadas V–I no tiene tritono y atrae solo por su sensible. Cuando oyes un V7-I y sientes satisfacción, estás oyendo el movimiento contrario colapsar un tritono en consonancia.
 
 ### Ejercicio práctico
 

@@ -153,7 +153,7 @@ Contraindre les topologies d'interaction :
 
 ## Lien avec CYB-001
 
-Ce cours traite directement la **lacune B** de CYB-001 : « Les contrats du Système 2 sont statiques, pas activement amortissants. » Les cinq mécanismes transforment le Galactic Protocol, spécification d'interface passive (boucle ouverte), en un coordinateur anti-oscillation actif (boucle fermée), remplissant ainsi la fonction centrale du Système 2 dans le VSM de Beer.
+Ce cours traite une lacune du Système 2 que CYB-001 ne nomme pas parmi ses lacunes lettrées (A dynamique temporelle, B profondeur récursive, C S5 non humain, D canal algédonique) : CYB-001 fait correspondre le Système 2 aux contrats du Galactic Protocol, et ces contrats sont statiques, pas activement amortissants. Les cinq mécanismes transforment le Galactic Protocol, spécification d'interface passive (boucle ouverte), en un coordinateur anti-oscillation actif (boucle fermée), remplissant ainsi la fonction centrale du Système 2 dans le VSM de Beer.
 
 Le canal algédonique (lacune D de CYB-001) a été résolu séparément via `policies/algedonic-channel-policy.yaml`. L'amortissement et le contournement algédonique sont complémentaires : l'amortissement ralentit la coordination normale pour empêcher l'oscillation ; le canal algédonique contourne tout amortissement pour les urgences réelles.
 
