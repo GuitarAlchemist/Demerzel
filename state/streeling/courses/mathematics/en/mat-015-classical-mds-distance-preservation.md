@@ -58,9 +58,9 @@ The star graph K₁,₃ has a centre joined to three leaves. Its shortest-path d
 
 ## 3. Classical MDS and PCA
 
-**Classical multidimensional scaling** (Torgerson 1952), which Gower (1966) calls principal coordinate analysis, computes the eigendecomposition B = QΛQᵀ with λ₁ ≥ λ₂ ≥ …, keeps the k largest eigenvalues, and returns the n × k configuration Y = Q_kΛ_k^(1/2): row i holds the coordinates of point i. When D is Euclidean, YYᵀ is the best approximation of B of rank k in the Frobenius norm (Eckart–Young, MAT-006); in general, it is the best positive semidefinite one. This criterion on B, often called **strain**, is what classical MDS optimises, rather than the distances themselves.
+**Classical multidimensional scaling** (Torgerson 1952), which Gower (1966) calls principal coordinate analysis, computes the eigendecomposition B = QΛQᵀ with λ₁ ≥ λ₂ ≥ …, keeps the k largest eigenvalues, replaces any negative one among them by 0, and returns the n × k configuration Y = Q_k(Λ_k)₊^(1/2), where (Λ_k)₊ holds the max(λᵢ, 0): row i holds the coordinates of point i, and a column whose eigenvalue is negative or zero is zero. When D is Euclidean, YYᵀ is the best approximation of B of rank k in the Frobenius norm (Eckart–Young, MAT-006); in general, it is the best positive semidefinite one. This criterion on B, often called **strain**, is what classical MDS optimises, rather than the distances themselves.
 
-When D comes from points with a centred data matrix X_c of size n × p, B = X_cX_cᵀ. With the SVD X_c = UΣVᵀ of MAT-006, B = UΣ²Uᵀ, so the nonzero eigenvalues of B are the σᵢ², which are n − 1 times the variances of MAT-014, and Y = U_kΣ_k = X_cV_k: classical MDS returns exactly the PCA scores, up to the sign of each column. Gower described this duality between the n × n and the p × p eigenproblems. MDS is the natural choice when only distances are known, or when p is much larger than n. PCA is cheaper when n is large and p small: its eigenproblem is p × p, and it never forms the n² distances.
+When D comes from points with a centred data matrix X_c of size n × p, B = X_cX_cᵀ. With the SVD X_c = UΣVᵀ of MAT-006, B = UΣ²Uᵀ, so the nonzero eigenvalues of B are the σᵢ², which are n − 1 times the variances of MAT-014, and Y = U_kΣ_k = X_cV_k: classical MDS returns exactly the PCA scores, up to the sign of each column when σ₁, …, σ_k are distinct and σ_k > σ_{k+1}. When some of them tie, each method may pick a different orthonormal basis of the tied eigenspace, and the scores then agree only up to a rotation within that subspace, as for the unit square of §4. Gower described this duality between the n × n and the p × p eigenproblems. MDS is the natural choice when only distances are known, or when p is much larger than n. PCA is cheaper when n is large and p small: its eigenproblem is p × p, and it never forms the n² distances.
 
 ### Practice Exercise
 
@@ -188,7 +188,7 @@ For which scale factors s does `symmetric_eigen` return the diagonal of B unchan
 | **Double-centred matrix** | B = −½ J D⁽²⁾ J, the Gram matrix of the centred points when D is Euclidean |
 | **Euclidean distance matrix** | A matrix of the distances between points of some ℝᵐ |
 | **Schoenberg criterion** | A symmetric D with zero diagonal and nonnegative entries is Euclidean exactly when B is positive semidefinite; the dimension needed is the rank of B |
-| **Classical MDS** | The configuration Q_kΛ_k^(1/2) built from the k largest eigenvalues of B, also called principal coordinate analysis |
+| **Classical MDS** | The configuration Q_k(Λ_k)₊^(1/2) built from the k largest eigenvalues of B, with negative ones replaced by 0, also called principal coordinate analysis |
 | **Strain** | The discrepancy between B and the Gram matrix of the configuration, which classical MDS minimises |
 | **Stress** | The discrepancy between the given distances and those of the configuration, which metric MDS minimises |
 | **Non-metric MDS** | MDS that fits only the order of the dissimilarities |
