@@ -108,7 +108,7 @@ The Galactic Protocol's six message types (directive, knowledge-package, complia
 
 ## Coordination Transparency Framework
 
-The 2026 Springer paper "Coordination transparency: governing distributed agency in AI systems" provides academic validation for this approach through four components:
+Bohr's 2026 paper "Coordination transparency: governing distributed agency in AI systems" (*AI & Society* 41(5)) provides academic validation for this approach through four components:
 
 ### Component 1: Interaction Logging
 Record every Galactic Protocol message with sender, receiver, timestamp, and content hash. Demerzel already partially supports this via Article 7 (Auditability), but the logs need to capture *interaction patterns*, not just individual messages.
@@ -162,10 +162,10 @@ The algedonic channel (CYB-001 Gap D) was resolved separately via `policies/alge
 - Beer, S. (1972). *Brain of the Firm*. Allen Lane.
 - Beer, S. (1979). *The Heart of Enterprise*. John Wiley.
 - Beer, S. (1985). *Diagnosing the System for Organizations*. John Wiley.
-- Coordination transparency: governing distributed agency in AI systems. (2026). *AI & Society*, Springer. https://link.springer.com/article/10.1007/s00146-026-02853-w
+- Bohr, J. (2026). "Coordination transparency: governing distributed agency in AI systems." *AI & Society*, 41(5). https://doi.org/10.1007/s00146-026-02853-w
 - Gorelkin, M. (2025). "Stafford Beer's VSM for Building Enterprise Agentic Systems." Medium. https://medium.com/@magorelkin/stafford-beers-viable-system-model-for-building-enterprise-agentic-systems-81982d6f59c0
 - Fearne, D. (2025). "Applying Stafford Beer's VSM to Create The Autonomous AI Organisation." Medium. https://medium.com/@fearney/applying-stafford-beers-viable-system-model-to-create-the-autonomous-ai-organisation-aaaed39b37e2
-- IBM Research. (2025). "Agentic AI Needs a Systems Theory."
+- Miehling, E. et al. (IBM Research, 2025). "Agentic AI Needs a Systems Theory." arXiv:2503.00237. https://arxiv.org/abs/2503.00237
 - NI. (2025). "PID Theory Explained." https://www.ni.com/en/shop/labview/pid-theory-explained.html
 - GeeksforGeeks. (2025). "Feedback Loops in Distributed Systems." https://www.geeksforgeeks.org/system-design/feedback-loops-in-distributed-systems/
 

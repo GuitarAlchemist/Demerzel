@@ -123,7 +123,7 @@ Train your ear to feel this difference viscerally. Major chords feel settled, su
 
 **Extending to diminished and augmented:**
 
-| Quality | Intervals from root | Character | Guitar Example |
+| Quality | Stacked intervals | Character | Guitar Example |
 |---------|-------------------|-----------|----------------|
 | Major | M3 + m3 | Bright, stable | Open E major |
 | Minor | m3 + M3 | Dark, stable | Open E minor |
@@ -314,11 +314,11 @@ These are rough guides. Some people progress faster, some slower. The only facto
 | Term | Definition | ES | PT | FR | JA | ZH |
 |------|-----------|----|----|----|----|-----|
 | Interval | The distance in pitch between two notes | Intervalo | Intervalo | Intervalle | 音程 | 音程 |
-| Audiation | Hearing and comprehending music in the mind without external sound | Audiacion | Audiacao | Audiation | オーディエーション | 内心听觉 |
-| Transcription | Figuring out music by ear and writing or playing it | Transcripcion | Transcricao | Transcription | 採譜 | 扒谱 |
-| Chord quality | Whether a chord is major, minor, diminished, or augmented | Calidad del acorde | Qualidade do acorde | Qualite de l'accord | 和音の種類 | 和弦性质 |
-| Drone | A sustained reference note played while practicing intervals | Bordón | Bordao | Bourdon | ドローン | 持续音 |
-| Bass line | The lowest notes in a musical passage, usually defining chord roots | Linea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
+| Audiation | Hearing and comprehending music in the mind without external sound | Audiación | Audiação | Audiation | オーディエーション | 内心听觉 |
+| Transcription | Figuring out music by ear and writing or playing it | Transcripción | Transcrição | Transcription | 採譜 | 扒谱 |
+| Chord quality | Whether a chord is major, minor, diminished, or augmented | Calidad del acorde | Qualidade do acorde | Qualité de l'accord | 和音の種類 | 和弦性质 |
+| Drone | A sustained reference note played while practicing intervals | Bordón | Bordão | Bourdon | ドローン | 持续音 |
+| Bass line | The lowest notes in a musical passage, usually defining chord roots | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
 
 ---
 
