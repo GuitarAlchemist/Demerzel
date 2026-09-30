@@ -85,7 +85,7 @@ El "7" a secas siempre significa dominante. Tienes que escribir "maj7" para obte
 `C/E` significa "acorde de Do mayor con E en el bajo". La nota después de la barra es la nota del bajo, no necesariamente una nota del acorde. Usos habituales:
 
 - Inversiones: `C/E` (primera inversión), `C/G` (segunda inversión)
-- Poliacordes implícitos: `Db/C` = tríada de Db sobre un bajo de C (crea un sonido de Cmaj7#11)
+- Poliacordes implícitos: `Db/C` = tríada de Db sobre un bajo de C (Db, F y Ab sobre C son b9, 11 y b13 — un color frigio; el lidio es `D/C`)
 - Pedales: `Dm7/G` = crea un sonido de G11 sin enunciar G como fundamental
 
 ### Ejercicio práctico
@@ -101,7 +101,7 @@ Lee los siguientes cifrados y deletrea sus notas. No uses tu instrumento — tra
 
 Respuestas:
 1. F A C E G B (Fa mayor con 7.ª mayor, 9.ª, #11.ª)
-2. Bb D Ab B/Cb Eb/D# Gb (dominante con todas las extensiones superiores alteradas)
+2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominante con todas las extensiones superiores alteradas: b9, #9, #11, b13)
 3. Eb Gb Bb Db F Ab (séptima menor con 11.ª)
 4. Ab C Eb Gb Bb Db F (séptima de dominante con 9.ª, 11.ª implícita, 13.ª)
 5. D F Ab C (tríada menor con quinta disminuida y séptima menor)
@@ -122,7 +122,7 @@ En Do mayor:
   ii7         V7         Imaj7
 ```
 
-¿Por qué funciona? Cada acorde se resuelve en el siguiente mediante el movimiento de fundamentales más fuerte de la música tonal — las quintas descendentes (D→G→C). La conducción de voces es igual de poderosa: la tercera de Dm7 (F) resuelve bajando a la tercera de G7 (B no es F, sino que la 7.ª de Dm7, C, se convierte en la relación de 7.ª). Más exactamente:
+¿Por qué funciona? Cada acorde se resuelve en el siguiente mediante el movimiento de fundamentales más fuerte de la música tonal — las quintas descendentes (D→G→C). La conducción de voces es igual de poderosa: en cada cambio, las notas guía bajan un semitono o se quedan donde están. Más exactamente:
 
 - La **7.ª del ii** (C) baja por grado conjunto a la **tercera del V** (B)
 - La **tercera del V** (B) sube por grado conjunto a la **fundamental del I** (C)
@@ -163,18 +163,18 @@ El turnaround — los últimos compases de una forma que llevan de vuelta al pri
 Esta es la progresión de acordes de **"All The Things You Are"** (Kern/Hammerstein). Rodea cada ii-V-I (mayor o menor). Marca si cada uno se resuelve o queda en el aire:
 
 ```
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dm7    | G7     | Cmaj7  |
-Cm7   | Fm7    | Bb7    | Ebmaj7 |
-Abmaj7| Am7    | D7     | Gmaj7  |
-Am7   | D7     | Gmaj7  |        |
-F#m7  | B7     | Emaj7  | C7alt  |
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dbm7   | Cm7    | Bdim7  |
-Bbm7  | Eb7    | Abmaj7 |        |
+A1  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dm7 G7 | Cmaj7  | Cmaj7  |
+A2  | Cm7    | Fm7    | Bb7    | Ebmaj7 |
+    | Abmaj7 | Am7 D7 | Gmaj7  | Gmaj7  |
+B   | Am7    | D7     | Gmaj7  | Gmaj7  |
+    | F#m7   | B7     | Emaj7  | C7alt  |
+A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dbm7   | Cm7    | Bdim7  |
+    | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-Deberías encontrar al menos seis progresiones ii-V-I en tres tonalidades distintas, además de varios ii-V que resuelven de forma rota o se encadenan hacia la siguiente zona tonal.
+La forma tiene 36 compases: ocho, ocho, ocho y luego una última A de doce compases; los compases 6 y 14 llevan dos acordes cada uno, de dos tiempos cada uno. Deberías encontrar ocho progresiones ii-V-I en cinco tonalidades distintas, además de varios ii-V que resuelven de forma rota o se encadenan hacia la siguiente zona tonal.
 
 ---
 
@@ -189,17 +189,17 @@ La fundamental, la tercera y la séptima son las **notas esenciales** que define
 **Fundamental en la 6.ª cuerda:**
 
 ```
-Dm7:        G7:         Cmaj7:
-e ----      e ----      e ----
-B ----      B ----      B ----
-G ----      G ----      G ----
-D ----      D ----      D ----
-A --5--     A ----      A --3--
-E --x--     E --3--     E --x--
-   1 b3 b7     1 3 b7      1 3 7
+Dm7:         G7:          Cmaj7:
+e ----       e ----       e ----
+B ----       B ----       B ----
+G --10--     G --4--      G --9--
+D --10--     D --3--      D --9--
+A ----       A ----       A ----
+E --10--     E --3--      E --8--
+   1 b7 b3      1 b7 3       1 7 3
 ```
 
-(Las posiciones reales de los trastes dependen de dónde esté la fundamental; el concepto es fundamental-tercera-séptima en cuerdas adyacentes.)
+(Lee de abajo arriba: fundamental en la 6.ª cuerda, séptima en la 4.ª, tercera en la 3.ª — la 5.ª cuerda se salta. La forma se mueve como un bloque, así que la misma digitación en otro traste da el mismo tipo de acorde sobre otra fundamental.)
 
 **Fundamental en la 5.ª cuerda:**
 
@@ -222,7 +222,7 @@ A --3-- (C, the root — dropped from close position)
 E ----
 ```
 
-Los voicings drop-2 existen en cuatro grupos de cuerdas:
+Los voicings drop-2 existen en tres grupos de cuerdas:
 
 | Grupo de cuerdas | Registro | Ideal para |
 |-----------|-------|----------|
@@ -498,7 +498,7 @@ La belleza de las estructuras superiores es que tocas una **tríada simple** —
 
 ### Ejercicio práctico
 
-Construye voicings por cuartas desde cada grado de Re dórico (D E F G A B C) en el grupo de cuerdas 4-3-2-1. Apila tres cuartas justas desde cada nota de partida. Escribe las cuatro notas de cada voicing e identifica la calidad de acorde resultante (algunos serán acordes por terceras conocidos, disfrazados).
+Construye voicings por cuartas desde cada grado de Re dórico (D E F G A B C) en el grupo de cuerdas 4-3-2-1. Apila tres cuartas tomadas del modo — la mayoría son justas, pero la de F a B es un tritono, y cada voicing que la abarca hereda ese tritono. Escribe las cuatro notas de cada voicing e identifica la calidad de acorde resultante (algunos serán acordes por terceras conocidos, disfrazados).
 
 Después: sobre un vamp de C7, toca formas de tríada de D mayor, Ab mayor y Eb mayor en el registro agudo mientras se sostiene una nota C en el bajo. Escucha cómo cada estructura superior cambia el color del acorde de dominante.
 
@@ -538,15 +538,15 @@ El ritmo armónico es vertiginoso: dos acordes por compás a un tempo rápido, c
 **"Countdown"** muestra cómo los Coltrane Changes funcionan como técnica de rearmonización. El tema original es "Tune Up" de Miles Davis:
 
 ```
-Tune Up:   Em7  | A7   | Dmaj7 | Dmaj7 |
-Countdown: Em7  | F7 Bbmaj7 | Db7 Gbmaj7 | A7 Dmaj7 |
+Tune Up:   | Em7     | A7          | Dmaj7      | Dmaj7 |
+Countdown: | Em7 F7  | Bbmaj7 Db7  | Gbmaj7 A7  | Dmaj7 |
 ```
 
 Coltrane reemplaza el sencillo ii-V-I por una cadena de V-I que desciende por terceras mayores:
 
 - Desde el objetivo (Dmaj7), retrocede por el ciclo de terceras mayores: Dmaj7 ← Gbmaj7 ← Bbmaj7
 - Cada centro tonal está precedido por su V7: A7→D, Db7→Gb, F7→Bb
-- El resultado: tres resoluciones ii-V-I comprimidas en cuatro compases
+- El resultado: el ii original y luego tres resoluciones V-I, comprimidos en cuatro compases
 
 ### La geometría
 
@@ -594,7 +594,7 @@ Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
 
 1. Escribe los tres centros tonales por terceras mayores para un ii-V-I en **Fa mayor** (objetivo: Fmaj7).
 2. Rearmoniza `Gm7 | C7 | Fmaj7` con el ciclo de Coltrane, insertando pares V7→I para cada centro tonal.
-3. Toca despacio tu rearmonización en la guitarra con voicings shell. Céntrate en el movimiento del bajo — debe seguir un patrón de terceras mayores descendentes conectadas por semitonos ascendentes (las fundamentales de los V7).
+3. Toca despacio tu rearmonización en la guitarra con voicings shell. Céntrate en el movimiento del bajo — los centros tonales bajan por terceras mayores, así que, tras el único semitono que sale del acorde de ii, las fundamentales alternan una cuarta justa ascendente (cada V7 hacia su I) y una tercera menor ascendente (cada I hacia el siguiente V7).
 
 ---
 
@@ -605,7 +605,7 @@ Los siguientes estándares de jazz se citan a lo largo de este curso como materi
 | Estándar | Compositor | Conceptos clave | Por qué estudiarlo |
 |----------|----------|-------------|--------------|
 | **Autumn Leaves** | Kosma/Mercer | ii-V-I en mayor y en la relativa menor | El primer tema de jazz perfecto — dos ii-V-I en tonalidades relativas |
-| **All The Things You Are** | Kern/Hammerstein | ii-V-I encadenados a través de cuatro centros tonales | El estándar armónicamente más rico del repertorio |
+| **All The Things You Are** | Kern/Hammerstein | ii-V-I encadenados a través de cinco centros tonales | El estándar armónicamente más rico del repertorio |
 | **Rhythm Changes** | Gershwin (I Got Rhythm) | Turnarounds, dominantes del puente, campo de juego de la sustitución | La forma de jazz más habitual después del blues |
 | **Stella by Starlight** | Young | Cadenas de ii-V, mezcla modal, resolución rota | Pone a prueba tu capacidad de seguir centros tonales que cambian rápidamente |
 | **Giant Steps** | Coltrane | División simétrica por terceras mayores, Coltrane Changes | La carrera de obstáculos armónica definitiva |

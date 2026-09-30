@@ -154,7 +154,7 @@ Listen to any song you know well. Try to identify where phrases end and what typ
 
 ## 3. Why the Dominant Wants to Resolve
 
-The pull from V to I is not arbitrary convention — it is rooted in acoustic physics and interval mechanics. Understanding **why** the dominant resolves is the key to understanding all of tonal harmony.
+The pull from V to I is a convention of common-practice tonality, not a law of acoustics — but it is not arbitrary: it rests on voice leading, the smallest possible steps from the dominant's tense notes to the tonic's stable ones. Understanding **why** the dominant resolves is the key to understanding all of tonal harmony.
 
 ### The Tritone Within V7
 
@@ -185,7 +185,7 @@ F# ─── ↑½ ───→   G     ← leading tone resolves UP
 C  ─── ↓½ ───→   B     ← 7th resolves DOWN
 ```
 
-This is **contrary motion** — two voices moving toward each other, collapsing the tritone into the stable major third (G to B) or minor sixth. The acoustic tension literally converges to consonance.
+This is **contrary motion** — the two voices move in opposite directions, a semitone each. If F# is below C (a diminished fifth), they close in to the major third G–B; if C is below F# (an augmented fourth), they open out to the minor sixth B–G. Either way the tritone gives way to a consonance.
 
 ### Guitar Example — D7 to G Voice Movements
 

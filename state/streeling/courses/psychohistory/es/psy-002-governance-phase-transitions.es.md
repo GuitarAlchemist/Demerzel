@@ -196,8 +196,8 @@ Usando el estado actual de la gobernanza de Demerzel:
 ## Lecturas adicionales
 
 - [PSY-001: Introducción a la capitalización fractal](psy-001-intro-fractal-compounding.md): requisito previo sobre D_c y ERGOL/LOLLI
-- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/en/CYB-003-measuring-variety-ratio-quantitatively.md): el parámetro de orden
-- [CYB-001: Correspondencia entre el VSM y la gobernanza de la IA](../../cybernetics/en/CYB-001-vsm-ai-governance-mapping.md): requisitos previos estructurales
+- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md): el parámetro de orden
+- [CYB-001: Correspondencia entre el VSM y la gobernanza de la IA](../../cybernetics/en/cyb-001-vsm-ai-governance-mapping.md): requisitos previos estructurales
 - Mecánica estadística de las transiciones de fase (teoría de Landau, parámetros de orden, exponentes críticos)
 - Fundación de Asimov: la psicohistoria predice tendencias agregadas, no sucesos individuales
 

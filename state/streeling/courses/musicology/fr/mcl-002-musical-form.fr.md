@@ -296,7 +296,7 @@ La forme continue suit directement le texte ou le récit — la musique suit l'h
 
 - **Kansas, « Carry On Wayward Son » :** couplet-refrain avec un pont caractéristique et une section instrumentale — le rock progressif élargit les formes pop.
 - **Robert Johnson, « Cross Road Blues » :** blues en 12 mesures classique, la forme qui a façonné l'essentiel du vocabulaire de la guitare rock.
-- **Autumn Leaves (standard de jazz) :** forme proche de l'AABA (en réalité 32 mesures en AB ou ABAC selon l'arrangement), l'un des premiers standards de jazz que tout guitariste apprend.
+- **Autumn Leaves (standard de jazz) :** AABC sur 32 mesures — quatre sections de huit mesures, la deuxième reprenant la première, l'un des premiers standards de jazz que tout guitariste apprend.
 
 ---
 
@@ -331,7 +331,7 @@ Généralement, plusieurs de ces éléments coïncident au même point. Lorsque 
 Le Prélude n° 1 de Villa-Lobos (extrait des Cinq Préludes, 1940) est l'une des pièces de guitare classique les plus jouées. Sa forme est une forme ternaire claire :
 
 - **Section A (mesures 1-18) :** hommage à l'habitant des campagnes brésiliennes. Mélodie lente et lyrique sur les cordes graves, accompagnement arpégé. Tonalité : Mi mineur. Se termine par une demi-cadence qui mène à la section B.
-- **Section B (mesures 19-52) :** plus rapide, plus agitée. Mouvement mélodique chromatique, texture arpégée dans un registre plus aigu, modulations à travers des tonalités voisines. C'est le milieu contrastant.
+- **Section B (mesures 19-52) :** plus rapide (*più mosso*), plus agitée. Mouvement mélodique chromatique, texture arpégée dans un registre plus aigu, et un passage à Mi majeur — le majeur homonyme de la section A, qui est la vraie source du contraste. C'est le milieu contrastant.
 - **Retour de la section A (mesures 53-fin) :** le matériau initial revient, presque identique, et clôt la pièce avec symétrie. Le retour offre la récompense émotionnelle — nous sommes de retour à la maison.
 
 Étiquetez cette pièce A B A. Écoutez-la avec cette carte en main et remarquez comment arrive le retour de A à la mesure 53 — le soulagement, l'inévitabilité. C'est la forme qui agit sur l'auditeur.

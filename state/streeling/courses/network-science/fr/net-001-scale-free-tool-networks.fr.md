@@ -117,7 +117,7 @@ Pour analyser votre propre réseau d'outils :
 2. **Cartographiez les arêtes :** pour chaque paire, vérifiez s'ils partagent des outils, des schémas, des protocoles ou des dépendances
 3. **Calculez la distribution des degrés :** comptez les connexions par nœud
 4. **Tracez-la en échelle log-log :** si la distribution est à peu près linéaire sur un graphique log-log, vous avez un comportement sans échelle
-5. **Identifiez les hubs :** les nœuds dont le degré dépasse la moyenne de plus de 2 écarts-types
+5. **Identifiez les hubs :** classez les nœuds par degré et prenez le décile supérieur. N'utilisez pas un seuil fondé sur la moyenne et l'écart-type : avec `gamma` entre 2 et 3, le second moment diverge, si bien que l'écart-type mesuré est fixé par les hubs eux-mêmes et croît avec le réseau — le test utiliserait les hubs pour définir le seuil censé les trouver
 
 ---
 
@@ -154,7 +154,7 @@ Pour analyser votre propre réseau d'outils :
 
 ## Bases de recherche
 
-- Barabasi & Albert (1999) — découverte des réseaux sans échelle et de l'attachement préférentiel
+- Barabasi & Albert (1999) — réseaux sans échelle, et le nom d'attachement préférentiel ; le mécanisme lui-même est plus ancien, sous le nom d'avantage cumulatif (Yule 1925, Simon 1955, Price 1976)
 - Des études des dépendances logicielles montrent des distributions en loi de puissance dans npm, PyPI, crates.io
 - La fédération MCP crée naturellement une topologie en étoile, avec les dépôts de gouvernance comme nœuds centraux
 - Validation croisée avec GPT-4o-mini : accord moyen — soutien théorique solide, données MCP spécifiques nécessaires

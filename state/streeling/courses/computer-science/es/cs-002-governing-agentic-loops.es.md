@@ -1,5 +1,5 @@
 ---
-module_id: cs-001-governing-agentic-loops
+module_id: cs-002-governing-agentic-loops
 department: computer-science
 course: "IA agéntica — Sistemas multiagente, uso de herramientas, bucles de razonamiento"
 level: intermediate
@@ -37,8 +37,8 @@ garantizarla. La garantía debe venir del framework.
 ### El paralelo con la parada
 
 Alan Turing demostró (1936) que ningún algoritmo puede decidir, para todos los programas, si se detendrán.
-Un LLM dentro de un bucle se enfrenta al mismo problema: el sistema que ejecuta el bucle no puede determinar de forma fiable
-si ese bucle terminará. La comprobación debe ser externa.
+Tampoco hay un procedimiento general que pueda decidirlo para un bucle de agente arbitrario. Por eso la terminación se impone
+en lugar de detectarse: un límite impuesto por el framework hace que el bucle se detenga por construcción.
 
 **Implicación:** Cualquier framework agéntico que dependa de que el modelo declare su propia finalización
 es defectuoso por construcción.
@@ -76,13 +76,16 @@ cap_behavior: halt_and_escalate
 
 ### Propiedad 2: prueba de progreso
 Cada iteración debe producir un cambio de estado medible. El framework compara los hashes del estado
-antes y después de cada paso. Si `hash(state_n) == hash(state_n-1)`, el bucle está estancado.
+antes y después de cada paso. Si `hash(state_n) == hash(state_n-1)`, el bucle está estancado. Calcula el hash
+de los campos que llevan el resultado, no del contador de iteraciones: ese cambia en cada paso, así que la
+prueba de estancamiento nunca se activaría. Y una prueba de estancamiento detecta la repetición, no la deriva: un
+bucle que sigue cambiando sin converger lo detienen el límite y el criterio externo, no esta prueba.
 
 ```python
-def progress_test(state_before, state_after):
-    return hash(state_before) != hash(state_after)
+def stall_test(state_before, state_after):
+    return hash(state_before) == hash(state_after)
 
-if not progress_test(prev_state, curr_state):
+if stall_test(prev_state, curr_state):
     raise StallDetected("No state change — possible infinite loop")
 ```
 

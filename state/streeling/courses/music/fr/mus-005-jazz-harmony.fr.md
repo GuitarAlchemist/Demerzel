@@ -85,7 +85,7 @@ Le « 7 » seul signifie toujours dominante. Il faut écrire « maj7 » pour obt
 `C/E` signifie « accord de Do majeur avec E à la basse ». La note après la barre oblique est la note de basse, pas nécessairement une note de l'accord. Usages courants :
 
 - Renversements : `C/E` (premier renversement), `C/G` (deuxième renversement)
-- Polyaccords implicites : `Db/C` = triade de Db sur une basse de C (crée une sonorité de Cmaj7#11)
+- Polyaccords implicites : `Db/C` = triade de Db sur une basse de C (Db, F et Ab sur C sont b9, 11 et b13 — une couleur phrygienne ; la couleur lydienne est `D/C`)
 - Pédales : `Dm7/G` = crée une sonorité de G11 sans énoncer G comme fondamentale
 
 ### Exercice pratique
@@ -101,7 +101,7 @@ Lisez les symboles d'accords suivants et épelez leurs notes. N'utilisez pas vot
 
 Réponses :
 1. F A C E G B (Fa majeur avec 7e majeure, 9e, #11e)
-2. Bb D Ab B/Cb Eb/D# Gb (dominante avec toutes les extensions supérieures altérées)
+2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominante avec toutes les extensions supérieures altérées : b9, #9, #11, b13)
 3. Eb Gb Bb Db F Ab (septième mineure avec 11e)
 4. Ab C Eb Gb Bb Db F (septième de dominante avec 9e, 11e implicite, 13e)
 5. D F Ab C (triade mineure avec quinte diminuée et septième mineure)
@@ -122,7 +122,7 @@ En Do majeur :
   ii7         V7         Imaj7
 ```
 
-Pourquoi cela fonctionne-t-il ? Chaque accord se résout sur le suivant par le mouvement de fondamentale le plus fort de la musique tonale — les quintes descendantes (D→G→C). La conduite des voix est tout aussi puissante : la tierce de Dm7 (F) descend vers la tierce de G7 (B n'est pas F, mais la 7e de Dm7, C, devient la relation de 7e). Plus précisément :
+Pourquoi cela fonctionne-t-il ? Chaque accord se résout sur le suivant par le mouvement de fondamentale le plus fort de la musique tonale — les quintes descendantes (D→G→C). La conduite des voix est tout aussi puissante : à chaque changement, les notes guides descendent d'un demi-ton ou restent en place. Plus précisément :
 
 - La **7e du ii** (C) descend d'un degré vers la **tierce du V** (B)
 - La **tierce du V** (B) monte d'un degré vers la **fondamentale du I** (C)
@@ -163,18 +163,18 @@ Le turnaround — les dernières mesures d'une forme qui ramènent au début —
 Voici la grille d'accords de **« All The Things You Are »** (Kern/Hammerstein). Entourez chaque ii-V-I (majeur ou mineur). Indiquez si chacun se résout ou reste en suspens :
 
 ```
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dm7    | G7     | Cmaj7  |
-Cm7   | Fm7    | Bb7    | Ebmaj7 |
-Abmaj7| Am7    | D7     | Gmaj7  |
-Am7   | D7     | Gmaj7  |        |
-F#m7  | B7     | Emaj7  | C7alt  |
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dbm7   | Cm7    | Bdim7  |
-Bbm7  | Eb7    | Abmaj7 |        |
+A1  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dm7 G7 | Cmaj7  | Cmaj7  |
+A2  | Cm7    | Fm7    | Bb7    | Ebmaj7 |
+    | Abmaj7 | Am7 D7 | Gmaj7  | Gmaj7  |
+B   | Am7    | D7     | Gmaj7  | Gmaj7  |
+    | F#m7   | B7     | Emaj7  | C7alt  |
+A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dbm7   | Cm7    | Bdim7  |
+    | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-Vous devriez trouver au moins six progressions ii-V-I dans trois tonalités différentes, ainsi que plusieurs ii-V qui se résolvent de façon rompue ou s'enchaînent vers la zone tonale suivante.
+La forme compte 36 mesures : huit, huit, huit, puis un dernier A de douze mesures ; les mesures 6 et 14 portent chacune deux accords, de deux temps chacun. Vous devriez trouver huit progressions ii-V-I dans cinq tonalités différentes, ainsi que plusieurs ii-V qui se résolvent de façon rompue ou s'enchaînent vers la zone tonale suivante.
 
 ---
 
@@ -189,17 +189,17 @@ La fondamentale, la tierce et la septième sont les **notes essentielles** qui d
 **Fondamentale sur la 6e corde :**
 
 ```
-Dm7:        G7:         Cmaj7:
-e ----      e ----      e ----
-B ----      B ----      B ----
-G ----      G ----      G ----
-D ----      D ----      D ----
-A --5--     A ----      A --3--
-E --x--     E --3--     E --x--
-   1 b3 b7     1 3 b7      1 3 7
+Dm7:         G7:          Cmaj7:
+e ----       e ----       e ----
+B ----       B ----       B ----
+G --10--     G --4--      G --9--
+D --10--     D --3--      D --9--
+A ----       A ----       A ----
+E --10--     E --3--      E --8--
+   1 b7 b3      1 b7 3       1 7 3
 ```
 
-(Les positions réelles des cases dépendent de l'emplacement de la fondamentale ; le principe est fondamentale-tierce-septième sur des cordes adjacentes.)
+(Lisez de bas en haut : fondamentale sur la 6e corde, septième sur la 4e, tierce sur la 3e — la 5e corde est sautée. La forme se déplace d'un bloc, si bien que le même doigté à une autre case donne le même type d'accord sur une autre fondamentale.)
 
 **Fondamentale sur la 5e corde :**
 
@@ -222,7 +222,7 @@ A --3-- (C, the root — dropped from close position)
 E ----
 ```
 
-Les voicings drop-2 existent sur quatre jeux de cordes :
+Les voicings drop-2 existent sur trois jeux de cordes :
 
 | Jeu de cordes | Registre | Idéal pour |
 |-----------|-------|----------|
@@ -498,7 +498,7 @@ La beauté des structures supérieures, c'est que vous jouez une **triade simple
 
 ### Exercice pratique
 
-Construisez des voicings en quartes à partir de chaque degré de Ré dorien (D E F G A B C) sur le jeu de cordes 4-3-2-1. Empilez trois quartes justes à partir de chaque note de départ. Écrivez les quatre notes de chaque voicing et identifiez la qualité d'accord obtenue (certains seront des accords en tierces familiers déguisés).
+Construisez des voicings en quartes à partir de chaque degré de Ré dorien (D E F G A B C) sur le jeu de cordes 4-3-2-1. Empilez trois quartes prises dans le mode — la plupart sont justes, mais celle de F à B est un triton, et chaque voicing qui l'enjambe hérite de ce triton. Écrivez les quatre notes de chaque voicing et identifiez la qualité d'accord obtenue (certains seront des accords en tierces familiers déguisés).
 
 Ensuite : sur un vamp de C7, jouez des formes de triades de D majeur, Ab majeur et Eb majeur dans le registre aigu pendant qu'une note de basse C est tenue. Écoutez comment chaque structure supérieure change la couleur de l'accord de dominante.
 
@@ -538,15 +538,15 @@ Le rythme harmonique est fulgurant : deux accords par mesure à un tempo rapide,
 **« Countdown »** montre comment les Coltrane Changes fonctionnent comme technique de réharmonisation. Le morceau d'origine est « Tune Up » de Miles Davis :
 
 ```
-Tune Up:   Em7  | A7   | Dmaj7 | Dmaj7 |
-Countdown: Em7  | F7 Bbmaj7 | Db7 Gbmaj7 | A7 Dmaj7 |
+Tune Up:   | Em7     | A7          | Dmaj7      | Dmaj7 |
+Countdown: | Em7 F7  | Bbmaj7 Db7  | Gbmaj7 A7  | Dmaj7 |
 ```
 
 Coltrane remplace le simple ii-V-I par une chaîne de V-I descendant par tierces majeures :
 
 - Depuis la cible (Dmaj7), il remonte le cycle des tierces majeures : Dmaj7 ← Gbmaj7 ← Bbmaj7
 - Chaque centre tonal est précédé de son V7 : A7→D, Db7→Gb, F7→Bb
-- Le résultat : trois résolutions ii-V-I comprimées en quatre mesures
+- Le résultat : le ii d'origine, puis trois résolutions V-I, comprimés en quatre mesures
 
 ### La géométrie
 
@@ -594,7 +594,7 @@ Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
 
 1. Écrivez les trois centres tonaux en tierces majeures pour un ii-V-I en **Fa majeur** (cible : Fmaj7).
 2. Réharmonisez `Gm7 | C7 | Fmaj7` avec le cycle de Coltrane, en insérant des paires V7→I pour chaque centre tonal.
-3. Jouez lentement votre réharmonisation à la guitare avec des voicings en shell. Concentrez-vous sur le mouvement de la basse — il doit suivre un motif de tierces majeures descendantes reliées par des demi-tons ascendants (les fondamentales des V7).
+3. Jouez lentement votre réharmonisation à la guitare avec des voicings en shell. Concentrez-vous sur le mouvement de la basse — les centres tonaux descendent par tierces majeures, donc après l'unique demi-ton qui quitte l'accord de ii, les fondamentales alternent une quarte juste ascendante (chaque V7 vers son I) et une tierce mineure ascendante (chaque I vers le V7 suivant).
 
 ---
 
@@ -605,7 +605,7 @@ Les standards de jazz suivants servent de matériau d'étude tout au long de ce 
 | Standard | Compositeur | Notions clés | Pourquoi l'étudier |
 |----------|----------|-------------|--------------|
 | **Autumn Leaves** | Kosma/Mercer | ii-V-I en majeur et en relatif mineur | Le premier morceau de jazz idéal — deux ii-V-I dans des tonalités relatives |
-| **All The Things You Are** | Kern/Hammerstein | ii-V-I enchaînés à travers quatre centres tonaux | Le standard le plus riche harmoniquement du répertoire |
+| **All The Things You Are** | Kern/Hammerstein | ii-V-I enchaînés à travers cinq centres tonaux | Le standard le plus riche harmoniquement du répertoire |
 | **Rhythm Changes** | Gershwin (I Got Rhythm) | Turnarounds, dominantes du pont, terrain de jeu de la substitution | La forme de jazz la plus courante après le blues |
 | **Stella by Starlight** | Young | Chaînes de ii-V, mélange modal, résolution rompue | Met à l'épreuve votre capacité à suivre des centres tonaux qui changent vite |
 | **Giant Steps** | Coltrane | Division symétrique en tierces majeures, Coltrane Changes | Le parcours d'obstacles harmonique ultime |

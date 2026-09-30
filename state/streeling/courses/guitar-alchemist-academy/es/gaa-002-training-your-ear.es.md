@@ -123,7 +123,7 @@ Entrena tu oído para sentir esta diferencia en las entrañas. Los acordes mayor
 
 **Ampliar a disminuido y aumentado:**
 
-| Calidad | Intervalos desde la fundamental | Carácter | Ejemplo en la guitarra |
+| Calidad | Intervalos apilados | Carácter | Ejemplo en la guitarra |
 |---------|-------------------|-----------|----------------|
 | Mayor | M3 + m3 | Brillante, estable | Mi mayor al aire |
 | Menor | m3 + M3 | Oscuro, estable | Mi menor al aire |
@@ -314,11 +314,11 @@ Son orientaciones aproximadas. Algunas personas avanzan más rápido y otras má
 | Término | Definición | ES | PT | FR | JA | ZH |
 |------|-----------|----|----|----|----|-----|
 | Intervalo | La distancia de altura entre dos notas | Intervalo | Intervalo | Intervalle | 音程 | 音程 |
-| Audiación | Oír y comprender la música en la mente sin sonido externo | Audiacion | Audiacao | Audiation | オーディエーション | 内心听觉 |
-| Transcripción | Sacar música de oído y escribirla o tocarla | Transcripcion | Transcricao | Transcription | 採譜 | 扒谱 |
-| Calidad del acorde | Si un acorde es mayor, menor, disminuido o aumentado | Calidad del acorde | Qualidade do acorde | Qualite de l'accord | 和音の種類 | 和弦性质 |
-| Bordón | Una nota de referencia sostenida que suena mientras practicas intervalos | Bordón | Bordao | Bourdon | ドローン | 持续音 |
-| Línea de bajo | Las notas más graves de un pasaje musical, que suelen definir las fundamentales de los acordes | Linea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
+| Audiación | Oír y comprender la música en la mente sin sonido externo | Audiación | Audiação | Audiation | オーディエーション | 内心听觉 |
+| Transcripción | Sacar música de oído y escribirla o tocarla | Transcripción | Transcrição | Transcription | 採譜 | 扒谱 |
+| Calidad del acorde | Si un acorde es mayor, menor, disminuido o aumentado | Calidad del acorde | Qualidade do acorde | Qualité de l'accord | 和音の種類 | 和弦性质 |
+| Bordón | Una nota de referencia sostenida que suena mientras practicas intervalos | Bordón | Bordão | Bourdon | ドローン | 持续音 |
+| Línea de bajo | Las notas más graves de un pasaje musical, que suelen definir las fundamentales de los acordes | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
 
 ---
 

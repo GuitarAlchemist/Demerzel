@@ -108,7 +108,7 @@ Les six types de messages du Galactic Protocol (directive, knowledge-package, co
 
 ## Cadre de transparence de la coordination
 
-L'article Springer de 2026 « Coordination transparency: governing distributed agency in AI systems » apporte une validation académique à cette approche à travers quatre composantes :
+L'article de Bohr de 2026 « Coordination transparency: governing distributed agency in AI systems » (*AI & Society* 41(5)) apporte une validation académique à cette approche à travers quatre composantes :
 
 ### Composante 1 : journalisation des interactions
 Enregistrer chaque message du Galactic Protocol avec l'émetteur, le destinataire, l'horodatage et l'empreinte du contenu. Demerzel le permet déjà en partie via l'article 7 (Auditabilité), mais les journaux doivent capturer les *schémas d'interaction*, et pas seulement des messages isolés.
@@ -162,16 +162,16 @@ Le canal algédonique (lacune D de CYB-001) a été résolu séparément via `po
 - Beer, S. (1972). *Brain of the Firm*. Allen Lane.
 - Beer, S. (1979). *The Heart of Enterprise*. John Wiley.
 - Beer, S. (1985). *Diagnosing the System for Organizations*. John Wiley.
-- Coordination transparency: governing distributed agency in AI systems. (2026). *AI & Society*, Springer. https://link.springer.com/article/10.1007/s00146-026-02853-w
+- Bohr, J. (2026). "Coordination transparency: governing distributed agency in AI systems." *AI & Society*, 41(5). https://doi.org/10.1007/s00146-026-02853-w
 - Gorelkin, M. (2025). "Stafford Beer's VSM for Building Enterprise Agentic Systems." Medium. https://medium.com/@magorelkin/stafford-beers-viable-system-model-for-building-enterprise-agentic-systems-81982d6f59c0
 - Fearne, D. (2025). "Applying Stafford Beer's VSM to Create The Autonomous AI Organisation." Medium. https://medium.com/@fearney/applying-stafford-beers-viable-system-model-to-create-the-autonomous-ai-organisation-aaaed39b37e2
-- IBM Research. (2025). "Agentic AI Needs a Systems Theory."
+- Miehling, E. et al. (IBM Research, 2025). "Agentic AI Needs a Systems Theory." arXiv:2503.00237. https://arxiv.org/abs/2503.00237
 - NI. (2025). "PID Theory Explained." https://www.ni.com/en/shop/labview/pid-theory-explained.html
 - GeeksforGeeks. (2025). "Feedback Loops in Distributed Systems." https://www.geeksforgeeks.org/system-design/feedback-loops-in-distributed-systems/
 
 ## Références croisées
 
-- Prérequis : `state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md`
+- Prérequis : `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`
 - Protocole : `contracts/galactic-protocol.md`
 - Politique algédonique : `policies/algedonic-channel-policy.yaml`
 - Département : `state/streeling/departments/cybernetics.department.json`

@@ -123,7 +123,7 @@ Entraînez votre oreille à ressentir cette différence au plus profond. Les acc
 
 **Étendre au diminué et à l'augmenté :**
 
-| Qualité | Intervalles depuis la fondamentale | Caractère | Exemple à la guitare |
+| Qualité | Intervalles empilés | Caractère | Exemple à la guitare |
 |---------|-------------------|-----------|----------------|
 | Majeur | M3 + m3 | Lumineux, stable | Mi majeur ouvert |
 | Mineur | m3 + M3 | Sombre, stable | Mi mineur ouvert |
@@ -314,11 +314,11 @@ Ce sont des repères approximatifs. Certains progressent plus vite, d'autres plu
 | Terme | Définition | ES | PT | FR | JA | ZH |
 |------|-----------|----|----|----|----|-----|
 | Intervalle | La distance en hauteur entre deux notes | Intervalo | Intervalo | Intervalle | 音程 | 音程 |
-| Audiation | Entendre et comprendre la musique dans sa tête sans son extérieur | Audiacion | Audiacao | Audiation | オーディエーション | 内心听觉 |
-| Relevé | Trouver une musique à l'oreille et l'écrire ou la jouer | Transcripcion | Transcricao | Transcription | 採譜 | 扒谱 |
-| Qualité d'accord | Le fait qu'un accord soit majeur, mineur, diminué ou augmenté | Calidad del acorde | Qualidade do acorde | Qualite de l'accord | 和音の種類 | 和弦性质 |
-| Bourdon | Une note de référence tenue, jouée pendant qu'on travaille les intervalles | Bordón | Bordao | Bourdon | ドローン | 持续音 |
-| Ligne de basse | Les notes les plus graves d'un passage musical, qui définissent en général les fondamentales des accords | Linea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
+| Audiation | Entendre et comprendre la musique dans sa tête sans son extérieur | Audiación | Audiação | Audiation | オーディエーション | 内心听觉 |
+| Relevé | Trouver une musique à l'oreille et l'écrire ou la jouer | Transcripción | Transcrição | Transcription | 採譜 | 扒谱 |
+| Qualité d'accord | Le fait qu'un accord soit majeur, mineur, diminué ou augmenté | Calidad del acorde | Qualidade do acorde | Qualité de l'accord | 和音の種類 | 和弦性质 |
+| Bourdon | Une note de référence tenue, jouée pendant qu'on travaille les intervalles | Bordón | Bordão | Bourdon | ドローン | 持续音 |
+| Ligne de basse | Les notes les plus graves d'un passage musical, qui définissent en général les fondamentales des accords | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
 
 ---
 

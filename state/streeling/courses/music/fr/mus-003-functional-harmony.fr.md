@@ -154,7 +154,7 @@ C'est le coup de théâtre musical. L'oreille attend la maison mais se retrouve 
 
 ## 3. Pourquoi la dominante veut se résoudre
 
-L'attraction de V vers I n'est pas une convention arbitraire — elle s'enracine dans la physique acoustique et la mécanique des intervalles. Comprendre **pourquoi** la dominante se résout est la clé pour comprendre toute l'harmonie tonale.
+L'attraction de V vers I est une convention de la tonalité de la pratique commune, pas une loi de l'acoustique — mais elle n'a rien d'arbitraire : elle repose sur la conduite des voix, par les plus petits pas possibles des notes tendues de la dominante vers les notes stables de la tonique. Comprendre **pourquoi** la dominante se résout est la clé pour comprendre toute l'harmonie tonale.
 
 ### Le triton dans V7
 
@@ -185,7 +185,7 @@ F# ─── ↑½ ───→   G     ← leading tone resolves UP
 C  ─── ↓½ ───→   B     ← 7th resolves DOWN
 ```
 
-C'est le **mouvement contraire** — deux voix qui se rapprochent l'une de l'autre et font s'effondrer le triton en une tierce majeure stable (Sol-Si) ou en une sixte mineure. La tension acoustique converge littéralement vers la consonance.
+C'est le **mouvement contraire** — les deux voix partent en sens opposés, d'un demi-ton chacune. Si Fa# est sous Do (une quinte diminuée), elles se resserrent sur la tierce majeure Sol-Si ; si Do est sous Fa# (une quarte augmentée), elles s'écartent jusqu'à la sixte mineure Si-Sol. Dans les deux cas, le triton cède la place à une consonance.
 
 ### Exemple à la guitare — mouvements des voix de D7 vers G
 
@@ -530,7 +530,7 @@ Expérimentez ensuite avec le rythme harmonique : jouez la même progression ave
 > E7 = V7/vi (vise Am). D7 = V7/V (vise G). Toutes deux sont des dominantes secondaires qui créent une chaîne de quintes descendantes : E7 → Am → D7 → G → C.
 
 **4. Pourquoi la progression ii-V-I est-elle plus forte que IV-V-I, alors que les deux suivent PD → D → T ?**
-> L'accord de ii offre une conduite des voix plus fluide vers V. Dans le passage de ii à V, la plupart des voix se déplacent par degrés conjoints (notes communes et demi-tons), tandis que IV vers V crée un mouvement plus disjoint. De plus, ii-V-I forme un mouvement de fondamentales selon le cycle des quintes (quinte descendante, quinte descendante), qui est l'enchaînement de fondamentales le plus fort de la musique tonale.
+> L'accord de ii offre une conduite des voix plus fluide vers V. Dans le passage de ii à V, les deux accords ont des notes communes que l'on peut tenir (Ré et Fa de Dm7 sont la quinte et la septième de G7), alors que IV et V n'ont aucune note commune, si bien que toutes les voix supérieures doivent bouger. De plus, ii-V-I forme un mouvement de fondamentales selon le cycle des quintes (quinte descendante, quinte descendante), qui est l'enchaînement de fondamentales le plus fort de la musique tonale.
 
 **Critères de réussite :** pour toute progression d'accords diatonique dans une tonalité majeure, attribuer les chiffres romains, étiqueter les fonctions (T/PD/D), identifier les cadences et repérer les dominantes secondaires avec leurs cibles.
 
@@ -541,7 +541,7 @@ Expérimentez ensuite avec le rythme harmonique : jouez la même progression ave
 - La *Vereinfachte Harmonielehre* (1893) de Hugo Riemann a établi le modèle à trois fonctions (T/S/D) dont descend toute l'harmonie fonctionnelle moderne
 - Kostka & Payne, *Tonal Harmony* (7e éd., 2013) — manuel universitaire de référence pour l'harmonie diatonique et chromatique
 - Aldwell & Schachter, *Harmony and Voice Leading* (4e éd., 2011) — traitement faisant autorité des principes de conduite des voix et de la structure des phrases
-- Le mécanisme de résolution du triton est fondé acoustiquement sur les sons résultants et la convergence des rapports de fréquences
+- La résolution du triton est une convention de conduite des voix propre à la tonalité de la pratique commune — le mouvement contraire par degrés conjoints décrit par Kostka & Payne et par Aldwell & Schachter — et non une nécessité acoustique
 - La pédagogie des dominantes secondaires et de la modulation suit l'approche graduée : diatonique → tonicisation → modulation
 - Sources : programme du Département de musique de Streeling, consensus de la pédagogie de l'harmonie occidentale
 - État de croyance : T(0.85) F(0.03) U(0.08) C(0.04)

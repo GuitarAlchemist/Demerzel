@@ -348,7 +348,7 @@ La **bossa nova** est un groove brésilien en 2/4 ou 4/4 détendu, avec des moti
 
 ```
 Count:    1   &   2   &   3   &   4   &
-Bass:     X           X           X           X     (thumb, root)
+Bass:     X               X                         (thumb, root)
 Chord:        X       X       X       X             (fingers, chord stab)
 ```
 
@@ -417,11 +417,11 @@ La phrase mnémotechnique pour 3:2 est **« pass the god-damn but-ter »** — d
 
 ```
 3 group:  pass   the    god   damn   but   ter
-2 group:  ONE           -     -      TWO   -
-          (1st)         (1)   (2)    (3rd of 3)
+3 hits:   X             X            X       (on syllables 1, 3, 5)
+2 hits:   ONE                 TWO            (on syllables 1, 4)
 ```
 
-« pass » et « but » s'alignent sur les deux temps ; « the god damn » remplit l'espace entre eux, créant la sensation de trois contre deux.
+« pass » et « damn » s'alignent sur les deux temps, tandis que « pass », « god » et « but » marquent les trois — les deux groupements ne se rencontrent que sur « pass ».
 
 ### Rythme croisé 3:4
 
@@ -486,7 +486,7 @@ Les interprètes classiques, les chanteurs et les solistes de jazz utilisent tou
 
 ### Mesures irrégulières dans le rock progressif
 
-Des groupes de rock progressif ont construit des langages musicaux entiers sur des mesures changeantes. Rush, King Crimson, Tool et Dream Theater passent couramment entre 4/4, 7/8, 5/4 et 9/8 au sein d'une même chanson — parfois au sein d'une seule mesure (modulation métrique) et parfois par des changements brusques.
+Des groupes de rock progressif ont construit des langages musicaux entiers sur des mesures changeantes. Rush, King Crimson, Tool et Dream Theater passent couramment entre 4/4, 7/8, 5/4 et 9/8 au sein d'une même chanson — parfois par modulation métrique, où une valeur de note garde sa durée d'une mesure à l'autre, et parfois par des changements brusques.
 
 Pour l'auditeur, l'effet est une sensation d'élan asymétrique — la musique refuse de s'installer dans des motifs prévisibles. Pour l'interprète, ces changements exigent une intériorisation profonde du caractère de chaque mesure et une exécution fluide des transitions.
 
@@ -547,7 +547,7 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 
 - La pulsation, le rythme et la mesure comme couches indépendantes constituent la distinction standard de la recherche en cognition musicale (London, *Hearing in Time*, 2004)
 - Les systèmes de comptage (« 1 e and a » pour les doubles croches, « 1 trip let » pour les triolets) sont des standards pédagogiques de l'enseignement musical occidental
-- Les ratios de swing documentés empiriquement par Friberg & Sundstrom (2002) montrent que les batteurs de jazz professionnels utilisent typiquement des ratios de 1.7:1 à 2.5:1 (62:38 à 71:29)
+- Les ratios de swing documentés empiriquement par Friberg & Sundstrom (2002) montrent que les batteurs de jazz professionnels utilisent typiquement des ratios de 1.7:1 à 2.5:1 (63:37 à 71:29)
 - Le motif de Travis picking doit son nom à Merle Travis ; il s'est diffusé dans la country et le folk grâce à l'adaptation de Chet Atkins
 - La pédagogie de la polyrythmie s'appuie sur des moyens mnémotechniques verbaux (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - La modulation métrique a été théorisée systématiquement par Elliott Carter dans ses quatuors à cordes à partir des années 1950

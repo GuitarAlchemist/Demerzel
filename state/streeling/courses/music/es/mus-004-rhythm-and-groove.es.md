@@ -348,7 +348,7 @@ La **bossa nova** es un groove brasileño en un 2/4 o 4/4 relajado, con patrones
 
 ```
 Count:    1   &   2   &   3   &   4   &
-Bass:     X           X           X           X     (thumb, root)
+Bass:     X               X                         (thumb, root)
 Chord:        X       X       X       X             (fingers, chord stab)
 ```
 
@@ -417,11 +417,11 @@ La frase mnemotécnica para 3:2 es **"pass the god-damn but-ter"** — dila en v
 
 ```
 3 group:  pass   the    god   damn   but   ter
-2 group:  ONE           -     -      TWO   -
-          (1st)         (1)   (2)    (3rd of 3)
+3 hits:   X             X            X       (on syllables 1, 3, 5)
+2 hits:   ONE                 TWO            (on syllables 1, 4)
 ```
 
-"pass" y "but" coinciden con los dos tiempos; "the god damn" rellena el espacio intermedio, creando la sensación de tres contra dos.
+"pass" y "damn" coinciden con los dos tiempos, mientras que "pass", "god" y "but" marcan los tres; las dos agrupaciones solo se encuentran en "pass".
 
 ### Ritmo cruzado 3:4
 
@@ -486,7 +486,7 @@ Los intérpretes clásicos, los cantantes y los solistas de jazz usan el rubato 
 
 ### Compases irregulares en el rock progresivo
 
-Las bandas de rock progresivo construyeron lenguajes musicales enteros sobre compases cambiantes. Rush, King Crimson, Tool y Dream Theater pasan habitualmente entre 4/4, 7/8, 5/4 y 9/8 dentro de una misma canción — a veces dentro de un solo compás (modulación métrica) y a veces con cambios bruscos.
+Las bandas de rock progresivo construyeron lenguajes musicales enteros sobre compases cambiantes. Rush, King Crimson, Tool y Dream Theater pasan habitualmente entre 4/4, 7/8, 5/4 y 9/8 dentro de una misma canción — a veces por modulación métrica, en la que una figura conserva su duración de un compás al otro, y a veces con cambios bruscos.
 
 Para el oyente, el efecto es una sensación de impulso asimétrico — la música se niega a asentarse en patrones predecibles. Para el intérprete, estos cambios exigen una interiorización profunda del carácter de cada compás y una ejecución fluida de las transiciones.
 
@@ -547,7 +547,7 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 
 - El pulso, el ritmo y la métrica como capas independientes son la distinción estándar en la investigación sobre cognición musical (London, *Hearing in Time*, 2004)
 - Los sistemas de conteo ("1 e and a" para semicorcheas, "1 trip let" para tresillos) son estándares pedagógicos en la enseñanza musical occidental
-- Las proporciones de swing documentadas empíricamente por Friberg & Sundstrom (2002) muestran que los bateristas de jazz profesionales usan normalmente proporciones de 1.7:1 a 2.5:1 (62:38 a 71:29)
+- Las proporciones de swing documentadas empíricamente por Friberg & Sundstrom (2002) muestran que los bateristas de jazz profesionales usan normalmente proporciones de 1.7:1 a 2.5:1 (63:37 a 71:29)
 - El patrón de Travis picking debe su nombre a Merle Travis; se difundió por el country y el folk gracias a la adaptación de Chet Atkins
 - La pedagogía de la polirritmia se apoya en recursos mnemotécnicos verbales (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - La modulación métrica fue teorizada sistemáticamente por Elliott Carter en sus cuartetos de cuerda a partir de la década de 1950

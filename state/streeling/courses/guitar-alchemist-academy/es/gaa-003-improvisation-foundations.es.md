@@ -108,7 +108,7 @@ El blues no es una escala: es un lenguaje. Tiene su propia gramática, su vocabu
 
 Las «blue notes» son las alturas que dan al blues su sonido distintivo. Existen en las grietas entre los grados habituales de la escala:
 
-- **b3 (tercera menor):** La nota que hace que el menor suene menor. En el blues de La, es Do. Pero los músicos de blues estiran la segunda mayor (Si) hacia Do, flotando en la zona ambigua entre mayor y menor. Este es el sonido del blues: ni alegre ni triste, sino algo más complejo.
+- **b3 (tercera menor):** La nota que hace que el menor suene menor. En el blues de La, es Do. Pero los músicos de blues estiran ese Do hacia Do# (la tercera mayor), flotando en la zona ambigua entre menor y mayor. Este es el sonido del blues: ni alegre ni triste, sino algo más complejo.
 - **b5 (quinta disminuida):** La «blue note» propiamente dicha. En La, es Mib. Añadirla a la pentatónica crea la «escala de blues» de seis notas: La, Do, Re, Mib, Mi, Sol. La b5 es una nota de paso: suena tensa y quiere resolver hacia arriba a Mi (la quinta) o hacia abajo a Re (la cuarta). Nunca te detengas en ella; pasa a través de ella.
 - **b7 (séptima menor):** Ya está en tu escala pentatónica (Sol en La menor). Esta nota es el alma de los acordes de séptima de dominante y el motor de la armonía del blues.
 
@@ -125,7 +125,7 @@ A|---------------------------0----|
 E|----------------------------0---|
 ```
 
-Este descenso cromático (Do-Si-Sib-La en la cuerda de Sol) sobre los acordes V-IV-I es una de las figuras más reconocibles de toda la música. Apréndelo en varias tonalidades desplazando el traste inicial.
+Este descenso cromático (Do-Si-Sib-La en la cuerda de Sol) se apoya en el acorde de I y desemboca en el V (E7) que cierra la forma. Es una de las figuras más reconocibles de toda la música. Apréndelo en varias tonalidades desplazando el traste inicial.
 
 **Orientarse en el blues de 12 compases:**
 
@@ -133,7 +133,7 @@ El blues estándar de 12 compases en La:
 
 | Compás | 1-4 | 5-6 | 7-8 | 9 | 10 | 11-12 |
 |------|-----|-----|-----|---|----|-------|
-| Acorde | A7 | D7 | A7 | E7 | D7 | A7 (turnaround) |
+| Acorde | A7 | D7 | A7 | E7 | D7 | A7 y luego E7 (turnaround) |
 
 Al improvisar sobre la forma de 12 compases, no necesitas cambiar de escala en cada acorde: la pentatónica menor de La funciona sobre toda la progresión. Pero saber en qué punto de la forma estás transforma el divagar genérico en narración. Empieza con moderación en los compases 1-4, aumenta la intensidad sobre el acorde de IV (compases 5-6), llega al clímax en el acorde de V (compás 9) y resuelve a través del turnaround.
 
@@ -252,7 +252,7 @@ Este arco narrativo refleja la estructura de una buena historia: introducción, 
 
 ### Ejercicio práctico
 
-Elige un motivo de 3 notas (por ejemplo, La-Do-Mi en la caja 1: traste 5 de la cuerda de Mi grave, traste 3 de la cuerda de La, traste 2 de la cuerda de Re, o cualesquiera tres notas que te gusten). Sobre una pista de acompañamiento, dedica 4 compases a repetir el motivo exactamente. Dedica los 4 compases siguientes a transportarlo (muévelo para que empiece en Re). Dedica 4 compases a fragmentarlo (solo las dos primeras notas). Luego dedica los últimos 4 compases a tocar el motivo completo una última vez. Grábate y escucha: ¿suena como una declaración musical completa?
+Elige un motivo de 3 notas (por ejemplo, La-Do-Mi en la caja 1: trastes 5 y 8 de la cuerda de Mi grave, y luego traste 7 de la cuerda de La, o cualesquiera tres notas que te gusten). Sobre una pista de acompañamiento, dedica 4 compases a repetir el motivo exactamente. Dedica los 4 compases siguientes a transportarlo (muévelo para que empiece en Re). Dedica 4 compases a fragmentarlo (solo las dos primeras notas). Luego dedica los últimos 4 compases a tocar el motivo completo una última vez. Grábate y escucha: ¿suena como una declaración musical completa?
 
 ---
 
@@ -467,7 +467,7 @@ Pon una pista de acompañamiento en La menor (tempo medio, con sabor a blues). G
 > La, Do, Re, Mi, Sol. Es una zona segura porque no contiene intervalos de semitono, lo que significa que ninguna nota choca con dureza contra los acordes menores o de dominante en La. Cada nota está al menos a un tono de su vecina, lo que garantiza la consonancia sea cual sea el orden o la combinación.
 
 **2. Describe tres técnicas de la «caja de herramientas del desarrollo motívico» y da un ejemplo de cada una con un motivo de 3 notas La-Do-Re.**
-> (a) Transportar: mover el motivo una cuarta hacia arriba, a Re-Fa-Sol. (b) Aumentar: tocar La-Do-Re en blancas en lugar de corcheas, duplicando la duración. (c) Fragmentar: usar solo las dos primeras notas (La-Do) como versión abreviada del motivo.
+> (a) Transportar: mover el motivo una cuarta hacia arriba, a Re-Fa-Sol. (b) Aumentar: tocar La-Do-Re en negras en lugar de corcheas, duplicando la duración. (c) Fragmentar: usar solo las dos primeras notas (La-Do) como versión abreviada del motivo.
 
 **3. ¿Cuál es la nota característica del modo dórico y por qué es importante?**
 > La sexta natural (por ejemplo, Fa# en La dórico). Distingue el dórico de la escala menor natural (eólica), que tiene una b6 (Fa natural). Destacar la sexta natural en los tiempos fuertes es lo que hace que una improvisación suene dórica y no simplemente menor.

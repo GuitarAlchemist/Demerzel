@@ -117,7 +117,7 @@ Para analizar tu propia red de herramientas:
 2. **Mapea las aristas:** para cada par, comprueba si comparten herramientas, esquemas, protocolos o dependencias
 3. **Calcula la distribución de grados:** cuenta las conexiones por nodo
 4. **Represéntala en escala log-log:** si la distribución es aproximadamente lineal en un gráfico log-log, tienes un comportamiento libre de escala
-5. **Identifica los hubs:** nodos con un grado superior a la media en más de 2 desviaciones típicas
+5. **Identifica los hubs:** ordena los nodos por grado y toma el decil superior. No uses un umbral basado en la media y la desviación típica: con `gamma` entre 2 y 3 el segundo momento diverge, así que la desviación típica que mides la fijan los propios hubs y crece con la red — la prueba usaría los hubs para definir el umbral que debe encontrarlos
 
 ---
 
@@ -154,7 +154,7 @@ Para analizar tu propia red de herramientas:
 
 ## Base de investigación
 
-- Barabasi & Albert (1999) — descubrimiento de las redes libres de escala y del enlace preferencial
+- Barabasi & Albert (1999) — redes libres de escala, y el nombre de enlace preferencial; el mecanismo en sí es más antiguo, como ventaja acumulativa (Yule 1925, Simon 1955, Price 1976)
 - Los estudios de dependencias de software muestran distribuciones en ley de potencia en npm, PyPI y crates.io
 - La federación MCP crea de forma natural una topología de concentrador y radios con los repositorios de gobernanza como nodos centrales
 - Validado de forma cruzada con GPT-4o-mini: acuerdo medio — sólido respaldo teórico, se necesitan datos específicos de MCP

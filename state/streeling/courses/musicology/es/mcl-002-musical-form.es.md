@@ -296,7 +296,7 @@ La forma continua se ajusta directamente al texto o a la narración — la músi
 
 - **Kansas, "Carry On Wayward Son":** estrofa-estribillo con un puente característico y una sección instrumental — el rock progresivo ampliando las formas pop.
 - **Robert Johnson, "Cross Road Blues":** blues clásico de 12 compases, la forma que moldeó la mayor parte del vocabulario de la guitarra rock.
-- **Autumn Leaves (estándar de jazz):** forma cercana a AABA (en realidad 32 compases en AB o ABAC según el arreglo), uno de los primeros estándares de jazz que aprende todo guitarrista.
+- **Autumn Leaves (estándar de jazz):** AABC en 32 compases — cuatro secciones de ocho compases, la segunda una repetición de la primera, uno de los primeros estándares de jazz que aprende todo guitarrista.
 
 ---
 
@@ -331,7 +331,7 @@ Normalmente varios de ellos coinciden en el mismo punto. Cuando coinciden tres o
 El Preludio n.º 1 de Villa-Lobos (de los Cinco Preludios, 1940) es una de las piezas de guitarra clásica más interpretadas. Su forma es una ternaria clara:
 
 - **Sección A (compases 1-18):** homenaje al campesino brasileño. Melodía lenta y lírica en las cuerdas graves, acompañamiento arpegiado. Tonalidad: Mi menor. Termina con una semicadencia que conduce a la sección B.
-- **Sección B (compases 19-52):** más rápida, más agitada. Movimiento melódico cromático, textura arpegiada en un registro más agudo, modulaciones por tonalidades vecinas. Es el centro contrastante.
+- **Sección B (compases 19-52):** más rápida (*più mosso*), más agitada. Movimiento melódico cromático, textura arpegiada en un registro más agudo y un giro a Mi mayor — el homónimo mayor de la sección A, que es la verdadera fuente del contraste. Es el centro contrastante.
 - **Regreso de la sección A (compases 53-final):** el material inicial vuelve, casi idéntico, y cierra la pieza con simetría. El regreso da la recompensa emocional — estamos en casa.
 
 Etiqueta esta pieza como A B A. Escúchala con este mapa en la mano y fíjate en cómo llega el regreso de A en el compás 53 — el alivio, la inevitabilidad. Eso es la forma actuando sobre el oyente.

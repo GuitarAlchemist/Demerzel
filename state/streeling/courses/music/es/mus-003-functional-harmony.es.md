@@ -154,7 +154,7 @@ Escucha una canción que conozcas bien. Intenta identificar dónde terminan las 
 
 ## 3. Por qué la dominante quiere resolver
 
-La atracción de V hacia I no es una convención arbitraria — tiene su raíz en la física acústica y en la mecánica de los intervalos. Entender **por qué** resuelve la dominante es la clave para entender toda la armonía tonal.
+La atracción de V hacia I es una convención de la tonalidad de la práctica común, no una ley de la acústica — pero no es arbitraria: se apoya en la conducción de voces, en los pasos más pequeños posibles desde las notas tensas de la dominante hasta las notas estables de la tónica. Entender **por qué** resuelve la dominante es la clave para entender toda la armonía tonal.
 
 ### El tritono dentro de V7
 
@@ -185,7 +185,7 @@ F# ─── ↑½ ───→   G     ← leading tone resolves UP
 C  ─── ↓½ ───→   B     ← 7th resolves DOWN
 ```
 
-Esto es **movimiento contrario** — dos voces que se mueven una hacia la otra y colapsan el tritono en la tercera mayor estable (Sol a Si) o en una sexta menor. La tensión acústica converge literalmente en consonancia.
+Esto es **movimiento contrario** — las dos voces se mueven en direcciones opuestas, un semitono cada una. Si Fa# está debajo de Do (una quinta disminuida), se cierran en la tercera mayor Sol-Si; si Do está debajo de Fa# (una cuarta aumentada), se abren hasta la sexta menor Si-Sol. En ambos casos, el tritono da paso a una consonancia.
 
 ### Ejemplo en la guitarra — movimientos de las voces de D7 a G
 
@@ -530,7 +530,7 @@ Después experimenta con el ritmo armónico: toca la misma progresión con un ac
 > E7 = V7/vi (apunta a Am). D7 = V7/V (apunta a G). Ambas son dominantes secundarias que crean una cadena de quintas descendentes: E7 → Am → D7 → G → C.
 
 **4. ¿Por qué la progresión ii-V-I es más fuerte que IV-V-I, aunque ambas sigan PD → D → T?**
-> El acorde de ii proporciona una conducción de voces más fluida hacia V. En el paso de ii a V, la mayoría de las voces se mueven por grado conjunto (notas comunes y semitonos), mientras que de IV a V se produce un movimiento más disjunto. Además, ii-V-I forma un movimiento de fundamentales por el ciclo de quintas (una quinta abajo, otra quinta abajo), que es el patrón de enlace de fundamentales más fuerte de la música tonal.
+> El acorde de ii proporciona una conducción de voces más fluida hacia V. En el paso de ii a V, los dos acordes comparten notas que pueden mantenerse (Re y Fa de Dm7 son la quinta y la séptima de G7), mientras que IV y V no tienen ninguna nota en común, así que todas las voces superiores tienen que moverse. Además, ii-V-I forma un movimiento de fundamentales por el ciclo de quintas (una quinta abajo, otra quinta abajo), que es el patrón de enlace de fundamentales más fuerte de la música tonal.
 
 **Criterios de aprobación:** dada cualquier progresión de acordes diatónica en una tonalidad mayor, asignar los números romanos, etiquetar las funciones (T/PD/D), identificar las cadencias y localizar las dominantes secundarias con sus destinos.
 
@@ -541,7 +541,7 @@ Después experimenta con el ritmo armónico: toca la misma progresión con un ac
 - La *Vereinfachte Harmonielehre* (1893) de Hugo Riemann estableció el modelo de tres funciones (T/S/D) del que desciende toda la armonía funcional moderna
 - Kostka & Payne, *Tonal Harmony* (7.ª ed., 2013) — texto universitario de referencia para la armonía diatónica y cromática
 - Aldwell & Schachter, *Harmony and Voice Leading* (4.ª ed., 2011) — tratamiento de referencia de los principios de conducción de voces y de la estructura de la frase
-- El mecanismo de resolución del tritono tiene una base acústica en los sonidos de combinación y la convergencia de las razones de frecuencia
+- La resolución del tritono es una convención de conducción de voces propia de la tonalidad de la práctica común — el movimiento contrario por grado conjunto que describen Kostka & Payne y Aldwell & Schachter — y no una necesidad acústica
 - La pedagogía de las dominantes secundarias y la modulación sigue el enfoque gradual: diatónica → tonicización → modulación
 - Fuentes: plan de estudios del Departamento de Música de Streeling, consenso de la pedagogía de la armonía occidental
 - Estado de creencia: T(0.85) F(0.03) U(0.08) C(0.04)

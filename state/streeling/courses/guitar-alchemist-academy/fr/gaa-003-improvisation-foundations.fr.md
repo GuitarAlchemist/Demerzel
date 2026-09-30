@@ -108,7 +108,7 @@ Le blues n'est pas une gamme — c'est un langage. Il a sa propre grammaire, son
 
 Les « blue notes » sont les hauteurs qui donnent au blues sa sonorité caractéristique. Elles existent dans les interstices entre les degrés habituels de la gamme :
 
-- **b3 (tierce mineure) :** La note qui fait sonner le mineur comme mineur. En blues de La, c'est Do. Mais les bluesmen tirent la seconde majeure (Si) vers Do, en flottant dans la zone ambiguë entre majeur et mineur. C'est le son du blues — ni joyeux ni triste, mais quelque chose de plus complexe.
+- **b3 (tierce mineure) :** La note qui fait sonner le mineur comme mineur. En blues de La, c'est Do. Mais les bluesmen tirent ce Do vers Do# (la tierce majeure), en flottant dans la zone ambiguë entre mineur et majeur. C'est le son du blues — ni joyeux ni triste, mais quelque chose de plus complexe.
 - **b5 (quinte diminuée) :** La « blue note » proprement dite. En La, c'est Mib. L'ajouter à la pentatonique crée la « gamme blues » à six notes : La, Do, Ré, Mib, Mi, Sol. La b5 est une note de passage — elle sonne tendue et veut se résoudre vers le haut sur Mi (la quinte) ou vers le bas sur Ré (la quarte). Ne vous posez jamais dessus ; traversez-la.
 - **b7 (septième mineure) :** Déjà présente dans votre gamme pentatonique (Sol en La mineur). Cette note est l'âme des accords de septième de dominante et le moteur de l'harmonie blues.
 
@@ -125,7 +125,7 @@ A|---------------------------0----|
 E|----------------------------0---|
 ```
 
-Cette descente chromatique (Do-Si-Sib-La sur la corde de Sol) sur les accords V-IV-I est l'une des figures les plus reconnaissables de toute la musique. Apprenez-la dans plusieurs tonalités en déplaçant la case de départ.
+Cette descente chromatique (Do-Si-Sib-La sur la corde de Sol) se place sur l'accord de I et aboutit sur le V (E7) qui termine la forme. C'est l'une des figures les plus reconnaissables de toute la musique. Apprenez-la dans plusieurs tonalités en déplaçant la case de départ.
 
 **Se repérer dans le blues de 12 mesures :**
 
@@ -133,7 +133,7 @@ Le blues standard de 12 mesures en La :
 
 | Mesure | 1-4 | 5-6 | 7-8 | 9 | 10 | 11-12 |
 |------|-----|-----|-----|---|----|-------|
-| Accord | A7 | D7 | A7 | E7 | D7 | A7 (turnaround) |
+| Accord | A7 | D7 | A7 | E7 | D7 | A7 puis E7 (turnaround) |
 
 Quand vous improvisez sur la grille de 12 mesures, vous n'avez pas besoin de changer de gamme à chaque accord — la pentatonique mineure de La fonctionne sur toute la progression. Mais savoir où vous en êtes dans la grille transforme un bavardage générique en récit. Commencez sobrement sur les mesures 1-4, faites monter l'intensité sur l'accord de IV (mesures 5-6), culminez sur l'accord de V (mesure 9) et résolvez à travers le turnaround.
 
@@ -252,7 +252,7 @@ Cet arc narratif reflète la structure d'une bonne histoire : introduction, comp
 
 ### Exercice pratique
 
-Choisissez un motif de 3 notes (par exemple La-Do-Mi dans la boîte 1 : 5e case sur le Mi grave, 3e case sur la corde de La, 2e case sur la corde de Ré — ou trois notes de votre choix). Sur un backing track, passez 4 mesures à répéter le motif à l'identique. Passez les 4 mesures suivantes à le transposer (déplacez-le pour qu'il commence sur Ré). Passez 4 mesures à le fragmenter (juste les deux premières notes). Puis passez les 4 dernières mesures à jouer le motif complet une dernière fois. Enregistrez-vous et écoutez : cela sonne-t-il comme un énoncé musical complet ?
+Choisissez un motif de 3 notes (par exemple La-Do-Mi dans la boîte 1 : 5e et 8e cases de la corde de Mi grave, puis 7e case de la corde de La — ou trois notes de votre choix). Sur un backing track, passez 4 mesures à répéter le motif à l'identique. Passez les 4 mesures suivantes à le transposer (déplacez-le pour qu'il commence sur Ré). Passez 4 mesures à le fragmenter (juste les deux premières notes). Puis passez les 4 dernières mesures à jouer le motif complet une dernière fois. Enregistrez-vous et écoutez : cela sonne-t-il comme un énoncé musical complet ?
 
 ---
 
@@ -467,7 +467,7 @@ Lancez un backing track en La mineur (tempo moyen, bluesy). Enregistrez-vous en 
 > La, Do, Ré, Mi, Sol. C'est une zone de sécurité parce qu'elle ne contient aucun intervalle d'un demi-ton, ce qui signifie qu'aucune note ne heurte durement les accords mineurs ou de dominante en La. Chaque note est au moins à un ton de sa voisine, ce qui garantit la consonance quel que soit l'ordre ou la combinaison.
 
 **2. Décrivez trois techniques de la « boîte à outils du développement motivique » et donnez un exemple de chacune avec un motif de 3 notes La-Do-Ré.**
-> (a) Transposer : déplacer le motif d'une quarte vers le haut, soit Ré-Fa-Sol. (b) Augmenter : jouer La-Do-Ré en blanches au lieu de croches, ce qui double la durée. (c) Fragmenter : n'utiliser que les deux premières notes (La-Do) comme version raccourcie du motif.
+> (a) Transposer : déplacer le motif d'une quarte vers le haut, soit Ré-Fa-Sol. (b) Augmenter : jouer La-Do-Ré en noires au lieu de croches, ce qui double la durée. (c) Fragmenter : n'utiliser que les deux premières notes (La-Do) comme version raccourcie du motif.
 
 **3. Quelle est la note caractéristique du mode dorien et pourquoi est-elle importante ?**
 > La sixte naturelle (par exemple Fa# en La dorien). Elle distingue le dorien de la gamme mineure naturelle (éolienne), qui a une b6 (Fa naturel). Mettre en valeur la sixte naturelle sur les temps forts est ce qui fait sonner une improvisation dorienne plutôt que simplement mineure.
