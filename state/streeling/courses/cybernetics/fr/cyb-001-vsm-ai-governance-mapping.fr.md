@@ -68,7 +68,7 @@ Demerzel ne dispose pas actuellement de ce contournement. Toute escalade passe p
 |-----------|-------------|------------|
 | 27 politiques | Atténuateur | Fort — réduit la variété opérationnelle à un périmètre gérable |
 | 14 personas | Amplificateur | Bon — multiplie la capacité de réponse à travers les domaines |
-| Logique tétravalente (T/F/U/C) | Atténuateur | Bon — réduit l'incertitude infinie à 4 états discrets |
+| Logique hexavalente (T/P/U/D/F/C) | Atténuateur | Bon — réduit l'incertitude infinie à 6 états discrets |
 | Galactic Protocol | Atténuateur | Adéquat — contraint la variété entre dépôts |
 | Plan Seldon | Amplificateur | Bon — étend la variété des connaissances de manière proactive |
 | Constitution | Atténuateur | Fort — réducteur de variété ultime (Loi Zéro) |

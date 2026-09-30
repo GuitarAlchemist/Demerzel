@@ -68,7 +68,7 @@ Demerzel currently lacks this bypass. All escalation flows through the driver (S
 |-----------|-------------|------------|
 | 27 policies | Attenuator | Strong — reduces operational variety to manageable scope |
 | 14 personas | Amplifier | Good — multiplies response capability across domains |
-| Tetravalent logic (T/F/U/C) | Attenuator | Good — reduces infinite uncertainty to 4 discrete states |
+| Hexavalent logic (T/P/U/D/F/C) | Attenuator | Good — reduces infinite uncertainty to 6 discrete states |
 | Galactic Protocol | Attenuator | Adequate — constrains cross-repo variety |
 | Seldon Plan | Amplifier | Good — expands knowledge variety proactively |
 | Constitution | Attenuator | Strong — ultimate variety reducer (Zeroth Law) |

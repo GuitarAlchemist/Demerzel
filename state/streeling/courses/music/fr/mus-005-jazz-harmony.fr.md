@@ -97,7 +97,7 @@ Lisez les symboles d'accords suivants et épelez leurs notes. N'utilisez pas vot
 3. `Ebm11`
 4. `Ab13`
 5. `Dm7b5`
-6. `G7#9/Db` (quelle substitution cela implique-t-il ?)
+6. `G7#9/Db` (est-ce une substitution tritonique ?)
 
 Réponses :
 1. F A C E G B (Fa majeur avec 7e majeure, 9e, #11e)
@@ -105,7 +105,7 @@ Réponses :
 3. Eb Gb Bb Db F Ab (septième mineure avec 11e)
 4. Ab C Eb Gb Bb Db F (septième de dominante avec 9e, 11e implicite, 13e)
 5. D F Ab C (triade mineure avec quinte diminuée et septième mineure)
-6. G B D F A#/Bb sur une basse de Db — la basse de Db implique la substitution tritonique de G7
+6. G B D F A#/Bb sur une basse de Db. Ce n'est pas une substitution tritonique : la structure supérieure reste G7#9, désormais sur sa b5. La substitution elle-même est Db7 (Db F Ab Cb), qui partage le triton B–F de G7 (sous la forme Cb–F).
 
 ---
 
@@ -174,7 +174,7 @@ A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
     | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-La forme compte 36 mesures : huit, huit, huit, puis un dernier A de douze mesures ; les mesures 6 et 14 portent chacune deux accords, de deux temps chacun. Vous devriez trouver huit progressions ii-V-I dans cinq tonalités différentes, ainsi que plusieurs ii-V qui se résolvent de façon rompue ou s'enchaînent vers la zone tonale suivante.
+La forme compte 36 mesures : huit, huit, huit, puis un dernier A de douze mesures ; les mesures 6 et 14 portent chacune deux accords, de deux temps chacun. Vous devriez trouver huit progressions ii-V-I dans cinq tonalités différentes (le dernier A en contient deux), ainsi que plusieurs ii-V qui se résolvent de façon rompue ou s'enchaînent vers la zone tonale suivante. Les grilles diffèrent aux mesures 6 et 14 : certaines écrivent Dm7 et Am7, comme ici, d'autres les accords demi-diminués Dm7b5 et Am7b5, qui gardent le Ab et le Eb de la tonalité précédente ; dans les deux cas, chacune de ces mesures ouvre un ii-V-I.
 
 ---
 

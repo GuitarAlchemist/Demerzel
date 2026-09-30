@@ -97,10 +97,10 @@ Quand `marginal_return → 0` sur 3 ajouts de politiques consécutifs ou plus, l
 
 ### Signal 4 : force du couplage entre dépôts
 
-Demerzel gouverne quatre dépôts (demerzel, ix, tars, ga). Mesurez la corrélation entre leurs taux de conformité :
+Demerzel gouverne quatre dépôts (demerzel, ix, tars, ga). Relevez le taux de conformité de chaque dépôt à chaque cycle et, sur une fenêtre des W derniers cycles, faites la moyenne des corrélations de Pearson des six paires de dépôts (un seul cycle ne donne qu'un taux par dépôt, dont on ne peut tirer aucune corrélation) :
 
 ```
-coupling = pearson_correlation(compliance_rates entre dépôts)
+coupling = mean_{i<j} pearson_correlation(rates_i[W], rates_j[W])
 ```
 
 | Couplage | Régime |
@@ -179,7 +179,7 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
 
 2. Prenez pour R l'`overall_score` du dernier enregistrement de `state/resilience/history.json`. Dans quel régime se trouve le système ? Que faudrait-il changer pour franchir la frontière suivante ?
 
-3. Dans le même fichier, les `metafixes_applied` du cycle chaos-003 consignent un nouveau fichier de politique, créé pendant que R passait de 0.64 (chaos-002) à 0.73. Calculez le rendement marginal de cette politique. Entre chaos-003 et chaos-004, R est monté à 0.82 sans nouveau fichier de politique : qu'est-ce que cela dit de la mesure des rendements par nombre de politiques ?
+3. Dans le même fichier, le cycle chaos-003 consigne, dans `metafixes_applied`, un nouveau fichier de politique et une section ajoutée à une politique existante, et dans `level_deltas` un gain au niveau L4, pendant que R passait de 0.64 (chaos-002) à 0.73. Calculez le rendement global des changements de ce cycle. Pourquoi la hausse de 0.09 ne peut-elle pas être attribuée à la seule nouvelle politique, et quelle observation isolerait son rendement ? Entre chaos-003 et chaos-004, R est monté à 0.82 sans nouveau fichier de politique : qu'est-ce que cela dit de la mesure des rendements par nombre de politiques ?
 
 4. **Expérience de pensée :** Si les trois dépôts consommateurs (ix, tars, ga) atteignaient soudain 100 % de conformité, quelle transition de phase cela représenterait-il ? Est-ce souhaitable ?
 

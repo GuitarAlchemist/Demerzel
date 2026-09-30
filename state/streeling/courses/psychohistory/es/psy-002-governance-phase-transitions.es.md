@@ -97,10 +97,10 @@ Cuando `marginal_return → 0` a lo largo de 3 o más adiciones de políticas co
 
 ### Señal 4: intensidad del acoplamiento entre repositorios
 
-Demerzel gobierna cuatro repositorios (demerzel, ix, tars, ga). Mide la correlación entre sus tasas de cumplimiento:
+Demerzel gobierna cuatro repositorios (demerzel, ix, tars, ga). Registra la tasa de cumplimiento de cada repositorio en cada ciclo y, sobre una ventana de los últimos W ciclos, promedia las correlaciones de Pearson de los seis pares de repositorios (un solo ciclo da una tasa por repositorio, de la que no puede calcularse ninguna correlación):
 
 ```
-coupling = pearson_correlation(compliance_rates entre repositorios)
+coupling = mean_{i<j} pearson_correlation(rates_i[W], rates_j[W])
 ```
 
 | Acoplamiento | Régimen |
@@ -179,7 +179,7 @@ Usando el estado actual de la gobernanza de Demerzel:
 
 2. Toma como R el `overall_score` del último registro de `state/resilience/history.json`. ¿En qué régimen está el sistema? ¿Qué tendría que cambiar para cruzar la frontera siguiente?
 
-3. En el mismo archivo, los `metafixes_applied` del ciclo chaos-003 registran un nuevo archivo de política, creado mientras R pasaba de 0.64 (chaos-002) a 0.73. Calcula el rendimiento marginal de esa política. Entre chaos-003 y chaos-004, R subió a 0.82 sin un nuevo archivo de política: ¿qué dice eso sobre medir los rendimientos por número de políticas?
+3. En el mismo archivo, el ciclo chaos-003 registra, en `metafixes_applied`, un nuevo archivo de política y una sección añadida a una política existente, y en `level_deltas` una mejora en el nivel L4, mientras R pasaba de 0.64 (chaos-002) a 0.73. Calcula el rendimiento global de los cambios de ese ciclo. ¿Por qué no puede atribuirse la subida de 0.09 solo a la nueva política, y qué observación aislaría su rendimiento? Entre chaos-003 y chaos-004, R subió a 0.82 sin un nuevo archivo de política: ¿qué dice eso sobre medir los rendimientos por número de políticas?
 
 4. **Experimento mental:** Si los tres repositorios consumidores (ix, tars, ga) alcanzaran de repente el 100 % de cumplimiento, ¿qué transición de fase representaría eso? ¿Es deseable?
 

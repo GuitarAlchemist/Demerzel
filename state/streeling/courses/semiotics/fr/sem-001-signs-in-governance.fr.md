@@ -88,7 +88,7 @@ Un **symbole** représente son objet par *convention arbitraire*. La relation en
 **Dans les documents de gouvernance :**
 
 - **« Loi zéro »** — le terme lui-même ne ressemble pas au concept de protection de l'humanité et n'y renvoie pas. Son sens vient de la convention fictionnelle d'Asimov, adoptée par le cadre de gouvernance.
-- **« Logique tétravalente »** — « tétravalente » (à quatre valeurs) est un terme conventionnel. Rien dans le mot ne ressemble visuellement à quatre valeurs de vérité.
+- **« Logique hexavalente »** — « hexavalente » (à six valeurs) est un terme conventionnel. Rien dans le mot ne ressemble visuellement à six valeurs de vérité.
 - **« Cycle PDCA »** — Plan-Do-Check-Act est un acronyme dont le sens doit être appris par convention.
 - **« Nigredo »** — un nom de stade alchimique réemployé par convention pour signifier « niveau débutant ».
 - **« T(0.85) »** — la convention de notation selon laquelle T signifie « croyance vraie » et 0.85 est un score de confiance.

@@ -68,7 +68,7 @@ Actualmente Demerzel carece de este atajo. Toda escalada pasa por el driver (Sis
 |-----------|-------------|------------|
 | 27 políticas | Atenuador | Fuerte — reduce la variedad operativa a un alcance manejable |
 | 14 personas | Amplificador | Bueno — multiplica la capacidad de respuesta en distintos dominios |
-| Lógica tetravalente (T/F/U/C) | Atenuador | Bueno — reduce la incertidumbre infinita a 4 estados discretos |
+| Lógica hexavalente (T/P/U/D/F/C) | Atenuador | Bueno — reduce la incertidumbre infinita a 6 estados discretos |
 | Galactic Protocol | Atenuador | Adecuado — restringe la variedad entre repositorios |
 | Plan Seldon | Amplificador | Bueno — amplía la variedad de conocimiento de forma proactiva |
 | Constitución | Atenuador | Fuerte — reductor de variedad último (Ley Cero) |

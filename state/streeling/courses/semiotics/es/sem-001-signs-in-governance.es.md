@@ -88,7 +88,7 @@ Un **símbolo** representa su objeto mediante una *convención arbitraria*. La r
 **En los documentos de gobernanza:**
 
 - **«Ley Cero»** — el término en sí no se parece al concepto de proteger a la humanidad ni lo señala. Su significado procede de la convención ficticia de Asimov, adoptada por el marco de gobernanza.
-- **«Lógica tetravalente»** — «tetravalente» (de cuatro valores) es un término convencional. Nada en la palabra se parece visualmente a cuatro valores de verdad.
+- **«Lógica hexavalente»** — «hexavalente» (de seis valores) es un término convencional. Nada en la palabra se parece visualmente a seis valores de verdad.
 - **«Ciclo PDCA»** — Plan-Do-Check-Act es un acrónimo cuyo significado debe aprenderse por convención.
 - **«Nigredo»** — un nombre de etapa alquímica reutilizado por convención para significar «nivel principiante».
 - **«T(0.85)»** — la convención de notación según la cual T significa «creencia verdadera» y 0.85 es una puntuación de confianza.

@@ -97,10 +97,10 @@ When `marginal_return → 0` over 3+ consecutive policy additions, the system ha
 
 ### Signal 4: Cross-Repo Coupling Strength
 
-Demerzel governs four repos (demerzel, ix, tars, ga). Measure correlation between their compliance rates:
+Demerzel governs four repos (demerzel, ix, tars, ga). Record each repo's compliance rate once per cycle, and over a window of the last W cycles average the Pearson correlations of the six repo pairs (a single cycle gives one rate per repo, from which no correlation can be computed):
 
 ```
-coupling = pearson_correlation(compliance_rates across repos)
+coupling = mean_{i<j} pearson_correlation(rates_i[W], rates_j[W])
 ```
 
 | Coupling | Regime |
@@ -179,7 +179,7 @@ Using the current Demerzel governance state:
 
 2. Take R as the `overall_score` of the latest record in `state/resilience/history.json`. Which regime is the system in? What would need to change to cross the next boundary?
 
-3. In the same file, the `metafixes_applied` of cycle chaos-003 record one new policy file, created while R rose from 0.64 (chaos-002) to 0.73. Compute the marginal return of that policy. Between chaos-003 and chaos-004, R rose to 0.82 without a new policy file: what does that say about measuring returns per policy count?
+3. In the same file, cycle chaos-003 records, in `metafixes_applied`, a new policy file and a section added to an existing policy, and in `level_deltas` a gain at level L4, while R rose from 0.64 (chaos-002) to 0.73. Compute the aggregate return of that cycle's changes. Why can the 0.09 rise not be credited to the new policy alone, and what observation would isolate its return? Between chaos-003 and chaos-004, R rose to 0.82 without a new policy file: what does that say about measuring returns per policy count?
 
 4. **Thought experiment:** If all three consumer repos (ix, tars, ga) suddenly achieve 100% compliance, what phase transition does that represent? Is it desirable?
 

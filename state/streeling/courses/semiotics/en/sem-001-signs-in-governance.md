@@ -88,7 +88,7 @@ A **symbol** represents its object through *arbitrary convention*. The relations
 **In governance documents:**
 
 - **"Zeroth Law"** — the term itself does not resemble or point to the concept of protecting humanity. Its meaning comes from Asimov's fictional convention, adopted by the governance framework.
-- **"Tetravalent logic"** — "tetravalent" (four-valued) is a conventional term. Nothing about the word visually resembles four truth values.
+- **"Hexavalent logic"** — "hexavalent" (six-valued) is a conventional term. Nothing about the word visually resembles six truth values.
 - **"PDCA cycle"** — Plan-Do-Check-Act is an acronym whose meaning must be learned through convention.
 - **"Nigredo"** — an alchemical stage name repurposed by convention to mean "beginner level."
 - **"T(0.85)"** — the notation convention that T means "True belief" and 0.85 is a confidence score.

@@ -97,7 +97,7 @@ Lee los siguientes cifrados y deletrea sus notas. No uses tu instrumento — tra
 3. `Ebm11`
 4. `Ab13`
 5. `Dm7b5`
-6. `G7#9/Db` (¿qué sustitución implica?)
+6. `G7#9/Db` (¿es una sustitución tritonal?)
 
 Respuestas:
 1. F A C E G B (Fa mayor con 7.ª mayor, 9.ª, #11.ª)
@@ -105,7 +105,7 @@ Respuestas:
 3. Eb Gb Bb Db F Ab (séptima menor con 11.ª)
 4. Ab C Eb Gb Bb Db F (séptima de dominante con 9.ª, 11.ª implícita, 13.ª)
 5. D F Ab C (tríada menor con quinta disminuida y séptima menor)
-6. G B D F A#/Bb sobre un bajo de Db — el bajo de Db implica la sustitución tritonal de G7
+6. G B D F A#/Bb sobre un bajo de Db. No es una sustitución tritonal: la estructura superior sigue siendo G7#9, ahora sobre su b5. El sustituto en sí es Db7 (Db F Ab Cb), que comparte el tritono B–F de G7 (como Cb–F).
 
 ---
 
@@ -174,7 +174,7 @@ A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
     | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-La forma tiene 36 compases: ocho, ocho, ocho y luego una última A de doce compases; los compases 6 y 14 llevan dos acordes cada uno, de dos tiempos cada uno. Deberías encontrar ocho progresiones ii-V-I en cinco tonalidades distintas, además de varios ii-V que resuelven de forma rota o se encadenan hacia la siguiente zona tonal.
+La forma tiene 36 compases: ocho, ocho, ocho y luego una última A de doce compases; los compases 6 y 14 llevan dos acordes cada uno, de dos tiempos cada uno. Deberías encontrar ocho progresiones ii-V-I en cinco tonalidades distintas (la última A contiene dos), además de varios ii-V que resuelven de forma rota o se encadenan hacia la siguiente zona tonal. Las partituras difieren en los compases 6 y 14: unas escriben Dm7 y Am7, como aquí, y otras los acordes semidisminuidos Dm7b5 y Am7b5, que conservan el Ab y el Eb de la tonalidad anterior; en ambos casos, cada uno de esos compases abre un ii-V-I.
 
 ---
 

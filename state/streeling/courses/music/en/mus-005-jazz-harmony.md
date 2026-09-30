@@ -97,7 +97,7 @@ Read the following chord symbols and spell out the notes. Do not use your instru
 3. `Ebm11`
 4. `Ab13`
 5. `Dm7b5`
-6. `G7#9/Db` (what substitution does this imply?)
+6. `G7#9/Db` (is this a tritone substitution?)
 
 Answers:
 1. F A C E G B (F major with major 7th, 9th, #11th)
@@ -105,7 +105,7 @@ Answers:
 3. Eb Gb Bb Db F Ab (minor 7th with 11th)
 4. Ab C Eb Gb Bb Db F (dominant 7th with 9th, 11th implicit, 13th)
 5. D F Ab C (minor triad with flatted 5th and minor 7th)
-6. G B D F A#/Bb over Db bass — the Db bass implies tritone substitution of G7
+6. G B D F A#/Bb over a Db bass. It is not a tritone substitution: the upper structure is still G7#9, now over its b5. The substitute itself is Db7 (Db F Ab Cb), which shares G7's tritone B–F (as Cb–F).
 
 ---
 
@@ -174,7 +174,7 @@ A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
     | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-The form is 36 bars: eight, eight, eight, then a twelve-bar last A; bars 6 and 14 hold two chords each, two beats apiece. You should find eight ii-V-I progressions in five different keys, plus several ii-V's that resolve deceptively or chain into the next key area.
+The form is 36 bars: eight, eight, eight, then a twelve-bar last A; bars 6 and 14 hold two chords each, two beats apiece. You should find eight ii-V-I progressions in five different keys (the last A holds two), plus several ii-V's that resolve deceptively or chain into the next key area. Charts differ in bars 6 and 14: some write Dm7 and Am7, as here, others the half-diminished Dm7b5 and Am7b5, which keep the Ab and the Eb of the preceding key; either way, each of these bars begins a ii-V-I.
 
 ---
 
