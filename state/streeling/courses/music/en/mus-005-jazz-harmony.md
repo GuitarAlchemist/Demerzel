@@ -164,9 +164,9 @@ Here is the chord progression to **"All The Things You Are"** (Kern/Hammerstein)
 
 ```
 A1  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
-    | Dbmaj7 | G7     | Cmaj7  | Cmaj7  |
+    | Dbmaj7 | Dm7 G7 | Cmaj7  | Cmaj7  |
 A2  | Cm7    | Fm7    | Bb7    | Ebmaj7 |
-    | Abmaj7 | D7     | Gmaj7  | Gmaj7  |
+    | Abmaj7 | Am7 D7 | Gmaj7  | Gmaj7  |
 B   | Am7    | D7     | Gmaj7  | Gmaj7  |
     | F#m7   | B7     | Emaj7  | C7alt  |
 A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
@@ -174,7 +174,7 @@ A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
     | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-The form is 36 bars: eight, eight, eight, then a twelve-bar last A. You should find at least six ii-V-I progressions in four different keys, plus several ii-V's that resolve deceptively or chain into the next key area.
+The form is 36 bars: eight, eight, eight, then a twelve-bar last A; bars 6 and 14 hold two chords each, two beats apiece. You should find eight ii-V-I progressions in five different keys, plus several ii-V's that resolve deceptively or chain into the next key area.
 
 ---
 
@@ -604,7 +604,7 @@ The following jazz standards are referenced throughout this course as study mate
 | Standard | Composer | Key Concepts | Why Study It |
 |----------|----------|-------------|--------------|
 | **Autumn Leaves** | Kosma/Mercer | ii-V-I in major and relative minor | The perfect first jazz tune — two ii-V-Is in related keys |
-| **All The Things You Are** | Kern/Hammerstein | Chained ii-V-Is through four key centers | The most harmonically rich standard in the repertoire |
+| **All The Things You Are** | Kern/Hammerstein | Chained ii-V-Is through five key centers | The most harmonically rich standard in the repertoire |
 | **Rhythm Changes** | Gershwin (I Got Rhythm) | Turnarounds, bridge dominants, substitution playground | The second most common jazz form after blues |
 | **Stella by Starlight** | Young | ii-V chains, modal mixture, deceptive resolution | Tests your ability to track rapidly shifting key centers |
 | **Giant Steps** | Coltrane | Major-third symmetric division, Coltrane Changes | The ultimate harmonic obstacle course |
