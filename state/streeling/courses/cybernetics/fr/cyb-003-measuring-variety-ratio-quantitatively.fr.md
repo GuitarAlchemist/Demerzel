@@ -3,7 +3,7 @@
 **Département :** Cybernétique
 **Identifiant du module :** CYB-003
 **Produit par :** cycle du plan Seldon cybernetics-2026-03-23-003
-**Croyance :** T (vérifiée), confiance 0.85
+**Croyance :** T (vérifiée), confiance 0.85 — **Traduction française :** U (non relue par un locuteur natif)
 **Date :** 2026-03-23
 **Prérequis :** CYB-001 (Correspondance VSM), CYB-002 (Amortissement actif)
 

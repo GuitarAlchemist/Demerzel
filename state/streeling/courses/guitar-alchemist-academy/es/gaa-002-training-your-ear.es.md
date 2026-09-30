@@ -353,4 +353,4 @@ Son orientaciones aproximadas. Algunas personas avanzan más rápido y otras má
 - El reconocimiento de intervalos mediante canciones de referencia es una técnica pedagógica muy extendida, aunque la investigación sugiere que la escucha contextual/funcional puede ser más eficaz a largo plazo (Rogers, *Teaching Approaches in Music Theory*)
 - La práctica diaria espaciada de habilidades perceptivas sigue la investigación consolidada sobre la consolidación de la memoria: las sesiones diarias cortas superan a la práctica masiva en tareas de discriminación auditiva
 - Fuentes: Edwin Gordon, *Learning Sequences in Music*; Gary Karpinski, *Aural Skills Acquisition*; Michael Rogers, *Teaching Approaches in Music Theory*
-- Estado de creencia: T(0.80) F(0.03) U(0.12) C(0.05)
+- Estado de creencia: T(0.80) F(0.03) U(0.12) C(0.05); traducción al español: U (sin revisión de un hablante nativo)

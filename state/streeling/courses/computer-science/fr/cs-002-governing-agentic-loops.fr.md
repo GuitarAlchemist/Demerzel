@@ -3,7 +3,7 @@ module_id: cs-002-governing-agentic-loops
 department: computer-science
 course: "IA agentique — Systèmes multi-agents, utilisation d'outils, boucles de raisonnement"
 level: intermediate
-prerequisites: ["Multi-agent orchestration patterns"]
+prerequisites: ["Modèles d'orchestration multi-agents"]
 estimated_duration: "25 minutes"
 produced_by: seldon-auto-research
 research_cycle: cs-2026-03-22-001
@@ -196,4 +196,4 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 ---
 *Produit par Seldon Auto-Research cs-2026-03-22-001 le 2026-03-22.*
 *Question de recherche : Quelles propriétés de gouvernance un framework d'orchestration multi-agents doit-il satisfaire pour empêcher les boucles de raisonnement illimitées tout en préservant la résolution itérative légitime de problèmes ?*
-*Croyance : T (confiance : 0.82) — cohérente en interne avec la théorie du problème de l'arrêt et l'architecture de gouvernance de Demerzel*
+*Croyance : T (confiance : 0.82) — cohérente en interne avec la théorie du problème de l'arrêt et l'architecture de gouvernance de Demerzel ; traduction française : U (non relue par un locuteur natif)*

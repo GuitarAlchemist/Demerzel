@@ -666,4 +666,4 @@ Estos temas forman un vocabulario básico. Un guitarrista de jazz que sepa condu
 - La conducción de voces por notas guía y la pedagogía armónica de Barry Harris representan la tradición de transmisión oral de la armonía del bebop
 - Los sistemas de voicings drop-2 y drop-3 fueron codificados por Ted Greene, Mick Goodrick y el departamento de guitarra de Berklee
 - Fuentes: Levine, *The Jazz Theory Book* (1995); Goodrick, *The Advancing Guitarist* y *Almanac of Guitar Voice Leading* (1987/2011); serie Aebersold Play-Along; Porter, *John Coltrane: His Life and Music* (1998)
-- Estado de creencia: T(0.80) F(0.05) U(0.10) C(0.05)
+- Estado de creencia: T(0.80) F(0.05) U(0.10) C(0.05); traducción al español: U (sin revisión de un hablante nativo)

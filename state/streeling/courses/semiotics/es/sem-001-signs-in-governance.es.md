@@ -166,4 +166,4 @@ Esta auditoría semiótica es un control de calidad ligero que detecta fallos ha
 - Los documentos de gobernanza de la IA contienen de forma demostrable los tres tipos de signo, con funciones distintas
 - El análisis semiótico ofrece un marco de calidad ligero para el diseño de documentos
 - Validado de forma cruzada con GPT-4o-mini: acuerdo alto — las tres categorías confirmadas con ejemplos concretos
-- Estado de creencia: T(0.85) F(0.03) U(0.08) C(0.04)
+- Estado de creencia: T(0.85) F(0.03) U(0.08) C(0.04); traducción al español: U (sin revisión de un hablante nativo)

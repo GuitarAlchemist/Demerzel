@@ -666,4 +666,4 @@ Ces morceaux forment un vocabulaire de base. Un guitariste de jazz capable de co
 - La conduite des voix par notes guides et la pédagogie harmonique de Barry Harris représentent la tradition orale de l'harmonie bebop
 - Les systèmes de voicings drop-2 et drop-3 ont été codifiés par Ted Greene, Mick Goodrick et le département de guitare de Berklee
 - Sources : Levine, *The Jazz Theory Book* (1995) ; Goodrick, *The Advancing Guitarist* et *Almanac of Guitar Voice Leading* (1987/2011) ; série Aebersold Play-Along ; Porter, *John Coltrane: His Life and Music* (1998)
-- État de croyance : T(0.80) F(0.05) U(0.10) C(0.05)
+- État de croyance : T(0.80) F(0.05) U(0.10) C(0.05) — traduction française : U (non relue par un locuteur natif)

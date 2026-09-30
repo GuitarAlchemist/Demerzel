@@ -421,4 +421,4 @@ En la forma sonata, la sección de desarrollo suele pasar por varias tonalidades
 - Referencias al repertorio de guitarra tomadas del canon pedagógico estándar: estudios de Sor (Op. 6, Op. 31), Cinco Preludios de Villa-Lobos, transcripciones de Bach para laúd/violonchelo, sonatas de Giuliani
 - Tipología de cadencias e interacción armónico-formal coherentes con Aldwell & Schachter, *Harmony and Voice Leading*
 - La distinción chacona/passacaglia se reconoce como discutida — la investigación moderna (Silbiger, Hudson) muestra que los compositores barrocos usaban los términos indistintamente
-- Estado de creencia: T(0.83) F(0.03) U(0.10) C(0.04)
+- Estado de creencia: T(0.83) F(0.03) U(0.10) C(0.04); traducción al español: U (sin revisión de un hablante nativo)

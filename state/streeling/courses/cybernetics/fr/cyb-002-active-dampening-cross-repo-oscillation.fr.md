@@ -3,7 +3,7 @@
 **Département :** Cybernétique
 **Identifiant du module :** CYB-002
 **Produit par :** cycle du plan Seldon cybernetics-2026-03-23-002
-**Croyance :** T (probable), confiance 0.83
+**Croyance :** T (probable), confiance 0.83 — **Traduction française :** U (non relue par un locuteur natif)
 **Date :** 2026-03-23
 **Prérequis :** CYB-001 (Correspondance entre le VSM et la gouvernance de l'IA)
 

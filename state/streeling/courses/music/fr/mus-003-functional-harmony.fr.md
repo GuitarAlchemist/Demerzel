@@ -544,4 +544,4 @@ Expérimentez ensuite avec le rythme harmonique : jouez la même progression ave
 - La résolution du triton est une convention de conduite des voix propre à la tonalité de la pratique commune — le mouvement contraire par degrés conjoints décrit par Kostka & Payne et par Aldwell & Schachter — et non une nécessité acoustique
 - La pédagogie des dominantes secondaires et de la modulation suit l'approche graduée : diatonique → tonicisation → modulation
 - Sources : programme du Département de musique de Streeling, consensus de la pédagogie de l'harmonie occidentale
-- État de croyance : T(0.85) F(0.03) U(0.08) C(0.04)
+- État de croyance : T(0.85) F(0.03) U(0.08) C(0.04) — traduction française : U (non relue par un locuteur natif)

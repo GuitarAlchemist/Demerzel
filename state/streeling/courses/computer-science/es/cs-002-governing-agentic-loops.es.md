@@ -3,7 +3,7 @@ module_id: cs-002-governing-agentic-loops
 department: computer-science
 course: "IA agéntica — Sistemas multiagente, uso de herramientas, bucles de razonamiento"
 level: intermediate
-prerequisites: ["Multi-agent orchestration patterns"]
+prerequisites: ["Patrones de orquestación multiagente"]
 estimated_duration: "25 minutes"
 produced_by: seldon-auto-research
 research_cycle: cs-2026-03-22-001
@@ -196,4 +196,4 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 ---
 *Producido por Seldon Auto-Research cs-2026-03-22-001 el 2026-03-22.*
 *Pregunta de investigación: ¿Qué propiedades de gobernanza debe cumplir un framework de orquestación multiagente para evitar bucles de razonamiento ilimitados sin renunciar a la resolución iterativa legítima de problemas?*
-*Creencia: T (confianza: 0.82): coherente internamente con la teoría del problema de la parada y la arquitectura de gobernanza de Demerzel*
+*Creencia: T (confianza: 0.82): coherente internamente con la teoría del problema de la parada y la arquitectura de gobernanza de Demerzel; traducción al español: U (sin revisión de un hablante nativo)*

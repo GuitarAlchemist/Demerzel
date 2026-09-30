@@ -3,7 +3,7 @@
 **Département :** Cybernétique
 **Identifiant du module :** CYB-001
 **Produit par :** Cycle du Plan Seldon cybernetics-2026-03-22-001
-**Croyance :** T (probable), confiance 0.82
+**Croyance :** T (probable), confiance 0.82 — **Traduction française :** U (non relue par un locuteur natif)
 **Date :** 2026-03-22
 
 ## Question de recherche

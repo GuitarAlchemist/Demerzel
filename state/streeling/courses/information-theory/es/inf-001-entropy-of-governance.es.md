@@ -145,4 +145,4 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 - Las métricas de complejidad del software (ciclomática, Halstead) muestran que las medidas formales se correlacionan con la dificultad de mantenimiento
 - El análisis estructural de YAML trata los documentos como secuencias de tokens sobre un alfabeto finito
 - Validación cruzada con GPT-4o-mini: acuerdo medio sobre la hipótesis, fuerte sobre la teoría, se necesita validación empírica
-- Estado de creencia: T(0.75) F(0.05) U(0.15) C(0.05)
+- Estado de creencia: T(0.75) F(0.05) U(0.15) C(0.05); traducción al español: U (sin revisión de un hablante nativo)

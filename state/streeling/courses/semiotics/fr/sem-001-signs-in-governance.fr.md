@@ -166,4 +166,4 @@ Cet audit sémiotique est un contrôle qualité léger qui détecte les défaill
 - Les documents de gouvernance de l'IA contiennent de façon démontrable les trois types de signes, avec des fonctions distinctes
 - L'analyse sémiotique fournit un cadre de qualité léger pour la conception des documents
 - Validation croisée avec GPT-4o-mini : accord élevé — les trois catégories confirmées par des exemples concrets
-- État de croyance : T(0.85) F(0.03) U(0.08) C(0.04)
+- État de croyance : T(0.85) F(0.03) U(0.08) C(0.04) — traduction française : U (non relue par un locuteur natif)

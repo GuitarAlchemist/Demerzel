@@ -544,4 +544,4 @@ Después experimenta con el ritmo armónico: toca la misma progresión con un ac
 - La resolución del tritono es una convención de conducción de voces propia de la tonalidad de la práctica común — el movimiento contrario por grado conjunto que describen Kostka & Payne y Aldwell & Schachter — y no una necesidad acústica
 - La pedagogía de las dominantes secundarias y la modulación sigue el enfoque gradual: diatónica → tonicización → modulación
 - Fuentes: plan de estudios del Departamento de Música de Streeling, consenso de la pedagogía de la armonía occidental
-- Estado de creencia: T(0.85) F(0.03) U(0.08) C(0.04)
+- Estado de creencia: T(0.85) F(0.03) U(0.08) C(0.04); traducción al español: U (sin revisión de un hablante nativo)

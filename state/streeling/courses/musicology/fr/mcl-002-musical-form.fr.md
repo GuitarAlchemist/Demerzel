@@ -421,4 +421,4 @@ Dans la forme sonate, la section de développement traverse souvent plusieurs to
 - Références au répertoire de guitare tirées du canon pédagogique standard : études de Sor (op. 6, op. 31), Cinq Préludes de Villa-Lobos, transcriptions de Bach (luth/violoncelle), sonates de Giuliani
 - Typologie des cadences et interaction harmonie-forme conformes à Aldwell & Schachter, *Harmony and Voice Leading*
 - Distinction chaconne/passacaille reconnue comme contestée — les travaux modernes (Silbiger, Hudson) montrent que les compositeurs baroques employaient les termes de manière interchangeable
-- État de croyance : T(0.83) F(0.03) U(0.10) C(0.04)
+- État de croyance : T(0.83) F(0.03) U(0.10) C(0.04) — traduction française : U (non relue par un locuteur natif)

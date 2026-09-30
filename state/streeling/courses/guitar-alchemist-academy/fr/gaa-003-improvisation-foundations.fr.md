@@ -490,4 +490,4 @@ Lancez un backing track en La mineur (tempo moyen, bluesy). Enregistrez-vous en 
 - Le décalage rythmique et la syncope comme dimensions indépendantes de l'improvisation sont mis en avant dans les traditions afro-cubaines et brésiliennes
 - Le modèle de la « spirale de pratique » reflète les recherches sur la répétition espacée et l'entrelacement dans l'acquisition des habiletés motrices (Bjork & Bjork, 2011)
 - Sources : méthodologie play-along d'Aebersold, programme du Berklee College of Music, série *Inside Improvisation* de Jerry Bergonzi, *Forward Motion* de Hal Galper
-- État de croyance : T(0.78) F(0.04) U(0.13) C(0.05)
+- État de croyance : T(0.78) F(0.04) U(0.13) C(0.05) — traduction française : U (non relue par un locuteur natif)

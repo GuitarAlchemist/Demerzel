@@ -3,7 +3,7 @@
 **Departamento:** Cibernética
 **ID del módulo:** CYB-003
 **Producido por:** ciclo del plan Seldon cybernetics-2026-03-23-003
-**Creencia:** T (verificada), confianza 0.85
+**Creencia:** T (verificada), confianza 0.85; **traducción al español:** U (sin revisión de un hablante nativo)
 **Fecha:** 2026-03-23
 **Requisitos previos:** CYB-001 (Correspondencia con el VSM), CYB-002 (Amortiguación activa)
 

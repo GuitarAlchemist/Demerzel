@@ -204,4 +204,4 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
 ---
 *Produit par Seldon Auto-Research psychohistory-2026-03-23-001 le 2026-03-23.*
 *Question de recherche : Quels signaux mesurables dans l'état d'une gouvernance de l'IA fondée sur des fichiers indiquent qu'un système de gouvernance approche d'une transition de phase ?*
-*Croyance : T (confiance : 0.80) — accord entre Claude et GPT-4o, NotebookLM indisponible*
+*Croyance : T (confiance : 0.80) — accord entre Claude et GPT-4o, NotebookLM indisponible ; traduction française : U (non relue par un locuteur natif)*

@@ -145,4 +145,4 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 - Les métriques de complexité logicielle (cyclomatique, Halstead) montrent que les mesures formelles sont corrélées à la difficulté de maintenance
 - L'analyse structurelle du YAML traite les documents comme des séquences de jetons sur un alphabet fini
 - Validation croisée avec GPT-4o-mini : accord moyen sur l'hypothèse, fort sur la théorie, validation empirique nécessaire
-- État de croyance : T(0.75) F(0.05) U(0.15) C(0.05)
+- État de croyance : T(0.75) F(0.05) U(0.15) C(0.05) — traduction française : U (non relue par un locuteur natif)

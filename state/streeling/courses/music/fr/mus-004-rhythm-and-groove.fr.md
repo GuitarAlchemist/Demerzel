@@ -553,4 +553,4 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 - La modulation métrique a été théorisée systématiquement par Elliott Carter dans ses quatuors à cordes à partir des années 1950
 - Les motifs de groove propres à la guitare sont documentés dans la littérature pédagogique de la guitare (méthodes Berklee, Hal Leonard)
 - Sources : programme du département de musique de Streeling, recherche en cognition musicale, consensus de la pédagogie de la guitare
-- État de croyance : T(0.82) F(0.04) U(0.10) C(0.04)
+- État de croyance : T(0.82) F(0.04) U(0.10) C(0.04) — traduction française : U (non relue par un locuteur natif)

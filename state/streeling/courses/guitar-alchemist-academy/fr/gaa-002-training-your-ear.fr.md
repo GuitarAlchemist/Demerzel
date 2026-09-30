@@ -353,4 +353,4 @@ Ce sont des repères approximatifs. Certains progressent plus vite, d'autres plu
 - La reconnaissance des intervalles par des chansons repères est une technique pédagogique très répandue, bien que la recherche suggère qu'une écoute contextuelle/fonctionnelle puisse être plus efficace à long terme (Rogers, *Teaching Approaches in Music Theory*)
 - La pratique quotidienne espacée des compétences perceptives suit les recherches établies sur la consolidation de la mémoire — de courtes séances quotidiennes surpassent la pratique massée pour les tâches de discrimination auditive
 - Sources : Edwin Gordon, *Learning Sequences in Music* ; Gary Karpinski, *Aural Skills Acquisition* ; Michael Rogers, *Teaching Approaches in Music Theory*
-- État de croyance : T(0.80) F(0.03) U(0.12) C(0.05)
+- État de croyance : T(0.80) F(0.03) U(0.12) C(0.05) — traduction française : U (non relue par un locuteur natif)

@@ -553,4 +553,4 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 - La modulación métrica fue teorizada sistemáticamente por Elliott Carter en sus cuartetos de cuerda a partir de la década de 1950
 - Los patrones de groove específicos de la guitarra están documentados en la literatura pedagógica de guitarra (métodos de Berklee y Hal Leonard)
 - Fuentes: plan de estudios del Departamento de Música de Streeling, investigación sobre cognición musical, consenso de la pedagogía de guitarra
-- Estado de creencia: T(0.82) F(0.04) U(0.10) C(0.04)
+- Estado de creencia: T(0.82) F(0.04) U(0.10) C(0.04); traducción al español: U (sin revisión de un hablante nativo)

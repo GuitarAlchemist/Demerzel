@@ -3,7 +3,7 @@
 **Departamento:** Cibernética
 **ID del módulo:** CYB-001
 **Producido por:** Ciclo del Plan Seldon cybernetics-2026-03-22-001
-**Creencia:** T (probable), confianza 0.82
+**Creencia:** T (probable), confianza 0.82; **traducción al español:** U (sin revisión de un hablante nativo)
 **Fecha:** 2026-03-22
 
 ## Pregunta de investigación

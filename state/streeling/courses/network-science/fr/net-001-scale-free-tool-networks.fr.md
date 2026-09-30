@@ -159,4 +159,4 @@ Pour analyser votre propre réseau d'outils :
 - Des études des dépendances logicielles montrent des distributions en loi de puissance dans npm, PyPI, crates.io
 - La fédération MCP crée naturellement une topologie en étoile, avec les dépôts de gouvernance comme nœuds centraux
 - Validation croisée avec GPT-4o-mini : accord moyen — soutien théorique solide, données MCP spécifiques nécessaires
-- État de croyance : T(0.75) F(0.05) U(0.15) C(0.05)
+- État de croyance : T(0.75) F(0.05) U(0.15) C(0.05) — traduction française : U (non relue par un locuteur natif)

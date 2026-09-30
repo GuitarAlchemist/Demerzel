@@ -159,4 +159,4 @@ Para analizar tu propia red de herramientas:
 - Los estudios de dependencias de software muestran distribuciones en ley de potencia en npm, PyPI y crates.io
 - La federación MCP crea de forma natural una topología de concentrador y radios con los repositorios de gobernanza como nodos centrales
 - Validado de forma cruzada con GPT-4o-mini: acuerdo medio — sólido respaldo teórico, se necesitan datos específicos de MCP
-- Estado de creencia: T(0.75) F(0.05) U(0.15) C(0.05)
+- Estado de creencia: T(0.75) F(0.05) U(0.15) C(0.05); traducción al español: U (sin revisión de un hablante nativo)

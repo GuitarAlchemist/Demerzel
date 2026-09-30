@@ -490,4 +490,4 @@ Pon una pista de acompañamiento en La menor (tempo medio, con sabor a blues). G
 - El desplazamiento rítmico y la síncopa como dimensiones independientes de la improvisación se destacan en las tradiciones afrocubana y brasileña
 - El modelo de la «espiral de práctica» refleja la investigación sobre la repetición espaciada y la práctica intercalada en la adquisición de habilidades motoras (Bjork & Bjork, 2011)
 - Fuentes: metodología play-along de Aebersold, plan de estudios del Berklee College of Music, serie *Inside Improvisation* de Jerry Bergonzi, *Forward Motion* de Hal Galper
-- Estado de creencia: T(0.78) F(0.04) U(0.13) C(0.05)
+- Estado de creencia: T(0.78) F(0.04) U(0.13) C(0.05); traducción al español: U (sin revisión de un hablante nativo)
