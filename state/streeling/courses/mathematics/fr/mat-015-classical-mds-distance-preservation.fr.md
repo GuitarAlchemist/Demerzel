@@ -42,9 +42,9 @@ Trois points d'une droite sont à des distances mutuelles d₁₂ = 1, d₂₃ =
 
 ## 2. Quand une matrice de distances est-elle euclidienne ?
 
-Une matrice symétrique D de diagonale nulle est une **matrice de distances euclidienne** s'il existe des points x₁, …, xₙ d'un certain ℝᵐ avec dᵢⱼ = ‖xᵢ − xⱼ‖. Le critère de Schoenberg (1935) et de Young et Householder (1938) affirme que D est euclidienne exactement quand B est semi-définie positive, et que la plus petite dimension m qui convient est le rang de B. Un sens est le §1 : une matrice de Gram est SDP (MAT-013). Pour l'autre, une matrice B SDP se factorise en B = YYᵀ avec Y = QΛ^(1/2) (MAT-005), et les lignes de Y sont des points aux bonnes distances, puisque bᵢᵢ + bⱼⱼ − 2bᵢⱼ = d²ᵢⱼ pour toute D symétrique de diagonale nulle.
+Une matrice symétrique D de diagonale nulle et de coefficients positifs ou nuls est une **matrice de distances euclidienne** s'il existe des points x₁, …, xₙ d'un certain ℝᵐ avec dᵢⱼ = ‖xᵢ − xⱼ‖. Le critère de Schoenberg (1935) et de Young et Householder (1938) affirme qu'une telle D est euclidienne exactement quand B est semi-définie positive, et que la plus petite dimension m qui convient est le rang de B. Un sens est le §1 : une matrice de Gram est SDP (MAT-013). Pour l'autre, une matrice B SDP se factorise en B = YYᵀ avec Y = QΛ^(1/2) (MAT-005), et les lignes de Y sont des points aux bonnes distances, puisque bᵢᵢ + bⱼⱼ − 2bᵢⱼ = d²ᵢⱼ pour toute D symétrique de diagonale nulle, et que la racine carrée de d²ᵢⱼ est dᵢⱼ car dᵢⱼ ≥ 0. La condition de signe est indispensable : B ne voit que les carrés, donc [[0, −1], [−1, 0]] a la même matrice B semi-définie positive que [[0, 1], [1, 0]] et n'est pourtant pas une matrice de distances (§6).
 
-Comme B1 = 0, et que Jx = x dès que les coordonnées de x ont une somme nulle, xᵀBx = −½ xᵀD⁽²⁾x pour de tels x : D est euclidienne exactement quand xᵀD⁽²⁾x ≤ 0 pour tout x dont les coordonnées ont une somme nulle. Un seul vecteur x avec xᵀBx < 0 est un **témoin** qu'aucune configuration, en aucune dimension, n'a ces distances.
+Comme B1 = 0, et que Jx = x dès que les coordonnées de x ont une somme nulle, xᵀBx = −½ xᵀD⁽²⁾x pour de tels x : une D symétrique de diagonale nulle et de coefficients positifs ou nuls est euclidienne exactement quand xᵀD⁽²⁾x ≤ 0 pour tout x dont les coordonnées ont une somme nulle. Un seul vecteur x avec xᵀBx < 0 est un **témoin** qu'aucune configuration, en aucune dimension, n'a ces distances.
 
 L'inégalité triangulaire est nécessaire mais pas suffisante. Dans un espace euclidien, l'égalité d(a, c) = d(a, b) + d(b, c) force b à se trouver sur le segment de a à c, aux distances prescrites des deux. Les distances de plus court chemin dans un graphe atteignent souvent cette égalité, et les contraintes peuvent alors se contredire.
 
@@ -187,7 +187,7 @@ Pour quels facteurs d'échelle s `symmetric_eigen` renvoie-t-il la diagonale de 
 | **Matrice de centrage** | J = I − (1/n) 11ᵀ, qui soustrait la moyenne |
 | **Matrice doublement centrée** | B = −½ J D⁽²⁾ J, la matrice de Gram des points centrés quand D est euclidienne |
 | **Matrice de distances euclidienne** | Une matrice des distances entre des points d'un certain ℝᵐ |
-| **Critère de Schoenberg** | D est euclidienne exactement quand B est semi-définie positive ; la dimension nécessaire est le rang de B |
+| **Critère de Schoenberg** | Une D symétrique de diagonale nulle et de coefficients positifs ou nuls est euclidienne exactement quand B est semi-définie positive ; la dimension nécessaire est le rang de B |
 | **MDS classique** | La configuration Q_kΛ_k^(1/2) construite sur les k plus grandes valeurs propres de B, appelée aussi analyse en coordonnées principales |
 | **Strain** | L'écart entre B et la matrice de Gram de la configuration, que le MDS classique minimise |
 | **Stress** | L'écart entre les distances données et celles de la configuration, que le MDS métrique minimise |

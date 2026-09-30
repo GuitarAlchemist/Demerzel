@@ -42,9 +42,9 @@ Tres puntos de una recta están a distancias mutuas d₁₂ = 1, d₂₃ = 2 y d
 
 ## 2. ¿Cuándo es euclídea una matriz de distancias?
 
-Una matriz simétrica D con diagonal nula es una **matriz de distancias euclídea** si hay puntos x₁, …, xₙ de algún ℝᵐ con dᵢⱼ = ‖xᵢ − xⱼ‖. El criterio de Schoenberg (1935) y de Young y Householder (1938) afirma que D es euclídea exactamente cuando B es semidefinida positiva, y que la menor dimensión m que sirve es el rango de B. Una dirección es el §1: una matriz de Gram es SDP (MAT-013). Para la otra, una matriz B SDP se factoriza como B = YYᵀ con Y = QΛ^(1/2) (MAT-005), y las filas de Y son puntos con las distancias correctas, ya que bᵢᵢ + bⱼⱼ − 2bᵢⱼ = d²ᵢⱼ para toda D simétrica con diagonal nula.
+Una matriz simétrica D con diagonal nula y entradas no negativas es una **matriz de distancias euclídea** si hay puntos x₁, …, xₙ de algún ℝᵐ con dᵢⱼ = ‖xᵢ − xⱼ‖. El criterio de Schoenberg (1935) y de Young y Householder (1938) afirma que una tal D es euclídea exactamente cuando B es semidefinida positiva, y que la menor dimensión m que sirve es el rango de B. Una dirección es el §1: una matriz de Gram es SDP (MAT-013). Para la otra, una matriz B SDP se factoriza como B = YYᵀ con Y = QΛ^(1/2) (MAT-005), y las filas de Y son puntos con las distancias correctas, ya que bᵢᵢ + bⱼⱼ − 2bᵢⱼ = d²ᵢⱼ para toda D simétrica con diagonal nula, y la raíz cuadrada de d²ᵢⱼ es dᵢⱼ porque dᵢⱼ ≥ 0. La condición de signo es imprescindible: B solo ve los cuadrados, así que [[0, −1], [−1, 0]] tiene la misma B semidefinida positiva que [[0, 1], [1, 0]] y aun así no es una matriz de distancias (§6).
 
-Como B1 = 0, y Jx = x siempre que las entradas de x suman 0, xᵀBx = −½ xᵀD⁽²⁾x para tales x: D es euclídea exactamente cuando xᵀD⁽²⁾x ≤ 0 para todo x cuyas entradas suman 0. Un solo vector x con xᵀBx < 0 es un **testigo** de que ninguna configuración, en ninguna dimensión, tiene esas distancias.
+Como B1 = 0, y Jx = x siempre que las entradas de x suman 0, xᵀBx = −½ xᵀD⁽²⁾x para tales x: una D simétrica con diagonal nula y entradas no negativas es euclídea exactamente cuando xᵀD⁽²⁾x ≤ 0 para todo x cuyas entradas suman 0. Un solo vector x con xᵀBx < 0 es un **testigo** de que ninguna configuración, en ninguna dimensión, tiene esas distancias.
 
 La desigualdad triangular es necesaria pero no suficiente. En un espacio euclídeo, la igualdad d(a, c) = d(a, b) + d(b, c) obliga a b a estar en el segmento de a a c, a las distancias prescritas de ambos. Las distancias de camino más corto en un grafo alcanzan a menudo esta igualdad, y entonces las restricciones pueden contradecirse.
 
@@ -187,7 +187,7 @@ IX proyecta la estrella con k = 2 y con k = 3 y devuelve las mismas distancias. 
 | **Matriz de centrado** | J = I − (1/n) 11ᵀ, que resta la media |
 | **Matriz doblemente centrada** | B = −½ J D⁽²⁾ J, la matriz de Gram de los puntos centrados cuando D es euclídea |
 | **Matriz de distancias euclídea** | Una matriz de las distancias entre puntos de algún ℝᵐ |
-| **Criterio de Schoenberg** | D es euclídea exactamente cuando B es semidefinida positiva; la dimensión necesaria es el rango de B |
+| **Criterio de Schoenberg** | Una D simétrica con diagonal nula y entradas no negativas es euclídea exactamente cuando B es semidefinida positiva; la dimensión necesaria es el rango de B |
 | **MDS clásico** | La configuración Q_kΛ_k^(1/2) construida con los k mayores valores propios de B, también llamada análisis de coordenadas principales |
 | **Strain** | La discrepancia entre B y la matriz de Gram de la configuración, que el MDS clásico minimiza |
 | **Stress** | La discrepancia entre las distancias dadas y las de la configuración, que el MDS métrico minimiza |

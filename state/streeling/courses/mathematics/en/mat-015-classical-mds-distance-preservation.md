@@ -42,9 +42,9 @@ Three points on a line are at mutual distances d₁₂ = 1, d₂₃ = 2 and d₁
 
 ## 2. When Is a Distance Matrix Euclidean?
 
-A symmetric matrix D with zero diagonal is a **Euclidean distance matrix** if there are points x₁, …, xₙ in some ℝᵐ with dᵢⱼ = ‖xᵢ − xⱼ‖. The criterion of Schoenberg (1935) and of Young and Householder (1938) states that D is Euclidean exactly when B is positive semidefinite, and that the smallest dimension m that works is the rank of B. One direction is §1: a Gram matrix is PSD (MAT-013). For the other, a PSD matrix B factors as B = YYᵀ with Y = QΛ^(1/2) (MAT-005), and the rows of Y are points with the right distances, since bᵢᵢ + bⱼⱼ − 2bᵢⱼ = d²ᵢⱼ for any symmetric D with zero diagonal.
+A symmetric matrix D with zero diagonal and nonnegative entries is a **Euclidean distance matrix** if there are points x₁, …, xₙ in some ℝᵐ with dᵢⱼ = ‖xᵢ − xⱼ‖. The criterion of Schoenberg (1935) and of Young and Householder (1938) states that such a D is Euclidean exactly when B is positive semidefinite, and that the smallest dimension m that works is the rank of B. One direction is §1: a Gram matrix is PSD (MAT-013). For the other, a PSD matrix B factors as B = YYᵀ with Y = QΛ^(1/2) (MAT-005), and the rows of Y are points with the right distances, since bᵢᵢ + bⱼⱼ − 2bᵢⱼ = d²ᵢⱼ for any symmetric D with zero diagonal, and the square root of d²ᵢⱼ is dᵢⱼ because dᵢⱼ ≥ 0. The sign condition cannot be dropped: B sees only the squares, so [[0, −1], [−1, 0]] has the same positive semidefinite B as [[0, 1], [1, 0]] and is still not a distance matrix (§6).
 
-Since B1 = 0, and Jx = x whenever the entries of x sum to 0, xᵀBx = −½ xᵀD⁽²⁾x for such x: D is Euclidean exactly when xᵀD⁽²⁾x ≤ 0 for every x whose entries sum to 0. A single vector x with xᵀBx < 0 is a **witness** that no configuration, in any dimension, has these distances.
+Since B1 = 0, and Jx = x whenever the entries of x sum to 0, xᵀBx = −½ xᵀD⁽²⁾x for such x: a symmetric D with zero diagonal and nonnegative entries is Euclidean exactly when xᵀD⁽²⁾x ≤ 0 for every x whose entries sum to 0. A single vector x with xᵀBx < 0 is a **witness** that no configuration, in any dimension, has these distances.
 
 The triangle inequality is necessary but not sufficient. In a Euclidean space, equality d(a, c) = d(a, b) + d(b, c) forces b to lie on the segment from a to c, at the prescribed distances from both. Shortest-path distances in a graph often reach this equality, and then the constraints can contradict one another.
 
@@ -187,7 +187,7 @@ For which scale factors s does `symmetric_eigen` return the diagonal of B unchan
 | **Centring matrix** | J = I − (1/n) 11ᵀ, which subtracts the mean |
 | **Double-centred matrix** | B = −½ J D⁽²⁾ J, the Gram matrix of the centred points when D is Euclidean |
 | **Euclidean distance matrix** | A matrix of the distances between points of some ℝᵐ |
-| **Schoenberg criterion** | D is Euclidean exactly when B is positive semidefinite; the dimension needed is the rank of B |
+| **Schoenberg criterion** | A symmetric D with zero diagonal and nonnegative entries is Euclidean exactly when B is positive semidefinite; the dimension needed is the rank of B |
 | **Classical MDS** | The configuration Q_kΛ_k^(1/2) built from the k largest eigenvalues of B, also called principal coordinate analysis |
 | **Strain** | The discrepancy between B and the Gram matrix of the configuration, which classical MDS minimises |
 | **Stress** | The discrepancy between the given distances and those of the configuration, which metric MDS minimises |
