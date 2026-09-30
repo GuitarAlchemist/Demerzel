@@ -165,17 +165,17 @@ Subdivisión:  1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4
 ```
 
 - **1, 2, 3, 4** son los tiempos (números de tiempo)
-- **&** (pronunciado "and") es el contratiempo de corchea
+- **&** (se dice "y") es el contratiempo de corchea
 - **e** y **a** son las subdivisiones de semicorchea entre el tiempo y el "&"
 
-Dilo en voz alta a un tempo lento: "ONE e and a TWO e and a THREE e and a FOUR e and a". Marca con el pie cada número. Este es el marco de conteo fundamental para todos los ritmos de semicorcheas.
+Dilo en voz alta a un tempo lento: "UNO e y a DOS e y a TRES e y a CUATRO e y a". Marca con el pie cada número. Este es el marco de conteo fundamental para todos los ritmos de semicorcheas.
 
 ### Contar tresillos
 
-Un **tresillo** divide un tiempo en tres partes iguales en lugar de dos. Las sílabas de conteo son "1-trip-let, 2-trip-let, 3-trip-let, 4-trip-let":
+Un **tresillo** divide un tiempo en tres partes iguales en lugar de dos. Las sílabas de conteo son "1-y-a, 2-y-a, 3-y-a, 4-y-a":
 
 ```
-Tiempo:     1  trip  let  2  trip  let  3  trip  let  4  trip  let
+Tiempo:     1   &   a   2   &   a   3   &   a   4   &   a
 ```
 
 Los tresillos se indican con un pequeño **3** sobre las notas unidas por barra. Son la columna vertebral del shuffle, el swing y los ritmos en 12/8.
@@ -188,9 +188,9 @@ Cuando tocas un pasaje y el ritmo se siente desigual, el remedio es casi siempre
 
 A 60 BPM, cuenta en voz alta un compás de 4/4 de cuatro maneras distintas:
 1. Negras: "1, 2, 3, 4"
-2. Corcheas: "1 and 2 and 3 and 4 and"
-3. Semicorcheas: "1 e and a 2 e and a 3 e and a 4 e and a"
-4. Tresillos: "1 trip let 2 trip let 3 trip let 4 trip let"
+2. Corcheas: "1 y 2 y 3 y 4 y"
+3. Semicorcheas: "1 e y a 2 e y a 3 e y a 4 e y a"
+4. Tresillos: "1 y a 2 y a 3 y a 4 y a"
 
 Haz que cada subdivisión sea rítmicamente perfecta. Este ejercicio desarrolla la precisión rítmica interna más que ningún otro.
 
@@ -318,7 +318,7 @@ La notación no puede capturar del todo el swing. La mayoría de las partituras 
 ### Ejercicio práctico
 
 A 90 BPM, toca el mismo pasaje de tres maneras:
-1. **Recto:** "1-and, 2-and, 3-and, 4-and" con corcheas iguales
+1. **Recto:** "1-y, 2-y, 3-y, 4-y" con corcheas iguales
 2. **Swing medio:** primera corchea más larga, segunda más corta, como si contaras "1-da, 2-da, 3-da, 4-da"
 3. **Shuffle pesado:** largo-corto extremo, casi corchea con puntillo + semicorchea
 
@@ -528,7 +528,7 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 > En 6/8, las corcheas se agrupan en dos grupos de tres (1-2-3, 4-5-6), lo que produce dos tiempos sentidos por compás, cada uno dividido en tres. En 3/4, las corcheas se agrupan en tres pares de dos (1-y, 2-y, 3-y), lo que produce tres tiempos sentidos por compás, cada uno dividido en dos. El patrón de acentos — dos tiempos fuertes frente a tres — es totalmente distinto.
 
 **2. Cuenta el ritmo del siguiente patrón de semicorcheas en 4/4 con las sílabas estándar: X-_-X-X-_-X-_-X (donde X = tocar, _ = silencio, sobre un tiempo).**
-> Las sílabas son "1 e and a" para un tiempo. Así que este patrón sobre un tiempo se lee "1 - and a" (tocando en 1, &, a, y silencio en e). Sobre un tiempo completo: tocar en "1", silencio en "e", tocar en "and", tocar en "a". Extendido a todo el compás: "1 - & a 2 - & a 3 - & a 4 - & a" con el mismo patrón de acentos.
+> Las sílabas son "1 e y a" para un tiempo. Así que este patrón sobre un tiempo se lee "1 - y a" (tocando en 1, &, a, y silencio en e). Sobre un tiempo completo: tocar en "1", silencio en "e", tocar en "y", tocar en "a". Extendido a todo el compás: "1 - & a 2 - & a 3 - & a 4 - & a" con el mismo patrón de acentos.
 
 **3. Si el swing de jazz estándar usa aproximadamente una proporción de 60:40 para los pares de corcheas, y el swing marcado usa 67:33 (basado en tresillos), ¿qué diferencia práctica oye el oyente?**
 > A 60:40, el swing es relativamente relajado — la primera corchea es algo más larga, pero sin exagerar. A 67:33, el feeling es la división completa de tresillo, en la que la primera nota dura exactamente el doble que la segunda. Los oyentes perciben el 60:40 como suave y elegante (cool jazz, bebop), mientras que el 67:33 suena saltarín y más pesado (blues, shuffles de gospel). La proporción 67:33 crea un balanceo "con puntillo" claro; la 60:40 es más discreta.
@@ -546,7 +546,7 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 ## Base de investigación
 
 - El pulso, el ritmo y la métrica como capas independientes son la distinción estándar en la investigación sobre cognición musical (London, *Hearing in Time*, 2004)
-- Los sistemas de conteo ("1 e and a" para semicorcheas, "1 trip let" para tresillos) son estándares pedagógicos en la enseñanza musical occidental
+- Los sistemas de conteo ("1 e and a" para semicorcheas, "1 trip let" o "1 & a" para tresillos) son estándares pedagógicos en la enseñanza musical anglófona; este curso los dice en español, con "y" en lugar de "&": "1 e y a", y "1 y a" para los tresillos
 - Las proporciones de swing documentadas empíricamente por Friberg & Sundstrom (2002) muestran que los bateristas de jazz profesionales usan normalmente proporciones de 1.7:1 a 2.5:1 (63:37 a 71:29)
 - El patrón de Travis picking debe su nombre a Merle Travis; se difundió por el country y el folk gracias a la adaptación de Chet Atkins
 - La pedagogía de la polirritmia se apoya en recursos mnemotécnicos verbales (Magadini, *Polyrhythms: The Musician's Guide*, 1993)

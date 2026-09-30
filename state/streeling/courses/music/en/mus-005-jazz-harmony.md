@@ -652,7 +652,7 @@ These tunes form a core vocabulary. A jazz guitarist who can voice lead, comp, a
 > B, G, and Eb. They are equidistant on the chromatic circle, each a major third apart, forming an equilateral triangle on the circle of fifths.
 
 **5. Build a quartal voicing starting on A using stacked perfect fourths (four notes). What familiar chord does this voicing resemble?**
-> A - D - G - C. This is an Am7(11) or equivalently a C/A voicing. The quartal stack contains the notes of Am7 (A C G) plus D (the 11th), but without the tertian ordering.
+> A - D - G - C. This is an Am7(11) without its fifth, or equivalently D7sus4/A, which has the same four notes. The quartal stack contains the notes of Am7 without its fifth E (A C G), plus D (the 11th), but without the tertian ordering.
 
 **Pass criteria:** Identify all ii-V-I progressions in an unfamiliar lead sheet, voice lead through them using at least two voicing types, apply one substitution technique, and explain the voice-leading rationale for each chord connection.
 

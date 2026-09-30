@@ -13,7 +13,7 @@ How can Demerzel measure its variety ratio quantitatively? (Carried from Cycle 0
 
 ## Summary
 
-Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces. This course defines a quantitative framework for measuring Demerzel's variety ratio across three dimensions: behavioral variety (personas), structural variety (grammars), and regulatory variety (policies, constitutions, thresholds). The key formula is V = log2(N) applied per dimension, with the variety ratio R = V_amplifiers / V_attenuators tracked over time to detect governance drift toward over-constraint or under-regulation.
+Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces. This course defines a quantitative framework for measuring Demerzel's variety ratio across three dimensions: behavioral variety (personas), structural variety (grammars), and regulatory variety (policies, constitutions, thresholds). The key formula is V = log2(N) applied per dimension. The variety ratio R = N_amplifiers / N_attenuators compares the two state spaces; since V = log2(N), R = 2^(V_amplifiers - V_attenuators), and its logarithm log2 R = V_amplifiers - V_attenuators, in bits, is tracked over time to detect governance drift toward over-constraint or under-regulation.
 
 ## Ashby's Variety: The Formal Definition
 
@@ -60,7 +60,7 @@ Variety in a governance framework is not a single number. Demerzel's variety ope
 
 **Total behavioral amplification:** V_B_amp = 3.81 + 2.00 + 4.75 = **10.56 bits**
 
-This means Demerzel can produce approximately 2^10.56 = 1,506 distinguishable behavioral configurations.
+This means Demerzel can produce approximately 14 × 4 × 27 = 1,512 distinguishable behavioral configurations (2^10.56 ≈ 1,510).
 
 **Attenuators:**
 | Component | Count (N) | Variety V = log2(N) |
@@ -70,9 +70,9 @@ This means Demerzel can produce approximately 2^10.56 = 1,506 distinguishable be
 
 **Total behavioral attenuation:** V_B_att = 5.81 bits
 
-**Behavioral variety ratio:** R_B = V_B_amp / V_B_att = 10.56 / 5.81 = **1.82**
+**Behavioral variety ratio:** log2 R_B = V_B_amp - V_B_att = 10.56 - 5.81 = **4.75 bits**, so R_B = 2^4.75 ≈ **27**
 
-Interpretation: Behavioral amplification exceeds attenuation by a factor of 1.82. This is healthy — the system has more response capacity than constraint.
+Interpretation: the amplifiers span about 27 times as many states as the attenuators (1,512 configurations against 56 constraints). This is healthy — the system has more response capacity than constraint. Dividing the two varieties instead, 10.56 / 5.81 ≈ 1.82, would not measure this: a quotient of logarithms is not a ratio of state spaces.
 
 ### Dimension 2: Structural Variety (V_S)
 
@@ -95,9 +95,9 @@ Interpretation: Behavioral amplification exceeds attenuation by a factor of 1.82
 
 **Total structural attenuation:** V_S_att = 1.00 bit
 
-**Structural variety ratio:** R_S = V_S_amp / V_S_att = 17.00 / 1.00 = **17.00**
+**Structural variety ratio:** log2 R_S = V_S_amp - V_S_att = 17.00 - 1.00 = **16.00 bits**, so R_S = 2^16.00 ≈ **66,000**
 
-Interpretation: Structural variety is very high relative to attenuation. This reflects the generative nature of grammars — they are variety amplifiers by design. However, this high ratio also signals a potential concern: insufficient structural constraint could lead to grammar sprawl without quality control.
+Interpretation: the grammars span about 66,000 times as many structures as the evolution gates distinguish. This reflects the generative nature of grammars — they are variety amplifiers by design. However, this high ratio also signals a potential concern: insufficient structural constraint could lead to grammar sprawl without quality control.
 
 ### Dimension 3: Regulatory Variety (V_R)
 
@@ -121,35 +121,37 @@ Interpretation: Structural variety is very high relative to attenuation. This re
 
 **Total regulatory attenuation:** V_R_att = 5.21 + 4.09 + 2.00 = **11.30 bits**
 
-**Regulatory variety ratio:** R_R = V_R_amp / V_R_att = 6.32 / 11.30 = **0.56**
+**Regulatory variety ratio:** log2 R_R = V_R_amp - V_R_att = 6.32 - 11.30 = **-4.98 bits**, so R_R = 2^-4.98 ≈ **0.032**
 
-Interpretation: Regulatory attenuation significantly exceeds amplification. This is **by design** — governance should constrain more than it amplifies. A regulatory ratio below 1.0 means the system is conservative, which aligns with Asimov's Laws (prefer safety over capability).
+Interpretation: regulatory attenuation significantly exceeds amplification: the attenuators span about 31 times as many states as the amplifiers (37 × 17 × 4 = 2,516 combinations against 4 × 5 × 4 = 80). This is **by design** — governance should constrain more than it amplifies. A regulatory ratio below 1, a negative log2 R_R, means the system is conservative, which aligns with Asimov's Laws (prefer safety over capability).
 
 ## The Composite Variety Dashboard
 
 ### Summary Table
 
-| Dimension | V_amplifiers | V_attenuators | Ratio R | Assessment |
-|-----------|-------------|---------------|---------|------------|
-| Behavioral (V_B) | 10.56 bits | 5.81 bits | 1.82 | Healthy — more response capacity than constraint |
-| Structural (V_S) | 17.00 bits | 1.00 bit | 17.00 | Caution — high generativity, low constraint |
-| Regulatory (V_R) | 6.32 bits | 11.30 bits | 0.56 | By design — governance is conservative |
+| Dimension | V_amplifiers | V_attenuators | log2 R | Ratio R | Assessment |
+|-----------|-------------|---------------|--------|---------|------------|
+| Behavioral (V_B) | 10.56 bits | 5.81 bits | 4.75 bits | ≈ 27 | Healthy — more response capacity than constraint |
+| Structural (V_S) | 17.00 bits | 1.00 bit | 16.00 bits | ≈ 66,000 | Caution — high generativity, low constraint |
+| Regulatory (V_R) | 6.32 bits | 11.30 bits | -4.98 bits | ≈ 0.032 | By design — governance is conservative |
 
-### Healthy Ranges
+### Healthy Directions
 
-Based on Ashby's Law and VSM principles (CYB-001), healthy variety ratios differ by dimension:
+Ashby's Law and VSM principles (CYB-001) set the direction each ratio should take, not yet its size:
 
-| Dimension | Healthy Range | Rationale |
+| Dimension | Healthy Direction | Rationale |
 |-----------|---------------|-----------|
-| Behavioral | 1.2 -- 3.0 | System needs more behavioral options than constraints, but not unbounded |
-| Structural | 2.0 -- 10.0 | Grammars should be generative but gated by quality controls |
-| Regulatory | 0.3 -- 0.8 | Governance SHOULD be over-attenuated — this is the conservative principle |
+| Behavioral | R > 1 (log2 R > 0 bits) | System needs more behavioral options than constraints, but not unbounded |
+| Structural | R > 1 (log2 R > 0 bits), with quality gates | Grammars should be generative but gated by quality controls |
+| Regulatory | R < 1 (log2 R < 0 bits) | Governance SHOULD be over-attenuated — this is the conservative principle |
+
+Numeric bounds on log2 R remain to be calibrated against observed cycles. They cannot be set on the quotient V_amplifiers / V_attenuators, which has no fixed meaning in state-space terms: 10 / 5 and 2 / 1 are both 2, while the state spaces they compare differ by factors of 2^5 = 32 and 2^1 = 2. A negative log2 R is not a negative variety: it is the logarithm of a ratio below 1.
 
 ### Current Assessment
 
-- **Behavioral (1.82):** Within healthy range. No action needed.
-- **Structural (17.00):** Above healthy range. The 27 grammars with ~324 productions are weakly constrained. Recommendation: add structural quality gates (e.g., grammar test coverage requirements, production usage tracking).
-- **Regulatory (0.56):** Within healthy range. The system is conservative but not paralyzed.
+- **Behavioral (R_B ≈ 27, 4.75 bits):** In the healthy direction. No action needed.
+- **Structural (R_S ≈ 66,000, 16.00 bits):** In the healthy direction, but by far the largest ratio of the three: 2 evolution gates against the structures of 27 grammars with ~324 productions, which are weakly constrained. Recommendation: add structural quality gates (e.g., grammar test coverage requirements, production usage tracking).
+- **Regulatory (R_R ≈ 0.032, -4.98 bits):** In the healthy direction. The system is conservative; telling whether it is too conservative needs a calibrated lower bound.
 
 ## The Disturbance Side: What Must Be Regulated?
 
@@ -229,10 +231,10 @@ To track the variety ratio over time, Demerzel should compute the following metr
 
 ```json
 {
-  "variety_ratios": {
-    "behavioral": 1.82,
-    "structural": 17.00,
-    "regulatory": 0.56,
+  "variety_ratios_log2_bits": {
+    "behavioral": 4.75,
+    "structural": 16.00,
+    "regulatory": -4.98,
     "timestamp": "2026-03-23T00:00:00Z"
   }
 }
@@ -240,11 +242,13 @@ To track the variety ratio over time, Demerzel should compute the following metr
 
 ### Metric 3: Trend Detection
 
-Track ratios over consecutive cycles. Alert when:
-- Any ratio crosses its healthy range boundary
-- The regulatory ratio drops below 0.3 (system paralysis risk)
-- The structural ratio exceeds 20.0 (grammar sprawl risk)
-- The behavioral ratio drops below 1.0 (under-responsive system)
+Track log2 R over consecutive cycles. Alert when:
+- Any ratio leaves its healthy direction (its log2 R changes sign)
+- The regulatory log2 R_R falls by 1 bit or more in one cycle (paralysis risk: relative to the amplifiers, the attenuators' state space has doubled)
+- The structural log2 R_S rises by 1 bit or more in one cycle (grammar sprawl risk)
+- The behavioral log2 R_B falls by 1 bit or more in one cycle (the system becomes less responsive)
+
+A 1-bit step, a doubling or halving of the ratio, is a starting threshold, not a calibrated one.
 
 ### Metric 4: Disturbance Growth Rate
 
@@ -265,7 +269,7 @@ Cross-validation with GPT-4o confirmed:
 ## Implications for Demerzel
 
 1. **Track variety ratios per cycle** — Add variety snapshot to `state/governance/variety-metrics.json` (or equivalent state file). Monitor dimensional ratios for drift.
-2. **Add structural quality gates** — The structural ratio (17.00) is above healthy range. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
+2. **Add structural quality gates** — The structural ratio, 2^16.00 ≈ 66,000, is by far the largest of the three. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
 3. **Monitor the regulatory gap (3.06 to 30.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest single source of disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Being the largest single source, it raises both bounds at once. Consider policy grouping or hierarchical policy organization.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 78-82) should be expanded with quantitative measurement productions.
@@ -273,7 +277,7 @@ Cross-validation with GPT-4o confirmed:
 ## Connection to CYB-001 and CYB-002
 
 - **CYB-001** identified that Ashby's Law applies to Demerzel and listed variety amplifiers/attenuators qualitatively. CYB-003 makes this quantitative.
-- **CYB-001 Recommendation 5** ("Monitor variety ratio") is now operationalized with specific formulas, healthy ranges, and a measurement protocol.
+- **CYB-001 Recommendation 5** ("Monitor variety ratio") is now operationalized with specific formulas, healthy directions, and a measurement protocol.
 - **CYB-002** addressed System 2 dampening. The deadband and hysteresis mechanisms from CYB-002 are themselves variety attenuators — they reduce the variety of signals flowing through coordination channels. CYB-003's structural attenuation metric should include these when implemented.
 
 ## Sources

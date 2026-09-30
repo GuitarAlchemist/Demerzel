@@ -652,7 +652,7 @@ Ces morceaux forment un vocabulaire de base. Un guitariste de jazz capable de co
 > B, G et Eb. Ils sont équidistants sur le cercle chromatique, chacun à une tierce majeure d'écart, et forment un triangle équilatéral sur le cycle des quintes.
 
 **5. Construisez un voicing en quartes à partir de A avec des quartes justes empilées (quatre notes). À quel accord familier ce voicing ressemble-t-il ?**
-> A - D - G - C. C'est un Am7(11) ou, de manière équivalente, un voicing C/A. L'empilement de quartes contient les notes de Am7 (A C G) plus D (la 11e), mais sans l'ordre en tierces.
+> A - D - G - C. C'est un Am7(11) sans sa quinte ou, de manière équivalente, un D7sus4/A, qui a les mêmes quatre notes. L'empilement de quartes contient les notes de Am7 sans sa quinte E (A C G), plus D (la 11e), mais sans l'ordre en tierces.
 
 **Critères de réussite :** identifier toutes les progressions ii-V-I d'une grille inconnue, y conduire les voix avec au moins deux types de voicings, appliquer une technique de substitution et expliquer la logique de conduite des voix de chaque enchaînement d'accords.
 

@@ -652,7 +652,7 @@ Estos temas forman un vocabulario básico. Un guitarrista de jazz que sepa condu
 > B, G y Eb. Son equidistantes en el círculo cromático, cada uno a una tercera mayor de distancia, y forman un triángulo equilátero en el círculo de quintas.
 
 **5. Construye un voicing por cuartas empezando en A con cuartas justas apiladas (cuatro notas). ¿A qué acorde conocido se parece este voicing?**
-> A - D - G - C. Es un Am7(11) o, de forma equivalente, un voicing C/A. La pila de cuartas contiene las notas de Am7 (A C G) más D (la 11.ª), pero sin el orden por terceras.
+> A - D - G - C. Es un Am7(11) sin su quinta o, de forma equivalente, un D7sus4/A, que tiene las mismas cuatro notas. La pila de cuartas contiene las notas de Am7 sin su quinta E (A C G), más D (la 11.ª), pero sin el orden por terceras.
 
 **Criterios de aprobación:** identificar todas las progresiones ii-V-I en una partitura guía desconocida, conducir las voces a través de ellas con al menos dos tipos de voicing, aplicar una técnica de sustitución y explicar la lógica de conducción de voces de cada enlace de acordes.
 

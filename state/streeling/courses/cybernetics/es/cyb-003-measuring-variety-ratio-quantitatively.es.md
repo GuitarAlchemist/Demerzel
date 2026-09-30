@@ -13,7 +13,7 @@
 
 ## Resumen
 
-La ley de la variedad requerida de Ashby establece que un regulador debe tener al menos tanta variedad como las perturbaciones a las que se enfrenta. Este curso define un marco cuantitativo para medir el cociente de variedad de Demerzel en tres dimensiones: variedad conductual (personas), variedad estructural (gramáticas) y variedad regulatoria (políticas, constituciones, umbrales). La fórmula clave es V = log2(N) aplicada a cada dimensión, con el cociente de variedad R = V_amplifiers / V_attenuators seguido a lo largo del tiempo para detectar una deriva de la gobernanza hacia la sobrerrestricción o la infrarregulación.
+La ley de la variedad requerida de Ashby establece que un regulador debe tener al menos tanta variedad como las perturbaciones a las que se enfrenta. Este curso define un marco cuantitativo para medir el cociente de variedad de Demerzel en tres dimensiones: variedad conductual (personas), variedad estructural (gramáticas) y variedad regulatoria (políticas, constituciones, umbrales). La fórmula clave es V = log2(N) aplicada a cada dimensión. El cociente de variedad R = N_amplifiers / N_attenuators compara los dos espacios de estados; como V = log2(N), R = 2^(V_amplifiers - V_attenuators), y su logaritmo log2 R = V_amplifiers - V_attenuators, en bits, se sigue a lo largo del tiempo para detectar una deriva de la gobernanza hacia la sobrerrestricción o la infrarregulación.
 
 ## La variedad de Ashby: la definición formal
 
@@ -60,7 +60,7 @@ En un marco de gobernanza, la variedad no es un único número. La variedad de D
 
 **Amplificación conductual total:** V_B_amp = 3.81 + 2.00 + 4.75 = **10.56 bits**
 
-Esto significa que Demerzel puede producir aproximadamente 2^10.56 = 1,506 configuraciones conductuales distinguibles.
+Esto significa que Demerzel puede producir aproximadamente 14 × 4 × 27 = 1,512 configuraciones conductuales distinguibles (2^10.56 ≈ 1,510).
 
 **Atenuadores:**
 | Componente | Cantidad (N) | Variedad V = log2(N) |
@@ -70,9 +70,9 @@ Esto significa que Demerzel puede producir aproximadamente 2^10.56 = 1,506 confi
 
 **Atenuación conductual total:** V_B_att = 5.81 bits
 
-**Cociente de variedad conductual:** R_B = V_B_amp / V_B_att = 10.56 / 5.81 = **1.82**
+**Cociente de variedad conductual:** log2 R_B = V_B_amp - V_B_att = 10.56 - 5.81 = **4.75 bits**, así que R_B = 2^4.75 ≈ **27**
 
-Interpretación: la amplificación conductual supera a la atenuación en un factor de 1.82. Esto es saludable: el sistema tiene más capacidad de respuesta que restricción.
+Interpretación: los amplificadores abarcan unas 27 veces más estados que los atenuadores (1,512 configuraciones frente a 56 restricciones). Esto es saludable: el sistema tiene más capacidad de respuesta que restricción. Dividir en cambio las dos variedades, 10.56 / 5.81 ≈ 1.82, no mediría esto: un cociente de logaritmos no es un cociente de espacios de estados.
 
 ### Dimensión 2: variedad estructural (V_S)
 
@@ -95,9 +95,9 @@ Interpretación: la amplificación conductual supera a la atenuación en un fact
 
 **Atenuación estructural total:** V_S_att = 1.00 bit
 
-**Cociente de variedad estructural:** R_S = V_S_amp / V_S_att = 17.00 / 1.00 = **17.00**
+**Cociente de variedad estructural:** log2 R_S = V_S_amp - V_S_att = 17.00 - 1.00 = **16.00 bits**, así que R_S = 2^16.00 ≈ **66,000**
 
-Interpretación: la variedad estructural es muy alta en relación con la atenuación. Esto refleja la naturaleza generativa de las gramáticas: son amplificadores de variedad por diseño. Sin embargo, este cociente alto también señala un posible problema: una restricción estructural insuficiente podría llevar a una proliferación de gramáticas sin control de calidad.
+Interpretación: las gramáticas abarcan unas 66,000 veces más estructuras de las que distinguen las puertas de evolución. Esto refleja la naturaleza generativa de las gramáticas: son amplificadores de variedad por diseño. Sin embargo, este cociente alto también señala un posible problema: una restricción estructural insuficiente podría llevar a una proliferación de gramáticas sin control de calidad.
 
 ### Dimensión 3: variedad regulatoria (V_R)
 
@@ -121,35 +121,37 @@ Interpretación: la variedad estructural es muy alta en relación con la atenuac
 
 **Atenuación regulatoria total:** V_R_att = 5.21 + 4.09 + 2.00 = **11.30 bits**
 
-**Cociente de variedad regulatoria:** R_R = V_R_amp / V_R_att = 6.32 / 11.30 = **0.56**
+**Cociente de variedad regulatoria:** log2 R_R = V_R_amp - V_R_att = 6.32 - 11.30 = **-4.98 bits**, así que R_R = 2^-4.98 ≈ **0.032**
 
-Interpretación: la atenuación regulatoria supera con claridad a la amplificación. Esto es **intencionado**: la gobernanza debe restringir más de lo que amplifica. Un cociente regulatorio inferior a 1.0 significa que el sistema es conservador, lo que concuerda con las leyes de Asimov (preferir la seguridad a la capacidad).
+Interpretación: la atenuación regulatoria supera con claridad a la amplificación: los atenuadores abarcan unas 31 veces más estados que los amplificadores (37 × 17 × 4 = 2,516 combinaciones frente a 4 × 5 × 4 = 80). Esto es **intencionado**: la gobernanza debe restringir más de lo que amplifica. Un cociente regulatorio inferior a 1, es decir, un log2 R_R negativo, significa que el sistema es conservador, lo que concuerda con las leyes de Asimov (preferir la seguridad a la capacidad).
 
 ## El panel compuesto de variedad
 
 ### Tabla resumen
 
-| Dimensión | V_amplifiers | V_attenuators | Cociente R | Valoración |
-|-----------|-------------|---------------|---------|------------|
-| Conductual (V_B) | 10.56 bits | 5.81 bits | 1.82 | Saludable: más capacidad de respuesta que restricción |
-| Estructural (V_S) | 17.00 bits | 1.00 bit | 17.00 | Precaución: alta generatividad, poca restricción |
-| Regulatoria (V_R) | 6.32 bits | 11.30 bits | 0.56 | Intencionado: la gobernanza es conservadora |
+| Dimensión | V_amplifiers | V_attenuators | log2 R | Cociente R | Valoración |
+|-----------|-------------|---------------|--------|---------|------------|
+| Conductual (V_B) | 10.56 bits | 5.81 bits | 4.75 bits | ≈ 27 | Saludable: más capacidad de respuesta que restricción |
+| Estructural (V_S) | 17.00 bits | 1.00 bit | 16.00 bits | ≈ 66,000 | Precaución: alta generatividad, poca restricción |
+| Regulatoria (V_R) | 6.32 bits | 11.30 bits | -4.98 bits | ≈ 0.032 | Intencionado: la gobernanza es conservadora |
 
-### Rangos saludables
+### Sentidos saludables
 
-Según la ley de Ashby y los principios del VSM (CYB-001), los cocientes de variedad saludables difieren según la dimensión:
+La ley de Ashby y los principios del VSM (CYB-001) fijan el sentido que debe tomar cada cociente, todavía no su tamaño:
 
-| Dimensión | Rango saludable | Justificación |
+| Dimensión | Sentido saludable | Justificación |
 |-----------|---------------|-----------|
-| Conductual | 1.2 -- 3.0 | El sistema necesita más opciones conductuales que restricciones, pero no sin límite |
-| Estructural | 2.0 -- 10.0 | Las gramáticas deben ser generativas, pero filtradas por controles de calidad |
-| Regulatoria | 0.3 -- 0.8 | La gobernanza DEBE estar sobreatenuada: es el principio conservador |
+| Conductual | R > 1 (log2 R > 0 bits) | El sistema necesita más opciones conductuales que restricciones, pero no sin límite |
+| Estructural | R > 1 (log2 R > 0 bits), con puertas de calidad | Las gramáticas deben ser generativas, pero filtradas por controles de calidad |
+| Regulatoria | R < 1 (log2 R < 0 bits) | La gobernanza DEBE estar sobreatenuada: es el principio conservador |
+
+Los límites numéricos de log2 R quedan por calibrar con ciclos observados. No pueden fijarse sobre el cociente V_amplifiers / V_attenuators, que no tiene un sentido fijo en términos de espacios de estados: 10 / 5 y 2 / 1 valen ambos 2, mientras que los espacios de estados que comparan difieren en factores de 2^5 = 32 y 2^1 = 2. Un log2 R negativo no es una variedad negativa: es el logaritmo de un cociente menor que 1.
 
 ### Valoración actual
 
-- **Conductual (1.82):** Dentro del rango saludable. No se requiere ninguna acción.
-- **Estructural (17.00):** Por encima del rango saludable. Las 27 gramáticas con ~324 producciones están débilmente restringidas. Recomendación: añadir puertas de calidad estructurales (por ejemplo, requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones).
-- **Regulatoria (0.56):** Dentro del rango saludable. El sistema es conservador, pero no está paralizado.
+- **Conductual (R_B ≈ 27, 4.75 bits):** En el sentido saludable. No se requiere ninguna acción.
+- **Estructural (R_S ≈ 66,000, 16.00 bits):** En el sentido saludable, pero con mucho el mayor cociente de los tres: 2 puertas de evolución frente a las estructuras de 27 gramáticas con ~324 producciones, que están débilmente restringidas. Recomendación: añadir puertas de calidad estructurales (por ejemplo, requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones).
+- **Regulatoria (R_R ≈ 0.032, -4.98 bits):** En el sentido saludable. El sistema es conservador; saber si lo es demasiado requiere un límite inferior calibrado.
 
 ## El lado de las perturbaciones: ¿qué hay que regular?
 
@@ -229,10 +231,10 @@ Para seguir el cociente de variedad a lo largo del tiempo, Demerzel debería cal
 
 ```json
 {
-  "variety_ratios": {
-    "behavioral": 1.82,
-    "structural": 17.00,
-    "regulatory": 0.56,
+  "variety_ratios_log2_bits": {
+    "behavioral": 4.75,
+    "structural": 16.00,
+    "regulatory": -4.98,
     "timestamp": "2026-03-23T00:00:00Z"
   }
 }
@@ -240,11 +242,13 @@ Para seguir el cociente de variedad a lo largo del tiempo, Demerzel debería cal
 
 ### Métrica 3: detección de tendencias
 
-Sigue los cocientes a lo largo de ciclos consecutivos. Alerta cuando:
-- Cualquier cociente cruce el límite de su rango saludable
-- El cociente regulatorio baje de 0.3 (riesgo de parálisis del sistema)
-- El cociente estructural supere 20.0 (riesgo de proliferación de gramáticas)
-- El cociente conductual baje de 1.0 (sistema con respuesta insuficiente)
+Sigue log2 R a lo largo de ciclos consecutivos. Alerta cuando:
+- Cualquier cociente salga de su sentido saludable (su log2 R cambie de signo)
+- El log2 R_R regulatorio baje 1 bit o más en un ciclo (riesgo de parálisis: en relación con los amplificadores, el espacio de estados de los atenuadores se ha duplicado)
+- El log2 R_S estructural suba 1 bit o más en un ciclo (riesgo de proliferación de gramáticas)
+- El log2 R_B conductual baje 1 bit o más en un ciclo (el sistema responde menos)
+
+Un paso de 1 bit, es decir, un cociente que se duplica o se reduce a la mitad, es un umbral de partida, no un umbral calibrado.
 
 ### Métrica 4: tasa de crecimiento de las perturbaciones
 
@@ -265,7 +269,7 @@ La validación cruzada con GPT-4o confirmó:
 ## Implicaciones para Demerzel
 
 1. **Seguir los cocientes de variedad en cada ciclo**: añadir una instantánea de variedad a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Vigilar la deriva de los cocientes por dimensión.
-2. **Añadir puertas de calidad estructurales**: el cociente estructural (17.00) está por encima del rango saludable. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones para aumentar la atenuación sin reducir la generatividad.
+2. **Añadir puertas de calidad estructurales**: el cociente estructural, 2^16.00 ≈ 66,000, es con mucho el mayor de los tres. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones para aumentar la atenuación sin reducir la generatividad.
 3. **Vigilar la brecha regulatoria (de 3.06 a 30.31 bits)**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente aislada de perturbación. A medida que crezcan las políticas, el número de pares crecerá de forma cuadrática, pero su variedad log2(n(n-1)/2) solo crecerá de forma logarítmica, unos 2 bits cada vez que se duplique el número de políticas. Como es la mayor fuente aislada, esos bits elevan de inmediato las dos cotas. Considerar agrupar las políticas u organizarlas jerárquicamente.
 4. **El escalado a humanos es un puente de variedad**: el sistema de umbrales de confianza (Artículo 6: Escalado) es el mecanismo principal de Demerzel para absorber la variedad que supera su capacidad regulatoria. Es una característica, no una limitación.
 5. **Hacer evolucionar la sección 6 de la gramática**: la sección de variedad requerida de la gramática `sci-cybernetics.ebnf` (líneas 78-82) debería ampliarse con producciones de medición cuantitativa.
@@ -273,7 +277,7 @@ La validación cruzada con GPT-4o confirmó:
 ## Relación con CYB-001 y CYB-002
 
 - **CYB-001** estableció que la ley de Ashby se aplica a Demerzel y enumeró cualitativamente los amplificadores y atenuadores de variedad. CYB-003 lo hace cuantitativo.
-- **La recomendación 5 de CYB-001** («Vigilar el cociente de variedad») queda ahora operacionalizada con fórmulas concretas, rangos saludables y un protocolo de medición.
+- **La recomendación 5 de CYB-001** («Vigilar el cociente de variedad») queda ahora operacionalizada con fórmulas concretas, sentidos saludables y un protocolo de medición.
 - **CYB-002** abordó la amortiguación del Sistema 2. Los mecanismos de banda muerta e histéresis de CYB-002 son en sí mismos atenuadores de variedad: reducen la variedad de las señales que circulan por los canales de coordinación. La métrica de atenuación estructural de CYB-003 debería incluirlos cuando se implementen.
 
 ## Fuentes

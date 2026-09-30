@@ -13,7 +13,7 @@ Comment Demerzel peut-elle mesurer quantitativement son ratio de variété ? (Re
 
 ## Résumé
 
-La loi de la variété requise d'Ashby énonce qu'un régulateur doit avoir au moins autant de variété que les perturbations auxquelles il fait face. Ce cours définit un cadre quantitatif pour mesurer le ratio de variété de Demerzel selon trois dimensions : la variété comportementale (personas), la variété structurelle (grammaires) et la variété régulatrice (politiques, constitutions, seuils). La formule clé est V = log2(N), appliquée à chaque dimension, avec le ratio de variété R = V_amplifiers / V_attenuators suivi dans le temps pour détecter une dérive de la gouvernance vers la sur-contrainte ou la sous-régulation.
+La loi de la variété requise d'Ashby énonce qu'un régulateur doit avoir au moins autant de variété que les perturbations auxquelles il fait face. Ce cours définit un cadre quantitatif pour mesurer le ratio de variété de Demerzel selon trois dimensions : la variété comportementale (personas), la variété structurelle (grammaires) et la variété régulatrice (politiques, constitutions, seuils). La formule clé est V = log2(N), appliquée à chaque dimension. Le ratio de variété R = N_amplifiers / N_attenuators compare les deux espaces d'états ; comme V = log2(N), R = 2^(V_amplifiers - V_attenuators), et son logarithme log2 R = V_amplifiers - V_attenuators, en bits, est suivi dans le temps pour détecter une dérive de la gouvernance vers la sur-contrainte ou la sous-régulation.
 
 ## La variété d'Ashby : la définition formelle
 
@@ -60,7 +60,7 @@ Dans un cadre de gouvernance, la variété n'est pas un nombre unique. La varié
 
 **Amplification comportementale totale :** V_B_amp = 3.81 + 2.00 + 4.75 = **10.56 bits**
 
-Cela signifie que Demerzel peut produire environ 2^10.56 = 1,506 configurations comportementales distinguables.
+Cela signifie que Demerzel peut produire environ 14 × 4 × 27 = 1,512 configurations comportementales distinguables (2^10.56 ≈ 1,510).
 
 **Atténuateurs :**
 | Composant | Nombre (N) | Variété V = log2(N) |
@@ -70,9 +70,9 @@ Cela signifie que Demerzel peut produire environ 2^10.56 = 1,506 configurations 
 
 **Atténuation comportementale totale :** V_B_att = 5.81 bits
 
-**Ratio de variété comportementale :** R_B = V_B_amp / V_B_att = 10.56 / 5.81 = **1.82**
+**Ratio de variété comportementale :** log2 R_B = V_B_amp - V_B_att = 10.56 - 5.81 = **4.75 bits**, donc R_B = 2^4.75 ≈ **27**
 
-Interprétation : l'amplification comportementale dépasse l'atténuation d'un facteur 1.82. C'est sain — le système a plus de capacité de réponse que de contrainte.
+Interprétation : les amplificateurs couvrent environ 27 fois plus d'états que les atténuateurs (1,512 configurations contre 56 contraintes). C'est sain — le système a plus de capacité de réponse que de contrainte. Diviser plutôt les deux variétés, 10.56 / 5.81 ≈ 1.82, ne mesurerait pas cela : un quotient de logarithmes n'est pas un rapport d'espaces d'états.
 
 ### Dimension 2 : variété structurelle (V_S)
 
@@ -95,9 +95,9 @@ Interprétation : l'amplification comportementale dépasse l'atténuation d'un f
 
 **Atténuation structurelle totale :** V_S_att = 1.00 bit
 
-**Ratio de variété structurelle :** R_S = V_S_amp / V_S_att = 17.00 / 1.00 = **17.00**
+**Ratio de variété structurelle :** log2 R_S = V_S_amp - V_S_att = 17.00 - 1.00 = **16.00 bits**, donc R_S = 2^16.00 ≈ **66,000**
 
-Interprétation : la variété structurelle est très élevée par rapport à l'atténuation. Cela reflète la nature générative des grammaires — elles sont des amplificateurs de variété par conception. Ce ratio élevé signale toutefois un risque : une contrainte structurelle insuffisante pourrait conduire à une prolifération des grammaires sans contrôle de qualité.
+Interprétation : les grammaires couvrent environ 66,000 fois plus de structures que les portes d'évolution n'en distinguent. Cela reflète la nature générative des grammaires — elles sont des amplificateurs de variété par conception. Ce ratio élevé signale toutefois un risque : une contrainte structurelle insuffisante pourrait conduire à une prolifération des grammaires sans contrôle de qualité.
 
 ### Dimension 3 : variété régulatrice (V_R)
 
@@ -121,35 +121,37 @@ Interprétation : la variété structurelle est très élevée par rapport à l'
 
 **Atténuation régulatrice totale :** V_R_att = 5.21 + 4.09 + 2.00 = **11.30 bits**
 
-**Ratio de variété régulatrice :** R_R = V_R_amp / V_R_att = 6.32 / 11.30 = **0.56**
+**Ratio de variété régulatrice :** log2 R_R = V_R_amp - V_R_att = 6.32 - 11.30 = **-4.98 bits**, donc R_R = 2^-4.98 ≈ **0.032**
 
-Interprétation : l'atténuation régulatrice dépasse nettement l'amplification. C'est **voulu** — la gouvernance doit contraindre plus qu'elle n'amplifie. Un ratio régulateur inférieur à 1.0 signifie que le système est prudent, ce qui s'accorde avec les lois d'Asimov (préférer la sécurité à la capacité).
+Interprétation : l'atténuation régulatrice dépasse nettement l'amplification : les atténuateurs couvrent environ 31 fois plus d'états que les amplificateurs (37 × 17 × 4 = 2,516 combinaisons contre 4 × 5 × 4 = 80). C'est **voulu** — la gouvernance doit contraindre plus qu'elle n'amplifie. Un ratio régulateur inférieur à 1, soit un log2 R_R négatif, signifie que le système est prudent, ce qui s'accorde avec les lois d'Asimov (préférer la sécurité à la capacité).
 
 ## Le tableau de bord composite de la variété
 
 ### Tableau récapitulatif
 
-| Dimension | V_amplifiers | V_attenuators | Ratio R | Évaluation |
-|-----------|-------------|---------------|---------|------------|
-| Comportementale (V_B) | 10.56 bits | 5.81 bits | 1.82 | Saine — plus de capacité de réponse que de contrainte |
-| Structurelle (V_S) | 17.00 bits | 1.00 bit | 17.00 | Prudence — forte générativité, faible contrainte |
-| Régulatrice (V_R) | 6.32 bits | 11.30 bits | 0.56 | Voulu — la gouvernance est prudente |
+| Dimension | V_amplifiers | V_attenuators | log2 R | Ratio R | Évaluation |
+|-----------|-------------|---------------|--------|---------|------------|
+| Comportementale (V_B) | 10.56 bits | 5.81 bits | 4.75 bits | ≈ 27 | Saine — plus de capacité de réponse que de contrainte |
+| Structurelle (V_S) | 17.00 bits | 1.00 bit | 16.00 bits | ≈ 66,000 | Prudence — forte générativité, faible contrainte |
+| Régulatrice (V_R) | 6.32 bits | 11.30 bits | -4.98 bits | ≈ 0.032 | Voulu — la gouvernance est prudente |
 
-### Plages saines
+### Sens sains
 
-D'après la loi d'Ashby et les principes du VSM (CYB-001), les ratios de variété sains diffèrent selon la dimension :
+La loi d'Ashby et les principes du VSM (CYB-001) fixent le sens que doit prendre chaque ratio, pas encore sa taille :
 
-| Dimension | Plage saine | Justification |
+| Dimension | Sens sain | Justification |
 |-----------|---------------|-----------|
-| Comportementale | 1.2 -- 3.0 | Le système a besoin de plus d'options comportementales que de contraintes, mais pas sans limite |
-| Structurelle | 2.0 -- 10.0 | Les grammaires doivent être génératives, mais filtrées par des contrôles de qualité |
-| Régulatrice | 0.3 -- 0.8 | La gouvernance DOIT être sur-atténuée — c'est le principe de prudence |
+| Comportementale | R > 1 (log2 R > 0 bits) | Le système a besoin de plus d'options comportementales que de contraintes, mais pas sans limite |
+| Structurelle | R > 1 (log2 R > 0 bits), avec des portes de qualité | Les grammaires doivent être génératives, mais filtrées par des contrôles de qualité |
+| Régulatrice | R < 1 (log2 R < 0 bits) | La gouvernance DOIT être sur-atténuée — c'est le principe de prudence |
+
+Les bornes numériques de log2 R restent à calibrer sur des cycles observés. On ne peut pas les fixer sur le quotient V_amplifiers / V_attenuators, qui n'a pas de sens fixe en termes d'espaces d'états : 10 / 5 et 2 / 1 valent tous deux 2, alors que les espaces d'états qu'ils comparent diffèrent d'un facteur 2^5 = 32 et 2^1 = 2. Un log2 R négatif n'est pas une variété négative : c'est le logarithme d'un ratio inférieur à 1.
 
 ### Évaluation actuelle
 
-- **Comportementale (1.82) :** Dans la plage saine. Aucune action nécessaire.
-- **Structurelle (17.00) :** Au-dessus de la plage saine. Les 27 grammaires et leurs ~324 productions sont faiblement contraintes. Recommandation : ajouter des portes de qualité structurelles (par exemple, des exigences de couverture de tests des grammaires, un suivi de l'usage des productions).
-- **Régulatrice (0.56) :** Dans la plage saine. Le système est prudent, mais pas paralysé.
+- **Comportementale (R_B ≈ 27, 4.75 bits) :** Dans le sens sain. Aucune action nécessaire.
+- **Structurelle (R_S ≈ 66,000, 16.00 bits) :** Dans le sens sain, mais de loin le plus grand ratio des trois : 2 portes d'évolution face aux structures de 27 grammaires et de leurs ~324 productions, qui sont faiblement contraintes. Recommandation : ajouter des portes de qualité structurelles (par exemple, des exigences de couverture de tests des grammaires, un suivi de l'usage des productions).
+- **Régulatrice (R_R ≈ 0.032, -4.98 bits) :** Dans le sens sain. Le système est prudent ; dire s'il l'est trop demande une borne inférieure calibrée.
 
 ## Le côté des perturbations : que faut-il réguler ?
 
@@ -229,10 +231,10 @@ Pour suivre le ratio de variété dans le temps, Demerzel devrait calculer les m
 
 ```json
 {
-  "variety_ratios": {
-    "behavioral": 1.82,
-    "structural": 17.00,
-    "regulatory": 0.56,
+  "variety_ratios_log2_bits": {
+    "behavioral": 4.75,
+    "structural": 16.00,
+    "regulatory": -4.98,
     "timestamp": "2026-03-23T00:00:00Z"
   }
 }
@@ -240,11 +242,13 @@ Pour suivre le ratio de variété dans le temps, Demerzel devrait calculer les m
 
 ### Métrique 3 : détection des tendances
 
-Suivez les ratios sur des cycles consécutifs. Alertez quand :
-- Un ratio franchit la limite de sa plage saine
-- Le ratio régulateur passe sous 0.3 (risque de paralysie du système)
-- Le ratio structurel dépasse 20.0 (risque de prolifération des grammaires)
-- Le ratio comportemental passe sous 1.0 (système insuffisamment réactif)
+Suivez log2 R sur des cycles consécutifs. Alertez quand :
+- Un ratio quitte son sens sain (son log2 R change de signe)
+- Le log2 R_R régulateur baisse d'au moins 1 bit en un cycle (risque de paralysie : par rapport aux amplificateurs, l'espace d'états des atténuateurs a doublé)
+- Le log2 R_S structurel augmente d'au moins 1 bit en un cycle (risque de prolifération des grammaires)
+- Le log2 R_B comportemental baisse d'au moins 1 bit en un cycle (le système devient moins réactif)
+
+Un pas de 1 bit, soit un ratio qui double ou diminue de moitié, est un seuil de départ, pas un seuil calibré.
 
 ### Métrique 4 : taux de croissance des perturbations
 
@@ -265,7 +269,7 @@ La validation croisée avec GPT-4o a confirmé :
 ## Implications pour Demerzel
 
 1. **Suivre les ratios de variété à chaque cycle** — Ajouter un instantané de variété à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Surveiller la dérive des ratios par dimension.
-2. **Ajouter des portes de qualité structurelles** — Le ratio structurel (17.00) est au-dessus de la plage saine. Introduire des exigences de couverture de tests des grammaires et un suivi de l'usage des productions pour augmenter l'atténuation sans réduire la générativité.
+2. **Ajouter des portes de qualité structurelles** — Le ratio structurel, 2^16.00 ≈ 66,000, est de loin le plus grand des trois. Introduire des exigences de couverture de tests des grammaires et un suivi de l'usage des productions pour augmenter l'atténuation sans réduire la générativité.
 3. **Surveiller l'écart régulateur (3.06 à 30.31 bits)** — La complexité des interactions entre politiques (666 combinaisons deux à deux à partir de 37 politiques) est la plus grande source isolée de perturbation. À mesure que les politiques augmentent, le nombre de paires croît de façon quadratique, mais sa variété log2(n(n-1)/2) ne croît que de façon logarithmique, d'environ 2 bits chaque fois que le nombre de politiques double. Comme c'est la plus grande source isolée, ces bits relèvent aussitôt les deux bornes. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
 4. **L'escalade vers des humains est un pont de variété** — Le système de seuils de confiance (Article 6 : Escalade) est le principal mécanisme de Demerzel pour absorber la variété qui dépasse sa capacité de régulation. C'est une fonctionnalité, pas une limite.
 5. **Faire évoluer la section 6 de la grammaire** — La section sur la variété requise de la grammaire `sci-cybernetics.ebnf` (lignes 78-82) devrait être enrichie de productions de mesure quantitative.
@@ -273,7 +277,7 @@ La validation croisée avec GPT-4o a confirmé :
 ## Lien avec CYB-001 et CYB-002
 
 - **CYB-001** a établi que la loi d'Ashby s'applique à Demerzel et a listé qualitativement les amplificateurs et atténuateurs de variété. CYB-003 rend cela quantitatif.
-- **La recommandation 5 de CYB-001** (« Surveiller le ratio de variété ») est désormais opérationnalisée avec des formules précises, des plages saines et un protocole de mesure.
+- **La recommandation 5 de CYB-001** (« Surveiller le ratio de variété ») est désormais opérationnalisée avec des formules précises, des sens sains et un protocole de mesure.
 - **CYB-002** traitait de l'amortissement du Système 2. Les mécanismes de zone morte et d'hystérésis de CYB-002 sont eux-mêmes des atténuateurs de variété — ils réduisent la variété des signaux qui circulent dans les canaux de coordination. La métrique d'atténuation structurelle de CYB-003 devrait les inclure une fois implémentés.
 
 ## Sources

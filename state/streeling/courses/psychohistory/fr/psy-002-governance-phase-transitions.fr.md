@@ -127,7 +127,7 @@ Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le syst
 
 ### Signal 6 : le ratio de variété comme paramètre d'ordre
 
-D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations (la vérification de la loi d'Ashby) mesure si la gouvernance a une complexité suffisante pour faire face à son environnement. Ce n'est pas le ratio dimensionnel R = V_amplifiers / V_attenuators de CYB-003, dont la valeur régulatrice est saine en dessous de 1.0 par construction :
+D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations (la vérification de la loi d'Ashby) mesure si la gouvernance a une complexité suffisante pour faire face à son environnement. Ce n'est pas le ratio dimensionnel R = 2^(V_amplifiers - V_attenuators) de CYB-003, dont la valeur régulatrice est saine en dessous de 1.0 par construction :
 
 ```
 variety_ratio = governance_variety / environmental_variety

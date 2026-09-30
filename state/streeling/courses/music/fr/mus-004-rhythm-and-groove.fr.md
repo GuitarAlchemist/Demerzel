@@ -165,17 +165,17 @@ Subdivision :  1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4
 ```
 
 - **1, 2, 3, 4** sont les temps (numéros des temps)
-- **&** (prononcé « and ») est le contretemps de croche
+- **&** (dit « et ») est le contretemps de croche
 - **e** et **a** sont les subdivisions en doubles croches entre le temps et le « & »
 
-Dites-le à voix haute à un tempo lent : « ONE e and a TWO e and a THREE e and a FOUR e and a ». Tapez du pied sur chaque numéro. C'est le cadre de comptage fondamental pour tous les rythmes en doubles croches.
+Dites-le à voix haute à un tempo lent : « UN e et a DEUX e et a TROIS e et a QUATRE e et a ». Tapez du pied sur chaque numéro. C'est le cadre de comptage fondamental pour tous les rythmes en doubles croches.
 
 ### Compter les triolets
 
-Un **triolet** divise un temps en trois parties égales au lieu de deux. Les syllabes de comptage sont « 1-trip-let, 2-trip-let, 3-trip-let, 4-trip-let » :
+Un **triolet** divise un temps en trois parties égales au lieu de deux. Les syllabes de comptage sont « 1-et-a, 2-et-a, 3-et-a, 4-et-a » :
 
 ```
-Temps :     1  trip  let  2  trip  let  3  trip  let  4  trip  let
+Temps :     1   &   a   2   &   a   3   &   a   4   &   a
 ```
 
 Les triolets sont signalés par un petit **3** au-dessus des notes ligaturées. Ils sont la colonne vertébrale du shuffle, du swing et des rythmes en 12/8.
@@ -188,9 +188,9 @@ Lorsque vous jouez un passage et que le rythme semble inégal, le remède est pr
 
 À 60 BPM, comptez à voix haute une mesure de 4/4 de quatre façons différentes :
 1. Noires : « 1, 2, 3, 4 »
-2. Croches : « 1 and 2 and 3 and 4 and »
-3. Doubles croches : « 1 e and a 2 e and a 3 e and a 4 e and a »
-4. Triolets : « 1 trip let 2 trip let 3 trip let 4 trip let »
+2. Croches : « 1 et 2 et 3 et 4 et »
+3. Doubles croches : « 1 e et a 2 e et a 3 e et a 4 e et a »
+4. Triolets : « 1 et a 2 et a 3 et a 4 et a »
 
 Rendez chaque subdivision rythmiquement parfaite. Cet exercice développe la précision rythmique intérieure plus que tout autre.
 
@@ -318,7 +318,7 @@ La notation ne peut pas saisir entièrement le swing. La plupart des partitions 
 ### Exercice pratique
 
 À 90 BPM, jouez le même passage de trois façons :
-1. **Droit :** « 1-and, 2-and, 3-and, 4-and » en croches égales
+1. **Droit :** « 1-et, 2-et, 3-et, 4-et » en croches égales
 2. **Swing moyen :** première croche plus longue, seconde plus courte, comme si vous comptiez « 1-da, 2-da, 3-da, 4-da »
 3. **Shuffle lourd :** long-court extrême, presque croche pointée + double croche
 
@@ -528,7 +528,7 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 > En 6/8, les croches sont groupées en deux groupes de trois (1-2-3, 4-5-6), ce qui produit deux temps ressentis par mesure, chaque temps étant divisé en trois. En 3/4, les croches sont groupées en trois paires de deux (1-et, 2-et, 3-et), ce qui produit trois temps ressentis par mesure, chaque temps étant divisé en deux. Le motif d'accentuation — deux temps forts contre trois — est entièrement différent.
 
 **2. Comptez le rythme du motif en doubles croches suivant, en 4/4, avec les syllabes standard : X-_-X-X-_-X-_-X (où X = jouer, _ = silence, sur un temps).**
-> Les syllabes sont « 1 e and a » pour un temps. Ce motif sur un temps se lit donc « 1 - and a » (on joue sur 1, &, a, et silence sur e). Sur un temps complet : jouer sur « 1 », silence sur « e », jouer sur « and », jouer sur « a ». Étendu à toute la mesure : « 1 - & a 2 - & a 3 - & a 4 - & a » avec le même motif d'accentuation.
+> Les syllabes sont « 1 e et a » pour un temps. Ce motif sur un temps se lit donc « 1 - et a » (on joue sur 1, &, a, et silence sur e). Sur un temps complet : jouer sur « 1 », silence sur « e », jouer sur « et », jouer sur « a ». Étendu à toute la mesure : « 1 - & a 2 - & a 3 - & a 4 - & a » avec le même motif d'accentuation.
 
 **3. Si le swing jazz standard utilise un ratio d'environ 60:40 pour les paires de croches, et le swing appuyé un ratio de 67:33 (ternaire), quelle différence concrète l'auditeur entend-il ?**
 > À 60:40, le swing est relativement détendu — la première croche est légèrement plus longue, mais sans exagération. À 67:33, on a la pleine division ternaire, où la première note est exactement deux fois plus longue que la seconde. Les auditeurs perçoivent le 60:40 comme fluide et élégant (cool jazz, bebop), tandis que le 67:33 sonne rebondissant et plus lourd (blues, shuffles gospel). Le ratio 67:33 crée un balancement « pointé » net ; le 60:40 est plus discret.
@@ -546,7 +546,7 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 ## Fondements de recherche
 
 - La pulsation, le rythme et la mesure comme couches indépendantes constituent la distinction standard de la recherche en cognition musicale (London, *Hearing in Time*, 2004)
-- Les systèmes de comptage (« 1 e and a » pour les doubles croches, « 1 trip let » pour les triolets) sont des standards pédagogiques de l'enseignement musical occidental
+- Les systèmes de comptage (« 1 e and a » pour les doubles croches, « 1 trip let » ou « 1 & a » pour les triolets) sont des standards pédagogiques de l'enseignement musical anglophone ; ce cours les dit en français, avec « et » pour « & » : « 1 e et a », et « 1 et a » pour les triolets
 - Les ratios de swing documentés empiriquement par Friberg & Sundstrom (2002) montrent que les batteurs de jazz professionnels utilisent typiquement des ratios de 1.7:1 à 2.5:1 (63:37 à 71:29)
 - Le motif de Travis picking doit son nom à Merle Travis ; il s'est diffusé dans la country et le folk grâce à l'adaptation de Chet Atkins
 - La pédagogie de la polyrythmie s'appuie sur des moyens mnémotechniques verbaux (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
