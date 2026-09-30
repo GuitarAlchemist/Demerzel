@@ -75,7 +75,7 @@ Commencez par les intervalles les plus difficiles à confondre :
 | Intervalle | Demi-tons | Chanson repère | Référence à la guitare |
 |----------|-----------|-------------|-----------------|
 | Octave (P8) | 12 | « Somewhere Over the Rainbow » (deux premières notes) | Même corde, 12e case |
-| Quinte juste (P5) | 7 | « Twinkle Twinkle Little Star » (2e et 3e notes, « -kle twin- ») | De la fondamentale à la quinte d'un power chord |
+| Quinte juste (P5) | 7 | « Ah ! vous dirai-je, maman », l'air de « Twinkle Twinkle Little Star » (2e et 3e notes, « vous di- ») | De la fondamentale à la quinte d'un power chord |
 | Quarte juste (P4) | 5 | « Here Comes the Bride » (deux premières notes) | Cordes à vide voisines (sauf Sol-Si) |
 
 Ces trois intervalles ont une qualité creuse et ouverte caractéristique. L'octave sonne comme « la même note plus haut ». La quinte sonne stable et puissante — c'est la base de tous les power chords que vous jouerez. La quarte a une qualité flottante, dans l'attente.
@@ -88,7 +88,7 @@ Ces intervalles déterminent si la musique sonne joyeuse ou triste, fluide ou te
 |----------|-----------|-------------|-----------|
 | Tierce majeure (M3) | 4 | « Oh When the Saints » (deux premières notes) | Lumineux, joyeux |
 | Tierce mineure (m3) | 3 | « Greensleeves » (deux premières notes) | Sombre, triste |
-| Seconde majeure (M2) | 2 | « Happy Birthday » (2e et 3e notes, « -py birth- ») | Monter d'un degré de gamme |
+| Seconde majeure (M2) | 2 | « Joyeux anniversaire », sur l'air de « Happy Birthday » (2e et 3e notes, « -yeux an- ») | Monter d'un degré de gamme |
 | Seconde mineure (m2) | 1 | Thème des « Dents de la mer » (deux premières notes) | Tendu, chromatique, inquiétant |
 
 Les tierces sont la paire la plus importante à distinguer. Une tierce majeure rend un accord majeur (joyeux). Une tierce mineure rend un accord mineur (triste). Entraîner votre oreille à distinguer instantanément M3 de m3 est l'investissement le plus rentable que vous puissiez faire en éducation de l'oreille.

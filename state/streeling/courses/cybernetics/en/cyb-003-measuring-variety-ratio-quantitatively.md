@@ -181,13 +181,13 @@ For governance to be viable:
 V(regulatory response) >= V(disturbance)
 ```
 
-- V_R_amp = 6.32 bits
+- V_R_amp lies between its largest single component, the confidence thresholds at 2.32 bits, and the sum of all three, 6.32 bits, reached only if every combination of logic state, confidence threshold and PDCA state can be produced
 - V_D lies between the largest single source, 9.97 bits, and the sum of every source, 16.61 + 16.02 = 32.63 bits
-- **Gap: at least 9.97 - 6.32 = 3.65 bits, at most 32.63 - 6.32 = 26.31 bits**
+- **Gap: at least 9.97 - 6.32 = 3.65 bits, at most 32.63 - 2.32 = 30.31 bits**
 
-The lower bound holds whatever the dependencies: a joint state space never has fewer states than any one of its parts. The upper bound assumes every source is independent; causal links (a repo change that triggers a belief change, a policy interaction that prompts a grammar proposal) pull the real value down. Measuring the joint variety, by counting the distinct combinations actually observed per cycle, would place it within the range.
+Both ranges hold whatever the dependencies: a joint state space has at least as many states as its largest part and at most the product of their sizes. The gap is smallest when the disturbance sources are as dependent, and the response components as independent, as they can be; it is largest in the opposite case. Causal links between disturbance sources (a repo change that triggers a belief change, a policy interaction that prompts a grammar proposal) pull V_D down, and combinations of response values that governance never produces pull V_R_amp down. Measuring both joint varieties, by counting the distinct combinations actually observed per cycle, would place the gap within the range.
 
-This means the regulatory system faces between 2^3.65 ≈ 12.6 and 2^26.31 ≈ 8.3 × 10^7 times more disturbance variety than it can produce response variety. The gap is absorbed by:
+This means the regulatory system faces between 2^3.65 ≈ 12.6 and 2^30.31 ≈ 1.3 × 10^9 times more disturbance variety than it can produce response variety. The gap is absorbed by:
 
 1. **Human escalation** — the confidence threshold system routes difficult decisions to humans, borrowing their variety
 2. **Constitutional override** — the Asimov Laws collapse complex decisions to binary (safe/unsafe), reducing required variety
@@ -266,7 +266,7 @@ Cross-validation with GPT-4o confirmed:
 
 1. **Track variety ratios per cycle** — Add variety snapshot to `state/governance/variety-metrics.json` (or equivalent state file). Monitor dimensional ratios for drift.
 2. **Add structural quality gates** — The structural ratio (17.00) is above healthy range. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
-3. **Monitor the regulatory gap (3.65 to 26.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest source of internal disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Those bits raise the upper bound at once, and the lower bound once policy interactions overtake the repo-state term (9.97 bits), from 46 policies. Consider policy grouping or hierarchical policy organization.
+3. **Monitor the regulatory gap (3.65 to 30.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest source of internal disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Those bits raise the upper bound at once, and the lower bound once policy interactions overtake the repo-state term (9.97 bits), from 46 policies. Consider policy grouping or hierarchical policy organization.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 78-82) should be expanded with quantitative measurement productions.
 

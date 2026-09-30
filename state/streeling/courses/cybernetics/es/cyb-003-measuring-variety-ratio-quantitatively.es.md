@@ -181,13 +181,13 @@ Para que la gobernanza sea viable:
 V(regulatory response) >= V(disturbance)
 ```
 
-- V_R_amp = 6.32 bits
+- V_R_amp está entre su mayor componente aislado, los umbrales de confianza con 2.32 bits, y la suma de los tres, 6.32 bits, que solo se alcanza si puede producirse cualquier combinación de estado lógico, umbral de confianza y estado PDCA
 - V_D está entre la mayor fuente aislada, 9.97 bits, y la suma de todas las fuentes, 16.61 + 16.02 = 32.63 bits
-- **Brecha: al menos 9.97 - 6.32 = 3.65 bits, como mucho 32.63 - 6.32 = 26.31 bits**
+- **Brecha: al menos 9.97 - 6.32 = 3.65 bits, como mucho 32.63 - 2.32 = 30.31 bits**
 
-La cota inferior se cumple sean cuales sean las dependencias: un espacio de estados conjunto nunca tiene menos estados que cualquiera de sus partes. La cota superior supone que todas las fuentes son independientes; los vínculos causales (un cambio en un repositorio que desencadena un cambio de creencia, una interacción entre políticas que motiva una propuesta de gramática) reducen el valor real. Medir la variedad conjunta, contando las combinaciones distintas observadas de hecho en cada ciclo, lo situaría dentro de ese intervalo.
+Ambos intervalos se cumplen sean cuales sean las dependencias: un espacio de estados conjunto tiene al menos tantos estados como su mayor parte y como mucho el producto de sus tamaños. La brecha es mínima cuando las fuentes de perturbación son lo más dependientes posible, y los componentes de la respuesta lo más independientes posible; es máxima en el caso contrario. Los vínculos causales entre fuentes de perturbación (un cambio en un repositorio que desencadena un cambio de creencia, una interacción entre políticas que motiva una propuesta de gramática) reducen V_D, y las combinaciones de valores de respuesta que la gobernanza nunca produce reducen V_R_amp. Medir ambas variedades conjuntas, contando las combinaciones distintas observadas de hecho en cada ciclo, situaría la brecha dentro de ese intervalo.
 
-Esto significa que el sistema regulatorio se enfrenta a una variedad de perturbaciones entre 2^3.65 ≈ 12.6 y 2^26.31 ≈ 8.3 × 10^7 veces mayor que la variedad de respuestas que puede producir. La brecha se absorbe mediante:
+Esto significa que el sistema regulatorio se enfrenta a una variedad de perturbaciones entre 2^3.65 ≈ 12.6 y 2^30.31 ≈ 1.3 × 10^9 veces mayor que la variedad de respuestas que puede producir. La brecha se absorbe mediante:
 
 1. **Escalado a humanos**: el sistema de umbrales de confianza deriva las decisiones difíciles a humanos, tomando prestada su variedad
 2. **Prevalencia constitucional**: las leyes de Asimov reducen las decisiones complejas a una elección binaria (seguro/inseguro), lo que disminuye la variedad requerida
@@ -266,7 +266,7 @@ La validación cruzada con GPT-4o confirmó:
 
 1. **Seguir los cocientes de variedad en cada ciclo**: añadir una instantánea de variedad a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Vigilar la deriva de los cocientes por dimensión.
 2. **Añadir puertas de calidad estructurales**: el cociente estructural (17.00) está por encima del rango saludable. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones para aumentar la atenuación sin reducir la generatividad.
-3. **Vigilar la brecha regulatoria (de 3.65 a 26.31 bits)**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente de perturbación interna. A medida que crezcan las políticas, el número de pares crecerá de forma cuadrática, pero su variedad log2(n(n-1)/2) solo crecerá de forma logarítmica, unos 2 bits cada vez que se duplique el número de políticas. Esos bits elevan de inmediato la cota superior, y la cota inferior en cuanto las interacciones entre políticas superan el término de los estados de los repositorios (9.97 bits), a partir de 46 políticas. Considerar agrupar las políticas u organizarlas jerárquicamente.
+3. **Vigilar la brecha regulatoria (de 3.65 a 30.31 bits)**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente de perturbación interna. A medida que crezcan las políticas, el número de pares crecerá de forma cuadrática, pero su variedad log2(n(n-1)/2) solo crecerá de forma logarítmica, unos 2 bits cada vez que se duplique el número de políticas. Esos bits elevan de inmediato la cota superior, y la cota inferior en cuanto las interacciones entre políticas superan el término de los estados de los repositorios (9.97 bits), a partir de 46 políticas. Considerar agrupar las políticas u organizarlas jerárquicamente.
 4. **El escalado a humanos es un puente de variedad**: el sistema de umbrales de confianza (Artículo 6: Escalado) es el mecanismo principal de Demerzel para absorber la variedad que supera su capacidad regulatoria. Es una característica, no una limitación.
 5. **Hacer evolucionar la sección 6 de la gramática**: la sección de variedad requerida de la gramática `sci-cybernetics.ebnf` (líneas 78-82) debería ampliarse con producciones de medición cuantitativa.
 

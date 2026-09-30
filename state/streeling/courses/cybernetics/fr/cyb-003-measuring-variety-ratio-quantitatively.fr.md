@@ -181,13 +181,13 @@ Pour que la gouvernance soit viable :
 V(regulatory response) >= V(disturbance)
 ```
 
-- V_R_amp = 6.32 bits
+- V_R_amp se situe entre sa plus grande composante isolée, les seuils de confiance à 2.32 bits, et la somme des trois, 6.32 bits, atteinte seulement si toute combinaison d'état logique, de seuil de confiance et d'état PDCA peut être produite
 - V_D se situe entre la plus grande source isolée, 9.97 bits, et la somme de toutes les sources, 16.61 + 16.02 = 32.63 bits
-- **Écart : au moins 9.97 - 6.32 = 3.65 bits, au plus 32.63 - 6.32 = 26.31 bits**
+- **Écart : au moins 9.97 - 6.32 = 3.65 bits, au plus 32.63 - 2.32 = 30.31 bits**
 
-La borne inférieure tient quelles que soient les dépendances : un espace d'états conjoint n'a jamais moins d'états que l'une de ses parties. La borne supérieure suppose que toutes les sources sont indépendantes ; les liens de causalité (un changement de dépôt qui déclenche un changement de croyance, une interaction entre politiques qui suscite une proposition de grammaire) font baisser la valeur réelle. Mesurer la variété conjointe, en comptant les combinaisons distinctes effectivement observées à chaque cycle, la situerait dans cet intervalle.
+Les deux intervalles tiennent quelles que soient les dépendances : un espace d'états conjoint a au moins autant d'états que sa plus grande partie et au plus le produit de leurs tailles. L'écart est le plus petit quand les sources de perturbation sont aussi dépendantes, et les composantes de la réponse aussi indépendantes, que possible ; il est le plus grand dans le cas inverse. Les liens de causalité entre sources de perturbation (un changement de dépôt qui déclenche un changement de croyance, une interaction entre politiques qui suscite une proposition de grammaire) font baisser V_D, et les combinaisons de valeurs de réponse que la gouvernance ne produit jamais font baisser V_R_amp. Mesurer les deux variétés conjointes, en comptant les combinaisons distinctes effectivement observées à chaque cycle, situerait l'écart dans cet intervalle.
 
-Cela signifie que le système régulateur fait face à une variété de perturbations de 2^3.65 ≈ 12.6 à 2^26.31 ≈ 8.3 × 10^7 fois plus grande que la variété de réponses qu'il peut produire. L'écart est absorbé par :
+Cela signifie que le système régulateur fait face à une variété de perturbations de 2^3.65 ≈ 12.6 à 2^30.31 ≈ 1.3 × 10^9 fois plus grande que la variété de réponses qu'il peut produire. L'écart est absorbé par :
 
 1. **L'escalade vers des humains** — le système de seuils de confiance oriente les décisions difficiles vers des humains, en empruntant leur variété
 2. **La primauté constitutionnelle** — les lois d'Asimov ramènent les décisions complexes à un choix binaire (sûr/dangereux), ce qui réduit la variété requise
@@ -266,7 +266,7 @@ La validation croisée avec GPT-4o a confirmé :
 
 1. **Suivre les ratios de variété à chaque cycle** — Ajouter un instantané de variété à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Surveiller la dérive des ratios par dimension.
 2. **Ajouter des portes de qualité structurelles** — Le ratio structurel (17.00) est au-dessus de la plage saine. Introduire des exigences de couverture de tests des grammaires et un suivi de l'usage des productions pour augmenter l'atténuation sans réduire la générativité.
-3. **Surveiller l'écart régulateur (3.65 à 26.31 bits)** — La complexité des interactions entre politiques (666 combinaisons deux à deux à partir de 37 politiques) est la principale source de perturbation interne. À mesure que les politiques augmentent, le nombre de paires croît de façon quadratique, mais sa variété log2(n(n-1)/2) ne croît que de façon logarithmique, d'environ 2 bits chaque fois que le nombre de politiques double. Ces bits relèvent aussitôt la borne supérieure, et la borne inférieure dès que les interactions entre politiques dépassent le terme des états des dépôts (9.97 bits), à partir de 46 politiques. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
+3. **Surveiller l'écart régulateur (3.65 à 30.31 bits)** — La complexité des interactions entre politiques (666 combinaisons deux à deux à partir de 37 politiques) est la principale source de perturbation interne. À mesure que les politiques augmentent, le nombre de paires croît de façon quadratique, mais sa variété log2(n(n-1)/2) ne croît que de façon logarithmique, d'environ 2 bits chaque fois que le nombre de politiques double. Ces bits relèvent aussitôt la borne supérieure, et la borne inférieure dès que les interactions entre politiques dépassent le terme des états des dépôts (9.97 bits), à partir de 46 politiques. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
 4. **L'escalade vers des humains est un pont de variété** — Le système de seuils de confiance (Article 6 : Escalade) est le principal mécanisme de Demerzel pour absorber la variété qui dépasse sa capacité de régulation. C'est une fonctionnalité, pas une limite.
 5. **Faire évoluer la section 6 de la grammaire** — La section sur la variété requise de la grammaire `sci-cybernetics.ebnf` (lignes 78-82) devrait être enrichie de productions de mesure quantitative.
 

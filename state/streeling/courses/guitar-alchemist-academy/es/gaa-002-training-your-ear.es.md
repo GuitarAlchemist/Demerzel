@@ -75,7 +75,7 @@ Empieza por los intervalos más difíciles de confundir:
 | Intervalo | Semitonos | Canción de referencia | Referencia en la guitarra |
 |----------|-----------|-------------|-----------------|
 | Octava (P8) | 12 | «Somewhere Over the Rainbow» (dos primeras notas) | Misma cuerda, traste 12 |
-| Quinta justa (P5) | 7 | «Twinkle Twinkle Little Star» (notas 2.ª y 3.ª, «-kle twin-») | De la fundamental a la quinta de un power chord |
+| Quinta justa (P5) | 7 | «Estrellita, ¿dónde estás?», la melodía de «Twinkle Twinkle Little Star» (notas 2.ª y 3.ª, «-tre-lli-») | De la fundamental a la quinta de un power chord |
 | Cuarta justa (P4) | 5 | «Here Comes the Bride» (dos primeras notas) | Cuerdas al aire contiguas (excepto Sol-Si) |
 
 Estos tres intervalos tienen una cualidad hueca y abierta característica. La octava suena como «la misma nota más aguda». La quinta suena estable y poderosa: es la base de todos los power chords que vayas a tocar. La cuarta tiene una cualidad flotante, expectante.
@@ -88,7 +88,7 @@ Estos intervalos definen si la música suena alegre o triste, suave o tensa:
 |----------|-----------|-------------|-----------|
 | Tercera mayor (M3) | 4 | «Oh When the Saints» (dos primeras notas) | Brillante, alegre |
 | Tercera menor (m3) | 3 | «Greensleeves» (dos primeras notas) | Oscuro, triste |
-| Segunda mayor (M2) | 2 | «Happy Birthday» (notas 2.ª y 3.ª, «-py birth-») | Subir un grado de la escala |
+| Segunda mayor (M2) | 2 | «Cumpleaños feliz», con la melodía de «Happy Birthday» (notas 2.ª y 3.ª, «-ple-a-») | Subir un grado de la escala |
 | Segunda menor (m2) | 1 | Tema de «Tiburón» (dos primeras notas) | Tenso, cromático, inquietante |
 
 Las terceras son el par más importante que hay que distinguir. Una tercera mayor hace que un acorde sea mayor (alegre). Una tercera menor hace que sea menor (triste). Entrenar tu oído para distinguir al instante M3 de m3 es la inversión de mayor valor que puedes hacer en entrenamiento auditivo.

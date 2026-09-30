@@ -56,7 +56,7 @@ La plupart de la musique tonale est construite sur des paires de phrases. La pre
 - L'antécédent se termine généralement sur une **demi-cadence** (V) — une pause non résolue qui appelle une suite
 - Le conséquent se termine généralement sur une **cadence authentique** (V-I) — une conclusion résolue
 
-Essayez de chanter « Twinkle Twinkle Little Star » et arrêtez-vous après « how I wonder what you are ». Remarquez la sensation d'achèvement. Arrêtez-vous maintenant après « up above the world so high ». Remarquez la sensation d'inachèvement, le besoin de continuer. C'est la structure antécédent-conséquent.
+Essayez de chanter « Ah ! vous dirai-je, maman », l'air de « Twinkle Twinkle Little Star », et arrêtez-vous après la deuxième ligne, « Ce qui cause mon tourment ». Remarquez la sensation d'achèvement. Arrêtez-vous maintenant après la troisième, « Papa veut que je raisonne ». Remarquez la sensation d'inachèvement, le besoin de continuer. C'est la structure antécédent-conséquent.
 
 ### La période
 

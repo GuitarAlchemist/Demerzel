@@ -117,7 +117,7 @@ To analyze your own tool network:
 2. **Map edges:** For each pair, check if they share tools, schemas, protocols, or dependencies
 3. **Compute degree distribution:** Count connections per node
 4. **Plot on log-log scale:** If the distribution is roughly linear on a log-log plot, you have scale-free behavior
-5. **Identify hubs:** Rank nodes by degree and take the top decile. Do not use a threshold built on the mean and standard deviation: with `gamma` between 2 and 3 the second moment diverges, so the standard deviation you measure is set by the hubs themselves and grows with the network — the test would be using the hubs to define the threshold meant to find them
+5. **Identify hubs:** Only once step 4 shows a heavy tail, rank nodes by degree and name as hubs the few at its head, whose degree stands far above the rest. A fixed cut such as the top decile names some nodes in any graph, even a regular one where no node stands out, and in a five-node graph it selects half a node, so it can only report the head of a tail already established. Do not use a threshold built on the mean and standard deviation either: with `gamma` between 2 and 3 the second moment diverges, so the standard deviation you measure is set by the hubs themselves and grows with the network — the test would be using the hubs to define the threshold meant to find them
 
 ---
 

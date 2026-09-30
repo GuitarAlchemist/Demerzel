@@ -56,7 +56,7 @@ La mayor parte de la música tonal se construye sobre pares de frases. La primer
 - El antecedente suele terminar en una **semicadencia** (V) — una pausa no resuelta que exige continuación
 - El consecuente suele terminar en una **cadencia auténtica** (V-I) — un cierre resuelto
 
-Prueba a cantar "Twinkle Twinkle Little Star" y detente después de "how I wonder what you are". Nota la sensación de conclusión. Ahora detente después de "up above the world so high". Nota la sensación de algo incompleto, la necesidad de continuar. Esa es la estructura antecedente-consecuente.
+Prueba a cantar "Estrellita, ¿dónde estás?", la melodía de "Twinkle Twinkle Little Star", y detente después del segundo verso, "Me pregunto qué serás". Nota la sensación de conclusión. Ahora detente después del tercero, "En el cielo y en el mar". Nota la sensación de algo incompleto, la necesidad de continuar. Esa es la estructura antecedente-consecuente.
 
 ### El período
 

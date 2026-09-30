@@ -117,7 +117,7 @@ Para analizar tu propia red de herramientas:
 2. **Mapea las aristas:** para cada par, comprueba si comparten herramientas, esquemas, protocolos o dependencias
 3. **Calcula la distribución de grados:** cuenta las conexiones por nodo
 4. **Represéntala en escala log-log:** si la distribución es aproximadamente lineal en un gráfico log-log, tienes un comportamiento libre de escala
-5. **Identifica los hubs:** ordena los nodos por grado y toma el decil superior. No uses un umbral basado en la media y la desviación típica: con `gamma` entre 2 y 3 el segundo momento diverge, así que la desviación típica que mides la fijan los propios hubs y crece con la red — la prueba usaría los hubs para definir el umbral que debe encontrarlos
+5. **Identifica los hubs:** solo cuando el paso 4 muestre una cola pesada, ordena los nodos por grado y llama hubs a los pocos que la encabezan, cuyo grado supera con creces al del resto. Un corte fijo como el decil superior señala nodos en cualquier grafo, incluso en uno regular donde ningún nodo destaca, y en un grafo de cinco nodos selecciona medio nodo: solo puede dar cuenta de la cabeza de una cola ya establecida. Tampoco uses un umbral basado en la media y la desviación típica: con `gamma` entre 2 y 3 el segundo momento diverge, así que la desviación típica que mides la fijan los propios hubs y crece con la red — la prueba usaría los hubs para definir el umbral que debe encontrarlos
 
 ---
 

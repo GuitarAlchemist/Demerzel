@@ -117,7 +117,7 @@ Pour analyser votre propre réseau d'outils :
 2. **Cartographiez les arêtes :** pour chaque paire, vérifiez s'ils partagent des outils, des schémas, des protocoles ou des dépendances
 3. **Calculez la distribution des degrés :** comptez les connexions par nœud
 4. **Tracez-la en échelle log-log :** si la distribution est à peu près linéaire sur un graphique log-log, vous avez un comportement sans échelle
-5. **Identifiez les hubs :** classez les nœuds par degré et prenez le décile supérieur. N'utilisez pas un seuil fondé sur la moyenne et l'écart-type : avec `gamma` entre 2 et 3, le second moment diverge, si bien que l'écart-type mesuré est fixé par les hubs eux-mêmes et croît avec le réseau — le test utiliserait les hubs pour définir le seuil censé les trouver
+5. **Identifiez les hubs :** seulement une fois que l'étape 4 montre une queue lourde, classez les nœuds par degré et appelez hubs les quelques nœuds en tête, dont le degré dépasse de loin celui des autres. Une coupe fixe comme le décile supérieur désigne des nœuds dans n'importe quel graphe, même un graphe régulier où aucun nœud ne se distingue, et dans un graphe de cinq nœuds elle retient un demi-nœud : elle ne peut que rendre compte de la tête d'une queue déjà établie. N'utilisez pas non plus un seuil fondé sur la moyenne et l'écart-type : avec `gamma` entre 2 et 3, le second moment diverge, si bien que l'écart-type mesuré est fixé par les hubs eux-mêmes et croît avec le réseau — le test utiliserait les hubs pour définir le seuil censé les trouver
 
 ---
 
