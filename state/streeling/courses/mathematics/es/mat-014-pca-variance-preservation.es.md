@@ -68,7 +68,7 @@ Calcula los valores singulares de la matriz centrada de B, las varianzas que dan
 
 La **razón de varianza explicada** de la componente i es λᵢ/(λ₁ + … + λ_p) = λᵢ/traza(S). Su denominador es la varianza total, la suma de los p valores propios, no solo de los que se conservan; se puede calcular a partir de la diagonal de S, sin ningún valor propio. La razón dice qué parte de la dispersión lleva una componente, no si importa: una dirección de varianza pequeña puede ser la que separa dos clases.
 
-El ACP sobre la covarianza depende de las unidades de cada variable. Multiplicar una variable por 100 multiplica su varianza por 10^4 y atrae hacia ella la primera componente. El **ACP estandarizado** divide antes cada variable por su desviación típica, lo que equivale a tomar los vectores propios de la matriz de correlación: elimina las unidades, y da a cada variable el mismo peso por decisión. Multiplicar todas las variables por el mismo factor, en cambio, debe dejar las componentes sin cambios y multiplicar cada varianza por el cuadrado del factor.
+El ACP sobre la covarianza depende de las unidades de cada variable. Multiplicar una variable por 100 multiplica su varianza por 10^4 y atrae hacia ella la primera componente. El **ACP estandarizado** divide antes cada variable por su desviación típica, lo que equivale a tomar los vectores propios de la matriz de correlación: elimina las unidades, y da a cada variable el mismo peso por decisión. Una variable constante tiene desviación típica 0, así que sus correlaciones no están definidas: no lleva varianza y debe eliminarse antes de estandarizar. Multiplicar todas las variables por el mismo factor, en cambio, debe dejar las componentes sin cambios y multiplicar cada varianza por el cuadrado del factor.
 
 ### Ejercicio práctico
 
@@ -80,7 +80,7 @@ La estatura tiene desviación típica 0.1 m y el peso 10 kg, y no están correla
 
 ## 5. Unicidad, estabilidad y blanqueo
 
-Si λ₁ = λ₂, todo vector unitario de su espacio propio es una primera componente válida, y programas correctos distintos devuelven componentes distintas. Ese espacio propio es un plano cuando λ₂ > λ₃; cuando coinciden más valores propios, su dimensión es el número de valores propios iguales, y para S = I₃ es el espacio entero. Si λ₁ y λ₂ están cerca, la componente existe pero es frágil: por el teorema de Davis–Kahan, una perturbación E de S, por ruido o por redondeo, puede girar q₁ un ángulo θ cuyo seno llega a ‖E‖ dividido por la **brecha espectral** λ₁ − λ₂. La iteración de la potencia del MAT-005 nota la misma brecha: la tangente de su ángulo con q₁ se multiplica por λ₂/λ₁ en cada paso, y la **deflación**, que resta λ v vᵀ para hallar la componente siguiente, transmite el error restante.
+Si λ₁ = λ₂, todo vector unitario de su espacio propio es una primera componente válida, y programas correctos distintos devuelven componentes distintas. Ese espacio propio es un plano cuando λ₂ > λ₃; cuando coinciden más valores propios, su dimensión es el número de valores propios iguales, y para S = I₃ es el espacio entero. Si λ₁ y λ₂ están cerca, la componente existe pero es frágil: por el teorema de Davis–Kahan, una perturbación E de S, por ruido o por redondeo, puede girar q₁ un ángulo θ cuyo seno llega a ‖E‖ dividido por la **brecha espectral** λ₁ − λ₂. La iteración de la potencia del MAT-005 nota la misma brecha: la tangente de su ángulo con q₁ se multiplica en cada paso por un factor de a lo sumo λ₂/λ₁, exactamente λ₂/λ₁ cuando el error está en el espacio propio de λ₂, como en el ejercicio siguiente, y la **deflación**, que resta λ v vᵀ para hallar la componente siguiente, transmite el error restante.
 
 El ACP no **blanquea**. Sus puntuaciones conservan las varianzas λᵢ; el blanqueo divide la puntuación según qᵢ por √λᵢ para cada componente con λᵢ > 0, de modo que los datos blanqueados tienen la identidad como covarianza en esas componentes; una dirección de varianza nula no se puede reescalar, y se descarta o se regulariza. El blanqueo pone las direcciones de menor varianza, a menudo casi solo ruido, al mismo nivel que las mayores.
 
@@ -212,7 +212,7 @@ Corregir todo esto corresponde a los responsables de IX; esta lección solo lo d
 | **Razón de varianza explicada** | λᵢ dividido por la varianza total |
 | **Error de reconstrucción** | La suma de los cuadrados de las distancias de las observaciones a sus proyecciones, (n − 1) veces los valores propios descartados |
 | **Teorema de Eckart–Young** | La SVD truncada es la mejor aproximación de rango dado en la norma de Frobenius |
-| **ACP estandarizado** | El ACP de la matriz de correlación, tras dividir cada variable por su desviación típica |
+| **ACP estandarizado** | El ACP de la matriz de correlación, tras eliminar las variables constantes y dividir cada una de las demás por su desviación típica |
 | **Brecha espectral** | λ₁ − λ₂, que controla la estabilidad de la primera componente |
 | **Deflación** | Restar λ v vᵀ de una matriz para retirar un par propio ya hallado |
 | **Blanqueo** | Dividir las puntuaciones por √λᵢ, para las componentes con λᵢ > 0, de modo que su covarianza pase a ser la identidad |

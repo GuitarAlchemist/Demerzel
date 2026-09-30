@@ -68,7 +68,7 @@ Calculez les valeurs singulières de la matrice centrée de B, les variances qu'
 
 Le **ratio de variance expliquée** de la composante i vaut λᵢ/(λ₁ + … + λ_p) = λᵢ/trace(S). Son dénominateur est la variance totale, la somme des p valeurs propres, et pas seulement de celles que l'on garde ; il se calcule à partir de la diagonale de S, sans aucune valeur propre. Le ratio dit quelle part de la dispersion porte une composante, pas si elle compte : une direction de faible variance peut être celle qui sépare deux classes.
 
-L'ACP sur la covariance dépend des unités de chaque variable. Multiplier une variable par 100 multiplie sa variance par 10^4 et attire la première composante vers elle. L'**ACP normée** divise d'abord chaque variable par son écart type, ce qui revient à prendre les vecteurs propres de la matrice de corrélation : elle supprime les unités, et donne à chaque variable le même poids par décision. Multiplier toutes les variables par le même facteur doit en revanche laisser les composantes inchangées et multiplier chaque variance par le carré du facteur.
+L'ACP sur la covariance dépend des unités de chaque variable. Multiplier une variable par 100 multiplie sa variance par 10^4 et attire la première composante vers elle. L'**ACP normée** divise d'abord chaque variable par son écart type, ce qui revient à prendre les vecteurs propres de la matrice de corrélation : elle supprime les unités, et donne à chaque variable le même poids par décision. Une variable constante a un écart type nul, donc des corrélations indéfinies : elle ne porte aucune variance et doit être retirée avant la normalisation. Multiplier toutes les variables par le même facteur doit en revanche laisser les composantes inchangées et multiplier chaque variance par le carré du facteur.
 
 ### Exercice pratique
 
@@ -80,7 +80,7 @@ La taille a un écart type de 0,1 m et le poids de 10 kg, et ils sont non corré
 
 ## 5. Unicité, stabilité et blanchiment
 
-Si λ₁ = λ₂, tout vecteur unitaire de leur espace propre est une première composante valide, et des programmes corrects différents en renvoient des différentes. Cet espace propre est un plan quand λ₂ > λ₃ ; quand plus de valeurs propres sont égales, sa dimension est le nombre de valeurs propres égales, et pour S = I₃ c'est l'espace entier. Si λ₁ et λ₂ sont proches, la composante existe mais est fragile : par le théorème de Davis–Kahan, une perturbation E de S, due au bruit ou à l'arrondi, peut faire tourner q₁ d'un angle θ dont le sinus atteint environ ‖E‖ divisé par l'**écart spectral** λ₁ − λ₂. L'itération de la puissance du MAT-005 ressent le même écart : la tangente de son angle à q₁ est multipliée par λ₂/λ₁ à chaque étape, et la **déflation**, qui soustrait λ v vᵀ pour trouver la composante suivante, transmet l'erreur restante.
+Si λ₁ = λ₂, tout vecteur unitaire de leur espace propre est une première composante valide, et des programmes corrects différents en renvoient des différentes. Cet espace propre est un plan quand λ₂ > λ₃ ; quand plus de valeurs propres sont égales, sa dimension est le nombre de valeurs propres égales, et pour S = I₃ c'est l'espace entier. Si λ₁ et λ₂ sont proches, la composante existe mais est fragile : par le théorème de Davis–Kahan, une perturbation E de S, due au bruit ou à l'arrondi, peut faire tourner q₁ d'un angle θ dont le sinus atteint environ ‖E‖ divisé par l'**écart spectral** λ₁ − λ₂. L'itération de la puissance du MAT-005 ressent le même écart : la tangente de son angle à q₁ est multipliée à chaque étape par un facteur d'au plus λ₂/λ₁, exactement λ₂/λ₁ quand l'erreur est dans l'espace propre de λ₂, comme dans l'exercice ci-dessous, et la **déflation**, qui soustrait λ v vᵀ pour trouver la composante suivante, transmet l'erreur restante.
 
 L'ACP ne **blanchit** pas. Ses scores gardent les variances λᵢ ; le blanchiment divise le score selon qᵢ par √λᵢ pour chaque composante de λᵢ > 0, de sorte que les données blanchies ont l'identité pour covariance sur ces composantes ; une direction de variance nulle ne peut pas être remise à l'échelle, et elle est écartée ou régularisée. Le blanchiment met les directions de plus faible variance, souvent faites surtout de bruit, sur le même pied que les plus grandes.
 
@@ -212,7 +212,7 @@ Pour quels facteurs d'échelle s le premier appel de l'itération de la puissanc
 | **Ratio de variance expliquée** | λᵢ divisé par la variance totale |
 | **Erreur de reconstruction** | La somme des carrés des distances des observations à leurs projections, (n − 1) fois les valeurs propres écartées |
 | **Théorème d'Eckart–Young** | La SVD tronquée est la meilleure approximation de rang donné en norme de Frobenius |
-| **ACP normée** | L'ACP de la matrice de corrélation, après division de chaque variable par son écart type |
+| **ACP normée** | L'ACP de la matrice de corrélation, après retrait des variables constantes et division de chacune des autres par son écart type |
 | **Écart spectral** | λ₁ − λ₂, qui règle la stabilité de la première composante |
 | **Déflation** | Soustraire λ v vᵀ d'une matrice pour retirer un couple propre déjà trouvé |
 | **Blanchiment** | Diviser les scores par √λᵢ, pour les composantes de λᵢ > 0, de sorte que leur covariance devienne l'identité |

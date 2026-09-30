@@ -68,7 +68,7 @@ Compute the singular values of the centred matrix of B, the variances they give,
 
 The **explained-variance ratio** of component i is λᵢ/(λ₁ + … + λ_p) = λᵢ/trace(S). Its denominator is the total variance, the sum of all p eigenvalues, not only of those kept; it can be computed from the diagonal of S without any eigenvalue. The ratio says how much of the spread a component carries, not whether it matters: a direction of small variance can be the one that separates two classes.
 
-Covariance PCA depends on the units of each variable. Multiplying one variable by 100 multiplies its variance by 10^4 and pulls the first component towards it. **Standardised PCA** divides each variable by its standard deviation first, which amounts to the eigenvectors of the correlation matrix: it removes the units, and gives every variable the same weight by decision. Multiplying all variables by the same factor, on the other hand, must leave the components unchanged and multiply every variance by the square of the factor.
+Covariance PCA depends on the units of each variable. Multiplying one variable by 100 multiplies its variance by 10^4 and pulls the first component towards it. **Standardised PCA** divides each variable by its standard deviation first, which amounts to the eigenvectors of the correlation matrix: it removes the units, and gives every variable the same weight by decision. A constant variable has standard deviation 0, so its correlations are undefined: it carries no variance and must be dropped before standardising. Multiplying all variables by the same factor, on the other hand, must leave the components unchanged and multiply every variance by the square of the factor.
 
 ### Practice Exercise
 
@@ -80,7 +80,7 @@ Height has standard deviation 0.1 m and weight 10 kg, and they are uncorrelated.
 
 ## 5. Uniqueness, Stability and Whitening
 
-If λ₁ = λ₂, every unit vector in their eigenspace is a valid first component, and different correct programs return different ones. That eigenspace is a plane when λ₂ > λ₃; when more eigenvalues tie, its dimension is the number of equal eigenvalues, and for S = I₃ it is the whole space. If λ₁ and λ₂ are close, the component exists but is fragile: by the Davis–Kahan theorem, a perturbation E of S, from noise or rounding, can rotate q₁ by an angle θ with sin θ up to about ‖E‖ divided by the **eigengap** λ₁ − λ₂. The power iteration of MAT-005 feels the same gap: the tangent of its angle to q₁ shrinks by the factor λ₂/λ₁ at each step, and **deflation**, which subtracts λ v vᵀ to find the next component, passes the remaining error on.
+If λ₁ = λ₂, every unit vector in their eigenspace is a valid first component, and different correct programs return different ones. That eigenspace is a plane when λ₂ > λ₃; when more eigenvalues tie, its dimension is the number of equal eigenvalues, and for S = I₃ it is the whole space. If λ₁ and λ₂ are close, the component exists but is fragile: by the Davis–Kahan theorem, a perturbation E of S, from noise or rounding, can rotate q₁ by an angle θ with sin θ up to about ‖E‖ divided by the **eigengap** λ₁ − λ₂. The power iteration of MAT-005 feels the same gap: the tangent of its angle to q₁ shrinks at each step by a factor of at most λ₂/λ₁, exactly λ₂/λ₁ when the error lies in the eigenspace of λ₂, as in the exercise below, and **deflation**, which subtracts λ v vᵀ to find the next component, passes the remaining error on.
 
 PCA does not **whiten**. Its scores keep the variances λᵢ; whitening divides the score along qᵢ by √λᵢ for each component with λᵢ > 0, so that the whitened data have the identity as covariance on those components; a direction of zero variance cannot be rescaled, and is dropped or regularised. Whitening puts the directions of smallest variance, often mostly noise, on the same footing as the largest.
 
@@ -212,7 +212,7 @@ For which scale factors s does the first call of power iteration stop after a si
 | **Explained-variance ratio** | λᵢ divided by the total variance |
 | **Reconstruction error** | The sum of squared distances from the observations to their projections, (n − 1) times the discarded eigenvalues |
 | **Eckart–Young theorem** | The truncated SVD is the best approximation of given rank in the Frobenius norm |
-| **Standardised PCA** | PCA of the correlation matrix, after dividing each variable by its standard deviation |
+| **Standardised PCA** | PCA of the correlation matrix, after dropping constant variables and dividing each of the others by its standard deviation |
 | **Eigengap** | λ₁ − λ₂, which controls how stable the first component is |
 | **Deflation** | Subtracting λ v vᵀ from a matrix to remove an eigenpair already found |
 | **Whitening** | Rescaling the scores by 1/√λᵢ, for the components with λᵢ > 0, so that their covariance becomes the identity |
