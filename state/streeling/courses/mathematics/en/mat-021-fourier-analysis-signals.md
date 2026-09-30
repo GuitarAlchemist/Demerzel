@@ -30,7 +30,7 @@ After this lesson, you will be able to:
 
 Sample a signal N times and you get a vector x in ℂᴺ. The **discrete Fourier transform** writes it in the basis of sampled complex exponentials f_k, with entries e^(2πikn/N): X_k = Σ_n x_n e^(−2πikn/N), for k = 0, …, N − 1. Two of these vectors are orthogonal, since ⟨f_j, f_k⟩ = Σ_n e^(2πi(k−j)n/N) is a geometric sum that vanishes unless j = k, where it equals N. The matrix F with entries e^(−2πikn/N) therefore satisfies F F* = N I, so F/√N is unitary, a length-preserving change of basis in the sense of MAT-004. The inverse is x_n = (1/N) Σ_k X_k e^(2πikn/N), and **Parseval's theorem**, Σ|x_n|² = (1/N) Σ|X_k|², is that preservation of length written out.
 
-The index k counts cycles per N samples: bin k is the frequency k/N cycles per sample, or k·fs/N at a sampling rate fs. For a real signal, X_(N−k) is the complex conjugate of X_k, so the bins N/2 + 1 to N − 1 repeat the bins N/2 − 1 down to 1: they are the negative frequencies −k/N, not frequencies above one half. A cosine of amplitude 1 on the grid, x_n = cos(2π·3n/8), has X_3 = X_5 = 4 and every other bin 0, and Parseval checks: Σ x_n² = 4 and (4² + 4²)/8 = 4.
+The index k counts cycles per N samples: bin k is the frequency k/N cycles per sample, or k·fs/N at a sampling rate fs. For a real signal, X_(N−k) is the complex conjugate of X_k, so the bins N/2 + 1 to N − 1 repeat the bins N/2 − 1 down to 1: bin k in that range is the negative frequency (k − N)/N, not a frequency above one half, and in an 8-point DFT bin 5 is the frequency −3/8, the mirror of bin 3. A cosine of amplitude 1 on the grid, x_n = cos(2π·3n/8), has X_3 = X_5 = 4 and every other bin 0, and Parseval checks: Σ x_n² = 4 and (4² + 4²)/8 = 4.
 
 ### Practice Exercise
 
