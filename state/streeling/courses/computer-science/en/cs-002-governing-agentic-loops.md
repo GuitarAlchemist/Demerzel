@@ -38,7 +38,7 @@ guarantee it. The guarantee must come from the framework.
 
 Alan Turing proved (1936) that no algorithm can decide for all programs whether they will halt.
 No general procedure can settle it for an arbitrary agent loop either. So termination is imposed
-rather than detected: a framework-enforced cap bounds the number of iterations, and a deadline on every model call, tool call and network request bounds each iteration. Only the two together make the loop halt by construction: an iteration blocked on a call never reaches the counter.
+rather than detected: a framework-enforced cap bounds the number of iterations, and a framework-enforced deadline on each whole iteration stops it when it expires, if need be by killing the process that runs it. Only the two together make the loop halt by construction: an iteration that never ends never reaches the counter, and a deadline on each call is not enough, since an iteration can make any number of calls or compute between them.
 
 **Implication:** Any agentic framework that relies on the model to declare its own completion
 is unsound by construction.
@@ -66,7 +66,7 @@ These six properties make an iteration bounded and auditable. A loop that must b
 
 ### Property 1: Hard Iteration Cap
 A maximum iteration count enforced by the framework, not the model. When reached: halt,
-log the cap, escalate to human review. The counter advances only when an iteration ends, so the cap also needs a deadline on every call inside an iteration; the configuration below sets only the cap.
+log the cap, escalate to human review. The counter advances only when an iteration ends, so the cap also needs a deadline around each whole iteration, enforced by the framework, which stops the iteration when it expires, if need be by killing the process that runs it. Timeouts on model calls, tool calls and network requests are useful but do not bound an iteration by themselves. The configuration below sets only the cap.
 
 ```yaml
 # Example: Demerzel autonomous-loop configuration
@@ -181,7 +181,7 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 ## Key Takeaways
 
 - An LLM cannot reliably detect its own infinite loops — termination must be external
-- A governed loop has six properties: hard cap with a deadline on every call, progress test, external criterion, checkpoint, dedup, external exit decision — plus serializable state if it must be paused and resumed
+- A governed loop has six properties: hard cap with a deadline on every iteration, progress test, external criterion, checkpoint, dedup, external exit decision — plus serializable state if it must be paused and resumed
 - The Demerzel framework implements these in seldon-plan, demerzel-drive, and Ralph Loop
 - Article 9 (Bounded Autonomy) is the constitutional basis — bounds are predefined, extension requires escalation
 

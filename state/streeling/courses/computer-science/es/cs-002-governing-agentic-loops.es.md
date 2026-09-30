@@ -38,7 +38,7 @@ garantizarla. La garantía debe venir del framework.
 
 Alan Turing demostró (1936) que ningún algoritmo puede decidir, para todos los programas, si se detendrán.
 Tampoco hay un procedimiento general que pueda decidirlo para un bucle de agente arbitrario. Por eso la terminación se impone
-en lugar de detectarse: un límite impuesto por el framework acota el número de iteraciones, y un plazo máximo en cada llamada al modelo, llamada a herramienta y petición de red acota cada iteración. Solo los dos juntos hacen que el bucle se detenga por construcción: una iteración bloqueada en una llamada nunca llega al contador.
+en lugar de detectarse: un límite impuesto por el framework acota el número de iteraciones, y un plazo máximo impuesto por el framework a cada iteración completa la detiene cuando vence, si hace falta matando el proceso que la ejecuta. Solo los dos juntos hacen que el bucle se detenga por construcción: una iteración que nunca termina nunca llega al contador, y un plazo en cada llamada no basta, porque una iteración puede encadenar cualquier número de llamadas o calcular entre ellas.
 
 **Implicación:** Cualquier framework agéntico que dependa de que el modelo declare su propia finalización
 es defectuoso por construcción.
@@ -66,7 +66,7 @@ Estas seis propiedades hacen que una iteración sea acotada y auditable. Un bucl
 
 ### Propiedad 1: límite estricto de iteraciones
 Un número máximo de iteraciones impuesto por el framework, no por el modelo. Al alcanzarlo: detenerse,
-registrar el límite y escalar a revisión humana. El contador solo avanza cuando termina una iteración, así que el límite también exige un plazo máximo en cada llamada dentro de una iteración; la configuración de abajo solo fija el límite.
+registrar el límite y escalar a revisión humana. El contador solo avanza cuando termina una iteración, así que el límite también exige un plazo máximo alrededor de cada iteración completa, impuesto por el framework, que detiene la iteración cuando vence, si hace falta matando el proceso que la ejecuta. Los plazos en las llamadas al modelo, las llamadas a herramientas y las peticiones de red son útiles, pero no acotan por sí solos una iteración. La configuración de abajo solo fija el límite.
 
 ```yaml
 # Ejemplo: configuración del bucle autónomo de Demerzel
@@ -181,7 +181,7 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 ## Conclusiones clave
 
 - Un LLM no puede detectar de forma fiable sus propios bucles infinitos: la terminación debe ser externa
-- Un bucle gobernado tiene seis propiedades: límite estricto con un plazo máximo en cada llamada, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa, más un estado serializable si debe poder pausarse y reanudarse
+- Un bucle gobernado tiene seis propiedades: límite estricto con un plazo máximo en cada iteración, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa, más un estado serializable si debe poder pausarse y reanudarse
 - El framework Demerzel las implementa en seldon-plan, demerzel-drive y Ralph Loop
 - El artículo 9 (Autonomía acotada) es la base constitucional: los límites están predefinidos y ampliarlos requiere escalado
 

@@ -38,7 +38,7 @@ la garantir. La garantie doit venir du framework.
 
 Alan Turing a prouvé (1936) qu'aucun algorithme ne peut décider, pour tous les programmes, s'ils s'arrêteront.
 Aucune procédure générale ne peut davantage trancher pour une boucle d'agent quelconque. La terminaison est donc imposée
-plutôt que détectée : un plafond appliqué par le framework borne le nombre d'itérations, et un délai maximal sur chaque appel au modèle, appel d'outil et requête réseau borne chaque itération. Seuls les deux ensemble font s'arrêter la boucle par construction : une itération bloquée sur un appel n'atteint jamais le compteur.
+plutôt que détectée : un plafond appliqué par le framework borne le nombre d'itérations, et un délai maximal appliqué par le framework à chaque itération entière l'arrête à son expiration, au besoin en tuant le processus qui l'exécute. Seuls les deux ensemble font s'arrêter la boucle par construction : une itération qui ne finit jamais n'atteint jamais le compteur, et un délai sur chaque appel ne suffit pas, puisqu'une itération peut enchaîner autant d'appels qu'elle veut ou calculer entre eux.
 
 **Conséquence :** Tout framework agentique qui compte sur le modèle pour déclarer lui-même qu'il a terminé
 est défectueux par construction.
@@ -66,7 +66,7 @@ Ces six propriétés rendent une itération bornée et auditable. Une boucle qui
 
 ### Propriété 1 : plafond d'itérations strict
 Un nombre maximal d'itérations imposé par le framework, et non par le modèle. Une fois atteint : arrêter,
-journaliser le plafond, escalader vers une revue humaine. Le compteur n'avance qu'à la fin d'une itération : le plafond exige donc aussi un délai maximal sur chaque appel à l'intérieur d'une itération ; la configuration ci-dessous ne fixe que le plafond.
+journaliser le plafond, escalader vers une revue humaine. Le compteur n'avance qu'à la fin d'une itération : le plafond exige donc aussi un délai maximal autour de chaque itération entière, appliqué par le framework, qui arrête l'itération à son expiration, au besoin en tuant le processus qui l'exécute. Des délais sur les appels au modèle, les appels d'outils et les requêtes réseau sont utiles, mais ne bornent pas à eux seuls une itération. La configuration ci-dessous ne fixe que le plafond.
 
 ```yaml
 # Exemple : configuration de la boucle autonome de Demerzel
@@ -181,7 +181,7 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 ## Points clés à retenir
 
 - Un LLM ne peut pas détecter de façon fiable ses propres boucles infinies — l'arrêt doit être externe
-- Une boucle gouvernée a six propriétés : plafond strict avec un délai maximal sur chaque appel, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe — plus un état sérialisable si elle doit pouvoir être mise en pause et reprise
+- Une boucle gouvernée a six propriétés : plafond strict avec un délai maximal sur chaque itération, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe — plus un état sérialisable si elle doit pouvoir être mise en pause et reprise
 - Le framework Demerzel les implémente dans seldon-plan, demerzel-drive et Ralph Loop
 - L'article 9 (Autonomie bornée) en est la base constitutionnelle — les limites sont prédéfinies, les étendre exige une escalade
 
