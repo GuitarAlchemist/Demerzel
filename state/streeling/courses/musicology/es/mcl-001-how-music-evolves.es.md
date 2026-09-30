@@ -42,7 +42,7 @@ Entender estos cambios no se trata de memorizar fechas. Se trata de escuchar *po
 
 **Figura clave:** Hildegard von Bingen — compositora, mística y una de las primeras compositoras conocidas por nombre en la historia.
 
-**La guitarra:** Aun no existía. Sus ancestros — el ud (mundo árabe) y la vihuela (España) — ya se tocaban. El ud llegó a Europa a través de la España morisca, plantando la semilla.
+**La guitarra:** Aún no existía. Sus ancestros — el ud (mundo árabe) y la vihuela (España) — ya se tocaban. El ud llegó a Europa a través de la España morisca, plantando la semilla.
 
 ### Punto de escucha
 
@@ -112,7 +112,7 @@ Si escuchas canto gregoriano y luego un organum de Perotin (c. 1200), puedes oí
 
 **Figuras clave:** Frédéric Chopin (el poeta del piano), Richard Wagner (la ópera como arte total), Piotr Chaikovski (intensidad emocional), Johannes Brahms (clasicista romántico).
 
-**La guitarra:** Paradojicamente, la guitarra quedó rezagada. No podía competir con el volumen de las orquestas y pianos románticos. Francisco Tárrega mantuvo viva la llama, arreglando obras orquestales para guitarra y desarrollando la técnica moderna. Su trabajo preparó el terreno para el renacimiento de la guitarra en el siglo XX.
+**La guitarra:** Paradójicamente, la guitarra quedó rezagada. No podía competir con el volumen de las orquestas y pianos románticos. Francisco Tárrega mantuvo viva la llama, arreglando obras orquestales para guitarra y desarrollando la técnica moderna. Su trabajo preparó el terreno para el renacimiento de la guitarra en el siglo XX.
 
 ---
 

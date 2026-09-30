@@ -86,7 +86,7 @@ Este es el estándar profesional por una buena razón:
 
 3. **Segundo EQ (tonal):** Ahora moldea el sonido de forma creativa. Realza aire en 10-12 kHz, agrega presencia en 3-5 kHz, calienta los medios-bajos. Este EQ va después de la compresión, así que tus realces no disparan el compresor.
 
-**Por qué funciona:** Separacion de responsabilidades. El EQ correctivo previene artefactos del compresor. El compresor maneja la dinámica sobre una señal limpia. El EQ tonal moldea el carácter final sin afectar la dinámica.
+**Por qué funciona:** Separación de responsabilidades. El EQ correctivo previene artefactos del compresor. El compresor maneja la dinámica sobre una señal limpia. El EQ tonal moldea el carácter final sin afectar la dinámica.
 
 ---
 
@@ -144,5 +144,5 @@ Configura: Filtro pasa-altos a 100 Hz + corte a 250 Hz → Compresor (3:1) → R
 
 ---
 *Producido por el Ciclo de Investigación Seldon audio-engineering-2026-03-23-001 el 2026-03-23.*
-*Pregunta de investigación: El orden de compresión antes de EQ versus EQ antes de compresión produce resultados mediblemente diferentes en voces?*
+*Pregunta de investigación: ¿El orden de compresión antes de EQ versus EQ antes de compresión produce resultados mediblemente diferentes en voces?*
 *Creencia: T (confianza: 0.80)*

@@ -30,7 +30,7 @@ Al terminar esta lección, serás capaz de:
 Los humanos somos pésimos prediciendo el futuro. Aquí está la evidencia:
 
 - En 1943, el presidente de IBM, Thomas Watson, supuestamente dijo que el mercado mundial de computadoras era "tal vez cinco." (Hoy hay miles de millones.)
-- En 1995, Newsweek publicó "Internet? Bah!" argumentando que el comercio y la comunidad en línea nunca funcionarían.
+- En 1995, Newsweek publicó "¿Internet? ¡Bah!" argumentando que el comercio y la comunidad en línea nunca funcionarían.
 - En 2007, el CEO de Microsoft, Steve Ballmer, dijo que el iPhone "no tenía ninguna oportunidad" de ganar participación de mercado significativa.
 
 Estas no eran personas tontas. Eran expertos en sus campos. Entonces, ¿qué salió mal?
@@ -123,10 +123,10 @@ No todos los futuros están igualmente distantes. El **marco de horizontes** te 
 ### Ejercicio práctico
 
 Piensa en tu campo o carrera. Escribe una oración para cada horizonte:
-- Cercano: Que está ocurriendo obviamente ahora mismo?
-- Medio: Que cambio es probable pero no seguro?
-- Lejano: Que podría ser radicalmente diferente?
-- Profundo: Que importa sin importar lo que pase?
+- Cercano: ¿Qué está ocurriendo obviamente ahora mismo?
+- Medio: ¿Qué cambio es probable pero no seguro?
+- Lejano: ¿Qué podría ser radicalmente diferente?
+- Profundo: ¿Qué importa sin importar lo que pase?
 
 ---
 
@@ -141,7 +141,7 @@ Ejemplos de señales débiles que se convirtieron en megatendencias:
 - El comercio temprano de Bitcoin en 2009 → el ecosistema de criptomonedas
 - Pequeños canales de lecciones de guitarra en línea en 2006 → el colapso del control tradicional de la educación musical
 
-**Cómo usar señales débiles:** Recopilalas. No las juzgues demasiado rápido. Revísalas trimestralmente. Algunas se apagarán. Unas pocas crecerán. Las que crecen son oro.
+**Cómo usar señales débiles:** Recopílalas. No las juzgues demasiado rápido. Revísalas trimestralmente. Algunas se apagarán. Unas pocas crecerán. Las que crecen son oro.
 
 ### Comodines
 

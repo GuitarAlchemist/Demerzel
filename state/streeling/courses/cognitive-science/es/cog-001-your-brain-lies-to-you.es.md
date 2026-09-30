@@ -137,7 +137,7 @@ Has pasado 8 meses construyendo una funcionalidad. Las pruebas con usuarios mues
 
 ### Cómo contrarrestarlo
 
-- **Aplica la prueba del inicio limpio.** Pregunta: "Si empezáramos desde cero hoy, sin ninguna inversión previa, eligiriamos construir esto?" Si la respuesta es no, la inversión existente no debería cambiar esa respuesta.
+- **Aplica la prueba del inicio limpio.** Pregunta: "Si empezáramos desde cero hoy, sin ninguna inversión previa, ¿elegiríamos construir esto?" Si la respuesta es no, la inversión existente no debería cambiar esa respuesta.
 - **Separa al que decide del que invirtió.** La persona que aprobó la inversión original a menudo no puede evaluar objetivamente si continuar. Busca una perspectiva fresca.
 - **Celebra eliminar malos proyectos.** Haz que detener algo sea una señal de buen juicio, no de fracaso.
 
@@ -232,7 +232,7 @@ Conocer tus sesgos no los elimina. Pero te permite construir sistemas — humano
 ## Autoevaluación
 
 **1. Un equipo dice "Hemos invertido demasiado para detenernos ahora." ¿Qué sesgo está en juego, y qué pregunta deberían hacer en su lugar?**
-> Falacia del costo hundido. Deberían preguntar: "Si empezáramos desde cero hoy, eligiriamos este proyecto?" La inversión pasada es irrelevante para las decisiones futuras.
+> Falacia del costo hundido. Deberían preguntar: "Si empezáramos desde cero hoy, ¿elegiríamos este proyecto?" La inversión pasada es irrelevante para las decisiones futuras.
 
 **2. Después de una brecha de seguridad importante, el equipo quiere agregar cinco capas de revisión de seguridad a cada despliegue. ¿Qué sesgo podría estar impulsando esto?**
 > Heurística de disponibilidad. La brecha vivida y reciente hace que el riesgo se sienta más grande de lo que es. Deberían ver la tasa base — ¿cuántos despliegues realmente han tenido problemas de seguridad? — y diseñar controles proporcionales al riesgo real.
