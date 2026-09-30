@@ -171,7 +171,7 @@ The algedonic channel (CYB-001 Gap D) was resolved separately via `policies/alge
 
 ## Cross-References
 
-- Prerequisite: `state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md`
+- Prerequisite: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`
 - Protocol: `contracts/galactic-protocol.md`
 - Algedonic policy: `policies/algedonic-channel-policy.yaml`
 - Department: `state/streeling/departments/cybernetics.department.json`
