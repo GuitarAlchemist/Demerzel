@@ -62,7 +62,7 @@ Muestra que, cuando se descarta el rango de los nodos colgantes, el punto fijo x
 
 Las medidas de centralidad responden a preguntas distintas sobre un vértice i de un grafo no dirigido conexo con n vértices:
 - La **centralidad de grado**, d_i/(n − 1): cuántos vecinos, como fracción de los posibles.
-- La **centralidad de cercanía**, (n − 1)/Σ_j dist(i, j), con distancias contadas en aristas: cuán cerca está i de todos los demás. En un grafo no conexo esa suma es infinita; la forma r²/((n − 1) Σ_j dist(i, j)), con r el número de vértices alcanzables desde i y la suma sobre ellos, se reduce a la primera cuando todos los vértices son alcanzables (Wasserman y Faust 1994).
+- La **centralidad de cercanía**, (n − 1)/Σ_j dist(i, j), con distancias contadas en aristas: cuán cerca está i de todos los demás. En un grafo no conexo esa suma es infinita; la forma r²/((n − 1) Σ_j dist(i, j)), con r el número de vértices distintos de i alcanzables desde i y la suma sobre ellos, se reduce a la primera cuando todos los vértices son alcanzables (Wasserman y Faust 1994).
 - La **centralidad de intermediación**, Σ σ_st(i)/σ_st sobre los pares no ordenados {s, t} de otros vértices, donde σ_st cuenta los caminos más cortos entre s y t y σ_st(i) los que pasan por i (Freeman 1977): con qué frecuencia i está en el camino. Dividir por (n − 1)(n − 2)/2, el número de pares, la lleva a [0, 1]. Brandes (2001) la calcula para todos los vértices en tiempo O(nm) para m aristas, con una búsqueda en anchura desde cada vértice.
 - La **centralidad de vector propio** (Bonacich 1972): el vector de Perron de A, de modo que cada vértice puntúa en proporción a la suma de las puntuaciones de sus vecinos, x_i = (1/λ_1) Σ_j A_ij x_j.
 

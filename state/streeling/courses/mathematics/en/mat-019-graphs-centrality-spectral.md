@@ -62,7 +62,7 @@ Show that when the rank of the dangling nodes is dropped, the fixed point x*, di
 
 Centrality measures answer different questions about a vertex i of a connected undirected graph with n vertices:
 - **Degree centrality**, d_i/(n − 1): how many neighbours, as a fraction of the possible.
-- **Closeness centrality**, (n − 1)/Σ_j dist(i, j), with distances counted in edges: how near to all the others. On a disconnected graph that sum is infinite; the form r²/((n − 1) Σ_j dist(i, j)), with r the number of vertices reachable from i and the sum over them, reduces to the first when every vertex is reachable (Wasserman and Faust 1994).
+- **Closeness centrality**, (n − 1)/Σ_j dist(i, j), with distances counted in edges: how near to all the others. On a disconnected graph that sum is infinite; the form r²/((n − 1) Σ_j dist(i, j)), with r the number of vertices other than i reachable from i and the sum over them, reduces to the first when every vertex is reachable (Wasserman and Faust 1994).
 - **Betweenness centrality**, Σ σ_st(i)/σ_st over the unordered pairs {s, t} of other vertices, where σ_st counts the shortest paths between s and t and σ_st(i) those through i (Freeman 1977): how often i lies on the way. Dividing by (n − 1)(n − 2)/2, the number of pairs, puts it in [0, 1]. Brandes (2001) computes it for every vertex in O(nm) time for m edges, with one breadth-first search from each vertex.
 - **Eigenvector centrality** (Bonacich 1972): the Perron vector of A, so that each vertex scores in proportion to the sum of its neighbours' scores, x_i = (1/λ_1) Σ_j A_ij x_j.
 

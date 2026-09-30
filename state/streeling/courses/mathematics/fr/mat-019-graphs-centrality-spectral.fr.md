@@ -62,7 +62,7 @@ Montrer que, quand le rang des nœuds pendants est abandonné, le point fixe x*,
 
 Les mesures de centralité répondent à des questions différentes sur un sommet i d'un graphe non orienté connexe à n sommets :
 - La **centralité de degré**, d_i/(n − 1) : combien de voisins, en fraction du possible.
-- La **centralité de proximité**, (n − 1)/Σ_j dist(i, j), avec des distances comptées en arêtes : à quel point i est proche de tous les autres. Sur un graphe non connexe, cette somme est infinie ; la forme r²/((n − 1) Σ_j dist(i, j)), avec r le nombre de sommets accessibles depuis i et la somme sur eux, se ramène à la première quand tous les sommets sont accessibles (Wasserman et Faust 1994).
+- La **centralité de proximité**, (n − 1)/Σ_j dist(i, j), avec des distances comptées en arêtes : à quel point i est proche de tous les autres. Sur un graphe non connexe, cette somme est infinie ; la forme r²/((n − 1) Σ_j dist(i, j)), avec r le nombre de sommets autres que i accessibles depuis i et la somme sur eux, se ramène à la première quand tous les sommets sont accessibles (Wasserman et Faust 1994).
 - La **centralité d'intermédiarité**, Σ σ_st(i)/σ_st sur les paires non ordonnées {s, t} d'autres sommets, où σ_st compte les plus courts chemins entre s et t et σ_st(i) ceux qui passent par i (Freeman 1977) : à quelle fréquence i se trouve sur le trajet. La division par (n − 1)(n − 2)/2, le nombre de paires, la ramène dans [0, 1]. Brandes (2001) la calcule pour tous les sommets en temps O(nm) pour m arêtes, avec un parcours en largeur depuis chaque sommet.
 - La **centralité de vecteur propre** (Bonacich 1972) : le vecteur de Perron de A, de sorte que chaque sommet obtient un score proportionnel à la somme des scores de ses voisins, x_i = (1/λ_1) Σ_j A_ij x_j.
 
