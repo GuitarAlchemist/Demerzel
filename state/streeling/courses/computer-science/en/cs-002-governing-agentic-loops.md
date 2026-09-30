@@ -1,5 +1,5 @@
 ---
-module_id: cs-001-governing-agentic-loops
+module_id: cs-002-governing-agentic-loops
 department: computer-science
 course: "Agentic AI — Multi-Agent Systems, Tool Use, Reasoning Loops"
 level: intermediate
