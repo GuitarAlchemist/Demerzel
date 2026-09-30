@@ -45,7 +45,7 @@ V(régulateur) >= V(perturbation)
 
 ## Trois dimensions de la variété dans Demerzel
 
-Dans un cadre de gouvernance, la variété n'est pas un nombre unique. Ce cours mesure celle de Demerzel selon trois dimensions. Les nombres de l'inventaire (personas, contraintes, grammaires, règles, politiques, articles) sont lus dans le dépôt au commit `74cf7c5`, qui a ajouté ce module. Les valeurs logiques et les échelons de confiance suivent les définitions canoniques actuelles, dans `CONTEXT.md` et `logic/confidence-thresholds.yaml`.
+Dans un cadre de gouvernance, la variété n'est pas un nombre unique. Ce cours mesure celle de Demerzel selon trois dimensions. Les nombres de l'inventaire (personas, contraintes, grammaires, règles, politiques, articles) sont lus dans le dépôt au commit `74cf7c5`, qui a ajouté ce module. Les valeurs logiques et les échelons de confiance suivent les définitions canoniques actuelles, dans `CONTEXT.md` et `logic/confidence-thresholds.yaml`, lues au commit `91e41ac`.
 
 ### Trois règles de comptage
 
@@ -53,7 +53,7 @@ Dans un cadre de gouvernance, la variété n'est pas un nombre unique. Ce cours 
 
 **Les règles ne sont pas des états.** Une règle, comme une politique, une contrainte de persona ou une porte d'évolution, est un prédicat qui autorise certains états et en interdit d'autres. Plusieurs règles peuvent s'appliquer à la fois et se recouvrir, et scinder une règle en deux change leur nombre sans changer aucun comportement. Le log2 d'un nombre de règles n'est donc pas une variété. Un atténuateur se mesure par la variété qu'il retire : A = V_in - V_out, où V_in est la variété de ce qui lui parvient et V_out celle de ce qu'il laisse passer.
 
-**Un inventaire n'est pas un ensemble d'issues.** Un nombre d'éléments définis par le dépôt ne borne les issues que si chaque élément peut se produire seul, comme une issue. Une dérivation de grammaire utilise plusieurs définitions de règles à la fois, une même étiquette de décision peut couvrir plusieurs actions différentes, et une paire de politiques n'est une interaction que si les deux interagissent réellement. La variété se compte sur les issues : les structures distinctes générées, les réponses données et les perturbations rencontrées.
+**Un inventaire n'est pas un ensemble d'issues.** Un nombre d'éléments définis par le dépôt ne borne les issues que si chaque élément peut se produire seul, comme une issue. Une dérivation de grammaire utilise plusieurs définitions de règles à la fois, une même étiquette de décision peut couvrir plusieurs actions différentes, et une paire de politiques n'est une interaction que si les deux interagissent réellement, tandis qu'une même paire en interaction peut entrer en conflit de plusieurs façons distinguables. La variété se compte sur les issues : les structures distinctes générées, les réponses données et les perturbations rencontrées.
 
 ### Dimension 1 : variété comportementale (V_B)
 
@@ -78,7 +78,7 @@ Multiplier les trois lignes, 14 × 4 × 14 = 784 profils (9.61 bits), compterait
 | Contraintes de persona | 60 | Des règles, environ 4.3 par persona ; pas des états |
 | Appariement d'estimateur | 1 | skeptical-auditor évalue les 13 autres personas |
 
-**Atténuation comportementale :** non mesurée. Les 60 contraintes sont des prédicats qui s'appliquent ensemble et peuvent se recouvrir ; log2(60) = 5.91 bits les traiterait comme 60 issues distinguables. Leur atténuation est la variété des actions qu'elles retirent à chaque persona, A_B = V_in - V_out, et la mesurer demande un relevé des actions que chaque persona propose et de celles que ses contraintes refusent.
+**Atténuation comportementale :** non mesurée. Les 60 contraintes sont des prédicats qui s'appliquent ensemble et peuvent se recouvrir ; log2(60) = 5.91 bits les traiterait comme 60 issues distinguables. Leur atténuation est la réduction de variété entre les actions que chaque persona propose et celles que ses contraintes autorisent, A_B = V_in - V_out, et la mesurer demande un relevé des unes et des autres, les refus étant consignés à part.
 
 Interprétation : Demerzel a 14 profils comportementaux, 3.81 bits de choix de persona, chacun borné par ses propres contraintes. Ce que retirent les contraintes est la mesure encore ouverte de cette dimension.
 
@@ -102,7 +102,7 @@ Une grammaire dérive une structure en composant des définitions de règles : `
 | Portes d'évolution des grammaires (T >= 0.7 ; T >= 0.7 et C < 0.1) | 2 | Des règles sur les changements proposés ; pas des états |
 | Alerte d'obsolescence (plus de 30 jours) | 1 | Une règle sur l'âge d'une grammaire ; pas un état |
 
-**Atténuation structurelle :** non mesurée. C'est la variété des changements de grammaire proposés que les portes rejettent, A_S = V_in - V_out, et la mesurer demande le journal des propositions et des verdicts.
+**Atténuation structurelle :** non mesurée. C'est la réduction de variété entre les changements de grammaire proposés et ceux que les portes acceptent, A_S = V_in - V_out, et la mesurer demande le journal des propositions et des verdicts.
 
 Interprétation : trois règles contrôlent 27 grammaires qui contiennent 1,129 définitions de règles. L'inventaire ne dit pas à lui seul ce qu'elles retirent, mais il montre combien peu de mécanismes séparent une proposition des grammaires, ce qui plaide pour davantage de portes structurelles (voir Évaluation actuelle).
 
@@ -130,7 +130,7 @@ Ces étiquettes classent une décision ; elles ne comptent pas les réponses. Un
 | Articles constitutionnels (Asimov 6, Default 11) | 17 | Des règles ; pas des états |
 | Niveaux de gravité des préjudices (Critical, High, Medium, Low) | 4 | Des classes qui orientent une réponse ; pas des états retirés |
 
-**Atténuation régulatrice :** non mesurée. C'est la variété des décisions candidates que les politiques et les articles excluent, A_R = V_in - V_out.
+**Atténuation régulatrice :** non mesurée. C'est la réduction de variété entre les décisions candidates et celles que les politiques et les articles autorisent, A_R = V_in - V_out.
 
 Interprétation : la gouvernance doit contraindre plus qu'elle n'amplifie, conformément aux lois d'Asimov (préférer la sécurité à la capacité), mais ni la variété de ses réponses ni l'ampleur de cette contrainte ne sont mesurées.
 
@@ -142,7 +142,7 @@ Interprétation : la gouvernance doit contraindre plus qu'elle n'amplifie, confo
 |-----------|------------------------|---------------------|-------------|------------|
 | Comportementale (V_B) | 14 personas, 60 contraintes, 1 estimateur | Choix de la persona : 3.81 bits | Non mesurée | Profils fixés par persona |
 | Structurelle (V_S) | 27 grammaires, 1,129 définitions de règles, 2 portes, 1 alerte d'obsolescence | Non mesurée | Non mesurée | Peu de contrôles sur de nombreuses grammaires |
-| Régulatrice (V_R) | 6 valeurs, 5 échelons, 4 états PDCA ; 37 politiques, 17 articles, 4 niveaux de gravité | Étiquettes : 2.58 à 6.91 bits ; réponses non mesurées | Non mesurée | Prudente par conception, ampleur non mesurée |
+| Régulatrice (V_R) | 4 valeurs (6 à `91e41ac`), 5 échelons à `91e41ac`, 4 états PDCA ; 37 politiques, 17 articles, 4 niveaux de gravité | Étiquettes : 2.58 à 6.91 bits ; réponses non mesurées | Non mesurée | Prudente par conception, ampleur non mesurée |
 
 ### Pourquoi le tableau de bord n'a pas de ratio amplificateurs sur atténuateurs
 
@@ -162,13 +162,13 @@ Ces sens deviendront des seuils une fois A_B, A_S, A_R et les variétés conjoin
 
 ### Évaluation actuelle
 
-- **Comportementale (3.81 bits de choix de persona, 14 personas) :** chaque persona fixe son niveau et sa voix. Ce que retirent ses contraintes n'est pas mesuré ; consigner les actions refusées à chaque persona le mesurerait.
+- **Comportementale (3.81 bits de choix de persona, 14 personas) :** chaque persona fixe son niveau et sa voix. Ce que retirent ses contraintes n'est pas mesuré ; consigner les actions que chaque persona propose et celles que ses contraintes autorisent le mesurerait.
 - **Structurelle (27 grammaires, 1,129 définitions de règles) :** trois règles les contrôlent, et aucune variété structurelle n'est mesurée. Recommandation : ajouter des portes de qualité structurelles (par exemple, des exigences de couverture de tests des grammaires, un suivi de l'usage des productions), dont les verdicts mesureraient aussi A_S, et consigner les dérivations produites, ce qui mesurerait V_S.
 - **Régulatrice (étiquettes de 2.58 à 6.91 bits) :** prudente par conception ; dire si elle l'est trop, ou si elle a assez de variété de réponse, demande A_R et V_R_amp.
 
 ## Le côté des perturbations : que faut-il réguler ?
 
-Le côté des amplificateurs ne raconte que la moitié de l'histoire. Il faut aussi estimer la variété des perturbations auxquelles le système fait face. Les valeurs des tableaux ci-dessous sont des estimations, pas des mesures, et l'une d'elles est une borne supérieure :
+Le côté des amplificateurs ne raconte que la moitié de l'histoire. Il faut aussi estimer la variété des perturbations auxquelles le système fait face. Les valeurs des tableaux ci-dessous sont des estimations, pas des mesures, et une source n'est pas estimée du tout :
 
 ### Perturbations externes (V_D_ext)
 | Source | Estimation (N) | Variété V |
@@ -177,18 +177,18 @@ Le côté des amplificateurs ne raconte que la moitié de l'histoire. Il faut au
 | Combinaisons d'états des dépôts (3 dépôts x ~10 états chacun) | 10 à 10^3 = 1000 | 3.32 à 9.97 bits |
 | Changements de l'environnement externe (bibliothèques, API, modèles) | ~100 | 6.64 bits |
 
-**Variété totale des perturbations externes :** les combinaisons d'états des dépôts couvrent déjà les trois dépôts, donc la première ligne n'ajoute rien. Cette ligne est elle-même une fourchette : avec environ 10 états chacun, les trois dépôts ont entre 10 états conjoints (3.32 bits), si l'état de l'un détermine celui des autres, et 10^3 = 1000 (9.97 bits), s'ils varient indépendamment. Si les estimations tiennent, la ligne de l'environnement est alors le plus grand terme isolé : V_D_ext vaut au moins **6.64 bits**, et au plus log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** si un changement de l'environnement peut survenir dans n'importe lequel des 1000 états des dépôts.
+**Variété totale des perturbations externes :** les combinaisons d'états des dépôts couvrent déjà les trois dépôts, donc la première ligne n'ajoute rien. Cette ligne est elle-même une fourchette : avec environ 10 états chacun, les trois dépôts ont entre 10 états conjoints (3.32 bits), si l'état de l'un détermine celui des autres, et 10^3 = 1000 (9.97 bits), s'ils varient indépendamment. Si les estimations tiennent, la ligne de l'environnement est alors le plus grand terme isolé : V_D_ext vaut au moins **6.64 bits**, et au plus log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** si les changements de l'environnement surviennent un à la fois, chacun dans n'importe lequel des 1000 états des dépôts.
 
 ### Perturbations internes (V_D_int)
 | Source | Estimation (N) | Variété V |
 |--------|-------------|-----------|
 | Changements d'état de croyance par cycle | ~20 | 4.32 bits |
-| Paires de politiques (37 politiques) | au plus 666 | au plus 9.38 bits |
+| Interactions entre politiques (37 politiques, 666 paires) | non estimé | non estimée |
 | Propositions d'évolution des grammaires | ~5 par cycle | 2.32 bits |
 
-666 est le nombre de paires de politiques, une borne supérieure du nombre d'interactions deux à deux distinctes : seules comptent les paires qui interagissent réellement, et rien ici ne mesure combien le font.
+666 est le nombre de paires de politiques. Il compte les paires qui pourraient interagir, pas les issues de leurs interactions : seules contribuent les paires qui interagissent réellement, une même paire peut entrer en conflit de plusieurs façons distinguables, et rien ici ne mesure ni l'un ni l'autre. La ligne des politiques ne donne donc ni borne inférieure ni borne supérieure.
 
-**Variété totale des perturbations internes :** si les estimations tiennent, V_D_int vaut au moins **4.32 bits** (les seuls changements de croyance), et au plus log2(20 × 666 × 5) = 4.32 + 9.38 + 2.32 = **16.02 bits** si toutes les paires de politiques interagissent et que les trois sources sont indépendantes. Les paires de politiques ne donnent aucune borne inférieure, puisque leur nombre est lui-même une borne supérieure.
+**Variété totale des perturbations internes :** si les estimations tiennent, V_D_int vaut au moins **4.32 bits** (les seuls changements de croyance, si environ 20 changements distincts surviennent dans un cycle). L'inventaire ne lui donne aucune borne supérieure : la ligne des politiques n'est pas estimée, et les deux autres lignes comptent des événements par cycle, pas les formes distinctes que chaque événement peut prendre.
 
 ### Vérification de la loi d'Ashby
 
@@ -199,10 +199,10 @@ V(réponse régulatrice) >= V(perturbation)
 ```
 
 - V_R_amp, la variété des réponses, n'est pas mesurée. L'inventaire ne donne que la variété des étiquettes, entre 2.58 et 6.91 bits, qui ne la borne pas (voir la dimension 3)
-- Si les estimations tiennent, V_D se situe entre la plus grande source estimée isolée, les changements de l'environnement à 6.64 bits, et la somme de toutes les sources, 16.61 + 16.02 = 32.63 bits
-- **Écart : non calculé.** Aucun des deux côtés n'est mesuré, et les inventaires sont compatibles avec un surplus comme avec un grand déficit
+- Si les estimations tiennent, V_D vaut au moins 6.64 bits, les changements de l'environnement, la plus grande source estimée isolée. L'inventaire ne donne aucune borne supérieure, puisque les interactions entre politiques ne sont pas estimées (voir Perturbations internes)
+- **Écart : non calculé.** Aucun des deux côtés n'est mesuré, et les inventaires sont compatibles avec un surplus comme avec un déficit de n'importe quelle taille
 
-Les deux intervalles tiennent quelles que soient les dépendances, étant donné les estimations : un espace d'états conjoint a au moins autant d'états que sa plus grande partie et au plus le produit de leurs tailles. Les intervalles montrent aussi combien peu les inventaires tranchent. En bas, environ 100 changements de l'environnement distincts (6.64 bits), c'est moins que les 120 triplets d'étiquettes (6.91 bits) : même les étiquettes pourraient en principe les distinguer. En haut, 32.63 bits représentent environ 6.7 × 10^9 états de perturbation, bien au-delà de tout nombre d'étiquettes. Mesurer les deux variétés conjointes, en comptant les perturbations distinctes rencontrées et les réponses distinctes données à chaque cycle, situerait l'écart, s'il existe.
+La borne inférieure tient quelles que soient les dépendances, étant donné les estimations : un espace d'états conjoint a au moins autant d'états que sa plus grande partie. Elle montre aussi combien peu les inventaires tranchent. Environ 100 changements de l'environnement distincts (6.64 bits), c'est moins que les 120 triplets d'étiquettes (6.91 bits) : même les étiquettes pourraient en principe les distinguer, alors que rien dans les inventaires ne plafonne les perturbations. Mesurer les deux variétés conjointes, en comptant les perturbations distinctes rencontrées et les réponses distinctes données à chaque cycle, situerait l'écart, s'il existe.
 
 Si les perturbations dépassent les réponses, la différence doit être absorbée par :
 
@@ -226,20 +226,24 @@ Pour suivre la variété dans le temps, Demerzel devrait calculer les métriques
       "personas": 14,
       "grammars": 27,
       "grammar_rule_definitions": 1129,
-      "logic_values": 6,
-      "confidence_rungs": 5,
+      "logic_values": 4,
       "pdca_states": 4,
       "policies": 37,
       "constitutional_articles": 17,
       "harm_severity_levels": 4,
       "persona_constraints": 60,
       "evolution_gates": 2
+    },
+    "definitions": {
+      "commit": "91e41ac",
+      "logic_values": 6,
+      "confidence_rungs": 5
     }
   }
 }
 ```
 
-`commit` date les nombres de l'inventaire. Comme indiqué plus haut, `logic_values` et `confidence_rungs` suivent les définitions actuelles : à ce commit, la logique avait quatre valeurs.
+`commit` date les nombres de l'inventaire, tous lus à `74cf7c5`, où la logique avait quatre valeurs. `definitions` contient ce qu'utilise la variété des étiquettes : les six valeurs logiques de `CONTEXT.md` et les cinq échelons de `logic/confidence-thresholds.yaml`, lus à `91e41ac`. Le fichier de l'échelle n'existait pas à `74cf7c5`, si bien que l'inventaire ne compte pas d'échelons.
 
 ### Métrique 2 : variétés par dimension
 
@@ -252,16 +256,17 @@ Pour suivre la variété dans le temps, Demerzel devrait calculer les métriques
     "responses": null,
     "disturbances": null,
     "attenuation": {"behavioral": null, "structural": null, "regulatory": null},
-    "commit": "74cf7c5"
+    "inventory_commit": "74cf7c5",
+    "definitions_commit": "91e41ac"
   }
 }
 ```
 
-Un `null` marque une grandeur pas encore mesurée, pas un zéro.
+Un `null` marque une grandeur pas encore mesurée, pas un zéro. `persona_selection` vient de l'inventaire et `decision_labels` des définitions, d'où les deux commits.
 
 ### Métrique 3 : mesure des issues et de l'atténuation
 
-Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes refusent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Le nombre d'issues distinctes de chaque côté donne V_in et V_out, et A = V_in - V_out. Consignez de la même façon les structures distinctes que génèrent les grammaires (V_S), les réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les perturbations distinctes qu'elle rencontre (V_D).
+Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne passe, V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les structures distinctes que génèrent les grammaires (V_S), les réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les perturbations distinctes qu'elle rencontre (V_D).
 
 Suivez ces grandeurs sur des cycles consécutifs. Alertez quand :
 - Le A d'un atténuateur tombe à 0 bit (il ne retire plus rien)
@@ -292,7 +297,7 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 
 1. **Suivre les variétés à chaque cycle** — Ajouter l'instantané de l'inventaire à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Consigner l'inventaire et, une fois mesurées, les variétés des structures, des réponses et des perturbations, ainsi que chaque atténuation.
 2. **Ajouter des portes de qualité structurelles** — Trois règles contrôlent 1,129 définitions de règles de grammaire. Introduire des exigences de couverture de tests des grammaires et un suivi de l'usage des productions ; leurs verdicts rendraient aussi A_S mesurable.
-3. **Mesurer l'écart régulateur** — Les inventaires ne le bornent que de loin : des perturbations entre 6.64 et 32.63 bits si les estimations tiennent, et aucune borne sur les réponses. Les paires de politiques (666 à partir de 37 politiques) sont la plus grande source possible de perturbation. À mesure que les politiques augmentent, le nombre de paires croît de façon quadratique, mais sa variété log2(n(n-1)/2) ne croît que de façon logarithmique, d'environ 2 bits chaque fois que le nombre de politiques double, et elle relève d'autant la borne supérieure de V_D. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
+3. **Mesurer l'écart régulateur** — Les inventaires ne le bornent que de loin : des perturbations d'au moins 6.64 bits si les estimations tiennent, sans borne supérieure, et aucune borne sur les réponses. Les interactions entre politiques sont la source de perturbation la moins connue. Le nombre de paires de politiques (666 à partir de 37 politiques) croît de façon quadratique, environ quatre fois chaque fois que le nombre de politiques double (2,701 paires pour 74 politiques), et chaque paire en interaction peut entrer en conflit de plusieurs façons. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
 4. **L'escalade vers des humains est un pont de variété** — Le système de seuils de confiance (Article 6 : Escalade) est le principal mécanisme de Demerzel pour absorber la variété qui dépasse sa capacité de régulation. C'est une fonctionnalité, pas une limite.
 5. **Faire évoluer la section 6 de la grammaire** — La section sur la variété requise de la grammaire `sci-cybernetics.ebnf` (lignes 76-82) devrait être enrichie de productions de mesure quantitative.
 
