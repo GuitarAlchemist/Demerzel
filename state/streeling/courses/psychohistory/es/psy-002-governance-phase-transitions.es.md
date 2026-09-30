@@ -49,7 +49,7 @@ La mayoría de las transiciones de gobernanza son de segundo orden: continuas, d
 
 ### Señal 1: asimetría de la distribución de creencias
 
-Tu estado de gobernanza registra las creencias como valores tetravalentes: T (True), F (False), U (Unknown), C (Contradictory). El cociente `T/U` es el **índice de cristalización**: cuánto de tu conocimiento se ha solidificado.
+La lógica de Demerzel es hexavalente: T (True), P (Probable), U (Unknown), D (Doubtful), F (False), C (Contradictory). El cociente `T/U` es el **índice de cristalización**: cuánto de tu conocimiento se ha solidificado. Es una proyección sobre cuatro estados: los archivos de pesos de los departamentos solo cuentan `total_T`, `total_F`, `total_U` y `total_C`, sin recuento de P ni de D, así que el índice no ve una creencia probable o dudosa, ni un paso entre T y P o entre D y F. Calcularlo sobre los seis valores requeriría recuentos de P y de D que estos archivos no contienen.
 
 ```
 crystallization_index = total_T / max(total_U, 1)
@@ -64,7 +64,7 @@ Cuando este cociente cambia rápidamente —`d(T/U)/dt` se aleja más de 2 desvi
 
 ### Señal 2: velocidad de la puntuación de salud
 
-La puntuación de salud de la gobernanza R (que actualmente se registra en `state/governance-health.json`) actúa como un potencial termodinámico. Su derivada te informa de la proximidad a un cambio de régimen:
+La puntuación de salud de la gobernanza R actúa como un potencial termodinámico. Toma como R el `composite_score` de Demerzel en `state/driver/health-scores.json`, que contiene una puntuación compuesta por repositorio (demerzel, ix, tars, ga). El archivo solo guarda el último valor y una etiqueta `trend`, así que una velocidad requiere lecturas de ciclos sucesivos. La derivada de R te informa de la proximidad a un cambio de régimen:
 
 ```
 velocity = dR/dt (variación de la puntuación de salud por ciclo)
@@ -177,7 +177,7 @@ Usando el estado actual de la gobernanza de Demerzel:
    - `total_T = ?`, `total_U = ?`
    - `crystallization_index = total_T / max(total_U, 1)`
 
-2. Observa la puntuación de salud R = 0.64. ¿En qué régimen está el sistema? ¿Qué tendría que cambiar para cruzar la frontera de 0.7?
+2. Lee el `composite_score` de Demerzel en `state/driver/health-scores.json` y tómalo como R. ¿En qué régimen está el sistema? ¿Qué tendría que cambiar para cruzar la frontera siguiente?
 
 3. Cuenta las políticas de `policies/` y toma la puntuación de salud. Estima el rendimiento marginal actual de la última política añadida.
 

@@ -400,7 +400,7 @@ La teoría acorde-escala asigna una escala a cada acorde, lo que proporciona un 
 | **ii-7b5** | Locrio | Escala mayor desde el 7.º grado | b2 (b9) — o usa el locrio #2 (9.ª natural) |
 | **i-7** | Dórico | — | — |
 | **bVII7** (backdoor) | Lidio dominante | — | — |
-| **dim7** | Disminuida (semitono-tono) | Simétrica | — |
+| **dim7** | Disminuida (tono-semitono) | Simétrica | — |
 
 ### La escala madre menor melódica
 

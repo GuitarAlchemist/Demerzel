@@ -49,7 +49,7 @@ Most governance transitions are second-order — continuous, hard to pinpoint, b
 
 ### Signal 1: Belief Distribution Skew
 
-Your governance state tracks beliefs as tetravalent values: T (True), F (False), U (Unknown), C (Contradictory). The ratio `T/U` is the **crystallization index** — how much of your knowledge has solidified.
+Demerzel's logic is hexavalent: T (True), P (Probable), U (Unknown), D (Doubtful), F (False), C (Contradictory). The ratio `T/U` is the **crystallization index** — how much of your knowledge has solidified. It is a four-state projection: the department weights files count only `total_T`, `total_F`, `total_U` and `total_C`, with no count for P or D, so the index cannot see a probable or doubtful belief, nor a move between T and P or between D and F. Computing it over all six values would need P and D counts that these files do not carry.
 
 ```
 crystallization_index = total_T / max(total_U, 1)
@@ -64,7 +64,7 @@ When this ratio changes rapidly — `d(T/U)/dt` exceeding 2 standard deviations 
 
 ### Signal 2: Health Score Velocity
 
-The governance health score R (currently tracked in `state/governance-health.json`) acts as a thermodynamic potential. Its derivative tells you about regime proximity:
+The governance health score R acts as a thermodynamic potential. Take R to be Demerzel's `composite_score` in `state/driver/health-scores.json`, which holds one composite score per repository (demerzel, ix, tars, ga). The file keeps only the latest value and a `trend` label, so a velocity needs readings from successive cycles. The derivative of R tells you about regime proximity:
 
 ```
 velocity = dR/dt (health score change per cycle)
@@ -177,7 +177,7 @@ Using the current Demerzel governance state:
    - `total_T = ?`, `total_U = ?`
    - `crystallization_index = total_T / max(total_U, 1)`
 
-2. Look at the health score R = 0.64. Which regime is the system in? What would need to change to cross the 0.7 boundary?
+2. Read Demerzel's `composite_score` in `state/driver/health-scores.json` and take it as R. Which regime is the system in? What would need to change to cross the next boundary?
 
 3. Count the policies in `policies/` and the health score. Estimate the current marginal return of the last policy added.
 

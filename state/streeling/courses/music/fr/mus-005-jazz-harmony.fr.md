@@ -400,7 +400,7 @@ La théorie accord-gamme attribue une gamme à chaque accord, ce qui fournit un 
 | **ii-7b5** | Locrien | Gamme majeure depuis le 7e degré | b2 (b9) — ou utiliser le locrien #2 (9e naturelle) |
 | **i-7** | Dorien | — | — |
 | **bVII7** (backdoor) | Lydien dominant | — | — |
-| **dim7** | Diminuée (demi-ton/ton) | Symétrique | — |
+| **dim7** | Diminuée (ton/demi-ton) | Symétrique | — |
 
 ### La gamme mère mineure mélodique
 

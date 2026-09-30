@@ -400,7 +400,7 @@ Chord-scale theory assigns a scale to each chord, providing a pool of melody not
 | **ii-7b5** | Locrian | Major scale from 7th degree | b2 (b9) — or use Locrian #2 (natural 9) |
 | **i-7** | Dorian | — | — |
 | **bVII7** (backdoor) | Lydian Dominant | — | — |
-| **dim7** | Diminished (half-whole) | Symmetric | — |
+| **dim7** | Diminished (whole-half) | Symmetric | — |
 
 ### The Melodic Minor Mother Scale
 
