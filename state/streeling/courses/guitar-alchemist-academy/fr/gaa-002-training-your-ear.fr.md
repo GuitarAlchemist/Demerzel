@@ -101,7 +101,7 @@ Les tierces sont la paire la plus importante à distinguer. Une tierce majeure r
 | Sixte majeure (M6) | 9 | « My Bonnie Lies Over the Ocean » (deux premières notes) | Saut large et lumineux |
 | Sixte mineure (m6) | 8 | « The Entertainer » (3e et 4e notes du thème principal, Mi montant au Do) | Saut large et plus sombre |
 | Septième majeure (M7) | 11 | « Take On Me » (deux premières notes du refrain) | Tension extrême, presque une octave |
-| Septième mineure (m7) | 10 | « Somewhere » de West Side Story (« There's a... ») | Blues, qui s'étire vers le haut |
+| Septième mineure (m7) | 10 | « Somewhere » de West Side Story (deux premières notes chantées) | Blues, qui s'étire vers le haut |
 
 N'essayez pas de tous les apprendre en une séance. Maîtrisez d'abord le niveau 1. Ajoutez le niveau 2 quand il est solide. Le niveau 3 peut attendre des semaines.
 

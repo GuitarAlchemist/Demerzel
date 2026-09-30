@@ -101,7 +101,7 @@ Las terceras son el par más importante que hay que distinguir. Una tercera mayo
 | Sexta mayor (M6) | 9 | «My Bonnie Lies Over the Ocean» (dos primeras notas) | Salto amplio y brillante |
 | Sexta menor (m6) | 8 | «The Entertainer» (notas 3.ª y 4.ª del tema principal, Mi subiendo a Do) | Salto amplio y más oscuro |
 | Séptima mayor (M7) | 11 | «Take On Me» (dos primeras notas del estribillo) | Tensión extrema, casi una octava |
-| Séptima menor (m7) | 10 | «Somewhere» de West Side Story («There's a...») | Con sabor a blues, que se estira |
+| Séptima menor (m7) | 10 | «Somewhere» de West Side Story (dos primeras notas cantadas) | Con sabor a blues, que se estira |
 
 No intentes aprenderlos todos en una sesión. Domina primero el nivel 1. Añade el nivel 2 cuando esté sólido. El nivel 3 puede esperar semanas.
 
