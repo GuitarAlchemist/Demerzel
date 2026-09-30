@@ -80,7 +80,7 @@ Multiplica V por c > 0 y parte de √c W₀ y √c H₀. En la actualización de
 
 Una regla de parada puede reintroducir las unidades. Una regla que se detiene cuando el error cambia menos de τ, en términos absolutos, se convierte sobre cV en la regla de tolerancia τ/c sobre V: multiplicar los datos por 1000, como cuando los metros pasan a milímetros, hace la regla 1000 veces más estricta, y dividirlos por 1000 la hace 1000 veces más laxa. Una regla relativa, como |e_t − e_(t+1)| ≤ τ e_t, da el mismo número de iteraciones en cualquier unidad, y también una tolerancia sobre una medida de estacionariedad relativa a su primer valor, el tipo de regla que usa Lin (2007). Como en el MAT-012, un cambio pequeño certifica poco: no prueba ningún mínimo y, tras el §3, nada sobre los factores, ya que el error es constante a lo largo de familias enteras de factorizaciones.
 
-Las constantes aditivas rompen la equivariancia del mismo modo. Un suelo sobre un valor de partida, o un ε sumado a un denominador, es una longitud en las unidades de los datos, y cuenta cuando los datos son pequeños frente a él. IX tiene ambos (§6).
+Las constantes aditivas rompen la equivariancia del mismo modo. Un suelo sobre un valor de partida, o un ε sumado a las entradas de partida o a un denominador, es un número fijo, mientras que las cantidades con las que se encuentra escalan de forma distinta bajo V → cV: la media de V por c, las entradas de los factores por √c, los denominadores por c^(3/2). Una constante así cuenta cuando la cantidad con la que se compara, o a la que se suma, es pequeña frente a ella. IX tiene las tres (§6).
 
 ### Ejercicio práctico
 
@@ -184,7 +184,7 @@ En el paso 4, ¿por qué 0.001 V se detiene tras 16 iteraciones con un error may
 - **Tomar una parada por una solución.** Un cambio por debajo de una tolerancia no prueba ningún mínimo ni identifica ningún factor; en la matriz de prueba del §5, la parada llega mientras las partes son arbitrarias.
 - **Usar una tolerancia absoluta con datos en unidades arbitrarias.** Reescala los datos a una norma fija, o usa una regla relativa.
 - **Elegir k solo por el error.** El mejor error solo puede bajar al crecer k, y llega a 0 en k = min(n, p), donde la factorización es trivial.
-- **Empezar una entrada en 0.** Las actualizaciones multiplicativas nunca la mueven; parte de valores positivos.
+- **Empezar una entrada en 0.** Las actualizaciones multiplicativas nunca la mueven mientras su cociente esté definido (§2); parte de valores positivos.
 - **Comparar factores columna a columna.** La escala y el orden son arbitrarios; escala cada parte y empareja las partes primero.
 - **Escribir una prueba que la factorización nula supera.** Compara con el error inicial, o con la cota del §1.
 - **Pasar NaN a un ajuste que solo rechaza entradas negativas.** Comprueba que cada entrada es finita antes de ajustar.

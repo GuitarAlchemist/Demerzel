@@ -80,7 +80,7 @@ Multiplions V par c > 0 et partons de √c W₀ et √c H₀. Dans la mise à jo
 
 Une règle d'arrêt peut réintroduire les unités. Une règle qui s'arrête quand l'erreur varie de moins de τ, en valeur absolue, devient sur cV la règle de tolérance τ/c sur V : multiplier les données par 1000, comme quand des mètres deviennent des millimètres, rend la règle 1000 fois plus stricte, et les diviser par 1000 la rend 1000 fois plus lâche. Une règle relative, comme |e_t − e_(t+1)| ≤ τ e_t, donne le même nombre d'itérations dans toutes les unités, tout comme une tolérance sur une mesure de stationnarité rapportée à sa première valeur, le genre de règle qu'utilise Lin (2007). Comme au MAT-012, une petite variation certifie peu de chose : elle ne prouve aucun minimum et, après le §3, rien sur les facteurs, puisque l'erreur est constante le long de familles entières de factorisations.
 
-Les constantes additives brisent l'équivariance de la même façon. Un plancher sur une valeur de départ, ou un ε ajouté à un dénominateur, est une longueur dans les unités des données, et compte quand les données sont petites devant lui. IX a les deux (§6).
+Les constantes additives brisent l'équivariance de la même façon. Un plancher sur une valeur de départ, ou un ε ajouté aux coefficients de départ ou à un dénominateur, est un nombre fixe, alors que les quantités qu'il rencontre changent différemment sous V → cV : la moyenne de V est multipliée par c, les coefficients des facteurs par √c, les dénominateurs par c^(3/2). Une telle constante compte quand la quantité à laquelle on la compare, ou on l'ajoute, est petite devant elle. IX a les trois (§6).
 
 ### Exercice pratique
 
@@ -184,7 +184,7 @@ Le test d'erreur d'IX part de W₀ et H₀ de coefficients u · s + ε, où u su
 - **Prendre un arrêt pour une solution.** Une variation inférieure à une tolérance ne prouve aucun minimum et n'identifie aucun facteur ; sur la matrice de test du §5, l'arrêt survient alors que les parties sont arbitraires.
 - **Utiliser une tolérance absolue sur des données en unités arbitraires.** Remettre les données à une norme fixée, ou utiliser une règle relative.
 - **Choisir k d'après la seule erreur.** La meilleure erreur ne peut que baisser quand k croît, et elle atteint 0 pour k = min(n, p), où la factorisation est triviale.
-- **Démarrer un coefficient à 0.** Les mises à jour multiplicatives ne le déplacent jamais ; partir de valeurs strictement positives.
+- **Démarrer un coefficient à 0.** Les mises à jour multiplicatives ne le déplacent jamais tant que leur quotient est défini (§2) ; partir de valeurs strictement positives.
 - **Comparer des facteurs colonne par colonne.** L'échelle et l'ordre sont arbitraires ; mettre chaque partie à l'échelle et apparier les parties d'abord.
 - **Écrire un test que la factorisation nulle réussit.** Comparer à l'erreur initiale, ou à la borne du §1.
 - **Passer NaN à un ajustement qui ne rejette que les coefficients négatifs.** Vérifier que chaque coefficient est fini avant l'ajustement.

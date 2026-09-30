@@ -80,7 +80,7 @@ Multiply V by c > 0 and start from √c W₀ and √c H₀. In the H update, (�
 
 A stopping rule can bring the units back. A rule that stops when the error changes by less than τ, in absolute terms, becomes on cV the rule with tolerance τ/c on V: multiplying the data by 1000, as when metres become millimetres, makes the rule 1000 times stricter, and dividing them by 1000 makes it 1000 times looser. A relative rule, such as |e_t − e_(t+1)| ≤ τ e_t, gives the same number of iterations in every unit, and so does a tolerance on a stationarity measure taken relative to its first value, the kind of rule Lin (2007) uses. As in MAT-012, a small change certifies little: it proves no minimum and, after §3, nothing about the factors, since the error is flat along whole families of factorisations.
 
-Additive constants break the equivariance in the same way. A floor on a starting value, or an ε added to a denominator, is a length in the units of the data, and matters when the data are small compared with it. IX has both (§6).
+Additive constants break the equivariance in the same way. A floor on a starting value, or an ε added to the starting entries or to a denominator, is a fixed number, while the quantities it meets scale differently under V → cV: the mean of V by c, the entries of the factors by √c, the denominators by c^(3/2). Such a constant matters when the quantity it is compared with, or added to, is small compared with it. IX has all three (§6).
 
 ### Practice Exercise
 
@@ -184,7 +184,7 @@ In step 4, why does 0.001 V stop after 16 iterations with a higher error, when i
 - **Taking a stop for a solution.** A change below a tolerance proves no minimum and identifies no factors; on the test matrix of §5, the stop comes while the parts are arbitrary.
 - **Using an absolute tolerance on data in arbitrary units.** Rescale the data to a fixed norm, or use a relative rule.
 - **Choosing k by the error alone.** The best error can only fall as k grows, and it reaches 0 at k = min(n, p), where the factorisation is trivial.
-- **Starting an entry at 0.** Multiplicative updates never move it; start from positive values.
+- **Starting an entry at 0.** Multiplicative updates never move it while their ratio is defined (§2); start from positive values.
 - **Comparing factors column by column.** Scale and order are arbitrary; scale each part and match the parts first.
 - **Writing a test that the zero factorisation passes.** Compare with the initial error, or with the bound of §1.
 - **Passing NaN to a fit that only rejects negative entries.** Check that every entry is finite before fitting.
