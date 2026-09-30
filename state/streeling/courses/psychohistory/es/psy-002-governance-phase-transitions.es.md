@@ -127,7 +127,7 @@ Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuert
 
 ### Señal 6: el cociente de variedad como parámetro de orden
 
-Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones (la comprobación de la ley de Ashby) mide si la gobernanza tiene la complejidad suficiente para manejar su entorno. No es el cociente dimensional R = 2^(V_amplifiers - V_attenuators) de CYB-003, cuyo valor regulatorio es sano por debajo de 1.0 por diseño:
+Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones (la comprobación de la ley de Ashby) mide si la gobernanza tiene la complejidad suficiente para manejar su entorno. Compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador:
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -196,7 +196,7 @@ Usando el estado actual de la gobernanza de Demerzel:
 ## Lecturas adicionales
 
 - [PSY-001: Introducción a la capitalización fractal](psy-001-intro-fractal-compounding.es.md): requisito previo sobre D_c y ERGOL/LOLLI
-- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/es/cyb-003-measuring-variety-ratio-quantitatively.es.md): el parámetro de orden
+- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en inglés): el parámetro de orden
 - [CYB-001: Correspondencia entre el VSM y la gobernanza de la IA](../../cybernetics/es/cyb-001-vsm-ai-governance-mapping.es.md): requisitos previos estructurales
 - Mecánica estadística de las transiciones de fase (teoría de Landau, parámetros de orden, exponentes críticos)
 - Fundación de Asimov: la psicohistoria predice tendencias agregadas, no sucesos individuales

@@ -127,7 +127,7 @@ Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le syst
 
 ### Signal 6 : le ratio de variété comme paramètre d'ordre
 
-D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations (la vérification de la loi d'Ashby) mesure si la gouvernance a une complexité suffisante pour faire face à son environnement. Ce n'est pas le ratio dimensionnel R = 2^(V_amplifiers - V_attenuators) de CYB-003, dont la valeur régulatrice est saine en dessous de 1.0 par construction :
+D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations (la vérification de la loi d'Ashby) mesure si la gouvernance a une complexité suffisante pour faire face à son environnement. Il compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur :
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -196,7 +196,7 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
 ## Pour aller plus loin
 
 - [PSY-001 : Introduction à la capitalisation fractale](psy-001-intro-fractal-compounding.fr.md) — prérequis sur D_c et ERGOL/LOLLI
-- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/fr/cyb-003-measuring-variety-ratio-quantitatively.fr.md) — le paramètre d'ordre
+- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en anglais) — le paramètre d'ordre
 - [CYB-001 : Correspondance entre le VSM et la gouvernance de l'IA](../../cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md) — prérequis structurels
 - Mécanique statistique des transitions de phase (théorie de Landau, paramètres d'ordre, exposants critiques)
 - Fondation d'Asimov — la psychohistoire prédit des tendances agrégées, pas des événements individuels

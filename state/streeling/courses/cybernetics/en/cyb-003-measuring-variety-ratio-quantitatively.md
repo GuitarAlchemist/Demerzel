@@ -13,7 +13,7 @@ How can Demerzel measure its variety ratio quantitatively? (Carried from Cycle 0
 
 ## Summary
 
-Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces. This course defines a quantitative framework for measuring Demerzel's variety ratio across three dimensions: behavioral variety (personas), structural variety (grammars), and regulatory variety (policies, constitutions, thresholds). The key formula is V = log2(N) applied per dimension. The variety ratio R = N_amplifiers / N_attenuators compares the two state spaces; since V = log2(N), R = 2^(V_amplifiers - V_attenuators), and its logarithm log2 R = V_amplifiers - V_attenuators, in bits, is tracked over time to detect governance drift toward over-constraint or under-regulation.
+Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces. This course defines a quantitative framework for measuring Demerzel's variety ratio across three dimensions: behavioral variety (personas), structural variety (grammars), and regulatory variety (policies, constitutions, thresholds). The key formula is V = log2(N) applied per dimension, with the variety ratio R = V_amplifiers / V_attenuators tracked over time to detect governance drift toward over-constraint or under-regulation.
 
 ## Ashby's Variety: The Formal Definition
 
@@ -60,7 +60,7 @@ Variety in a governance framework is not a single number. Demerzel's variety ope
 
 **Total behavioral amplification:** V_B_amp = 3.81 + 2.00 + 4.75 = **10.56 bits**
 
-This means Demerzel can produce approximately 14 × 4 × 27 = 1,512 distinguishable behavioral configurations (2^10.56 ≈ 1,510).
+This means Demerzel can produce approximately 2^10.56 = 1,506 distinguishable behavioral configurations.
 
 **Attenuators:**
 | Component | Count (N) | Variety V = log2(N) |
@@ -70,9 +70,9 @@ This means Demerzel can produce approximately 14 × 4 × 27 = 1,512 distinguisha
 
 **Total behavioral attenuation:** V_B_att = 5.81 bits
 
-**Behavioral variety ratio:** log2 R_B = V_B_amp - V_B_att = 10.56 - 5.81 = **4.75 bits**, so R_B = 2^4.75 ≈ **27**
+**Behavioral variety ratio:** R_B = V_B_amp / V_B_att = 10.56 / 5.81 = **1.82**
 
-Interpretation: the amplifiers span about 27 times as many states as the attenuators (1,512 configurations against 56 constraints). This is healthy — the system has more response capacity than constraint. Dividing the two varieties instead, 10.56 / 5.81 ≈ 1.82, would not measure this: a quotient of logarithms is not a ratio of state spaces.
+Interpretation: Behavioral amplification exceeds attenuation by a factor of 1.82. This is healthy — the system has more response capacity than constraint.
 
 ### Dimension 2: Structural Variety (V_S)
 
@@ -95,9 +95,9 @@ Interpretation: the amplifiers span about 27 times as many states as the attenua
 
 **Total structural attenuation:** V_S_att = 1.00 bit
 
-**Structural variety ratio:** log2 R_S = V_S_amp - V_S_att = 17.00 - 1.00 = **16.00 bits**, so R_S = 2^16.00 ≈ **66,000**
+**Structural variety ratio:** R_S = V_S_amp / V_S_att = 17.00 / 1.00 = **17.00**
 
-Interpretation: the grammars span about 66,000 times as many structures as the evolution gates distinguish. This reflects the generative nature of grammars — they are variety amplifiers by design. However, this high ratio also signals a potential concern: insufficient structural constraint could lead to grammar sprawl without quality control.
+Interpretation: Structural variety is very high relative to attenuation. This reflects the generative nature of grammars — they are variety amplifiers by design. However, this high ratio also signals a potential concern: insufficient structural constraint could lead to grammar sprawl without quality control.
 
 ### Dimension 3: Regulatory Variety (V_R)
 
@@ -121,37 +121,35 @@ Interpretation: the grammars span about 66,000 times as many structures as the e
 
 **Total regulatory attenuation:** V_R_att = 5.21 + 4.09 + 2.00 = **11.30 bits**
 
-**Regulatory variety ratio:** log2 R_R = V_R_amp - V_R_att = 6.32 - 11.30 = **-4.98 bits**, so R_R = 2^-4.98 ≈ **0.032**
+**Regulatory variety ratio:** R_R = V_R_amp / V_R_att = 6.32 / 11.30 = **0.56**
 
-Interpretation: regulatory attenuation significantly exceeds amplification: the attenuators span about 31 times as many states as the amplifiers (37 × 17 × 4 = 2,516 combinations against 4 × 5 × 4 = 80). This is **by design** — governance should constrain more than it amplifies. A regulatory ratio below 1, a negative log2 R_R, means the system is conservative, which aligns with Asimov's Laws (prefer safety over capability).
+Interpretation: Regulatory attenuation significantly exceeds amplification. This is **by design** — governance should constrain more than it amplifies. A regulatory ratio below 1.0 means the system is conservative, which aligns with Asimov's Laws (prefer safety over capability).
 
 ## The Composite Variety Dashboard
 
 ### Summary Table
 
-| Dimension | V_amplifiers | V_attenuators | log2 R | Ratio R | Assessment |
-|-----------|-------------|---------------|--------|---------|------------|
-| Behavioral (V_B) | 10.56 bits | 5.81 bits | 4.75 bits | ≈ 27 | Healthy — more response capacity than constraint |
-| Structural (V_S) | 17.00 bits | 1.00 bit | 16.00 bits | ≈ 66,000 | Caution — high generativity, low constraint |
-| Regulatory (V_R) | 6.32 bits | 11.30 bits | -4.98 bits | ≈ 0.032 | By design — governance is conservative |
+| Dimension | V_amplifiers | V_attenuators | Ratio R | Assessment |
+|-----------|-------------|---------------|---------|------------|
+| Behavioral (V_B) | 10.56 bits | 5.81 bits | 1.82 | Healthy — more response capacity than constraint |
+| Structural (V_S) | 17.00 bits | 1.00 bit | 17.00 | Caution — high generativity, low constraint |
+| Regulatory (V_R) | 6.32 bits | 11.30 bits | 0.56 | By design — governance is conservative |
 
-### Healthy Directions
+### Healthy Ranges
 
-Ashby's Law and VSM principles (CYB-001) set the direction each ratio should take, not yet its size:
+Based on Ashby's Law and VSM principles (CYB-001), healthy variety ratios differ by dimension:
 
-| Dimension | Healthy Direction | Rationale |
+| Dimension | Healthy Range | Rationale |
 |-----------|---------------|-----------|
-| Behavioral | R > 1 (log2 R > 0 bits) | System needs more behavioral options than constraints, but not unbounded |
-| Structural | R > 1 (log2 R > 0 bits), with quality gates | Grammars should be generative but gated by quality controls |
-| Regulatory | R < 1 (log2 R < 0 bits) | Governance SHOULD be over-attenuated — this is the conservative principle |
-
-Numeric bounds on log2 R remain to be calibrated against observed cycles. They cannot be set on the quotient V_amplifiers / V_attenuators, which has no fixed meaning in state-space terms: 10 / 5 and 2 / 1 are both 2, while the state spaces they compare differ by factors of 2^5 = 32 and 2^1 = 2. A negative log2 R is not a negative variety: it is the logarithm of a ratio below 1.
+| Behavioral | 1.2 -- 3.0 | System needs more behavioral options than constraints, but not unbounded |
+| Structural | 2.0 -- 10.0 | Grammars should be generative but gated by quality controls |
+| Regulatory | 0.3 -- 0.8 | Governance SHOULD be over-attenuated — this is the conservative principle |
 
 ### Current Assessment
 
-- **Behavioral (R_B ≈ 27, 4.75 bits):** In the healthy direction. No action needed.
-- **Structural (R_S ≈ 66,000, 16.00 bits):** In the healthy direction, but by far the largest ratio of the three: 2 evolution gates against the structures of 27 grammars with ~324 productions, which are weakly constrained. Recommendation: add structural quality gates (e.g., grammar test coverage requirements, production usage tracking).
-- **Regulatory (R_R ≈ 0.032, -4.98 bits):** In the healthy direction. The system is conservative; telling whether it is too conservative needs a calibrated lower bound.
+- **Behavioral (1.82):** Within healthy range. No action needed.
+- **Structural (17.00):** Above healthy range. The 27 grammars with ~324 productions are weakly constrained. Recommendation: add structural quality gates (e.g., grammar test coverage requirements, production usage tracking).
+- **Regulatory (0.56):** Within healthy range. The system is conservative but not paralyzed.
 
 ## The Disturbance Side: What Must Be Regulated?
 
@@ -161,10 +159,10 @@ The variety ratio only tells half the story. We must also measure the variety of
 | Source | Estimate (N) | Variety V |
 |--------|-------------|-----------|
 | Consumer repos (ix, tars, ga) | 3 | 1.58 bits |
-| Repo state combinations (3 repos x ~10 states each) | 10 to 10^3 = 1000 | 3.32 to 9.97 bits |
+| Repo state combinations (3 repos x ~10 states each) | 30 | 4.91 bits |
 | External environment changes (libraries, APIs, models) | ~100 | 6.64 bits |
 
-**Total external disturbance variety:** the repo state combinations already cover the three repos, so the first row adds nothing. That row is itself a range: with about 10 states each, the three repos have between 10 joint states (3.32 bits), if the state of one determines the others, and 10^3 = 1000 (9.97 bits), if they vary independently. The environment row is then the largest single term: V_D_ext is at least **6.64 bits**, and at most log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** if an environment change can arrive in any of the 1000 repo states
+**Total external disturbance variety:** V_D_ext = **6.64 bits** (dominated by environment changes)
 
 ### Internal Disturbances (V_D_int)
 | Source | Estimate (N) | Variety V |
@@ -173,7 +171,7 @@ The variety ratio only tells half the story. We must also measure the variety of
 | Policy interactions (37 policies, pairwise) | 666 | 9.38 bits |
 | Grammar evolution proposals | ~5 per cycle | 2.32 bits |
 
-**Total internal disturbance variety:** by the same bounds, V_D_int is at least **9.38 bits** (policy interactions alone), and at most log2(20 × 666 × 5) = 4.32 + 9.38 + 2.32 = **16.02 bits** if the three sources are independent
+**Total internal disturbance variety:** V_D_int = **9.38 bits** (dominated by policy interactions)
 
 ### Ashby's Law Check
 
@@ -183,19 +181,17 @@ For governance to be viable:
 V(regulatory response) >= V(disturbance)
 ```
 
-- V_R_amp lies between its largest single component, the confidence thresholds at 2.32 bits, and the sum of all three, 6.32 bits, reached only if every combination of logic state, confidence threshold and PDCA state can be produced
-- V_D lies between the largest single source, the policy interactions at 9.38 bits, and the sum of every source, 16.61 + 16.02 = 32.63 bits
-- **Gap: at least 9.38 - 6.32 = 3.06 bits, at most 32.63 - 2.32 = 30.31 bits**
+- V_R_amp = 6.32 bits
+- V_D = max(V_D_ext, V_D_int) = 9.38 bits
+- **Gap: 9.38 - 6.32 = 3.06 bits**
 
-Both ranges hold whatever the dependencies: a joint state space has at least as many states as its largest part and at most the product of their sizes. The gap is smallest when the disturbance sources are as dependent, and the response components as independent, as they can be; it is largest in the opposite case. Causal links between disturbance sources (a repo change that triggers a belief change, a policy interaction that prompts a grammar proposal) pull V_D down, and combinations of response values that governance never produces pull V_R_amp down. Measuring both joint varieties, by counting the distinct combinations actually observed per cycle, would place the gap within the range.
-
-This means the regulatory system faces between 2^3.06 ≈ 8.3 and 2^30.31 ≈ 1.3 × 10^9 times more disturbance variety than it can produce response variety. The gap is absorbed by:
+This means the regulatory system faces approximately 2^3.06 = 8x more disturbance variety than it can produce response variety. The gap is absorbed by:
 
 1. **Human escalation** — the confidence threshold system routes difficult decisions to humans, borrowing their variety
 2. **Constitutional override** — the Asimov Laws collapse complex decisions to binary (safe/unsafe), reducing required variety
 3. **PDCA cycling** — sequential processing converts parallel disturbances into manageable queues
 
-These are legitimate variety absorption mechanisms, but even the 3.06-bit lower bound suggests Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
+These are legitimate variety absorption mechanisms, but the 3-bit gap suggests Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
 
 ## Measurement Protocol
 
@@ -231,10 +227,10 @@ To track the variety ratio over time, Demerzel should compute the following metr
 
 ```json
 {
-  "variety_ratios_log2_bits": {
-    "behavioral": 4.75,
-    "structural": 16.00,
-    "regulatory": -4.98,
+  "variety_ratios": {
+    "behavioral": 1.82,
+    "structural": 17.00,
+    "regulatory": 0.56,
     "timestamp": "2026-03-23T00:00:00Z"
   }
 }
@@ -242,13 +238,11 @@ To track the variety ratio over time, Demerzel should compute the following metr
 
 ### Metric 3: Trend Detection
 
-Track log2 R over consecutive cycles. Alert when:
-- Any ratio leaves its healthy direction (its log2 R changes sign)
-- The regulatory log2 R_R falls by 1 bit or more in one cycle (paralysis risk: relative to the amplifiers, the attenuators' state space has doubled)
-- The structural log2 R_S rises by 1 bit or more in one cycle (grammar sprawl risk)
-- The behavioral log2 R_B falls by 1 bit or more in one cycle (the system becomes less responsive)
-
-A 1-bit step, a doubling or halving of the ratio, is a starting threshold, not a calibrated one.
+Track ratios over consecutive cycles. Alert when:
+- Any ratio crosses its healthy range boundary
+- The regulatory ratio drops below 0.3 (system paralysis risk)
+- The structural ratio exceeds 20.0 (grammar sprawl risk)
+- The behavioral ratio drops below 1.0 (under-responsive system)
 
 ### Metric 4: Disturbance Growth Rate
 
@@ -262,22 +256,22 @@ Cross-validation with GPT-4o confirmed:
 2. **The additive model (summing log-varieties) is valid** for independent dimensions but overly simplistic when components interact. The dimensional separation (behavioral, structural, regulatory) addresses this by treating each dimension independently.
 3. **GPT-4o computed a naive composite ratio of -2.8**, treating amplifiers and attenuators as a single additive sum. This is incorrect — negative variety is meaningless (you cannot have fewer than zero distinguishable states). The dimensional model avoids this error.
 4. **Both models agree R_regulatory < 1.0 is expected** for a governance system. Governance is inherently attenuating.
-5. **The regulatory gap** is a novel finding not present in GPT-4o's analysis. It emerges from separately computing disturbance variety, which GPT-4o did not do.
+5. **The 3-bit regulatory gap** is a novel finding not present in GPT-4o's analysis. It emerges from separately computing disturbance variety, which GPT-4o did not do.
 
 **Cross-validation confidence: 0.85** (T — both models agree on fundamentals; dimensional refinement adds value beyond GPT-4o's analysis)
 
 ## Implications for Demerzel
 
 1. **Track variety ratios per cycle** — Add variety snapshot to `state/governance/variety-metrics.json` (or equivalent state file). Monitor dimensional ratios for drift.
-2. **Add structural quality gates** — The structural ratio, 2^16.00 ≈ 66,000, is by far the largest of the three. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
-3. **Monitor the regulatory gap (3.06 to 30.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest single source of disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Being the largest single source, it raises both bounds at once. Consider policy grouping or hierarchical policy organization.
+2. **Add structural quality gates** — The structural ratio (17.00) is above healthy range. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
+3. **Monitor the 3-bit regulatory gap** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest source of internal disturbance. As policies grow, this gap will widen quadratically. Consider policy grouping or hierarchical policy organization.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 78-82) should be expanded with quantitative measurement productions.
 
 ## Connection to CYB-001 and CYB-002
 
 - **CYB-001** identified that Ashby's Law applies to Demerzel and listed variety amplifiers/attenuators qualitatively. CYB-003 makes this quantitative.
-- **CYB-001 Recommendation 5** ("Monitor variety ratio") is now operationalized with specific formulas, healthy directions, and a measurement protocol.
+- **CYB-001 Recommendation 5** ("Monitor variety ratio") is now operationalized with specific formulas, healthy ranges, and a measurement protocol.
 - **CYB-002** addressed System 2 dampening. The deadband and hysteresis mechanisms from CYB-002 are themselves variety attenuators — they reduce the variety of signals flowing through coordination channels. CYB-003's structural attenuation metric should include these when implemented.
 
 ## Sources
@@ -292,7 +286,7 @@ Cross-validation with GPT-4o confirmed:
 
 ## Follow-Up Questions for Cycle 004
 
-1. How much of the regulatory gap can hierarchical policy grouping close (reducing pairwise interactions from O(n^2) to O(n log n))?
+1. Can the 3-bit regulatory gap be closed by hierarchical policy grouping (reducing pairwise interactions from O(n^2) to O(n log n))?
 2. How should grammar production usage be tracked to detect dead productions and inform structural attenuation?
 3. What is the information-theoretic relationship between Demerzel's tetravalent logic (T/F/U/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?
 
