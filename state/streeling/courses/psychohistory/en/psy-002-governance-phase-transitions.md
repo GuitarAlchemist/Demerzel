@@ -97,7 +97,7 @@ When `marginal_return → 0` over 3+ consecutive policy additions, the system ha
 
 ### Signal 4: Cross-Repo Coupling Strength
 
-Demerzel governs four repos (demerzel, ix, tars, ga). Record each repo's compliance rate once per cycle, and over a window of the last W cycles average the Pearson correlations of the six repo pairs (a single cycle gives one rate per repo, from which no correlation can be computed):
+Demerzel governs four repos (demerzel, ix, tars, ga). Record each repo's compliance rate once per cycle, and over a window of the last W cycles average the Pearson correlations of the six repo pairs (a single cycle gives one rate per repo, from which no correlation can be computed). A constant series, such as a repo holding at 100%, has no correlation with anything: leave its pairs out of the mean, and report coupling as undefined for the window if no pair remains:
 
 ```
 coupling = mean_{i<j} pearson_correlation(rates_i[W], rates_j[W])

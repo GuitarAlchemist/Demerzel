@@ -584,10 +584,10 @@ Original:  Dm7     | G7      | Cmaj7   |
 Coltrane:  Dm7 Eb7 | Abmaj7 B7 | Emaj7 G7 | Cmaj7 |
 ```
 
-Or more compactly:
+Or, regrouped with the ii chord alone in the first bar:
 
 ```
-Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
+Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 ```
 
 ### Practice Exercise

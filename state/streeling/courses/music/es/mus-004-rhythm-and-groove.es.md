@@ -527,7 +527,7 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 **1. ¿Cuál es la diferencia entre 6/8 y 3/4, si ambos contienen seis corcheas por compás?**
 > En 6/8, las corcheas se agrupan en dos grupos de tres (1-2-3, 4-5-6), lo que produce dos tiempos sentidos por compás, cada uno dividido en tres. En 3/4, las corcheas se agrupan en tres pares de dos (1-y, 2-y, 3-y), lo que produce tres tiempos sentidos por compás, cada uno dividido en dos. El patrón de acentos — dos tiempos fuertes frente a tres — es totalmente distinto.
 
-**2. Cuenta el ritmo del siguiente patrón de semicorcheas en 4/4 con las sílabas estándar: X-_-X-X-_-X-_-X (donde X = tocar, _ = silencio, sobre un tiempo).**
+**2. Cuenta el ritmo del siguiente patrón de semicorcheas en 4/4 con las sílabas estándar: X-_-X-X (donde X = tocar, _ = silencio, sobre un tiempo).**
 > Las sílabas son "1 e y a" para un tiempo. Así que este patrón sobre un tiempo se lee "1 - y a" (tocando en 1, &, a, y silencio en e). Sobre un tiempo completo: tocar en "1", silencio en "e", tocar en "y", tocar en "a". Extendido a todo el compás: "1 - & a 2 - & a 3 - & a 4 - & a" con el mismo patrón de acentos.
 
 **3. Si el swing de jazz estándar usa aproximadamente una proporción de 60:40 para los pares de corcheas, y el swing marcado usa 67:33 (basado en tresillos), ¿qué diferencia práctica oye el oyente?**

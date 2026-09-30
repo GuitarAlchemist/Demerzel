@@ -97,7 +97,7 @@ Quand `marginal_return → 0` sur 3 ajouts de politiques consécutifs ou plus, l
 
 ### Signal 4 : force du couplage entre dépôts
 
-Demerzel gouverne quatre dépôts (demerzel, ix, tars, ga). Relevez le taux de conformité de chaque dépôt à chaque cycle et, sur une fenêtre des W derniers cycles, faites la moyenne des corrélations de Pearson des six paires de dépôts (un seul cycle ne donne qu'un taux par dépôt, dont on ne peut tirer aucune corrélation) :
+Demerzel gouverne quatre dépôts (demerzel, ix, tars, ga). Relevez le taux de conformité de chaque dépôt à chaque cycle et, sur une fenêtre des W derniers cycles, faites la moyenne des corrélations de Pearson des six paires de dépôts (un seul cycle ne donne qu'un taux par dépôt, dont on ne peut tirer aucune corrélation). Une série constante, comme celle d'un dépôt qui reste à 100 %, n'a de corrélation avec rien : laissez ses paires hors de la moyenne, et déclarez le couplage non défini pour la fenêtre s'il ne reste aucune paire :
 
 ```
 coupling = mean_{i<j} pearson_correlation(rates_i[W], rates_j[W])

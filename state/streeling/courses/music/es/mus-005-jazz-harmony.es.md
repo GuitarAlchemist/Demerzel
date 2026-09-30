@@ -584,10 +584,10 @@ Original:  Dm7     | G7      | Cmaj7   |
 Coltrane:  Dm7 Eb7 | Abmaj7 B7 | Emaj7 G7 | Cmaj7 |
 ```
 
-O, de forma más compacta:
+O, reagrupado con el acorde ii solo en el primer compás:
 
 ```
-Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
+Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 ```
 
 ### Ejercicio práctico

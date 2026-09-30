@@ -527,7 +527,7 @@ Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100
 **1. What is the difference between 6/8 and 3/4, given that both contain six eighth notes per measure?**
 > In 6/8, the eighths are grouped as two groups of three (1-2-3, 4-5-6), producing two felt beats per measure with each beat divided into three. In 3/4, the eighths are grouped as three pairs of two (1-and, 2-and, 3-and), producing three felt beats per measure with each beat divided into two. The accent pattern — two strong beats vs three — is entirely different.
 
-**2. Count the rhythm of the following 16th-note pattern in 4/4 using the standard syllables: X-_-X-X-_-X-_-X (where X = play, _ = rest, over one beat).**
+**2. Count the rhythm of the following 16th-note pattern in 4/4 using the standard syllables: X-_-X-X (where X = play, _ = rest, over one beat).**
 > The syllables are "1 e and a" for one beat. So this pattern over one beat reads "1 - and a" (playing on 1, &, a, and rest on e). Over a full beat: play on "1", rest on "e", play on "and", play on "a". Extended across the measure: "1 - & a 2 - & a 3 - & a 4 - & a" with the same accent pattern.
 
 **3. If standard jazz swing uses approximately a 60:40 ratio for eighth-note pairs, and hard swing uses 67:33 (triplet-based), what is the practical difference a listener hears?**

@@ -584,10 +584,10 @@ Original : Dm7     | G7      | Cmaj7   |
 Coltrane : Dm7 Eb7 | Abmaj7 B7 | Emaj7 G7 | Cmaj7 |
 ```
 
-Ou, plus compact :
+Ou, regroupé avec l'accord ii seul dans la première mesure :
 
 ```
-Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
+Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 ```
 
 ### Exercice pratique

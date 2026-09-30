@@ -527,7 +527,7 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 **1. Quelle est la différence entre 6/8 et 3/4, sachant que les deux contiennent six croches par mesure ?**
 > En 6/8, les croches sont groupées en deux groupes de trois (1-2-3, 4-5-6), ce qui produit deux temps ressentis par mesure, chaque temps étant divisé en trois. En 3/4, les croches sont groupées en trois paires de deux (1-et, 2-et, 3-et), ce qui produit trois temps ressentis par mesure, chaque temps étant divisé en deux. Le motif d'accentuation — deux temps forts contre trois — est entièrement différent.
 
-**2. Comptez le rythme du motif en doubles croches suivant, en 4/4, avec les syllabes standard : X-_-X-X-_-X-_-X (où X = jouer, _ = silence, sur un temps).**
+**2. Comptez le rythme du motif en doubles croches suivant, en 4/4, avec les syllabes standard : X-_-X-X (où X = jouer, _ = silence, sur un temps).**
 > Les syllabes sont « 1 e et a » pour un temps. Ce motif sur un temps se lit donc « 1 - et a » (on joue sur 1, &, a, et silence sur e). Sur un temps complet : jouer sur « 1 », silence sur « e », jouer sur « et », jouer sur « a ». Étendu à toute la mesure : « 1 - & a 2 - & a 3 - & a 4 - & a » avec le même motif d'accentuation.
 
 **3. Si le swing jazz standard utilise un ratio d'environ 60:40 pour les paires de croches, et le swing appuyé un ratio de 67:33 (ternaire), quelle différence concrète l'auditeur entend-il ?**
