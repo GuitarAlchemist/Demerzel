@@ -171,7 +171,7 @@ El canal algedónico (brecha D de CYB-001) se resolvió por separado mediante `p
 
 ## Referencias cruzadas
 
-- Requisito previo: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`
+- Requisito previo: `state/streeling/courses/cybernetics/es/cyb-001-vsm-ai-governance-mapping.es.md`
 - Protocolo: `contracts/galactic-protocol.md`
 - Política algedónica: `policies/algedonic-channel-policy.yaml`
 - Departamento: `state/streeling/departments/cybernetics.department.json`

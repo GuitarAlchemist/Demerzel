@@ -195,9 +195,9 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
 
 ## Pour aller plus loin
 
-- [PSY-001 : Introduction à la capitalisation fractale](psy-001-intro-fractal-compounding.md) — prérequis sur D_c et ERGOL/LOLLI
-- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — le paramètre d'ordre
-- [CYB-001 : Correspondance entre le VSM et la gouvernance de l'IA](../../cybernetics/en/cyb-001-vsm-ai-governance-mapping.md) — prérequis structurels
+- [PSY-001 : Introduction à la capitalisation fractale](psy-001-intro-fractal-compounding.fr.md) — prérequis sur D_c et ERGOL/LOLLI
+- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/fr/cyb-003-measuring-variety-ratio-quantitatively.fr.md) — le paramètre d'ordre
+- [CYB-001 : Correspondance entre le VSM et la gouvernance de l'IA](../../cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md) — prérequis structurels
 - Mécanique statistique des transitions de phase (théorie de Landau, paramètres d'ordre, exposants critiques)
 - Fondation d'Asimov — la psychohistoire prédit des tendances agrégées, pas des événements individuels
 

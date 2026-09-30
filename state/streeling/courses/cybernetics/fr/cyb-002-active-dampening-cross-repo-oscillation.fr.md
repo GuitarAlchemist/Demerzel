@@ -171,7 +171,7 @@ Le canal algédonique (lacune D de CYB-001) a été résolu séparément via `po
 
 ## Références croisées
 
-- Prérequis : `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`
+- Prérequis : `state/streeling/courses/cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md`
 - Protocole : `contracts/galactic-protocol.md`
 - Politique algédonique : `policies/algedonic-channel-policy.yaml`
 - Département : `state/streeling/departments/cybernetics.department.json`
