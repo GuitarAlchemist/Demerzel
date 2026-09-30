@@ -30,7 +30,7 @@ Après cette leçon, vous serez capable de :
 Claude Shannon a défini l'entropie en 1948 comme une mesure de l'**incertitude** ou du **contenu informationnel** d'un message. La formule est d'une simplicité trompeuse :
 
 ```
-H(X) = -sum(p(x) * log2(p(x))) for all symbols x in alphabet X
+H(X) = -sum(p(x) * log2(p(x))) pour tous les symboles x de l'alphabet X
 ```
 
 Où `p(x)` est la probabilité d'apparition du symbole `x`. L'entropie est maximale lorsque tous les symboles sont équiprobables (surprise maximale) et minimale lorsqu'un symbole domine (aucune surprise).

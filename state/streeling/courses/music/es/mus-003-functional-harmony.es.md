@@ -165,7 +165,7 @@ En Sol mayor, el acorde de V7 es D7: **Re - Fa# - La - Do**.
 El tritono está entre **Fa#** (la sensible, grado 7) y **Do** (la séptima del acorde, grado 4):
 
 ```
-F# to C = 6 semitones = tritone
+F# a C = 6 semitonos = tritono
 ```
 
 Este tritono es un intervalo de tensión máxima. Exige resolución.
@@ -179,10 +179,10 @@ El tritono resuelve cuando sus dos notas se mueven en direcciones opuestas por l
 
 ```
 D7           →    G
-D  ───────────→   D (or G)
-A  ───────────→   G (or B)
-F# ─── ↑½ ───→   G     ← leading tone resolves UP
-C  ─── ↓½ ───→   B     ← 7th resolves DOWN
+D  ───────────→   D (o G)
+A  ───────────→   G (o B)
+F# ─── ↑½ ───→   G     ← la sensible resuelve hacia ARRIBA
+C  ─── ↓½ ───→   B     ← la 7.ª resuelve hacia ABAJO
 ```
 
 Esto es **movimiento contrario** — las dos voces se mueven en direcciones opuestas, un semitono cada una. Si Fa# está debajo de Do (una quinta disminuida), se cierran en la tercera mayor Sol-Si; si Do está debajo de Fa# (una cuarta aumentada), se abren hasta la sexta menor Si-Sol. En ambos casos, el tritono da paso a una consonancia.
@@ -192,11 +192,11 @@ Esto es **movimiento contrario** — las dos voces se mueven en direcciones opue
 Toca esto despacio en la guitarra, nota a nota, y escucha cada resolución:
 
 ```
-D7 chord:          G chord:
-e|--2-- (F#)  →   e|--3-- (G)    F# rises a half step to G
-B|--1-- (C)   →   B|--0-- (B)    C falls a half step to B
-G|--2-- (A)   →   G|--0-- (G)    A moves down a step to G
-D|--0-- (D)   →   D|--0-- (D)    D stays (common tone)
+Acorde D7:         Acorde G:
+e|--2-- (F#)  →   e|--3-- (G)    F# sube un semitono a G
+B|--1-- (C)   →   B|--0-- (B)    C baja un semitono a B
+G|--2-- (A)   →   G|--0-- (G)    A baja un tono a G
+D|--0-- (D)   →   D|--0-- (D)    D se mantiene (nota común)
 ```
 
 En la práctica, en la guitarra, la conducción de voces se reparte por la forma del acorde en lugar de seguir una escritura estricta a cuatro voces. Pero el principio se mantiene: las notas de tensión encuentran sus destinos.
@@ -350,12 +350,12 @@ Las dominantes secundarias crean **tonicizaciones** — breves momentos en los q
 Una tonicización suele consistir en solo uno o dos acordes que apuntan hacia un destino que no es la tónica. La tonalidad original nunca se pierde.
 
 ```
-In G major:
+En Sol mayor:
 G  →  B7  →  Em  →  C  →  D  →  G
 I     V7/vi   vi    IV    V    I
 
-The B7 → Em is a tonicization of vi.
-The key of G major is never in doubt.
+El B7 → Em es una tonicización de vi.
+La tonalidad de Sol mayor nunca está en duda.
 ```
 
 ### Modulación mediante acorde pivote
@@ -365,11 +365,11 @@ La técnica de modulación más habitual es el **acorde pivote** — un acorde q
 **Ejemplo en la guitarra: de Sol mayor a Re mayor**
 
 ```
-G major:  G  →  C  →  D  →  Em  →  A7  →  D  →  G(D)  →  A  →  D
-          I     IV    V     vi          
-                                  ↑ PIVOT
-G key:                    vi     V7/V    V
-D key:                    ii     V7      I     IV     V     I
+Sol mayor:    G  →  C  →  D  →  Em  →  A7  →  D  →  G(D)  →  A  →  D
+              I     IV    V     vi          
+                                      ↑ PIVOTE
+En Sol:                       vi     V7/V    V
+En Re:                        ii     V7      I     IV     V     I
 ```
 
 El acorde **Em** es el pivote. En Sol mayor, Em es vi. En Re mayor, Em es ii. El oído reinterpreta la función de Em en cuanto llega A7 — A7 no es diatónico en Sol mayor, así que el centro tonal del oyente se desplaza.
@@ -403,8 +403,8 @@ Para Sol mayor, las tonalidades vecinas son:
 Toca esta progresión y escucha la modulación:
 
 ```
-Key of G:  G  →  D  →  Em  →  C
-Key of D:  Em → A7  →  D   →  G  →  A  →  D
+En Sol:    G  →  D  →  Em  →  C
+En Re:     Em → A7  →  D   →  G  →  A  →  D
 ```
 
 ¿Oyes el momento en que Sol deja de sonar como el hogar y Re toma el relevo? La llegada de A7 es el punto de inflexión. Tócala varias veces e intenta localizar el acorde exacto en el que cambia tu percepción.
@@ -439,8 +439,8 @@ El **período** es la estructura de frase más habitual de la música tonal. Con
 El antecedente plantea una pregunta armónica; el consecuente la responde.
 
 ```
-Antecedent (4 measures):   I  →  IV  →  V  →  V     (ends on HC)
-Consequent (4 measures):   I  →  IV  →  V  →  I     (ends on PAC)
+Antecedente (4 compases):  I  →  IV  →  V  →  V     (termina en HC)
+Consecuente (4 compases):  I  →  IV  →  V  →  I     (termina en PAC)
 ```
 
 Las dos frases suelen empezar igual, lo que crea una sensación de rima. La diferencia llega al final — donde el antecedente te deja en suspenso sobre V, el consecuente resuelve en I.
@@ -448,8 +448,8 @@ Las dos frases suelen empezar igual, lo que crea una sensación de rima. La dife
 **Ejemplo en la guitarra en Sol:**
 
 ```
-Antecedent:  | G    | C    | D    | D    |   ← ends on V (half cadence)
-Consequent:  | G    | C    | D    | G    |   ← ends on I (perfect authentic cadence)
+Antecedente: | G    | C    | D    | D    |   ← termina en V (semicadencia)
+Consecuente: | G    | C    | D    | G    |   ← termina en I (cadencia auténtica perfecta)
 ```
 
 Toca ambas frases. Oye cómo la primera suena incompleta y la segunda, terminada.
@@ -463,10 +463,10 @@ La **oración** es otra estructura de frase habitual, construida a partir de tre
 3. **Continuación + cadencia** (4 compases) — fragmenta la idea, acelera el ritmo armónico y conduce a una cadencia
 
 ```
-Basic idea (2m):      | I       | V       |
-Repetition (2m):      | I       | V       |
-Continuation (4m):    | IV  V   | IV  V   | ii    V | I       |
-                        ↑ fragmented    ↑ accelerating    ↑ cadence
+Idea básica (2 compases):  | I       | V       |
+Repetición (2 compases):   | I       | V       |
+Continuación (4 compases): | IV  V   | IV  V   | ii    V | I       |
+                             ↑ fragmentación ↑ aceleración     ↑ cadencia
 ```
 
 Fíjate en cómo la sección de continuación aumenta la actividad armónica — los acordes cambian dos veces por compás en lugar de una, lo que genera impulso hacia la cadencia.

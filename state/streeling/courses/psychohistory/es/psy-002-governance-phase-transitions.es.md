@@ -67,7 +67,7 @@ Cuando este cociente cambia rápidamente —`d(T/U)/dt` se aleja más de 2 desvi
 La puntuación de salud de la gobernanza R (que actualmente se registra en `state/governance-health.json`) actúa como un potencial termodinámico. Su derivada te informa de la proximidad a un cambio de régimen:
 
 ```
-velocity = dR/dt (health score change per cycle)
+velocity = dR/dt (variación de la puntuación de salud por ciclo)
 ```
 
 | Patrón | Significado |
@@ -100,7 +100,7 @@ Cuando `marginal_return → 0` a lo largo de 3 o más adiciones de políticas co
 Demerzel gobierna cuatro repositorios (demerzel, ix, tars, ga). Mide la correlación entre sus tasas de cumplimiento:
 
 ```
-coupling = pearson_correlation(compliance_rates across repos)
+coupling = pearson_correlation(compliance_rates entre repositorios)
 ```
 
 | Acoplamiento | Régimen |
@@ -146,23 +146,23 @@ Cruzar 1.0 es una transición de fase de segundo orden. El sistema no se rompe: 
 ## 3. Juntarlo todo: el diagrama de fases
 
 ```
-                    R (health score)
+                    R (puntuación de salud)
                     │
-     Autonomous     │         ╱
+     Autónomo       │         ╱
      R >= 0.9       │       ╱
                     │     ╱
      ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ variety_ratio = 1.0
-     Proactive      │ ╱
+     Proactivo      │ ╱
      R >= 0.7       │╱
                     ╱
-     ─ ─ ─ ─ ─ ─ ╱│─ ─ ─ ─ ─ ─ ─ policy saturation
-     Structured   ╱ │
+     ─ ─ ─ ─ ─ ─ ╱│─ ─ ─ ─ ─ ─ ─ saturación de políticas
+     Estructurado ╱ │
      R >= 0.5   ╱   │
               ╱     │
-     ─ ─ ─ ╱─ ─ ─ ─│─ ─ ─ ─ ─ ─ ─ critical coupling
-     Reactive       │
+     ─ ─ ─ ╱─ ─ ─ ─│─ ─ ─ ─ ─ ─ ─ acoplamiento crítico
+     Reactivo       │
      R < 0.5        │
-                    └────────────────── t (time/cycles)
+                    └────────────────── t (tiempo/ciclos)
 ```
 
 Cada línea horizontal es una frontera de fase. El sistema de gobernanza cruza estas fronteras cuando se alinean suficientes señales. Ninguna señal por sí sola basta: busca la **convergencia** de 3 o más señales que indiquen la misma dirección de transición.

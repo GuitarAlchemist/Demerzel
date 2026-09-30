@@ -38,7 +38,7 @@ La escala logarítmica importa porque la variedad se combina de forma multiplica
 ### La ley de Ashby
 
 ```
-V(regulator) >= V(disturbance)
+V(regulador) >= V(perturbación)
 ```
 
 «Solo la variedad puede absorber la variedad». Un sistema de gobernanza que puede producir menos respuestas distintas que las perturbaciones distintas a las que se enfrenta fracasará necesariamente al regular algunas de esas perturbaciones.
@@ -178,7 +178,7 @@ El cociente de variedad solo cuenta la mitad de la historia. También debemos me
 Para que la gobernanza sea viable:
 
 ```
-V(regulatory response) >= V(disturbance)
+V(respuesta reguladora) >= V(perturbación)
 ```
 
 - V_R_amp está entre su mayor componente aislado, los umbrales de confianza con 2.32 bits, y la suma de los tres, 6.32 bits, que solo se alcanza si puede producirse cualquier combinación de estado lógico, umbral de confianza y estado PDCA

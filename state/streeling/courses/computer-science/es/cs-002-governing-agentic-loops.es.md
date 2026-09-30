@@ -38,7 +38,7 @@ garantizarla. La garantía debe venir del framework.
 
 Alan Turing demostró (1936) que ningún algoritmo puede decidir, para todos los programas, si se detendrán.
 Tampoco hay un procedimiento general que pueda decidirlo para un bucle de agente arbitrario. Por eso la terminación se impone
-en lugar de detectarse: un límite impuesto por el framework hace que el bucle se detenga por construcción.
+en lugar de detectarse: un límite impuesto por el framework acota el número de iteraciones, y un plazo máximo en cada llamada al modelo, llamada a herramienta y petición de red acota cada iteración. Solo los dos juntos hacen que el bucle se detenga por construcción: una iteración bloqueada en una llamada nunca llega al contador.
 
 **Implicación:** Cualquier framework agéntico que dependa de que el modelo declare su propia finalización
 es defectuoso por construcción.
@@ -66,10 +66,10 @@ Estas seis propiedades hacen que una iteración sea acotada y auditable. Un bucl
 
 ### Propiedad 1: límite estricto de iteraciones
 Un número máximo de iteraciones impuesto por el framework, no por el modelo. Al alcanzarlo: detenerse,
-registrar el límite y escalar a revisión humana.
+registrar el límite y escalar a revisión humana. El contador solo avanza cuando termina una iteración, así que el límite también exige un plazo máximo en cada llamada dentro de una iteración; la configuración de abajo solo fija el límite.
 
 ```yaml
-# Example: Demerzel autonomous-loop configuration
+# Ejemplo: configuración del bucle autónomo de Demerzel
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
@@ -86,7 +86,7 @@ def stall_test(state_before, state_after):
     return hash(state_before) == hash(state_after)
 
 if stall_test(prev_state, curr_state):
-    raise StallDetected("No state change — possible infinite loop")
+    raise StallDetected("Ningún cambio de estado — posible bucle infinito")
 ```
 
 ### Propiedad 3: criterio de terminación externo
@@ -94,12 +94,12 @@ La condición de salida se especifica antes de que empiece el bucle, no se gener
 El modelo no puede redefinir la convergencia a mitad del bucle.
 
 ```python
-# Good: criterion is external
+# Bien: el criterio es externo
 def is_complete(state) -> bool:
     return state.belief_confidence >= 0.85 or state.iteration >= MAX
 
-# Bad: model declares its own completion
-result = model.run("keep going until you think you're done")
+# Mal: el modelo declara él mismo que ha terminado
+result = model.run("sigue hasta que creas que has terminado")
 ```
 
 ### Propiedad 4: punto de control legible por humanos
@@ -121,24 +121,24 @@ trata como un voto, no como una orden.
 El framework Demerzel lo implementa mediante `autonomous-loop-policy.yaml`:
 
 ```
-GOVERNED LOOP
-├── Pre-conditions (checked before first iteration)
-│   ├── Kill switch check
-│   ├── Daily/session cap check
-│   └── Termination criterion defined
+BUCLE GOBERNADO
+├── Precondiciones (comprobadas antes de la primera iteración)
+│   ├── Comprobación del kill switch
+│   ├── Comprobación del límite diario/de sesión
+│   └── Criterio de terminación definido
 │
-├── Iteration body
-│   ├── Execute step
-│   ├── Progress test (hash compare)
-│   ├── Checkpoint emit (every N steps)
-│   └── Output dedup check
+├── Cuerpo de la iteración
+│   ├── Ejecutar el paso
+│   ├── Prueba de progreso (comparación de hashes)
+│   ├── Emisión de un punto de control (cada N pasos)
+│   └── Comprobación de deduplicación de salidas
 │
-└── Post-conditions (any can halt the loop)
-    ├── Termination criterion met → complete
-    ├── Iteration cap hit → escalate
-    ├── Stall detected → escalate
-    ├── Kill switch set → halt immediately
-    └── Anomaly detected → conscience signal + halt
+└── Postcondiciones (cualquiera puede detener el bucle)
+    ├── Criterio de terminación cumplido → completado
+    ├── Límite de iteraciones alcanzado → escalar
+    ├── Estancamiento detectado → escalar
+    ├── Kill switch activado → detención inmediata
+    └── Anomalía detectada → señal de conciencia + detención
 ```
 
 Este patrón aparece en tres lugares del ecosistema Demerzel:
@@ -181,7 +181,7 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 ## Conclusiones clave
 
 - Un LLM no puede detectar de forma fiable sus propios bucles infinitos: la terminación debe ser externa
-- Un bucle gobernado tiene seis propiedades: límite estricto, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa, más un estado serializable si debe poder pausarse y reanudarse
+- Un bucle gobernado tiene seis propiedades: límite estricto con un plazo máximo en cada llamada, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa, más un estado serializable si debe poder pausarse y reanudarse
 - El framework Demerzel las implementa en seldon-plan, demerzel-drive y Ralph Loop
 - El artículo 9 (Autonomía acotada) es la base constitucional: los límites están predefinidos y ampliarlos requiere escalado
 

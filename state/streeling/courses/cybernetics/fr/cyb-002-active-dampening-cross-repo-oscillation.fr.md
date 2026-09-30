@@ -22,9 +22,9 @@ Le Galactic Protocol de Demerzel définit actuellement des formats et des flux d
 L'oscillation entre dépôts se produit quand des changements d'état dans un dépôt déclenchent des réactions dans les autres, qui déclenchent à leur tour d'autres réactions, créant des boucles de rétroaction amplificatrices :
 
 ```
-ix detects gap → Demerzel issues directive → tars adjusts →
-Demerzel detects tars drift → issues counter-directive →
-ix re-adjusts → Demerzel detects ix drift → ...
+ix détecte un écart → Demerzel émet une directive → tars s'ajuste →
+Demerzel détecte une dérive de tars → émet une contre-directive →
+ix se réajuste → Demerzel détecte une dérive d'ix → ...
 ```
 
 C'est le même problème d'instabilité que le Système 2 du VSM de Beer a été conçu pour empêcher. Dans le modèle du système viable, les unités opérationnelles du Système 1 (ix, tars, ga) sont semi-autonomes, mais ne doivent pas se déstabiliser mutuellement par des réactions non coordonnées.

@@ -165,7 +165,7 @@ En Sol majeur, l'accord de V7 est D7 : **Ré - Fa# - La - Do**.
 Le triton se situe entre **Fa#** (la sensible, degré 7) et **Do** (la septième de l'accord, degré 4) :
 
 ```
-F# to C = 6 semitones = tritone
+F# à C = 6 demi-tons = triton
 ```
 
 Ce triton est un intervalle de tension maximale. Il exige une résolution.
@@ -179,10 +179,10 @@ Le triton se résout quand ses deux notes se déplacent en sens opposés par les
 
 ```
 D7           →    G
-D  ───────────→   D (or G)
-A  ───────────→   G (or B)
-F# ─── ↑½ ───→   G     ← leading tone resolves UP
-C  ─── ↓½ ───→   B     ← 7th resolves DOWN
+D  ───────────→   D (ou G)
+A  ───────────→   G (ou B)
+F# ─── ↑½ ───→   G     ← la sensible se résout vers le HAUT
+C  ─── ↓½ ───→   B     ← la 7e se résout vers le BAS
 ```
 
 C'est le **mouvement contraire** — les deux voix partent en sens opposés, d'un demi-ton chacune. Si Fa# est sous Do (une quinte diminuée), elles se resserrent sur la tierce majeure Sol-Si ; si Do est sous Fa# (une quarte augmentée), elles s'écartent jusqu'à la sixte mineure Si-Sol. Dans les deux cas, le triton cède la place à une consonance.
@@ -192,11 +192,11 @@ C'est le **mouvement contraire** — les deux voix partent en sens opposés, d'u
 Jouez ceci lentement à la guitare, une note à la fois, en écoutant chaque résolution :
 
 ```
-D7 chord:          G chord:
-e|--2-- (F#)  →   e|--3-- (G)    F# rises a half step to G
-B|--1-- (C)   →   B|--0-- (B)    C falls a half step to B
-G|--2-- (A)   →   G|--0-- (G)    A moves down a step to G
-D|--0-- (D)   →   D|--0-- (D)    D stays (common tone)
+Accord D7 :        Accord G :
+e|--2-- (F#)  →   e|--3-- (G)    F# monte d'un demi-ton vers G
+B|--1-- (C)   →   B|--0-- (B)    C descend d'un demi-ton vers B
+G|--2-- (A)   →   G|--0-- (G)    A descend d'un ton vers G
+D|--0-- (D)   →   D|--0-- (D)    D reste en place (note commune)
 ```
 
 En pratique, à la guitare, la conduite des voix se répartit sur la forme d'accord au lieu de suivre une écriture stricte à quatre voix. Mais le principe tient : les notes de tension trouvent leurs cibles.
@@ -350,12 +350,12 @@ Les dominantes secondaires créent des **tonicisations** — de brefs moments o�
 Une tonicisation se limite généralement à un ou deux accords pointant vers une cible autre que la tonique. La tonalité d'origine n'est jamais perdue.
 
 ```
-In G major:
+En Sol majeur :
 G  →  B7  →  Em  →  C  →  D  →  G
 I     V7/vi   vi    IV    V    I
 
-The B7 → Em is a tonicization of vi.
-The key of G major is never in doubt.
+Le B7 → Em est une tonicisation de vi.
+La tonalité de Sol majeur n'est jamais mise en doute.
 ```
 
 ### La modulation par accord pivot
@@ -365,11 +365,11 @@ La technique de modulation la plus courante est l'**accord pivot** — un accord
 **Exemple à la guitare : de Sol majeur à Ré majeur**
 
 ```
-G major:  G  →  C  →  D  →  Em  →  A7  →  D  →  G(D)  →  A  →  D
-          I     IV    V     vi          
-                                  ↑ PIVOT
-G key:                    vi     V7/V    V
-D key:                    ii     V7      I     IV     V     I
+Sol majeur :  G  →  C  →  D  →  Em  →  A7  →  D  →  G(D)  →  A  →  D
+              I     IV    V     vi          
+                                      ↑ PIVOT
+En Sol :                      vi     V7/V    V
+En Ré :                       ii     V7      I     IV     V     I
 ```
 
 L'accord **Em** est le pivot. En Sol majeur, Em est vi. En Ré majeur, Em est ii. L'oreille réinterprète la fonction de Em dès l'arrivée de A7 — A7 n'est pas diatonique en Sol majeur, donc le centre tonal de l'auditeur se déplace.
@@ -403,8 +403,8 @@ Pour Sol majeur, les tons voisins sont :
 Jouez cette progression en écoutant la modulation :
 
 ```
-Key of G:  G  →  D  →  Em  →  C
-Key of D:  Em → A7  →  D   →  G  →  A  →  D
+En Sol :   G  →  D  →  Em  →  C
+En Ré :    Em → A7  →  D   →  G  →  A  →  D
 ```
 
 Entendez-vous le moment où Sol cesse de sonner comme la maison et où Ré prend le relais ? L'arrivée de A7 est le point de bascule. Jouez-la plusieurs fois et essayez de repérer l'accord exact où votre perception bascule.
@@ -439,8 +439,8 @@ La **période** est la structure de phrase la plus courante de la musique tonale
 L'antécédent pose une question harmonique ; le conséquent y répond.
 
 ```
-Antecedent (4 measures):   I  →  IV  →  V  →  V     (ends on HC)
-Consequent (4 measures):   I  →  IV  →  V  →  I     (ends on PAC)
+Antécédent (4 mesures) :   I  →  IV  →  V  →  V     (se termine sur HC)
+Conséquent (4 mesures) :   I  →  IV  →  V  →  I     (se termine sur PAC)
 ```
 
 Les deux phrases commencent généralement de la même façon, ce qui crée un effet de rime. La différence arrive à la fin — là où l'antécédent vous laisse en suspens sur V, le conséquent se résout sur I.
@@ -448,8 +448,8 @@ Les deux phrases commencent généralement de la même façon, ce qui crée un e
 **Exemple à la guitare en Sol :**
 
 ```
-Antecedent:  | G    | C    | D    | D    |   ← ends on V (half cadence)
-Consequent:  | G    | C    | D    | G    |   ← ends on I (perfect authentic cadence)
+Antécédent : | G    | C    | D    | D    |   ← se termine sur V (demi-cadence)
+Conséquent : | G    | C    | D    | G    |   ← se termine sur I (cadence parfaite)
 ```
 
 Jouez les deux phrases. Entendez comme la première semble incomplète et la seconde achevée.
@@ -463,10 +463,10 @@ La **sentence** est une autre structure de phrase courante, construite à partir
 3. **Continuation + cadence** (4 mesures) — fragmente l'idée, accélère le rythme harmonique et mène à une cadence
 
 ```
-Basic idea (2m):      | I       | V       |
-Repetition (2m):      | I       | V       |
-Continuation (4m):    | IV  V   | IV  V   | ii    V | I       |
-                        ↑ fragmented    ↑ accelerating    ↑ cadence
+Idée de base (2 mesures) :  | I       | V       |
+Répétition (2 mesures) :    | I       | V       |
+Continuation (4 mesures) :  | IV  V   | IV  V   | ii    V | I       |
+                              ↑ fragmentation ↑ accélération    ↑ cadence
 ```
 
 Remarquez comme la section de continuation augmente l'activité harmonique — les accords changent deux fois par mesure au lieu d'une, ce qui crée un élan vers la cadence.

@@ -38,7 +38,7 @@ L'échelle logarithmique compte parce que la variété se combine de façon mult
 ### La loi d'Ashby
 
 ```
-V(regulator) >= V(disturbance)
+V(régulateur) >= V(perturbation)
 ```
 
 « Seule la variété peut absorber la variété. » Un système de gouvernance capable de produire moins de réponses distinctes qu'il ne rencontre de perturbations distinctes échouera nécessairement à réguler certaines de ces perturbations.
@@ -178,7 +178,7 @@ Le ratio de variété ne raconte que la moitié de l'histoire. Il faut aussi mes
 Pour que la gouvernance soit viable :
 
 ```
-V(regulatory response) >= V(disturbance)
+V(réponse régulatrice) >= V(perturbation)
 ```
 
 - V_R_amp se situe entre sa plus grande composante isolée, les seuils de confiance à 2.32 bits, et la somme des trois, 6.32 bits, atteinte seulement si toute combinaison d'état logique, de seuil de confiance et d'état PDCA peut être produite

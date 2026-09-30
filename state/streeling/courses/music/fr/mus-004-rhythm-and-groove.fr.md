@@ -160,8 +160,8 @@ Une noire pointée équivaut à une noire liée à une croche. Elles sonnent de 
 Le système de syllabes standard pour compter les doubles croches en 4/4 est :
 
 ```
-Beat:       1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Subdivide:  1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4
+Temps :        1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
+Subdivision :  1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4
 ```
 
 - **1, 2, 3, 4** sont les temps (numéros des temps)
@@ -175,7 +175,7 @@ Dites-le à voix haute à un tempo lent : « ONE e and a TWO e and a THREE e and
 Un **triolet** divise un temps en trois parties égales au lieu de deux. Les syllabes de comptage sont « 1-trip-let, 2-trip-let, 3-trip-let, 4-trip-let » :
 
 ```
-Beat:       1  trip  let  2  trip  let  3  trip  let  4  trip  let
+Temps :     1  trip  let  2  trip  let  3  trip  let  4  trip  let
 ```
 
 Les triolets sont signalés par un petit **3** au-dessus des notes ligaturées. Ils sont la colonne vertébrale du shuffle, du swing et des rythmes en 12/8.
@@ -209,9 +209,9 @@ La syncope la plus élémentaire de la musique populaire occidentale est le **ba
 En musique classique, les temps 1 et 3 sont les temps forts. En rock et en pop, la caisse claire du batteur frappe sur 2 et 4, créant le backbeat qui propulse presque toute la musique populaire.
 
 ```
-Beat:           1   2   3   4
-Classical:      >   .   >   .
-Rock/Pop:       .   >   .   >
+Temps :         1   2   3   4
+Classique :     >   .   >   .
+Rock/Pop :      .   >   .   >
 ```
 
 Lorsque vous comptez sur une chanson rock, vous vous surprendrez à frapper dans vos mains sur 2 et 4 — c'est le backbeat à l'œuvre.
@@ -221,9 +221,9 @@ Lorsque vous comptez sur une chanson rock, vous vous surprendrez à frapper dans
 Une **anticipation** (parfois appelée « la poussée ») se produit lorsqu'un changement d'accord arrive légèrement en avance — typiquement sur le « et » du temps 4 de la mesure précédente, lié au temps 1 de la mesure suivante.
 
 ```
-Measure 1:            |  C     C     C     C-tie  |
+Mesure 1 :            |  C     C     C     C-lié  |
                       |  1  &  2  &  3  &  4  &   |
-Measure 2 (tied):     |  G     G     G     G      |
+Mesure 2 (liée) :     |  G     G     G     G      |
                       |  1  &  2  &  3  &  4  &   |
 ```
 
@@ -236,9 +236,9 @@ La poussée est essentielle dans la musique latine, la country et la pop. Les gu
 Les liaisons créent la syncope en prolongeant les notes par-delà les limites des temps. Considérez ce rythme :
 
 ```
-Count:   1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Notes:   X           X       X           X           X       X
-         (8th)       (8th tied to 16th)  (16th)       (8th tied to 16th) (16th)
+Compte : 1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
+Notes :  X           X       X           X           X       X   (c = croche, dc = double croche)
+         (c)         (c liée à dc)       (dc)         (c liée à dc)      (dc)
 ```
 
 Lorsqu'une croche commence sur le « & » du temps 1 et est liée par-dessus le temps 2, l'accent tombe entre les temps, créant un déplacement caractéristique, très funky.
@@ -249,8 +249,8 @@ Lorsqu'une croche commence sur le « & » du temps 1 et est liée par-dessus le 
 
 Par exemple, pour jouer un motif syncopé classique :
 ```
-Strum direction:  D   D   U   .   U   D   U
-Count:            1   2   &   3   &   4   &
+Sens du grattage :  D   D   U   .   U   D   U   (D = bas, U = haut)
+Compte :            1   2   &   3   &   4   &
 ```
 Votre main monte et descend en continu ; vous ne frappez les cordes que sur les coups notés. Cette technique s'appelle le **ghost strumming** (grattage fantôme).
 
@@ -258,8 +258,8 @@ Votre main monte et descend en continu ; vous ne frappez les cordes que sur les 
 
 À 80 BPM, tapez du pied une pulsation régulière en noires. Frappez dans vos mains ce rythme syncopé par-dessus :
 ```
-Count: 1   &   2   &   3   &   4   &
-Clap:  X       X   X       X       X
+Compte : 1   &   2   &   3   &   4   &
+Frappe : X       X   X       X       X
 ```
 Remarquez comment les frappes sur le « & » de 2 et le « & » de 4 créent une syncope contre les noires régulières de votre pied.
 
@@ -286,9 +286,9 @@ Dans le swing, la paire est étirée. Le ratio varie d'un musicien à l'autre et
 Un **swing ternaire** traite chaque paire comme la première et la troisième note d'un triolet :
 
 ```
-Straight:       ♪   ♪        (even halves)
-Swung:          ♪───♪        (triplet quarter + triplet eighth)
-                triplet
+Droites :       ♪   ♪        (moitiés égales)
+Swinguées :     ♪───♪        (noire de triolet + croche de triolet)
+                triolet
 ```
 
 Autrement dit : la première croche reçoit les deux tiers du temps, la seconde en reçoit un tiers.
@@ -300,9 +300,9 @@ Le **blues shuffle** est un feeling rythmique particulier fondé sur un swing te
 Le motif de shuffle classique à la guitare sur un seul accord :
 
 ```
-Beat:    1        2        3        4
-Count:   1 & a   2 & a   3 & a   4 & a   (triplet counting)
-Notes:   X - X   X - X   X - X   X - X   (play on 1, a, 2, a, etc.)
+Temps :  1        2        3        4
+Compte : 1 & a   2 & a   3 & a   4 & a   (compte en triolets)
+Notes :  X - X   X - X   X - X   X - X   (jouer sur 1, a, 2, a, etc.)
 ```
 
 Vous jouez sur la première et la troisième note de chaque triolet, en sautant celle du milieu. À la guitare, cela s'exécute souvent sur deux cordes, en alternant entre la quinte et la sixte de l'accord — le célèbre motif « boogie bass ».
@@ -335,9 +335,9 @@ Chaque genre possède des modèles rythmiques caractéristiques — les **groove
 Le **Travis picking** est un motif de fingerpicking à pouce alterné où le pouce joue des notes de basse sur chaque temps tandis que les doigts pincent les cordes aiguës entre les temps.
 
 ```
-Beat:        1       2       3       4
-Thumb:       Low     Higher  Low     Higher
-Fingers:         UP      UP      UP      UP
+Temps :      1       2       3       4
+Pouce :      Grave   Aiguë   Grave   Aiguë
+Doigts :         HAUT    HAUT    HAUT    HAUT
 ```
 
 Le pouce fournit la pulsation en noires ; les doigts ajoutent une mélodie syncopée par-dessus. C'est le groove de base de la guitare acoustique pour la country, le folk et les ballades à la James Taylor.
@@ -347,9 +347,9 @@ Le pouce fournit la pulsation en noires ; les doigts ajoutent une mélodie synco
 La **bossa nova** est un groove brésilien en 2/4 ou 4/4 détendu, avec des motifs d'accompagnement syncopés. Le motif de guitare bossa classique :
 
 ```
-Count:    1   &   2   &   3   &   4   &
-Bass:     X               X                         (thumb, root)
-Chord:        X       X       X       X             (fingers, chord stab)
+Compte :  1   &   2   &   3   &   4   &
+Basse :   X               X                         (pouce, fondamentale)
+Accord :      X       X       X       X             (doigts, accord plaqué)
 ```
 
 Le pouce joue la basse sur les temps 1 et 3 (et parfois sur le « & » de 2), tandis que les doigts jouent des fragments d'accords syncopés sur les contretemps. C'est la subtilité du rythme de la bossa qui la rend hypnotique.
@@ -360,7 +360,7 @@ Le fingerstyle arpégé fait défiler les notes d'un accord une à une, typiquem
 
 ```
 6/8:   1   2   3   4   5   6
-       P   I   M   A   M   I     (thumb, index, middle, ring, middle, index)
+       P   I   M   A   M   I     (pouce, index, majeur, annulaire, majeur, index)
 ```
 
 Cela crée une texture fluide, semblable à celle d'une harpe, courante en guitare classique et dans les ballades pop douces.
@@ -370,9 +370,9 @@ Cela crée une texture fluide, semblable à celle d'une harpe, courante en guita
 Le **funk** repose sur un grattage constant en doubles croches avec des étouffements et des accents sélectifs. La main qui gratte maintient un mouvement verrouillé en doubles croches (bas-haut-bas-haut au niveau de la double croche) tandis que la main sur le manche contrôle quelles doubles croches résonnent réellement.
 
 ```
-Count:  1 e & a 2 e & a 3 e & a 4 e & a
-Strum:  D U D U D U D U D U D U D U D U  (constant motion)
-Play:   X . X . . X X . X . . X X . X .  (selective)
+Compte :   1 e & a 2 e & a 3 e & a 4 e & a
+Grattage : D U D U D U D U D U D U D U D U  (mouvement constant ; D = bas, U = haut)
+Jeu :      X . X . . X X . X . . X X . X .  (sélectif)
 ```
 
 Les « chicks » étouffés et les accords joués sélectivement créent la texture percussive caractéristique du funk. Pensez à Nile Rodgers et aux guitaristes rythmiques de James Brown.
@@ -382,8 +382,8 @@ Les « chicks » étouffés et les accords joués sélectivement créent la text
 Les guitaristes de rock et de metal utilisent le **palm muting** pour contrôler l'attaque et la tenue des rythmes martelés. La paume de la main droite repose légèrement sur les cordes près du chevalet, ce qui étouffe le son.
 
 ```
-Count:  1 & 2 & 3 & 4 &
-Notes:  M M M M M M X M   (M = muted, X = open/ringing)
+Compte : 1 & 2 & 3 & 4 &
+Notes :  M M M M M M X M   (M = étouffé, X = ouvert/résonnant)
 ```
 
 La variante en doubles croches (triolets au galop « bas-bas-haut ») est le fondement de la guitare rythmique metal.
@@ -393,8 +393,8 @@ La variante en doubles croches (triolets au galop « bas-bas-haut ») est le fon
 Le **skank** du reggae accentue les contretemps — le « et » de chaque temps :
 
 ```
-Count:  1   &   2   &   3   &   4   &
-Strum:      X       X       X       X     (short chord stabs on offbeats)
+Compte :   1   &   2   &   3   &   4   &
+Grattage :     X       X       X       X     (accords brefs plaqués sur les contretemps)
 ```
 
 Le skank crée un élan caractéristique en laissant les temps vides (remplis par la basse) et en plaquant les accords entre eux.
@@ -416,9 +416,9 @@ Deux temps dans la durée de trois, ou trois temps dans la durée de deux. Les d
 La phrase mnémotechnique pour 3:2 est **« pass the god-damn but-ter »** — dites-la à voix haute avec un espacement égal entre chaque syllabe :
 
 ```
-3 group:  pass   the    god   damn   but   ter
-3 hits:   X             X            X       (on syllables 1, 3, 5)
-2 hits:   ONE                 TWO            (on syllables 1, 4)
+Syllabes : pass   the    god   damn   but   ter
+3 coups :  X             X            X       (sur les syllabes 1, 3, 5)
+2 coups :  UN                  DEUX           (sur les syllabes 1, 4)
 ```
 
 « pass » et « damn » s'alignent sur les deux temps, tandis que « pass », « god » et « but » marquent les trois — les deux groupements ne se rencontrent que sur « pass ».
@@ -428,10 +428,10 @@ La phrase mnémotechnique pour 3:2 est **« pass the god-damn but-ter »** — d
 Trois temps contre quatre — les deux regroupements ne tombent ensemble que toutes les 12 subdivisions.
 
 ```
-12 subdivisions:  1  2  3  4  5  6  7  8  9 10 11 12
-4 grouping:       X        X        X        X  (every 3)
-3 grouping:       X           X           X     (every 4)
-Align at:         X (only at beat 1 of each cycle)
+12 subdivisions : 1  2  3  4  5  6  7  8  9 10 11 12
+4 coups :         X        X        X        X  (tous les 3)
+3 coups :         X           X           X     (tous les 4)
+Rencontre :       X (seulement sur le temps 1 de chaque cycle)
 ```
 
 Cela crée une sensation de « roulement » où les deux rythmes semblent tirer l'un contre l'autre, pour enfin se rejoindre au début de chaque cycle.

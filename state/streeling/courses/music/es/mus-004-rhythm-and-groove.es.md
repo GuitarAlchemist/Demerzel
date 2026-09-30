@@ -160,8 +160,8 @@ Una negra con puntillo equivale a una negra ligada a una corchea. Suenan idénti
 El sistema de sílabas estándar para contar semicorcheas en 4/4 es:
 
 ```
-Beat:       1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Subdivide:  1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4
+Tiempo:       1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
+Subdivisión:  1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4 / 1 / 2 / 3 / 4
 ```
 
 - **1, 2, 3, 4** son los tiempos (números de tiempo)
@@ -175,7 +175,7 @@ Dilo en voz alta a un tempo lento: "ONE e and a TWO e and a THREE e and a FOUR e
 Un **tresillo** divide un tiempo en tres partes iguales en lugar de dos. Las sílabas de conteo son "1-trip-let, 2-trip-let, 3-trip-let, 4-trip-let":
 
 ```
-Beat:       1  trip  let  2  trip  let  3  trip  let  4  trip  let
+Tiempo:     1  trip  let  2  trip  let  3  trip  let  4  trip  let
 ```
 
 Los tresillos se indican con un pequeño **3** sobre las notas unidas por barra. Son la columna vertebral del shuffle, el swing y los ritmos en 12/8.
@@ -209,8 +209,8 @@ La síncopa más básica de la música popular occidental es el **backbeat**: ac
 En la música clásica, los tiempos 1 y 3 son los tiempos fuertes. En el rock y el pop, la caja del batería suena en 2 y 4, creando el backbeat que impulsa casi toda la música popular.
 
 ```
-Beat:           1   2   3   4
-Classical:      >   .   >   .
+Tiempo:         1   2   3   4
+Clásica:        >   .   >   .
 Rock/Pop:       .   >   .   >
 ```
 
@@ -221,9 +221,9 @@ Cuando cuentes junto con una canción de rock, te encontrarás dando palmas en 2
 Una **anticipación** (a veces llamada "el empuje") ocurre cuando un cambio de acorde llega un poco antes — normalmente en el "y" del tiempo 4 del compás anterior, ligado al tiempo 1 del compás siguiente.
 
 ```
-Measure 1:            |  C     C     C     C-tie  |
+Compás 1:             |  C     C     C     C-lig. |
                       |  1  &  2  &  3  &  4  &   |
-Measure 2 (tied):     |  G     G     G     G      |
+Compás 2 (ligado):    |  G     G     G     G      |
                       |  1  &  2  &  3  &  4  &   |
 ```
 
@@ -236,9 +236,9 @@ El empuje es esencial en la música latina, el country y el pop. Los guitarrista
 Las ligaduras crean síncopa al sostener notas a través de los límites de los tiempos. Considera este ritmo:
 
 ```
-Count:   1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Notes:   X           X       X           X           X       X
-         (8th)       (8th tied to 16th)  (16th)       (8th tied to 16th) (16th)
+Cuenta:  1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
+Notas:   X           X       X           X           X       X   (c = corchea, sc = semicorchea)
+         (c)         (c ligada a sc)     (sc)         (c ligada a sc)    (sc)
 ```
 
 Cuando una corchea empieza en el "&" del tiempo 1 y se liga por encima del tiempo 2, el acento cae entre tiempos, creando un desplazamiento característico con sabor funky.
@@ -249,8 +249,8 @@ En la guitarra, la síncopa se ejecuta normalmente rasgueando. La regla práctic
 
 Por ejemplo, para tocar un patrón sincopado clásico:
 ```
-Strum direction:  D   D   U   .   U   D   U
-Count:            1   2   &   3   &   4   &
+Dirección del rasgueo:  D   D   U   .   U   D   U   (D = abajo, U = arriba)
+Cuenta:                 1   2   &   3   &   4   &
 ```
 Tu mano se mueve abajo-arriba de forma continua; solo golpeas las cuerdas en los rasgueos anotados. Esta técnica se llama **ghost strumming** (rasgueo fantasma).
 
@@ -258,8 +258,8 @@ Tu mano se mueve abajo-arriba de forma continua; solo golpeas las cuerdas en los
 
 A 80 BPM, marca con el pie un pulso regular de negras. Da palmas con este ritmo sincopado por encima:
 ```
-Count: 1   &   2   &   3   &   4   &
-Clap:  X       X   X       X       X
+Cuenta: 1   &   2   &   3   &   4   &
+Palmas: X       X   X       X       X
 ```
 Fíjate en cómo las palmas en el "&" de 2 y el "&" de 4 crean síncopa frente a las negras regulares de tu pie.
 
@@ -286,9 +286,9 @@ En el swing, el par se estira. La proporción varía de un músico a otro y de u
 Un **swing basado en tresillos** trata cada par como la primera y la tercera nota de un tresillo:
 
 ```
-Straight:       ♪   ♪        (even halves)
-Swung:          ♪───♪        (triplet quarter + triplet eighth)
-                triplet
+Rectas:         ♪   ♪        (mitades iguales)
+Con swing:      ♪───♪        (negra de tresillo + corchea de tresillo)
+                tresillo
 ```
 
 En otras palabras: la primera corchea recibe dos tercios del tiempo y la segunda, un tercio.
@@ -300,9 +300,9 @@ El **blues shuffle** es un feeling rítmico concreto construido sobre un swing p
 El patrón clásico de shuffle en guitarra sobre un solo acorde:
 
 ```
-Beat:    1        2        3        4
-Count:   1 & a   2 & a   3 & a   4 & a   (triplet counting)
-Notes:   X - X   X - X   X - X   X - X   (play on 1, a, 2, a, etc.)
+Tiempo:  1        2        3        4
+Cuenta:  1 & a   2 & a   3 & a   4 & a   (conteo en tresillos)
+Notas:   X - X   X - X   X - X   X - X   (tocar en 1, a, 2, a, etc.)
 ```
 
 Tocas en la primera y la tercera nota de cada tresillo y te saltas la del medio. En la guitarra, esto se ejecuta a menudo en dos cuerdas, alternando entre la quinta y la sexta del acorde — el famoso patrón "boogie bass".
@@ -335,9 +335,9 @@ Los distintos géneros tienen plantillas rítmicas características — los **gr
 El **Travis picking** es un patrón de fingerpicking con pulgar alterno en el que el pulgar toca notas graves en cada tiempo mientras los dedos pulsan las cuerdas agudas entre los tiempos.
 
 ```
-Beat:        1       2       3       4
-Thumb:       Low     Higher  Low     Higher
-Fingers:         UP      UP      UP      UP
+Tiempo:      1       2       3       4
+Pulgar:      Grave   Aguda   Grave   Aguda
+Dedos:           ARRIBA  ARRIBA  ARRIBA  ARRIBA
 ```
 
 El pulgar aporta el pulso de negras; los dedos añaden una melodía sincopada por encima. Es el groove fundamental de la guitarra acústica para el country, el folk y las baladas al estilo de James Taylor.
@@ -347,9 +347,9 @@ El pulgar aporta el pulso de negras; los dedos añaden una melodía sincopada po
 La **bossa nova** es un groove brasileño en un 2/4 o 4/4 relajado, con patrones de acompañamiento sincopados. El patrón clásico de guitarra de bossa:
 
 ```
-Count:    1   &   2   &   3   &   4   &
-Bass:     X               X                         (thumb, root)
-Chord:        X       X       X       X             (fingers, chord stab)
+Cuenta:   1   &   2   &   3   &   4   &
+Bajo:     X               X                         (pulgar, fundamental)
+Acorde:       X       X       X       X             (dedos, golpe de acorde)
 ```
 
 El pulgar toca el bajo en los tiempos 1 y 3 (y a veces en el "&" de 2), mientras los dedos tocan fragmentos de acorde sincopados en los contratiempos. La sutileza del ritmo de la bossa es lo que la hace hipnótica.
@@ -360,7 +360,7 @@ El fingerstyle arpegiado recorre las notas de un acorde una a una, normalmente e
 
 ```
 6/8:   1   2   3   4   5   6
-       P   I   M   A   M   I     (thumb, index, middle, ring, middle, index)
+       P   I   M   A   M   I     (pulgar, índice, medio, anular, medio, índice)
 ```
 
 Esto crea una textura fluida, parecida a la de un arpa, habitual en la guitarra clásica y en las baladas pop suaves.
@@ -370,9 +370,9 @@ Esto crea una textura fluida, parecida a la de un arpa, habitual en la guitarra 
 El **funk** se basa en un rasgueo constante de semicorcheas con apagados y acentos selectivos. La mano que rasguea mantiene un movimiento fijo de semicorcheas (abajo-arriba-abajo-arriba al nivel de semicorchea) mientras la mano del mástil controla qué semicorcheas suenan realmente.
 
 ```
-Count:  1 e & a 2 e & a 3 e & a 4 e & a
-Strum:  D U D U D U D U D U D U D U D U  (constant motion)
-Play:   X . X . . X X . X . . X X . X .  (selective)
+Cuenta:   1 e & a 2 e & a 3 e & a 4 e & a
+Rasgueo:  D U D U D U D U D U D U D U D U  (movimiento constante; D = abajo, U = arriba)
+Suena:    X . X . . X X . X . . X X . X .  (selectivo)
 ```
 
 Los "chicks" apagados y los acordes que suenan de forma selectiva crean la textura percusiva característica del funk. Piensa en Nile Rodgers y en los guitarristas rítmicos de James Brown.
@@ -382,8 +382,8 @@ Los "chicks" apagados y los acordes que suenan de forma selectiva crean la textu
 Los guitarristas de rock y metal usan el **palm muting** para controlar el ataque y la duración de los ritmos machacados. La palma de la mano que pulsa descansa ligeramente sobre las cuerdas cerca del puente y amortigua el sonido.
 
 ```
-Count:  1 & 2 & 3 & 4 &
-Notes:  M M M M M M X M   (M = muted, X = open/ringing)
+Cuenta: 1 & 2 & 3 & 4 &
+Notas:  M M M M M M X M   (M = apagado, X = al aire/resonando)
 ```
 
 La variante en semicorcheas (tresillos al galope "abajo-abajo-arriba") es la base de la guitarra rítmica del metal.
@@ -393,8 +393,8 @@ La variante en semicorcheas (tresillos al galope "abajo-abajo-arriba") es la bas
 El **skank** del reggae acentúa los contratiempos — el "y" de cada tiempo:
 
 ```
-Count:  1   &   2   &   3   &   4   &
-Strum:      X       X       X       X     (short chord stabs on offbeats)
+Cuenta:   1   &   2   &   3   &   4   &
+Rasgueo:      X       X       X       X     (golpes de acorde cortos en los contratiempos)
 ```
 
 El skank crea un impulso característico al dejar vacíos los tiempos (que llena el bajo) y golpear los acordes entre ellos.
@@ -416,9 +416,9 @@ Dos tiempos en el espacio de tres, o tres tiempos en el espacio de dos. Los dos 
 La frase mnemotécnica para 3:2 es **"pass the god-damn but-ter"** — dila en voz alta con el mismo espacio entre cada sílaba:
 
 ```
-3 group:  pass   the    god   damn   but   ter
-3 hits:   X             X            X       (on syllables 1, 3, 5)
-2 hits:   ONE                 TWO            (on syllables 1, 4)
+Sílabas:  pass   the    god   damn   but   ter
+3 golpes: X             X            X       (en las sílabas 1, 3, 5)
+2 golpes: UNO                 DOS            (en las sílabas 1, 4)
 ```
 
 "pass" y "damn" coinciden con los dos tiempos, mientras que "pass", "god" y "but" marcan los tres; las dos agrupaciones solo se encuentran en "pass".
@@ -428,10 +428,10 @@ La frase mnemotécnica para 3:2 es **"pass the god-damn but-ter"** — dila en v
 Tres tiempos contra cuatro — las dos agrupaciones solo coinciden cada 12 subdivisiones.
 
 ```
-12 subdivisions:  1  2  3  4  5  6  7  8  9 10 11 12
-4 grouping:       X        X        X        X  (every 3)
-3 grouping:       X           X           X     (every 4)
-Align at:         X (only at beat 1 of each cycle)
+12 subdivisiones: 1  2  3  4  5  6  7  8  9 10 11 12
+4 golpes:         X        X        X        X  (cada 3)
+3 golpes:         X           X           X     (cada 4)
+Coinciden en:     X (solo en el tiempo 1 de cada ciclo)
 ```
 
 Esto crea una sensación "rodante" en la que los dos ritmos parecen tirar uno contra otro, hasta reunirse de nuevo al comienzo de cada ciclo.

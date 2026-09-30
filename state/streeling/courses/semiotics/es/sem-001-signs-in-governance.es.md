@@ -44,9 +44,9 @@ Un **icono** representa su objeto por *semejanza*. Se parece, suena parecido o r
 **En los documentos de gobernanza:**
 
 ```
-asimov.constitution.md        (root)
-  +-- demerzel-mandate.md      (who enforces)
-  +-- default.constitution.md  (operational ethics)
+asimov.constitution.md        (raíz)
+  +-- demerzel-mandate.md      (quién hace cumplir)
+  +-- default.constitution.md  (ética operativa)
        +-- policies/*.yaml
             +-- personas/*.persona.yaml
 ```

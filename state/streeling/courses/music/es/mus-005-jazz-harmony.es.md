@@ -41,8 +41,8 @@ Los cifrados de acordes de jazz son un lenguaje de notación comprimido. A difer
 Todo cifrado de jazz tiene hasta cuatro componentes:
 
 ```
-Root  +  Quality  +  Extensions/Alterations  +  Slash Bass
- C        maj           9#11                      /E
+Fundamental  +  Calidad  +  Extensiones/Alteraciones  +  Nota del bajo
+ C               maj           9#11                        /E
 ```
 
 **Fundamental:** cualquier letra de la A a la G, opcionalmente con # o b.
@@ -135,8 +135,8 @@ Esta atracción cromática por grados conjuntos crea una sensación de resoluci�
 En Do menor:
 
 ```
-  Dm7b5  →    G7alt   →    Cm(maj7) or Cm7
-  ii-half      V7alt        i
+  Dm7b5  →    G7alt   →    Cm(maj7) o Cm7
+  ii-semidis   V7alt        i
 ```
 
 El ii semidisminuido aporta el color de la tonalidad menor. La dominante alterada (G7alt) contiene tanto la b9 (Ab) como la b13 (Eb), que son la b6 y la b3 de Do menor — justamente las notas que definen la tonalidad menor.
@@ -148,13 +148,13 @@ Las piezas de jazz a menudo encadenan ii-V por varias tonalidades sin resolver:
 ```
   Em7  A7  |  Dm7  G7  |  Cmaj7
   ii   V      ii   V      I
-  (of D)      (of C)      (arrived)
+  (de D)      (de C)      (llegada)
 ```
 
 El turnaround — los últimos compases de una forma que llevan de vuelta al principio — es la cadena extendida más habitual:
 
 ```
-  Cmaj7  Am7  |  Dm7  G7  ||  (back to Cmaj7)
+  Cmaj7  Am7  |  Dm7  G7  ||  (vuelta a Cmaj7)
   I      vi      ii   V        I
 ```
 
@@ -215,10 +215,10 @@ Toma un acorde de cuatro notas en posición cerrada y "deja caer" una octava la 
 
 ```
 e ----
-B --5-- (E, the 3rd)
-G --4-- (B, the 7th)
-D --5-- (G, the 5th)
-A --3-- (C, the root — dropped from close position)
+B --5-- (E, la tercera)
+G --4-- (B, la séptima)
+D --5-- (G, la quinta)
+A --3-- (C, la fundamental — bajada desde la posición cerrada)
 E ----
 ```
 
@@ -272,9 +272,9 @@ La **tercera** y la **séptima** de cada acorde se llaman **notas guía** porque
 El milagro central de la conducción de voces del ii-V-I:
 
 ```
-Chord:    Dm7    G7     Cmaj7
-3rd:       F  →   B  →   E
-7th:       C  →   F  →   B
+Acorde:   Dm7    G7     Cmaj7
+Tercera:   F  →   B  →   E
+Séptima:   C  →   F  →   B
 ```
 
 Observa:
@@ -321,8 +321,8 @@ La sustitución tritonal reemplaza un acorde de séptima de dominante por otro a
 ¿Por qué funciona? Las **notas guía son compartidas:**
 
 ```
-G7:   B (3rd)  F (7th)
-Db7:  F (3rd)  Cb/B (7th)
+G7:   B (tercera)  F (séptima)
+Db7:  F (tercera)  Cb/B (séptima)
 ```
 
 La tercera y la séptima simplemente intercambian sus papeles. La resolución a Cmaj7 funciona igual porque F→E y B→C (o Cb→C) en ambos casos. Lo que cambia es el movimiento del bajo: en lugar de G→C (quinta descendente), obtienes Db→C (descenso cromático) — un sonido más estilizado y moderno.
@@ -330,9 +330,9 @@ La tercera y la séptima simplemente intercambian sus papeles. La resolución a 
 **Aplicación en el ii-V-I:**
 
 ```
-Original:    Dm7  | G7    | Cmaj7
-Tritone sub: Dm7  | Db7   | Cmaj7
-With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
+Original:       Dm7  | G7    | Cmaj7
+Sust. tritonal: Dm7  | Db7   | Cmaj7
+Con ii:         Abm7 | Db7   | Cmaj7  (Abm7 es el ii relacionado de Db7)
 ```
 
 ### Sustitución disminuida
@@ -357,7 +357,7 @@ La línea del bajo (C-C#-D) crea un ascenso cromático. El C#dim7 funciona como 
 En lugar de la resolución estándar V7→I, el jazz usa **bVII7→I**:
 
 ```
-Standard: G7  → Cmaj7  (V → I)
+Estándar: G7  → Cmaj7  (V → I)
 Backdoor: Bb7 → Cmaj7  (bVII → I)
 ```
 
@@ -452,9 +452,9 @@ La armonía tradicional apila **terceras**. La armonía por cuartas apila **cuar
 **El enfoque de McCoy Tyner:** sobre un vamp en Re dórico, apila cuartas justas desde distintos grados de la escala:
 
 ```
-From D: D - G - C - F     (stacked 4ths)
-From E: E - A - D - G     (stacked 4ths)
-From G: G - C - F - Bb    (stacked 4ths — includes b6, outside Dorian)
+Desde D: D - G - C - F     (cuartas apiladas)
+Desde E: E - A - D - G     (cuartas apiladas)
+Desde G: G - C - F - Bb    (cuartas apiladas — incluye b6, fuera del dórico)
 ```
 
 Estos voicings pueden moverse dentro del modo y crean un paisaje armónico resplandeciente y no funcional. Los voicings individuales no "resuelven" — flotan.
@@ -513,9 +513,9 @@ En 1959, John Coltrane introdujo un sistema de sustitución que divide la octava
 El ciclo: empezando desde cualquier tonalidad, baja una tercera mayor tres veces y vuelves al punto de partida:
 
 ```
-C → Ab → E → C  (descending major thirds)
-or equivalently:
-C → E → Ab → C  (ascending major thirds)
+C → Ab → E → C  (terceras mayores descendentes)
+o, de forma equivalente:
+C → E → Ab → C  (terceras mayores ascendentes)
 ```
 
 ### Análisis de Giant Steps
@@ -561,10 +561,10 @@ Eb             A
    Db      B
        F#
 
-Triangle 1: C - E - Ab
-Triangle 2: D - F# - Bb
-Triangle 3: Eb - G - B  ← Giant Steps triangle
-Triangle 4: F - A - Db
+Triángulo 1: C - E - Ab
+Triángulo 2: D - F# - Bb
+Triángulo 3: Eb - G - B  ← triángulo de Giant Steps
+Triángulo 4: F - A - Db
 ```
 
 Solo hay cuatro triángulos de terceras mayores distintos. Juntos dividen los doce sonidos en cuatro grupos de tres.

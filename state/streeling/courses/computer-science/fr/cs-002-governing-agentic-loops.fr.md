@@ -38,7 +38,7 @@ la garantir. La garantie doit venir du framework.
 
 Alan Turing a prouvé (1936) qu'aucun algorithme ne peut décider, pour tous les programmes, s'ils s'arrêteront.
 Aucune procédure générale ne peut davantage trancher pour une boucle d'agent quelconque. La terminaison est donc imposée
-plutôt que détectée : un plafond appliqué par le framework fait s'arrêter la boucle par construction.
+plutôt que détectée : un plafond appliqué par le framework borne le nombre d'itérations, et un délai maximal sur chaque appel au modèle, appel d'outil et requête réseau borne chaque itération. Seuls les deux ensemble font s'arrêter la boucle par construction : une itération bloquée sur un appel n'atteint jamais le compteur.
 
 **Conséquence :** Tout framework agentique qui compte sur le modèle pour déclarer lui-même qu'il a terminé
 est défectueux par construction.
@@ -66,10 +66,10 @@ Ces six propriétés rendent une itération bornée et auditable. Une boucle qui
 
 ### Propriété 1 : plafond d'itérations strict
 Un nombre maximal d'itérations imposé par le framework, et non par le modèle. Une fois atteint : arrêter,
-journaliser le plafond, escalader vers une revue humaine.
+journaliser le plafond, escalader vers une revue humaine. Le compteur n'avance qu'à la fin d'une itération : le plafond exige donc aussi un délai maximal sur chaque appel à l'intérieur d'une itération ; la configuration ci-dessous ne fixe que le plafond.
 
 ```yaml
-# Example: Demerzel autonomous-loop configuration
+# Exemple : configuration de la boucle autonome de Demerzel
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
@@ -86,7 +86,7 @@ def stall_test(state_before, state_after):
     return hash(state_before) == hash(state_after)
 
 if stall_test(prev_state, curr_state):
-    raise StallDetected("No state change — possible infinite loop")
+    raise StallDetected("Aucun changement d'état — boucle infinie possible")
 ```
 
 ### Propriété 3 : critère d'arrêt externe
@@ -94,12 +94,12 @@ La condition de sortie est spécifiée avant le début de la boucle, et non gén
 Le modèle ne peut pas redéfinir la convergence en cours de boucle.
 
 ```python
-# Good: criterion is external
+# Bon : le critère est externe
 def is_complete(state) -> bool:
     return state.belief_confidence >= 0.85 or state.iteration >= MAX
 
-# Bad: model declares its own completion
-result = model.run("keep going until you think you're done")
+# Mauvais : le modèle déclare lui-même avoir terminé
+result = model.run("continue jusqu'à ce que tu penses avoir fini")
 ```
 
 ### Propriété 4 : point de contrôle lisible par un humain
@@ -121,24 +121,24 @@ traité comme un vote, pas comme un ordre.
 Le framework Demerzel l'implémente via `autonomous-loop-policy.yaml` :
 
 ```
-GOVERNED LOOP
-├── Pre-conditions (checked before first iteration)
-│   ├── Kill switch check
-│   ├── Daily/session cap check
-│   └── Termination criterion defined
+BOUCLE GOUVERNÉE
+├── Préconditions (vérifiées avant la première itération)
+│   ├── Vérification du kill switch
+│   ├── Vérification du plafond journalier/de session
+│   └── Critère de terminaison défini
 │
-├── Iteration body
-│   ├── Execute step
-│   ├── Progress test (hash compare)
-│   ├── Checkpoint emit (every N steps)
-│   └── Output dedup check
+├── Corps de l'itération
+│   ├── Exécuter l'étape
+│   ├── Test de progression (comparaison de hachages)
+│   ├── Émission d'un point de contrôle (toutes les N étapes)
+│   └── Vérification de déduplication des sorties
 │
-└── Post-conditions (any can halt the loop)
-    ├── Termination criterion met → complete
-    ├── Iteration cap hit → escalate
-    ├── Stall detected → escalate
-    ├── Kill switch set → halt immediately
-    └── Anomaly detected → conscience signal + halt
+└── Postconditions (chacune peut arrêter la boucle)
+    ├── Critère de terminaison atteint → terminé
+    ├── Plafond d'itérations atteint → escalade
+    ├── Stagnation détectée → escalade
+    ├── Kill switch activé → arrêt immédiat
+    └── Anomalie détectée → signal de conscience + arrêt
 ```
 
 Ce schéma apparaît à trois endroits de l'écosystème Demerzel :
@@ -181,7 +181,7 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 ## Points clés à retenir
 
 - Un LLM ne peut pas détecter de façon fiable ses propres boucles infinies — l'arrêt doit être externe
-- Une boucle gouvernée a six propriétés : plafond strict, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe — plus un état sérialisable si elle doit pouvoir être mise en pause et reprise
+- Une boucle gouvernée a six propriétés : plafond strict avec un délai maximal sur chaque appel, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe — plus un état sérialisable si elle doit pouvoir être mise en pause et reprise
 - Le framework Demerzel les implémente dans seldon-plan, demerzel-drive et Ralph Loop
 - L'article 9 (Autonomie bornée) en est la base constitutionnelle — les limites sont prédéfinies, les étendre exige une escalade
 

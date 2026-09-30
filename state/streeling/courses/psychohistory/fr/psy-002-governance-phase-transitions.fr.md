@@ -67,7 +67,7 @@ Quand ce ratio change rapidement — `d(T/U)/dt` s'écartant de plus de 2 écart
 Le score de santé de la gouvernance R (actuellement suivi dans `state/governance-health.json`) joue le rôle d'un potentiel thermodynamique. Sa dérivée renseigne sur la proximité d'un changement de régime :
 
 ```
-velocity = dR/dt (health score change per cycle)
+velocity = dR/dt (variation du score de santé par cycle)
 ```
 
 | Profil | Signification |
@@ -100,7 +100,7 @@ Quand `marginal_return → 0` sur 3 ajouts de politiques consécutifs ou plus, l
 Demerzel gouverne quatre dépôts (demerzel, ix, tars, ga). Mesurez la corrélation entre leurs taux de conformité :
 
 ```
-coupling = pearson_correlation(compliance_rates across repos)
+coupling = pearson_correlation(compliance_rates entre dépôts)
 ```
 
 | Couplage | Régime |
@@ -146,23 +146,23 @@ Franchir 1.0 est une transition de phase du second ordre. Le système ne se romp
 ## 3. Tout assembler : le diagramme de phases
 
 ```
-                    R (health score)
+                    R (score de santé)
                     │
-     Autonomous     │         ╱
+     Autonome       │         ╱
      R >= 0.9       │       ╱
                     │     ╱
      ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ variety_ratio = 1.0
-     Proactive      │ ╱
+     Proactif       │ ╱
      R >= 0.7       │╱
                     ╱
-     ─ ─ ─ ─ ─ ─ ╱│─ ─ ─ ─ ─ ─ ─ policy saturation
-     Structured   ╱ │
+     ─ ─ ─ ─ ─ ─ ╱│─ ─ ─ ─ ─ ─ ─ saturation des politiques
+     Structuré    ╱ │
      R >= 0.5   ╱   │
               ╱     │
-     ─ ─ ─ ╱─ ─ ─ ─│─ ─ ─ ─ ─ ─ ─ critical coupling
-     Reactive       │
+     ─ ─ ─ ╱─ ─ ─ ─│─ ─ ─ ─ ─ ─ ─ couplage critique
+     Réactif        │
      R < 0.5        │
-                    └────────────────── t (time/cycles)
+                    └────────────────── t (temps/cycles)
 ```
 
 Chaque ligne horizontale est une frontière de phase. Le système de gouvernance franchit ces frontières quand suffisamment de signaux s'alignent. Aucun signal isolé ne suffit — cherchez la **convergence** d'au moins 3 signaux indiquant la même direction de transition.

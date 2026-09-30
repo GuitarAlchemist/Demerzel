@@ -22,9 +22,9 @@ El Galactic Protocol de Demerzel define actualmente formatos y flujos de mensaje
 La oscilación entre repositorios ocurre cuando los cambios de estado en un repositorio desencadenan reacciones en otros, que a su vez desencadenan nuevas reacciones, creando bucles de retroalimentación que se amplifican:
 
 ```
-ix detects gap → Demerzel issues directive → tars adjusts →
-Demerzel detects tars drift → issues counter-directive →
-ix re-adjusts → Demerzel detects ix drift → ...
+ix detecta una brecha → Demerzel emite una directiva → tars se ajusta →
+Demerzel detecta una deriva en tars → emite una contradirectiva →
+ix se reajusta → Demerzel detecta una deriva en ix → ...
 ```
 
 Es el mismo problema de inestabilidad que el Sistema 2 del VSM de Beer se diseñó para evitar. En el modelo de sistema viable, las unidades operativas del Sistema 1 (ix, tars, ga) son semiautónomas, pero no deben desestabilizarse entre sí mediante reacciones no coordinadas.

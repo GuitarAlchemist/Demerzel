@@ -41,8 +41,8 @@ Les symboles d'accords jazz sont un langage de notation compressé. Contrairemen
 Tout symbole d'accord jazz comporte jusqu'à quatre composantes :
 
 ```
-Root  +  Quality  +  Extensions/Alterations  +  Slash Bass
- C        maj           9#11                      /E
+Fondamentale  +  Qualité  +  Extensions/Altérations  +  Note de basse
+ C                maj           9#11                      /E
 ```
 
 **Fondamentale :** n'importe quelle lettre de A à G, éventuellement suivie de # ou b.
@@ -135,8 +135,8 @@ Cette attraction chromatique conjointe crée un sentiment de résolution irrési
 En Do mineur :
 
 ```
-  Dm7b5  →    G7alt   →    Cm(maj7) or Cm7
-  ii-half      V7alt        i
+  Dm7b5  →    G7alt   →    Cm(maj7) ou Cm7
+  ii-demi-dim  V7alt        i
 ```
 
 Le ii demi-diminué apporte la couleur du mode mineur. La dominante altérée (G7alt) contient à la fois la b9 (Ab) et la b13 (Eb), qui sont la b6 et la b3 de Do mineur — précisément les notes qui définissent la tonalité mineure.
@@ -148,13 +148,13 @@ Les morceaux de jazz enchaînent souvent des ii-V à travers plusieurs tonalité
 ```
   Em7  A7  |  Dm7  G7  |  Cmaj7
   ii   V      ii   V      I
-  (of D)      (of C)      (arrived)
+  (de D)      (de C)      (arrivée)
 ```
 
 Le turnaround — les dernières mesures d'une forme qui ramènent au début — est la chaîne étendue la plus courante :
 
 ```
-  Cmaj7  Am7  |  Dm7  G7  ||  (back to Cmaj7)
+  Cmaj7  Am7  |  Dm7  G7  ||  (retour à Cmaj7)
   I      vi      ii   V        I
 ```
 
@@ -215,10 +215,10 @@ Prenez un accord de quatre notes en position serrée et « faites tomber » la d
 
 ```
 e ----
-B --5-- (E, the 3rd)
-G --4-- (B, the 7th)
-D --5-- (G, the 5th)
-A --3-- (C, the root — dropped from close position)
+B --5-- (E, la tierce)
+G --4-- (B, la septième)
+D --5-- (G, la quinte)
+A --3-- (C, la fondamentale — abaissée depuis la position serrée)
 E ----
 ```
 
@@ -272,9 +272,9 @@ La **tierce** et la **septième** de chaque accord sont appelées **notes guides
 Le miracle central de la conduite des voix dans le ii-V-I :
 
 ```
-Chord:    Dm7    G7     Cmaj7
-3rd:       F  →   B  →   E
-7th:       C  →   F  →   B
+Accord :  Dm7    G7     Cmaj7
+Tierce :   F  →   B  →   E
+Septième : C  →   F  →   B
 ```
 
 Remarquez :
@@ -321,8 +321,8 @@ La substitution tritonique remplace un accord de septième de dominante par un a
 Pourquoi cela fonctionne-t-il ? Les **notes guides sont partagées :**
 
 ```
-G7:   B (3rd)  F (7th)
-Db7:  F (3rd)  Cb/B (7th)
+G7 :  B (tierce)  F (septième)
+Db7 : F (tierce)  Cb/B (septième)
 ```
 
 La tierce et la septième échangent simplement leurs rôles. La résolution vers Cmaj7 fonctionne à l'identique, car F→E et B→C (ou Cb→C) dans les deux cas. Ce qui change, c'est le mouvement de basse : au lieu de G→C (quinte descendante), on obtient Db→C (descente chromatique) — un son plus lisse et plus moderne.
@@ -330,9 +330,9 @@ La tierce et la septième échangent simplement leurs rôles. La résolution ver
 **Application au ii-V-I :**
 
 ```
-Original:    Dm7  | G7    | Cmaj7
-Tritone sub: Dm7  | Db7   | Cmaj7
-With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
+Original :        Dm7  | G7    | Cmaj7
+Sub. tritonique : Dm7  | Db7   | Cmaj7
+Avec ii :         Abm7 | Db7   | Cmaj7  (Abm7 est le ii apparenté de Db7)
 ```
 
 ### Substitution diminuée
@@ -357,8 +357,8 @@ La ligne de basse (C-C#-D) crée une montée chromatique. Le C#dim7 agit comme u
 Au lieu de la résolution standard V7→I, le jazz utilise **bVII7→I** :
 
 ```
-Standard: G7  → Cmaj7  (V → I)
-Backdoor: Bb7 → Cmaj7  (bVII → I)
+Standard : G7  → Cmaj7  (V → I)
+Backdoor : Bb7 → Cmaj7  (bVII → I)
 ```
 
 Le bVII7 aborde la tonique depuis un ton en dessous. La résolution fonctionne parce que Bb7 contient D et Ab, qui se résolvent sur C et G (ou E) par degré conjoint. Le son est chaleureux, inattendu, et évite l'attraction évidente de la dominante.
@@ -452,9 +452,9 @@ L'harmonie traditionnelle empile des **tierces**. L'harmonie en quartes empile d
 **L'approche de McCoy Tyner :** sur un vamp en Ré dorien, empilez des quartes justes à partir de différents degrés de la gamme :
 
 ```
-From D: D - G - C - F     (stacked 4ths)
-From E: E - A - D - G     (stacked 4ths)
-From G: G - C - F - Bb    (stacked 4ths — includes b6, outside Dorian)
+Depuis D : D - G - C - F     (quartes empilées)
+Depuis E : E - A - D - G     (quartes empilées)
+Depuis G : G - C - F - Bb    (quartes empilées — inclut b6, hors du dorien)
 ```
 
 Ces voicings peuvent être déplacés à l'intérieur du mode, créant un paysage harmonique chatoyant et non fonctionnel. Les voicings individuels ne se « résolvent » pas — ils flottent.
@@ -513,9 +513,9 @@ En 1959, John Coltrane a introduit un système de substitution qui divise l'octa
 Le cycle : en partant de n'importe quelle tonalité, descendez trois fois d'une tierce majeure, et vous revenez à votre point de départ :
 
 ```
-C → Ab → E → C  (descending major thirds)
-or equivalently:
-C → E → Ab → C  (ascending major thirds)
+C → Ab → E → C  (tierces majeures descendantes)
+ou, de manière équivalente :
+C → E → Ab → C  (tierces majeures ascendantes)
 ```
 
 ### Analyse de Giant Steps
@@ -538,8 +538,8 @@ Le rythme harmonique est fulgurant : deux accords par mesure à un tempo rapide,
 **« Countdown »** montre comment les Coltrane Changes fonctionnent comme technique de réharmonisation. Le morceau d'origine est « Tune Up » de Miles Davis :
 
 ```
-Tune Up:   | Em7     | A7          | Dmaj7      | Dmaj7 |
-Countdown: | Em7 F7  | Bbmaj7 Db7  | Gbmaj7 A7  | Dmaj7 |
+Tune Up :   | Em7     | A7          | Dmaj7      | Dmaj7 |
+Countdown : | Em7 F7  | Bbmaj7 Db7  | Gbmaj7 A7  | Dmaj7 |
 ```
 
 Coltrane remplace le simple ii-V-I par une chaîne de V-I descendant par tierces majeures :
@@ -561,10 +561,10 @@ Eb             A
    Db      B
        F#
 
-Triangle 1: C - E - Ab
-Triangle 2: D - F# - Bb
-Triangle 3: Eb - G - B  ← Giant Steps triangle
-Triangle 4: F - A - Db
+Triangle 1 : C - E - Ab
+Triangle 2 : D - F# - Bb
+Triangle 3 : Eb - G - B  ← triangle de Giant Steps
+Triangle 4 : F - A - Db
 ```
 
 Il n'existe que quatre triangles de tierces majeures distincts. Ensemble, ils divisent les douze sons en quatre groupes de trois.
@@ -580,8 +580,8 @@ Pour réharmoniser un ii-V-I avec le cycle de Coltrane :
 **Exemple — réharmoniser Dm7-G7-Cmaj7 :**
 
 ```
-Original:  Dm7     | G7      | Cmaj7   |
-Coltrane:  Dm7 Eb7 | Abmaj7 B7 | Emaj7 G7 | Cmaj7 |
+Original : Dm7     | G7      | Cmaj7   |
+Coltrane : Dm7 Eb7 | Abmaj7 B7 | Emaj7 G7 | Cmaj7 |
 ```
 
 Ou, plus compact :

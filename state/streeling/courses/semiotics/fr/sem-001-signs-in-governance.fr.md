@@ -44,9 +44,9 @@ Une **icône** représente son objet par *ressemblance*. Elle ressemble visuelle
 **Dans les documents de gouvernance :**
 
 ```
-asimov.constitution.md        (root)
-  +-- demerzel-mandate.md      (who enforces)
-  +-- default.constitution.md  (operational ethics)
+asimov.constitution.md        (racine)
+  +-- demerzel-mandate.md      (qui fait appliquer)
+  +-- default.constitution.md  (éthique opérationnelle)
        +-- policies/*.yaml
             +-- personas/*.persona.yaml
 ```

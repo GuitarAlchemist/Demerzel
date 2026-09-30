@@ -30,7 +30,7 @@ Al terminar esta lección, serás capaz de:
 Claude Shannon definió la entropía en 1948 como una medida de la **incertidumbre** o del **contenido de información** de un mensaje. La fórmula es engañosamente simple:
 
 ```
-H(X) = -sum(p(x) * log2(p(x))) for all symbols x in alphabet X
+H(X) = -sum(p(x) * log2(p(x))) para todos los símbolos x del alfabeto X
 ```
 
 Donde `p(x)` es la probabilidad de que aparezca el símbolo `x`. La entropía es máxima cuando todos los símbolos son igualmente probables (sorpresa máxima) y mínima cuando un símbolo domina (ninguna sorpresa).
