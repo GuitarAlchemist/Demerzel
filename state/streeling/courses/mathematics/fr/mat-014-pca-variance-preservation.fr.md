@@ -80,7 +80,7 @@ La taille a un écart type de 0,1 m et le poids de 10 kg, et ils sont non corré
 
 ## 5. Unicité, stabilité et blanchiment
 
-Si λ₁ = λ₂, tout vecteur unitaire de leur espace propre de dimension deux est une première composante valide, et des programmes corrects différents en renvoient des différentes. Si λ₁ et λ₂ sont proches, la composante existe mais est fragile : par le théorème de Davis–Kahan, une perturbation E de S, due au bruit ou à l'arrondi, peut faire tourner q₁ d'un angle θ dont le sinus atteint environ ‖E‖ divisé par l'**écart spectral** λ₁ − λ₂. L'itération de la puissance du MAT-005 ressent le même écart : la tangente de son angle à q₁ est multipliée par λ₂/λ₁ à chaque étape, et la **déflation**, qui soustrait λ v vᵀ pour trouver la composante suivante, transmet l'erreur restante.
+Si λ₁ = λ₂, tout vecteur unitaire de leur espace propre est une première composante valide, et des programmes corrects différents en renvoient des différentes. Cet espace propre est un plan quand λ₂ > λ₃ ; quand plus de valeurs propres sont égales, sa dimension est le nombre de valeurs propres égales, et pour S = I₃ c'est l'espace entier. Si λ₁ et λ₂ sont proches, la composante existe mais est fragile : par le théorème de Davis–Kahan, une perturbation E de S, due au bruit ou à l'arrondi, peut faire tourner q₁ d'un angle θ dont le sinus atteint environ ‖E‖ divisé par l'**écart spectral** λ₁ − λ₂. L'itération de la puissance du MAT-005 ressent le même écart : la tangente de son angle à q₁ est multipliée par λ₂/λ₁ à chaque étape, et la **déflation**, qui soustrait λ v vᵀ pour trouver la composante suivante, transmet l'erreur restante.
 
 L'ACP ne **blanchit** pas. Ses scores gardent les variances λᵢ ; le blanchiment divise le score selon qᵢ par √λᵢ pour chaque composante de λᵢ > 0, de sorte que les données blanchies ont l'identité pour covariance sur ces composantes ; une direction de variance nulle ne peut pas être remise à l'échelle, et elle est écartée ou régularisée. Le blanchiment met les directions de plus faible variance, souvent faites surtout de bruit, sur le même pied que les plus grandes.
 
@@ -194,7 +194,7 @@ Pour quels facteurs d'échelle s le premier appel de l'itération de la puissanc
 - **Mélanger les unités dans l'ACP sur la covariance.** Une variable de grande dispersion numérique domine la première composante ; normez quand les unités sont arbitraires, et dites-le.
 - **Lire la variance comme de l'importance.** Une petite composante peut porter le signal qui compte ; le ratio mesure la dispersion, pas la pertinence.
 - **Comparer des composantes sans tenir compte du signe.** q et −q sont la même composante ; comparez |qᵀq′|, ou fixez une convention de signe.
-- **Faire confiance à une composante de faible écart spectral.** Quand λ₁ ≈ λ₂, interprétez le sous-espace qu'elles engendrent, pas chaque direction.
+- **Faire confiance à une composante de faible écart spectral.** Quand λ₁ ≈ λ₂, interprétez le sous-espace de toutes les composantes dont les valeurs propres se groupent avec elles, jusqu'à un écart net, pas chaque direction.
 - **Former XᵀX quand la SVD est disponible.** Cela élève le conditionnement au carré et fait perdre d'abord les petites composantes.
 - **S'arrêter sur une variation absolue.** Une tolérance qui ignore la taille de la matrice fait dépendre la réponse des unités ; comparez les variations à la taille de la valeur propre.
 - **Confondre ACP et blanchiment.** L'ACP fait tourner ; le blanchiment change aussi l'échelle, et amplifie les directions de plus faible variance.
@@ -231,7 +231,7 @@ Pour quels facteurs d'échelle s le premier appel de l'itération de la puissanc
 > Non. Multiplier toutes les variables par le même facteur multiplie S par son carré et laisse les vecteurs propres inchangés. La différence vient de la tolérance absolue de 10^-10 de l'itération de la puissance d'IX, sous laquelle tombent les petites variances en kilomètres. Changer l'échelle d'une seule variable, en revanche, change bien les composantes.
 
 **4. Un échantillon donne λ₁ = 1,00 et λ₂ = 0,99. Jusqu'où feriez-vous confiance à la direction de la première composante ?**
-> Pas loin. L'écart spectral vaut 0,01, donc par Davis–Kahan une perturbation de S de taille 0,001 pourrait déjà faire tourner la composante d'un angle dont le sinus vaut environ 0,1. Rapportez le plan des deux premières composantes, et vérifiez sa stabilité, par exemple par rééchantillonnage.
+> Pas loin. L'écart spectral vaut 0,01, donc par Davis–Kahan une perturbation de S de taille 0,001 pourrait déjà faire tourner la composante d'un angle dont le sinus vaut environ 0,1. Rapportez le plan des deux premières composantes, pourvu que λ₃ soit nettement sous 0,99, et vérifiez sa stabilité, par exemple par rééchantillonnage.
 
 **Critères de réussite :** Obtenir les composantes principales à partir de la variance, les relier à l'erreur de reconstruction et à la SVD des données centrées, calculer un ratio de variance expliquée avec le bon dénominateur, expliquer l'effet des unités, du signe et des faibles écarts spectraux, distinguer l'ACP du blanchiment, et retracer où le ratio, le test d'arrêt et l'état sauvegardé d'IX s'écartent des définitions.
 

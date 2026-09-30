@@ -80,7 +80,7 @@ La estatura tiene desviación típica 0.1 m y el peso 10 kg, y no están correla
 
 ## 5. Unicidad, estabilidad y blanqueo
 
-Si λ₁ = λ₂, todo vector unitario de su espacio propio de dimensión dos es una primera componente válida, y programas correctos distintos devuelven componentes distintas. Si λ₁ y λ₂ están cerca, la componente existe pero es frágil: por el teorema de Davis–Kahan, una perturbación E de S, por ruido o por redondeo, puede girar q₁ un ángulo θ cuyo seno llega a ‖E‖ dividido por la **brecha espectral** λ₁ − λ₂. La iteración de la potencia del MAT-005 nota la misma brecha: la tangente de su ángulo con q₁ se multiplica por λ₂/λ₁ en cada paso, y la **deflación**, que resta λ v vᵀ para hallar la componente siguiente, transmite el error restante.
+Si λ₁ = λ₂, todo vector unitario de su espacio propio es una primera componente válida, y programas correctos distintos devuelven componentes distintas. Ese espacio propio es un plano cuando λ₂ > λ₃; cuando coinciden más valores propios, su dimensión es el número de valores propios iguales, y para S = I₃ es el espacio entero. Si λ₁ y λ₂ están cerca, la componente existe pero es frágil: por el teorema de Davis–Kahan, una perturbación E de S, por ruido o por redondeo, puede girar q₁ un ángulo θ cuyo seno llega a ‖E‖ dividido por la **brecha espectral** λ₁ − λ₂. La iteración de la potencia del MAT-005 nota la misma brecha: la tangente de su ángulo con q₁ se multiplica por λ₂/λ₁ en cada paso, y la **deflación**, que resta λ v vᵀ para hallar la componente siguiente, transmite el error restante.
 
 El ACP no **blanquea**. Sus puntuaciones conservan las varianzas λᵢ; el blanqueo divide la puntuación según qᵢ por √λᵢ para cada componente con λᵢ > 0, de modo que los datos blanqueados tienen la identidad como covarianza en esas componentes; una dirección de varianza nula no se puede reescalar, y se descarta o se regulariza. El blanqueo pone las direcciones de menor varianza, a menudo casi solo ruido, al mismo nivel que las mayores.
 
@@ -194,7 +194,7 @@ Corregir todo esto corresponde a los responsables de IX; esta lección solo lo d
 - **Mezclar unidades en el ACP sobre la covarianza.** Una variable con gran dispersión numérica domina la primera componente; estandariza cuando las unidades sean arbitrarias, y dilo.
 - **Leer la varianza como importancia.** Una componente pequeña puede llevar la señal que importa; la razón mide dispersión, no relevancia.
 - **Comparar componentes sin tener en cuenta el signo.** q y −q son la misma componente; compara |qᵀq′|, o fija una convención de signo.
-- **Confiar en una componente con una brecha espectral pequeña.** Cuando λ₁ ≈ λ₂, interpreta el subespacio que generan, no cada dirección.
+- **Confiar en una componente con una brecha espectral pequeña.** Cuando λ₁ ≈ λ₂, interpreta el subespacio de todas las componentes cuyos valores propios se agrupan con ellos, hasta una brecha clara, no cada dirección.
 - **Formar XᵀX cuando la SVD está disponible.** Eleva al cuadrado el número de condición y pierde primero las componentes pequeñas.
 - **Detenerse sobre un cambio absoluto.** Una tolerancia que ignora el tamaño de la matriz hace que la respuesta dependa de las unidades; compara los cambios con el tamaño del valor propio.
 - **Confundir el ACP con el blanqueo.** El ACP gira; el blanqueo también cambia la escala, y amplifica las direcciones de menor varianza.
@@ -231,7 +231,7 @@ Corregir todo esto corresponde a los responsables de IX; esta lección solo lo d
 > No. Multiplicar todas las variables por el mismo factor multiplica S por su cuadrado y deja los vectores propios sin cambios. La diferencia viene de la tolerancia absoluta de 10^-10 de la iteración de la potencia de IX, por debajo de la cual caen las pequeñas varianzas en kilómetros. Cambiar la escala de una sola variable, en cambio, sí cambia las componentes.
 
 **4. Una muestra da λ₁ = 1.00 y λ₂ = 0.99. ¿Hasta dónde confiarías en la dirección de la primera componente?**
-> No mucho. La brecha espectral es 0.01, así que por Davis–Kahan una perturbación de S de tamaño 0.001 ya podría girar la componente un ángulo cuyo seno ronda 0.1. Informa del plano de las dos primeras componentes, y comprueba su estabilidad, por ejemplo por remuestreo.
+> No mucho. La brecha espectral es 0.01, así que por Davis–Kahan una perturbación de S de tamaño 0.001 ya podría girar la componente un ángulo cuyo seno ronda 0.1. Informa del plano de las dos primeras componentes, siempre que λ₃ quede claramente por debajo de 0.99, y comprueba su estabilidad, por ejemplo por remuestreo.
 
 **Criterio de aprobación:** Obtener las componentes principales a partir de la varianza, relacionarlas con el error de reconstrucción y con la SVD de los datos centrados, calcular una razón de varianza explicada con el denominador correcto, explicar el efecto de las unidades, del signo y de las brechas espectrales pequeñas, distinguir el ACP del blanqueo, y rastrear dónde la razón, la prueba de parada y el estado guardado de IX se apartan de las definiciones.
 

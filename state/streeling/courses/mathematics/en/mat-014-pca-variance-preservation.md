@@ -80,7 +80,7 @@ Height has standard deviation 0.1 m and weight 10 kg, and they are uncorrelated.
 
 ## 5. Uniqueness, Stability and Whitening
 
-If λ₁ = λ₂, every unit vector in their two-dimensional eigenspace is a valid first component, and different correct programs return different ones. If λ₁ and λ₂ are close, the component exists but is fragile: by the Davis–Kahan theorem, a perturbation E of S, from noise or rounding, can rotate q₁ by an angle θ with sin θ up to about ‖E‖ divided by the **eigengap** λ₁ − λ₂. The power iteration of MAT-005 feels the same gap: the tangent of its angle to q₁ shrinks by the factor λ₂/λ₁ at each step, and **deflation**, which subtracts λ v vᵀ to find the next component, passes the remaining error on.
+If λ₁ = λ₂, every unit vector in their eigenspace is a valid first component, and different correct programs return different ones. That eigenspace is a plane when λ₂ > λ₃; when more eigenvalues tie, its dimension is the number of equal eigenvalues, and for S = I₃ it is the whole space. If λ₁ and λ₂ are close, the component exists but is fragile: by the Davis–Kahan theorem, a perturbation E of S, from noise or rounding, can rotate q₁ by an angle θ with sin θ up to about ‖E‖ divided by the **eigengap** λ₁ − λ₂. The power iteration of MAT-005 feels the same gap: the tangent of its angle to q₁ shrinks by the factor λ₂/λ₁ at each step, and **deflation**, which subtracts λ v vᵀ to find the next component, passes the remaining error on.
 
 PCA does not **whiten**. Its scores keep the variances λᵢ; whitening divides the score along qᵢ by √λᵢ for each component with λᵢ > 0, so that the whitened data have the identity as covariance on those components; a direction of zero variance cannot be rescaled, and is dropped or regularised. Whitening puts the directions of smallest variance, often mostly noise, on the same footing as the largest.
 
@@ -194,7 +194,7 @@ For which scale factors s does the first call of power iteration stop after a si
 - **Mixing units in covariance PCA.** A variable with a large numerical spread dominates the first component; standardise when the units are arbitrary, and say that you did.
 - **Reading variance as importance.** A small component can carry the signal that matters; the ratio measures spread, not relevance.
 - **Comparing components without allowing for sign.** q and −q are the same component; compare |qᵀq′|, or fix a sign convention.
-- **Trusting a component with a small eigengap.** When λ₁ ≈ λ₂, interpret the subspace they span, not each direction.
+- **Trusting a component with a small eigengap.** When λ₁ ≈ λ₂, interpret the subspace of all the components whose eigenvalues cluster with them, down to a clear gap, not each direction.
 - **Forming XᵀX when the SVD is available.** It squares the condition number and loses the small components first.
 - **Stopping on an absolute change.** A tolerance that ignores the size of the matrix makes the answer depend on the units; compare changes with the size of the eigenvalue.
 - **Confusing PCA with whitening.** PCA rotates; whitening also rescales, and amplifies the directions of smallest variance.
@@ -231,7 +231,7 @@ For which scale factors s does the first call of power iteration stop after a si
 > No. Multiplying every variable by the same factor multiplies S by its square and leaves the eigenvectors unchanged. The difference comes from the absolute tolerance of 10^-10 in IX's power iteration, which the small variances in kilometres fall under. Rescaling a single variable, by contrast, does change the components.
 
 **4. A sample gives λ₁ = 1.00 and λ₂ = 0.99. How far would you trust the direction of the first component?**
-> Not far. The eigengap is 0.01, so by Davis–Kahan a perturbation of S of size 0.001 could already rotate the component by an angle whose sine is about 0.1. Report the plane of the first two components, and check its stability, for example by resampling.
+> Not far. The eigengap is 0.01, so by Davis–Kahan a perturbation of S of size 0.001 could already rotate the component by an angle whose sine is about 0.1. Report the plane of the first two components, provided λ₃ is clearly below 0.99, and check its stability, for example by resampling.
 
 **Pass criteria:** Derive the principal components from the variance, relate them to the reconstruction error and to the SVD of the centred data, compute an explained-variance ratio with the right denominator, explain the effect of units, sign and small eigengaps, tell PCA from whitening, and trace where IX's ratio, stopping test and saved state depart from the definitions.
 
