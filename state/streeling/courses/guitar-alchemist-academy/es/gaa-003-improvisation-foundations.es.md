@@ -444,7 +444,7 @@ Pon una pista de acompañamiento en La menor (tempo medio, con sabor a blues). G
 
 | Término | Definición |
 |------|-----------|
-| **Escala pentatónica** | Una escala de cinco notas (1, b3, 4, 5, b7 en su forma menor) sin pasos de semitono, lo que la hace universalmente consonante |
+| **Escala pentatónica** | Una escala de cinco notas (1, b3, 4, 5, b7 en su forma menor) sin pasos de semitono, lo que la hace tolerante sobre los acordes menores y en el blues |
 | **Caja (posición)** | Una zona del mástil donde se puede tocar una escala sin desplazar la mano; la pentatónica tiene cinco cajas |
 | **Blue note** | Una nota (normalmente b3, b5 o b7) estirada o inflexionada para crear el sonido característico del blues |
 | **Pregunta-respuesta** | Una estructura de frase musical en la que una frase (la pregunta) recibe la respuesta de otra (la respuesta) |
@@ -464,7 +464,7 @@ Pon una pista de acompañamiento en La menor (tempo medio, con sabor a blues). G
 ## Autoevaluación
 
 **1. Nombra las cinco notas de la escala pentatónica menor de La y explica por qué se la llama «zona segura» para la improvisación.**
-> La, Do, Re, Mi, Sol. Es una zona segura porque no contiene intervalos de semitono, lo que significa que ninguna nota choca con dureza contra los acordes menores o de dominante en La. Cada nota está al menos a un tono de su vecina, lo que garantiza la consonancia sea cual sea el orden o la combinación.
+> La, Do, Re, Mi, Sol. Se la llama zona segura porque no contiene pasos de semitono. Sobre Am o Am7, ninguna de sus notas está a un semitono de una nota del acorde, así que ningún orden ni combinación produce un choque de semitono con el acorde. Sobre un acorde de dominante como A7 eso ya no se cumple: Do está un semitono por debajo del Do# del acorde, y Re un semitono por encima. En un blues esa fricción es el sonido idiomático de la blue note b3, así que la escala sigue siendo tolerante ahí, pero no tener semitonos dentro de la escala no la hace consonante con todos los acordes.
 
 **2. Describe tres técnicas de la «caja de herramientas del desarrollo motívico» y da un ejemplo de cada una con un motivo de 3 notas La-Do-Re.**
 > (a) Transportar: mover el motivo una cuarta hacia arriba, a Re-Fa-Sol. (b) Aumentar: tocar La-Do-Re en negras en lugar de corcheas, duplicando la duración. (c) Fragmentar: usar solo las dos primeras notas (La-Do) como versión abreviada del motivo.

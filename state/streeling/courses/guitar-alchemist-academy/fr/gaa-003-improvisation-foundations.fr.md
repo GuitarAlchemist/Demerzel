@@ -444,7 +444,7 @@ Lancez un backing track en La mineur (tempo moyen, bluesy). Enregistrez-vous en 
 
 | Terme | Définition |
 |------|-----------|
-| **Gamme pentatonique** | Une gamme de cinq notes (1, b3, 4, 5, b7 dans sa forme mineure) sans pas d'un demi-ton, ce qui la rend universellement consonante |
+| **Gamme pentatonique** | Une gamme de cinq notes (1, b3, 4, 5, b7 dans sa forme mineure) sans pas d'un demi-ton, ce qui en fait une gamme qui pardonne sur les accords mineurs et dans le blues |
 | **Boîte (position)** | Une zone du manche où une gamme peut être jouée sans déplacer la main ; la pentatonique a cinq boîtes |
 | **Blue note** | Une note (typiquement b3, b5 ou b7) tirée ou infléchie pour créer la sonorité caractéristique du blues |
 | **Question-réponse** | Une structure de phrase musicale où une phrase (la question) reçoit la réponse d'une autre (la réponse) |
@@ -464,7 +464,7 @@ Lancez un backing track en La mineur (tempo moyen, bluesy). Enregistrez-vous en 
 ## Autoévaluation
 
 **1. Nommez les cinq notes de la gamme pentatonique mineure de La et expliquez pourquoi on l'appelle une « zone de sécurité » pour l'improvisation.**
-> La, Do, Ré, Mi, Sol. C'est une zone de sécurité parce qu'elle ne contient aucun intervalle d'un demi-ton, ce qui signifie qu'aucune note ne heurte durement les accords mineurs ou de dominante en La. Chaque note est au moins à un ton de sa voisine, ce qui garantit la consonance quel que soit l'ordre ou la combinaison.
+> La, Do, Ré, Mi, Sol. On l'appelle une zone de sécurité parce qu'elle ne contient aucun pas d'un demi-ton. Sur Am ou Am7, aucune de ses notes n'est à un demi-ton d'une note de l'accord, si bien qu'aucun ordre ni aucune combinaison ne crée de frottement d'un demi-ton avec l'accord. Sur un accord de dominante comme A7, ce n'est plus vrai : Do est un demi-ton sous le Do# de l'accord, et Ré un demi-ton au-dessus. Dans un blues, ce frottement est le son idiomatique de la blue note b3, si bien que la gamme y reste une gamme qui pardonne ; mais l'absence de demi-tons à l'intérieur de la gamme ne la rend pas consonante avec tous les accords.
 
 **2. Décrivez trois techniques de la « boîte à outils du développement motivique » et donnez un exemple de chacune avec un motif de 3 notes La-Do-Ré.**
 > (a) Transposer : déplacer le motif d'une quarte vers le haut, soit Ré-Fa-Sol. (b) Augmenter : jouer La-Do-Ré en noires au lieu de croches, ce qui double la durée. (c) Fragmenter : n'utiliser que les deux premières notes (La-Do) comme version raccourcie du motif.

@@ -444,7 +444,7 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 
 | Term | Definition |
 |------|-----------|
-| **Pentatonic scale** | A five-note scale (1, b3, 4, 5, b7 in minor form) with no semitone steps, making it universally consonant |
+| **Pentatonic scale** | A five-note scale (1, b3, 4, 5, b7 in minor form) with no semitone steps, which makes it forgiving over minor chords and in the blues |
 | **Box (position)** | A fretboard region where a scale can be played without shifting the hand; the pentatonic has five boxes |
 | **Blue note** | A note (typically b3, b5, or b7) bent or inflected to create the characteristic blues sound |
 | **Call-and-response** | A musical phrase structure where one phrase (call) is answered by another (response) |
@@ -464,7 +464,7 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 ## Self-Check Assessment
 
 **1. Name the five notes of the A minor pentatonic scale and explain why it is called a "safe zone" for improvisation.**
-> A, C, D, E, G. It is a safe zone because it contains no semitone intervals, which means no note clashes harshly against minor or dominant chords in A. Every note is at least a whole step from its neighbor, ensuring consonance regardless of order or combination.
+> A, C, D, E, G. It is called a safe zone because it contains no semitone steps. Over Am or Am7 none of its notes lies a half step from a chord tone, so no order or combination makes a half-step clash with the chord. Over a dominant chord such as A7 that no longer holds: C lies a half step below the chord's C#, and D a half step above it. In a blues that friction is the idiomatic sound of the b3 blue note, so the scale stays forgiving there, but having no semitones inside the scale does not make it consonant with every chord.
 
 **2. Describe three techniques from the "motivic development toolkit" and give an example of each using a 3-note motif A-C-D.**
 > (a) Transpose: shift the motif up a 4th to D-F-G. (b) Augment: play A-C-D as quarter notes instead of eighth notes, doubling the duration. (c) Fragment: use only the first two notes (A-C) as a shortened version of the motif.

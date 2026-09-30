@@ -339,7 +339,7 @@ Con ii:         Abm7 | Db7   | Cmaj7  (Abm7 es el ii relacionado de Db7)
 
 Un acorde de séptima disminuida puede sustituir a un acorde de séptima de dominante situado un semitono por debajo de cualquiera de sus cuatro notas (porque el dim7 es simétrico — cada nota está a una tercera menor de la siguiente).
 
-**Bdim7 puede sustituir a:** G7, Bb7, Db7 o E7 (acordes de dominante cuya fundamental está un semitono por debajo de cada nota del acorde disminuido: Ab, B, D, F). Bdim7 es el 7b9 de cada uno de ellos, sin su fundamental.
+**Bdim7 puede sustituir a:** G7, Bb7, Db7 o E7 (acordes de dominante cuyas fundamentales G, Bb, Db y E están un semitono por debajo de las notas del acorde disminuido Ab, B, D y F). Bdim7 es el 7b9 de cada uno de ellos, sin su fundamental.
 
 ### Acordes disminuidos de paso
 

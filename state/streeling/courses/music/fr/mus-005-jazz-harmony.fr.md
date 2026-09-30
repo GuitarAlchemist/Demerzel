@@ -339,7 +339,7 @@ Avec ii :         Abm7 | Db7   | Cmaj7  (Abm7 est le ii apparenté de Db7)
 
 Un accord de septième diminuée peut se substituer à un accord de septième de dominante situé un demi-ton sous l'une quelconque de ses quatre notes (parce que le dim7 est symétrique — chaque note est à une tierce mineure de la suivante).
 
-**Bdim7 peut se substituer à :** G7, Bb7, Db7 ou E7 (accords de dominante dont la fondamentale est un demi-ton au-dessous de chaque note de l'accord diminué : Ab, B, D, F). Bdim7 est le 7b9 de chacun de ces accords, sans sa fondamentale.
+**Bdim7 peut se substituer à :** G7, Bb7, Db7 ou E7 (accords de dominante dont les fondamentales G, Bb, Db et E sont un demi-ton au-dessous des notes de l'accord diminué Ab, B, D et F). Bdim7 est le 7b9 de chacun de ces accords, sans sa fondamentale.
 
 ### Accords diminués de passage
 

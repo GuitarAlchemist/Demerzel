@@ -339,7 +339,7 @@ With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
 
 A diminished 7th chord can substitute for a dominant 7th chord a half step below any of its four notes (because dim7 is symmetric — every note is a minor third from the next).
 
-**Bdim7 can substitute for:** G7, Bb7, Db7, or E7 (dominant chords rooted a half step below each diminished chord tone: Ab, B, D, F). Bdim7 is each of these chords' 7b9 without its root.
+**Bdim7 can substitute for:** G7, Bb7, Db7, or E7 (dominant chords whose roots G, Bb, Db and E lie a half step below the diminished chord tones Ab, B, D and F). Bdim7 is each of these chords' 7b9 without its root.
 
 ### Passing Diminished Chords
 
