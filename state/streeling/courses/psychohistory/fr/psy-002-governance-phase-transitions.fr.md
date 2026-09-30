@@ -49,7 +49,7 @@ La plupart des transitions de gouvernance sont du second ordre — continues, di
 
 ### Signal 1 : asymétrie de la distribution des croyances
 
-La logique de Demerzel est hexavalente : T (True), P (Probable), U (Unknown), D (Doubtful), F (False), C (Contradictory). Le ratio `T/U` est l'**indice de cristallisation** — la part de vos connaissances qui s'est solidifiée. C'est une projection sur quatre états : les fichiers de poids des départements ne comptent que `total_T`, `total_F`, `total_U` et `total_C`, sans compte pour P ni pour D, de sorte que l'indice ne voit ni une croyance probable ou douteuse, ni un passage entre T et P ou entre D et F. Le calculer sur les six valeurs demanderait des comptes de P et de D que ces fichiers ne contiennent pas.
+La logique de Demerzel est hexavalente : T (Vrai), P (Probable), U (Inconnu), D (Douteux), F (Faux), C (Contradictoire). Le ratio `T/U` est l'**indice de cristallisation** — la part de vos connaissances qui s'est solidifiée. C'est une projection sur quatre états : les fichiers de poids des départements ne comptent que `total_T`, `total_F`, `total_U` et `total_C`, sans compte pour P ni pour D, de sorte que l'indice ne voit ni une croyance probable ou douteuse, ni un passage entre T et P ou entre D et F. Le calculer sur les six valeurs demanderait des comptes de P et de D que ces fichiers ne contiennent pas.
 
 ```
 crystallization_index = total_T / max(total_U, 1)
@@ -64,7 +64,7 @@ Quand ce ratio change rapidement — `d(T/U)/dt` s'écartant de plus de 2 écart
 
 ### Signal 2 : vitesse du score de santé
 
-Le score de santé de la gouvernance R joue le rôle d'un potentiel thermodynamique. Prenez pour R le `composite_score` de Demerzel dans `state/driver/health-scores.json`, qui contient un score composite par dépôt (demerzel, ix, tars, ga). Le fichier ne garde que la dernière valeur et une étiquette `trend` ; une vitesse demande donc des relevés sur des cycles successifs. La dérivée de R renseigne sur la proximité d'un changement de régime :
+Le score de santé de la gouvernance R est le score de résilience de Demerzel, défini dans `CONTEXT.md` par `R = injections_caught / injections_total` : la part des défauts injectés dans la gouvernance que sa détection intercepte. `state/resilience/history.json` l'enregistre sous `overall_score`, un enregistrement par cycle de chaos, et le fichier `governance-health.json` à la racine en garde la dernière valeur. R joue le rôle d'un potentiel thermodynamique, et sa dérivée renseigne sur la proximité d'un changement de régime :
 
 ```
 velocity = dR/dt (variation du score de santé par cycle)
@@ -177,9 +177,9 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
    - `total_T = ?`, `total_U = ?`
    - `crystallization_index = total_T / max(total_U, 1)`
 
-2. Lisez le `composite_score` de Demerzel dans `state/driver/health-scores.json` et prenez-le pour R. Dans quel régime se trouve le système ? Que faudrait-il changer pour franchir la frontière suivante ?
+2. Prenez pour R l'`overall_score` du dernier enregistrement de `state/resilience/history.json`. Dans quel régime se trouve le système ? Que faudrait-il changer pour franchir la frontière suivante ?
 
-3. Comptez les politiques dans `policies/` et relevez le score de santé. Estimez le rendement marginal actuel de la dernière politique ajoutée.
+3. Dans le même fichier, les `metafixes_applied` du cycle chaos-003 consignent un nouveau fichier de politique, créé pendant que R passait de 0.64 (chaos-002) à 0.73. Calculez le rendement marginal de cette politique. Entre chaos-003 et chaos-004, R est monté à 0.82 sans nouveau fichier de politique : qu'est-ce que cela dit de la mesure des rendements par nombre de politiques ?
 
 4. **Expérience de pensée :** Si les trois dépôts consommateurs (ix, tars, ga) atteignaient soudain 100 % de conformité, quelle transition de phase cela représenterait-il ? Est-ce souhaitable ?
 

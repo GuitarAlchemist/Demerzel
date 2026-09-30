@@ -64,7 +64,7 @@ When this ratio changes rapidly — `d(T/U)/dt` exceeding 2 standard deviations 
 
 ### Signal 2: Health Score Velocity
 
-The governance health score R acts as a thermodynamic potential. Take R to be Demerzel's `composite_score` in `state/driver/health-scores.json`, which holds one composite score per repository (demerzel, ix, tars, ga). The file keeps only the latest value and a `trend` label, so a velocity needs readings from successive cycles. The derivative of R tells you about regime proximity:
+The governance health score R is Demerzel's resilience score, defined in `CONTEXT.md` as `R = injections_caught / injections_total`: the share of faults injected into governance that its detection catches. `state/resilience/history.json` records it as `overall_score`, one record per chaos cycle, and the root `governance-health.json` holds the latest value. R acts as a thermodynamic potential, and its derivative tells you about regime proximity:
 
 ```
 velocity = dR/dt (health score change per cycle)
@@ -177,9 +177,9 @@ Using the current Demerzel governance state:
    - `total_T = ?`, `total_U = ?`
    - `crystallization_index = total_T / max(total_U, 1)`
 
-2. Read Demerzel's `composite_score` in `state/driver/health-scores.json` and take it as R. Which regime is the system in? What would need to change to cross the next boundary?
+2. Take R as the `overall_score` of the latest record in `state/resilience/history.json`. Which regime is the system in? What would need to change to cross the next boundary?
 
-3. Count the policies in `policies/` and the health score. Estimate the current marginal return of the last policy added.
+3. In the same file, the `metafixes_applied` of cycle chaos-003 record one new policy file, created while R rose from 0.64 (chaos-002) to 0.73. Compute the marginal return of that policy. Between chaos-003 and chaos-004, R rose to 0.82 without a new policy file: what does that say about measuring returns per policy count?
 
 4. **Thought experiment:** If all three consumer repos (ix, tars, ga) suddenly achieve 100% compliance, what phase transition does that represent? Is it desirable?
 
