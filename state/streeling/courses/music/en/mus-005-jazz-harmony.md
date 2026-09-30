@@ -62,7 +62,7 @@ Root  +  Quality  +  Extensions/Alterations  +  Slash Bass
 **Extensions** add upper chord tones (9, 11, 13). The highest number implies all odd-numbered tones below it:
 
 - `Cmaj9` = C E G B D (implies the 7th is present)
-- `Cmaj13` = C E G B D (F#) A (implies 9 and 7; the 11 is typically #11 in a major context)
+- `Cmaj13` = C E G B D (F) A (implies 9 and 7; the implied 11th, F, sits a half step above the major 3rd E and is usually omitted; an F# must be written, as in `Cmaj13#11`)
 
 **Alterations** modify specific tones:
 
@@ -103,7 +103,7 @@ Answers:
 1. F A C E G B (F major with major 7th, 9th, #11th)
 2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominant with all altered upper extensions: b9, #9, #11, b13)
 3. Eb Gb Bb Db F Ab (minor 7th with 11th)
-4. Ab C Eb Gb Bb Db F (dominant 7th with 9th, 11th implicit, 13th)
+4. Ab C Eb Gb Bb (Db) F (dominant 7th with 9th and 13th; the implied 11th, Db, sits a half step above the major 3rd C and is usually omitted)
 5. D F Ab C (minor triad with flatted 5th and minor 7th)
 6. G B D F A#/Bb over a Db bass. It is not a tritone substitution: the upper structure is still G7#9, now over its b5. The substitute itself is Db7 (Db F Ab Cb), which shares G7's tritone B–F (as Cb–F).
 

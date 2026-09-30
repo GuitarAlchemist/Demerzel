@@ -62,7 +62,7 @@ La **calidad** codifica la tríada y la séptima:
 Las **extensiones** añaden notas superiores (9, 11, 13). El número más alto implica todas las notas impares por debajo:
 
 - `Cmaj9` = C E G B D (implica que la 7.ª está presente)
-- `Cmaj13` = C E G B D (F#) A (implica la 9 y la 7; la 11 suele ser #11 en un contexto mayor)
+- `Cmaj13` = C E G B D (F) A (implica la 9 y la 7; la 11.ª implícita, F, queda un semitono por encima de la tercera mayor E y suele omitirse; un F# debe escribirse, como en `Cmaj13#11`)
 
 Las **alteraciones** modifican notas concretas:
 
@@ -103,7 +103,7 @@ Respuestas:
 1. F A C E G B (Fa mayor con 7.ª mayor, 9.ª, #11.ª)
 2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominante con todas las extensiones superiores alteradas: b9, #9, #11, b13)
 3. Eb Gb Bb Db F Ab (séptima menor con 11.ª)
-4. Ab C Eb Gb Bb Db F (séptima de dominante con 9.ª, 11.ª implícita, 13.ª)
+4. Ab C Eb Gb Bb (Db) F (séptima de dominante con 9.ª y 13.ª; la 11.ª implícita, Db, queda un semitono por encima de la tercera mayor C y suele omitirse)
 5. D F Ab C (tríada menor con quinta disminuida y séptima menor)
 6. G B D F A#/Bb sobre un bajo de Db. No es una sustitución tritonal: la estructura superior sigue siendo G7#9, ahora sobre su b5. El sustituto en sí es Db7 (Db F Ab Cb), que comparte el tritono B–F de G7 (como Cb–F).
 

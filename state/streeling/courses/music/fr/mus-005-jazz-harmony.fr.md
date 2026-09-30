@@ -62,7 +62,7 @@ La **qualité** encode la triade et la septième :
 Les **extensions** ajoutent des notes supérieures (9, 11, 13). Le nombre le plus élevé implique toutes les notes impaires inférieures :
 
 - `Cmaj9` = C E G B D (implique la présence de la 7e)
-- `Cmaj13` = C E G B D (F#) A (implique la 9 et la 7 ; la 11 est généralement #11 dans un contexte majeur)
+- `Cmaj13` = C E G B D (F) A (implique la 9 et la 7 ; la 11e impliquée, F, se trouve un demi-ton au-dessus de la tierce majeure E et est généralement omise ; un F# doit être écrit, comme dans `Cmaj13#11`)
 
 Les **altérations** modifient des notes précises :
 
@@ -103,7 +103,7 @@ Réponses :
 1. F A C E G B (Fa majeur avec 7e majeure, 9e, #11e)
 2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominante avec toutes les extensions supérieures altérées : b9, #9, #11, b13)
 3. Eb Gb Bb Db F Ab (septième mineure avec 11e)
-4. Ab C Eb Gb Bb Db F (septième de dominante avec 9e, 11e implicite, 13e)
+4. Ab C Eb Gb Bb (Db) F (septième de dominante avec 9e et 13e ; la 11e impliquée, Db, se trouve un demi-ton au-dessus de la tierce majeure C et est généralement omise)
 5. D F Ab C (triade mineure avec quinte diminuée et septième mineure)
 6. G B D F A#/Bb sur une basse de Db. Ce n'est pas une substitution tritonique : la structure supérieure reste G7#9, désormais sur sa b5. La substitution elle-même est Db7 (Db F Ab Cb), qui partage le triton B–F de G7 (sous la forme Cb–F).
 

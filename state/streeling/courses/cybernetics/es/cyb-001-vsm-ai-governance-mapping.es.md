@@ -12,7 +12,7 @@
 
 ## Resumen
 
-El modelo de sistema viable se corresponde estructuralmente con los marcos de gobernanza de la IA con gran fidelidad. Los cinco sistemas del VSM, más el Sistema 3*, tienen equivalentes claros en la arquitectura de Demerzel. Aparecen cuatro brechas significativas (tres en la sección 2 y el canal algedónico ausente en la sección 4) que requieren una adaptación más allá del VSM clásico.
+El modelo de sistema viable se corresponde estructuralmente con los marcos de gobernanza de la IA con gran fidelidad. Los cinco sistemas del VSM, más el Sistema 3*, tienen equivalentes claros en la arquitectura de Demerzel. Aparecen cuatro brechas significativas (tres en la sección 2 y el canal algedónico ausente en la sección 4) que requieren una adaptación más allá del VSM clásico. El canal algedónico se implementó ese mismo día, en `policies/algedonic-channel-policy.yaml` (sección 4).
 
 ## Correspondencia VSM-Demerzel
 
@@ -55,12 +55,14 @@ Los Ashby Workshops 2025 en Fathom aplicaron explícitamente la variedad requeri
 
 La teoría del VSM describe un **canal algedónico** — una vía de señal de emergencia que evita la jerarquía de dirección normal. Cuando una unidad del Sistema 1 encuentra una crisis (señal de dolor) o un avance (señal de placer), puede enviar la señal directamente al Sistema 5 sin pasar por los Sistemas 2, 3 o 4.
 
-Actualmente Demerzel carece de este atajo. Toda escalada pasa por el driver (Sistema 3). Si ix detecta una violación de la Ley Cero, debe esperar al siguiente ciclo PDCA del driver para escalarla. Un canal algedónico basado en archivos podría resolverlo:
+Cuando se escribió este módulo, Demerzel carecía de este atajo. Toda escalada pasaba por el driver (Sistema 3): si ix detectaba una violación de la Ley Cero, debía esperar al siguiente ciclo PDCA del driver para escalarla. El módulo proponía un canal algedónico basado en archivos:
 
 - Los repositorios operativos escriben en `state/algedonic/{repo}-{timestamp}.signal`
 - La señal contiene: gravedad (dolor/placer), repositorio de origen, descripción, artículo constitucional activado
 - El Sistema 5 (aplicación de la constitución) comprueba si hay señales antes de cualquier otro procesamiento
 - Las señales de dolor que invocan el Artículo 0 de Asimov (Ley Cero) desencadenan una detención inmediata
+
+**Implementado ese mismo día.** `policies/algedonic-channel-policy.yaml` (vigente desde el 2026-03-22) define el canal, y su diseño difiere de esta propuesta. La vía va directamente de S1 a S5, y S2, S3 y S4 no pueden suprimir, filtrar ni retrasar una alerta. Cada alerta notifica a un humano, que debe confirmarla, y se valida frente a la constitución de Asimov (S5). Las alertas se almacenan como `state/algedonic/{date}-{signal_id}.alert.json`, no como archivos `.signal`, y la detención automática depende de la gravedad: solo una alerta `critical` detiene el sistema. Lee la lista anterior como la propuesta que dio lugar a la política, no como un canal que aún haya que construir.
 
 ### 5. Evaluación de la variedad por componente
 
@@ -77,7 +79,7 @@ En conjunto: Demerzel tiene una fuerte atenuación de la variedad, pero podría 
 
 ## Implicaciones para Demerzel
 
-1. **Añadir un canal algedónico** — La brecha estructural de mayor prioridad. Atajo de emergencia de S1 a S5 para violaciones de la Ley Cero.
+1. **Añadir un canal algedónico** — La brecha estructural de mayor prioridad. Atajo de emergencia de S1 a S5 para violaciones de la Ley Cero. Implementado: `policies/algedonic-channel-policy.yaml`.
 2. **Capas de gobernanza por velocidad de reloj** — Separación explícita entre gobernanza de bucle rápido (por solicitud) y de bucle lento (por ciclo), en línea con las escalas temporales operativa y estratégica del VSM.
 3. **Plantilla de gobernanza recursiva** — El directorio templates/ ya proporciona fragmentos de CLAUDE.md para los repositorios consumidores; extenderlo a la gobernanza de subagentes profundizaría la recursión del VSM.
 4. **La conciencia como S5 sintético** — La política de protoconciencia de Demerzel es una extensión novedosa más allá del VSM clásico, que aporta capacidad de reflexión sobre valores sin juicio humano. Merece más investigación.
@@ -100,3 +102,4 @@ En conjunto: Demerzel tiene una fuerte atenuación de la variedad, pero podría 
 - Gramática: `grammars/sci-cybernetics.ebnf` (líneas 49-65, sección VSM)
 - Departamento: `state/streeling/departments/cybernetics.department.json`
 - Política: `policies/seldon-plan-policy.yaml`
+- Política: `policies/algedonic-channel-policy.yaml` (el canal algedónico, sección 4)

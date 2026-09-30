@@ -49,9 +49,13 @@ asimov.constitution.md        (root)
   +-- default.constitution.md  (operational ethics)
        +-- policies/*.yaml
             +-- personas/*.persona.yaml
+
+epistemic.constitution.md     (parallel: governs thought)
 ```
 
-This ASCII hierarchy chart is an **icon**. Its tree structure visually mirrors the actual governance hierarchy. You can *see* the relationships by looking at the indentation. The sign resembles its object.
+This ASCII hierarchy chart is an **icon**. Its tree structure visually mirrors the governance hierarchy of actions. You can *see* the relationships by looking at the indentation. The sign resembles its object.
+
+Like every icon, it simplifies. `constitutions/precedence.yaml` declares `epistemic.constitution.md` a parallel domain that governs thought rather than action and is not ranked in the action hierarchy, so the chart draws it apart. The epistemic constitution was added on 2026-03-28, after this module was written. And `CONTEXT.md` places policies below the Default, mandate and epistemic constitutions together, not below Default alone: the indentation under Default is a shortcut.
 
 Other governance icons:
 - Flowcharts showing decision processes

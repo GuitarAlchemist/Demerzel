@@ -49,9 +49,13 @@ asimov.constitution.md        (racine)
   +-- default.constitution.md  (éthique opérationnelle)
        +-- policies/*.yaml
             +-- personas/*.persona.yaml
+
+epistemic.constitution.md     (parallèle : régit la pensée)
 ```
 
-Ce schéma hiérarchique en ASCII est une **icône**. Son arborescence reflète visuellement la hiérarchie de gouvernance réelle. Vous pouvez *voir* les relations en regardant l'indentation. Le signe ressemble à son objet.
+Ce schéma hiérarchique en ASCII est une **icône**. Son arborescence reflète visuellement la hiérarchie de gouvernance des actions. Vous pouvez *voir* les relations en regardant l'indentation. Le signe ressemble à son objet.
+
+Comme toute icône, il simplifie. `constitutions/precedence.yaml` déclare `epistemic.constitution.md` domaine parallèle, qui régit la pensée plutôt que l'action et n'est pas classé dans la hiérarchie des actions ; le schéma le dessine donc à part. La constitution épistémique a été ajoutée le 2026-03-28, après la rédaction de ce module. Et `CONTEXT.md` place les politiques sous les constitutions Default, mandat et épistémique ensemble, et non sous la seule Default : l'indentation sous Default est un raccourci.
 
 Autres icônes de gouvernance :
 - Des organigrammes qui montrent des processus de décision

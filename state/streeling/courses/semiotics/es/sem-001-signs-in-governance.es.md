@@ -49,9 +49,13 @@ asimov.constitution.md        (raíz)
   +-- default.constitution.md  (ética operativa)
        +-- policies/*.yaml
             +-- personas/*.persona.yaml
+
+epistemic.constitution.md     (paralela: rige el pensamiento)
 ```
 
-Este esquema jerárquico en ASCII es un **icono**. Su estructura de árbol refleja visualmente la jerarquía de gobernanza real. Puedes *ver* las relaciones mirando la sangría. El signo se parece a su objeto.
+Este esquema jerárquico en ASCII es un **icono**. Su estructura de árbol refleja visualmente la jerarquía de gobernanza de las acciones. Puedes *ver* las relaciones mirando la sangría. El signo se parece a su objeto.
+
+Como todo icono, simplifica. `constitutions/precedence.yaml` declara `epistemic.constitution.md` dominio paralelo, que rige el pensamiento y no la acción y no se clasifica en la jerarquía de acciones; por eso el esquema la dibuja aparte. La constitución epistémica se añadió el 2026-03-28, después de redactarse este módulo. Y `CONTEXT.md` sitúa las políticas por debajo de las constituciones Default, del mandato y epistémica juntas, y no solo por debajo de Default: la sangría bajo Default es un atajo.
 
 Otros iconos de gobernanza:
 - Diagramas de flujo que muestran procesos de decisión

@@ -97,10 +97,10 @@ Cuando `marginal_return → 0` a lo largo de 3 o más adiciones de políticas co
 
 ### Señal 4: intensidad del acoplamiento entre repositorios
 
-Demerzel gobierna cuatro repositorios (demerzel, ix, tars, ga). Registra la tasa de cumplimiento de cada repositorio en cada ciclo y, sobre una ventana de los últimos W ciclos, promedia las correlaciones de Pearson de los seis pares de repositorios (un solo ciclo da una tasa por repositorio, de la que no puede calcularse ninguna correlación). Una serie constante, como la de un repositorio que se mantiene al 100 %, no tiene correlación con nada: deja sus pares fuera de la media y declara el acoplamiento indefinido para la ventana si no queda ningún par:
+Demerzel gobierna cuatro repositorios (demerzel, ix, tars, ga). Registra la tasa de cumplimiento de cada repositorio en cada ciclo y, sobre una ventana de los últimos W ciclos, promedia los valores absolutos de las correlaciones de Pearson de los seis pares de repositorios (un solo ciclo da una tasa por repositorio, de la que no puede calcularse ninguna correlación). Toma valores absolutos porque dos repositorios que evolucionan en sentidos opuestos, con una correlación cercana a −1, están tan acoplados como dos que evolucionan juntos, y las correlaciones de signo opuesto se anularían en una media con signo. Una serie constante, como la de un repositorio que se mantiene al 100 %, no tiene correlación con nada: deja sus pares fuera de la media y declara el acoplamiento indefinido para la ventana si no queda ningún par:
 
 ```
-coupling = mean_{i<j} pearson_correlation(rates_i[W], rates_j[W])
+coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 ```
 
 | Acoplamiento | Régimen |

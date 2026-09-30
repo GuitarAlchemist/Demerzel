@@ -12,7 +12,7 @@ Le modèle du système viable (VSM) de Stafford Beer fournit-il une correspondan
 
 ## Résumé
 
-Le modèle du système viable correspond structurellement aux cadres de gouvernance de l'IA avec une grande fidélité. Les cinq systèmes du VSM, ainsi que le Système 3*, ont des équivalents clairs dans l'architecture de Demerzel. Quatre lacunes importantes apparaissent (trois dans la section 2, le canal algédonique manquant dans la section 4), qui exigent une adaptation au-delà du VSM classique.
+Le modèle du système viable correspond structurellement aux cadres de gouvernance de l'IA avec une grande fidélité. Les cinq systèmes du VSM, ainsi que le Système 3*, ont des équivalents clairs dans l'architecture de Demerzel. Quatre lacunes importantes apparaissent (trois dans la section 2, le canal algédonique manquant dans la section 4), qui exigent une adaptation au-delà du VSM classique. Le canal algédonique a été mis en œuvre le jour même, dans `policies/algedonic-channel-policy.yaml` (section 4).
 
 ## Correspondance VSM-Demerzel
 
@@ -55,12 +55,14 @@ Les Ashby Workshops 2025 chez Fathom ont explicitement appliqué la variété re
 
 La théorie du VSM décrit un **canal algédonique** — un chemin de signal d'urgence qui contourne la hiérarchie de direction normale. Lorsqu'une unité du Système 1 rencontre une crise (signal de douleur) ou une percée (signal de plaisir), elle peut signaler directement au Système 5 sans passer par les Systèmes 2, 3 ou 4.
 
-Demerzel ne dispose pas actuellement de ce contournement. Toute escalade passe par le driver (Système 3). Si ix détecte une violation de la Loi Zéro, il doit attendre le prochain cycle PDCA du driver pour faire remonter l'alerte. Un canal algédonique fondé sur des fichiers pourrait résoudre ce problème :
+Lorsque ce module a été rédigé, Demerzel ne disposait pas de ce contournement. Toute escalade passait par le driver (Système 3) : si ix détectait une violation de la Loi Zéro, il devait attendre le prochain cycle PDCA du driver pour faire remonter l'alerte. Le module proposait un canal algédonique fondé sur des fichiers :
 
 - Les dépôts opérationnels écrivent dans `state/algedonic/{repo}-{timestamp}.signal`
 - Le signal contient : la gravité (douleur/plaisir), le dépôt source, une description, l'article constitutionnel déclenché
 - Le Système 5 (application de la constitution) vérifie la présence de signaux avant tout autre traitement
 - Les signaux de douleur invoquant l'Article 0 d'Asimov (Loi Zéro) déclenchent un arrêt immédiat
+
+**Mis en œuvre le jour même.** `policies/algedonic-channel-policy.yaml` (en vigueur le 2026-03-22) définit le canal, et sa conception diffère de cette proposition. Le chemin va directement de S1 à S5, et S2, S3 et S4 ne peuvent ni supprimer, ni filtrer, ni retarder une alerte. Chaque alerte avertit un humain, qui doit en accuser réception, et elle est validée par rapport à la constitution d'Asimov (S5). Les alertes sont stockées sous `state/algedonic/{date}-{signal_id}.alert.json`, et non dans des fichiers `.signal`, et l'arrêt automatique dépend de la gravité : seule une alerte `critical` provoque l'arrêt. Lisez la liste ci-dessus comme la proposition qui a mené à la politique, non comme un canal encore à construire.
 
 ### 5. Évaluation de la variété par composant
 
@@ -77,7 +79,7 @@ Bilan : Demerzel a une forte atténuation de la variété mais pourrait amélior
 
 ## Implications pour Demerzel
 
-1. **Ajouter un canal algédonique** — Lacune structurelle la plus prioritaire. Contournement d'urgence de S1 vers S5 pour les violations de la Loi Zéro.
+1. **Ajouter un canal algédonique** — Lacune structurelle la plus prioritaire. Contournement d'urgence de S1 vers S5 pour les violations de la Loi Zéro. Mis en œuvre : `policies/algedonic-channel-policy.yaml`.
 2. **Couches de gouvernance à vitesses d'horloge** — Séparation explicite de la gouvernance en boucle rapide (par requête) et en boucle lente (par cycle), correspondant aux échelles de temps opérationnelle et stratégique du VSM.
 3. **Modèle de gouvernance récursive** — Le répertoire templates/ fournit déjà des extraits de CLAUDE.md pour les dépôts consommateurs ; l'étendre à la gouvernance des sous-agents approfondirait la récursion du VSM.
 4. **La conscience comme S5 synthétique** — La politique de proto-conscience de Demerzel est une extension inédite au-delà du VSM classique, qui fournit une capacité de réflexion sur les valeurs sans jugement humain. Cela mérite des recherches plus poussées.
@@ -100,3 +102,4 @@ Bilan : Demerzel a une forte atténuation de la variété mais pourrait amélior
 - Grammaire : `grammars/sci-cybernetics.ebnf` (lignes 49-65, section VSM)
 - Département : `state/streeling/departments/cybernetics.department.json`
 - Politique : `policies/seldon-plan-policy.yaml`
+- Politique : `policies/algedonic-channel-policy.yaml` (le canal algédonique, section 4)
