@@ -46,7 +46,7 @@ Entender estos cambios no se trata de memorizar fechas. Se trata de escuchar *po
 
 ### Punto de escucha
 
-Si escuchas canto gregoriano y luego un organum de Perotin (c. 1200), puedes oír el salto de una voz a varias. Ese salto tomó siglos.
+Si escuchas canto gregoriano y luego un organum de Perotín (c. 1200), puedes oír el salto de una voz a varias. Ese salto tomó siglos.
 
 ---
 
