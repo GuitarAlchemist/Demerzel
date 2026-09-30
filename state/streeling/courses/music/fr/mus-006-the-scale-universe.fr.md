@@ -26,7 +26,7 @@ Après ce cours, vous serez capable de :
 - Appliquer les critères de Zeitler pour réduire l'univers aux gammes « musicalement réelles »
 - Calculer les vecteurs d'intervalles, la luminosité et les propriétés de symétrie à partir de l'entier d'une gamme
 - Associer n'importe quel entier de gamme à des positions sur le manche de la guitare
-- Relier l'espace des gammes aux relations d'équivalence OPTIC-K utilisées en théorie des ensembles musicaux
+- Relier l'espace des gammes aux relations d'équivalence OPTIC utilisées en théorie des ensembles musicaux
 
 ---
 
@@ -264,7 +264,7 @@ Réponses :
 
 ## 5. Qu'est-ce qui fait une « vraie gamme » ?
 
-Sur les 4 096 possibilités mathématiques, la plupart ne sont pas utiles en musique. Une gamme comme `101100000001` (Do, Réb, Mib, Si) est une collection de notes, mais personne ne l'appellerait une gamme au sens pratique. Comment réduire l'univers aux gammes légitimes ?
+Sur les 4 096 possibilités mathématiques, la plupart ne sont pas utiles en musique. Une gamme comme `100000001011` (Do, Réb, Mib, Si) est une collection de notes, mais personne ne l'appellerait une gamme au sens pratique. Comment réduire l'univers aux gammes légitimes ?
 
 ### Les critères de Zeitler
 
@@ -474,7 +474,7 @@ Indice : 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ---
 
-## 8. Lien avec OPTIC-K
+## 8. Lien avec OPTIC
 
 La théorie des ensembles musicaux utilise une taxonomie de **relations d'équivalence** pour décrire comment deux collections de notes peuvent être considérées comme « identiques ». Le moyen mnémotechnique OPTIC les rassemble toutes. Le cadre des entiers de gammes rend ces équivalences calculables.
 
@@ -486,7 +486,7 @@ La théorie des ensembles musicaux utilise une taxonomie de **relations d'équiv
 | **P** | Permutation | L'ordre des notes n'a pas d'importance | Traiter comme un ensemble |
 | **T** | Transposition | Même motif commençant sur une fondamentale différente | Rotation modulaire |
 | **I** | Inversion | Image miroir autour d'un pivot | Inverser l'ordre des intervalles |
-| **C** | Cardinalité | Nombre de classes de hauteur distinctes | POPCOUNT de l'entier |
+| **C** | Cardinalité | Doubler une note ne change pas la collection (Do-Mi-Sol = Do-Mi-Sol-Sol) | Intégrée : un ensemble contient chaque classe de hauteur une seule fois |
 
 (OPTIC, sans K, désigne les cinq équivalences définies par Callender, Quinn et Tymoczko, « Generalized Voice-Leading Spaces », *Science* 320, 2008. Le « -K » appartient à l'embedding OPTIC-K de Guitar Alchemist, pas à cet article.)
 
@@ -496,7 +496,7 @@ La théorie des ensembles musicaux utilise une taxonomie de **relations d'équiv
 - **Équivalence P :** intégrée au modèle. Un entier de 12 bits est par construction un ensemble (indépendant de l'ordre).
 - **Équivalence T :** calculée comme rotation (décalage circulaire) de l'entier.
 - **Équivalence I :** calculée comme **inversion de l'ordre des bits** de l'entier de 12 bits. Inverser l'ordre des bits de la gamme S donne sa gamme inversée (puis on effectue une rotation pour replacer la fondamentale sur le bit 0).
-- **Équivalence C :** calculée par POPCOUNT — le nombre de bits à 1.
+- **Équivalence C :** intégrée au modèle. Un bit vaut 1 ou 0, si bien qu'une note doublée ne peut même pas s'écrire ; POPCOUNT, le nombre de bits à 1, compte alors les classes de hauteur distinctes.
 
 ### Les 224 classes de Forte
 
@@ -552,7 +552,7 @@ La théorie musicale n'avait pas besoin d'être floue. La théorie des ensembles
 | **Relation Z** | Deux gammes de même vecteur d'intervalles mais non liées par T ou I |
 | **Critères de Zeitler** | Heuristiques pour filtrer les gammes mathématiques et ne garder que celles « musicalement réelles » |
 | **POPCOUNT** | Le nombre de bits à 1 dans un nombre binaire (= cardinalité de la gamme) |
-| **OPTIC-K** | Moyen mnémotechnique des relations d'équivalence en théorie des ensembles musicaux |
+| **OPTIC** | Moyen mnémotechnique des cinq équivalences de Callender, Quinn et Tymoczko (2008) : octave, permutation, transposition, inversion, cardinalité. L'embedding OPTIC-K de Guitar Alchemist y ajoute le K |
 
 ---
 
@@ -573,7 +573,7 @@ La théorie musicale n'avait pas besoin d'être floue. La théorie des ensembles
 **5. Appliquez le filtrage de Zeitler à la gamme de classes de hauteur {0, 1, 7}. Quels critères satisfait-elle ou enfreint-elle ?**
 > Fondamentale présente (bit 0 à 1) : RÉUSSI. Écart maximal de 1 à 7 de 6 demi-tons : ÉCHEC (dépasse 4). Cardinalité = 3 notes : ÉCHEC (sous le minimum de 5). Aucun cluster de 4 demi-tons ou plus : RÉUSSI. Bilan : elle échoue au filtre de Zeitler en tant que gamme « légitime » (c'est un tricorde, pas une gamme).
 
-**Critères de réussite :** convertir n'importe quelle gamme (donnée sous forme de classes de hauteur ou de noms de notes) vers et depuis sa représentation entière, calculer son vecteur d'intervalles à la main, identifier sa cardinalité de Forte, et expliquer quelles équivalences OPTIC-K sont intégrées au modèle entier et lesquelles demandent un calcul supplémentaire.
+**Critères de réussite :** convertir n'importe quelle gamme (donnée sous forme de classes de hauteur ou de noms de notes) vers et depuis sa représentation entière, calculer son vecteur d'intervalles à la main, identifier sa cardinalité de Forte, et expliquer quelles équivalences OPTIC sont intégrées au modèle entier et lesquelles demandent un calcul supplémentaire.
 
 ---
 

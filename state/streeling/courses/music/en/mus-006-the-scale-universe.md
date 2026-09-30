@@ -26,7 +26,7 @@ After completing this course, you will be able to:
 - Apply Zeitler's criteria to filter the universe down to "musically real" scales
 - Compute interval vectors, brightness, and symmetry properties from a scale's integer
 - Map any scale integer to fretboard positions on guitar
-- Relate scale-space to the OPTIC-K equivalence relations used in music set theory
+- Relate scale-space to the OPTIC equivalence relations used in music set theory
 
 ---
 
@@ -264,7 +264,7 @@ Answers:
 
 ## 5. What Makes a "Real Scale"?
 
-Of the 4,096 mathematical possibilities, most are not useful for music. A scale like `101100000001` (C, Db, Eb, B) is a collection of notes, but no one would call it a scale in the practical sense. How do we filter the universe down to legitimate scales?
+Of the 4,096 mathematical possibilities, most are not useful for music. A scale like `100000001011` (C, Db, Eb, B) is a collection of notes, but no one would call it a scale in the practical sense. How do we filter the universe down to legitimate scales?
 
 ### The Zeitler Criteria
 
@@ -474,7 +474,7 @@ Hint: 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ---
 
-## 8. Connection to OPTIC-K
+## 8. Connection to OPTIC
 
 Music set theory uses a taxonomy of **equivalence relations** to describe how two note collections might be considered "the same." The mnemonic OPTIC captures them all. The scale-integer framework makes these equivalences computable.
 
@@ -486,7 +486,7 @@ Music set theory uses a taxonomy of **equivalence relations** to describe how tw
 | **P** | Permutation | Order of notes does not matter | Treat as a set |
 | **T** | Transposition | Same pattern starting on different root | Modular rotation |
 | **I** | Inversion | Mirror image around a pivot | Reverse interval order |
-| **C** | Cardinality | Number of distinct pitch classes | POPCOUNT of integer |
+| **C** | Cardinality | Doubling a note does not change the collection (C-E-G = C-E-G-G) | Built in: a set holds each pitch class once |
 
 (OPTIC, without a K, is the set of five equivalences defined by Callender, Quinn and Tymoczko, "Generalized Voice-Leading Spaces", *Science* 320, 2008. The "-K" belongs to Guitar Alchemist's OPTIC-K embedding, not to that paper.)
 
@@ -496,7 +496,7 @@ Music set theory uses a taxonomy of **equivalence relations** to describe how tw
 - **P-equivalence:** Built into the model. A 12-bit integer is a set (order-independent) by construction.
 - **T-equivalence:** Computed as rotation (circular shift) of the integer.
 - **I-equivalence:** Computed as **bit reversal** of the 12-bit integer. Reversing the bits of scale S gives its inverted scale (then rotate to put the root back at bit 0).
-- **C-equivalence:** Computed as POPCOUNT — the number of 1 bits.
+- **C-equivalence:** Built into the model. A bit is either set or not, so a doubled note cannot even be written; POPCOUNT, the number of 1 bits, then counts the distinct pitch classes.
 
 ### The 224 Forte Classes
 
@@ -552,7 +552,7 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 | **Z-relation** | Two scales with the same interval vector but unrelated by T or I |
 | **Zeitler criteria** | Heuristics for filtering mathematical scales to "musically real" ones |
 | **POPCOUNT** | The count of set bits in a binary number (= scale cardinality) |
-| **OPTIC-K** | Mnemonic for equivalence relations in music set theory |
+| **OPTIC** | Mnemonic for the five equivalences of Callender, Quinn and Tymoczko (2008): octave, permutation, transposition, inversion, cardinality. Guitar Alchemist's OPTIC-K embedding adds the K |
 
 ---
 
@@ -573,7 +573,7 @@ Music theory did not need to be fuzzy. Pitch-class set theory, combined with mod
 **5. Apply Zeitler filtering to the scale with pitch classes {0, 1, 7}. Which criteria does it pass or fail?**
 > Root present (bit 0 set): PASS. Max gap from 1 to 7 is 6 semitones: FAIL (exceeds 4). Cardinality = 3 notes: FAIL (below minimum of 5). No cluster of 4+ semitones: PASS. Net: fails Zeitler as a "legitimate" scale (it is a trichord, not a scale).
 
-**Pass criteria:** Convert any scale (given as pitch classes or note names) to and from its integer representation, compute its interval vector by hand, identify its Forte cardinality, and explain which OPTIC-K equivalences are built into the integer model versus which require additional computation.
+**Pass criteria:** Convert any scale (given as pitch classes or note names) to and from its integer representation, compute its interval vector by hand, identify its Forte cardinality, and explain which OPTIC equivalences are built into the integer model versus which require additional computation.
 
 ---
 

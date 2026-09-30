@@ -26,7 +26,7 @@ Al terminar este curso, serás capaz de:
 - Aplicar los criterios de Zeitler para reducir el universo a las escalas «musicalmente reales»
 - Calcular vectores interválicos, brillo y propiedades de simetría a partir del entero de una escala
 - Llevar cualquier entero de escala a posiciones en el diapasón de la guitarra
-- Relacionar el espacio de escalas con las relaciones de equivalencia OPTIC-K que se usan en la teoría de conjuntos musical
+- Relacionar el espacio de escalas con las relaciones de equivalencia OPTIC que se usan en la teoría de conjuntos musical
 
 ---
 
@@ -264,7 +264,7 @@ Respuestas:
 
 ## 5. ¿Qué hace que una escala sea «real»?
 
-De las 4096 posibilidades matemáticas, la mayoría no son útiles para la música. Una escala como `101100000001` (Do, Reb, Mib, Si) es una colección de notas, pero nadie la llamaría escala en sentido práctico. ¿Cómo reducimos el universo a escalas legítimas?
+De las 4096 posibilidades matemáticas, la mayoría no son útiles para la música. Una escala como `100000001011` (Do, Reb, Mib, Si) es una colección de notas, pero nadie la llamaría escala en sentido práctico. ¿Cómo reducimos el universo a escalas legítimas?
 
 ### Los criterios de Zeitler
 
@@ -474,7 +474,7 @@ Pista: 1709 = 1024 + 512 + 128 + 32 + 8 + 4 + 1 → bits 0, 2, 3, 5, 7, 9, 10.
 
 ---
 
-## 8. Conexión con OPTIC-K
+## 8. Conexión con OPTIC
 
 La teoría de conjuntos musical usa una taxonomía de **relaciones de equivalencia** para describir cómo dos colecciones de notas pueden considerarse «la misma». La regla mnemotécnica OPTIC las reúne todas. El marco de los enteros de escala hace que estas equivalencias sean calculables.
 
@@ -486,7 +486,7 @@ La teoría de conjuntos musical usa una taxonomía de **relaciones de equivalenc
 | **P** | Permutación | El orden de las notas no importa | Tratar como conjunto |
 | **T** | Transposición | El mismo patrón empezando en otra tónica | Rotación modular |
 | **I** | Inversión | Imagen especular alrededor de un pivote | Invertir el orden de los intervalos |
-| **C** | Cardinalidad | Número de clases de altura distintas | POPCOUNT del entero |
+| **C** | Cardinalidad | Doblar una nota no cambia la colección (Do-Mi-Sol = Do-Mi-Sol-Sol) | Integrada: un conjunto contiene cada clase de altura una sola vez |
 
 (OPTIC, sin K, designa las cinco equivalencias definidas por Callender, Quinn y Tymoczko, «Generalized Voice-Leading Spaces», *Science* 320, 2008. La «-K» pertenece al embedding OPTIC-K de Guitar Alchemist, no a ese artículo.)
 
@@ -496,7 +496,7 @@ La teoría de conjuntos musical usa una taxonomía de **relaciones de equivalenc
 - **Equivalencia P:** integrada en el modelo. Un entero de 12 bits es por construcción un conjunto (independiente del orden).
 - **Equivalencia T:** se calcula como rotación (desplazamiento circular) del entero.
 - **Equivalencia I:** se calcula como **inversión del orden de los bits** del entero de 12 bits. Invertir el orden de los bits de la escala S da su escala invertida (y luego se rota para devolver la tónica al bit 0).
-- **Equivalencia C:** se calcula con POPCOUNT — el número de bits a 1.
+- **Equivalencia C:** integrada en el modelo. Un bit vale 1 o 0, así que una nota doblada ni siquiera puede escribirse; POPCOUNT, el número de bits a 1, cuenta entonces las clases de altura distintas.
 
 ### Las 224 clases de Forte
 
@@ -552,7 +552,7 @@ La teoría musical no tenía por qué ser difusa. La teoría de conjuntos de cla
 | **Relación Z** | Dos escalas con el mismo vector interválico pero no relacionadas por T ni por I |
 | **Criterios de Zeitler** | Heurísticas para filtrar las escalas matemáticas y quedarse con las «musicalmente reales» |
 | **POPCOUNT** | El número de bits activos en un número binario (= cardinalidad de la escala) |
-| **OPTIC-K** | Regla mnemotécnica de las relaciones de equivalencia en la teoría de conjuntos musical |
+| **OPTIC** | Regla mnemotécnica de las cinco equivalencias de Callender, Quinn y Tymoczko (2008): octava, permutación, transposición, inversión, cardinalidad. El embedding OPTIC-K de Guitar Alchemist añade la K |
 
 ---
 
@@ -573,7 +573,7 @@ La teoría musical no tenía por qué ser difusa. La teoría de conjuntos de cla
 **5. Aplica el filtro de Zeitler a la escala con clases de altura {0, 1, 7}. ¿Qué criterios cumple o incumple?**
 > Tónica presente (bit 0 activo): CUMPLE. Salto máximo de 1 a 7 de 6 semitonos: FALLA (supera 4). Cardinalidad = 3 notas: FALLA (por debajo del mínimo de 5). Ningún clúster de 4 o más semitonos: CUMPLE. Balance: no pasa el filtro de Zeitler como escala «legítima» (es un tricordio, no una escala).
 
-**Criterios de aprobación:** convertir cualquier escala (dada como clases de altura o nombres de notas) a y desde su representación entera, calcular a mano su vector interválico, identificar su cardinalidad de Forte y explicar qué equivalencias OPTIC-K están integradas en el modelo entero y cuáles requieren un cálculo adicional.
+**Criterios de aprobación:** convertir cualquier escala (dada como clases de altura o nombres de notas) a y desde su representación entera, calcular a mano su vector interválico, identificar su cardinalidad de Forte y explicar qué equivalencias OPTIC están integradas en el modelo entero y cuáles requieren un cálculo adicional.
 
 ---
 
