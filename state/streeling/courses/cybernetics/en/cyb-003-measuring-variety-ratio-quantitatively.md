@@ -162,7 +162,7 @@ The variety ratio only tells half the story. We must also measure the variety of
 | Repo state combinations (3 repos x ~10 states each) | 10^3 = 1000 | 9.97 bits |
 | External environment changes (libraries, APIs, models) | ~100 | 6.64 bits |
 
-**Total external disturbance variety:** the repo state combinations already cover the three repos, so the first row adds nothing; an environment change can arrive in any of the 1000 repo states, so those two sources multiply and their varieties add: V_D_ext = log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits**
+**Total external disturbance variety:** the repo state combinations already cover the three repos, so the first row adds nothing. The joint variety of the other two lies between the larger row and their sum: V_D_ext is at least **9.97 bits**, and at most log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** if an environment change can arrive in any of the 1000 repo states
 
 ### Internal Disturbances (V_D_int)
 | Source | Estimate (N) | Variety V |
@@ -171,7 +171,7 @@ The variety ratio only tells half the story. We must also measure the variety of
 | Policy interactions (37 policies, pairwise) | 666 | 9.38 bits |
 | Grammar evolution proposals | ~5 per cycle | 2.32 bits |
 
-**Total internal disturbance variety:** the three sources can occur in the same cycle, so they multiply too: V_D_int = log2(20 × 666 × 5) = 4.32 + 9.38 + 2.32 = **16.02 bits**
+**Total internal disturbance variety:** by the same bounds, V_D_int is at least **9.38 bits** (policy interactions alone), and at most log2(20 × 666 × 5) = 4.32 + 9.38 + 2.32 = **16.02 bits** if the three sources are independent
 
 ### Ashby's Law Check
 
@@ -182,18 +182,18 @@ V(regulatory response) >= V(disturbance)
 ```
 
 - V_R_amp = 6.32 bits
-- V_D = V_D_ext + V_D_int = 16.61 + 16.02 = 32.63 bits
-- **Gap: 32.63 - 6.32 = 26.31 bits**
+- V_D lies between the largest single source, 9.97 bits, and the sum of every source, 16.61 + 16.02 = 32.63 bits
+- **Gap: at least 9.97 - 6.32 = 3.65 bits, at most 32.63 - 6.32 = 26.31 bits**
 
-This treats every source as independent. Where sources are correlated (a repo change that triggers a belief change), V_D is smaller, but never below its largest single source, V_D_ext = 16.61 bits, which still leaves a gap of 10.29 bits.
+The lower bound holds whatever the dependencies: a joint state space never has fewer states than any one of its parts. The upper bound assumes every source is independent; causal links (a repo change that triggers a belief change, a policy interaction that prompts a grammar proposal) pull the real value down. Measuring the joint variety, by counting the distinct combinations actually observed per cycle, would place it within the range.
 
-This means the regulatory system faces approximately 2^26.31 ≈ 8.3 × 10^7 times more disturbance variety than it can produce response variety (2^10.29 ≈ 1,250 times at the correlated floor). The gap is absorbed by:
+This means the regulatory system faces between 2^3.65 ≈ 12.6 and 2^26.31 ≈ 8.3 × 10^7 times more disturbance variety than it can produce response variety. The gap is absorbed by:
 
 1. **Human escalation** — the confidence threshold system routes difficult decisions to humans, borrowing their variety
 2. **Constitutional override** — the Asimov Laws collapse complex decisions to binary (safe/unsafe), reducing required variety
 3. **PDCA cycling** — sequential processing converts parallel disturbances into manageable queues
 
-These are legitimate variety absorption mechanisms, but the 26.31-bit gap suggests Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
+These are legitimate variety absorption mechanisms, but even the 3.65-bit lower bound suggests Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
 
 ## Measurement Protocol
 
@@ -266,7 +266,7 @@ Cross-validation with GPT-4o confirmed:
 
 1. **Track variety ratios per cycle** — Add variety snapshot to `state/governance/variety-metrics.json` (or equivalent state file). Monitor dimensional ratios for drift.
 2. **Add structural quality gates** — The structural ratio (17.00) is above healthy range. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
-3. **Monitor the 26.31-bit regulatory gap** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest source of internal disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles, and each of those bits adds directly to V_D. Consider policy grouping or hierarchical policy organization.
+3. **Monitor the regulatory gap (3.65 to 26.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest source of internal disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Those bits raise the upper bound at once, and the lower bound once policy interactions overtake the repo-state term (9.97 bits), from 46 policies. Consider policy grouping or hierarchical policy organization.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 78-82) should be expanded with quantitative measurement productions.
 
@@ -288,7 +288,7 @@ Cross-validation with GPT-4o confirmed:
 
 ## Follow-Up Questions for Cycle 004
 
-1. How much of the 26.31-bit regulatory gap can hierarchical policy grouping close (reducing pairwise interactions from O(n^2) to O(n log n))?
+1. How much of the regulatory gap can hierarchical policy grouping close (reducing pairwise interactions from O(n^2) to O(n log n))?
 2. How should grammar production usage be tracked to detect dead productions and inform structural attenuation?
 3. What is the information-theoretic relationship between Demerzel's tetravalent logic (T/F/U/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?
 

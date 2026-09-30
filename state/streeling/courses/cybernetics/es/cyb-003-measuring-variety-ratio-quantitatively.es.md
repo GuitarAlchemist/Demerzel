@@ -162,7 +162,7 @@ El cociente de variedad solo cuenta la mitad de la historia. También debemos me
 | Combinaciones de estados de los repositorios (3 repositorios x ~10 estados cada uno) | 10^3 = 1000 | 9.97 bits |
 | Cambios del entorno externo (bibliotecas, API, modelos) | ~100 | 6.64 bits |
 
-**Variedad total de perturbaciones externas:** las combinaciones de estados de los repositorios ya cubren los tres repositorios, así que la primera fila no añade nada; un cambio del entorno puede llegar en cualquiera de los 1000 estados de los repositorios, así que esas dos fuentes se multiplican y sus variedades se suman: V_D_ext = log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits**
+**Variedad total de perturbaciones externas:** las combinaciones de estados de los repositorios ya cubren los tres repositorios, así que la primera fila no añade nada. La variedad conjunta de las otras dos está entre la mayor de las dos filas y su suma: V_D_ext vale al menos **9.97 bits**, y como mucho log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** si un cambio del entorno puede llegar en cualquiera de los 1000 estados de los repositorios
 
 ### Perturbaciones internas (V_D_int)
 | Fuente | Estimación (N) | Variedad V |
@@ -171,7 +171,7 @@ El cociente de variedad solo cuenta la mitad de la historia. También debemos me
 | Interacciones entre políticas (37 políticas, por pares) | 666 | 9.38 bits |
 | Propuestas de evolución de gramáticas | ~5 por ciclo | 2.32 bits |
 
-**Variedad total de perturbaciones internas:** las tres fuentes pueden darse en el mismo ciclo, así que también se multiplican: V_D_int = log2(20 × 666 × 5) = 4.32 + 9.38 + 2.32 = **16.02 bits**
+**Variedad total de perturbaciones internas:** con las mismas cotas, V_D_int vale al menos **9.38 bits** (solo las interacciones entre políticas), y como mucho log2(20 × 666 × 5) = 4.32 + 9.38 + 2.32 = **16.02 bits** si las tres fuentes son independientes
 
 ### Comprobación de la ley de Ashby
 
@@ -182,18 +182,18 @@ V(regulatory response) >= V(disturbance)
 ```
 
 - V_R_amp = 6.32 bits
-- V_D = V_D_ext + V_D_int = 16.61 + 16.02 = 32.63 bits
-- **Brecha: 32.63 - 6.32 = 26.31 bits**
+- V_D está entre la mayor fuente aislada, 9.97 bits, y la suma de todas las fuentes, 16.61 + 16.02 = 32.63 bits
+- **Brecha: al menos 9.97 - 6.32 = 3.65 bits, como mucho 32.63 - 6.32 = 26.31 bits**
 
-Este cálculo trata cada fuente como independiente. Donde las fuentes están correlacionadas (un cambio en un repositorio que desencadena un cambio de creencia), V_D es menor, pero nunca inferior a su mayor fuente aislada, V_D_ext = 16.61 bits, lo que aún deja una brecha de 10.29 bits.
+La cota inferior se cumple sean cuales sean las dependencias: un espacio de estados conjunto nunca tiene menos estados que cualquiera de sus partes. La cota superior supone que todas las fuentes son independientes; los vínculos causales (un cambio en un repositorio que desencadena un cambio de creencia, una interacción entre políticas que motiva una propuesta de gramática) reducen el valor real. Medir la variedad conjunta, contando las combinaciones distintas observadas de hecho en cada ciclo, lo situaría dentro de ese intervalo.
 
-Esto significa que el sistema regulatorio se enfrenta a aproximadamente 2^26.31 ≈ 8.3 × 10^7 veces más variedad de perturbaciones de la que puede producir en variedad de respuestas (2^10.29 ≈ 1250 veces en el mínimo correlacionado). La brecha se absorbe mediante:
+Esto significa que el sistema regulatorio se enfrenta a una variedad de perturbaciones entre 2^3.65 ≈ 12.6 y 2^26.31 ≈ 8.3 × 10^7 veces mayor que la variedad de respuestas que puede producir. La brecha se absorbe mediante:
 
 1. **Escalado a humanos**: el sistema de umbrales de confianza deriva las decisiones difíciles a humanos, tomando prestada su variedad
 2. **Prevalencia constitucional**: las leyes de Asimov reducen las decisiones complejas a una elección binaria (seguro/inseguro), lo que disminuye la variedad requerida
 3. **Ciclo PDCA**: el procesamiento secuencial convierte perturbaciones paralelas en colas manejables
 
-Son mecanismos legítimos de absorción de variedad, pero la brecha de 26.31 bits sugiere que Demerzel debería vigilar si la complejidad de las interacciones entre políticas crece más rápido que la capacidad regulatoria.
+Son mecanismos legítimos de absorción de variedad, pero incluso la cota inferior de 3.65 bits sugiere que Demerzel debería vigilar si la complejidad de las interacciones entre políticas crece más rápido que la capacidad regulatoria.
 
 ## Protocolo de medición
 
@@ -266,7 +266,7 @@ La validación cruzada con GPT-4o confirmó:
 
 1. **Seguir los cocientes de variedad en cada ciclo**: añadir una instantánea de variedad a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Vigilar la deriva de los cocientes por dimensión.
 2. **Añadir puertas de calidad estructurales**: el cociente estructural (17.00) está por encima del rango saludable. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones para aumentar la atenuación sin reducir la generatividad.
-3. **Vigilar la brecha regulatoria de 26.31 bits**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente de perturbación interna. A medida que crezcan las políticas, el número de pares crecerá de forma cuadrática, pero su variedad log2(n(n-1)/2) solo crecerá de forma logarítmica, unos 2 bits cada vez que se duplique el número de políticas, y cada uno de esos bits se suma directamente a V_D. Considerar agrupar las políticas u organizarlas jerárquicamente.
+3. **Vigilar la brecha regulatoria (de 3.65 a 26.31 bits)**: la complejidad de las interacciones entre políticas (666 combinaciones por pares a partir de 37 políticas) es la mayor fuente de perturbación interna. A medida que crezcan las políticas, el número de pares crecerá de forma cuadrática, pero su variedad log2(n(n-1)/2) solo crecerá de forma logarítmica, unos 2 bits cada vez que se duplique el número de políticas. Esos bits elevan de inmediato la cota superior, y la cota inferior en cuanto las interacciones entre políticas superan el término de los estados de los repositorios (9.97 bits), a partir de 46 políticas. Considerar agrupar las políticas u organizarlas jerárquicamente.
 4. **El escalado a humanos es un puente de variedad**: el sistema de umbrales de confianza (Artículo 6: Escalado) es el mecanismo principal de Demerzel para absorber la variedad que supera su capacidad regulatoria. Es una característica, no una limitación.
 5. **Hacer evolucionar la sección 6 de la gramática**: la sección de variedad requerida de la gramática `sci-cybernetics.ebnf` (líneas 78-82) debería ampliarse con producciones de medición cuantitativa.
 
@@ -288,7 +288,7 @@ La validación cruzada con GPT-4o confirmó:
 
 ## Preguntas de seguimiento para el ciclo 004
 
-1. ¿Qué parte de la brecha regulatoria de 26.31 bits puede cerrar una agrupación jerárquica de políticas (reduciendo las interacciones por pares de O(n^2) a O(n log n))?
+1. ¿Qué parte de la brecha regulatoria puede cerrar una agrupación jerárquica de políticas (reduciendo las interacciones por pares de O(n^2) a O(n log n))?
 2. ¿Cómo debería seguirse el uso de las producciones de gramática para detectar producciones muertas y orientar la atenuación estructural?
 3. ¿Cuál es la relación, desde la teoría de la información, entre la lógica tetravalente de Demerzel (T/F/U/C) y la entropía de Shannon? ¿Lleva U (Unknown) más bits que T (True)?
 
