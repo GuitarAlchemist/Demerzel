@@ -413,15 +413,15 @@ Una **polirritmia** es la ejecución simultánea de dos agrupaciones rítmicas d
 
 Dos tiempos en el espacio de tres, o tres tiempos en el espacio de dos. Los dos ritmos comparten la misma duración total pero la dividen de forma distinta.
 
-La frase mnemotécnica para 3:2 es **"pass the god-damn but-ter"** — dila en voz alta con el mismo espacio entre cada sílaba:
+La frase mnemotécnica para 3:2 es **"Pá-sa-me-la-man-ta"** (seis sílabas, sin sinalefa) — dila en voz alta con el mismo espacio entre cada sílaba:
 
 ```
-Sílabas:  pass   the    god   damn   but   ter
+Sílabas:  pá     sa     me    la     man   ta
 3 golpes: X             X            X       (en las sílabas 1, 3, 5)
 2 golpes: UNO                 DOS            (en las sílabas 1, 4)
 ```
 
-"pass" y "damn" coinciden con los dos tiempos, mientras que "pass", "god" y "but" marcan los tres; las dos agrupaciones solo se encuentran en "pass".
+"pá" y "la" coinciden con los dos tiempos, mientras que "pá", "me" y "man" marcan los tres; las dos agrupaciones solo se encuentran en "pá".
 
 ### Ritmo cruzado 3:4
 
@@ -455,7 +455,7 @@ Muchos guitarristas encuentran las polirritmias más fáciles de sentir que de c
 
 ### Ejercicio práctico
 
-Pon un metrónomo a 60 BPM. Da tres palmas espaciadas uniformemente por cada dos clics del metrónomo ("pass-the-god" en el clic 1, "damn-but-ter" en el clic 2). Esa es la polirritmia 3:2. Luego inviértela: dos palmas por cada tres clics del metrónomo. Ambas son difíciles al principio; la paciencia y los tempos lentos son esenciales.
+Pon un metrónomo a 60 BPM. Da tres palmas espaciadas uniformemente por cada dos clics del metrónomo ("pá-sa-me" en el clic 1, "la-man-ta" en el clic 2). Esa es la polirritmia 3:2. Luego inviértela: dos palmas por cada tres clics del metrónomo. Ambas son difíciles al principio; la paciencia y los tempos lentos son esenciales.
 
 ---
 
@@ -536,8 +536,8 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 **4. Describe un patrón básico de Travis picking: qué mano toca qué y qué tiempos se cubren.**
 > El pulgar toca notas graves alternas en cada tiempo de negra (1, 2, 3, 4), normalmente alternando entre la fundamental del acorde y la quinta (u otra nota grave). Los dedos (índice, medio, a veces anular) pulsan las cuerdas agudas en las subdivisiones "y" entre los tiempos del pulgar, creando una textura continua de corcheas. El pulgar aporta el pulso; los dedos añaden la síncopa por encima.
 
-**5. Da palmas o marca una polirritmia 3:2 usando la frase "pass the goddamn butter". Describe cómo se alinean los dos ritmos.**
-> Di "pass-the-god-damn-but-ter" con cada sílaba espaciada uniformemente a lo largo de dos tiempos. Las seis sílabas forman la agrupación de tres (cada dos sílabas = uno de los tres pulsos: "pass-the", "god-damn", "but-ter"). La agrupación de dos cae en "pass" (tiempo 1) y en la "d" de "damn" (tiempo 2, que es la cuarta sílaba, a mitad de camino). Así, tres pulsos espaciados uniformemente se alinean con dos pulsos espaciados uniformemente justo al principio ("pass" = tiempo 1 de ambos) y solo en el comienzo del ciclo siguiente.
+**5. Da palmas o marca una polirritmia 3:2 usando la frase "Pásame la manta". Describe cómo se alinean los dos ritmos.**
+> Di "pá-sa-me-la-man-ta" con cada sílaba espaciada uniformemente a lo largo de dos tiempos. Las seis sílabas forman la agrupación de tres (cada dos sílabas = uno de los tres pulsos: "pá-sa", "me-la", "man-ta"). La agrupación de dos cae en "pá" (tiempo 1) y en la "l" de "la" (tiempo 2, que es la cuarta sílaba, a mitad de camino). Así, tres pulsos espaciados uniformemente se alinean con dos pulsos espaciados uniformemente justo al principio ("pá" = tiempo 1 de ambos) y solo en el comienzo del ciclo siguiente.
 
 **Criterios de aprobación:** dada una indicación de compás, contar en voz alta al menos dos niveles de subdivisión (tiempos + corcheas o corcheas + semicorcheas), identificar cualquier síncopa o ligadura y describir el carácter resultante en términos de familia métrica (simple/compuesta/asimétrica) y tipo de groove.
 

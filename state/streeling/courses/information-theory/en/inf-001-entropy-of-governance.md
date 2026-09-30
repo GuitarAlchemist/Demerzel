@@ -100,7 +100,7 @@ Shannon entropy as a complexity proxy has real limits:
 
 2. **Token granularity matters.** Coarse tokens (just KEY/SCALAR) give different entropy than fine-grained tokens (individual key names). The choice of alphabet shapes the measurement.
 
-3. **Size confounds.** Longer documents naturally explore more of the token space. Normalize by document length or compare within similar-sized documents.
+3. **Size confounds.** Longer documents naturally explore more of the token space, and entropy estimated from a short document is noisier and tends to come out low. Do not divide H by the length: it is already an average per token. Compare documents of similar size, or state how uncertain each estimate is.
 
 4. **Regularity is not simplicity.** A deeply nested but perfectly regular structure (like a decision tree) has low entropy but may still be hard to understand.
 
@@ -130,7 +130,7 @@ Shannon entropy as a complexity proxy has real limits:
 > Because entropy measures structural variety, not whether that variety is justified by the domain. Complex domains require complex policies. Entropy flags candidates for review, not automatic refactoring.
 
 **3. How would you compare entropy across policies of different lengths?**
-> Normalize by document length (entropy per token) or by maximum possible entropy (H/log2(N) where N is alphabet size) to get a comparable 0-1 scale.
+> Not by dividing by the length: H is already an average in bits per token, so two documents with the same token frequencies have the same H whatever their lengths. Compare H directly over the same alphabet, or divide it by the maximum possible entropy (H/log2(N) where N is alphabet size) to get a comparable 0-1 scale. Length matters in another way: H is estimated from observed frequencies, and a short document gives a noisier estimate that tends to come out low, so compare documents of similar length or state the uncertainty.
 
 **4. A policy has very low entropy but users report it is confusing. What might explain this?**
 > Low entropy means repetitive structure, but the content within that structure could be unclear, contradictory, or poorly worded. Structural simplicity does not guarantee semantic clarity.

@@ -100,7 +100,7 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 
 2. **La granularité des jetons compte.** Des jetons grossiers (seulement KEY/SCALAR) donnent une entropie différente de jetons fins (noms de clés individuels). Le choix de l'alphabet façonne la mesure.
 
-3. **La taille est un facteur de confusion.** Les documents plus longs explorent naturellement une plus grande partie de l'espace des jetons. Normalisez par la longueur du document ou comparez des documents de taille similaire.
+3. **La taille est un facteur de confusion.** Les documents plus longs explorent naturellement une plus grande partie de l'espace des jetons, et l'entropie estimée sur un document court est plus bruitée et tend à sortir trop basse. Ne divisez pas H par la longueur : c'est déjà une moyenne par jeton. Comparez des documents de taille similaire, ou indiquez l'incertitude de chaque estimation.
 
 4. **Régularité n'est pas simplicité.** Une structure profondément imbriquée mais parfaitement régulière (comme un arbre de décision) a une entropie faible mais peut rester difficile à comprendre.
 
@@ -130,7 +130,7 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 > Parce que l'entropie mesure la variété structurelle, pas si cette variété est justifiée par le domaine. Les domaines complexes exigent des politiques complexes. L'entropie signale des candidats à examiner, pas une refactorisation automatique.
 
 **3. Comment compareriez-vous l'entropie de politiques de longueurs différentes ?**
-> Normalisez par la longueur du document (entropie par jeton) ou par l'entropie maximale possible (H/log2(N) où N est la taille de l'alphabet) pour obtenir une échelle comparable de 0 à 1.
+> Pas en divisant par la longueur : H est déjà une moyenne en bits par jeton, donc deux documents aux mêmes fréquences de jetons ont la même H, quelle que soit leur longueur. Comparez H directement sur le même alphabet, ou divisez-la par l'entropie maximale possible (H/log2(N) où N est la taille de l'alphabet) pour obtenir une échelle comparable de 0 à 1. La longueur compte autrement : H est estimée à partir des fréquences observées, et un document court donne une estimation plus bruitée qui tend à sortir trop basse ; comparez donc des documents de longueur similaire ou indiquez l'incertitude.
 
 **4. Une politique a une entropie très faible mais les utilisateurs la trouvent confuse. Qu'est-ce qui pourrait l'expliquer ?**
 > Une entropie faible signifie une structure répétitive, mais le contenu à l'intérieur de cette structure peut être peu clair, contradictoire ou mal rédigé. La simplicité structurelle ne garantit pas la clarté sémantique.

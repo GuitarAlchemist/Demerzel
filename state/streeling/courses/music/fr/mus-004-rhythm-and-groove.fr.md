@@ -413,15 +413,15 @@ Une **polyrythmie** est l'émission simultanée de deux regroupements rythmiques
 
 Deux temps dans la durée de trois, ou trois temps dans la durée de deux. Les deux rythmes partagent la même durée totale mais la divisent différemment.
 
-La phrase mnémotechnique pour 3:2 est **« pass the god-damn but-ter »** — dites-la à voix haute avec un espacement égal entre chaque syllabe :
+La phrase mnémotechnique pour 3:2 est **« Pas-sez-moi-du-pain-blanc »** (six syllabes, sans e muet) — dites-la à voix haute avec un espacement égal entre chaque syllabe :
 
 ```
-Syllabes : pass   the    god   damn   but   ter
+Syllabes : pas    sez    moi   du     pain  blanc
 3 coups :  X             X            X       (sur les syllabes 1, 3, 5)
 2 coups :  UN                  DEUX           (sur les syllabes 1, 4)
 ```
 
-« pass » et « damn » s'alignent sur les deux temps, tandis que « pass », « god » et « but » marquent les trois — les deux groupements ne se rencontrent que sur « pass ».
+« pas » et « du » s'alignent sur les deux temps, tandis que « pas », « moi » et « pain » marquent les trois — les deux groupements ne se rencontrent que sur « pas ».
 
 ### Rythme croisé 3:4
 
@@ -455,7 +455,7 @@ Beaucoup de guitaristes trouvent les polyrythmies plus faciles à sentir qu'à c
 
 ### Exercice pratique
 
-Réglez un métronome à 60 BPM. Frappez trois coups régulièrement espacés dans vos mains pour chaque paire de clics du métronome (« pass-the-god » sur le clic 1, « damn-but-ter » sur le clic 2). C'est la polyrythmie 3:2. Puis inversez : deux frappes pour chaque groupe de trois clics. Les deux sont difficiles au début ; la patience et les tempos lents sont essentiels.
+Réglez un métronome à 60 BPM. Frappez trois coups régulièrement espacés dans vos mains pour chaque paire de clics du métronome (« pas-sez-moi » sur le clic 1, « du-pain-blanc » sur le clic 2). C'est la polyrythmie 3:2. Puis inversez : deux frappes pour chaque groupe de trois clics. Les deux sont difficiles au début ; la patience et les tempos lents sont essentiels.
 
 ---
 
@@ -536,8 +536,8 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 **4. Décrivez un motif de Travis picking de base : quelle main joue quoi, et quels temps sont couverts.**
 > Le pouce joue des notes de basse alternées sur chaque temps de noire (1, 2, 3, 4), typiquement en alternant entre la fondamentale de l'accord et la quinte (ou une autre note de basse). Les doigts (index, majeur, parfois annulaire) pincent les cordes aiguës sur les subdivisions « et » entre les temps du pouce, créant une texture continue en croches. Le pouce fournit la pulsation ; les doigts ajoutent la syncope par-dessus.
 
-**5. Frappez ou tapez une polyrythmie 3:2 avec la phrase « pass the goddamn butter ». Décrivez comment les deux rythmes s'alignent.**
-> Dites « pass-the-god-damn-but-ter » avec chaque syllabe également espacée sur deux temps. Les six syllabes forment le regroupement par trois (toutes les deux syllabes = une des trois pulsations : « pass-the », « god-damn », « but-ter »). Le regroupement par deux tombe sur « pass » (temps 1) et sur le « d » de « damn » (temps 2, qui est la quatrième syllabe, à mi-parcours). Ainsi, trois pulsations également espacées s'alignent sur deux pulsations également espacées tout au début (« pass » = temps 1 des deux) et seulement au début du cycle suivant.
+**5. Frappez ou tapez une polyrythmie 3:2 avec la phrase « Passez-moi du pain blanc ». Décrivez comment les deux rythmes s'alignent.**
+> Dites « pas-sez-moi-du-pain-blanc » avec chaque syllabe également espacée sur deux temps. Les six syllabes forment le regroupement par trois (toutes les deux syllabes = une des trois pulsations : « pas-sez », « moi-du », « pain-blanc »). Le regroupement par deux tombe sur « pas » (temps 1) et sur le « d » de « du » (temps 2, qui est la quatrième syllabe, à mi-parcours). Ainsi, trois pulsations également espacées s'alignent sur deux pulsations également espacées tout au début (« pas » = temps 1 des deux) et seulement au début du cycle suivant.
 
 **Critères de réussite :** à partir d'un chiffrage de mesure, compter à voix haute au moins deux niveaux de subdivision (temps + croches ou croches + doubles croches), identifier toute syncope ou liaison, et décrire le caractère qui en résulte en termes de famille de mesure (simple/composée/asymétrique) et de type de groove.
 

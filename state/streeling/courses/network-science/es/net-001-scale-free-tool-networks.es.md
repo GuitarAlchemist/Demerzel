@@ -116,7 +116,7 @@ Para analizar tu propia red de herramientas:
 1. **Mapea los nodos:** enumera todos los repositorios, herramientas y servicios
 2. **Mapea las aristas:** para cada par, comprueba si comparten herramientas, esquemas, protocolos o dependencias
 3. **Calcula la distribución de grados:** cuenta las conexiones por nodo
-4. **Represéntala en escala log-log:** si la distribución es aproximadamente lineal en un gráfico log-log, tienes un comportamiento libre de escala
+4. **Pon a prueba la cola:** un gráfico log-log aproximadamente recto no basta, porque las distribuciones lognormales, exponenciales estiradas y truncadas también parecen rectas en un intervalo limitado. Ajusta una ley de potencia a la cola por máxima verosimilitud, con el umbral inferior que mejor se ajuste a los datos; comprueba la bondad del ajuste; y compárala con esas alternativas mediante cocientes de verosimilitud (Clauset, Shalizi y Newman). Di que la red es libre de escala solo si la ley de potencia es plausible y ninguna alternativa se ajusta claramente mejor. Con unas pocas decenas de nodos, espera que la prueba no sea concluyente
 5. **Identifica los hubs:** solo cuando el paso 4 muestre una cola pesada, ordena los nodos por grado y llama hubs a los pocos que la encabezan, cuyo grado supera con creces al del resto. Un corte fijo como el decil superior señala nodos en cualquier grafo, incluso en uno regular donde ningún nodo destaca, y en un grafo de cinco nodos selecciona medio nodo: solo puede dar cuenta de la cabeza de una cola ya establecida. Tampoco uses un umbral basado en la media y la desviación típica: con `gamma` entre 2 y 3 el segundo momento diverge, así que la desviación típica que mides la fijan los propios hubs y crece con la red — la prueba usaría los hubs para definir el umbral que debe encontrarlos
 
 ---
@@ -155,6 +155,7 @@ Para analizar tu propia red de herramientas:
 ## Base de investigación
 
 - Barabasi & Albert (1999) — redes libres de escala, y el nombre de enlace preferencial; el mecanismo en sí es más antiguo, como ventaja acumulativa (Yule 1925, Simon 1955, Price 1976)
+- Clauset, Shalizi y Newman (2009), "Power-law distributions in empirical data", *SIAM Review* 51: ajustar una ley de potencia a la cola y contrastarla con las alternativas
 - Los estudios de dependencias de software muestran distribuciones en ley de potencia en npm, PyPI y crates.io
 - La federación MCP crea de forma natural una topología de concentrador y radios con los repositorios de gobernanza como nodos centrales
 - Validado de forma cruzada con GPT-4o-mini: acuerdo medio — sólido respaldo teórico, se necesitan datos específicos de MCP

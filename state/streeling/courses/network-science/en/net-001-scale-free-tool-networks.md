@@ -116,7 +116,7 @@ To analyze your own tool network:
 1. **Map nodes:** List all repos, tools, and services
 2. **Map edges:** For each pair, check if they share tools, schemas, protocols, or dependencies
 3. **Compute degree distribution:** Count connections per node
-4. **Plot on log-log scale:** If the distribution is roughly linear on a log-log plot, you have scale-free behavior
+4. **Test the tail:** A roughly straight log-log plot is not enough, since lognormal, stretched-exponential and truncated distributions also look straight over a limited range. Fit a power law to the tail by maximum likelihood, with the lower cutoff that best matches the data; test how well it fits; and compare it with those alternatives by likelihood ratios (Clauset, Shalizi and Newman). Call the network scale-free only if the power law is plausible and no alternative fits clearly better. With a few dozen nodes, expect the test to be inconclusive
 5. **Identify hubs:** Only once step 4 shows a heavy tail, rank nodes by degree and name as hubs the few at its head, whose degree stands far above the rest. A fixed cut such as the top decile names some nodes in any graph, even a regular one where no node stands out, and in a five-node graph it selects half a node, so it can only report the head of a tail already established. Do not use a threshold built on the mean and standard deviation either: with `gamma` between 2 and 3 the second moment diverges, so the standard deviation you measure is set by the hubs themselves and grows with the network — the test would be using the hubs to define the threshold meant to find them
 
 ---
@@ -155,6 +155,7 @@ To analyze your own tool network:
 ## Research Basis
 
 - Barabasi & Albert (1999) — scale-free networks, and the naming of preferential attachment; the mechanism itself is older, as cumulative advantage (Yule 1925, Simon 1955, Price 1976)
+- Clauset, Shalizi & Newman (2009), "Power-law distributions in empirical data", *SIAM Review* 51 — fitting a power-law tail and testing it against alternatives
 - Software dependency studies show power-law distributions in npm, PyPI, crates.io
 - MCP federation naturally creates hub-spoke topology with governance repos as central nodes
 - Cross-validated with GPT-4o-mini: medium agreement — strong theoretical support, specific MCP data needed

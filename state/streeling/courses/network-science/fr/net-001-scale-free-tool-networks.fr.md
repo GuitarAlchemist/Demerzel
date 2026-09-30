@@ -116,7 +116,7 @@ Pour analyser votre propre réseau d'outils :
 1. **Cartographiez les nœuds :** listez tous les dépôts, outils et services
 2. **Cartographiez les arêtes :** pour chaque paire, vérifiez s'ils partagent des outils, des schémas, des protocoles ou des dépendances
 3. **Calculez la distribution des degrés :** comptez les connexions par nœud
-4. **Tracez-la en échelle log-log :** si la distribution est à peu près linéaire sur un graphique log-log, vous avez un comportement sans échelle
+4. **Testez la queue :** un graphique log-log à peu près droit ne suffit pas, car les distributions log-normales, exponentielles étirées et tronquées paraissent elles aussi droites sur un intervalle limité. Ajustez une loi de puissance à la queue par maximum de vraisemblance, avec le seuil inférieur qui colle le mieux aux données ; testez la qualité de l'ajustement ; et comparez-la à ces alternatives par des rapports de vraisemblance (Clauset, Shalizi et Newman). Ne dites le réseau sans échelle que si la loi de puissance est plausible et qu'aucune alternative ne s'ajuste nettement mieux. Avec quelques dizaines de nœuds, attendez-vous à un test non concluant
 5. **Identifiez les hubs :** seulement une fois que l'étape 4 montre une queue lourde, classez les nœuds par degré et appelez hubs les quelques nœuds en tête, dont le degré dépasse de loin celui des autres. Une coupe fixe comme le décile supérieur désigne des nœuds dans n'importe quel graphe, même un graphe régulier où aucun nœud ne se distingue, et dans un graphe de cinq nœuds elle retient un demi-nœud : elle ne peut que rendre compte de la tête d'une queue déjà établie. N'utilisez pas non plus un seuil fondé sur la moyenne et l'écart-type : avec `gamma` entre 2 et 3, le second moment diverge, si bien que l'écart-type mesuré est fixé par les hubs eux-mêmes et croît avec le réseau — le test utiliserait les hubs pour définir le seuil censé les trouver
 
 ---
@@ -155,6 +155,7 @@ Pour analyser votre propre réseau d'outils :
 ## Bases de recherche
 
 - Barabasi & Albert (1999) — réseaux sans échelle, et le nom d'attachement préférentiel ; le mécanisme lui-même est plus ancien, sous le nom d'avantage cumulatif (Yule 1925, Simon 1955, Price 1976)
+- Clauset, Shalizi & Newman (2009), « Power-law distributions in empirical data », *SIAM Review* 51 — ajuster une loi de puissance à la queue et la tester contre les alternatives
 - Des études des dépendances logicielles montrent des distributions en loi de puissance dans npm, PyPI, crates.io
 - La fédération MCP crée naturellement une topologie en étoile, avec les dépôts de gouvernance comme nœuds centraux
 - Validation croisée avec GPT-4o-mini : accord moyen — soutien théorique solide, données MCP spécifiques nécessaires

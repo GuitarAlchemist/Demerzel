@@ -100,7 +100,7 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 
 2. **La granularidad de los tokens importa.** Los tokens gruesos (solo KEY/SCALAR) dan una entropía distinta de la de los tokens finos (nombres de clave individuales). La elección del alfabeto moldea la medición.
 
-3. **El tamaño es un factor de confusión.** Los documentos más largos exploran de forma natural más parte del espacio de tokens. Normaliza por la longitud del documento o compara documentos de tamaño similar.
+3. **El tamaño es un factor de confusión.** Los documentos más largos exploran de forma natural más parte del espacio de tokens, y la entropía estimada a partir de un documento corto es más ruidosa y tiende a salir baja. No dividas H por la longitud: ya es un promedio por token. Compara documentos de tamaño similar o indica la incertidumbre de cada estimación.
 
 4. **Regularidad no es simplicidad.** Una estructura profundamente anidada pero perfectamente regular (como un árbol de decisión) tiene entropía baja, pero aun así puede ser difícil de entender.
 
@@ -130,7 +130,7 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 > Porque la entropía mide la variedad estructural, no si esa variedad está justificada por el dominio. Los dominios complejos requieren políticas complejas. La entropía señala candidatos para revisión, no una refactorización automática.
 
 **3. ¿Cómo compararías la entropía entre políticas de distinta longitud?**
-> Normaliza por la longitud del documento (entropía por token) o por la entropía máxima posible (H/log2(N), donde N es el tamaño del alfabeto) para obtener una escala comparable de 0 a 1.
+> No dividiendo por la longitud: H ya es un promedio en bits por token, así que dos documentos con las mismas frecuencias de tokens tienen la misma H sea cual sea su longitud. Compara H directamente sobre el mismo alfabeto, o divídela por la entropía máxima posible (H/log2(N), donde N es el tamaño del alfabeto) para obtener una escala comparable de 0 a 1. La longitud importa de otro modo: H se estima a partir de las frecuencias observadas, y un documento corto da una estimación más ruidosa que tiende a salir baja; compara documentos de longitud similar o indica la incertidumbre.
 
 **4. Una política tiene una entropía muy baja, pero los usuarios dicen que es confusa. ¿Qué podría explicarlo?**
 > Una entropía baja significa una estructura repetitiva, pero el contenido dentro de esa estructura podría ser poco claro, contradictorio o estar mal redactado. La simplicidad estructural no garantiza la claridad semántica.

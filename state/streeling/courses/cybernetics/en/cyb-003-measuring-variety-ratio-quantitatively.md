@@ -159,10 +159,10 @@ The variety ratio only tells half the story. We must also measure the variety of
 | Source | Estimate (N) | Variety V |
 |--------|-------------|-----------|
 | Consumer repos (ix, tars, ga) | 3 | 1.58 bits |
-| Repo state combinations (3 repos x ~10 states each) | 10^3 = 1000 | 9.97 bits |
+| Repo state combinations (3 repos x ~10 states each) | 10 to 10^3 = 1000 | 3.32 to 9.97 bits |
 | External environment changes (libraries, APIs, models) | ~100 | 6.64 bits |
 
-**Total external disturbance variety:** the repo state combinations already cover the three repos, so the first row adds nothing. The joint variety of the other two lies between the larger row and their sum: V_D_ext is at least **9.97 bits**, and at most log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** if an environment change can arrive in any of the 1000 repo states
+**Total external disturbance variety:** the repo state combinations already cover the three repos, so the first row adds nothing. That row is itself a range: with about 10 states each, the three repos have between 10 joint states (3.32 bits), if the state of one determines the others, and 10^3 = 1000 (9.97 bits), if they vary independently. The environment row is then the largest single term: V_D_ext is at least **6.64 bits**, and at most log2(1000 × 100) = 9.97 + 6.64 = **16.61 bits** if an environment change can arrive in any of the 1000 repo states
 
 ### Internal Disturbances (V_D_int)
 | Source | Estimate (N) | Variety V |
@@ -182,18 +182,18 @@ V(regulatory response) >= V(disturbance)
 ```
 
 - V_R_amp lies between its largest single component, the confidence thresholds at 2.32 bits, and the sum of all three, 6.32 bits, reached only if every combination of logic state, confidence threshold and PDCA state can be produced
-- V_D lies between the largest single source, 9.97 bits, and the sum of every source, 16.61 + 16.02 = 32.63 bits
-- **Gap: at least 9.97 - 6.32 = 3.65 bits, at most 32.63 - 2.32 = 30.31 bits**
+- V_D lies between the largest single source, the policy interactions at 9.38 bits, and the sum of every source, 16.61 + 16.02 = 32.63 bits
+- **Gap: at least 9.38 - 6.32 = 3.06 bits, at most 32.63 - 2.32 = 30.31 bits**
 
 Both ranges hold whatever the dependencies: a joint state space has at least as many states as its largest part and at most the product of their sizes. The gap is smallest when the disturbance sources are as dependent, and the response components as independent, as they can be; it is largest in the opposite case. Causal links between disturbance sources (a repo change that triggers a belief change, a policy interaction that prompts a grammar proposal) pull V_D down, and combinations of response values that governance never produces pull V_R_amp down. Measuring both joint varieties, by counting the distinct combinations actually observed per cycle, would place the gap within the range.
 
-This means the regulatory system faces between 2^3.65 ≈ 12.6 and 2^30.31 ≈ 1.3 × 10^9 times more disturbance variety than it can produce response variety. The gap is absorbed by:
+This means the regulatory system faces between 2^3.06 ≈ 8.3 and 2^30.31 ≈ 1.3 × 10^9 times more disturbance variety than it can produce response variety. The gap is absorbed by:
 
 1. **Human escalation** — the confidence threshold system routes difficult decisions to humans, borrowing their variety
 2. **Constitutional override** — the Asimov Laws collapse complex decisions to binary (safe/unsafe), reducing required variety
 3. **PDCA cycling** — sequential processing converts parallel disturbances into manageable queues
 
-These are legitimate variety absorption mechanisms, but even the 3.65-bit lower bound suggests Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
+These are legitimate variety absorption mechanisms, but even the 3.06-bit lower bound suggests Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
 
 ## Measurement Protocol
 
@@ -266,7 +266,7 @@ Cross-validation with GPT-4o confirmed:
 
 1. **Track variety ratios per cycle** — Add variety snapshot to `state/governance/variety-metrics.json` (or equivalent state file). Monitor dimensional ratios for drift.
 2. **Add structural quality gates** — The structural ratio (17.00) is above healthy range. Introduce grammar test coverage requirements and production usage tracking to increase attenuation without reducing generativity.
-3. **Monitor the regulatory gap (3.65 to 30.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest source of internal disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Those bits raise the upper bound at once, and the lower bound once policy interactions overtake the repo-state term (9.97 bits), from 46 policies. Consider policy grouping or hierarchical policy organization.
+3. **Monitor the regulatory gap (3.06 to 30.31 bits)** — Policy-interaction complexity (666 pairwise combinations from 37 policies) is the largest single source of disturbance. As policies grow, the number of pairs grows quadratically, but its variety log2(n(n-1)/2) grows only logarithmically, by about 2 bits each time the policy count doubles. Being the largest single source, it raises both bounds at once. Consider policy grouping or hierarchical policy organization.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 78-82) should be expanded with quantitative measurement productions.
 
