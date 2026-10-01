@@ -118,7 +118,7 @@ trata como un voto, no como una orden.
 
 ## 4. El patrón de bucle gobernado de Demerzel
 
-El framework Demerzel lo implementa mediante `autonomous-loop-policy.yaml`:
+El framework Demerzel especifica este patrón en `autonomous-loop-policy.yaml`, con límites de iteraciones y de estancamiento pero sin plazo por iteración:
 
 ```
 BUCLE GOBERNADO
@@ -141,10 +141,10 @@ BUCLE GOBERNADO
     └── Anomalía detectada → señal de conciencia + detención
 ```
 
-Este patrón aparece en tres lugares del ecosistema Demerzel:
-- **Seldon Plan:** límite de 6 ciclos al día, registro de novedad como prueba de progreso
-- **Demerzel Driver:** límite de 12 ciclos consecutivos, señales de conciencia como detección de anomalías
-- **Ralph Loop:** límite de iteraciones + métrica de convergencia (tasa de pruebas superadas) como criterio externo
+Este patrón aparece en tres lugares del ecosistema Demerzel, y solo los dos primeros acotan la duración de una iteración:
+- **Seldon Plan:** límite de 6 ciclos al día, registro de novedad como prueba de progreso, duración máxima de 30 minutos por ciclo (`policies/seldon-plan-policy.yaml`)
+- **Demerzel Driver:** límite de 12 ciclos consecutivos, señales de conciencia como detección de anomalías, plazo de ciclo (2 horas flexible, luego parada forzosa a las 2h15)
+- **Ralph Loop:** límite de iteraciones + métrica de convergencia (tasa de pruebas superadas) como criterio externo, pero sin plazo por iteración: ni `policies/autonomous-loop-policy.yaml` ni `.claude/skills/demerzel-loop/SKILL.md` lo definen, así que una iteración que se bloquea nunca llega al contador
 
 ---
 
@@ -182,7 +182,7 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 
 - Un LLM no puede detectar de forma fiable sus propios bucles infinitos: la terminación debe ser externa
 - Un bucle gobernado tiene seis propiedades: límite estricto con un plazo máximo en cada iteración, prueba de progreso, criterio externo, punto de control, deduplicación, decisión de salida externa, más un estado serializable si debe poder pausarse y reanudarse
-- El framework Demerzel las implementa en seldon-plan, demerzel-drive y Ralph Loop
+- El framework Demerzel aplica el patrón en seldon-plan, demerzel-drive y Ralph Loop; solo los dos primeros fijan un plazo por iteración, así que Ralph Loop aún no se detiene por construcción
 - El artículo 9 (Autonomía acotada) es la base constitucional: los límites están predefinidos y ampliarlos requiere escalado
 
 ## Lecturas adicionales

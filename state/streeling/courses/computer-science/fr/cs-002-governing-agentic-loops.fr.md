@@ -118,7 +118,7 @@ traité comme un vote, pas comme un ordre.
 
 ## 4. Le schéma de boucle gouvernée de Demerzel
 
-Le framework Demerzel l'implémente via `autonomous-loop-policy.yaml` :
+Le framework Demerzel spécifie ce schéma dans `autonomous-loop-policy.yaml`, avec des limites d'itérations et de stagnation mais sans délai par itération :
 
 ```
 BOUCLE GOUVERNÉE
@@ -141,10 +141,10 @@ BOUCLE GOUVERNÉE
     └── Anomalie détectée → signal de conscience + arrêt
 ```
 
-Ce schéma apparaît à trois endroits de l'écosystème Demerzel :
-- **Seldon Plan :** plafond de 6 cycles par jour, registre de nouveauté comme test de progression
-- **Demerzel Driver :** plafond de 12 cycles consécutifs, signaux de conscience comme détection d'anomalie
-- **Ralph Loop :** plafond d'itérations + métrique de convergence (taux de réussite des tests) comme critère externe
+Ce schéma apparaît à trois endroits de l'écosystème Demerzel, et seuls les deux premiers bornent la durée d'une itération :
+- **Seldon Plan :** plafond de 6 cycles par jour, registre de nouveauté comme test de progression, durée maximale de 30 minutes par cycle (`policies/seldon-plan-policy.yaml`)
+- **Demerzel Driver :** plafond de 12 cycles consécutifs, signaux de conscience comme détection d'anomalie, délai de cycle (2 heures en souple, puis arrêt forcé à 2h15)
+- **Ralph Loop :** plafond d'itérations + métrique de convergence (taux de réussite des tests) comme critère externe, mais aucun délai par itération : ni `policies/autonomous-loop-policy.yaml` ni `.claude/skills/demerzel-loop/SKILL.md` n'en définit, si bien qu'une itération qui se bloque n'atteint jamais le compteur
 
 ---
 
@@ -182,7 +182,7 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 
 - Un LLM ne peut pas détecter de façon fiable ses propres boucles infinies — l'arrêt doit être externe
 - Une boucle gouvernée a six propriétés : plafond strict avec un délai maximal sur chaque itération, test de progression, critère externe, point de contrôle, déduplication, décision de sortie externe — plus un état sérialisable si elle doit pouvoir être mise en pause et reprise
-- Le framework Demerzel les implémente dans seldon-plan, demerzel-drive et Ralph Loop
+- Le framework Demerzel applique le schéma dans seldon-plan, demerzel-drive et Ralph Loop ; seuls les deux premiers fixent un délai par itération, si bien que Ralph Loop ne s'arrête pas encore par construction
 - L'article 9 (Autonomie bornée) en est la base constitutionnelle — les limites sont prédéfinies, les étendre exige une escalade
 
 ## Pour aller plus loin

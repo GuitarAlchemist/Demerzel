@@ -84,8 +84,8 @@ Cadences are the punctuation marks of music:
 
 | Cadence | Symbol | Function | Feels Like |
 |---------|--------|----------|-----------|
-| Perfect Authentic (PAC) | V - I (both in root position, I on strong beat) | Full stop | Period (.) |
-| Imperfect Authentic (IAC) | V - I (weaker voicing) | Minor stop | Semicolon (;) |
+| Perfect Authentic (PAC) | V - I (both in root position, tonic in the soprano) | Full stop | Period (.) |
+| Imperfect Authentic (IAC) | V - I (an inverted chord, or the soprano not on the tonic) | Minor stop | Semicolon (;) |
 | Half Cadence (HC) | ends on V | Pause, expectation | Comma (,) |
 | Deceptive | V - vi (not V - I as expected) | Surprise turn | Dash (—) |
 | Plagal | IV - I | Soft resolution | "Amen" ending |
@@ -151,7 +151,7 @@ As forms grew more ambitious in the 18th century, composers developed structures
 A principal theme (the **refrain**, labeled A) alternates with contrasting episodes:
 
 - **Five-part rondo:** A B A C A
-- **Seven-part rondo:** A B A C A B A (also called sonata-rondo)
+- **Seven-part rondo:** A B A C A B A (the layout of the sonata-rondo, but the letters alone do not make one: in a sonata-rondo, B first comes in a contrasting key and returns in the tonic, as a sonata form's second theme does, and C often works like a development)
 
 The key feature is the recurring A. Every time the A returns, the listener feels "we're home again." The episodes (B, C) take us to contrasting keys and characters.
 

@@ -118,7 +118,7 @@ treated as a vote, not a command.
 
 ## 4. The Demerzel Governed Loop Pattern
 
-The Demerzel framework implements this via the `autonomous-loop-policy.yaml`:
+The Demerzel framework specifies this pattern in `autonomous-loop-policy.yaml`, with iteration and stall limits but no per-iteration deadline:
 
 ```
 GOVERNED LOOP
@@ -141,10 +141,10 @@ GOVERNED LOOP
     └── Anomaly detected → conscience signal + halt
 ```
 
-This pattern appears in three places in the Demerzel ecosystem:
-- **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test
-- **Demerzel Driver:** 12 consecutive cycle cap, conscience signals as anomaly detection
-- **Ralph Loop:** iteration cap + convergence metric (test pass rate) as external criterion
+This pattern appears in three places in the Demerzel ecosystem, and only the first two bound the duration of an iteration:
+- **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test, 30-minute maximum duration per cycle (`policies/seldon-plan-policy.yaml`)
+- **Demerzel Driver:** 12 consecutive cycle cap, conscience signals as anomaly detection, cycle timeout (2 hours soft, then a hard kill at 2h15m)
+- **Ralph Loop:** iteration cap + convergence metric (test pass rate) as external criterion, but no per-iteration deadline: neither `policies/autonomous-loop-policy.yaml` nor `.claude/skills/demerzel-loop/SKILL.md` defines one, so an iteration that blocks never reaches the counter
 
 ---
 
@@ -182,7 +182,7 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 
 - An LLM cannot reliably detect its own infinite loops — termination must be external
 - A governed loop has six properties: hard cap with a deadline on every iteration, progress test, external criterion, checkpoint, dedup, external exit decision — plus serializable state if it must be paused and resumed
-- The Demerzel framework implements these in seldon-plan, demerzel-drive, and Ralph Loop
+- The Demerzel framework applies the pattern in seldon-plan, demerzel-drive, and Ralph Loop; only the first two set a per-iteration deadline, so Ralph Loop does not yet halt by construction
 - Article 9 (Bounded Autonomy) is the constitutional basis — bounds are predefined, extension requires escalation
 
 ## Further Reading

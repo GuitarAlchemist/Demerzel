@@ -84,8 +84,8 @@ Las cadencias son los signos de puntuación de la música:
 
 | Cadencia | Símbolo | Función | Se siente como |
 |---------|--------|----------|-----------|
-| Auténtica perfecta (PAC) | V - I (ambos en estado fundamental, I en tiempo fuerte) | Final completo | Punto (.) |
-| Auténtica imperfecta (IAC) | V - I (disposición más débil) | Pausa menor | Punto y coma (;) |
+| Auténtica perfecta (PAC) | V - I (ambos en estado fundamental, tónica en el soprano) | Final completo | Punto (.) |
+| Auténtica imperfecta (IAC) | V - I (un acorde invertido, o el soprano fuera de la tónica) | Pausa menor | Punto y coma (;) |
 | Semicadencia (HC) | termina en V | Pausa, expectativa | Coma (,) |
 | Rota | V - vi (no V - I como se esperaba) | Giro sorpresa | Raya (—) |
 | Plagal | IV - I | Resolución suave | Final de "Amén" |
@@ -151,7 +151,7 @@ A medida que las formas se volvieron más ambiciosas en el siglo XVIII, los comp
 Un tema principal (el **estribillo**, etiquetado A) alterna con episodios contrastantes:
 
 - **Rondó en cinco partes:** A B A C A
-- **Rondó en siete partes:** A B A C A B A (también llamado rondó-sonata)
+- **Rondó en siete partes:** A B A C A B A (el esquema del rondó-sonata, pero las letras por sí solas no lo hacen: en un rondó-sonata, B aparece primero en una tonalidad contrastante y vuelve en la tónica, como el segundo tema de una forma sonata, y C suele funcionar como un desarrollo)
 
 El rasgo clave es la A recurrente. Cada vez que vuelve la A, el oyente siente "estamos de nuevo en casa". Los episodios (B, C) nos llevan a tonalidades y caracteres contrastantes.
 

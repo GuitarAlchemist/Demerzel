@@ -84,8 +84,8 @@ Les cadences sont les signes de ponctuation de la musique :
 
 | Cadence | Symbole | Fonction | Ressenti |
 |---------|--------|----------|-----------|
-| Cadence parfaite (PAC) | V - I (tous deux à l'état fondamental, I sur un temps fort) | Arrêt complet | Point (.) |
-| Cadence authentique imparfaite (IAC) | V - I (disposition plus faible) | Arrêt secondaire | Point-virgule (;) |
+| Cadence parfaite (PAC) | V - I (tous deux à l'état fondamental, tonique au soprano) | Arrêt complet | Point (.) |
+| Cadence authentique imparfaite (IAC) | V - I (un accord renversé, ou le soprano hors de la tonique) | Arrêt secondaire | Point-virgule (;) |
 | Demi-cadence (HC) | se termine sur V | Pause, attente | Virgule (,) |
 | Rompue | V - vi (et non V - I comme attendu) | Tournant surprise | Tiret (—) |
 | Plagale | IV - I | Résolution douce | Fin en « Amen » |
@@ -151,7 +151,7 @@ La forme menuet et trio de l'époque classique est ternaire : Menuet (A) - Trio 
 Un thème principal (le **refrain**, noté A) alterne avec des épisodes contrastants :
 
 - **Rondo en cinq parties :** A B A C A
-- **Rondo en sept parties :** A B A C A B A (aussi appelé rondo-sonate)
+- **Rondo en sept parties :** A B A C A B A (le plan du rondo-sonate, mais les lettres seules n'en font pas un : dans un rondo-sonate, B paraît d'abord dans une tonalité contrastante et revient à la tonique, comme le second thème d'une forme sonate, et C fonctionne souvent comme un développement)
 
 La caractéristique essentielle est le retour de A. Chaque fois que A revient, l'auditeur ressent « nous sommes de retour à la maison ». Les épisodes (B, C) nous emmènent vers des tonalités et des caractères contrastants.
 
