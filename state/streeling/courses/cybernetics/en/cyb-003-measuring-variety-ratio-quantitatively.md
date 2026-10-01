@@ -306,7 +306,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 2. **Measure the structural gates before adding any** — Log proposed grammar changes and the gates' verdicts, seed changes the gates must reject, and track grammar test coverage and production usage; add a gate where a seeded failure passes or coverage is missing. The verdicts also make A_S measurable.
 3. **Measure regulation** — Record each disturbance met, the response given and its outcome on the essential variables. The inventories and estimates bound neither variety. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
-5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 76-82) should be expanded with quantitative measurement productions.
+5. **Evolve grammar Section 6** — Since PR #1164, the `sci-cybernetics.ebnf` grammar's requisite variety section states the law on outcomes, in both forms, with the two conditions under which it applies. Productions for the measurement protocol itself, the per-cycle records of Metric 3, remain to be added.
 
 ## Connection to CYB-001 and CYB-002
 

@@ -77,7 +77,14 @@ regulatory_mechanism ::= feedback | buffer | structural_change
 (* 6. Ashby's Law of Requisite Variety                           *)
 (* ============================================================ *)
 
-requisite_variety ::= "variety" "(" regulator ")" ">=" "variety" "(" disturbance ")"
+(* Ashby states the law on outcomes. Both forms below hold only where every disturbance *)
+(* met received a response and no response brought two disturbances to the same       *)
+(* outcome; a cycle's record has to show both, or the bound is not applicable          *)
+(* (CYB-003, Metric 3).                                                                *)
+requisite_variety ::= outcome_bound | regulation_condition
+outcome_bound ::= "variety" "(" outcomes ")" ">=" "variety" "(" disturbance ")" "-" "variety" "(" regulator ")" applicability
+regulation_condition ::= "variety" "(" regulator ")" ">=" "variety" "(" disturbance ")" "-" "variety" "(" acceptable_outcomes ")" applicability
+applicability ::= "where" "every_disturbance_answered" "and" "distinct_outcomes_per_response"
 variety_amplifier ::= intelligence | delegation | automation
 variety_attenuator ::= policy | filter | abstraction
 
