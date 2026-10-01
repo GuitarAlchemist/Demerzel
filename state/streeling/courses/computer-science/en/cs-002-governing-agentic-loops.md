@@ -79,7 +79,7 @@ Each iteration must produce a measurable state change. The framework compares st
 before and after each step. If `hash(state_n) == hash(state_n-1)`, the loop is stalled. Hash the
 fields that carry the result, not the iteration counter — that one differs at every step, so the
 stall test would never fire. And a stall test catches repetition, not drift: a loop that keeps
-changing without converging is stopped by the cap and the external criterion, not here.
+changing without converging never meets the external criterion, and the cap stops it, not this test.
 
 ```python
 def stall_test(state_before, state_after):
@@ -91,12 +91,16 @@ if stall_test(prev_state, curr_state):
 
 ### Property 3: External Termination Criterion
 The exit condition is specified before the loop starts, not generated during execution.
-The model cannot redefine convergence mid-loop.
+The model cannot redefine convergence mid-loop. The iteration cap is not part of the criterion: a loop that reaches the cap has not converged, and it halts and escalates as Property 1 requires, rather than reporting its work as complete.
 
 ```python
 # Good: criterion is external
 def is_complete(state) -> bool:
-    return state.belief_confidence >= 0.85 or state.iteration >= MAX
+    return state.belief_confidence >= 0.85
+
+# Reaching the cap is not success: halt and escalate (Property 1)
+def cap_reached(state) -> bool:
+    return state.iteration >= MAX
 
 # Bad: model declares its own completion
 result = model.run("keep going until you think you're done")

@@ -35,7 +35,7 @@ H(X) = -sum(p(x) * log2(p(x))) para todos los símbolos x del alfabeto X
 
 Donde `p(x)` es la probabilidad de que aparezca el símbolo `x`. La entropía es máxima cuando todos los símbolos son igualmente probables (sorpresa máxima) y mínima cuando un símbolo domina (ninguna sorpresa).
 
-**Idea clave:** la entropía mide cuán *impredecible* es el siguiente símbolo. Un documento en el que todas las líneas se parecen tiene entropía baja. Un documento con una estructura muy variada tiene entropía alta.
+**Idea clave:** calculada solo a partir de las frecuencias de los símbolos, como en esta lección, la entropía mide cuán *impredecible* es un símbolo elegido al azar en el documento, sin tener en cuenta el orden: mide cuán por igual usa el documento sus tipos de símbolo. Cuán impredecible es el *siguiente* símbolo, dado el anterior, lo mide la entropía condicional H(X_n | X_(n-1)), estimada como H(pares) - H(X) a partir de las frecuencias de los pares consecutivos; nunca supera H(X), y solo la iguala cuando los símbolos consecutivos son independientes. Un documento que usa pocos tipos de símbolo tiene entropía baja según ambas medidas; un documento que repite un mismo patrón formado por muchos tipos de símbolo tiene una entropía de frecuencias alta y una entropía condicional baja.
 
 ---
 
@@ -53,7 +53,7 @@ Una política de gobernanza en YAML es un documento estructurado. Podemos defini
 | `COMMENT` | Líneas que empiezan por `#` |
 | `SEPARATOR` | Separadores de documentos `---` |
 
-Al convertir una política en esta secuencia de tokens, obtenemos una cadena sobre un alfabeto finito. La entropía de Shannon nos dice entonces cuán variado es estructuralmente el documento.
+Al convertir una política en esta secuencia de tokens, obtenemos una cadena sobre un alfabeto finito. La entropía de Shannon de las frecuencias de los tokens nos dice entonces cuán variados son los tipos de token del documento, no en qué orden aparecen: barajar los tokens no la cambia, así que dos políticas con el mismo número de tokens de cada tipo tienen la misma entropía, aunque una repita un solo patrón y la otra ordene sus tokens de forma errática. La regularidad estructural es una cuestión de orden, y la medida que la ve es la entropía condicional de la sección 1, estimada a partir de los pares de tokens consecutivos.
 
 ---
 
@@ -66,8 +66,8 @@ Considera dos políticas hipotéticas:
 **Política B** (entropía alta): un documento profundamente anidado con tablas, listas dentro de listas, bloques condicionales, referencias cruzadas y tipos de valores mezclados. La secuencia de tokens usa todos los tipos de token de forma más o menos equitativa. La entropía es alta.
 
 **Interpretación:**
-- Una **entropía baja** sugiere regularidad y previsibilidad — la política tiene una estructura simple y repetitiva.
-- Una **entropía alta** sugiere variedad estructural — coexisten muchos patrones de organización distintos. Esto *puede* indicar que:
+- Una **entropía baja** indica que unos pocos tipos de token dominan la política, lo que sugiere una estructura simple. No muestra que esa estructura se repita: eso lo muestra una entropía condicional baja.
+- Una **entropía alta** indica que muchos tipos de token se usan de forma más o menos equitativa, lo que sugiere variedad estructural, aunque un solo patrón formado por muchos tipos de token también la produce. Esto *puede* indicar que:
   - La política cubre un terreno genuinamente complejo (complejidad justificada)
   - La política ha crecido orgánicamente sin una estructura coherente (complejidad accidental)
   - La política intenta hacer demasiadas cosas (desbordamiento del alcance)
@@ -102,7 +102,7 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 
 3. **El tamaño es un factor de confusión.** Los documentos más largos exploran de forma natural más parte del espacio de tokens, y la entropía estimada a partir de un documento corto es más ruidosa y tiende a salir baja. No dividas H por la longitud: ya es un promedio por token. Compara documentos de tamaño similar o indica la incertidumbre de cada estimación.
 
-4. **Regularidad no es simplicidad.** Una estructura profundamente anidada pero perfectamente regular (como un árbol de decisión) tiene entropía baja, pero aun así puede ser difícil de entender.
+4. **Regularidad no es simplicidad.** Una estructura profundamente anidada pero perfectamente regular (como un árbol de decisión) se vuelve predecible en cuanto se tienen en cuenta suficientes tokens anteriores, así que su entropía condicional dados esos tokens es baja, sean cuales sean las frecuencias de sus tokens; aun así puede ser difícil de entender.
 
 5. **El contexto lo es todo.** Una política de gobernanza para la seguridad nuclear *debe* ser compleja. La entropía debe interpretarse en relación con la complejidad inherente del dominio.
 
@@ -113,6 +113,7 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 | Término | Definición |
 |------|-----------|
 | **Entropía de Shannon** | Una medida del contenido medio de información (sorpresa) por símbolo en un mensaje |
+| **Entropía condicional** | La sorpresa media de un símbolo dados los símbolos anteriores; a diferencia de la entropía de las frecuencias de los símbolos, depende de su orden |
 | **Alfabeto de símbolos** | El conjunto de tipos de token distintos que se usan para codificar la estructura de un documento |
 | **Complejidad estructural** | La variedad y profundidad de los patrones de organización de un documento |
 | **Complejidad esencial** | Complejidad inherente al dominio del problema que no se puede eliminar |
@@ -124,7 +125,7 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 ## Autoevaluación
 
 **1. ¿Qué indica una entropía de Shannon alta en un documento de política?**
-> Una gran variedad estructural — muchos tipos de token distintos aparecen con una frecuencia similar, lo que sugiere que el documento usa patrones de organización diversos.
+> Variedad de tipos de token — muchos tipos de token distintos aparecen con una frecuencia similar, lo que sugiere que el documento usa patrones de organización diversos. No dice nada del orden de los tokens, así que no muestra si la estructura es regular.
 
 **2. ¿Por qué la entropía por sí sola no puede decirte si una política necesita simplificarse?**
 > Porque la entropía mide la variedad estructural, no si esa variedad está justificada por el dominio. Los dominios complejos requieren políticas complejas. La entropía señala candidatos para revisión, no una refactorización automática.
@@ -133,7 +134,7 @@ La entropía de Shannon como indicador de complejidad tiene límites reales:
 > No dividiendo por la longitud: H ya es un promedio en bits por token, así que dos documentos con las mismas frecuencias de tokens tienen la misma H sea cual sea su longitud. Compara H directamente sobre el mismo alfabeto, o divídela por la entropía máxima posible (H/log2(N), donde N es el tamaño del alfabeto) para obtener una escala comparable de 0 a 1. La longitud importa de otro modo: H se estima a partir de las frecuencias observadas, y un documento corto da una estimación más ruidosa que tiende a salir baja; compara documentos de longitud similar o indica la incertidumbre.
 
 **4. Una política tiene una entropía muy baja, pero los usuarios dicen que es confusa. ¿Qué podría explicarlo?**
-> Una entropía baja significa una estructura repetitiva, pero el contenido dentro de esa estructura podría ser poco claro, contradictorio o estar mal redactado. La simplicidad estructural no garantiza la claridad semántica.
+> Una entropía baja significa que dominan unos pocos tipos de token, una estructura simple, pero el contenido dentro de esa estructura podría ser poco claro, contradictorio o estar mal redactado. La simplicidad estructural no garantiza la claridad semántica.
 
 **Criterios de aprobación:** explicar la entropía de Shannon, identificar los tokens de un documento estructurado y articular la diferencia entre complejidad estructural y semántica.
 

@@ -35,7 +35,7 @@ H(X) = -sum(p(x) * log2(p(x))) pour tous les symboles x de l'alphabet X
 
 Où `p(x)` est la probabilité d'apparition du symbole `x`. L'entropie est maximale lorsque tous les symboles sont équiprobables (surprise maximale) et minimale lorsqu'un symbole domine (aucune surprise).
 
-**Idée clé :** l'entropie mesure à quel point le symbole suivant est *imprévisible*. Un document dont toutes les lignes se ressemblent a une entropie faible. Un document à la structure extrêmement variée a une entropie élevée.
+**Idée clé :** calculée à partir des seules fréquences des symboles, comme dans cette leçon, l'entropie mesure à quel point un symbole est *imprévisible* quand on le tire au hasard dans le document, sans tenir compte de l'ordre : elle mesure à quel point le document utilise ses types de symboles de manière égale. L'imprévisibilité du symbole *suivant*, connaissant celui qui le précède, est l'entropie conditionnelle H(X_n | X_(n-1)), estimée par H(paires) - H(X) à partir des fréquences des paires consécutives ; elle ne dépasse jamais H(X), et ne l'égale que si les symboles consécutifs sont indépendants. Un document qui utilise peu de types de symboles a une entropie faible selon les deux mesures ; un document qui répète un même motif fait de nombreux types de symboles a une entropie des fréquences élevée et une entropie conditionnelle faible.
 
 ---
 
@@ -53,7 +53,7 @@ Une politique de gouvernance en YAML est un document structuré. On peut défini
 | `COMMENT` | Lignes commençant par `#` |
 | `SEPARATOR` | Séparateurs de documents `---` |
 
-En convertissant une politique en cette séquence de jetons, on obtient une chaîne sur un alphabet fini. L'entropie de Shannon nous dit alors à quel point le document est structurellement varié.
+En convertissant une politique en cette séquence de jetons, on obtient une chaîne sur un alphabet fini. L'entropie de Shannon des fréquences des jetons nous dit alors à quel point les types de jetons du document sont variés, pas dans quel ordre ils viennent : mélanger les jetons ne la change pas, si bien que deux politiques ayant le même nombre de jetons de chaque type ont la même entropie, même si l'une répète un seul motif et que l'autre ordonne ses jetons de façon erratique. La régularité structurelle est une affaire d'ordre, et la mesure qui la voit est l'entropie conditionnelle de la section 1, estimée à partir des paires de jetons consécutifs.
 
 ---
 
@@ -66,8 +66,8 @@ Considérons deux politiques hypothétiques :
 **Politique B** (entropie élevée) : un document profondément imbriqué avec des tables, des listes dans des listes, des blocs conditionnels, des références croisées et des types de valeurs mélangés. La séquence de jetons utilise tous les types de jetons à peu près également. L'entropie est élevée.
 
 **Interprétation :**
-- Une **entropie faible** suggère la régularité et la prévisibilité — la politique a une structure simple et répétitive.
-- Une **entropie élevée** suggère une variété structurelle — de nombreux schémas d'organisation différents coexistent. Cela *peut* indiquer que :
+- Une **entropie faible** indique que quelques types de jetons dominent la politique, ce qui suggère une structure simple. Elle ne montre pas que cette structure se répète : c'est une entropie conditionnelle faible qui le montre.
+- Une **entropie élevée** indique que de nombreux types de jetons sont utilisés à peu près également, ce qui suggère une variété structurelle, bien qu'un seul motif fait de nombreux types de jetons la donne aussi. Cela *peut* indiquer que :
   - La politique couvre un territoire réellement complexe (complexité justifiée)
   - La politique a grandi de façon organique sans structure cohérente (complexité accidentelle)
   - La politique essaie de faire trop de choses (dérive du périmètre)
@@ -102,7 +102,7 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 
 3. **La taille est un facteur de confusion.** Les documents plus longs explorent naturellement une plus grande partie de l'espace des jetons, et l'entropie estimée sur un document court est plus bruitée et tend à sortir trop basse. Ne divisez pas H par la longueur : c'est déjà une moyenne par jeton. Comparez des documents de taille similaire, ou indiquez l'incertitude de chaque estimation.
 
-4. **Régularité n'est pas simplicité.** Une structure profondément imbriquée mais parfaitement régulière (comme un arbre de décision) a une entropie faible mais peut rester difficile à comprendre.
+4. **Régularité n'est pas simplicité.** Une structure profondément imbriquée mais parfaitement régulière (comme un arbre de décision) devient prévisible dès qu'on tient compte d'assez de jetons précédents, si bien que son entropie conditionnelle sachant ces jetons est faible, quelles que soient les fréquences de ses jetons ; elle peut pourtant rester difficile à comprendre.
 
 5. **Le contexte est primordial.** Une politique de gouvernance pour la sûreté nucléaire *doit* être complexe. L'entropie doit être interprétée par rapport à la complexité inhérente du domaine.
 
@@ -113,6 +113,7 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 | Terme | Définition |
 |------|-----------|
 | **Entropie de Shannon** | Une mesure du contenu informationnel moyen (surprise) par symbole dans un message |
+| **Entropie conditionnelle** | La surprise moyenne d'un symbole sachant les symboles qui le précèdent ; contrairement à l'entropie des fréquences des symboles, elle dépend de leur ordre |
 | **Alphabet de symboles** | L'ensemble des types de jetons distincts utilisés pour encoder la structure d'un document |
 | **Complexité structurelle** | La variété et la profondeur des schémas d'organisation d'un document |
 | **Complexité essentielle** | La complexité inhérente au domaine du problème, qui ne peut pas être supprimée |
@@ -124,7 +125,7 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 ## Auto-évaluation
 
 **1. Qu'indique une entropie de Shannon élevée dans un document de politique ?**
-> Une grande variété structurelle — de nombreux types de jetons différents apparaissent avec une fréquence similaire, ce qui suggère que le document utilise des schémas d'organisation divers.
+> Une variété de types de jetons — de nombreux types de jetons différents apparaissent avec une fréquence similaire, ce qui suggère que le document utilise des schémas d'organisation divers. Elle ne dit rien de l'ordre des jetons, et ne montre donc pas si la structure est régulière.
 
 **2. Pourquoi l'entropie seule ne peut-elle pas vous dire si une politique doit être simplifiée ?**
 > Parce que l'entropie mesure la variété structurelle, pas si cette variété est justifiée par le domaine. Les domaines complexes exigent des politiques complexes. L'entropie signale des candidats à examiner, pas une refactorisation automatique.
@@ -133,7 +134,7 @@ L'entropie de Shannon comme indicateur de complexité a de réelles limites :
 > Pas en divisant par la longueur : H est déjà une moyenne en bits par jeton, donc deux documents aux mêmes fréquences de jetons ont la même H, quelle que soit leur longueur. Comparez H directement sur le même alphabet, ou divisez-la par l'entropie maximale possible (H/log2(N) où N est la taille de l'alphabet) pour obtenir une échelle comparable de 0 à 1. La longueur compte autrement : H est estimée à partir des fréquences observées, et un document court donne une estimation plus bruitée qui tend à sortir trop basse ; comparez donc des documents de longueur similaire ou indiquez l'incertitude.
 
 **4. Une politique a une entropie très faible mais les utilisateurs la trouvent confuse. Qu'est-ce qui pourrait l'expliquer ?**
-> Une entropie faible signifie une structure répétitive, mais le contenu à l'intérieur de cette structure peut être peu clair, contradictoire ou mal rédigé. La simplicité structurelle ne garantit pas la clarté sémantique.
+> Une entropie faible signifie que quelques types de jetons dominent, une structure simple, mais le contenu à l'intérieur de cette structure peut être peu clair, contradictoire ou mal rédigé. La simplicité structurelle ne garantit pas la clarté sémantique.
 
 **Critères de réussite :** expliquer l'entropie de Shannon, identifier les jetons d'un document structuré et formuler la différence entre complexité structurelle et complexité sémantique.
 

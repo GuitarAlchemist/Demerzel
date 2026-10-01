@@ -221,13 +221,13 @@ When you count along with a rock song, you will find yourself clapping on 2 and 
 An **anticipation** (sometimes called "the push") is when a chord change arrives slightly early — typically on the "and" of beat 4 in the previous measure, tied into beat 1 of the next measure.
 
 ```
-Measure 1:            |  C     C     C     C-tie  |
+Measure 1:            |  C     C     C     C  G~  |
                       |  1  &  2  &  3  &  4  &   |
-Measure 2 (tied):     |  G     G     G     G      |
+Measure 2 (tied):     | ~G     G     G     G      |
                       |  1  &  2  &  3  &  4  &   |
 ```
 
-Instead of the G arriving on beat 1 of measure 2, it arrives on the "and of 4" in measure 1 and is held across the barline. This creates rhythmic propulsion — you feel the new chord pushing forward before the new measure begins.
+The `~` marks the tie: the G struck on the "and" of 4 is held through beat 1 of measure 2, which is not struck again. Instead of the G arriving on beat 1 of measure 2, it arrives on the "and of 4" in measure 1 and is held across the barline. This creates rhythmic propulsion — you feel the new chord pushing forward before the new measure begins.
 
 The push is essential in Latin music, country, and pop. Guitarists who cannot feel or execute pushes will sound stiff no matter how clean their chords are.
 
@@ -237,11 +237,10 @@ Ties create syncopation by sustaining notes across beat boundaries. Consider thi
 
 ```
 Count:   1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Notes:   X           X       X           X           X       X
-         (8th)       (8th tied to 16th)  (16th)       (8th tied to 16th) (16th)
+Notes:   X   -   X   -   -   X   X   -   X   -   X   -   -   X   X   -
 ```
 
-When an eighth note begins on the "&" of beat 1 and ties over beat 2, the accent lands between beats, creating a characteristic funky displacement.
+Each column is one sixteenth: `X` strikes a note and `-` holds it. The pattern is an eighth, an eighth tied to a sixteenth, a sixteenth and an eighth, played twice. When an eighth note begins on the "&" of beat 1 and ties over beat 2, the accent lands between beats, creating a characteristic funky displacement.
 
 ### Syncopation on Guitar
 

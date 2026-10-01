@@ -221,13 +221,13 @@ Cuando cuentes junto con una canción de rock, te encontrarás dando palmas en 2
 Una **anticipación** (a veces llamada "el empuje") ocurre cuando un cambio de acorde llega un poco antes — normalmente en el "y" del tiempo 4 del compás anterior, ligado al tiempo 1 del compás siguiente.
 
 ```
-Compás 1:             |  C     C     C     C-lig. |
+Compás 1:             |  C     C     C     C  G~  |
                       |  1  &  2  &  3  &  4  &   |
-Compás 2 (ligado):    |  G     G     G     G      |
+Compás 2 (ligado):    | ~G     G     G     G      |
                       |  1  &  2  &  3  &  4  &   |
 ```
 
-En lugar de que el G llegue en el tiempo 1 del compás 2, llega en el "y de 4" del compás 1 y se sostiene a través de la barra de compás. Esto crea propulsión rítmica — sientes que el nuevo acorde empuja hacia delante antes de que empiece el nuevo compás.
+La `~` marca la ligadura: el G atacado en el "y" de 4 se sostiene durante el tiempo 1 del compás 2, que no se vuelve a tocar. En lugar de que el G llegue en el tiempo 1 del compás 2, llega en el "y de 4" del compás 1 y se sostiene a través de la barra de compás. Esto crea propulsión rítmica — sientes que el nuevo acorde empuja hacia delante antes de que empiece el nuevo compás.
 
 El empuje es esencial en la música latina, el country y el pop. Los guitarristas que no saben sentir ni ejecutar los empujes sonarán rígidos por muy limpios que sean sus acordes.
 
@@ -237,11 +237,10 @@ Las ligaduras crean síncopa al sostener notas a través de los límites de los 
 
 ```
 Cuenta:  1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Notas:   X           X       X           X           X       X   (c = corchea, sc = semicorchea)
-         (c)         (c ligada a sc)     (sc)         (c ligada a sc)    (sc)
+Notas:   X   -   X   -   -   X   X   -   X   -   X   -   -   X   X   -
 ```
 
-Cuando una corchea empieza en el "&" del tiempo 1 y se liga por encima del tiempo 2, el acento cae entre tiempos, creando un desplazamiento característico con sabor funky.
+Cada columna vale una semicorchea: `X` ataca una nota y `-` la sostiene. El patrón es una corchea, una corchea ligada a una semicorchea, una semicorchea y una corchea, tocado dos veces. Cuando una corchea empieza en el "&" del tiempo 1 y se liga por encima del tiempo 2, el acento cae entre tiempos, creando un desplazamiento característico con sabor funky.
 
 ### La síncopa en la guitarra
 

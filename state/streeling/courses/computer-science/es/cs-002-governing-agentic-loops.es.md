@@ -79,7 +79,7 @@ Cada iteración debe producir un cambio de estado medible. El framework compara 
 antes y después de cada paso. Si `hash(state_n) == hash(state_n-1)`, el bucle está estancado. Calcula el hash
 de los campos que llevan el resultado, no del contador de iteraciones: ese cambia en cada paso, así que la
 prueba de estancamiento nunca se activaría. Y una prueba de estancamiento detecta la repetición, no la deriva: un
-bucle que sigue cambiando sin converger lo detienen el límite y el criterio externo, no esta prueba.
+bucle que sigue cambiando sin converger nunca cumple el criterio externo, y lo detiene el límite, no esta prueba.
 
 ```python
 def stall_test(state_before, state_after):
@@ -91,12 +91,16 @@ if stall_test(prev_state, curr_state):
 
 ### Propiedad 3: criterio de terminación externo
 La condición de salida se especifica antes de que empiece el bucle, no se genera durante la ejecución.
-El modelo no puede redefinir la convergencia a mitad del bucle.
+El modelo no puede redefinir la convergencia a mitad del bucle. El límite de iteraciones no forma parte del criterio: un bucle que alcanza el límite no ha convergido, y se detiene y escala como exige la propiedad 1, en lugar de dar su trabajo por terminado.
 
 ```python
 # Bien: el criterio es externo
 def is_complete(state) -> bool:
-    return state.belief_confidence >= 0.85 or state.iteration >= MAX
+    return state.belief_confidence >= 0.85
+
+# Alcanzar el límite no es un éxito: detenerse y escalar (propiedad 1)
+def cap_reached(state) -> bool:
+    return state.iteration >= MAX
 
 # Mal: el modelo declara él mismo que ha terminado
 result = model.run("sigue hasta que creas que has terminado")

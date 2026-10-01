@@ -79,7 +79,7 @@ Chaque itération doit produire un changement d'état mesurable. Le framework co
 avant et après chaque étape. Si `hash(state_n) == hash(state_n-1)`, la boucle est bloquée. Hachez les
 champs qui portent le résultat, pas le compteur d'itérations — celui-ci change à chaque étape, si bien que
 le test de blocage ne se déclencherait jamais. Et un test de blocage détecte la répétition, pas la dérive : une
-boucle qui change sans cesse sans converger est arrêtée par le plafond et le critère externe, pas ici.
+boucle qui change sans cesse sans converger ne satisfait jamais le critère externe, et c'est le plafond qui l'arrête, pas ce test.
 
 ```python
 def stall_test(state_before, state_after):
@@ -91,12 +91,16 @@ if stall_test(prev_state, curr_state):
 
 ### Propriété 3 : critère d'arrêt externe
 La condition de sortie est spécifiée avant le début de la boucle, et non générée pendant l'exécution.
-Le modèle ne peut pas redéfinir la convergence en cours de boucle.
+Le modèle ne peut pas redéfinir la convergence en cours de boucle. Le plafond d'itérations ne fait pas partie du critère : une boucle qui atteint le plafond n'a pas convergé, et elle s'arrête et escalade comme l'exige la propriété 1, au lieu de déclarer son travail terminé.
 
 ```python
 # Bon : le critère est externe
 def is_complete(state) -> bool:
-    return state.belief_confidence >= 0.85 or state.iteration >= MAX
+    return state.belief_confidence >= 0.85
+
+# Atteindre le plafond n'est pas un succès : arrêter et escalader (propriété 1)
+def cap_reached(state) -> bool:
+    return state.iteration >= MAX
 
 # Mauvais : le modèle déclare lui-même avoir terminé
 result = model.run("continue jusqu'à ce que tu penses avoir fini")

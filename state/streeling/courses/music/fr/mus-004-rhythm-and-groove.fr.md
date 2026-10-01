@@ -221,13 +221,13 @@ Lorsque vous comptez sur une chanson rock, vous vous surprendrez à frapper dans
 Une **anticipation** (parfois appelée « la poussée ») se produit lorsqu'un changement d'accord arrive légèrement en avance — typiquement sur le « et » du temps 4 de la mesure précédente, lié au temps 1 de la mesure suivante.
 
 ```
-Mesure 1 :            |  C     C     C     C-lié  |
+Mesure 1 :            |  C     C     C     C  G~  |
                       |  1  &  2  &  3  &  4  &   |
-Mesure 2 (liée) :     |  G     G     G     G      |
+Mesure 2 (liée) :     | ~G     G     G     G      |
                       |  1  &  2  &  3  &  4  &   |
 ```
 
-Au lieu que le G arrive sur le temps 1 de la mesure 2, il arrive sur le « et de 4 » de la mesure 1 et est tenu par-delà la barre de mesure. Cela crée une propulsion rythmique — vous sentez le nouvel accord pousser vers l'avant avant que la nouvelle mesure ne commence.
+Le `~` marque la liaison : le G attaqué sur le « et » de 4 est tenu pendant le temps 1 de la mesure 2, qui n'est pas rejoué. Au lieu que le G arrive sur le temps 1 de la mesure 2, il arrive sur le « et de 4 » de la mesure 1 et est tenu par-delà la barre de mesure. Cela crée une propulsion rythmique — vous sentez le nouvel accord pousser vers l'avant avant que la nouvelle mesure ne commence.
 
 La poussée est essentielle dans la musique latine, la country et la pop. Les guitaristes qui ne savent ni sentir ni exécuter les poussées sonneront raides, aussi propres que soient leurs accords.
 
@@ -237,11 +237,10 @@ Les liaisons créent la syncope en prolongeant les notes par-delà les limites d
 
 ```
 Compte : 1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Notes :  X           X       X           X           X       X   (c = croche, dc = double croche)
-         (c)         (c liée à dc)       (dc)         (c liée à dc)      (dc)
+Notes :  X   -   X   -   -   X   X   -   X   -   X   -   -   X   X   -
 ```
 
-Lorsqu'une croche commence sur le « & » du temps 1 et est liée par-dessus le temps 2, l'accent tombe entre les temps, créant un déplacement caractéristique, très funky.
+Chaque colonne vaut une double croche : `X` attaque une note et `-` la tient. Le motif est une croche, une croche liée à une double croche, une double croche et une croche, joué deux fois. Lorsqu'une croche commence sur le « & » du temps 1 et est liée par-dessus le temps 2, l'accent tombe entre les temps, créant un déplacement caractéristique, très funky.
 
 ### La syncope à la guitare
 
