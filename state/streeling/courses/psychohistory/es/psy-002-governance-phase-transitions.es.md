@@ -127,11 +127,13 @@ Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuert
 
 ### Señal 6: el cociente de variedad como parámetro de orden candidato
 
-Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador:
+Desde la cibernética (CYB-003), el cociente de variedad compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador. Se calcula en cada ciclo a partir de los recuentos de respuestas distintas que da la gobernanza y de perturbaciones distintas que encuentra:
 
 ```
-variety_ratio = governance_variety / environmental_variety
+variety_ratio = distinct_responses / distinct_disturbances
 ```
+
+En bits, log2(variety_ratio) = V_R - V_D, con V = log2 de cada recuento. Un cociente de los valores en bits, V_R / V_D, rompería esta identidad, y dividiría por cero en un ciclo que encuentra una sola perturbación distinta, donde V_D = log2(1) = 0. Un ciclo que no encuentra ninguna perturbación no tiene cociente.
 
 Es un **parámetro de orden candidato** para los regímenes de gobernanza, con 1.0 como frontera elegida:
 
@@ -139,7 +141,7 @@ Es un **parámetro de orden candidato** para los regímenes de gobernanza, con 1
 - `variety_ratio ≈ 1.0`: frontera (tantas respuestas distintas como perturbaciones distintas)
 - `variety_ratio > 1.0`: régimen proactivo (más respuestas distintas que perturbaciones distintas)
 
-El cociente no dice si la gobernanza regula. CYB-003 enuncia la ley de Ashby sobre los resultados: si N_η resultados son aceptables, con V_η = log2(N_η) bits, regular cada perturbación requiere V_R >= V_D - V_η; así que un cociente menor que 1 es compatible con una regulación completa cuando hay bastantes resultados aceptables, y una misma respuesta puede llevar varias perturbaciones al mismo resultado aceptable. Un cociente mayor que 1 puede fallar igualmente, cuando las respuestas dadas no son las que necesitan las perturbaciones. La regulación se lee en el resultado de cada perturbación, dada la respuesta. CYB-003 aún no ha medido ninguna de las dos variedades, así que el cociente no tiene un valor actual en esta escala.
+El cociente no dice si la gobernanza regula. La ley de Ashby se enuncia sobre los resultados: si N_η resultados son aceptables, con V_η = log2(N_η) bits, regular cada perturbación requiere V_R >= V_D - V_η; así que un cociente menor que 1 es compatible con una regulación completa cuando hay bastantes resultados aceptables, y una misma respuesta puede llevar varias perturbaciones al mismo resultado aceptable. Un cociente mayor que 1 puede fallar igualmente, cuando las respuestas dadas no son las que necesitan las perturbaciones. La regulación se lee en el resultado de cada perturbación, dada la respuesta, y los recuentos mismos vienen de los registros de las perturbaciones encontradas y de las respuestas dadas en cada ciclo.
 
 Cruzar 1.0 significa solo que las respuestas distintas igualan por primera vez en número a las perturbaciones distintas; no es por sí mismo una transición de fase. El cociente puede pasar por 1 de forma suave, cuando se dispone de una respuesta más, sin ningún cambio cualitativo en el sistema. Llamar a un cruce transición de segundo orden exigiría un modelo del parámetro de orden que muestre comportamiento crítico cerca de 1.0, como las fluctuaciones crecientes de la señal 5; hasta entonces, trata 1.0 como una frontera de régimen.
 

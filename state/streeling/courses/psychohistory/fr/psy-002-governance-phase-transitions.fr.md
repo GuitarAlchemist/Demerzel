@@ -127,11 +127,13 @@ Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le syst
 
 ### Signal 6 : le ratio de variété comme paramètre d'ordre candidat
 
-D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur :
+D'après la cybernétique (CYB-003), le ratio de variété compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur. Il se calcule à chaque cycle à partir des nombres de réponses distinctes que donne la gouvernance et de perturbations distinctes qu'elle rencontre :
 
 ```
-variety_ratio = governance_variety / environmental_variety
+variety_ratio = distinct_responses / distinct_disturbances
 ```
+
+En bits, log2(variety_ratio) = V_R - V_D, avec V = log2 de chaque nombre. Un rapport des valeurs en bits, V_R / V_D, romprait cette identité, et diviserait par zéro dans un cycle qui rencontre une seule perturbation distincte, où V_D = log2(1) = 0. Un cycle qui ne rencontre aucune perturbation n'a pas de ratio.
 
 C'est un **paramètre d'ordre candidat** pour les régimes de gouvernance, avec 1.0 comme frontière choisie :
 
@@ -139,7 +141,7 @@ C'est un **paramètre d'ordre candidat** pour les régimes de gouvernance, avec 
 - `variety_ratio ≈ 1.0` : frontière (autant de réponses distinctes que de perturbations distinctes)
 - `variety_ratio > 1.0` : régime proactif (plus de réponses distinctes que de perturbations distinctes)
 
-Le ratio ne dit pas si la gouvernance régule. CYB-003 énonce la loi d'Ashby sur les issues : si N_η issues sont acceptables, portant V_η = log2(N_η) bits, réguler chaque perturbation demande V_R >= V_D - V_η ; un ratio inférieur à 1 est donc compatible avec une régulation complète quand assez d'issues sont acceptables, et une même réponse peut mener plusieurs perturbations à la même issue acceptable. Un ratio supérieur à 1 peut encore échouer, quand les réponses données ne sont pas celles dont les perturbations ont besoin. La régulation se lit sur l'issue de chaque perturbation, compte tenu de la réponse. CYB-003 n'a encore mesuré aucune des deux variétés, si bien que le ratio n'a pas de valeur actuelle sur cette échelle.
+Le ratio ne dit pas si la gouvernance régule. La loi d'Ashby s'énonce sur les issues : si N_η issues sont acceptables, portant V_η = log2(N_η) bits, réguler chaque perturbation demande V_R >= V_D - V_η ; un ratio inférieur à 1 est donc compatible avec une régulation complète quand assez d'issues sont acceptables, et une même réponse peut mener plusieurs perturbations à la même issue acceptable. Un ratio supérieur à 1 peut encore échouer, quand les réponses données ne sont pas celles dont les perturbations ont besoin. La régulation se lit sur l'issue de chaque perturbation, compte tenu de la réponse, et les nombres eux-mêmes viennent des relevés des perturbations rencontrées et des réponses données à chaque cycle.
 
 Franchir 1.0 signifie seulement que les réponses distinctes égalent pour la première fois en nombre les perturbations distinctes ; ce n'est pas en soi une transition de phase. Le ratio peut passer 1 en douceur, quand une réponse de plus devient disponible, sans aucun changement qualitatif du système. Qualifier un franchissement de transition du second ordre exigerait un modèle du paramètre d'ordre qui montre un comportement critique près de 1.0, comme les fluctuations croissantes du signal 5 ; d'ici là, traitez 1.0 comme une frontière de régime.
 

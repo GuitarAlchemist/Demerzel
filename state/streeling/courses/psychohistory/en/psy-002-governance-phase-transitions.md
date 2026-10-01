@@ -127,11 +127,13 @@ A 2x increase in signal rate over 3 cycles is a strong indicator that the system
 
 ### Signal 6: Variety Ratio as a Candidate Order Parameter
 
-From cybernetics (CYB-003), the ratio of regulatory response variety to disturbance variety compares the regulator with its environment, not amplifiers with attenuators inside the regulator:
+From cybernetics (CYB-003), the variety ratio compares the regulator with its environment, not amplifiers with attenuators inside the regulator. It is computed per cycle from counts of the distinct responses governance gives and the distinct disturbances it meets:
 
 ```
-variety_ratio = governance_variety / environmental_variety
+variety_ratio = distinct_responses / distinct_disturbances
 ```
+
+In bits, log2(variety_ratio) = V_R - V_D, with V = log2 of each count. A ratio of the bit values, V_R / V_D, would break this identity, and would divide by zero in a cycle that meets a single distinct disturbance, where V_D = log2(1) = 0. A cycle that meets no disturbance has no ratio.
 
 It is a **candidate order parameter** for governance regimes, with 1.0 as a chosen boundary:
 
@@ -139,7 +141,7 @@ It is a **candidate order parameter** for governance regimes, with 1.0 as a chos
 - `variety_ratio ≈ 1.0`: Boundary (as many distinct responses as distinct disturbances)
 - `variety_ratio > 1.0`: Proactive regime (more distinct responses than distinct disturbances)
 
-The ratio does not say whether governance regulates. CYB-003 states Ashby's Law on outcomes: if N_η outcomes are acceptable, carrying V_η = log2(N_η) bits, regulating every disturbance needs V_R >= V_D - V_η, so a ratio below 1 is compatible with full regulation when enough outcomes are acceptable, and one response can bring several disturbances to the same acceptable outcome. A ratio above 1 can still fail, when the responses given are not the ones the disturbances need. Whether governance regulates is read from the outcome of each disturbance, given the response. CYB-003 has measured neither variety yet, so the ratio has no current value on this scale.
+The ratio does not say whether governance regulates. Ashby's Law is stated on outcomes: if N_η outcomes are acceptable, carrying V_η = log2(N_η) bits, regulating every disturbance needs V_R >= V_D - V_η, so a ratio below 1 is compatible with full regulation when enough outcomes are acceptable, and one response can bring several disturbances to the same acceptable outcome. A ratio above 1 can still fail, when the responses given are not the ones the disturbances need. Whether governance regulates is read from the outcome of each disturbance, given the response, and the counts themselves come from records of the disturbances met and the responses given in each cycle.
 
 Crossing 1.0 means only that distinct responses first match distinct disturbances in number; it is not by itself a phase transition. The ratio can pass through 1 smoothly, when one more response becomes available, with no qualitative change in the system. Calling a crossing a second-order transition would need a model of the order parameter that shows critical behavior near 1.0, such as the growing fluctuations of Signal 5; until then, treat 1.0 as a regime boundary.
 
