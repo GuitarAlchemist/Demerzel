@@ -124,7 +124,7 @@ Un bandido de K brazos tiene K distribuciones de recompensa con medias desconoci
 
 **ε-voraz** tira de un brazo uniformemente al azar con probabilidad ε y, si no, del brazo con la mejor media. Su exploración nunca se detiene. Una vez que sus medias ordenan bien los brazos, cada ronda cuesta ε veces la brecha media de una tirada uniforme. Con medias 1, 2 y 3 y ε = 0.1, eso es 0.1 × (2 + 1 + 0)/3 = 0.1 por ronda, un arrepentimiento que crece linealmente en T. **UCB1** (Auer, Cesa-Bianchi y Fischer, 2002) tira una vez de cada brazo y luego del brazo con el mayor q_i + √(2 ln t / n_i), donde q_i es la media del brazo, n_i su número de tiradas y t el total. Para recompensas en [0, 1] tira de un brazo peor como mucho 8 ln T / Δ_i² + 1 + π²/3 veces en esperanza, un arrepentimiento logarítmico. El **muestreo de Thompson** (Thompson, 1933) saca una media para cada brazo de su distribución a posteriori y tira del brazo con la mejor muestra.
 
-La cota supone recompensas en [0, 1]. El bono √(2 ln t / n_i) no tiene unidad, mientras que q_i tiene la unidad de la recompensa, así que multiplicar todas las recompensas por c cambia las elecciones de UCB1, salvo que el bono también se multiplique por c. Dos brazos que siempre pagan 0.5 y 0.4 lo muestran sin ningún azar. Tras 10,000 rondas, UCB1 ha tirado del brazo peor 877 veces. Si pagan 50 y 40, tira del brazo peor una vez, durante el arranque, y nunca más. Si pagan 0.005 y 0.004, tira del brazo peor 4,918 veces, cerca de la mitad. Una escala grande tampoco es segura. Que el primer pago del mejor brazo sea desafortunado, 30 en lugar de 50, y todos los siguientes 50. UCB1 ya no vuelve a él: una tirada, y luego 9,999 del brazo peor, un arrepentimiento de 10 por ronda. Para salvar una brecha de 10, el bono √(2 ln t) necesita ln t cerca de 50.
+La cota supone recompensas en [0, 1]. El bono √(2 ln t / n_i) no tiene unidad, mientras que q_i tiene la unidad de la recompensa, así que multiplicar todas las recompensas por c cambia las elecciones de UCB1, salvo que el bono también se multiplique por c. Dos brazos que siempre pagan 0.5 y 0.4 lo muestran sin ningún azar. Tras 10,000 rondas, UCB1 ha tirado del brazo peor 877 veces. Si pagan 50 y 40, tira del brazo peor una vez, durante el arranque, y ya no en las 10,000 rondas. Si pagan 0.005 y 0.004, tira del brazo peor 4,918 veces, cerca de la mitad. Una escala grande tampoco es segura. Que el primer pago del mejor brazo sea desafortunado, 30 en lugar de 50, y todos los siguientes 50. UCB1 ya no vuelve a él en toda la ejecución: una tirada, y luego 9,999 del brazo peor, un arrepentimiento de 10 por ronda. El bono √(2 ln t) crece sin límite, así que UCB1 acabaría volviendo a él, pero para salvar una brecha de 10 necesita ln t cerca de 50.
 
 ### Ejercicio práctico
 
@@ -146,7 +146,7 @@ Recortar cada coordenada a su intervalo, como hace una búsqueda acotada por una
 
 El problema de presupuesto del §1, escrito para un minimizador que solo conoce la caja [0, 10]², pasa a ser: minimizar −ln(1 + x) − 2 ln(1 + y) + ρ max(0, x + y − 10). ¿Qué pesos ρ hacen exacta esta penalización ℓ1?
 
-> *Solución:* Todo ρ mayor que λ* = 1/4. Por debajo, una unidad más de presupuesto por encima de 10 rinde más, en el margen 1/(1 + x) = 1/4, de lo que cuesta la penalización, así que el minimizador gasta de más.
+> *Solución:* Todo ρ ≥ λ* = 1/4. Para ρ = 1/4 mismo, la pendiente de la penalización compensa el gradiente (−1/4, −1/4) del objetivo en (3, 7), y la función penalizada es estrictamente convexa, así que (3, 7) sigue siendo su único minimizador. Por debajo de 1/4, una unidad más de presupuesto por encima de 10 rinde más, en el margen 1/(1 + x) = 1/4, de lo que cuesta la penalización, así que el minimizador gasta de más.
 
 ---
 
@@ -272,7 +272,7 @@ El paso 6 compara el arrepentimiento con un único modelo de ruido fijo. ¿Cómo
 > Ambos son eficientes, pero el núcleo exige además que cada coalición reciba al menos su valor. El valor de Shapley da a los jugadores 1 y 3 juntos 1/6 + 2/3 = 5/6, menos que el 1 que pueden obtener solos. El único reparto que satisface a todas las coaliciones es (0, 0, 1).
 
 **3. Un servicio da a UCB1 recompensas medidas en milisegundos ahorrados, del orden de cientos. ¿Qué falla?**
-> El bono √(2 ln t / n_i) sigue siendo del orden de 1 mientras que las medias difieren en decenas. Tras el arranque UCB1 es voraz: un solo primer resultado desafortunado puede excluir al mejor brazo para siempre. Reescala las recompensas a [0, 1], o multiplica el bono por el rango.
+> El bono √(2 ln t / n_i) sigue siendo del orden de 1 mientras que las medias difieren en decenas. Tras el arranque UCB1 es casi voraz: un solo primer resultado desafortunado puede excluir al mejor brazo durante cualquier número realista de rondas, porque el bono solo crece como √(ln t). Reescala las recompensas a [0, 1], o multiplica el bono por el rango.
 
 **4. Un algoritmo genético con cotas de caja debe respetar x + y ≤ 10. ¿Qué puedes hacer?**
 > Añadir una penalización al objetivo. La penalización ℓ1 ρ max(0, x + y − 10) es exacta en cuanto ρ supera el multiplicador de la restricción. Una penalización cuadrática solo es factible aproximadamente. El recorte trata la caja y no hace nada por la suma.

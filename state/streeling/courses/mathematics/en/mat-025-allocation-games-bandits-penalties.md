@@ -124,7 +124,7 @@ A K-armed bandit has K reward distributions with unknown means μ_1, …, μ_K. 
 
 **ε-greedy** pulls a uniformly random arm with probability ε and otherwise the arm with the best average. Its exploration never stops. Once its averages rank the arms correctly, each round costs ε times the mean gap of a uniform pull. With means 1, 2 and 3 and ε = 0.1, that is 0.1 × (2 + 1 + 0)/3 = 0.1 per round, a regret that grows linearly in T. **UCB1** (Auer, Cesa-Bianchi and Fischer, 2002) pulls each arm once, then the arm with the largest q_i + √(2 ln t / n_i), where q_i is the arm's average, n_i its number of pulls, and t the total. For rewards in [0, 1] it pulls a worse arm at most 8 ln T / Δ_i² + 1 + π²/3 times in expectation, a logarithmic regret. **Thompson sampling** (Thompson, 1933) draws a mean for each arm from its posterior and pulls the arm with the best draw.
 
-The bound assumes rewards in [0, 1]. The bonus √(2 ln t / n_i) has no unit, while q_i has the unit of the reward, so multiplying every reward by c changes UCB1's choices unless the bonus is multiplied by c too. Two arms that always pay 0.5 and 0.4 show it with no randomness at all. After 10,000 rounds UCB1 has pulled the worse arm 877 times. If they pay 50 and 40, it pulls the worse arm once, in the warm-up, and never again. If they pay 0.005 and 0.004, it pulls the worse arm 4,918 times, close to half. A large scale is not safe either. Let the better arm's first payment be unlucky, 30 instead of 50, and every later one 50. UCB1 then never returns to it: one pull, then 9,999 of the worse arm, a regret of 10 per round. To bridge a gap of 10, the bonus √(2 ln t) needs ln t near 50.
+The bound assumes rewards in [0, 1]. The bonus √(2 ln t / n_i) has no unit, while q_i has the unit of the reward, so multiplying every reward by c changes UCB1's choices unless the bonus is multiplied by c too. Two arms that always pay 0.5 and 0.4 show it with no randomness at all. After 10,000 rounds UCB1 has pulled the worse arm 877 times. If they pay 50 and 40, it pulls the worse arm once, in the warm-up, and not again in the 10,000 rounds. If they pay 0.005 and 0.004, it pulls the worse arm 4,918 times, close to half. A large scale is not safe either. Let the better arm's first payment be unlucky, 30 instead of 50, and every later one 50. UCB1 then does not return to it in the whole run: one pull, then 9,999 of the worse arm, a regret of 10 per round. The bonus √(2 ln t) grows without bound, so UCB1 would come back to it eventually, but to bridge a gap of 10 it needs ln t near 50.
 
 ### Practice Exercise
 
@@ -146,7 +146,7 @@ Clamping each coordinate into its interval, as a box-bounded search does, is not
 
 The budget problem of §1, written for a minimiser that only knows the box [0, 10]², becomes: minimise −ln(1 + x) − 2 ln(1 + y) + ρ max(0, x + y − 10). Which weights ρ make this ℓ1 penalty exact?
 
-> *Solution:* Every ρ above λ* = 1/4. Below it, one more unit of budget beyond 10 earns more, at the margin 1/(1 + x) = 1/4, than the penalty costs, so the minimiser overspends.
+> *Solution:* Every ρ ≥ λ* = 1/4. At ρ = 1/4 itself, the penalty's slope cancels the objective's gradient (−1/4, −1/4) at (3, 7), and the penalised function is strictly convex, so (3, 7) is still its only minimiser. Below 1/4, one more unit of budget beyond 10 earns more, at the margin 1/(1 + x) = 1/4, than the penalty costs, so the minimiser overspends.
 
 ---
 
@@ -272,7 +272,7 @@ Step 6 compares regret on one fixed noise model. How would you make the comparis
 > Both are efficient, but the core also requires every coalition to get at least its value. The Shapley value gives players 1 and 3 together 1/6 + 2/3 = 5/6, less than the 1 they can make alone. The only allocation that satisfies every coalition is (0, 0, 1).
 
 **3. A service feeds UCB1 rewards measured in milliseconds saved, in the hundreds. What goes wrong?**
-> The bonus √(2 ln t / n_i) stays of order 1 while the averages differ by tens. After the warm-up UCB1 is greedy: one unlucky first latency can shut out the better arm for good. Rescale the rewards to [0, 1], or scale the bonus by the range.
+> The bonus √(2 ln t / n_i) stays of order 1 while the averages differ by tens. After the warm-up UCB1 is all but greedy: one unlucky first latency can shut out the better arm for any practical number of rounds, because the bonus grows only like √(ln t). Rescale the rewards to [0, 1], or scale the bonus by the range.
 
 **4. A genetic algorithm with box bounds must respect x + y ≤ 10. What can you do?**
 > Add a penalty to the objective. The ℓ1 penalty ρ max(0, x + y − 10) is exact once ρ exceeds the constraint's multiplier. A quadratic penalty is only approximately feasible. Clamping handles the box and does nothing for the sum.
