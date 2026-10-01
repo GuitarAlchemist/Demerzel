@@ -1,22 +1,24 @@
 --- ## Research Finding: Quantitative Variety Ratio Measurement
 --- Belief: **T**, confidence: 0.85, cycle: cybernetics-2026-03-23-003
 --- Third Seldon Plan cycle. First quantitative measurement framework.
+--- Revised 2026-09-30 with the CYB-003 rewrite (PR #1164): the dimensional ratios (1.82, 17.00, 0.56),
+--- the 3-bit regulatory gap and the use of 666 policy pairs as a disturbance estimate are withdrawn.
 RESEARCH_FINDING {
   department: "cybernetics",
   question: "How can Demerzel measure its variety ratio quantitatively?",
-  conclusion: "Variety ratio must be measured across three independent dimensions: behavioral (R=1.82, healthy), structural (R=17.00, caution — high generativity), regulatory (R=0.56, by design — conservative). The formula V=log2(N) applied per dimension avoids the error of naive additive models. A 3-bit gap exists between regulatory response variety (6.32 bits) and internal disturbance variety (9.38 bits), absorbed by human escalation, constitutional override, and PDCA cycling. Policy-interaction complexity (37 policies, 666 pairwise combinations) is the dominant disturbance source and grows quadratically.",
+  conclusion: "Variety must be counted on outcomes, dimension by dimension (behavioral, structural, regulatory), with V = log2(N). Three counting rules apply: a product of component counts is a joint state space only if the components vary independently, and otherwise an upper bound; a count of rules is not a count of states, so an attenuator is measured by A = log2(N_in / N_out) on the outcomes that reach it and pass it; and an inventory is not a set of outcomes. From the inventory at commit 74cf7c5, only persona selection (3.81 bits) and decision-label variety (2.58 to 6.91 bits) are established. Structural, response and disturbance varieties and every attenuation are not measured; disturbance variety is bounded only below (6.64 bits if the estimates hold), so no Ashby gap can be computed from the inventory. Measuring the distinct disturbances met and responses given per cycle would place it.",
   evidence: [
     "Ashby (1956) Chapter 7: V = log2(N) is the formal definition of variety",
     "Beer (1979) Chapter 6: variety engineering requires separate amplifier/attenuator accounting",
-    "GPT-4o cross-validation confirms V=log2(N) formula and R<1 for regulatory dimension",
-    "Dimensional separation avoids GPT-4o's additive error (negative variety is meaningless)",
-    "Demerzel component inventory: 14 personas, 27 grammars, 37 policies, 17 constitutional articles"
+    "GPT-4o cross-validation confirms the V=log2(N) formula",
+    "schemas/persona.schema.json fixes one voice and one goal_directedness per persona, so persona attributes do not multiply into profiles",
+    "Demerzel component inventory at 74cf7c5: 14 personas, 60 persona constraints, 27 grammars, 1,129 grammar rule definitions, 37 policies, 17 constitutional articles"
   ],
   belief: {value: "T", confidence: 0.85},
   course_produced: true,
   grammar_evolved: false,
   follow_up_questions: [
-    "Can the 3-bit regulatory gap be closed by hierarchical policy grouping?",
+    "How can the distinct disturbances met and responses given in each cycle be logged, so that the Ashby gap can be measured?",
     "How should grammar production usage be tracked to detect dead productions?",
     "What is the information-theoretic relationship between tetravalent logic and Shannon entropy?"
   ]

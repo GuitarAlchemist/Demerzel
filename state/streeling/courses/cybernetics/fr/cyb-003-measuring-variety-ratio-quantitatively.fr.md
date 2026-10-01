@@ -155,7 +155,7 @@ La loi d'Ashby et les principes du VSM (CYB-001) fixent le sens que doit prendre
 | Dimension | Sens sain | Justification |
 |-----------|---------------|-----------|
 | Comportementale | A_B > 0 sur les actions nuisibles, chaque persona gardant les actions permises par son rôle | Les contraintes doivent retirer le préjudice, pas des rôles entiers |
-| Structurelle | A_S > 0 : les portes rejettent certains changements proposés | Une porte qui ne rejette jamais rien n'atténue pas |
+| Structurelle | Les portes rejettent les changements proposés qui y échouent, échecs injectés compris | Une porte se teste par les changements qu'elle doit rejeter ; un lot de changements valides donne à bon droit A_S = 0 |
 | Régulatrice | V_response >= V_disturbance, en comptant la variété que l'escalade emprunte aux humains | La loi d'Ashby |
 
 Ces sens deviendront des seuils une fois A_B, A_S, A_R et les variétés conjointes mesurés sur plusieurs cycles.
@@ -266,10 +266,10 @@ Un `null` marque une grandeur pas encore mesurée, pas un zéro. `persona_select
 
 ### Métrique 3 : mesure des issues et de l'atténuation
 
-Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne passe, V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les structures distinctes que génèrent les grammaires (V_S), les réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les perturbations distinctes qu'elle rencontre (V_D).
+Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne parvient à l'atténuateur (N_in = 0), le cycle n'est pas une observation : consignez-le comme inactif, pas comme un blocage. Si des entrées lui parviennent et qu'aucune ne passe (N_in > 0, N_out = 0), V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les structures distinctes que génèrent les grammaires (V_S), les réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les perturbations distinctes qu'elle rencontre (V_D).
 
 Suivez ces grandeurs sur des cycles consécutifs. Alertez quand :
-- Le A d'un atténuateur tombe à 0 bit (il ne retire plus rien)
+- Une sonde de contrôle passe : une entrée que l'atténuateur doit refuser, injectée exprès, le franchit. A = 0 seul n'est pas une alerte, puisqu'un cycle dont toutes les entrées sont valides donne à bon droit A = 0
 - L'écart V_D - V_R_amp augmente d'au moins 1 bit en un cycle (la variété des perturbations double par rapport à celle des réponses)
 - L'inventaire change (une persona, une règle de grammaire ou une politique a été ajoutée ou retirée), pour que les nombres soient rafraîchis
 

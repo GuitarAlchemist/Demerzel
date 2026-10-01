@@ -155,7 +155,7 @@ La ley de Ashby y los principios del VSM (CYB-001) fijan el sentido que debe tom
 | Dimensión | Sentido saludable | Justificación |
 |-----------|---------------|-----------|
 | Conductual | A_B > 0 sobre las acciones dañinas, mientras cada persona conserva las acciones permitidas para su rol | Las restricciones deben eliminar el daño, no roles enteros |
-| Estructural | A_S > 0: las puertas rechazan algunos cambios propuestos | Una puerta que nunca rechaza nada no atenúa |
+| Estructural | Las puertas rechazan los cambios propuestos que no las superan, fallos inyectados incluidos | Una puerta se prueba con los cambios que debe rechazar; un lote de cambios válidos da con razón A_S = 0 |
 | Regulatoria | V_response >= V_disturbance, contando la variedad que el escalado toma prestada de los humanos | La ley de Ashby |
 
 Estos sentidos pasarán a ser umbrales cuando A_B, A_S, A_R y las variedades conjuntas se hayan medido durante varios ciclos.
@@ -266,10 +266,10 @@ Un `null` marca una magnitud aún sin medir, no un cero. `persona_selection` vie
 
 ### Métrica 3: medición de los resultados y de la atenuación
 
-Para cada atenuador, registra en cada ciclo lo que le llega y lo que deja pasar: las acciones que propone cada persona y las que permiten sus restricciones, los cambios de gramática propuestos y los que aceptan las puertas, las decisiones candidatas y las que permiten las políticas y los artículos. Registra aparte las acciones rechazadas, los cambios rechazados y las decisiones excluidas: muestran lo que se eliminó, no lo que pasó. Con N_in resultados distintos que llegan a un atenuador y N_out resultados distintos que lo atraviesan, V_in = log2(N_in), V_out = log2(N_out), y A = V_in - V_out = log2(N_in / N_out) bits: un atenuador que deja pasar 4 de 8 propuestas distintas elimina 1 bit. Si no pasa nada, V_out no está definido; registra ese ciclo como un bloqueo total, no como un número. Registra del mismo modo, como log2 de cada recuento, las estructuras distintas que generan las gramáticas (V_S), las respuestas distintas que da la gobernanza, escalados incluidos (V_R_amp), y las perturbaciones distintas que encuentra (V_D).
+Para cada atenuador, registra en cada ciclo lo que le llega y lo que deja pasar: las acciones que propone cada persona y las que permiten sus restricciones, los cambios de gramática propuestos y los que aceptan las puertas, las decisiones candidatas y las que permiten las políticas y los artículos. Registra aparte las acciones rechazadas, los cambios rechazados y las decisiones excluidas: muestran lo que se eliminó, no lo que pasó. Con N_in resultados distintos que llegan a un atenuador y N_out resultados distintos que lo atraviesan, V_in = log2(N_in), V_out = log2(N_out), y A = V_in - V_out = log2(N_in / N_out) bits: un atenuador que deja pasar 4 de 8 propuestas distintas elimina 1 bit. Si no llega nada al atenuador (N_in = 0), el ciclo no es una observación: regístralo como inactivo, no como un bloqueo. Si le llegan entradas y ninguna pasa (N_in > 0, N_out = 0), V_out no está definido; registra ese ciclo como un bloqueo total, no como un número. Registra del mismo modo, como log2 de cada recuento, las estructuras distintas que generan las gramáticas (V_S), las respuestas distintas que da la gobernanza, escalados incluidos (V_R_amp), y las perturbaciones distintas que encuentra (V_D).
 
 Sigue estas magnitudes a lo largo de ciclos consecutivos. Alerta cuando:
-- La A de un atenuador caiga a 0 bits (ha dejado de eliminar nada)
+- Una sonda de control pase: una entrada que el atenuador debe rechazar, inyectada a propósito, lo atraviesa. A = 0 por sí solo no es una alerta, ya que un ciclo cuyas entradas son todas válidas da con razón A = 0
 - La brecha V_D - V_R_amp suba 1 bit o más en un ciclo (la variedad de las perturbaciones se duplica en relación con la de las respuestas)
 - Cambie el inventario (se ha añadido o retirado una persona, una regla de gramática o una política), para que se actualicen los recuentos
 

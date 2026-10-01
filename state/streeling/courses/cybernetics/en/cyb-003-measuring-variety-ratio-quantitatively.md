@@ -155,7 +155,7 @@ Ashby's Law and VSM principles (CYB-001) set the direction each quantity should 
 | Dimension | Healthy Direction | Rationale |
 |-----------|---------------|-----------|
 | Behavioral | A_B > 0 on harmful actions, while each persona keeps permitted actions for its role | Constraints should remove harm, not whole roles |
-| Structural | A_S > 0: the gates reject some proposed changes | A gate that never rejects anything does not attenuate |
+| Structural | The gates reject the proposed changes that fail them, seeded failures included | A gate is tested by changes it must reject; a batch of valid changes rightly gives A_S = 0 |
 | Regulatory | V_response >= V_disturbance, counting the variety escalation borrows from humans | Ashby's Law |
 
 These directions become thresholds once A_B, A_S, A_R and the joint varieties have been measured over several cycles.
@@ -266,10 +266,10 @@ A `null` marks a quantity not yet measured, not a zero. `persona_selection` come
 
 ### Metric 3: Outcome and Attenuation Measurement
 
-For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing passes, V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the distinct structures the grammars generate (V_S), the distinct responses governance gives, escalations included (V_R_amp), and the distinct disturbances it meets (V_D).
+For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the distinct structures the grammars generate (V_S), the distinct responses governance gives, escalations included (V_R_amp), and the distinct disturbances it meets (V_D).
 
 Track these over consecutive cycles. Alert when:
-- An attenuator's A falls to 0 bits (it has stopped removing anything)
+- A control probe passes: an input the attenuator must refuse, seeded on purpose, gets through. A = 0 alone is not an alert, since a cycle whose inputs are all valid rightly gives A = 0
 - The gap V_D - V_R_amp rises by 1 bit or more in one cycle (disturbance variety doubling relative to response variety)
 - The inventory changes (a persona, grammar rule or policy was added or removed), so that the counts are refreshed
 
