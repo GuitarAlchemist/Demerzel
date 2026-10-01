@@ -44,7 +44,7 @@ VSM's System 5 assumes human judgment for identity and purpose. Demerzel's S5 (t
 
 ### 3. Ashby's Law of Requisite Variety Applies Directly
 
-The governance framework must have at least as much regulatory variety as the disturbances it faces. In Demerzel terms:
+Ashby's law is stated on outcomes: where every disturbance receives a response and no response brings two disturbances to the same outcome, keeping every outcome acceptable needs at least as much regulatory variety as the disturbances carry, less the variety of the outcomes governance may accept (CYB-003, Metric 3). In Demerzel terms:
 
 - **Variety amplifiers:** Seldon Plan (research), completeness instinct (gap detection), grammar evolution (structural adaptation)
 - **Variety attenuators:** Policies (constrain agent behavior), constitutions (reduce decision space), persona constraints (limit scope per role)
@@ -85,7 +85,7 @@ These assessments are qualitative. A count of policies or personas is an invento
 2. **Clock-speed governance layers** — Explicit separation of fast-loop (per-request) vs. slow-loop (per-cycle) governance, matching VSM's operational vs. strategic timescales.
 3. **Recursive governance template** — The templates/ directory already provides CLAUDE.md snippets for consumer repos; extending this to sub-agent governance would deepen VSM recursion.
 4. **Conscience as synthetic S5** — Demerzel's proto-conscience policy is a novel extension beyond classical VSM, providing value-reflection capability without human judgment. This is worth further research.
-5. **Measure variety on outcomes** — The ratio of policy count to persona count is an inventory balance, not a variety ratio: a duplicate policy or persona changes it without changing the responses governance can give or the disturbances it faces. Track the variety ratio on measured states: the distinct responses given against the distinct disturbances met in each cycle.
+5. **Measure variety on outcomes** — The ratio of policy count to persona count is an inventory balance, not a variety ratio: a duplicate policy or persona changes it without changing the responses governance can give or the disturbances it faces. Measure each cycle instead, as CYB-003's Metric 3 does: record each disturbance met, the response given (none, if none) and its outcome on the essential variables, then count the distinct disturbances, responses and outcomes.
 
 ## Sources
 

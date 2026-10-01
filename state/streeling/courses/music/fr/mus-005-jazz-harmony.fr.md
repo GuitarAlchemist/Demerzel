@@ -451,15 +451,15 @@ Jouez ensuite la progression à la guitare en improvisant une mélodie simple qu
 
 L'harmonie traditionnelle empile des **tierces**. L'harmonie en quartes empile des **quartes**. Le son est ouvert, ambigu et moderne — il évite la forte attraction majeur/mineur de l'harmonie en tierces.
 
-**L'approche de McCoy Tyner :** sur un vamp en Ré dorien, empilez des quartes justes à partir de différents degrés de la gamme :
+**L'approche de McCoy Tyner :** sur un vamp en Ré dorien, empilez des quartes à partir de différents degrés de la gamme, avec les seules notes du mode :
 
 ```
 Depuis D : D - G - C - F     (quartes empilées)
 Depuis E : E - A - D - G     (quartes empilées)
-Depuis G : G - C - F - Bb    (quartes empilées — inclut b6, hors du dorien)
+Depuis G : G - C - F - B     (quartes empilées — F-B est un triton)
 ```
 
-Ces voicings peuvent être déplacés à l'intérieur du mode, créant un paysage harmonique chatoyant et non fonctionnel. Les voicings individuels ne se « résolvent » pas — ils flottent.
+Ces voicings peuvent être déplacés à l'intérieur du mode, créant un paysage harmonique chatoyant et non fonctionnel. Les voicings individuels ne se « résolvent » pas — ils flottent. La plupart de ces quartes sont justes ; F-B, la seule quarte augmentée du mode, ajoute de la tension. Une quarte juste au-dessus de F donnerait Bb, la b6, hors du Ré dorien.
 
 ### Le voicing « So What »
 
@@ -630,7 +630,7 @@ Ces morceaux forment un vocabulaire de base. Un guitariste de jazz capable de co
 | **Théorie accord-gamme** | La pratique qui consiste à attribuer une gamme parente à chaque qualité d'accord pour l'improvisation |
 | **Note à éviter** | Un degré de la gamme qui crée une neuvième mineure contre une note de l'accord lorsqu'il est tenu |
 | **Mineur mélodique** | La « gamme mère » mineure du jazz (1 2 b3 4 5 6 7) dont les modes engendrent les gammes de dominantes altérées et étendues |
-| **Voicing en quartes** | Un accord construit en empilant des quartes justes plutôt que des tierces |
+| **Voicing en quartes** | Un accord construit en empilant des quartes, justes pour la plupart, plutôt que des tierces |
 | **Triade de structure supérieure** | Une triade majeure ou mineure superposée à une septième de dominante pour créer des extensions |
 | **Coltrane Changes** | Une technique de réharmonisation qui divise l'octave en trois centres tonaux à une tierce majeure d'écart |
 | **Conduite des voix** | L'art d'enchaîner les accords avec un mouvement mélodique minimal dans chaque voix |

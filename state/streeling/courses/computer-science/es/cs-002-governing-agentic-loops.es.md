@@ -146,7 +146,7 @@ BUCLE GOBERNADO
 ```
 
 Este patrón aparece en tres lugares del ecosistema Demerzel, y solo los dos primeros acotan la duración de una iteración:
-- **Seldon Plan:** límite de 6 ciclos al día, registro de novedad como prueba de progreso, duración máxima de 30 minutos por ciclo (`policies/seldon-plan-policy.yaml`)
+- **Seldon Plan:** límite de 6 ciclos al día, registro de novedad como prueba de progreso, límite flexible de 30 minutos por ciclo (`policies/seldon-plan-policy.yaml`) y parada forzosa a los 35 minutos (`timeout-minutes` en `.github/workflows/seldon-plan.yml`)
 - **Demerzel Driver:** una pausa para revisión humana tras 5 ciclos consecutivos sin intervención, señales de conciencia como detección de anomalías, plazo de ciclo (2 horas flexible, luego parada forzosa a las 2h15)
 - **Ralph Loop:** límite de iteraciones + métrica de convergencia (tasa de pruebas superadas) como criterio externo, pero sin plazo por iteración: ni `policies/autonomous-loop-policy.yaml` ni `.claude/skills/demerzel-loop/SKILL.md` lo definen, así que una iteración que se bloquea nunca llega al contador
 

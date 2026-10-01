@@ -146,7 +146,7 @@ BOUCLE GOUVERNÉE
 ```
 
 Ce schéma apparaît à trois endroits de l'écosystème Demerzel, et seuls les deux premiers bornent la durée d'une itération :
-- **Seldon Plan :** plafond de 6 cycles par jour, registre de nouveauté comme test de progression, durée maximale de 30 minutes par cycle (`policies/seldon-plan-policy.yaml`)
+- **Seldon Plan :** plafond de 6 cycles par jour, registre de nouveauté comme test de progression, limite souple de 30 minutes par cycle (`policies/seldon-plan-policy.yaml`) et arrêt forcé à 35 minutes (`timeout-minutes` dans `.github/workflows/seldon-plan.yml`)
 - **Demerzel Driver :** une pause pour revue humaine après 5 cycles consécutifs sans intervention, signaux de conscience comme détection d'anomalie, délai de cycle (2 heures en souple, puis arrêt forcé à 2h15)
 - **Ralph Loop :** plafond d'itérations + métrique de convergence (taux de réussite des tests) comme critère externe, mais aucun délai par itération : ni `policies/autonomous-loop-policy.yaml` ni `.claude/skills/demerzel-loop/SKILL.md` n'en définit, si bien qu'une itération qui se bloque n'atteint jamais le compteur
 

@@ -146,7 +146,7 @@ GOVERNED LOOP
 ```
 
 This pattern appears in three places in the Demerzel ecosystem, and only the first two bound the duration of an iteration:
-- **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test, 30-minute maximum duration per cycle (`policies/seldon-plan-policy.yaml`)
+- **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test, a 30-minute soft limit per cycle (`policies/seldon-plan-policy.yaml`) and a hard kill at 35 minutes (`timeout-minutes` in `.github/workflows/seldon-plan.yml`)
 - **Demerzel Driver:** a pause for human review after 5 consecutive unattended cycles, conscience signals as anomaly detection, cycle timeout (2 hours soft, then a hard kill at 2h15m)
 - **Ralph Loop:** iteration cap + convergence metric (test pass rate) as external criterion, but no per-iteration deadline: neither `policies/autonomous-loop-policy.yaml` nor `.claude/skills/demerzel-loop/SKILL.md` defines one, so an iteration that blocks never reaches the counter
 

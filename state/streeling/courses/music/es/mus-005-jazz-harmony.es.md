@@ -451,15 +451,15 @@ Después toca la progresión en la guitarra improvisando una melodía sencilla q
 
 La armonía tradicional apila **terceras**. La armonía por cuartas apila **cuartas**. El sonido es abierto, ambiguo y moderno — evita la fuerte atracción mayor/menor de la armonía por terceras.
 
-**El enfoque de McCoy Tyner:** sobre un vamp en Re dórico, apila cuartas justas desde distintos grados de la escala:
+**El enfoque de McCoy Tyner:** sobre un vamp en Re dórico, apila cuartas desde distintos grados de la escala, solo con notas del modo:
 
 ```
 Desde D: D - G - C - F     (cuartas apiladas)
 Desde E: E - A - D - G     (cuartas apiladas)
-Desde G: G - C - F - Bb    (cuartas apiladas — incluye b6, fuera del dórico)
+Desde G: G - C - F - B     (cuartas apiladas — F-B es un tritono)
 ```
 
-Estos voicings pueden moverse dentro del modo y crean un paisaje armónico resplandeciente y no funcional. Los voicings individuales no "resuelven" — flotan.
+Estos voicings pueden moverse dentro del modo y crean un paisaje armónico resplandeciente y no funcional. Los voicings individuales no "resuelven" — flotan. La mayoría de estas cuartas son justas; F-B, la única cuarta aumentada del modo, añade tensión. Una cuarta justa por encima de F daría Bb, la b6, fuera del Re dórico.
 
 ### El voicing "So What"
 
@@ -630,7 +630,7 @@ Estos temas forman un vocabulario básico. Un guitarrista de jazz que sepa condu
 | **Teoría acorde-escala** | La práctica de asignar una escala madre a cada calidad de acorde para improvisar |
 | **Nota a evitar** | Un grado de la escala que crea una novena menor contra una nota del acorde cuando se sostiene |
 | **Menor melódica** | La "escala madre" menor del jazz (1 2 b3 4 5 6 7) cuyos modos generan las escalas de dominantes alteradas y extendidas |
-| **Voicing por cuartas** | Un acorde construido apilando cuartas justas en lugar de terceras |
+| **Voicing por cuartas** | Un acorde construido apilando cuartas, justas en su mayoría, en lugar de terceras |
 | **Tríada de estructura superior** | Una tríada mayor o menor superpuesta a una séptima de dominante para crear extensiones |
 | **Coltrane Changes** | Una técnica de rearmonización que divide la octava en tres centros tonales a una tercera mayor de distancia |
 | **Conducción de voces** | El arte de enlazar acordes con un movimiento melódico mínimo en cada voz |

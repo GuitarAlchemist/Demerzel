@@ -451,15 +451,15 @@ Then play through the progression on guitar, improvising a simple melody that us
 
 Traditional harmony stacks **thirds**. Quartal harmony stacks **fourths**. The sound is open, ambiguous, and modern — it avoids the strong major/minor pull of tertian harmony.
 
-**McCoy Tyner's approach:** Over a D Dorian vamp, stack perfect fourths from various degrees of the scale:
+**McCoy Tyner's approach:** Over a D Dorian vamp, stack fourths from various degrees of the scale, using only the mode's notes:
 
 ```
 From D: D - G - C - F     (stacked 4ths)
 From E: E - A - D - G     (stacked 4ths)
-From G: G - C - F - Bb    (stacked 4ths — includes b6, outside Dorian)
+From G: G - C - F - B     (stacked 4ths — F-B is a tritone)
 ```
 
-These voicings can be moved around within the mode, creating a shimmering, non-functional harmonic landscape. The individual voicings do not "resolve" — they float.
+These voicings can be moved around within the mode, creating a shimmering, non-functional harmonic landscape. The individual voicings do not "resolve" — they float. Most of these fourths are perfect; F-B, the mode's one augmented fourth, adds tension. A perfect fourth above F would be Bb, the b6, which is outside D Dorian.
 
 ### The "So What" Voicing
 
@@ -630,7 +630,7 @@ These tunes form a core vocabulary. A jazz guitarist who can voice lead, comp, a
 | **Chord-scale theory** | The practice of assigning a parent scale to each chord quality for improvisation |
 | **Avoid note** | A scale degree that creates a minor 9th against a chord tone when sustained |
 | **Melodic minor** | The jazz minor "mother scale" (1 2 b3 4 5 6 7) whose modes generate altered and extended dominant scales |
-| **Quartal voicing** | A chord built by stacking perfect fourths rather than thirds |
+| **Quartal voicing** | A chord built by stacking fourths, mostly perfect, rather than thirds |
 | **Upper-structure triad** | A major or minor triad superimposed over a dominant 7th to create extensions |
 | **Coltrane Changes** | A reharmonization technique dividing the octave into three key centers a major third apart |
 | **Voice leading** | The art of connecting chords through minimal melodic motion in each voice |
