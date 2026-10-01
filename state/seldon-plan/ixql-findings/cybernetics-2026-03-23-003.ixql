@@ -18,7 +18,7 @@ RESEARCH_FINDING {
   course_produced: true,
   grammar_evolved: false,
   follow_up_questions: [
-    "How can each disturbance met, the response given and its outcome on the essential variables be logged in each cycle, so that regulation can be measured?",
+    "How can each disturbance met, the response given and its outcome on the essential variables be logged in each cycle, so that regulation can be measured? Once it is, does hierarchical policy grouping reduce the disturbances that policy interactions produce, or only the number of policy pairs?",
     "How should grammar production usage be tracked to detect dead productions and inform structural attenuation?",
     "What is the information-theoretic relationship between Demerzel's hexavalent logic (T/P/U/D/F/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?"
   ]
