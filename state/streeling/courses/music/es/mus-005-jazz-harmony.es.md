@@ -596,7 +596,7 @@ Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 
 1. Escribe los tres centros tonales por terceras mayores para un ii-V-I en **Fa mayor** (objetivo: Fmaj7).
 2. Rearmoniza `Gm7 | C7 | Fmaj7` con el ciclo de Coltrane, insertando pares V7→I para cada centro tonal.
-3. Toca despacio tu rearmonización en la guitarra con voicings shell. Céntrate en el movimiento del bajo — los centros tonales bajan por terceras mayores, así que, tras el único semitono que sale del acorde de ii, las fundamentales alternan una cuarta justa ascendente (cada V7 hacia su I) y una tercera menor ascendente (cada I hacia el siguiente V7).
+3. Toca despacio tu rearmonización en la guitarra con voicings shell. Céntrate en el movimiento del bajo — los centros tonales bajan por terceras mayores, así que, tras el único semitono que sale del acorde de ii, las fundamentales alternan una cuarta justa ascendente (cada V7 hacia su I) y tres semitonos ascendentes (cada I hacia el siguiente V7): una tercera menor como E→G o, donde los nombres de los acordes dan Ab→B o Db→E, su equivalente enarmónico, una segunda aumentada.
 
 ---
 

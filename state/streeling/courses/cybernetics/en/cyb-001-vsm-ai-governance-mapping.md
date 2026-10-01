@@ -3,7 +3,7 @@
 **Department:** Cybernetics
 **Module ID:** CYB-001
 **Produced by:** Seldon Plan Cycle cybernetics-2026-03-22-001
-**Belief:** T (probable), confidence 0.82
+**Belief:** T, confidence 0.82
 **Date:** 2026-03-22
 
 ## Research Question

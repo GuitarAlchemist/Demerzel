@@ -3,7 +3,7 @@
 **Department:** Cybernetics
 **Module ID:** CYB-002
 **Produced by:** Seldon Plan Cycle cybernetics-2026-03-23-002
-**Belief:** T (probable), confidence 0.83
+**Belief:** T, confidence 0.83
 **Date:** 2026-03-23
 **Prerequisite:** CYB-001 (VSM-to-AI Governance Mapping)
 

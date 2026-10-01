@@ -596,7 +596,7 @@ Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 
 1. Write out the three major-third key centers for a ii-V-I in **F major** (target: Fmaj7).
 2. Reharmonize `Gm7 | C7 | Fmaj7` using the Coltrane cycle, inserting V7→I pairs for each key center.
-3. Play through your reharmonization slowly on guitar, using shell voicings. Focus on the bass motion — the key centres fall by major thirds, so after the single half step that leaves the ii chord the roots alternate up a perfect fourth (each V7 to its I) and up a minor third (each I to the next V7).
+3. Play through your reharmonization slowly on guitar, using shell voicings. Focus on the bass motion — the key centres fall by major thirds, so after the single half step that leaves the ii chord the roots alternate up a perfect fourth (each V7 to its I) and up three half steps (each I to the next V7): a minor third such as E→G, or, where the chord names give Ab→B or Db→E, its enharmonic spelling, an augmented second.
 
 ---
 

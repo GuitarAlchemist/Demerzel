@@ -596,7 +596,7 @@ Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 
 1. Écrivez les trois centres tonaux en tierces majeures pour un ii-V-I en **Fa majeur** (cible : Fmaj7).
 2. Réharmonisez `Gm7 | C7 | Fmaj7` avec le cycle de Coltrane, en insérant des paires V7→I pour chaque centre tonal.
-3. Jouez lentement votre réharmonisation à la guitare avec des voicings en shell. Concentrez-vous sur le mouvement de la basse — les centres tonaux descendent par tierces majeures, donc après l'unique demi-ton qui quitte l'accord de ii, les fondamentales alternent une quarte juste ascendante (chaque V7 vers son I) et une tierce mineure ascendante (chaque I vers le V7 suivant).
+3. Jouez lentement votre réharmonisation à la guitare avec des voicings en shell. Concentrez-vous sur le mouvement de la basse — les centres tonaux descendent par tierces majeures, donc après l'unique demi-ton qui quitte l'accord de ii, les fondamentales alternent une quarte juste ascendante (chaque V7 vers son I) et trois demi-tons ascendants (chaque I vers le V7 suivant) : une tierce mineure comme E→G ou, là où les noms d'accords donnent Ab→B ou Db→E, son équivalent enharmonique, une seconde augmentée.
 
 ---
 
