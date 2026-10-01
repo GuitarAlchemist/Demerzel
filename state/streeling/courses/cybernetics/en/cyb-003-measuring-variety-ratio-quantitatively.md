@@ -53,7 +53,7 @@ Variety in a governance framework is not a single number. This course measures D
 
 **Rules are not states.** A rule, such as a policy, a persona constraint or an evolution gate, is a predicate that allows some states and forbids others. Several rules can apply at once and overlap, and splitting one rule into two changes their count without changing any behavior. So log2 of a number of rules is not a variety. An attenuator is measured by the variety it removes: A = V_in - V_out, where V_in is the variety of what reaches it and V_out the variety of what it lets through.
 
-**An inventory is not a set of outcomes.** A count of what the repository defines bounds the outcomes only when each item can occur alone as one outcome. A grammar derivation uses many rule definitions at once, one decision label can cover several different actions, and a pair of policies is an interaction only if the two actually interact, while one interacting pair can conflict in several distinguishable ways. Variety is counted on outcomes: the distinct structures generated, responses given and disturbances met.
+**An inventory is not a set of outcomes.** A count of what the repository defines bounds the outcomes only when each item can occur alone as one outcome, and then only from above: the outcomes have that variety only if every item actually occurs. A grammar derivation uses many rule definitions at once, one decision label can cover several different actions, and a pair of policies is an interaction only if the two actually interact, while one interacting pair can conflict in several distinguishable ways. Variety is counted on outcomes: the distinct structures generated, responses given and disturbances met.
 
 ### Dimension 1: Behavioral Variety (V_B)
 
@@ -68,7 +68,7 @@ Variety in a governance framework is not a single number. This course measures D
 
 Each persona file sets exactly one goal-directedness level and one voice: `schemas/persona.schema.json` requires both, and each holds a single value. Choosing a persona therefore chooses both, and the 14 voices are the voices of the 14 personas. The behavioral profiles Demerzel can instantiate are the personas themselves.
 
-**Persona selection:** V_B_persona = log2(14) = **3.81 bits**, the variety of choosing which persona acts. The actions a persona can then take are not counted here; they are what the attenuation measurement (Metric 3) records.
+**Persona selection:** V_B_persona is at most log2(14) = **3.81 bits**, the variety of choosing which persona acts, reached only if each of the 14 is actually chosen. Which personas act is not recorded, so the catalogue bounds this variety without measuring it. The actions a persona can then take are not counted here; they are what the attenuation measurement (Metric 3) records.
 
 Multiplying the three rows, 14 × 4 × 14 = 784 profiles (9.61 bits), would count combinations that exist only if any level and any voice could be recombined with any persona at runtime, which the persona files do not provide. That product is an upper bound, not the variety.
 
@@ -80,7 +80,7 @@ Multiplying the three rows, 14 × 4 × 14 = 784 profiles (9.61 bits), would coun
 
 **Behavioral attenuation:** not measured. The 60 constraints are predicates that apply together and can overlap; log2(60) = 5.91 bits would treat them as 60 distinguishable outcomes. Their attenuation is the reduction in variety from the actions each persona proposes to those its constraints allow, A_B = V_in - V_out, and measuring it needs a record of both, with the refusals kept apart.
 
-Interpretation: Demerzel has 14 behavioral profiles, 3.81 bits of persona selection, each bounded by its own constraints. How much the constraints remove is the open measurement of this dimension.
+Interpretation: Demerzel has 14 behavioral profiles, at most 3.81 bits of persona selection, each bounded by its own constraints. Which personas act, and how much the constraints remove, are the open measurements of this dimension.
 
 ### Dimension 2: Structural Variety (V_S)
 
@@ -119,9 +119,9 @@ At commit `74cf7c5` Demerzel's logic had four values, T/F/U/C. Its canonical log
 | Confidence rungs | 5 | 2.32 bits |
 | PDCA states | 4 | 2.00 bits |
 
-**Label variety:** by the counting rules, the variety of the label triple lies between the largest component, 2.58 bits, and the sum of the three, log2(6 × 5 × 4) = log2(120) = **6.91 bits**, reached only if every combination of logic value, confidence rung and PDCA state can occur. Whether they vary independently is not established, so both bounds are kept.
+**Label vocabularies:** these are three separate vocabularies, of 2.58, 2.32 and 2.00 bits. Each count is a maximum: a label has that variety only if decisions actually use every one of its values, and no record shows that they do, so not even the largest, 2.58 bits, is a lower bound. Nor does any file attach the three labels to one decision, so their combinations, log2(6 × 5 × 4) = log2(120) = **6.91 bits**, are what the vocabularies allow, not a set of labels in use. The label variety is **not measured**: measuring it needs a record of the labels each decision carries.
 
-These labels classify a decision; they do not count responses. A truth value states a belief, a confidence rung routes execution, and a PDCA state is a workflow stage, so several different actions, an escalation among them, can carry the same triple. The label variety therefore bounds nothing about the response variety V_R_amp, which is **not measured**: measuring it needs a record of the distinct actions governance takes, escalations included.
+These labels classify a decision; they do not count responses. A truth value states a belief, a confidence rung routes execution, and a PDCA state is a workflow stage, so several different actions, an escalation among them, can carry the same labels. The labels therefore bound nothing about the response variety V_R_amp, which is **not measured**: measuring it needs a record of the distinct actions governance takes, escalations included.
 
 **Attenuators:**
 | Component | Count | What the count is |
@@ -138,11 +138,11 @@ Interpretation: governance is meant to constrain more than it amplifies, in line
 
 ### Summary Table
 
-| Dimension | Inventory at `74cf7c5` | Variety established | Attenuation | Assessment |
+| Dimension | Inventory at `74cf7c5` | Variety | Attenuation | Assessment |
 |-----------|------------------------|---------------------|-------------|------------|
-| Behavioral (V_B) | 14 personas, 60 constraints, 1 estimator | Persona selection: 3.81 bits | Not measured | Profiles fixed per persona |
+| Behavioral (V_B) | 14 personas, 60 constraints, 1 estimator | Persona selection: at most 3.81 bits, not measured | Not measured | Profiles fixed per persona |
 | Structural (V_S) | 27 grammars, 1,129 rule definitions, 2 gates, 1 staleness alert | Not measured | Not measured | Gate effectiveness not measured |
-| Regulatory (V_R) | 4 values (6 at `91e41ac`), 5 rungs at `91e41ac`, 4 PDCA states; 37 policies, 17 articles, 4 severity levels | Labels: 2.58 to 6.91 bits; responses not measured | Not measured | Conservative by design, extent unmeasured |
+| Regulatory (V_R) | 4 values (6 at `91e41ac`), 5 rungs at `91e41ac`, 4 PDCA states; 37 policies, 17 articles, 4 severity levels | Labels: at most 6.91 bits combined; labels and responses not measured | Not measured | Conservative by design, extent unmeasured |
 
 ### Why the Dashboard Has No Amplifier-to-Attenuator Ratio
 
@@ -162,9 +162,9 @@ These directions become thresholds once A_B, A_S, A_R, the joint varieties and t
 
 ### Current Assessment
 
-- **Behavioral (3.81 bits of persona selection, 14 personas):** each persona fixes its level and voice. How much its constraints remove is unmeasured; logging the actions each persona proposes and those its constraints allow would measure it.
+- **Behavioral (14 personas, at most 3.81 bits of persona selection):** each persona fixes its level and voice. Which personas act, and how much their constraints remove, are unmeasured; logging the personas chosen, the actions each proposes and those its constraints allow would measure both.
 - **Structural (27 grammars, 1,129 rule definitions):** no structural variety is measured, and nothing yet shows whether the three rules that check them suffice. Recommendation: measure before adding gates. Log the proposed changes and the gates' verdicts, which measures A_S; seed changes the gates must reject; track grammar test coverage and production usage; and log the derivations produced, which measures V_S. Add a gate where a seeded failure passes or coverage is missing.
-- **Regulatory (labels 2.58 to 6.91 bits):** conservative by design; telling whether it is too conservative, or regulates enough, needs A_R and the outcomes of the disturbances it meets.
+- **Regulatory (label vocabularies, at most 6.91 bits combined):** conservative by design; telling whether it is too conservative, or regulates enough, needs A_R and the outcomes of the disturbances it meets.
 
 ## The Disturbance Side: What Must Be Regulated?
 
@@ -198,11 +198,11 @@ For governance to regulate every disturbance it meets, where no response brings 
 V(regulatory response) >= V(disturbance) - V(acceptable outcomes)
 ```
 
-- V_R_amp, the response variety, is not measured. The inventory gives only the label variety, between 2.58 and 6.91 bits, which does not bound it (see Dimension 3)
+- V_R_amp, the response variety, is not measured. The definitions give only the label vocabularies, at most 6.91 bits combined, and labels do not bound it (see Dimension 3)
 - If the estimates hold, V_D is at least 6.64 bits, the environment changes, the largest single estimated source. The inventory gives no upper bound, since policy interactions are not estimated (see Internal Disturbances)
 - **Gap: not computed.** Neither side is measured, and the inventories fit both a surplus and a deficit of any size
 
-The lower bound holds whatever the dependencies, given the estimates: a joint state space has at least as many states as its largest part. It also shows how little the inventories decide. About 100 distinct environment changes (6.64 bits) is fewer than the 120 label triples (6.91 bits), so even the labels could in principle tell them apart, while nothing in the inventories caps the disturbances from above. Counting the distinct disturbances met and responses given in each cycle would give V_D - V_R_amp, but that difference is only Ashby's lower bound on outcome variety, valid where no response brings two disturbances to the same outcome. Two cycles with the same counts can regulate fully or not at all, depending on which response meets which disturbance, and one robust response can regulate several disturbances. Whether governance regulates is measured by recording, for each disturbance, the response given and the outcome on the essential variables (Metric 3).
+The lower bound holds whatever the dependencies, given the estimates: a joint state space has at least as many states as its largest part. It also shows how little the inventories decide. About 100 distinct environment changes (6.64 bits) is fewer than the 120 label combinations the vocabularies allow (6.91 bits), so even the labels could in principle tell them apart if decisions used every combination, while nothing in the inventories caps the disturbances from above. Counting the distinct disturbances met and responses given in each cycle would give V_D - V_R_amp, but that difference is only Ashby's lower bound on outcome variety, valid where no response brings two disturbances to the same outcome. Two cycles with the same counts can regulate fully or not at all, depending on which response meets which disturbance, and one robust response can regulate several disturbances. Whether governance regulates is measured by recording, for each disturbance, the response given and the outcome on the essential variables (Metric 3).
 
 If disturbances outrun responses, the difference has to be absorbed by:
 
@@ -243,15 +243,20 @@ To track variety over time, Demerzel should compute the following metrics at eac
 }
 ```
 
-`commit` dates the inventory counts, all read at `74cf7c5`, where the logic had four values. `definitions` holds what the label variety uses: the six logic values of `CONTEXT.md` and the five rungs of `logic/confidence-thresholds.yaml`, read at `91e41ac`. The ladder file did not exist at `74cf7c5`, so the inventory has no rung count.
+`commit` dates the inventory counts, all read at `74cf7c5`, where the logic had four values. `definitions` holds what the label bounds use: the six logic values of `CONTEXT.md` and the five rungs of `logic/confidence-thresholds.yaml`, read at `91e41ac`. The ladder file did not exist at `74cf7c5`, so the inventory has no rung count.
 
 ### Metric 2: Dimensional Varieties
 
 ```json
 {
   "variety_bits": {
-    "persona_selection": 3.81,
-    "decision_labels": [2.58, 6.91],
+    "catalogue_bounds": {
+      "persona_selection": 3.81,
+      "label_vocabularies": [2.58, 2.32, 2.00],
+      "label_combinations": 6.91
+    },
+    "persona_selection": null,
+    "decision_labels": null,
     "structures_generated": null,
     "responses": null,
     "disturbances": null,
@@ -263,11 +268,11 @@ To track variety over time, Demerzel should compute the following metrics at eac
 }
 ```
 
-A `null` marks a quantity not yet measured, not a zero. `persona_selection` comes from the inventory and `decision_labels` from the definitions, hence the two commits.
+A `null` marks a quantity not yet measured, not a zero. `catalogue_bounds` holds upper bounds, not measurements: the persona bound comes from the inventory and the label bounds from the definitions, hence the two commits. Measuring `persona_selection` and `decision_labels` needs a record of the personas chosen and of the labels each decision carries.
 
 ### Metric 3: Outcome and Attenuation Measurement
 
-For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the N_S distinct structures the grammars generate (V_S), the N_R distinct responses governance gives, escalations included (V_R_amp), and the N_D distinct disturbances it meets (V_D). A zero count has no log2 and gets a label, not a number: a cycle that meets no disturbance (N_D = 0) is quiet; one that meets disturbances and gives no response (N_D > 0, N_R = 0) is unanswered; one in which the grammars generate no structure (N_S = 0) is idle for V_S. For each disturbance, record also the response given (none, if none) and the outcome on the essential variables, within bounds or not: for example, no constitutional article violated and no schema validation failing. The regulation rate is the share of disturbances met whose outcome stays within bounds, and the distinct outcomes give V_O. The difference V_D - V_R_amp, computed only for cycles with N_D > 0 and N_R > 0, is Ashby's lower bound on V_O, not a measure of regulation: it says how far outcomes must spread if no response serves two disturbances, every disturbance can be regulated only if it does not exceed V_η, and the recorded outcomes say how far they did spread.
+For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the distinct personas chosen to act and the distinct label combinations decisions carry, the N_S distinct structures the grammars generate (V_S), the N_R distinct responses governance gives, escalations included (V_R_amp), and the N_D distinct disturbances it meets (V_D). A zero count has no log2 and gets a label, not a number: a cycle that meets no disturbance (N_D = 0) is quiet; one that meets disturbances and gives no response (N_D > 0, N_R = 0) is unanswered; one in which the grammars generate no structure (N_S = 0) is idle for V_S. For each disturbance, record also the response given (none, if none) and the outcome on the essential variables, within bounds or not: for example, no constitutional article violated and no schema validation failing. The regulation rate is the share of disturbances met whose outcome stays within bounds, and the distinct outcomes give V_O. The difference V_D - V_R_amp, computed only for cycles with N_D > 0 and N_R > 0, is Ashby's lower bound on V_O, not a measure of regulation: it says how far outcomes must spread if no response serves two disturbances, every disturbance can be regulated only if it does not exceed V_η, and the recorded outcomes say how far they did spread.
 
 Track these over consecutive cycles. Alert when:
 - A control probe passes: an input the attenuator must refuse, seeded on purpose, gets through. A = 0 alone is not an alert, since a cycle whose inputs are all valid rightly gives A = 0
@@ -297,7 +302,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 
 ## Implications for Demerzel
 
-1. **Track varieties per cycle** — Add the inventory snapshot to `state/governance/variety-metrics.json` (or an equivalent state file). Record the inventory and, once measured, the varieties of structures, responses and disturbances, each attenuation, and for each disturbance the response given and its outcome.
+1. **Track varieties per cycle** — Add the inventory snapshot to `state/governance/variety-metrics.json` (or an equivalent state file). Record the inventory and, once measured, the varieties of persona selection, decision labels, structures, responses and disturbances, each attenuation, and for each disturbance the response given and its outcome.
 2. **Measure the structural gates before adding any** — Log proposed grammar changes and the gates' verdicts, seed changes the gates must reject, and track grammar test coverage and production usage; add a gate where a seeded failure passes or coverage is missing. The verdicts also make A_S measurable.
 3. **Measure regulation** — Record each disturbance met, the response given and its outcome on the essential variables. The inventories bound the two varieties only loosely: disturbances of at least 6.64 bits if the estimates hold, with no upper bound, and no bound on responses. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.

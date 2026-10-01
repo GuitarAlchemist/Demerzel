@@ -53,7 +53,7 @@ Dans un cadre de gouvernance, la variété n'est pas un nombre unique. Ce cours 
 
 **Les règles ne sont pas des états.** Une règle, comme une politique, une contrainte de persona ou une porte d'évolution, est un prédicat qui autorise certains états et en interdit d'autres. Plusieurs règles peuvent s'appliquer à la fois et se recouvrir, et scinder une règle en deux change leur nombre sans changer aucun comportement. Le log2 d'un nombre de règles n'est donc pas une variété. Un atténuateur se mesure par la variété qu'il retire : A = V_in - V_out, où V_in est la variété de ce qui lui parvient et V_out celle de ce qu'il laisse passer.
 
-**Un inventaire n'est pas un ensemble d'issues.** Un nombre d'éléments définis par le dépôt ne borne les issues que si chaque élément peut se produire seul, comme une issue. Une dérivation de grammaire utilise plusieurs définitions de règles à la fois, une même étiquette de décision peut couvrir plusieurs actions différentes, et une paire de politiques n'est une interaction que si les deux interagissent réellement, tandis qu'une même paire en interaction peut entrer en conflit de plusieurs façons distinguables. La variété se compte sur les issues : les structures distinctes générées, les réponses données et les perturbations rencontrées.
+**Un inventaire n'est pas un ensemble d'issues.** Un nombre d'éléments définis par le dépôt ne borne les issues que si chaque élément peut se produire seul, comme une issue, et seulement par le haut : les issues n'ont cette variété que si chaque élément se produit réellement. Une dérivation de grammaire utilise plusieurs définitions de règles à la fois, une même étiquette de décision peut couvrir plusieurs actions différentes, et une paire de politiques n'est une interaction que si les deux interagissent réellement, tandis qu'une même paire en interaction peut entrer en conflit de plusieurs façons distinguables. La variété se compte sur les issues : les structures distinctes générées, les réponses données et les perturbations rencontrées.
 
 ### Dimension 1 : variété comportementale (V_B)
 
@@ -68,7 +68,7 @@ Dans un cadre de gouvernance, la variété n'est pas un nombre unique. Ce cours 
 
 Chaque fichier de persona fixe exactement un niveau d'orientation vers un but et une voix : `schemas/persona.schema.json` exige les deux, et chacun contient une seule valeur. Choisir une persona revient donc à choisir les deux, et les 14 voix sont celles des 14 personas. Les profils comportementaux que Demerzel peut instancier sont les personas elles-mêmes.
 
-**Choix de la persona :** V_B_persona = log2(14) = **3.81 bits**, la variété du choix de la persona qui agit. Les actions qu'une persona peut ensuite entreprendre ne sont pas comptées ici ; c'est ce que consigne la mesure de l'atténuation (métrique 3).
+**Choix de la persona :** V_B_persona vaut au plus log2(14) = **3.81 bits**, la variété du choix de la persona qui agit, atteinte seulement si chacune des 14 est réellement choisie. Les personas qui agissent ne sont pas consignées : le catalogue borne cette variété sans la mesurer. Les actions qu'une persona peut ensuite entreprendre ne sont pas comptées ici ; c'est ce que consigne la mesure de l'atténuation (métrique 3).
 
 Multiplier les trois lignes, 14 × 4 × 14 = 784 profils (9.61 bits), compterait des combinaisons qui n'existent que si n'importe quel niveau et n'importe quelle voix pouvaient être recombinés avec n'importe quelle persona à l'exécution, ce que les fichiers de persona ne permettent pas. Ce produit est une borne supérieure, pas la variété.
 
@@ -80,7 +80,7 @@ Multiplier les trois lignes, 14 × 4 × 14 = 784 profils (9.61 bits), compterait
 
 **Atténuation comportementale :** non mesurée. Les 60 contraintes sont des prédicats qui s'appliquent ensemble et peuvent se recouvrir ; log2(60) = 5.91 bits les traiterait comme 60 issues distinguables. Leur atténuation est la réduction de variété entre les actions que chaque persona propose et celles que ses contraintes autorisent, A_B = V_in - V_out, et la mesurer demande un relevé des unes et des autres, les refus étant consignés à part.
 
-Interprétation : Demerzel a 14 profils comportementaux, 3.81 bits de choix de persona, chacun borné par ses propres contraintes. Ce que retirent les contraintes est la mesure encore ouverte de cette dimension.
+Interprétation : Demerzel a 14 profils comportementaux, au plus 3.81 bits de choix de persona, chacun borné par ses propres contraintes. Les personas qui agissent et ce que retirent les contraintes sont les mesures encore ouvertes de cette dimension.
 
 ### Dimension 2 : variété structurelle (V_S)
 
@@ -119,9 +119,9 @@ Au commit `74cf7c5`, la logique de Demerzel avait quatre valeurs, T/F/U/C. Sa lo
 | Échelons de confiance | 5 | 2.32 bits |
 | États PDCA | 4 | 2.00 bits |
 
-**Variété des étiquettes :** selon les règles de comptage, la variété du triplet d'étiquettes se situe entre la plus grande composante, 2.58 bits, et la somme des trois, log2(6 × 5 × 4) = log2(120) = **6.91 bits**, atteinte seulement si toute combinaison de valeur logique, d'échelon de confiance et d'état PDCA peut se produire. Leur indépendance n'est pas établie, donc les deux bornes sont conservées.
+**Vocabulaires d'étiquettes :** ce sont trois vocabulaires distincts, de 2.58, 2.32 et 2.00 bits. Chaque nombre est un maximum : une étiquette n'a cette variété que si les décisions utilisent réellement chacune de ses valeurs, et aucun relevé ne montre qu'elles le font, si bien que même la plus grande, 2.58 bits, n'est pas une borne inférieure. Aucun fichier n'attache non plus les trois étiquettes à une même décision : leurs combinaisons, log2(6 × 5 × 4) = log2(120) = **6.91 bits**, sont ce que permettent les vocabulaires, pas un ensemble d'étiquettes en usage. La variété des étiquettes n'est **pas mesurée** : la mesurer demande un relevé des étiquettes que porte chaque décision.
 
-Ces étiquettes classent une décision ; elles ne comptent pas les réponses. Une valeur de vérité énonce une croyance, un échelon de confiance oriente l'exécution et un état PDCA est une étape du flux de travail, si bien que plusieurs actions différentes, dont une escalade, peuvent porter le même triplet. La variété des étiquettes ne borne donc en rien la variété des réponses V_R_amp, qui n'est **pas mesurée** : la mesurer demande un relevé des actions distinctes que prend la gouvernance, escalades comprises.
+Ces étiquettes classent une décision ; elles ne comptent pas les réponses. Une valeur de vérité énonce une croyance, un échelon de confiance oriente l'exécution et un état PDCA est une étape du flux de travail, si bien que plusieurs actions différentes, dont une escalade, peuvent porter les mêmes étiquettes. Les étiquettes ne bornent donc en rien la variété des réponses V_R_amp, qui n'est **pas mesurée** : la mesurer demande un relevé des actions distinctes que prend la gouvernance, escalades comprises.
 
 **Atténuateurs :**
 | Composant | Nombre | Ce que le nombre compte |
@@ -138,11 +138,11 @@ Interprétation : la gouvernance doit contraindre plus qu'elle n'amplifie, confo
 
 ### Tableau récapitulatif
 
-| Dimension | Inventaire à `74cf7c5` | Variété établie | Atténuation | Évaluation |
+| Dimension | Inventaire à `74cf7c5` | Variété | Atténuation | Évaluation |
 |-----------|------------------------|---------------------|-------------|------------|
-| Comportementale (V_B) | 14 personas, 60 contraintes, 1 estimateur | Choix de la persona : 3.81 bits | Non mesurée | Profils fixés par persona |
+| Comportementale (V_B) | 14 personas, 60 contraintes, 1 estimateur | Choix de la persona : au plus 3.81 bits, non mesuré | Non mesurée | Profils fixés par persona |
 | Structurelle (V_S) | 27 grammaires, 1,129 définitions de règles, 2 portes, 1 alerte d'obsolescence | Non mesurée | Non mesurée | Efficacité des portes non mesurée |
-| Régulatrice (V_R) | 4 valeurs (6 à `91e41ac`), 5 échelons à `91e41ac`, 4 états PDCA ; 37 politiques, 17 articles, 4 niveaux de gravité | Étiquettes : 2.58 à 6.91 bits ; réponses non mesurées | Non mesurée | Prudente par conception, ampleur non mesurée |
+| Régulatrice (V_R) | 4 valeurs (6 à `91e41ac`), 5 échelons à `91e41ac`, 4 états PDCA ; 37 politiques, 17 articles, 4 niveaux de gravité | Étiquettes : au plus 6.91 bits à elles trois ; étiquettes et réponses non mesurées | Non mesurée | Prudente par conception, ampleur non mesurée |
 
 ### Pourquoi le tableau de bord n'a pas de ratio amplificateurs sur atténuateurs
 
@@ -162,9 +162,9 @@ Ces sens deviendront des seuils une fois A_B, A_S, A_R, les variétés conjointe
 
 ### Évaluation actuelle
 
-- **Comportementale (3.81 bits de choix de persona, 14 personas) :** chaque persona fixe son niveau et sa voix. Ce que retirent ses contraintes n'est pas mesuré ; consigner les actions que chaque persona propose et celles que ses contraintes autorisent le mesurerait.
+- **Comportementale (14 personas, au plus 3.81 bits de choix de persona) :** chaque persona fixe son niveau et sa voix. Les personas qui agissent et ce que retirent leurs contraintes ne sont pas mesurés ; consigner les personas choisies, les actions que chacune propose et celles que ses contraintes autorisent mesurerait les deux.
 - **Structurelle (27 grammaires, 1,129 définitions de règles) :** aucune variété structurelle n'est mesurée, et rien ne montre encore si les trois règles qui les contrôlent suffisent. Recommandation : mesurer avant d'ajouter des portes. Consigner les changements proposés et les verdicts des portes, ce qui mesure A_S ; injecter des changements que les portes doivent rejeter ; suivre la couverture de tests des grammaires et l'usage des productions ; et consigner les dérivations produites, ce qui mesure V_S. Ajouter une porte là où un échec injecté passe ou là où la couverture manque.
-- **Régulatrice (étiquettes de 2.58 à 6.91 bits) :** prudente par conception ; dire si elle l'est trop, ou si elle régule assez, demande A_R et les issues des perturbations qu'elle rencontre.
+- **Régulatrice (vocabulaires d'étiquettes, au plus 6.91 bits à eux trois) :** prudente par conception ; dire si elle l'est trop, ou si elle régule assez, demande A_R et les issues des perturbations qu'elle rencontre.
 
 ## Le côté des perturbations : que faut-il réguler ?
 
@@ -198,11 +198,11 @@ Pour que la gouvernance régule chaque perturbation rencontrée, là où aucune 
 V(réponse régulatrice) >= V(perturbation) - V(issues acceptables)
 ```
 
-- V_R_amp, la variété des réponses, n'est pas mesurée. L'inventaire ne donne que la variété des étiquettes, entre 2.58 et 6.91 bits, qui ne la borne pas (voir la dimension 3)
+- V_R_amp, la variété des réponses, n'est pas mesurée. Les définitions ne donnent que les vocabulaires d'étiquettes, au plus 6.91 bits à eux trois, et les étiquettes ne la bornent pas (voir la dimension 3)
 - Si les estimations tiennent, V_D vaut au moins 6.64 bits, les changements de l'environnement, la plus grande source estimée isolée. L'inventaire ne donne aucune borne supérieure, puisque les interactions entre politiques ne sont pas estimées (voir Perturbations internes)
 - **Écart : non calculé.** Aucun des deux côtés n'est mesuré, et les inventaires sont compatibles avec un surplus comme avec un déficit de n'importe quelle taille
 
-La borne inférieure tient quelles que soient les dépendances, étant donné les estimations : un espace d'états conjoint a au moins autant d'états que sa plus grande partie. Elle montre aussi combien peu les inventaires tranchent. Environ 100 changements de l'environnement distincts (6.64 bits), c'est moins que les 120 triplets d'étiquettes (6.91 bits) : même les étiquettes pourraient en principe les distinguer, alors que rien dans les inventaires ne plafonne les perturbations. Compter les perturbations distinctes rencontrées et les réponses distinctes données à chaque cycle donnerait V_D - V_R_amp, mais cette différence n'est que la borne inférieure d'Ashby sur la variété des issues, valable là où aucune réponse ne mène deux perturbations à la même issue. Deux cycles aux mêmes décomptes peuvent réguler entièrement ou pas du tout, selon la réponse qui rencontre chaque perturbation, et une seule réponse robuste peut réguler plusieurs perturbations. La régulation se mesure en consignant, pour chaque perturbation, la réponse donnée et l'issue sur les variables essentielles (métrique 3).
+La borne inférieure tient quelles que soient les dépendances, étant donné les estimations : un espace d'états conjoint a au moins autant d'états que sa plus grande partie. Elle montre aussi combien peu les inventaires tranchent. Environ 100 changements de l'environnement distincts (6.64 bits), c'est moins que les 120 combinaisons d'étiquettes que permettent les vocabulaires (6.91 bits) : même les étiquettes pourraient en principe les distinguer, si les décisions utilisaient chaque combinaison, alors que rien dans les inventaires ne plafonne les perturbations. Compter les perturbations distinctes rencontrées et les réponses distinctes données à chaque cycle donnerait V_D - V_R_amp, mais cette différence n'est que la borne inférieure d'Ashby sur la variété des issues, valable là où aucune réponse ne mène deux perturbations à la même issue. Deux cycles aux mêmes décomptes peuvent réguler entièrement ou pas du tout, selon la réponse qui rencontre chaque perturbation, et une seule réponse robuste peut réguler plusieurs perturbations. La régulation se mesure en consignant, pour chaque perturbation, la réponse donnée et l'issue sur les variables essentielles (métrique 3).
 
 Si les perturbations dépassent les réponses, la différence doit être absorbée par :
 
@@ -243,15 +243,20 @@ Pour suivre la variété dans le temps, Demerzel devrait calculer les métriques
 }
 ```
 
-`commit` date les nombres de l'inventaire, tous lus à `74cf7c5`, où la logique avait quatre valeurs. `definitions` contient ce qu'utilise la variété des étiquettes : les six valeurs logiques de `CONTEXT.md` et les cinq échelons de `logic/confidence-thresholds.yaml`, lus à `91e41ac`. Le fichier de l'échelle n'existait pas à `74cf7c5`, si bien que l'inventaire ne compte pas d'échelons.
+`commit` date les nombres de l'inventaire, tous lus à `74cf7c5`, où la logique avait quatre valeurs. `definitions` contient ce qu'utilisent les bornes des étiquettes : les six valeurs logiques de `CONTEXT.md` et les cinq échelons de `logic/confidence-thresholds.yaml`, lus à `91e41ac`. Le fichier de l'échelle n'existait pas à `74cf7c5`, si bien que l'inventaire ne compte pas d'échelons.
 
 ### Métrique 2 : variétés par dimension
 
 ```json
 {
   "variety_bits": {
-    "persona_selection": 3.81,
-    "decision_labels": [2.58, 6.91],
+    "catalogue_bounds": {
+      "persona_selection": 3.81,
+      "label_vocabularies": [2.58, 2.32, 2.00],
+      "label_combinations": 6.91
+    },
+    "persona_selection": null,
+    "decision_labels": null,
     "structures_generated": null,
     "responses": null,
     "disturbances": null,
@@ -263,11 +268,11 @@ Pour suivre la variété dans le temps, Demerzel devrait calculer les métriques
 }
 ```
 
-Un `null` marque une grandeur pas encore mesurée, pas un zéro. `persona_selection` vient de l'inventaire et `decision_labels` des définitions, d'où les deux commits.
+Un `null` marque une grandeur pas encore mesurée, pas un zéro. `catalogue_bounds` contient des bornes supérieures, pas des mesures : celle des personas vient de l'inventaire et celles des étiquettes des définitions, d'où les deux commits. Mesurer `persona_selection` et `decision_labels` demande un relevé des personas choisies et des étiquettes que porte chaque décision.
 
 ### Métrique 3 : mesure des issues et de l'atténuation
 
-Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne parvient à l'atténuateur (N_in = 0), le cycle n'est pas une observation : consignez-le comme inactif, pas comme un blocage. Si des entrées lui parviennent et qu'aucune ne passe (N_in > 0, N_out = 0), V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les N_S structures distinctes que génèrent les grammaires (V_S), les N_R réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les N_D perturbations distinctes qu'elle rencontre (V_D). Un nombre nul n'a pas de log2 et reçoit une étiquette, pas un nombre : un cycle qui ne rencontre aucune perturbation (N_D = 0) est calme ; un cycle qui rencontre des perturbations sans donner de réponse (N_D > 0, N_R = 0) est sans réponse ; un cycle où les grammaires ne génèrent aucune structure (N_S = 0) est inactif pour V_S. Pour chaque perturbation, consignez aussi la réponse donnée (aucune, s'il n'y en a pas) et l'issue sur les variables essentielles, dans les limites ou non : par exemple, aucun article constitutionnel violé et aucune validation de schéma en échec. Le taux de régulation est la part des perturbations rencontrées dont l'issue reste dans les limites, et les issues distinctes donnent V_O. La différence V_D - V_R_amp, calculée seulement pour les cycles où N_D > 0 et N_R > 0, est la borne inférieure d'Ashby sur V_O, pas une mesure de la régulation : elle dit jusqu'où les issues doivent s'étaler si aucune réponse ne sert deux perturbations, chaque perturbation ne peut être régulée que si elle ne dépasse pas V_η, et les issues consignées disent jusqu'où elles se sont étalées.
+Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne parvient à l'atténuateur (N_in = 0), le cycle n'est pas une observation : consignez-le comme inactif, pas comme un blocage. Si des entrées lui parviennent et qu'aucune ne passe (N_in > 0, N_out = 0), V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les personas distinctes choisies pour agir et les combinaisons d'étiquettes distinctes que portent les décisions, les N_S structures distinctes que génèrent les grammaires (V_S), les N_R réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les N_D perturbations distinctes qu'elle rencontre (V_D). Un nombre nul n'a pas de log2 et reçoit une étiquette, pas un nombre : un cycle qui ne rencontre aucune perturbation (N_D = 0) est calme ; un cycle qui rencontre des perturbations sans donner de réponse (N_D > 0, N_R = 0) est sans réponse ; un cycle où les grammaires ne génèrent aucune structure (N_S = 0) est inactif pour V_S. Pour chaque perturbation, consignez aussi la réponse donnée (aucune, s'il n'y en a pas) et l'issue sur les variables essentielles, dans les limites ou non : par exemple, aucun article constitutionnel violé et aucune validation de schéma en échec. Le taux de régulation est la part des perturbations rencontrées dont l'issue reste dans les limites, et les issues distinctes donnent V_O. La différence V_D - V_R_amp, calculée seulement pour les cycles où N_D > 0 et N_R > 0, est la borne inférieure d'Ashby sur V_O, pas une mesure de la régulation : elle dit jusqu'où les issues doivent s'étaler si aucune réponse ne sert deux perturbations, chaque perturbation ne peut être régulée que si elle ne dépasse pas V_η, et les issues consignées disent jusqu'où elles se sont étalées.
 
 Suivez ces grandeurs sur des cycles consécutifs. Alertez quand :
 - Une sonde de contrôle passe : une entrée que l'atténuateur doit refuser, injectée exprès, le franchit. A = 0 seul n'est pas une alerte, puisqu'un cycle dont toutes les entrées sont valides donne à bon droit A = 0
@@ -297,7 +302,7 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 
 ## Implications pour Demerzel
 
-1. **Suivre les variétés à chaque cycle** — Ajouter l'instantané de l'inventaire à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Consigner l'inventaire et, une fois mesurées, les variétés des structures, des réponses et des perturbations, chaque atténuation, et pour chaque perturbation la réponse donnée et son issue.
+1. **Suivre les variétés à chaque cycle** — Ajouter l'instantané de l'inventaire à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Consigner l'inventaire et, une fois mesurées, les variétés du choix de persona, des étiquettes de décision, des structures, des réponses et des perturbations, chaque atténuation, et pour chaque perturbation la réponse donnée et son issue.
 2. **Mesurer les portes structurelles avant d'en ajouter** — Consigner les changements de grammaire proposés et les verdicts des portes, injecter des changements que les portes doivent rejeter, et suivre la couverture de tests des grammaires et l'usage des productions ; ajouter une porte là où un échec injecté passe ou là où la couverture manque. Les verdicts rendent aussi A_S mesurable.
 3. **Mesurer la régulation** — Consigner chaque perturbation rencontrée, la réponse donnée et son issue sur les variables essentielles. Les inventaires ne bornent les deux variétés que de loin : des perturbations d'au moins 6.64 bits si les estimations tiennent, sans borne supérieure, et aucune borne sur les réponses. Les interactions entre politiques sont la source de perturbation la moins connue. Le nombre de paires de politiques (666 à partir de 37 politiques) croît de façon quadratique, environ quatre fois chaque fois que le nombre de politiques double (2,701 paires pour 74 politiques), et chaque paire en interaction peut entrer en conflit de plusieurs façons. Un regroupement des politiques ou une organisation hiérarchique des politiques peut réduire les interactions, mais c'est à la mesure de montrer s'il réduit les perturbations qu'elles produisent.
 4. **L'escalade vers des humains est un pont de variété** — Le système de seuils de confiance (Article 6 : Escalade) est le principal mécanisme de Demerzel pour absorber la variété qui dépasse sa capacité de régulation. C'est une fonctionnalité, pas une limite.
