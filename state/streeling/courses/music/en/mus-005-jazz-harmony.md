@@ -69,7 +69,7 @@ Root  +  Quality  +  Extensions/Alterations  +  Slash Bass
 - `#11` — raised 11th (avoids clash with major 3rd)
 - `b9`, `#9` — lowered or raised 9th
 - `b13` — lowered 13th (enharmonic to #5)
-- `alt` — shorthand for dominant with b9, #9, #11/b5, b13/#5
+- `alt` — an altered dominant: root, third and b7, with tensions chosen from b9, #9, #11/b5 and b13/#5; the symbol does not say which, and a voicing rarely uses them all
 
 ### The C7 vs Cmaj7 Ambiguity
 
@@ -101,7 +101,7 @@ Read the following chord symbols and spell out the notes. Do not use your instru
 
 Answers:
 1. F A C E G B (F major with major 7th, 9th, #11th)
-2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominant with all altered upper extensions: b9, #9, #11, b13)
+2. Bb D Ab: the root, the third and the b7. The symbol adds altered tensions without naming them: any of Cb/B (b9), Db/C# (#9), Fb/E (#11/b5) and Gb (b13/#5). All seven notes together make the Bb altered scale, the palette a soloist draws from, not a chord every voicing must sound.
 3. Eb Gb Bb Db F Ab (minor 7th with 11th)
 4. Ab C Eb Gb Bb (Db) F (dominant 7th with 9th and 13th; the implied 11th, Db, sits a half step above the major 3rd C and is usually omitted)
 5. D F Ab C (minor triad with flatted 5th and minor 7th)
@@ -139,7 +139,7 @@ In C minor:
   ii-half      V7alt        i
 ```
 
-The half-diminished ii provides the minor-key color. The altered dominant (G7alt) contains both b9 (Ab) and b13 (Eb), which are the b6 and b3 of C minor — the very notes that define the minor key.
+The half-diminished ii provides the minor-key color. The altered dominant (G7alt) draws its tensions from the G altered scale, whose b9 (Ab) and b13 (Eb) are the b6 and b3 of C minor — the very notes that define the minor key.
 
 ### Extended ii-V Chains
 

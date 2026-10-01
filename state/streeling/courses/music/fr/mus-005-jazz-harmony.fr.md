@@ -69,7 +69,7 @@ Les **altérations** modifient des notes précises :
 - `#11` — 11e augmentée (évite le frottement avec la tierce majeure)
 - `b9`, `#9` — 9e abaissée ou augmentée
 - `b13` — 13e abaissée (enharmonique de #5)
-- `alt` — abréviation d'une dominante avec b9, #9, #11/b5, b13/#5
+- `alt` — une dominante altérée : fondamentale, tierce et b7, avec des tensions choisies parmi b9, #9, #11/b5 et b13/#5 ; le symbole ne dit pas lesquelles, et un voicing les utilise rarement toutes
 
 ### L'ambiguïté C7 / Cmaj7
 
@@ -101,7 +101,7 @@ Lisez les symboles d'accords suivants et épelez leurs notes. N'utilisez pas vot
 
 Réponses :
 1. F A C E G B (Fa majeur avec 7e majeure, 9e, #11e)
-2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominante avec toutes les extensions supérieures altérées : b9, #9, #11, b13)
+2. Bb D Ab : la fondamentale, la tierce et la b7. Le symbole ajoute des tensions altérées sans les nommer : n'importe lesquelles de Cb/B (b9), Db/C# (#9), Fb/E (#11/b5) et Gb (b13/#5). Les sept notes ensemble forment la gamme altérée de Bb, la palette où puise l'improvisateur, pas un accord que chaque voicing doit faire entendre.
 3. Eb Gb Bb Db F Ab (septième mineure avec 11e)
 4. Ab C Eb Gb Bb (Db) F (septième de dominante avec 9e et 13e ; la 11e impliquée, Db, se trouve un demi-ton au-dessus de la tierce majeure C et est généralement omise)
 5. D F Ab C (triade mineure avec quinte diminuée et septième mineure)
@@ -139,7 +139,7 @@ En Do mineur :
   ii-demi-dim  V7alt        i
 ```
 
-Le ii demi-diminué apporte la couleur du mode mineur. La dominante altérée (G7alt) contient à la fois la b9 (Ab) et la b13 (Eb), qui sont la b6 et la b3 de Do mineur — précisément les notes qui définissent la tonalité mineure.
+Le ii demi-diminué apporte la couleur du mode mineur. La dominante altérée (G7alt) tire ses tensions de la gamme altérée de G, dont la b9 (Ab) et la b13 (Eb) sont la b6 et la b3 de Do mineur — précisément les notes qui définissent la tonalité mineure.
 
 ### Chaînes de ii-V étendues
 

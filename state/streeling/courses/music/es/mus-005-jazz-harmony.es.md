@@ -69,7 +69,7 @@ Las **alteraciones** modifican notas concretas:
 - `#11` — 11.ª aumentada (evita el choque con la tercera mayor)
 - `b9`, `#9` — 9.ª rebajada o aumentada
 - `b13` — 13.ª rebajada (enarmónica de #5)
-- `alt` — abreviatura de dominante con b9, #9, #11/b5, b13/#5
+- `alt` — una dominante alterada: fundamental, tercera y b7, con tensiones elegidas entre b9, #9, #11/b5 y b13/#5; el símbolo no dice cuáles, y un voicing rara vez las usa todas
 
 ### La ambigüedad C7 / Cmaj7
 
@@ -101,7 +101,7 @@ Lee los siguientes cifrados y deletrea sus notas. No uses tu instrumento — tra
 
 Respuestas:
 1. F A C E G B (Fa mayor con 7.ª mayor, 9.ª, #11.ª)
-2. Bb D Ab Cb/B Db/C# Fb/E Gb (dominante con todas las extensiones superiores alteradas: b9, #9, #11, b13)
+2. Bb D Ab: la fundamental, la tercera y la b7. El símbolo añade tensiones alteradas sin nombrarlas: cualquiera de Cb/B (b9), Db/C# (#9), Fb/E (#11/b5) y Gb (b13/#5). Las siete notas juntas forman la escala alterada de Bb, la paleta de la que toma el solista, no un acorde que cada voicing deba hacer sonar.
 3. Eb Gb Bb Db F Ab (séptima menor con 11.ª)
 4. Ab C Eb Gb Bb (Db) F (séptima de dominante con 9.ª y 13.ª; la 11.ª implícita, Db, queda un semitono por encima de la tercera mayor C y suele omitirse)
 5. D F Ab C (tríada menor con quinta disminuida y séptima menor)
@@ -139,7 +139,7 @@ En Do menor:
   ii-semidis   V7alt        i
 ```
 
-El ii semidisminuido aporta el color de la tonalidad menor. La dominante alterada (G7alt) contiene tanto la b9 (Ab) como la b13 (Eb), que son la b6 y la b3 de Do menor — justamente las notas que definen la tonalidad menor.
+El ii semidisminuido aporta el color de la tonalidad menor. La dominante alterada (G7alt) toma sus tensiones de la escala alterada de G, cuyas b9 (Ab) y b13 (Eb) son la b6 y la b3 de Do menor — justamente las notas que definen la tonalidad menor.
 
 ### Cadenas de ii-V extendidas
 
