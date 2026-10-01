@@ -273,8 +273,8 @@ The central miracle of ii-V-I voice leading:
 
 ```
 Chord:    Dm7    G7     Cmaj7
-3rd:       F  →   B  →   E
-7th:       C  →   F  →   B
+Voice 1:   F  →   F  →   E     (3rd → 7th → 3rd)
+Voice 2:   C  →   B  →   B     (7th → 3rd → 7th)
 ```
 
 Notice:
@@ -304,7 +304,9 @@ Bbmaj7 | G7    | Cm7   | F7    |
 Dm7    | G7    | Cm7   | F7    |
 ```
 
-Start on the 3rd of Bbmaj7 (D). At each chord change, move to the nearest guide tone (3rd or 7th) of the new chord. Your line should move by half step or whole step at most. Write out the resulting eight-note line.
+Start on the 7th of Bbmaj7 (A): from its 3rd, D, both guide tones of G7 lie a minor third away. At each chord change, move to the nearest guide tone (3rd or 7th) of the new chord. Every move is then a half step or a whole step except one: from F7 to Dm7, the nearest guide tone is a minor third away. Write out the resulting eight-note line.
+
+Answer: A B Bb A C B Bb A, with the minor third A → C from F7 to Dm7.
 
 ---
 

@@ -113,9 +113,9 @@ A sudden jump in coupling (loose → tight) means the system is transitioning to
 
 ### Signal 5: Conscience Signal Frequency
 
-In statistical mechanics, fluctuations increase near a phase boundary — this is called **critical opalescence** (the fluid becomes cloudy right before boiling).
+In statistical mechanics, fluctuations grow without bound as a system approaches a critical point, where the transition is continuous (second-order). Near the liquid–gas critical point this shows as **critical opalescence**: density fluctuations grow to the scale of the wavelength of light, and the fluid turns milky. Ordinary boiling, a first-order transition, has no such precursor.
 
-The governance equivalent: conscience signals (anomalies, escalations, contradictions) increase in frequency before a phase transition.
+The governance analogy therefore applies to continuous transitions: conscience signals (anomalies, escalations, contradictions) would increase in frequency as the system approaches one. An abrupt, first-order transition, such as a kill switch, need not announce itself.
 
 ```
 signal_rate = conscience_signals_count / time_window

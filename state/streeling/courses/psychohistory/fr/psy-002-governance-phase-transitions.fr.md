@@ -113,9 +113,9 @@ Un saut soudain du couplage (faible → fort) signifie que le système passe à 
 
 ### Signal 5 : fréquence des signaux de conscience
 
-En mécanique statistique, les fluctuations augmentent près d'une frontière de phase — c'est ce qu'on appelle l'**opalescence critique** (le fluide devient trouble juste avant l'ébullition).
+En mécanique statistique, les fluctuations croissent sans limite à l'approche d'un point critique, où la transition est continue (du second ordre). Près du point critique liquide–gaz, cela se manifeste par l'**opalescence critique** : les fluctuations de densité atteignent l'échelle de la longueur d'onde de la lumière, et le fluide devient laiteux. L'ébullition ordinaire, transition du premier ordre, n'a pas de tel signe avant-coureur.
 
-L'équivalent en gouvernance : les signaux de conscience (anomalies, escalades, contradictions) deviennent plus fréquents avant une transition de phase.
+L'analogie en gouvernance vaut donc pour les transitions continues : les signaux de conscience (anomalies, escalades, contradictions) deviendraient plus fréquents à l'approche de l'une d'elles. Une transition brutale, du premier ordre, comme l'activation d'un coupe-circuit, peut survenir sans prévenir.
 
 ```
 signal_rate = conscience_signals_count / time_window

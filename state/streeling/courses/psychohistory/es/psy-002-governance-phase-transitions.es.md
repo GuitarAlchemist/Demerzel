@@ -113,9 +113,9 @@ Un salto repentino del acoplamiento (débil → fuerte) significa que el sistema
 
 ### Señal 5: frecuencia de las señales de conciencia
 
-En mecánica estadística, las fluctuaciones aumentan cerca de una frontera de fase; esto se llama **opalescencia crítica** (el fluido se vuelve turbio justo antes de hervir).
+En mecánica estadística, las fluctuaciones crecen sin límite al acercarse un sistema a un punto crítico, donde la transición es continua (de segundo orden). Cerca del punto crítico líquido–gas esto se manifiesta como **opalescencia crítica**: las fluctuaciones de densidad alcanzan la escala de la longitud de onda de la luz y el fluido se vuelve lechoso. La ebullición ordinaria, una transición de primer orden, no tiene tal señal previa.
 
-El equivalente en gobernanza: las señales de conciencia (anomalías, escalados, contradicciones) aumentan de frecuencia antes de una transición de fase.
+Por eso la analogía en gobernanza se aplica a las transiciones continuas: las señales de conciencia (anomalías, escalados, contradicciones) aumentarían de frecuencia al acercarse el sistema a una de ellas. Una transición brusca, de primer orden, como la activación de un interruptor de emergencia, puede producirse sin aviso.
 
 ```
 signal_rate = conscience_signals_count / time_window

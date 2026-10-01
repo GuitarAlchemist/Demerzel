@@ -273,8 +273,8 @@ El milagro central de la conducción de voces del ii-V-I:
 
 ```
 Acorde:   Dm7    G7     Cmaj7
-Tercera:   F  →   B  →   E
-Séptima:   C  →   F  →   B
+Voz 1:     F  →   F  →   E     (tercera → séptima → tercera)
+Voz 2:     C  →   B  →   B     (séptima → tercera → séptima)
 ```
 
 Observa:
@@ -304,7 +304,9 @@ Bbmaj7 | G7    | Cm7   | F7    |
 Dm7    | G7    | Cm7   | F7    |
 ```
 
-Empieza en la tercera de Bbmaj7 (D). En cada cambio de acorde, ve a la nota guía más cercana (tercera o séptima) del nuevo acorde. Tu línea debe moverse como mucho por semitono o por tono. Escribe la línea de ocho notas resultante.
+Empieza en la séptima de Bbmaj7 (A): desde su tercera, D, las dos notas guía de G7 quedan a una tercera menor. En cada cambio de acorde, ve a la nota guía más cercana (tercera o séptima) del nuevo acorde. Todos los movimientos son entonces de semitono o de tono salvo uno: de F7 a Dm7, la nota guía más cercana está a una tercera menor. Escribe la línea de ocho notas resultante.
+
+Respuesta: A B Bb A C B Bb A, con la tercera menor A → C de F7 a Dm7.
 
 ---
 

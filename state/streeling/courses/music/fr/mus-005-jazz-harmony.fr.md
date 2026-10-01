@@ -273,8 +273,8 @@ Le miracle central de la conduite des voix dans le ii-V-I :
 
 ```
 Accord :  Dm7    G7     Cmaj7
-Tierce :   F  →   B  →   E
-Septième : C  →   F  →   B
+Voix 1 :   F  →   F  →   E     (tierce → septième → tierce)
+Voix 2 :   C  →   B  →   B     (septième → tierce → septième)
 ```
 
 Remarquez :
@@ -304,7 +304,9 @@ Bbmaj7 | G7    | Cm7   | F7    |
 Dm7    | G7    | Cm7   | F7    |
 ```
 
-Commencez sur la tierce de Bbmaj7 (D). À chaque changement d'accord, allez vers la note guide la plus proche (tierce ou septième) du nouvel accord. Votre ligne doit bouger au plus d'un demi-ton ou d'un ton. Écrivez la ligne de huit notes obtenue.
+Commencez sur la septième de Bbmaj7 (A) : depuis sa tierce, D, les deux notes guides de G7 sont à une tierce mineure. À chaque changement d'accord, allez vers la note guide la plus proche (tierce ou septième) du nouvel accord. Chaque mouvement est alors d'un demi-ton ou d'un ton, sauf un : de F7 à Dm7, la note guide la plus proche est à une tierce mineure. Écrivez la ligne de huit notes obtenue.
+
+Réponse : A B Bb A C B Bb A, avec la tierce mineure A → C de F7 à Dm7.
 
 ---
 
