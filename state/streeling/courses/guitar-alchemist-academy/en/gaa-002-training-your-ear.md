@@ -188,9 +188,9 @@ Play the melody of "Happy Birthday" on one string, starting on any note. Sing al
 
 Individual chords are words. Chord progressions are sentences. To transcribe or play along with a song, you need to hear how chords relate to each other, not just identify them in isolation.
 
-**Bass note extraction:** The lowest note you hear in a chord progression is almost always the root of the chord. Train your ear to filter out everything except the bass. This is your single most powerful transcription tool.
+**Bass note extraction:** In simple songs, the lowest note you hear in a chord progression is usually the root of the chord, but not always: in an inversion or a slash chord (C/E, a C chord over E), over a pedal tone, or in a walking bass line that moves between chord tones, the bass deliberately plays another note. Train your ear to filter out everything except the bass. This is your single most powerful transcription tool.
 
-To practice: listen to a song and hum only the bass notes. Ignore the melody, ignore the rhythm guitar, ignore the vocals. Just the bass. Once you can sing the bass line, you have the chord roots.
+To practice: listen to a song and hum only the bass notes. Ignore the melody, ignore the rhythm guitar, ignore the vocals. Just the bass. Once you can sing the bass line, you have the skeleton of the progression and a first guess at each chord root; check each guess against the chord you hear above it.
 
 **Functional hearing — home, tension, away:**
 
@@ -219,7 +219,7 @@ Play this progression in several keys. Then listen for it in songs. Once you can
 
 ### Practice Exercise
 
-Put on a song you enjoy. Listen to the first verse and chorus. Hum only the bass notes. Then try to find those bass notes on the low E string of your guitar. Do not worry about chord quality yet — just get the roots. Once you have the roots, try adding major or minor quality by ear. Spend 5 minutes on one song.
+Put on a song you enjoy. Listen to the first verse and chorus. Hum only the bass notes. Then try to find those bass notes on the low E string of your guitar. Do not worry about chord quality yet — just get the bass notes, your first guess at the roots. Once you have them, try adding major or minor quality by ear, and check that each bass note is the root of the chord you hear: if it sounds like the chord's third or fifth, the chord is an inversion. Spend 5 minutes on one song.
 
 ---
 
@@ -241,20 +241,21 @@ Do not try to figure out any specific notes. Just absorb the big picture.
 
 ### Phase 2 — Bass Line First
 
-Now pick up your guitar. Find the bass notes — the chord roots. The bass line is the skeleton of the song. Everything else hangs on it.
+Now pick up your guitar. Find the bass notes, which in most simple songs are the chord roots. The bass line is the skeleton of the song. Everything else hangs on it.
 
 - Play along with the recording, matching only the lowest notes
-- Write down the root notes in order (C - G - Am - F, etc.)
+- Write down the bass notes in order (C - G - A - F, etc.)
 - Note where the changes happen relative to the lyrics or beats
 
 This phase gives you the chord progression in skeleton form.
 
 ### Phase 3 — Chord Quality Layer
 
-With the roots established, now determine the quality of each chord:
+With the bass notes written down, now determine the quality of each chord, and whether its bass note is its root:
 - Is it major or minor? (The one-note difference you trained in Section 4)
 - Are there sevenths or extensions? (The added colors from Section 4)
 - Are there any unusual chords — suspensions, diminished passing chords?
+- Is the bass note the root? If it is the chord's third or fifth, the chord is an inversion, written as a slash chord (C/E, C/G).
 
 Play each chord against the recording to confirm. Adjust until it matches.
 
@@ -299,7 +300,7 @@ Once a week, transcribe one song (or one section of a harder song) using the fou
 |-----------|-------------------|-----------------|
 | "I can tell major from minor" | Instant recognition of chord mood | 2-4 weeks |
 | "I can find the key" | You know what note the song rests on | 1-2 months |
-| "I can hear the bass line" | You hum roots while the song plays | 2-3 months |
+| "I can hear the bass line" | You hum the bass line while the song plays | 2-3 months |
 | "I can transcribe a pop song" | Four-phase method in 30 minutes | 3-6 months |
 | "I hear intervals before I think" | Automatic recognition, no effort | 6-12 months |
 
@@ -318,7 +319,7 @@ These are rough guides. Some people progress faster, some slower. The only facto
 | Transcription | Figuring out music by ear and writing or playing it | Transcripción | Transcrição | Transcription | 採譜 | 扒谱 |
 | Chord quality | Whether a chord is major, minor, diminished, or augmented | Calidad del acorde | Qualidade do acorde | Qualité de l'accord | 和音の種類 | 和弦性质 |
 | Drone | A sustained reference note played while practicing intervals | Bordón | Bordão | Bourdon | ドローン | 持续音 |
-| Bass line | The lowest notes in a musical passage, usually defining chord roots | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
+| Bass line | The lowest notes in a musical passage, often but not always the chord roots | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
 
 ---
 

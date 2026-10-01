@@ -77,13 +77,15 @@ Cuando se escribió este módulo, Demerzel carecía de este atajo. Toda escalada
 
 En conjunto: Demerzel tiene una fuerte atenuación de la variedad, pero podría mejorar su amplificación. El sistema es mejor restringiendo que ampliando su repertorio de respuestas.
 
+Estas evaluaciones son cualitativas. Un número de políticas o de personas es un inventario, no una variedad: añadir una política o una persona duplicada cambia el recuento sin cambiar las respuestas que la gobernanza puede dar ni las perturbaciones que enfrenta.
+
 ## Implicaciones para Demerzel
 
 1. **Añadir un canal algedónico** — La brecha estructural de mayor prioridad. Atajo de emergencia de S1 a S5 para violaciones de la Ley Cero. Implementado: `policies/algedonic-channel-policy.yaml`.
 2. **Capas de gobernanza por velocidad de reloj** — Separación explícita entre gobernanza de bucle rápido (por solicitud) y de bucle lento (por ciclo), en línea con las escalas temporales operativa y estratégica del VSM.
 3. **Plantilla de gobernanza recursiva** — El directorio templates/ ya proporciona fragmentos de CLAUDE.md para los repositorios consumidores; extenderlo a la gobernanza de subagentes profundizaría la recursión del VSM.
 4. **La conciencia como S5 sintético** — La política de protoconciencia de Demerzel es una extensión novedosa más allá del VSM clásico, que aporta capacidad de reflexión sobre valores sin juicio humano. Merece más investigación.
-5. **Vigilar la razón de variedad** — Seguir si el número de políticas (atenuación) supera al número de personas/capacidades (amplificación).
+5. **Medir la variedad sobre resultados** — La razón entre el número de políticas y el de personas es un balance de inventario, no una razón de variedad: una política o una persona duplicada la modifica sin cambiar las respuestas que la gobernanza puede dar ni las perturbaciones que enfrenta. Seguir la razón de variedad sobre estados medidos: las respuestas distintas dadas frente a las perturbaciones distintas encontradas en cada ciclo.
 
 ## Fuentes
 

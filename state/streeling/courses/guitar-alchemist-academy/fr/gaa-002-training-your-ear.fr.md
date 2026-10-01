@@ -188,9 +188,9 @@ Jouez la mélodie de « Joyeux anniversaire » sur une corde, en partant de n'im
 
 Les accords isolés sont des mots. Les progressions d'accords sont des phrases. Pour relever une chanson ou jouer dessus, vous devez entendre comment les accords se rapportent les uns aux autres, et pas seulement les identifier isolément.
 
-**Extraire la basse :** La note la plus grave que vous entendez dans une progression d'accords est presque toujours la fondamentale de l'accord. Entraînez votre oreille à filtrer tout sauf la basse. C'est votre outil de relevé le plus puissant.
+**Extraire la basse :** Dans les chansons simples, la note la plus grave que vous entendez dans une progression d'accords est en général la fondamentale de l'accord, mais pas toujours : dans un renversement ou un accord slash (C/E, un accord de Do sur Mi), sur une pédale ou dans une walking bass qui circule entre les notes de l'accord, la basse joue délibérément une autre note. Entraînez votre oreille à filtrer tout sauf la basse. C'est votre outil de relevé le plus puissant.
 
-Pour vous entraîner : écoutez une chanson et fredonnez uniquement les notes de basse. Ignorez la mélodie, ignorez la guitare rythmique, ignorez le chant. Seulement la basse. Une fois que vous pouvez chanter la ligne de basse, vous avez les fondamentales des accords.
+Pour vous entraîner : écoutez une chanson et fredonnez uniquement les notes de basse. Ignorez la mélodie, ignorez la guitare rythmique, ignorez le chant. Seulement la basse. Une fois que vous pouvez chanter la ligne de basse, vous avez le squelette de la progression et une première hypothèse sur la fondamentale de chaque accord ; vérifiez chaque hypothèse contre l'accord que vous entendez au-dessus.
 
 **L'écoute fonctionnelle — maison, tension, ailleurs :**
 
@@ -219,7 +219,7 @@ Jouez cette progression dans plusieurs tonalités. Puis cherchez-la à l'oreille
 
 ### Exercice pratique
 
-Mettez une chanson que vous aimez. Écoutez le premier couplet et le refrain. Fredonnez uniquement les notes de basse. Puis essayez de trouver ces notes de basse sur la corde de Mi grave de votre guitare. Ne vous souciez pas encore de la qualité des accords — trouvez seulement les fondamentales. Une fois que vous les avez, essayez d'ajouter la qualité majeure ou mineure à l'oreille. Consacrez 5 minutes à une chanson.
+Mettez une chanson que vous aimez. Écoutez le premier couplet et le refrain. Fredonnez uniquement les notes de basse. Puis essayez de trouver ces notes de basse sur la corde de Mi grave de votre guitare. Ne vous souciez pas encore de la qualité des accords — trouvez seulement les notes de basse, votre première hypothèse sur les fondamentales. Une fois que vous les avez, essayez d'ajouter la qualité majeure ou mineure à l'oreille, et vérifiez que chaque note de basse est la fondamentale de l'accord que vous entendez : si elle sonne comme sa tierce ou sa quinte, l'accord est renversé. Consacrez 5 minutes à une chanson.
 
 ---
 
@@ -241,20 +241,21 @@ N'essayez pas de trouver de notes précises. Absorbez simplement la vue d'ensemb
 
 ### Phase 2 — La ligne de basse d'abord
 
-Prenez maintenant votre guitare. Trouvez les notes de basse — les fondamentales des accords. La ligne de basse est le squelette de la chanson. Tout le reste s'y accroche.
+Prenez maintenant votre guitare. Trouvez les notes de basse, qui dans la plupart des chansons simples sont les fondamentales des accords. La ligne de basse est le squelette de la chanson. Tout le reste s'y accroche.
 
 - Jouez avec l'enregistrement, en ne reproduisant que les notes les plus graves
-- Notez les fondamentales dans l'ordre (C - G - Am - F, etc.)
+- Notez les notes de basse dans l'ordre (C - G - A - F, etc.)
 - Notez où tombent les changements par rapport aux paroles ou aux temps
 
 Cette phase vous donne la progression d'accords sous forme de squelette.
 
 ### Phase 3 — La couche de qualité des accords
 
-Les fondamentales établies, déterminez maintenant la qualité de chaque accord :
+Les notes de basse notées, déterminez maintenant la qualité de chaque accord, et si sa note de basse en est la fondamentale :
 - Est-il majeur ou mineur ? (La différence d'une note travaillée à la section 4)
 - Y a-t-il des septièmes ou des extensions ? (Les couleurs ajoutées de la section 4)
 - Y a-t-il des accords inhabituels — suspensions, accords diminués de passage ?
+- La note de basse est-elle la fondamentale ? Si c'est la tierce ou la quinte de l'accord, l'accord est renversé et s'écrit comme un accord slash (C/E, C/G).
 
 Jouez chaque accord avec l'enregistrement pour confirmer. Ajustez jusqu'à ce que cela corresponde.
 
@@ -299,7 +300,7 @@ Une fois par semaine, relevez une chanson (ou une section d'une chanson plus dif
 |-----------|-------------------|-----------------|
 | « Je distingue le majeur du mineur » | Reconnaissance instantanée de l'humeur d'un accord | 2-4 semaines |
 | « Je trouve la tonalité » | Vous savez sur quelle note la chanson se repose | 1-2 mois |
-| « J'entends la ligne de basse » | Vous fredonnez les fondamentales pendant que la chanson joue | 2-3 mois |
+| « J'entends la ligne de basse » | Vous fredonnez la ligne de basse pendant que la chanson joue | 2-3 mois |
 | « Je relève une chanson pop » | Méthode en quatre phases en 30 minutes | 3-6 mois |
 | « J'entends les intervalles avant de réfléchir » | Reconnaissance automatique, sans effort | 6-12 mois |
 
@@ -318,7 +319,7 @@ Ce sont des repères approximatifs. Certains progressent plus vite, d'autres plu
 | Relevé | Trouver une musique à l'oreille et l'écrire ou la jouer | Transcripción | Transcrição | Transcription | 採譜 | 扒谱 |
 | Qualité d'accord | Le fait qu'un accord soit majeur, mineur, diminué ou augmenté | Calidad del acorde | Qualidade do acorde | Qualité de l'accord | 和音の種類 | 和弦性质 |
 | Bourdon | Une note de référence tenue, jouée pendant qu'on travaille les intervalles | Bordón | Bordão | Bourdon | ドローン | 持续音 |
-| Ligne de basse | Les notes les plus graves d'un passage musical, qui définissent en général les fondamentales des accords | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
+| Ligne de basse | Les notes les plus graves d'un passage musical, souvent, mais pas toujours, les fondamentales des accords | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
 
 ---
 

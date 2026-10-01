@@ -188,9 +188,9 @@ Toca la melodía de «Cumpleaños feliz» en una cuerda, empezando en cualquier 
 
 Los acordes individuales son palabras. Las progresiones de acordes son oraciones. Para transcribir una canción o tocar sobre ella, necesitas oír cómo se relacionan los acordes entre sí, no solo identificarlos aisladamente.
 
-**Extracción de la nota del bajo:** La nota más grave que oyes en una progresión de acordes es casi siempre la fundamental del acorde. Entrena tu oído para filtrar todo excepto el bajo. Esta es tu herramienta de transcripción más poderosa.
+**Extracción de la nota del bajo:** En las canciones sencillas, la nota más grave que oyes en una progresión de acordes suele ser la fundamental del acorde, pero no siempre: en una inversión o un acorde con barra (C/E, un acorde de Do sobre Mi), sobre una nota pedal o en un walking bass que se mueve entre notas del acorde, el bajo toca a propósito otra nota. Entrena tu oído para filtrar todo excepto el bajo. Esta es tu herramienta de transcripción más poderosa.
 
-Para practicar: escucha una canción y tararea solo las notas del bajo. Ignora la melodía, ignora la guitarra rítmica, ignora la voz. Solo el bajo. Cuando puedas cantar la línea de bajo, tendrás las fundamentales de los acordes.
+Para practicar: escucha una canción y tararea solo las notas del bajo. Ignora la melodía, ignora la guitarra rítmica, ignora la voz. Solo el bajo. Cuando puedas cantar la línea de bajo, tendrás el esqueleto de la progresión y una primera hipótesis sobre la fundamental de cada acorde; contrasta cada hipótesis con el acorde que oyes encima.
 
 **Escucha funcional — casa, tensión, fuera:**
 
@@ -219,7 +219,7 @@ Toca esta progresión en varias tonalidades. Luego búscala de oído en cancione
 
 ### Ejercicio práctico
 
-Pon una canción que te guste. Escucha la primera estrofa y el estribillo. Tararea solo las notas del bajo. Luego intenta encontrar esas notas en la cuerda de Mi grave de tu guitarra. No te preocupes aún por la calidad de los acordes: consigue solo las fundamentales. Cuando las tengas, intenta añadir de oído la calidad mayor o menor. Dedica 5 minutos a una canción.
+Pon una canción que te guste. Escucha la primera estrofa y el estribillo. Tararea solo las notas del bajo. Luego intenta encontrar esas notas en la cuerda de Mi grave de tu guitarra. No te preocupes aún por la calidad de los acordes: consigue solo las notas del bajo, tu primera hipótesis sobre las fundamentales. Cuando las tengas, intenta añadir de oído la calidad mayor o menor, y comprueba que cada nota del bajo es la fundamental del acorde que oyes: si suena como su tercera o su quinta, el acorde está invertido. Dedica 5 minutos a una canción.
 
 ---
 
@@ -241,20 +241,21 @@ No intentes averiguar notas concretas. Solo absorbe la imagen general.
 
 ### Fase 2 — Primero la línea de bajo
 
-Ahora toma tu guitarra. Encuentra las notas del bajo, las fundamentales de los acordes. La línea de bajo es el esqueleto de la canción. Todo lo demás cuelga de ella.
+Ahora toma tu guitarra. Encuentra las notas del bajo, que en la mayoría de las canciones sencillas son las fundamentales de los acordes. La línea de bajo es el esqueleto de la canción. Todo lo demás cuelga de ella.
 
 - Toca junto con la grabación, igualando solo las notas más graves
-- Anota las fundamentales en orden (C - G - Am - F, etc.)
+- Anota las notas del bajo en orden (C - G - A - F, etc.)
 - Anota dónde ocurren los cambios respecto a la letra o a los tiempos
 
 Esta fase te da la progresión de acordes en forma de esqueleto.
 
 ### Fase 3 — La capa de calidad del acorde
 
-Con las fundamentales establecidas, determina ahora la calidad de cada acorde:
+Con las notas del bajo anotadas, determina ahora la calidad de cada acorde, y si su nota del bajo es su fundamental:
 - ¿Es mayor o menor? (La diferencia de una nota que entrenaste en la sección 4)
 - ¿Hay séptimas o extensiones? (Los colores añadidos de la sección 4)
 - ¿Hay acordes inusuales, como suspensiones o acordes disminuidos de paso?
+- ¿Es la nota del bajo la fundamental? Si es la tercera o la quinta del acorde, el acorde está invertido y se escribe como acorde con barra (C/E, C/G).
 
 Toca cada acorde sobre la grabación para confirmarlo. Ajusta hasta que coincida.
 
@@ -299,7 +300,7 @@ Una vez por semana, transcribe una canción (o una sección de una canción más
 |-----------|-------------------|-----------------|
 | «Distingo el mayor del menor» | Reconocimiento instantáneo del carácter del acorde | 2-4 semanas |
 | «Encuentro la tonalidad» | Sabes en qué nota descansa la canción | 1-2 meses |
-| «Oigo la línea de bajo» | Tarareas las fundamentales mientras suena la canción | 2-3 meses |
+| «Oigo la línea de bajo» | Tarareas la línea de bajo mientras suena la canción | 2-3 meses |
 | «Transcribo una canción pop» | Método de cuatro fases en 30 minutos | 3-6 meses |
 | «Oigo los intervalos antes de pensar» | Reconocimiento automático, sin esfuerzo | 6-12 meses |
 
@@ -318,7 +319,7 @@ Son orientaciones aproximadas. Algunas personas avanzan más rápido y otras má
 | Transcripción | Sacar música de oído y escribirla o tocarla | Transcripción | Transcrição | Transcription | 採譜 | 扒谱 |
 | Calidad del acorde | Si un acorde es mayor, menor, disminuido o aumentado | Calidad del acorde | Qualidade do acorde | Qualité de l'accord | 和音の種類 | 和弦性质 |
 | Bordón | Una nota de referencia sostenida que suena mientras practicas intervalos | Bordón | Bordão | Bourdon | ドローン | 持续音 |
-| Línea de bajo | Las notas más graves de un pasaje musical, que suelen definir las fundamentales de los acordes | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
+| Línea de bajo | Las notas más graves de un pasaje musical, a menudo, pero no siempre, las fundamentales de los acordes | Línea de bajo | Linha de baixo | Ligne de basse | ベースライン | 低音线 |
 
 ---
 

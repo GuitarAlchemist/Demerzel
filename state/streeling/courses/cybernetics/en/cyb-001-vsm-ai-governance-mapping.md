@@ -77,13 +77,15 @@ When this module was written, Demerzel lacked this bypass. All escalation flowed
 
 Overall: Demerzel has strong variety attenuation but could improve variety amplification. The system is better at constraining than expanding its response repertoire.
 
+These assessments are qualitative. A count of policies or personas is an inventory, not a variety: adding a duplicate policy or persona changes the count without changing the responses governance can give or the disturbances it faces.
+
 ## Implications for Demerzel
 
 1. **Add algedonic channel** — Highest-priority structural gap. Emergency bypass from S1 to S5 for Zeroth Law violations. Implemented: `policies/algedonic-channel-policy.yaml`.
 2. **Clock-speed governance layers** — Explicit separation of fast-loop (per-request) vs. slow-loop (per-cycle) governance, matching VSM's operational vs. strategic timescales.
 3. **Recursive governance template** — The templates/ directory already provides CLAUDE.md snippets for consumer repos; extending this to sub-agent governance would deepen VSM recursion.
 4. **Conscience as synthetic S5** — Demerzel's proto-conscience policy is a novel extension beyond classical VSM, providing value-reflection capability without human judgment. This is worth further research.
-5. **Monitor variety ratio** — Track whether policy count (attenuation) outpaces persona/capability count (amplification).
+5. **Measure variety on outcomes** — The ratio of policy count to persona count is an inventory balance, not a variety ratio: a duplicate policy or persona changes it without changing the responses governance can give or the disturbances it faces. Track the variety ratio on measured states: the distinct responses given against the distinct disturbances met in each cycle.
 
 ## Sources
 

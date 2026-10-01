@@ -21,7 +21,7 @@ After this lesson, you will be able to:
 - Define what a phase transition means in a governance system
 - Identify six measurable signals that precede regime shifts
 - Distinguish first-order (abrupt) from second-order (continuous) governance transitions
-- Apply the variety ratio as an order parameter for governance regime classification
+- Apply the variety ratio as a candidate order parameter for governance regime classification
 - Design a monitoring dashboard from governance state files
 
 ---
@@ -109,7 +109,7 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 | 0.3 - 0.7 | Normal coupling — governance provides coherence |
 | > 0.7 | Tightly coupled — changes propagate everywhere |
 
-A sudden jump in coupling (loose → tight) means the system is transitioning to centralized governance. A sudden drop means fragmentation. Both are phase transitions.
+A sudden jump in coupling (loose → tight) means the system is transitioning to centralized governance. A sudden drop means fragmentation. Either may mark a phase transition if other signals converge on it (Section 3).
 
 ### Signal 5: Conscience Signal Frequency
 
@@ -125,7 +125,7 @@ A 2x increase in signal rate over 3 cycles is a strong indicator that the system
 
 **Where to measure:** `state/conscience/signals/` directory
 
-### Signal 6: Variety Ratio as Order Parameter
+### Signal 6: Variety Ratio as a Candidate Order Parameter
 
 From cybernetics (CYB-003), the ratio of regulatory response variety to disturbance variety (the Ashby's Law check) measures whether governance has sufficient complexity to handle its environment. It compares the regulator with its environment, not amplifiers with attenuators inside the regulator:
 
@@ -133,13 +133,13 @@ From cybernetics (CYB-003), the ratio of regulatory response variety to disturba
 variety_ratio = governance_variety / environmental_variety
 ```
 
-This is the **order parameter** for governance phase transitions:
+It is a **candidate order parameter** for governance regimes, with 1.0 as a chosen boundary:
 
 - `variety_ratio < 1.0`: Reactive regime (insufficient variety, governance lags environment)
-- `variety_ratio ≈ 1.0`: Critical point (Ashby's Law of Requisite Variety exactly met)
+- `variety_ratio ≈ 1.0`: Boundary (Ashby's Law of Requisite Variety exactly met)
 - `variety_ratio > 1.0`: Proactive regime (governance has surplus capacity)
 
-Crossing 1.0 is a second-order phase transition. The system doesn't break — it qualitatively changes its relationship to its environment.
+Crossing 1.0 means only that the regulator first meets Ashby's inequality; it is not by itself a phase transition. The ratio can pass through 1 smoothly, when one more response becomes available, with no qualitative change in the system. Calling a crossing a second-order transition would need a model of the order parameter that shows critical behavior near 1.0, such as the growing fluctuations of Signal 5; until then, treat 1.0 as a regime boundary.
 
 ---
 
@@ -165,7 +165,7 @@ Crossing 1.0 is a second-order phase transition. The system doesn't break — it
                     └────────────────── t (time/cycles)
 ```
 
-Each horizontal line is a phase boundary. The governance system crosses these boundaries when enough signals align. No single signal is sufficient — look for **convergence** of 3+ signals indicating the same transition direction.
+Each horizontal line is a chosen regime boundary, not a measured phase boundary. The governance system crosses these boundaries when enough signals align. No single signal is sufficient — look for **convergence** of 3+ signals indicating the same transition direction.
 
 ---
 
@@ -189,14 +189,14 @@ Using the current Demerzel governance state:
 
 - Phase transitions in governance are qualitative shifts in how the system operates, not just quantitative growth
 - Six measurable signals can detect approaching transitions: belief skew, health velocity, policy saturation, coupling strength, conscience frequency, and variety ratio
-- The variety ratio (from cybernetics) serves as the order parameter — crossing 1.0 is the most important transition
+- The variety ratio (from cybernetics) is a candidate order parameter — crossing 1.0 marks the regime boundary where Ashby's inequality is first met, not by itself a phase transition
 - Most governance transitions are second-order (continuous) — detectable but not abrupt
 - No single signal is sufficient; look for convergence of 3+ signals
 
 ## Further Reading
 
 - [PSY-001: Introduction to Fractal Compounding](psy-001-intro-fractal-compounding.md) — prerequisite on D_c and ERGOL/LOLLI
-- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the order parameter
+- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the candidate order parameter
 - [CYB-001: VSM and AI Governance Mapping](../../cybernetics/en/cyb-001-vsm-ai-governance-mapping.md) — structural prerequisites
 - Statistical mechanics of phase transitions (Landau theory, order parameters, critical exponents)
 - Asimov's Foundation — psychohistory predicts aggregate trends, not individual events

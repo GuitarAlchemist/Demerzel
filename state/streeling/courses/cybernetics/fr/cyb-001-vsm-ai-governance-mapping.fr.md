@@ -77,13 +77,15 @@ Lorsque ce module a été rédigé, Demerzel ne disposait pas de ce contournemen
 
 Bilan : Demerzel a une forte atténuation de la variété mais pourrait améliorer l'amplification de la variété. Le système est meilleur pour contraindre que pour étendre son répertoire de réponses.
 
+Ces évaluations sont qualitatives. Un nombre de politiques ou de personas est un inventaire, pas une variété : ajouter une politique ou une persona en double change le décompte sans changer les réponses que la gouvernance peut donner ni les perturbations qu'elle affronte.
+
 ## Implications pour Demerzel
 
 1. **Ajouter un canal algédonique** — Lacune structurelle la plus prioritaire. Contournement d'urgence de S1 vers S5 pour les violations de la Loi Zéro. Mis en œuvre : `policies/algedonic-channel-policy.yaml`.
 2. **Couches de gouvernance à vitesses d'horloge** — Séparation explicite de la gouvernance en boucle rapide (par requête) et en boucle lente (par cycle), correspondant aux échelles de temps opérationnelle et stratégique du VSM.
 3. **Modèle de gouvernance récursive** — Le répertoire templates/ fournit déjà des extraits de CLAUDE.md pour les dépôts consommateurs ; l'étendre à la gouvernance des sous-agents approfondirait la récursion du VSM.
 4. **La conscience comme S5 synthétique** — La politique de proto-conscience de Demerzel est une extension inédite au-delà du VSM classique, qui fournit une capacité de réflexion sur les valeurs sans jugement humain. Cela mérite des recherches plus poussées.
-5. **Surveiller le ratio de variété** — Suivre si le nombre de politiques (atténuation) dépasse le nombre de personas/capacités (amplification).
+5. **Mesurer la variété sur des résultats** — Le rapport du nombre de politiques au nombre de personas est un bilan d'inventaire, pas un ratio de variété : une politique ou une persona en double le modifie sans changer les réponses que la gouvernance peut donner ni les perturbations qu'elle affronte. Suivre le ratio de variété sur des états mesurés : les réponses distinctes données face aux perturbations distinctes rencontrées à chaque cycle.
 
 ## Sources
 

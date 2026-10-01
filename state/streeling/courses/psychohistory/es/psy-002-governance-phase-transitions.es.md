@@ -21,7 +21,7 @@ Al terminar esta lección, serás capaz de:
 - Definir qué significa una transición de fase en un sistema de gobernanza
 - Identificar seis señales medibles que preceden a los cambios de régimen
 - Distinguir las transiciones de gobernanza de primer orden (abruptas) de las de segundo orden (continuas)
-- Aplicar el cociente de variedad como parámetro de orden para clasificar los regímenes de gobernanza
+- Aplicar el cociente de variedad como parámetro de orden candidato para clasificar los regímenes de gobernanza
 - Diseñar un panel de monitorización a partir de los archivos de estado de la gobernanza
 
 ---
@@ -109,7 +109,7 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 | 0.3 - 0.7 | Acoplamiento normal: la gobernanza aporta coherencia |
 | > 0.7 | Fuertemente acoplado: los cambios se propagan por todas partes |
 
-Un salto repentino del acoplamiento (débil → fuerte) significa que el sistema está pasando a una gobernanza centralizada. Una caída repentina significa fragmentación. Ambas son transiciones de fase.
+Un salto repentino del acoplamiento (débil → fuerte) significa que el sistema está pasando a una gobernanza centralizada. Una caída repentina significa fragmentación. Cualquiera de los dos puede marcar una transición de fase si otras señales convergen en ella (sección 3).
 
 ### Señal 5: frecuencia de las señales de conciencia
 
@@ -125,7 +125,7 @@ Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuert
 
 **Dónde medir:** el directorio `state/conscience/signals/`
 
-### Señal 6: el cociente de variedad como parámetro de orden
+### Señal 6: el cociente de variedad como parámetro de orden candidato
 
 Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones (la comprobación de la ley de Ashby) mide si la gobernanza tiene la complejidad suficiente para manejar su entorno. Compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador:
 
@@ -133,13 +133,13 @@ Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regu
 variety_ratio = governance_variety / environmental_variety
 ```
 
-Este es el **parámetro de orden** de las transiciones de fase de la gobernanza:
+Es un **parámetro de orden candidato** para los regímenes de gobernanza, con 1.0 como frontera elegida:
 
 - `variety_ratio < 1.0`: régimen reactivo (variedad insuficiente, la gobernanza va por detrás del entorno)
-- `variety_ratio ≈ 1.0`: punto crítico (la ley de la variedad requerida de Ashby se cumple exactamente)
+- `variety_ratio ≈ 1.0`: frontera (la ley de la variedad requerida de Ashby se cumple exactamente)
 - `variety_ratio > 1.0`: régimen proactivo (la gobernanza tiene capacidad excedente)
 
-Cruzar 1.0 es una transición de fase de segundo orden. El sistema no se rompe: cambia cualitativamente su relación con el entorno.
+Cruzar 1.0 significa solo que el regulador cumple por primera vez la desigualdad de Ashby; no es por sí mismo una transición de fase. El cociente puede pasar por 1 de forma suave, cuando se dispone de una respuesta más, sin ningún cambio cualitativo en el sistema. Llamar a un cruce transición de segundo orden exigiría un modelo del parámetro de orden que muestre comportamiento crítico cerca de 1.0, como las fluctuaciones crecientes de la señal 5; hasta entonces, trata 1.0 como una frontera de régimen.
 
 ---
 
@@ -165,7 +165,7 @@ Cruzar 1.0 es una transición de fase de segundo orden. El sistema no se rompe: 
                     └────────────────── t (tiempo/ciclos)
 ```
 
-Cada línea horizontal es una frontera de fase. El sistema de gobernanza cruza estas fronteras cuando se alinean suficientes señales. Ninguna señal por sí sola basta: busca la **convergencia** de 3 o más señales que indiquen la misma dirección de transición.
+Cada línea horizontal es una frontera de régimen elegida, no una frontera de fase medida. El sistema de gobernanza cruza estas fronteras cuando se alinean suficientes señales. Ninguna señal por sí sola basta: busca la **convergencia** de 3 o más señales que indiquen la misma dirección de transición.
 
 ---
 
@@ -189,14 +189,14 @@ Usando el estado actual de la gobernanza de Demerzel:
 
 - Las transiciones de fase de la gobernanza son cambios cualitativos en el funcionamiento del sistema, no solo un crecimiento cuantitativo
 - Seis señales medibles pueden detectar la proximidad de una transición: asimetría de creencias, velocidad de la salud, saturación de políticas, intensidad del acoplamiento, frecuencia de señales de conciencia y cociente de variedad
-- El cociente de variedad (de la cibernética) sirve como parámetro de orden: cruzar 1.0 es la transición más importante
+- El cociente de variedad (de la cibernética) es un parámetro de orden candidato: cruzar 1.0 marca la frontera de régimen donde la desigualdad de Ashby se cumple por primera vez, no por sí mismo una transición de fase
 - La mayoría de las transiciones de gobernanza son de segundo orden (continuas): detectables, pero no abruptas
 - Ninguna señal por sí sola basta; busca la convergencia de 3 o más señales
 
 ## Lecturas adicionales
 
 - [PSY-001: Introducción a la capitalización fractal](psy-001-intro-fractal-compounding.es.md): requisito previo sobre D_c y ERGOL/LOLLI
-- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en inglés): el parámetro de orden
+- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en inglés): el parámetro de orden candidato
 - [CYB-001: Correspondencia entre el VSM y la gobernanza de la IA](../../cybernetics/es/cyb-001-vsm-ai-governance-mapping.es.md): requisitos previos estructurales
 - Mecánica estadística de las transiciones de fase (teoría de Landau, parámetros de orden, exponentes críticos)
 - Fundación de Asimov: la psicohistoria predice tendencias agregadas, no sucesos individuales

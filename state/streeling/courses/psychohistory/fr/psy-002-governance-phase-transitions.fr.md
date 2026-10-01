@@ -21,7 +21,7 @@ Après cette leçon, vous serez capable de :
 - Définir ce que signifie une transition de phase dans un système de gouvernance
 - Identifier six signaux mesurables qui précèdent les changements de régime
 - Distinguer les transitions de gouvernance du premier ordre (brutales) de celles du second ordre (continues)
-- Utiliser le ratio de variété comme paramètre d'ordre pour classer les régimes de gouvernance
+- Utiliser le ratio de variété comme paramètre d'ordre candidat pour classer les régimes de gouvernance
 - Concevoir un tableau de bord de surveillance à partir des fichiers d'état de la gouvernance
 
 ---
@@ -109,7 +109,7 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 | 0.3 - 0.7 | Couplage normal — la gouvernance apporte de la cohérence |
 | > 0.7 | Fortement couplé — les changements se propagent partout |
 
-Un saut soudain du couplage (faible → fort) signifie que le système passe à une gouvernance centralisée. Une chute soudaine signifie une fragmentation. Ce sont deux transitions de phase.
+Un saut soudain du couplage (faible → fort) signifie que le système passe à une gouvernance centralisée. Une chute soudaine signifie une fragmentation. L'un comme l'autre peut marquer une transition de phase si d'autres signaux convergent vers elle (section 3).
 
 ### Signal 5 : fréquence des signaux de conscience
 
@@ -125,7 +125,7 @@ Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le syst
 
 **Où mesurer :** le répertoire `state/conscience/signals/`
 
-### Signal 6 : le ratio de variété comme paramètre d'ordre
+### Signal 6 : le ratio de variété comme paramètre d'ordre candidat
 
 D'après la cybernétique (CYB-003), le rapport entre la variété de réponse régulatrice et la variété des perturbations (la vérification de la loi d'Ashby) mesure si la gouvernance a une complexité suffisante pour faire face à son environnement. Il compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur :
 
@@ -133,13 +133,13 @@ D'après la cybernétique (CYB-003), le rapport entre la variété de réponse r
 variety_ratio = governance_variety / environmental_variety
 ```
 
-C'est le **paramètre d'ordre** des transitions de phase de la gouvernance :
+C'est un **paramètre d'ordre candidat** pour les régimes de gouvernance, avec 1.0 comme frontière choisie :
 
 - `variety_ratio < 1.0` : régime réactif (variété insuffisante, la gouvernance est en retard sur l'environnement)
-- `variety_ratio ≈ 1.0` : point critique (la loi de la variété requise d'Ashby est exactement satisfaite)
+- `variety_ratio ≈ 1.0` : frontière (la loi de la variété requise d'Ashby est exactement satisfaite)
 - `variety_ratio > 1.0` : régime proactif (la gouvernance dispose d'une capacité excédentaire)
 
-Franchir 1.0 est une transition de phase du second ordre. Le système ne se rompt pas — il change qualitativement sa relation à son environnement.
+Franchir 1.0 signifie seulement que le régulateur satisfait pour la première fois l'inégalité d'Ashby ; ce n'est pas en soi une transition de phase. Le ratio peut passer 1 en douceur, quand une réponse de plus devient disponible, sans aucun changement qualitatif du système. Qualifier un franchissement de transition du second ordre exigerait un modèle du paramètre d'ordre qui montre un comportement critique près de 1.0, comme les fluctuations croissantes du signal 5 ; d'ici là, traitez 1.0 comme une frontière de régime.
 
 ---
 
@@ -165,7 +165,7 @@ Franchir 1.0 est une transition de phase du second ordre. Le système ne se romp
                     └────────────────── t (temps/cycles)
 ```
 
-Chaque ligne horizontale est une frontière de phase. Le système de gouvernance franchit ces frontières quand suffisamment de signaux s'alignent. Aucun signal isolé ne suffit — cherchez la **convergence** d'au moins 3 signaux indiquant la même direction de transition.
+Chaque ligne horizontale est une frontière de régime choisie, pas une frontière de phase mesurée. Le système de gouvernance franchit ces frontières quand suffisamment de signaux s'alignent. Aucun signal isolé ne suffit — cherchez la **convergence** d'au moins 3 signaux indiquant la même direction de transition.
 
 ---
 
@@ -189,14 +189,14 @@ Chaque ligne horizontale est une frontière de phase. Le système de gouvernance
 
 - Les transitions de phase de la gouvernance sont des changements qualitatifs dans le fonctionnement du système, et pas seulement une croissance quantitative
 - Six signaux mesurables permettent de détecter l'approche d'une transition : asymétrie des croyances, vitesse de la santé, saturation des politiques, force du couplage, fréquence des signaux de conscience et ratio de variété
-- Le ratio de variété (issu de la cybernétique) sert de paramètre d'ordre — franchir 1.0 est la transition la plus importante
+- Le ratio de variété (issu de la cybernétique) est un paramètre d'ordre candidat — franchir 1.0 marque la frontière de régime où l'inégalité d'Ashby est satisfaite pour la première fois, pas en soi une transition de phase
 - La plupart des transitions de gouvernance sont du second ordre (continues) — détectables mais pas brutales
 - Aucun signal isolé ne suffit ; cherchez la convergence d'au moins 3 signaux
 
 ## Pour aller plus loin
 
 - [PSY-001 : Introduction à la capitalisation fractale](psy-001-intro-fractal-compounding.fr.md) — prérequis sur D_c et ERGOL/LOLLI
-- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en anglais) — le paramètre d'ordre
+- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en anglais) — le paramètre d'ordre candidat
 - [CYB-001 : Correspondance entre le VSM et la gouvernance de l'IA](../../cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md) — prérequis structurels
 - Mécanique statistique des transitions de phase (théorie de Landau, paramètres d'ordre, exposants critiques)
 - Fondation d'Asimov — la psychohistoire prédit des tendances agrégées, pas des événements individuels
