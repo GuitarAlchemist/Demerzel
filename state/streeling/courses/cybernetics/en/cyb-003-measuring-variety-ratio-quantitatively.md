@@ -297,7 +297,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 
 1. **Track varieties per cycle** — Add the inventory snapshot to `state/governance/variety-metrics.json` (or an equivalent state file). Record the inventory and, once measured, the varieties of structures, responses and disturbances, and each attenuation.
 2. **Add structural quality gates** — Three rules check 1,129 grammar rule definitions. Introduce grammar test coverage requirements and production usage tracking; their verdicts would also make A_S measurable.
-3. **Measure the regulatory gap** — The inventories bound it only loosely: disturbances of at least 6.64 bits if the estimates hold, with no upper bound, and no bound on responses. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Consider policy grouping or hierarchical policy organization.
+3. **Measure the regulatory gap** — The inventories bound it only loosely: disturbances of at least 6.64 bits if the estimates hold, with no upper bound, and no bound on responses. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 76-82) should be expanded with quantitative measurement productions.
 
@@ -319,7 +319,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 
 ## Follow-Up Questions for Cycle 004
 
-1. How much of the regulatory gap can hierarchical policy grouping close (reducing pairwise interactions from O(n^2) to O(n log n))?
+1. How can the distinct disturbances met and responses given in each cycle be logged, so that the Ashby gap can be measured? Once it is, does hierarchical policy grouping reduce the disturbances that policy interactions produce, or only the number of policy pairs?
 2. How should grammar production usage be tracked to detect dead productions and inform structural attenuation?
 3. What is the information-theoretic relationship between Demerzel's hexavalent logic (T/P/U/D/F/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?
 

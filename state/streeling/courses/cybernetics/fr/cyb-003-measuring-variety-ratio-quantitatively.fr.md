@@ -297,7 +297,7 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 
 1. **Suivre les variétés à chaque cycle** — Ajouter l'instantané de l'inventaire à `state/governance/variety-metrics.json` (ou à un fichier d'état équivalent). Consigner l'inventaire et, une fois mesurées, les variétés des structures, des réponses et des perturbations, ainsi que chaque atténuation.
 2. **Ajouter des portes de qualité structurelles** — Trois règles contrôlent 1,129 définitions de règles de grammaire. Introduire des exigences de couverture de tests des grammaires et un suivi de l'usage des productions ; leurs verdicts rendraient aussi A_S mesurable.
-3. **Mesurer l'écart régulateur** — Les inventaires ne le bornent que de loin : des perturbations d'au moins 6.64 bits si les estimations tiennent, sans borne supérieure, et aucune borne sur les réponses. Les interactions entre politiques sont la source de perturbation la moins connue. Le nombre de paires de politiques (666 à partir de 37 politiques) croît de façon quadratique, environ quatre fois chaque fois que le nombre de politiques double (2,701 paires pour 74 politiques), et chaque paire en interaction peut entrer en conflit de plusieurs façons. Envisager un regroupement des politiques ou une organisation hiérarchique des politiques.
+3. **Mesurer l'écart régulateur** — Les inventaires ne le bornent que de loin : des perturbations d'au moins 6.64 bits si les estimations tiennent, sans borne supérieure, et aucune borne sur les réponses. Les interactions entre politiques sont la source de perturbation la moins connue. Le nombre de paires de politiques (666 à partir de 37 politiques) croît de façon quadratique, environ quatre fois chaque fois que le nombre de politiques double (2,701 paires pour 74 politiques), et chaque paire en interaction peut entrer en conflit de plusieurs façons. Un regroupement des politiques ou une organisation hiérarchique des politiques peut réduire les interactions, mais c'est à la mesure de montrer s'il réduit les perturbations qu'elles produisent.
 4. **L'escalade vers des humains est un pont de variété** — Le système de seuils de confiance (Article 6 : Escalade) est le principal mécanisme de Demerzel pour absorber la variété qui dépasse sa capacité de régulation. C'est une fonctionnalité, pas une limite.
 5. **Faire évoluer la section 6 de la grammaire** — La section sur la variété requise de la grammaire `sci-cybernetics.ebnf` (lignes 76-82) devrait être enrichie de productions de mesure quantitative.
 
@@ -319,7 +319,7 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 
 ## Questions de suivi pour le cycle 004
 
-1. Quelle part de l'écart régulateur un regroupement hiérarchique des politiques peut-il combler (en réduisant les interactions deux à deux de O(n^2) à O(n log n)) ?
+1. Comment consigner les perturbations distinctes rencontrées et les réponses distinctes données à chaque cycle, pour que l'écart d'Ashby puisse être mesuré ? Une fois qu'il l'est, un regroupement hiérarchique des politiques réduit-il les perturbations que produisent les interactions entre politiques, ou seulement le nombre de paires de politiques ?
 2. Comment suivre l'usage des productions de grammaire pour détecter les productions mortes et éclairer l'atténuation structurelle ?
 3. Quelle est la relation, du point de vue de la théorie de l'information, entre la logique hexavalente de Demerzel (T/P/U/D/F/C) et l'entropie de Shannon — U (Unknown) porte-t-il plus de bits que T (True) ?
 

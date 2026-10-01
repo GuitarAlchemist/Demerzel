@@ -19,7 +19,7 @@ RESEARCH_FINDING {
   grammar_evolved: false,
   follow_up_questions: [
     "How can the distinct disturbances met and responses given in each cycle be logged, so that the Ashby gap can be measured?",
-    "How should grammar production usage be tracked to detect dead productions?",
-    "What is the information-theoretic relationship between tetravalent logic and Shannon entropy?"
+    "How should grammar production usage be tracked to detect dead productions and inform structural attenuation?",
+    "What is the information-theoretic relationship between Demerzel's hexavalent logic (T/P/U/D/F/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?"
   ]
 } -> KNOWLEDGE_STATE "cybernetics/findings/cybernetics-2026-03-23-003"

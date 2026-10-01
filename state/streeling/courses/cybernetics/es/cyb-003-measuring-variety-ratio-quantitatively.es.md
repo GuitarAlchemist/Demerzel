@@ -297,7 +297,7 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 
 1. **Seguir las variedades en cada ciclo**: añadir la instantánea del inventario a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Registrar el inventario y, cuando se midan, las variedades de las estructuras, las respuestas y las perturbaciones, así como cada atenuación.
 2. **Añadir puertas de calidad estructurales**: tres reglas controlan 1,129 definiciones de reglas de gramática. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones; sus veredictos harían también medible A_S.
-3. **Medir la brecha regulatoria**: los inventarios solo la acotan de lejos: perturbaciones de al menos 6.64 bits si las estimaciones se cumplen, sin cota superior, y ninguna cota sobre las respuestas. Las interacciones entre políticas son la fuente de perturbación menos conocida. El número de pares de políticas (666 a partir de 37 políticas) crece de forma cuadrática, unas cuatro veces cada vez que se duplica el número de políticas (2,701 pares para 74 políticas), y cada par que interactúa puede entrar en conflicto de varias formas. Considerar agrupar las políticas u organizarlas jerárquicamente.
+3. **Medir la brecha regulatoria**: los inventarios solo la acotan de lejos: perturbaciones de al menos 6.64 bits si las estimaciones se cumplen, sin cota superior, y ninguna cota sobre las respuestas. Las interacciones entre políticas son la fuente de perturbación menos conocida. El número de pares de políticas (666 a partir de 37 políticas) crece de forma cuadrática, unas cuatro veces cada vez que se duplica el número de políticas (2,701 pares para 74 políticas), y cada par que interactúa puede entrar en conflicto de varias formas. Agrupar las políticas u organizarlas jerárquicamente puede reducir las interacciones, pero si reduce las perturbaciones que estas producen es algo que debe mostrar la medición.
 4. **El escalado a humanos es un puente de variedad**: el sistema de umbrales de confianza (Artículo 6: Escalado) es el mecanismo principal de Demerzel para absorber la variedad que supera su capacidad regulatoria. Es una característica, no una limitación.
 5. **Hacer evolucionar la sección 6 de la gramática**: la sección de variedad requerida de la gramática `sci-cybernetics.ebnf` (líneas 76-82) debería ampliarse con producciones de medición cuantitativa.
 
@@ -319,7 +319,7 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 
 ## Preguntas de seguimiento para el ciclo 004
 
-1. ¿Qué parte de la brecha regulatoria puede cerrar una agrupación jerárquica de políticas (reduciendo las interacciones por pares de O(n^2) a O(n log n))?
+1. ¿Cómo registrar las perturbaciones distintas encontradas y las respuestas distintas dadas en cada ciclo, para que pueda medirse la brecha de Ashby? Una vez medida, ¿reduce una agrupación jerárquica de políticas las perturbaciones que producen las interacciones entre políticas, o solo el número de pares de políticas?
 2. ¿Cómo debería seguirse el uso de las producciones de gramática para detectar producciones muertas y orientar la atenuación estructural?
 3. ¿Cuál es la relación, desde la teoría de la información, entre la lógica hexavalente de Demerzel (T/P/U/D/F/C) y la entropía de Shannon? ¿Lleva U (Unknown) más bits que T (True)?
 
