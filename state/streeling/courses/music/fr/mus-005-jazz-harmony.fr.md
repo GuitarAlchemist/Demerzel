@@ -122,7 +122,7 @@ En Do majeur :
   ii7         V7         Imaj7
 ```
 
-Pourquoi cela fonctionne-t-il ? Chaque accord se résout sur le suivant par le mouvement de fondamentale le plus fort de la musique tonale — les quintes descendantes (D→G→C). La conduite des voix est tout aussi puissante : à chaque changement, les notes guides descendent d'un demi-ton ou restent en place. Plus précisément :
+Pourquoi cela fonctionne-t-il ? Chaque accord se résout sur le suivant par le mouvement de fondamentale le plus fort de la musique tonale — les quintes descendantes (D→G→C). La conduite des voix est tout aussi puissante : à chaque changement, les notes guides bougent d'un demi-ton ou restent en place. Plus précisément :
 
 - La **7e du ii** (C) descend d'un degré vers la **tierce du V** (B)
 - La **tierce du V** (B) monte d'un degré vers la **fondamentale du I** (C)
@@ -267,7 +267,7 @@ Règle : la septième d'un accord doit se résoudre par degré conjoint vers la 
 La **tierce** et la **septième** de chaque accord sont appelées **notes guides** parce qu'elles :
 
 1. **Définissent la qualité :** la tierce indique majeur ou mineur. La septième indique dominante, majeur ou mineur.
-2. **Créent le mouvement :** lorsque les accords changent, les notes guides bougent d'un demi-ton ou d'un ton — les intervalles les plus petits et les plus doux possibles.
+2. **Créent le mouvement :** quand la fondamentale descend par quintes à travers les accords d'une tonalité, comme dans le ii-V-I, les notes guides bougent d'un demi-ton ou d'un ton, ou restent en place — les intervalles les plus petits et les plus doux possibles. D'autres progressions peuvent imposer un saut plus grand, comme dans l'exercice ci-dessous.
 
 Le miracle central de la conduite des voix dans le ii-V-I :
 

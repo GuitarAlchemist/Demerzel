@@ -122,7 +122,7 @@ En Do mayor:
   ii7         V7         Imaj7
 ```
 
-¿Por qué funciona? Cada acorde se resuelve en el siguiente mediante el movimiento de fundamentales más fuerte de la música tonal — las quintas descendentes (D→G→C). La conducción de voces es igual de poderosa: en cada cambio, las notas guía bajan un semitono o se quedan donde están. Más exactamente:
+¿Por qué funciona? Cada acorde se resuelve en el siguiente mediante el movimiento de fundamentales más fuerte de la música tonal — las quintas descendentes (D→G→C). La conducción de voces es igual de poderosa: en cada cambio, las notas guía se mueven un semitono o se quedan donde están. Más exactamente:
 
 - La **7.ª del ii** (C) baja por grado conjunto a la **tercera del V** (B)
 - La **tercera del V** (B) sube por grado conjunto a la **fundamental del I** (C)
@@ -267,7 +267,7 @@ Regla: la séptima de un acorde debe resolver por grado conjunto a la tercera (o
 La **tercera** y la **séptima** de cada acorde se llaman **notas guía** porque:
 
 1. **Definen la calidad:** la tercera indica mayor o menor. La séptima indica dominante, mayor o menor.
-2. **Crean movimiento:** cuando cambian los acordes, las notas guía se mueven por semitono o por tono — los intervalos más pequeños y suaves posibles.
+2. **Crean movimiento:** cuando la fundamental baja por quintas a través de los acordes de una tonalidad, como en el ii-V-I, las notas guía se mueven por semitono o por tono, o se quedan donde están — los intervalos más pequeños y suaves posibles. Otras progresiones pueden exigir un salto mayor, como en el ejercicio de abajo.
 
 El milagro central de la conducción de voces del ii-V-I:
 

@@ -122,7 +122,7 @@ In C major:
   ii7         V7         Imaj7
 ```
 
-Why does this work? Each chord resolves to the next by the strongest root motion in tonal music — descending fifths (D→G→C). The voice leading is equally powerful: at each change the guide tones either fall a half step or stay put. More precisely:
+Why does this work? Each chord resolves to the next by the strongest root motion in tonal music — descending fifths (D→G→C). The voice leading is equally powerful: at each change the guide tones move by a half step or stay put. More precisely:
 
 - The **7th of ii** (C) steps down to the **3rd of V** (B)
 - The **3rd of V** (B) steps up to the **root of I** (C)
@@ -267,7 +267,7 @@ Rule: the 7th of one chord should resolve by step to the 3rd (or nearby tone) of
 The **3rd** and **7th** of each chord are called **guide tones** because they:
 
 1. **Define quality:** The 3rd tells you major vs minor. The 7th tells you dominant vs major vs minor.
-2. **Create motion:** When chords change, the guide tones move by half step or whole step — the smallest, smoothest possible intervals.
+2. **Create motion:** When the roots fall by fifths through a key's chords, as in ii-V-I, the guide tones move by half step or whole step, or stay put — the smallest, smoothest intervals available. Other progressions can require a larger leap, as in the exercise below.
 
 The central miracle of ii-V-I voice leading:
 

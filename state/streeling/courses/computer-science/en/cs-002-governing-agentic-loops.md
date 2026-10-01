@@ -69,7 +69,7 @@ A maximum iteration count enforced by the framework, not the model. When reached
 log the cap, escalate to human review. The counter advances only when an iteration ends, so the cap also needs a deadline around each whole iteration, enforced by the framework, which stops the iteration when it expires, if need be by killing the process that runs it. Timeouts on model calls, tool calls and network requests are useful but do not bound an iteration by themselves. The configuration below sets only the cap.
 
 ```yaml
-# Example: Demerzel autonomous-loop configuration
+# Example: one loop's configuration (policy default 10, absolute max 25)
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
@@ -147,7 +147,7 @@ GOVERNED LOOP
 
 This pattern appears in three places in the Demerzel ecosystem, and only the first two bound the duration of an iteration:
 - **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test, 30-minute maximum duration per cycle (`policies/seldon-plan-policy.yaml`)
-- **Demerzel Driver:** 12 consecutive cycle cap, conscience signals as anomaly detection, cycle timeout (2 hours soft, then a hard kill at 2h15m)
+- **Demerzel Driver:** a pause for human review after 5 consecutive unattended cycles, conscience signals as anomaly detection, cycle timeout (2 hours soft, then a hard kill at 2h15m)
 - **Ralph Loop:** iteration cap + convergence metric (test pass rate) as external criterion, but no per-iteration deadline: neither `policies/autonomous-loop-policy.yaml` nor `.claude/skills/demerzel-loop/SKILL.md` defines one, so an iteration that blocks never reaches the counter
 
 ---
@@ -194,7 +194,7 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 - `policies/autonomous-loop-policy.yaml` — Demerzel governed loop specification
 - `policies/seldon-plan-policy.yaml` — Phase 1 (WAKE) kill switch and cap logic
 - `policies/continuous-learning-policy.yaml` — Iteration bounds in learning pipelines
-- `.claude/skills/demerzel-drive/SKILL.md` — Driver cycle (12-cycle cap pattern)
+- `.claude/skills/demerzel-drive/SKILL.md` — Driver cycle (pause after 5 unattended cycles)
 - `.claude/skills/seldon-plan/SKILL.md` — Research cycle (6/day cap + novelty registry as progress test)
 
 ---

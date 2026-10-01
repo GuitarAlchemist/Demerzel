@@ -69,7 +69,7 @@ Un nombre maximal d'itérations imposé par le framework, et non par le modèle.
 journaliser le plafond, escalader vers une revue humaine. Le compteur n'avance qu'à la fin d'une itération : le plafond exige donc aussi un délai maximal autour de chaque itération entière, appliqué par le framework, qui arrête l'itération à son expiration, au besoin en tuant le processus qui l'exécute. Des délais sur les appels au modèle, les appels d'outils et les requêtes réseau sont utiles, mais ne bornent pas à eux seuls une itération. La configuration ci-dessous ne fixe que le plafond.
 
 ```yaml
-# Exemple : configuration de la boucle autonome de Demerzel
+# Exemple : configuration d'une boucle (défaut de la politique 10, maximum absolu 25)
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
@@ -147,7 +147,7 @@ BOUCLE GOUVERNÉE
 
 Ce schéma apparaît à trois endroits de l'écosystème Demerzel, et seuls les deux premiers bornent la durée d'une itération :
 - **Seldon Plan :** plafond de 6 cycles par jour, registre de nouveauté comme test de progression, durée maximale de 30 minutes par cycle (`policies/seldon-plan-policy.yaml`)
-- **Demerzel Driver :** plafond de 12 cycles consécutifs, signaux de conscience comme détection d'anomalie, délai de cycle (2 heures en souple, puis arrêt forcé à 2h15)
+- **Demerzel Driver :** une pause pour revue humaine après 5 cycles consécutifs sans intervention, signaux de conscience comme détection d'anomalie, délai de cycle (2 heures en souple, puis arrêt forcé à 2h15)
 - **Ralph Loop :** plafond d'itérations + métrique de convergence (taux de réussite des tests) comme critère externe, mais aucun délai par itération : ni `policies/autonomous-loop-policy.yaml` ni `.claude/skills/demerzel-loop/SKILL.md` n'en définit, si bien qu'une itération qui se bloque n'atteint jamais le compteur
 
 ---
@@ -194,7 +194,7 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 - `policies/autonomous-loop-policy.yaml` — spécification de la boucle gouvernée de Demerzel
 - `policies/seldon-plan-policy.yaml` — phase 1 (WAKE) : arrêt d'urgence et logique de plafond
 - `policies/continuous-learning-policy.yaml` — bornes d'itération dans les pipelines d'apprentissage
-- `.claude/skills/demerzel-drive/SKILL.md` — cycle du Driver (schéma du plafond de 12 cycles)
+- `.claude/skills/demerzel-drive/SKILL.md` — cycle du Driver (pause après 5 cycles sans intervention)
 - `.claude/skills/seldon-plan/SKILL.md` — cycle de recherche (plafond de 6 par jour + registre de nouveauté comme test de progression)
 
 ---

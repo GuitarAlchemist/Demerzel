@@ -69,7 +69,7 @@ Un número máximo de iteraciones impuesto por el framework, no por el modelo. A
 registrar el límite y escalar a revisión humana. El contador solo avanza cuando termina una iteración, así que el límite también exige un plazo máximo alrededor de cada iteración completa, impuesto por el framework, que detiene la iteración cuando vence, si hace falta matando el proceso que la ejecuta. Los plazos en las llamadas al modelo, las llamadas a herramientas y las peticiones de red son útiles, pero no acotan por sí solos una iteración. La configuración de abajo solo fija el límite.
 
 ```yaml
-# Ejemplo: configuración del bucle autónomo de Demerzel
+# Ejemplo: configuración de un bucle (valor por defecto de la política 10, máximo absoluto 25)
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
@@ -147,7 +147,7 @@ BUCLE GOBERNADO
 
 Este patrón aparece en tres lugares del ecosistema Demerzel, y solo los dos primeros acotan la duración de una iteración:
 - **Seldon Plan:** límite de 6 ciclos al día, registro de novedad como prueba de progreso, duración máxima de 30 minutos por ciclo (`policies/seldon-plan-policy.yaml`)
-- **Demerzel Driver:** límite de 12 ciclos consecutivos, señales de conciencia como detección de anomalías, plazo de ciclo (2 horas flexible, luego parada forzosa a las 2h15)
+- **Demerzel Driver:** una pausa para revisión humana tras 5 ciclos consecutivos sin intervención, señales de conciencia como detección de anomalías, plazo de ciclo (2 horas flexible, luego parada forzosa a las 2h15)
 - **Ralph Loop:** límite de iteraciones + métrica de convergencia (tasa de pruebas superadas) como criterio externo, pero sin plazo por iteración: ni `policies/autonomous-loop-policy.yaml` ni `.claude/skills/demerzel-loop/SKILL.md` lo definen, así que una iteración que se bloquea nunca llega al contador
 
 ---
@@ -194,7 +194,7 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 - `policies/autonomous-loop-policy.yaml`: especificación del bucle gobernado de Demerzel
 - `policies/seldon-plan-policy.yaml`: fase 1 (WAKE), interruptor de emergencia y lógica de límites
 - `policies/continuous-learning-policy.yaml`: límites de iteración en los pipelines de aprendizaje
-- `.claude/skills/demerzel-drive/SKILL.md`: ciclo del Driver (patrón de límite de 12 ciclos)
+- `.claude/skills/demerzel-drive/SKILL.md`: ciclo del Driver (pausa tras 5 ciclos sin intervención)
 - `.claude/skills/seldon-plan/SKILL.md`: ciclo de investigación (límite de 6 al día + registro de novedad como prueba de progreso)
 
 ---
