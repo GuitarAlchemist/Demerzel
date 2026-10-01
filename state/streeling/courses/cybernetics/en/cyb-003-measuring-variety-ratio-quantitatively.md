@@ -311,7 +311,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 ## Connection to CYB-001 and CYB-002
 
 - **CYB-001** identified that Ashby's Law applies to Demerzel and listed variety amplifiers/attenuators qualitatively. CYB-003 makes this quantitative.
-- **CYB-001 Recommendation 5** asked to track the variety ratio. CYB-003 says what it must be counted on (outcomes, not numbers of policies and personas) and gives formulas, healthy directions and a measurement protocol; since PR #1164, the recommendation itself points to that protocol.
+- **CYB-001 Recommendation 5** asked to track the variety ratio. CYB-003 says what it must be counted on (outcomes, not numbers of policies and personas) and gives formulas, healthy directions and a measurement protocol; since PR #1164, the recommendation itself asks for that per-cycle record.
 - **CYB-002** addressed System 2 dampening. The deadband and hysteresis mechanisms from CYB-002 are themselves variety attenuators — they reduce the variety of signals flowing through coordination channels. CYB-003's structural attenuation metric should include these when implemented.
 
 ## Sources

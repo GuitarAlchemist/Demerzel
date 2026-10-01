@@ -311,7 +311,7 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 ## Relación con CYB-001 y CYB-002
 
 - **CYB-001** estableció que la ley de Ashby se aplica a Demerzel y enumeró cualitativamente los amplificadores y atenuadores de variedad. CYB-003 lo hace cuantitativo.
-- **La recomendación 5 de CYB-001** pedía seguir el cociente de variedad. CYB-003 dice sobre qué debe contarse (resultados, no números de políticas y personas) y da fórmulas, sentidos saludables y un protocolo de medición; desde la PR #1164, la propia recomendación remite a ese protocolo.
+- **La recomendación 5 de CYB-001** pedía seguir el cociente de variedad. CYB-003 dice sobre qué debe contarse (resultados, no números de políticas y personas) y da fórmulas, sentidos saludables y un protocolo de medición; desde la PR #1164, la propia recomendación pide ese registro por ciclo.
 - **CYB-002** abordó la amortiguación del Sistema 2. Los mecanismos de banda muerta e histéresis de CYB-002 son en sí mismos atenuadores de variedad: reducen la variedad de las señales que circulan por los canales de coordinación. La métrica de atenuación estructural de CYB-003 debería incluirlos cuando se implementen.
 
 ## Fuentes

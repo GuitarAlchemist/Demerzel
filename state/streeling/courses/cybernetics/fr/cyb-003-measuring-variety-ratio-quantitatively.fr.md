@@ -311,7 +311,7 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 ## Lien avec CYB-001 et CYB-002
 
 - **CYB-001** a établi que la loi d'Ashby s'applique à Demerzel et a listé qualitativement les amplificateurs et atténuateurs de variété. CYB-003 rend cela quantitatif.
-- **La recommandation 5 de CYB-001** demandait de suivre le ratio de variété. CYB-003 dit sur quoi il doit être compté (des issues, pas des nombres de politiques et de personas) et donne des formules, des sens sains et un protocole de mesure ; depuis la PR #1164, la recommandation elle-même renvoie à ce protocole.
+- **La recommandation 5 de CYB-001** demandait de suivre le ratio de variété. CYB-003 dit sur quoi il doit être compté (des issues, pas des nombres de politiques et de personas) et donne des formules, des sens sains et un protocole de mesure ; depuis la PR #1164, la recommandation elle-même demande ce relevé par cycle.
 - **CYB-002** traitait de l'amortissement du Système 2. Les mécanismes de zone morte et d'hystérésis de CYB-002 sont eux-mêmes des atténuateurs de variété — ils réduisent la variété des signaux qui circulent dans les canaux de coordination. La métrique d'atténuation structurelle de CYB-003 devrait les inclure une fois implémentés.
 
 ## Sources
