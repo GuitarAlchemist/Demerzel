@@ -13,7 +13,7 @@ How can Demerzel measure its variety ratio quantitatively? (Carried from Cycle 0
 
 ## Summary
 
-Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces. This course builds a quantitative framework for measuring Demerzel's variety, in bits, along three dimensions: behavioral (personas), structural (grammars) and regulatory (decisions and the labels they carry). The key formula is V = log2(N), where N counts distinguishable outcomes. Three counting rules keep the numbers honest. A product of component counts is a joint state space only when the components vary independently; otherwise it is only an upper bound. A count of rules is not a count of states: the attenuation that constraints, policies and gates provide is the variety they remove, V_in - V_out. And an inventory is not a set of outcomes: rule definitions, decision labels and policy pairs are what the repository defines, not the structures, responses and disturbances that occur. The inventory is counted at one commit; the varieties Ashby's Law compares have to be measured. The variety ratio that the law constrains compares response variety with disturbance variety; its logarithm, log2 R = V_response - V_disturbance in bits, is to be tracked over time to detect drift, once both sides are measured.
+Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces. This course builds a quantitative framework for measuring Demerzel's variety, in bits, along three dimensions: behavioral (personas), structural (grammars) and regulatory (decisions and the labels they carry). The key formula is V = log2(N), where N counts distinguishable outcomes. Three counting rules keep the numbers honest. A product of component counts is a joint state space only when the components vary independently; otherwise it is only an upper bound. A count of rules is not a count of states: the attenuation that constraints, policies and gates provide is the variety they remove, V_in - V_out. And an inventory is not a set of outcomes: rule definitions, decision labels and policy pairs are what the repository defines, not the structures, responses and disturbances that occur. The inventory is counted at one commit; the varieties Ashby's Law compares have to be measured. The variety ratio compares response variety with disturbance variety, and its logarithm, log2 R = V_response - V_disturbance in bits, is to be tracked over time once both sides are measured. Ashby's Law, however, is stated on outcomes, so whether governance regulates is read from the outcome of each disturbance, given the response, not from that ratio alone.
 
 ## Ashby's Variety: The Formal Definition
 
@@ -41,7 +41,7 @@ The log scale matters because variety combines multiplicatively, not additively.
 V(regulator) >= V(disturbance)
 ```
 
-"Only variety can absorb variety." A governance system that can produce fewer distinct responses than the distinct disturbances it faces will necessarily fail to regulate some of those disturbances.
+"Only variety can absorb variety." Ashby states the law on outcomes. Each disturbance met, with the response given to it, produces an outcome on the essential variables, the quantities governance must keep within acceptable bounds. If no response brings two different disturbances to the same outcome, the outcomes keep at least V_D - V_R bits of variety: V(outcomes) >= V(disturbance) - V(regulator). Regulation means few outcomes, ideally all within bounds, so a governance system that can produce fewer distinct responses than the distinct disturbances it faces will then fail to regulate some of them. Where one response does bring several disturbances to the same acceptable outcome, the system absorbs them without a response each, and the bound does not apply to them. The two counts alone therefore do not show whether governance regulates; the outcomes do.
 
 ## Three Dimensions of Variety in Demerzel
 
@@ -104,7 +104,7 @@ A grammar derives a structure by composing rule definitions: `grammars/sci-cyber
 
 **Structural attenuation:** not measured. It is the reduction in variety from the proposed grammar changes to those the gates accept, A_S = V_in - V_out, and measuring it needs the log of proposals and verdicts.
 
-Interpretation: three rules check 27 grammars holding 1,129 rule definitions. The inventory alone cannot say how much they remove, but it shows how few mechanisms stand between a proposal and the grammars, which is the case for more structural gates (see Current Assessment).
+Interpretation: three rules check 27 grammars holding 1,129 rule definitions. A count of gates does not say how well they control: one gate can check every proposed change, and splitting a predicate into two gates raises the count without removing anything. Whether the gates suffice is for their verdicts to show (see Current Assessment).
 
 ### Dimension 3: Regulatory Variety (V_R)
 
@@ -141,7 +141,7 @@ Interpretation: governance is meant to constrain more than it amplifies, in line
 | Dimension | Inventory at `74cf7c5` | Variety established | Attenuation | Assessment |
 |-----------|------------------------|---------------------|-------------|------------|
 | Behavioral (V_B) | 14 personas, 60 constraints, 1 estimator | Persona selection: 3.81 bits | Not measured | Profiles fixed per persona |
-| Structural (V_S) | 27 grammars, 1,129 rule definitions, 2 gates, 1 staleness alert | Not measured | Not measured | Few checks on many grammars |
+| Structural (V_S) | 27 grammars, 1,129 rule definitions, 2 gates, 1 staleness alert | Not measured | Not measured | Gate effectiveness not measured |
 | Regulatory (V_R) | 4 values (6 at `91e41ac`), 5 rungs at `91e41ac`, 4 PDCA states; 37 policies, 17 articles, 4 severity levels | Labels: 2.58 to 6.91 bits; responses not measured | Not measured | Conservative by design, extent unmeasured |
 
 ### Why the Dashboard Has No Amplifier-to-Attenuator Ratio
@@ -156,15 +156,15 @@ Ashby's Law and VSM principles (CYB-001) set the direction each quantity should 
 |-----------|---------------|-----------|
 | Behavioral | A_B > 0 on harmful actions, while each persona keeps permitted actions for its role | Constraints should remove harm, not whole roles |
 | Structural | The gates reject the proposed changes that fail them, seeded failures included | A gate is tested by changes it must reject; a batch of valid changes rightly gives A_S = 0 |
-| Regulatory | V_response >= V_disturbance, counting the variety escalation borrows from humans | Ashby's Law |
+| Regulatory | Every disturbance met ends with the essential variables within bounds, escalations to humans included | Ashby's Law, stated on outcomes |
 
-These directions become thresholds once A_B, A_S, A_R and the joint varieties have been measured over several cycles.
+These directions become thresholds once A_B, A_S, A_R, the joint varieties and the outcomes have been measured over several cycles.
 
 ### Current Assessment
 
 - **Behavioral (3.81 bits of persona selection, 14 personas):** each persona fixes its level and voice. How much its constraints remove is unmeasured; logging the actions each persona proposes and those its constraints allow would measure it.
-- **Structural (27 grammars, 1,129 rule definitions):** three rules check them, and no structural variety is measured. Recommendation: add structural quality gates (e.g., grammar test coverage requirements, production usage tracking), whose verdicts would also measure A_S, and log the derivations produced, which would measure V_S.
-- **Regulatory (labels 2.58 to 6.91 bits):** conservative by design; telling whether it is too conservative, or has enough response variety, needs A_R and V_R_amp.
+- **Structural (27 grammars, 1,129 rule definitions):** no structural variety is measured, and nothing yet shows whether the three rules that check them suffice. Recommendation: measure before adding gates. Log the proposed changes and the gates' verdicts, which measures A_S; seed changes the gates must reject; track grammar test coverage and production usage; and log the derivations produced, which measures V_S. Add a gate where a seeded failure passes or coverage is missing.
+- **Regulatory (labels 2.58 to 6.91 bits):** conservative by design; telling whether it is too conservative, or regulates enough, needs A_R and the outcomes of the disturbances it meets.
 
 ## The Disturbance Side: What Must Be Regulated?
 
@@ -202,7 +202,7 @@ V(regulatory response) >= V(disturbance)
 - If the estimates hold, V_D is at least 6.64 bits, the environment changes, the largest single estimated source. The inventory gives no upper bound, since policy interactions are not estimated (see Internal Disturbances)
 - **Gap: not computed.** Neither side is measured, and the inventories fit both a surplus and a deficit of any size
 
-The lower bound holds whatever the dependencies, given the estimates: a joint state space has at least as many states as its largest part. It also shows how little the inventories decide. About 100 distinct environment changes (6.64 bits) is fewer than the 120 label triples (6.91 bits), so even the labels could in principle tell them apart, while nothing in the inventories caps the disturbances from above. Measuring both joint varieties, by counting the distinct disturbances met and the distinct responses given in each cycle, would place the gap, if there is one.
+The lower bound holds whatever the dependencies, given the estimates: a joint state space has at least as many states as its largest part. It also shows how little the inventories decide. About 100 distinct environment changes (6.64 bits) is fewer than the 120 label triples (6.91 bits), so even the labels could in principle tell them apart, while nothing in the inventories caps the disturbances from above. Counting the distinct disturbances met and responses given in each cycle would give V_D - V_R_amp, but that difference is only Ashby's lower bound on outcome variety, valid where no response brings two disturbances to the same outcome. Two cycles with the same counts can regulate fully or not at all, depending on which response meets which disturbance, and one robust response can regulate several disturbances. Whether governance regulates is measured by recording, for each disturbance, the response given and the outcome on the essential variables (Metric 3).
 
 If disturbances outrun responses, the difference has to be absorbed by:
 
@@ -210,7 +210,7 @@ If disturbances outrun responses, the difference has to be absorbed by:
 2. **Constitutional override** — the Asimov Laws collapse complex decisions to binary (safe/unsafe), reducing required variety
 3. **PDCA cycling** — sequential processing converts parallel disturbances into manageable queues
 
-These are legitimate variety absorption mechanisms. Whether they suffice is what measuring both sides would show, and Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
+These are legitimate variety absorption mechanisms. Whether they suffice is what the outcomes would show, and Demerzel should monitor whether policy-interaction complexity is growing faster than regulatory capacity.
 
 ## Measurement Protocol
 
@@ -255,6 +255,7 @@ To track variety over time, Demerzel should compute the following metrics at eac
     "structures_generated": null,
     "responses": null,
     "disturbances": null,
+    "outcomes": null,
     "attenuation": {"behavioral": null, "structural": null, "regulatory": null},
     "inventory_commit": "74cf7c5",
     "definitions_commit": "91e41ac"
@@ -266,12 +267,12 @@ A `null` marks a quantity not yet measured, not a zero. `persona_selection` come
 
 ### Metric 3: Outcome and Attenuation Measurement
 
-For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the N_S distinct structures the grammars generate (V_S), the N_R distinct responses governance gives, escalations included (V_R_amp), and the N_D distinct disturbances it meets (V_D). A zero count has no log2 and gets a label, not a number: a cycle that meets no disturbance (N_D = 0) is quiet; one that meets disturbances and gives no response (N_D > 0, N_R = 0) is unanswered; one in which the grammars generate no structure (N_S = 0) is idle for V_S. The gap V_D - V_R_amp is computed only for cycles with N_D > 0 and N_R > 0.
+For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the N_S distinct structures the grammars generate (V_S), the N_R distinct responses governance gives, escalations included (V_R_amp), and the N_D distinct disturbances it meets (V_D). A zero count has no log2 and gets a label, not a number: a cycle that meets no disturbance (N_D = 0) is quiet; one that meets disturbances and gives no response (N_D > 0, N_R = 0) is unanswered; one in which the grammars generate no structure (N_S = 0) is idle for V_S. For each disturbance, record also the response given (none, if none) and the outcome on the essential variables, within bounds or not: for example, no constitutional article violated and no schema validation failing. The regulation rate is the share of disturbances met whose outcome stays within bounds, and the distinct outcomes give V_O. The difference V_D - V_R_amp, computed only for cycles with N_D > 0 and N_R > 0, is Ashby's lower bound on V_O, not a measure of regulation: it says how far outcomes must spread if no response serves two disturbances, and the recorded outcomes say how far they did.
 
 Track these over consecutive cycles. Alert when:
 - A control probe passes: an input the attenuator must refuse, seeded on purpose, gets through. A = 0 alone is not an alert, since a cycle whose inputs are all valid rightly gives A = 0
-- A cycle is unanswered: disturbances were met and no response was given (N_D > 0, N_R = 0)
-- The gap V_D - V_R_amp rises by 1 bit or more from the last cycle in which it was computed (disturbance variety doubling relative to response variety)
+- An outcome is out of bounds: a disturbance met ends with an essential variable outside its acceptable set, whether a response was given or not
+- Ashby's bound V_D - V_R_amp rises by 1 bit or more from the last cycle in which it was computed (disturbance variety doubling relative to response variety): a warning to check against the outcomes, not a failure by itself
 - The inventory changes (a persona, grammar rule or policy was added or removed), so that the counts are refreshed
 
 A 1-bit step, a doubling or halving, is a starting threshold, not a calibrated one.
@@ -296,9 +297,9 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 
 ## Implications for Demerzel
 
-1. **Track varieties per cycle** — Add the inventory snapshot to `state/governance/variety-metrics.json` (or an equivalent state file). Record the inventory and, once measured, the varieties of structures, responses and disturbances, and each attenuation.
-2. **Add structural quality gates** — Three rules check 1,129 grammar rule definitions. Introduce grammar test coverage requirements and production usage tracking; their verdicts would also make A_S measurable.
-3. **Measure the regulatory gap** — The inventories bound it only loosely: disturbances of at least 6.64 bits if the estimates hold, with no upper bound, and no bound on responses. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
+1. **Track varieties per cycle** — Add the inventory snapshot to `state/governance/variety-metrics.json` (or an equivalent state file). Record the inventory and, once measured, the varieties of structures, responses and disturbances, each attenuation, and for each disturbance the response given and its outcome.
+2. **Measure the structural gates before adding any** — Log proposed grammar changes and the gates' verdicts, seed changes the gates must reject, and track grammar test coverage and production usage; add a gate where a seeded failure passes or coverage is missing. The verdicts also make A_S measurable.
+3. **Measure regulation** — Record each disturbance met, the response given and its outcome on the essential variables. The inventories bound the two varieties only loosely: disturbances of at least 6.64 bits if the estimates hold, with no upper bound, and no bound on responses. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 76-82) should be expanded with quantitative measurement productions.
 
@@ -320,7 +321,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 
 ## Follow-Up Questions for Cycle 004
 
-1. How can the distinct disturbances met and responses given in each cycle be logged, so that the Ashby gap can be measured? Once it is, does hierarchical policy grouping reduce the disturbances that policy interactions produce, or only the number of policy pairs?
+1. How can each disturbance met, the response given and its outcome on the essential variables be logged in each cycle, so that regulation can be measured? Once it is, does hierarchical policy grouping reduce the disturbances that policy interactions produce, or only the number of policy pairs?
 2. How should grammar production usage be tracked to detect dead productions and inform structural attenuation?
 3. What is the information-theoretic relationship between Demerzel's hexavalent logic (T/P/U/D/F/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?
 

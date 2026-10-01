@@ -6,7 +6,7 @@
 RESEARCH_FINDING {
   department: "cybernetics",
   question: "How can Demerzel measure its variety ratio quantitatively?",
-  conclusion: "Variety must be counted on outcomes, dimension by dimension (behavioral, structural, regulatory), with V = log2(N). Three counting rules apply: a product of component counts is a joint state space only if the components vary independently, and otherwise an upper bound; a count of rules is not a count of states, so an attenuator is measured by A = log2(N_in / N_out) on the outcomes that reach it and pass it; and an inventory is not a set of outcomes. From the inventory at commit 74cf7c5, only persona selection (3.81 bits) and decision-label variety (2.58 to 6.91 bits) are established. Structural, response and disturbance varieties and every attenuation are not measured; disturbance variety is bounded only below (6.64 bits if the estimates hold), so no Ashby gap can be computed from the inventory. Measuring the distinct disturbances met and responses given per cycle would place it.",
+  conclusion: "Variety must be counted on outcomes, dimension by dimension (behavioral, structural, regulatory), with V = log2(N). Three counting rules apply: a product of component counts is a joint state space only if the components vary independently, and otherwise an upper bound; a count of rules is not a count of states, so an attenuator is measured by A = log2(N_in / N_out) on the outcomes that reach it and pass it; and an inventory is not a set of outcomes. From the inventory at commit 74cf7c5, only persona selection (3.81 bits) and decision-label variety (2.58 to 6.91 bits) are established. Structural, response and disturbance varieties and every attenuation are not measured; disturbance variety is bounded only below (6.64 bits if the estimates hold), so no Ashby gap can be computed from the inventory. Ashby's Law is stated on outcomes: V_D - V_R_amp bounds outcome variety only where no response brings two disturbances to the same outcome, so regulation is measured by recording, per cycle, each disturbance met, the response given and its outcome on the essential variables.",
   evidence: [
     "Ashby (1956) Chapter 7: V = log2(N) is the formal definition of variety",
     "Beer (1979) Chapter 6: variety engineering requires separate amplifier/attenuator accounting",
@@ -18,7 +18,7 @@ RESEARCH_FINDING {
   course_produced: true,
   grammar_evolved: false,
   follow_up_questions: [
-    "How can the distinct disturbances met and responses given in each cycle be logged, so that the Ashby gap can be measured?",
+    "How can each disturbance met, the response given and its outcome on the essential variables be logged in each cycle, so that regulation can be measured?",
     "How should grammar production usage be tracked to detect dead productions and inform structural attenuation?",
     "What is the information-theoretic relationship between Demerzel's hexavalent logic (T/P/U/D/F/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?"
   ]

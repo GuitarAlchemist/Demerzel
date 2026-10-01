@@ -13,7 +13,7 @@
 
 ## Resumen
 
-La ley de la variedad requerida de Ashby establece que un regulador debe tener al menos tanta variedad como las perturbaciones a las que se enfrenta. Este curso define un marco cuantitativo para medir la variedad de Demerzel, en bits, en tres dimensiones: conductual (personas), estructural (gramáticas) y regulatoria (las decisiones y las etiquetas que llevan). La fórmula clave es V = log2(N), donde N cuenta los resultados distinguibles. Tres reglas de recuento mantienen honestas las cifras. Un producto de recuentos de componentes solo es un espacio de estados conjunto si los componentes varían de forma independiente; si no, es solo una cota superior. Un recuento de reglas no es un recuento de estados: la atenuación que aportan las restricciones, las políticas y las puertas es la variedad que eliminan, V_in - V_out. Y un inventario no es un conjunto de resultados: las definiciones de reglas, las etiquetas de decisión y los pares de políticas son lo que el repositorio define, no las estructuras, las respuestas y las perturbaciones que se producen. El inventario se cuenta en un commit; las variedades que compara la ley de Ashby hay que medirlas. El cociente de variedad que restringe la ley compara la variedad de las respuestas con la de las perturbaciones; su logaritmo, log2 R = V_response - V_disturbance en bits, se seguirá a lo largo del tiempo para detectar una deriva, una vez medidos ambos lados.
+La ley de la variedad requerida de Ashby establece que un regulador debe tener al menos tanta variedad como las perturbaciones a las que se enfrenta. Este curso define un marco cuantitativo para medir la variedad de Demerzel, en bits, en tres dimensiones: conductual (personas), estructural (gramáticas) y regulatoria (las decisiones y las etiquetas que llevan). La fórmula clave es V = log2(N), donde N cuenta los resultados distinguibles. Tres reglas de recuento mantienen honestas las cifras. Un producto de recuentos de componentes solo es un espacio de estados conjunto si los componentes varían de forma independiente; si no, es solo una cota superior. Un recuento de reglas no es un recuento de estados: la atenuación que aportan las restricciones, las políticas y las puertas es la variedad que eliminan, V_in - V_out. Y un inventario no es un conjunto de resultados: las definiciones de reglas, las etiquetas de decisión y los pares de políticas son lo que el repositorio define, no las estructuras, las respuestas y las perturbaciones que se producen. El inventario se cuenta en un commit; las variedades que compara la ley de Ashby hay que medirlas. El cociente de variedad compara la variedad de las respuestas con la de las perturbaciones, y su logaritmo, log2 R = V_response - V_disturbance en bits, se seguirá a lo largo del tiempo una vez medidos ambos lados. La ley de Ashby, sin embargo, se enuncia sobre los resultados: es el resultado de cada perturbación, dada la respuesta, lo que dice si la gobernanza regula, no ese cociente por sí solo.
 
 ## La variedad de Ashby: la definición formal
 
@@ -41,7 +41,7 @@ La escala logarítmica importa porque la variedad se combina de forma multiplica
 V(regulador) >= V(perturbación)
 ```
 
-«Solo la variedad puede absorber la variedad». Un sistema de gobernanza que puede producir menos respuestas distintas que las perturbaciones distintas a las que se enfrenta fracasará necesariamente al regular algunas de esas perturbaciones.
+«Solo la variedad puede absorber la variedad». Ashby enuncia la ley sobre los resultados. Cada perturbación encontrada, con la respuesta que se le da, produce un resultado sobre las variables esenciales, las magnitudes que la gobernanza debe mantener dentro de límites aceptables. Si ninguna respuesta lleva dos perturbaciones distintas al mismo resultado, los resultados conservan al menos V_D - V_R bits de variedad: V(resultados) >= V(perturbación) - V(regulador). Regular es obtener pocos resultados, idealmente todos dentro de los límites, así que un sistema de gobernanza que puede producir menos respuestas distintas que las perturbaciones distintas a las que se enfrenta fracasará entonces al regular algunas de ellas. Donde una misma respuesta lleva varias perturbaciones al mismo resultado aceptable, el sistema las absorbe sin una respuesta para cada una, y la cota no se aplica a ellas. Los dos recuentos por sí solos no muestran, pues, si la gobernanza regula; los resultados sí.
 
 ## Tres dimensiones de la variedad en Demerzel
 
@@ -104,7 +104,7 @@ Una gramática deriva una estructura componiendo definiciones de reglas: `gramma
 
 **Atenuación estructural:** sin medir. Es la reducción de variedad entre los cambios de gramática propuestos y los que aceptan las puertas, A_S = V_in - V_out, y medirla requiere el registro de propuestas y veredictos.
 
-Interpretación: tres reglas controlan 27 gramáticas que contienen 1,129 definiciones de reglas. El inventario por sí solo no dice cuánto eliminan, pero muestra qué pocos mecanismos separan una propuesta de las gramáticas, lo que justifica más puertas estructurales (véase Valoración actual).
+Interpretación: tres reglas controlan 27 gramáticas que contienen 1,129 definiciones de reglas. Un recuento de puertas no dice si controlan bien: una sola puerta puede comprobar cada cambio propuesto, y dividir un predicado en dos puertas aumenta el recuento sin eliminar nada. Si las puertas bastan es algo que deben mostrar sus veredictos (véase Valoración actual).
 
 ### Dimensión 3: variedad regulatoria (V_R)
 
@@ -141,7 +141,7 @@ Interpretación: la gobernanza debe restringir más de lo que amplifica, en lín
 | Dimensión | Inventario en `74cf7c5` | Variedad establecida | Atenuación | Valoración |
 |-----------|------------------------|---------------------|-------------|------------|
 | Conductual (V_B) | 14 personas, 60 restricciones, 1 estimador | Elección de la persona: 3.81 bits | Sin medir | Perfiles fijados por persona |
-| Estructural (V_S) | 27 gramáticas, 1,129 definiciones de reglas, 2 puertas, 1 alerta de obsolescencia | Sin medir | Sin medir | Pocos controles sobre muchas gramáticas |
+| Estructural (V_S) | 27 gramáticas, 1,129 definiciones de reglas, 2 puertas, 1 alerta de obsolescencia | Sin medir | Sin medir | Eficacia de las puertas sin medir |
 | Regulatoria (V_R) | 4 valores (6 en `91e41ac`), 5 escalones en `91e41ac`, 4 estados PDCA; 37 políticas, 17 artículos, 4 niveles de gravedad | Etiquetas: 2.58 a 6.91 bits; respuestas sin medir | Sin medir | Conservadora por diseño, alcance sin medir |
 
 ### Por qué el panel no tiene un cociente de amplificadores entre atenuadores
@@ -156,15 +156,15 @@ La ley de Ashby y los principios del VSM (CYB-001) fijan el sentido que debe tom
 |-----------|---------------|-----------|
 | Conductual | A_B > 0 sobre las acciones dañinas, mientras cada persona conserva las acciones permitidas para su rol | Las restricciones deben eliminar el daño, no roles enteros |
 | Estructural | Las puertas rechazan los cambios propuestos que no las superan, fallos inyectados incluidos | Una puerta se prueba con los cambios que debe rechazar; un lote de cambios válidos da con razón A_S = 0 |
-| Regulatoria | V_response >= V_disturbance, contando la variedad que el escalado toma prestada de los humanos | La ley de Ashby |
+| Regulatoria | Cada perturbación encontrada termina con las variables esenciales dentro de sus límites, escalados a humanos incluidos | La ley de Ashby, enunciada sobre los resultados |
 
-Estos sentidos pasarán a ser umbrales cuando A_B, A_S, A_R y las variedades conjuntas se hayan medido durante varios ciclos.
+Estos sentidos pasarán a ser umbrales cuando A_B, A_S, A_R, las variedades conjuntas y los resultados se hayan medido durante varios ciclos.
 
 ### Valoración actual
 
 - **Conductual (3.81 bits de elección de persona, 14 personas):** cada persona fija su nivel y su voz. Cuánto eliminan sus restricciones está sin medir; registrar las acciones que propone cada persona y las que permiten sus restricciones lo mediría.
-- **Estructural (27 gramáticas, 1,129 definiciones de reglas):** tres reglas las controlan, y no se mide ninguna variedad estructural. Recomendación: añadir puertas de calidad estructurales (por ejemplo, requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones), cuyos veredictos medirían también A_S, y registrar las derivaciones producidas, lo que mediría V_S.
-- **Regulatoria (etiquetas de 2.58 a 6.91 bits):** conservadora por diseño; saber si lo es demasiado, o si tiene suficiente variedad de respuesta, requiere A_R y V_R_amp.
+- **Estructural (27 gramáticas, 1,129 definiciones de reglas):** no se mide ninguna variedad estructural, y nada muestra todavía si bastan las tres reglas que las controlan. Recomendación: medir antes de añadir puertas. Registrar los cambios propuestos y los veredictos de las puertas, lo que mide A_S; inyectar cambios que las puertas deben rechazar; seguir la cobertura de pruebas de las gramáticas y el uso de las producciones; y registrar las derivaciones producidas, lo que mide V_S. Añadir una puerta donde pase un fallo inyectado o falte cobertura.
+- **Regulatoria (etiquetas de 2.58 a 6.91 bits):** conservadora por diseño; saber si lo es demasiado, o si regula lo suficiente, requiere A_R y los resultados de las perturbaciones que encuentra.
 
 ## El lado de las perturbaciones: ¿qué hay que regular?
 
@@ -202,7 +202,7 @@ V(respuesta reguladora) >= V(perturbación)
 - Si las estimaciones se cumplen, V_D vale al menos 6.64 bits, los cambios del entorno, la mayor fuente estimada aislada. El inventario no da ninguna cota superior, ya que las interacciones entre políticas no están estimadas (véase Perturbaciones internas)
 - **Brecha: sin calcular.** Ninguno de los dos lados está medido, y los inventarios son compatibles tanto con un superávit como con un déficit de cualquier tamaño
 
-La cota inferior se cumple sean cuales sean las dependencias, dadas las estimaciones: un espacio de estados conjunto tiene al menos tantos estados como su mayor parte. Muestra también lo poco que deciden los inventarios. Unos 100 cambios del entorno distintos (6.64 bits) son menos que las 120 ternas de etiquetas (6.91 bits), así que incluso las etiquetas podrían en principio distinguirlos, mientras que nada en los inventarios pone techo a las perturbaciones. Medir ambas variedades conjuntas, contando las perturbaciones distintas encontradas y las respuestas distintas dadas en cada ciclo, situaría la brecha, si la hay.
+La cota inferior se cumple sean cuales sean las dependencias, dadas las estimaciones: un espacio de estados conjunto tiene al menos tantos estados como su mayor parte. Muestra también lo poco que deciden los inventarios. Unos 100 cambios del entorno distintos (6.64 bits) son menos que las 120 ternas de etiquetas (6.91 bits), así que incluso las etiquetas podrían en principio distinguirlos, mientras que nada en los inventarios pone techo a las perturbaciones. Contar las perturbaciones distintas encontradas y las respuestas distintas dadas en cada ciclo daría V_D - V_R_amp, pero esa diferencia es solo la cota inferior de Ashby sobre la variedad de los resultados, válida donde ninguna respuesta lleva dos perturbaciones al mismo resultado. Dos ciclos con los mismos recuentos pueden regular por completo o nada en absoluto, según qué respuesta se dé a cada perturbación, y una sola respuesta robusta puede regular varias perturbaciones. La regulación se mide registrando, para cada perturbación, la respuesta dada y el resultado sobre las variables esenciales (métrica 3).
 
 Si las perturbaciones superan a las respuestas, la diferencia debe absorberse mediante:
 
@@ -210,7 +210,7 @@ Si las perturbaciones superan a las respuestas, la diferencia debe absorberse me
 2. **Prevalencia constitucional**: las leyes de Asimov reducen las decisiones complejas a una elección binaria (seguro/inseguro), lo que disminuye la variedad requerida
 3. **Ciclo PDCA**: el procesamiento secuencial convierte perturbaciones paralelas en colas manejables
 
-Son mecanismos legítimos de absorción de variedad. Si bastan es lo que mostraría la medición de ambos lados, y Demerzel debería vigilar si la complejidad de las interacciones entre políticas crece más rápido que la capacidad regulatoria.
+Son mecanismos legítimos de absorción de variedad. Si bastan es lo que mostrarían los resultados, y Demerzel debería vigilar si la complejidad de las interacciones entre políticas crece más rápido que la capacidad regulatoria.
 
 ## Protocolo de medición
 
@@ -255,6 +255,7 @@ Para seguir la variedad a lo largo del tiempo, Demerzel debería calcular las si
     "structures_generated": null,
     "responses": null,
     "disturbances": null,
+    "outcomes": null,
     "attenuation": {"behavioral": null, "structural": null, "regulatory": null},
     "inventory_commit": "74cf7c5",
     "definitions_commit": "91e41ac"
@@ -266,12 +267,12 @@ Un `null` marca una magnitud aún sin medir, no un cero. `persona_selection` vie
 
 ### Métrica 3: medición de los resultados y de la atenuación
 
-Para cada atenuador, registra en cada ciclo lo que le llega y lo que deja pasar: las acciones que propone cada persona y las que permiten sus restricciones, los cambios de gramática propuestos y los que aceptan las puertas, las decisiones candidatas y las que permiten las políticas y los artículos. Registra aparte las acciones rechazadas, los cambios rechazados y las decisiones excluidas: muestran lo que se eliminó, no lo que pasó. Con N_in resultados distintos que llegan a un atenuador y N_out resultados distintos que lo atraviesan, V_in = log2(N_in), V_out = log2(N_out), y A = V_in - V_out = log2(N_in / N_out) bits: un atenuador que deja pasar 4 de 8 propuestas distintas elimina 1 bit. Si no llega nada al atenuador (N_in = 0), el ciclo no es una observación: regístralo como inactivo, no como un bloqueo. Si le llegan entradas y ninguna pasa (N_in > 0, N_out = 0), V_out no está definido; registra ese ciclo como un bloqueo total, no como un número. Registra del mismo modo, como log2 de cada recuento, las N_S estructuras distintas que generan las gramáticas (V_S), las N_R respuestas distintas que da la gobernanza, escalados incluidos (V_R_amp), y las N_D perturbaciones distintas que encuentra (V_D). Un recuento nulo no tiene log2 y recibe una etiqueta, no un número: un ciclo que no encuentra ninguna perturbación (N_D = 0) es tranquilo; uno que encuentra perturbaciones y no da ninguna respuesta (N_D > 0, N_R = 0) queda sin respuesta; uno en el que las gramáticas no generan ninguna estructura (N_S = 0) es inactivo para V_S. La brecha V_D - V_R_amp solo se calcula para los ciclos con N_D > 0 y N_R > 0.
+Para cada atenuador, registra en cada ciclo lo que le llega y lo que deja pasar: las acciones que propone cada persona y las que permiten sus restricciones, los cambios de gramática propuestos y los que aceptan las puertas, las decisiones candidatas y las que permiten las políticas y los artículos. Registra aparte las acciones rechazadas, los cambios rechazados y las decisiones excluidas: muestran lo que se eliminó, no lo que pasó. Con N_in resultados distintos que llegan a un atenuador y N_out resultados distintos que lo atraviesan, V_in = log2(N_in), V_out = log2(N_out), y A = V_in - V_out = log2(N_in / N_out) bits: un atenuador que deja pasar 4 de 8 propuestas distintas elimina 1 bit. Si no llega nada al atenuador (N_in = 0), el ciclo no es una observación: regístralo como inactivo, no como un bloqueo. Si le llegan entradas y ninguna pasa (N_in > 0, N_out = 0), V_out no está definido; registra ese ciclo como un bloqueo total, no como un número. Registra del mismo modo, como log2 de cada recuento, las N_S estructuras distintas que generan las gramáticas (V_S), las N_R respuestas distintas que da la gobernanza, escalados incluidos (V_R_amp), y las N_D perturbaciones distintas que encuentra (V_D). Un recuento nulo no tiene log2 y recibe una etiqueta, no un número: un ciclo que no encuentra ninguna perturbación (N_D = 0) es tranquilo; uno que encuentra perturbaciones y no da ninguna respuesta (N_D > 0, N_R = 0) queda sin respuesta; uno en el que las gramáticas no generan ninguna estructura (N_S = 0) es inactivo para V_S. Para cada perturbación, registra también la respuesta dada (ninguna, si no la hubo) y el resultado sobre las variables esenciales, dentro de los límites o no: por ejemplo, ningún artículo constitucional violado y ninguna validación de esquema fallida. La tasa de regulación es la parte de las perturbaciones encontradas cuyo resultado queda dentro de los límites, y los resultados distintos dan V_O. La diferencia V_D - V_R_amp, calculada solo para los ciclos con N_D > 0 y N_R > 0, es la cota inferior de Ashby sobre V_O, no una medida de la regulación: dice hasta dónde deben dispersarse los resultados si ninguna respuesta sirve a dos perturbaciones, y los resultados registrados dicen hasta dónde se dispersaron.
 
 Sigue estas magnitudes a lo largo de ciclos consecutivos. Alerta cuando:
 - Una sonda de control pase: una entrada que el atenuador debe rechazar, inyectada a propósito, lo atraviesa. A = 0 por sí solo no es una alerta, ya que un ciclo cuyas entradas son todas válidas da con razón A = 0
-- Un ciclo quede sin respuesta: se encontraron perturbaciones y no se dio ninguna respuesta (N_D > 0, N_R = 0)
-- La brecha V_D - V_R_amp suba 1 bit o más respecto del último ciclo en que se calculó (la variedad de las perturbaciones se duplica en relación con la de las respuestas)
+- Un resultado salga de los límites: una perturbación encontrada termina con una variable esencial fuera de su conjunto aceptable, se haya dado o no una respuesta
+- La cota de Ashby V_D - V_R_amp suba 1 bit o más respecto del último ciclo en que se calculó (la variedad de las perturbaciones se duplica en relación con la de las respuestas): un aviso que contrastar con los resultados, no un fallo por sí mismo
 - Cambie el inventario (se ha añadido o retirado una persona, una regla de gramática o una política), para que se actualicen los recuentos
 
 Un paso de 1 bit, es decir, una duplicación o una reducción a la mitad, es un umbral de partida, no un umbral calibrado.
@@ -296,9 +297,9 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 
 ## Implicaciones para Demerzel
 
-1. **Seguir las variedades en cada ciclo**: añadir la instantánea del inventario a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Registrar el inventario y, cuando se midan, las variedades de las estructuras, las respuestas y las perturbaciones, así como cada atenuación.
-2. **Añadir puertas de calidad estructurales**: tres reglas controlan 1,129 definiciones de reglas de gramática. Introducir requisitos de cobertura de pruebas de las gramáticas y seguimiento del uso de las producciones; sus veredictos harían también medible A_S.
-3. **Medir la brecha regulatoria**: los inventarios solo la acotan de lejos: perturbaciones de al menos 6.64 bits si las estimaciones se cumplen, sin cota superior, y ninguna cota sobre las respuestas. Las interacciones entre políticas son la fuente de perturbación menos conocida. El número de pares de políticas (666 a partir de 37 políticas) crece de forma cuadrática, unas cuatro veces cada vez que se duplica el número de políticas (2,701 pares para 74 políticas), y cada par que interactúa puede entrar en conflicto de varias formas. Agrupar las políticas u organizarlas jerárquicamente puede reducir las interacciones, pero si reduce las perturbaciones que estas producen es algo que debe mostrar la medición.
+1. **Seguir las variedades en cada ciclo**: añadir la instantánea del inventario a `state/governance/variety-metrics.json` (o a un archivo de estado equivalente). Registrar el inventario y, cuando se midan, las variedades de las estructuras, las respuestas y las perturbaciones, cada atenuación, y para cada perturbación la respuesta dada y su resultado.
+2. **Medir las puertas estructurales antes de añadir otras**: registrar los cambios de gramática propuestos y los veredictos de las puertas, inyectar cambios que las puertas deben rechazar, y seguir la cobertura de pruebas de las gramáticas y el uso de las producciones; añadir una puerta donde pase un fallo inyectado o falte cobertura. Los veredictos hacen también medible A_S.
+3. **Medir la regulación**: registrar cada perturbación encontrada, la respuesta dada y su resultado sobre las variables esenciales. Los inventarios solo acotan de lejos las dos variedades: perturbaciones de al menos 6.64 bits si las estimaciones se cumplen, sin cota superior, y ninguna cota sobre las respuestas. Las interacciones entre políticas son la fuente de perturbación menos conocida. El número de pares de políticas (666 a partir de 37 políticas) crece de forma cuadrática, unas cuatro veces cada vez que se duplica el número de políticas (2,701 pares para 74 políticas), y cada par que interactúa puede entrar en conflicto de varias formas. Agrupar las políticas u organizarlas jerárquicamente puede reducir las interacciones, pero si reduce las perturbaciones que estas producen es algo que debe mostrar la medición.
 4. **El escalado a humanos es un puente de variedad**: el sistema de umbrales de confianza (Artículo 6: Escalado) es el mecanismo principal de Demerzel para absorber la variedad que supera su capacidad regulatoria. Es una característica, no una limitación.
 5. **Hacer evolucionar la sección 6 de la gramática**: la sección de variedad requerida de la gramática `sci-cybernetics.ebnf` (líneas 76-82) debería ampliarse con producciones de medición cuantitativa.
 
@@ -320,7 +321,7 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 
 ## Preguntas de seguimiento para el ciclo 004
 
-1. ¿Cómo registrar las perturbaciones distintas encontradas y las respuestas distintas dadas en cada ciclo, para que pueda medirse la brecha de Ashby? Una vez medida, ¿reduce una agrupación jerárquica de políticas las perturbaciones que producen las interacciones entre políticas, o solo el número de pares de políticas?
+1. ¿Cómo registrar en cada ciclo cada perturbación encontrada, la respuesta dada y su resultado sobre las variables esenciales, para que pueda medirse la regulación? Una vez medida, ¿reduce una agrupación jerárquica de políticas las perturbaciones que producen las interacciones entre políticas, o solo el número de pares de políticas?
 2. ¿Cómo debería seguirse el uso de las producciones de gramática para detectar producciones muertas y orientar la atenuación estructural?
 3. ¿Cuál es la relación, desde la teoría de la información, entre la lógica hexavalente de Demerzel (T/P/U/D/F/C) y la entropía de Shannon? ¿Lleva U (Unknown) más bits que T (True)?
 
