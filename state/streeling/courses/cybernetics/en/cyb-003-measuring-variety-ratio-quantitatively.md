@@ -13,7 +13,7 @@ How can Demerzel measure its variety ratio quantitatively? (Carried from Cycle 0
 
 ## Summary
 
-Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces, less the variety of the outcomes it may accept. This course builds a quantitative framework for measuring Demerzel's variety, in bits, along three dimensions: behavioral (personas), structural (grammars) and regulatory (decisions and the labels they carry). The key formula is V = log2(N), where N counts distinguishable outcomes. Three counting rules keep the numbers honest. A product of component counts is a joint state space only when the components vary independently; otherwise it is only an upper bound. A count of rules is not a count of states: the attenuation that constraints, policies and gates provide is the variety they remove, V_in - V_out. And an inventory is not a set of outcomes: rule definitions, decision labels and policy pairs are what the repository defines, not the structures, responses and disturbances that occur. The inventory is counted at one commit; the varieties Ashby's Law compares have to be measured. The variety ratio compares response variety with disturbance variety, and its logarithm, log2 R = V_response - V_disturbance in bits, is to be tracked over time once both sides are measured. Ashby's Law, however, is stated on outcomes, so whether governance regulates is read from the outcome of each disturbance, given the response, not from that ratio alone.
+Ashby's Law of Requisite Variety states that a regulator must have at least as much variety as the disturbances it faces, less the variety of the outcomes it may accept. This course builds a quantitative framework for measuring Demerzel's variety, in bits, along three dimensions: behavioral (personas), structural (grammars) and regulatory (decisions and the labels they carry). The key formula is V = log2(N), where N counts distinguishable outcomes. Three counting rules keep the numbers honest. A product of component counts is a joint state space only when the components vary independently; otherwise it is only an upper bound. A count of rules is not a count of states: the attenuation that constraints, policies and gates provide is the variety they remove, V_in - V_out. And an inventory is not a set of outcomes: rule definitions, decision labels and policy pairs are what the repository defines, not the structures, responses and disturbances that occur. The inventory is counted at one commit; the varieties Ashby's Law compares have to be measured. The variety ratio R = N_R / N_D compares the counts of distinct responses and distinct disturbances, and its logarithm, log2 R = V_response - V_disturbance in bits, is to be tracked over time once both sides are measured. Ashby's Law, however, is stated on outcomes, so whether governance regulates is read from the outcome of each disturbance, given the response, not from that ratio alone.
 
 ## Ashby's Variety: The Formal Definition
 
@@ -168,19 +168,19 @@ These directions become thresholds once A_B, A_S, A_R, the joint varieties and t
 
 ## The Disturbance Side: What Must Be Regulated?
 
-The amplifier side only tells half the story. We must also estimate the variety of disturbances the system faces. The table values below are estimates, not measurements, and one source is not estimated at all:
+The amplifier side only tells half the story. The disturbances the system faces matter as much. The tables below estimate their sources, states and events; the values are estimates, not measurements, one source is not estimated at all, and none of them is a count of distinct disturbances:
 
 ### External Disturbances (V_D_ext)
-| Source | Estimate (N) | Variety V |
+| Source | Estimate (N) | log2(N) |
 |--------|-------------|-----------|
 | Consumer repos (ix, tars, ga) | 3 | 1.58 bits |
 | Repo state combinations (3 repos x ~10 states each) | 10 to 10^3 = 1000 | 3.32 to 9.97 bits |
 | External environment changes (libraries, APIs, models) | ~100 | 6.64 bits |
 
-**Total external disturbance variety:** the repo state combinations already cover the three repos, so the first row adds nothing. That row is itself a range: with about 10 states each, the three repos have between 10 joint states (3.32 bits), if the state of one determines the others, and 10^3 = 1000 (9.97 bits), if they vary independently. If the estimates hold, the environment row is then the largest single term: V_D_ext is at least **6.64 bits**. The rows give no upper bound: about 100 counts environment changes, not the disturbances they cause, and one library, API or model change can disturb the repos in several distinguishable ways, as one pair of policies can conflict in several.
+**Total external disturbance variety:** not bounded by these rows. They count sources of change and repo states, not the distinct disturbances that reach governance. (With about 10 states each, the three repos have between 10 joint states, 3.32 bits, if the state of one determines the others, and 10^3 = 1000, 9.97 bits, if they vary independently.) Several changes may cause no disturbance, or the same one, and one library, API or model change can disturb the repos in several distinguishable ways, as one pair of policies can conflict in several. So the rows give neither a lower nor an upper bound on V_D_ext; only a record of the distinct disturbances met measures it.
 
 ### Internal Disturbances (V_D_int)
-| Source | Estimate (N) | Variety V |
+| Source | Estimate (N) | log2(N) |
 |--------|-------------|-----------|
 | Belief state changes per cycle | ~20 | 4.32 bits |
 | Policy interactions (37 policies, 666 pairs) | not estimated | not estimated |
@@ -188,7 +188,7 @@ The amplifier side only tells half the story. We must also estimate the variety 
 
 666 is the number of pairs of policies. It counts the pairs that could interact, not the outcomes of their interactions: only the pairs that actually interact contribute, one pair can conflict in several distinguishable ways, and nothing here measures either. So the policy row gives neither a lower nor an upper bound.
 
-**Total internal disturbance variety:** if the estimates hold, V_D_int is at least **4.32 bits** (the belief changes alone, if about 20 distinct changes occur in a cycle). The inventory gives it no upper bound: the policy row is not estimated, and the other two rows count events per cycle, not the distinct forms each event can take.
+**Total internal disturbance variety:** not bounded either. The belief and grammar rows count events per cycle, not distinct disturbances: two events can be the same disturbance, and one event can take several distinct forms. The policy row is not estimated.
 
 ### Ashby's Law Check
 
@@ -199,10 +199,10 @@ V(regulatory response) >= V(disturbance) - V(acceptable outcomes)
 ```
 
 - V_R_amp, the response variety, is not measured. The definitions give only the label vocabularies, at most 6.91 bits combined, and labels do not bound it (see Dimension 3)
-- If the estimates hold, V_D is at least 6.64 bits, the environment changes, the largest single estimated source. Neither the inventory nor the estimates give an upper bound, since policy interactions are not estimated and one environment change can cause several distinct disturbances (see External and Internal Disturbances)
+- V_D, the disturbance variety, is not measured either. The estimates count sources, states and events, not distinct disturbances, so they bound it neither from below nor from above (see External and Internal Disturbances)
 - **Gap: not computed.** Neither side is measured, and the inventories fit both a surplus and a deficit of any size
 
-The lower bound holds whatever the dependencies, given the estimates: a joint state space has at least as many states as its largest part. It also shows how little the inventories decide. About 100 distinct environment changes (6.64 bits) is fewer than the 120 label combinations the vocabularies allow (6.91 bits), so even the labels could in principle tell them apart if decisions used every combination, while nothing in the inventories caps the disturbances from above. Counting the distinct disturbances met and responses given in each cycle would give V_D - V_R_amp, but that difference is only Ashby's lower bound on outcome variety, valid where no response brings two disturbances to the same outcome. Two cycles with the same counts can regulate fully or not at all, depending on which response meets which disturbance, and one robust response can regulate several disturbances. Whether governance regulates is measured by recording, for each disturbance, the response given and the outcome on the essential variables (Metric 3).
+The inventories and estimates decide nothing here, since none of them bounds either variety. Counting the distinct disturbances met and responses given in each cycle would give V_D - V_R_amp, but that difference is only Ashby's lower bound on outcome variety, valid where no response brings two disturbances to the same outcome. Two cycles with the same counts can regulate fully or not at all, depending on which response meets which disturbance, and one robust response can regulate several disturbances. Whether governance regulates is measured by recording, for each disturbance, the response given and the outcome on the essential variables (Metric 3).
 
 If disturbances outrun responses, the difference has to be absorbed by:
 
@@ -304,7 +304,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 
 1. **Track varieties per cycle** — Add the inventory snapshot to `state/governance/variety-metrics.json` (or an equivalent state file). Record the inventory and, once measured, the varieties of persona selection, decision labels, structures, responses and disturbances, each attenuation, and for each disturbance the response given and its outcome.
 2. **Measure the structural gates before adding any** — Log proposed grammar changes and the gates' verdicts, seed changes the gates must reject, and track grammar test coverage and production usage; add a gate where a seeded failure passes or coverage is missing. The verdicts also make A_S measurable.
-3. **Measure regulation** — Record each disturbance met, the response given and its outcome on the essential variables. The inventories bound the two varieties only loosely: disturbances of at least 6.64 bits if the estimates hold, with no upper bound, and no bound on responses. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
+3. **Measure regulation** — Record each disturbance met, the response given and its outcome on the essential variables. The inventories and estimates bound neither variety. Policy interactions are the least known source of disturbance. The number of policy pairs (666 from 37 policies) grows quadratically, about fourfold each time the policy count doubles (2,701 pairs for 74 policies), and each interacting pair can conflict in several ways. Policy grouping or a hierarchical organization of policies may reduce the interactions, but whether it reduces the disturbances they produce is for the measurement to show.
 4. **Human escalation is a variety bridge** — The confidence threshold system (Article 6: Escalation) is Demerzel's primary mechanism for absorbing variety that exceeds her regulatory capacity. This is a feature, not a limitation.
 5. **Evolve grammar Section 6** — The `sci-cybernetics.ebnf` grammar's requisite variety section (lines 76-82) should be expanded with quantitative measurement productions.
 
