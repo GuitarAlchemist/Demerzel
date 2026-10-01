@@ -106,10 +106,10 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 | Coupling | Regime |
 |----------|--------|
 | < 0.3 | Loosely coupled — repos evolve independently |
-| 0.3 - 0.7 | Normal coupling — governance provides coherence |
+| 0.3 - 0.7 | Normal coupling — repos partly move in step, together or in opposition |
 | > 0.7 | Tightly coupled — changes propagate everywhere |
 
-A sudden jump in coupling (loose → tight) means the system is transitioning to centralized governance. A sudden drop means fragmentation. Either may mark a phase transition if other signals converge on it (Section 3).
+A sudden jump in coupling (loose → tight) means the repos have started to move in lockstep, but not in which direction: the mean discards signs, so two repos improving while the other two decline in lockstep give every pair |r| = 1, the maximum coupling, although the ecosystem is polarizing rather than centralizing. Before reading a jump as centralization, check the signs of the six correlations: all positive means the repos move together; positive within two groups and negative between them means two camps. A sudden drop means the repos move more independently, as in fragmentation. Either may mark a phase transition if other signals converge on it (Section 3).
 
 ### Signal 5: Conscience Signal Frequency
 

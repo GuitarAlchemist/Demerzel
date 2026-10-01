@@ -106,10 +106,10 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 | Acoplamiento | Régimen |
 |----------|--------|
 | < 0.3 | Débilmente acoplado: los repositorios evolucionan de forma independiente |
-| 0.3 - 0.7 | Acoplamiento normal: la gobernanza aporta coherencia |
+| 0.3 - 0.7 | Acoplamiento normal: los repositorios se mueven en parte al unísono, juntos o en oposición |
 | > 0.7 | Fuertemente acoplado: los cambios se propagan por todas partes |
 
-Un salto repentino del acoplamiento (débil → fuerte) significa que el sistema está pasando a una gobernanza centralizada. Una caída repentina significa fragmentación. Cualquiera de los dos puede marcar una transición de fase si otras señales convergen en ella (sección 3).
+Un salto repentino del acoplamiento (débil → fuerte) significa que los repositorios han empezado a moverse al unísono, pero no en qué sentido: la media descarta los signos, así que dos repositorios que mejoran mientras los otros dos empeoran al unísono dan |r| = 1 en cada par, el acoplamiento máximo, aunque el ecosistema se esté polarizando en lugar de centralizarse. Antes de leer un salto como centralización, mira los signos de las seis correlaciones: todas positivas, los repositorios se mueven juntos; positivas dentro de dos grupos y negativas entre ellos, son dos bandos. Una caída repentina significa que los repositorios se mueven de forma más independiente, como en una fragmentación. Cualquiera de los dos puede marcar una transición de fase si otras señales convergen en ella (sección 3).
 
 ### Señal 5: frecuencia de las señales de conciencia
 

@@ -106,10 +106,10 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 | Couplage | Régime |
 |----------|--------|
 | < 0.3 | Faiblement couplé — les dépôts évoluent indépendamment |
-| 0.3 - 0.7 | Couplage normal — la gouvernance apporte de la cohérence |
+| 0.3 - 0.7 | Couplage normal — les dépôts évoluent en partie en phase, ensemble ou en opposition |
 | > 0.7 | Fortement couplé — les changements se propagent partout |
 
-Un saut soudain du couplage (faible → fort) signifie que le système passe à une gouvernance centralisée. Une chute soudaine signifie une fragmentation. L'un comme l'autre peut marquer une transition de phase si d'autres signaux convergent vers elle (section 3).
+Un saut soudain du couplage (faible → fort) signifie que les dépôts se sont mis à évoluer en phase, mais pas dans quel sens : la moyenne écarte les signes, si bien que deux dépôts qui s'améliorent pendant que les deux autres déclinent en phase donnent |r| = 1 pour chaque paire, le couplage maximal, alors que l'écosystème se polarise au lieu de se centraliser. Avant de lire un saut comme une centralisation, regardez les signes des six corrélations : toutes positives, les dépôts évoluent ensemble ; positives à l'intérieur de deux groupes et négatives entre eux, ce sont deux camps. Une chute soudaine signifie que les dépôts évoluent plus indépendamment, comme dans une fragmentation. L'un comme l'autre peut marquer une transition de phase si d'autres signaux convergent vers elle (section 3).
 
 ### Signal 5 : fréquence des signaux de conscience
 
