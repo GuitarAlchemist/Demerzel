@@ -266,11 +266,12 @@ Un `null` marca una magnitud aún sin medir, no un cero. `persona_selection` vie
 
 ### Métrica 3: medición de los resultados y de la atenuación
 
-Para cada atenuador, registra en cada ciclo lo que le llega y lo que deja pasar: las acciones que propone cada persona y las que permiten sus restricciones, los cambios de gramática propuestos y los que aceptan las puertas, las decisiones candidatas y las que permiten las políticas y los artículos. Registra aparte las acciones rechazadas, los cambios rechazados y las decisiones excluidas: muestran lo que se eliminó, no lo que pasó. Con N_in resultados distintos que llegan a un atenuador y N_out resultados distintos que lo atraviesan, V_in = log2(N_in), V_out = log2(N_out), y A = V_in - V_out = log2(N_in / N_out) bits: un atenuador que deja pasar 4 de 8 propuestas distintas elimina 1 bit. Si no llega nada al atenuador (N_in = 0), el ciclo no es una observación: regístralo como inactivo, no como un bloqueo. Si le llegan entradas y ninguna pasa (N_in > 0, N_out = 0), V_out no está definido; registra ese ciclo como un bloqueo total, no como un número. Registra del mismo modo, como log2 de cada recuento, las estructuras distintas que generan las gramáticas (V_S), las respuestas distintas que da la gobernanza, escalados incluidos (V_R_amp), y las perturbaciones distintas que encuentra (V_D).
+Para cada atenuador, registra en cada ciclo lo que le llega y lo que deja pasar: las acciones que propone cada persona y las que permiten sus restricciones, los cambios de gramática propuestos y los que aceptan las puertas, las decisiones candidatas y las que permiten las políticas y los artículos. Registra aparte las acciones rechazadas, los cambios rechazados y las decisiones excluidas: muestran lo que se eliminó, no lo que pasó. Con N_in resultados distintos que llegan a un atenuador y N_out resultados distintos que lo atraviesan, V_in = log2(N_in), V_out = log2(N_out), y A = V_in - V_out = log2(N_in / N_out) bits: un atenuador que deja pasar 4 de 8 propuestas distintas elimina 1 bit. Si no llega nada al atenuador (N_in = 0), el ciclo no es una observación: regístralo como inactivo, no como un bloqueo. Si le llegan entradas y ninguna pasa (N_in > 0, N_out = 0), V_out no está definido; registra ese ciclo como un bloqueo total, no como un número. Registra del mismo modo, como log2 de cada recuento, las N_S estructuras distintas que generan las gramáticas (V_S), las N_R respuestas distintas que da la gobernanza, escalados incluidos (V_R_amp), y las N_D perturbaciones distintas que encuentra (V_D). Un recuento nulo no tiene log2 y recibe una etiqueta, no un número: un ciclo que no encuentra ninguna perturbación (N_D = 0) es tranquilo; uno que encuentra perturbaciones y no da ninguna respuesta (N_D > 0, N_R = 0) queda sin respuesta; uno en el que las gramáticas no generan ninguna estructura (N_S = 0) es inactivo para V_S. La brecha V_D - V_R_amp solo se calcula para los ciclos con N_D > 0 y N_R > 0.
 
 Sigue estas magnitudes a lo largo de ciclos consecutivos. Alerta cuando:
 - Una sonda de control pase: una entrada que el atenuador debe rechazar, inyectada a propósito, lo atraviesa. A = 0 por sí solo no es una alerta, ya que un ciclo cuyas entradas son todas válidas da con razón A = 0
-- La brecha V_D - V_R_amp suba 1 bit o más en un ciclo (la variedad de las perturbaciones se duplica en relación con la de las respuestas)
+- Un ciclo quede sin respuesta: se encontraron perturbaciones y no se dio ninguna respuesta (N_D > 0, N_R = 0)
+- La brecha V_D - V_R_amp suba 1 bit o más respecto del último ciclo en que se calculó (la variedad de las perturbaciones se duplica en relación con la de las respuestas)
 - Cambie el inventario (se ha añadido o retirado una persona, una regla de gramática o una política), para que se actualicen los recuentos
 
 Un paso de 1 bit, es decir, una duplicación o una reducción a la mitad, es un umbral de partida, no un umbral calibrado.
@@ -304,7 +305,7 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 ## Relación con CYB-001 y CYB-002
 
 - **CYB-001** estableció que la ley de Ashby se aplica a Demerzel y enumeró cualitativamente los amplificadores y atenuadores de variedad. CYB-003 lo hace cuantitativo.
-- **La recomendación 5 de CYB-001** («Vigilar el cociente de variedad») queda ahora operacionalizada con fórmulas concretas, sentidos saludables y un protocolo de medición.
+- **La recomendación 5 de CYB-001** pedía seguir el cociente de variedad. CYB-003 dice sobre qué debe contarse (resultados, no números de políticas y personas) y da fórmulas, sentidos saludables y un protocolo de medición.
 - **CYB-002** abordó la amortiguación del Sistema 2. Los mecanismos de banda muerta e histéresis de CYB-002 son en sí mismos atenuadores de variedad: reducen la variedad de las señales que circulan por los canales de coordinación. La métrica de atenuación estructural de CYB-003 debería incluirlos cuando se implementen.
 
 ## Fuentes
@@ -325,8 +326,8 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 
 ## Referencias cruzadas
 
-- Requisito previo: `state/streeling/courses/cybernetics/es/cyb-001-vsm-ai-governance-mapping.es.md`
-- Requisito previo: `state/streeling/courses/cybernetics/es/cyb-002-active-dampening-cross-repo-oscillation.es.md`
+- Requisito previo: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md` (en inglés)
+- Requisito previo: `state/streeling/courses/cybernetics/en/cyb-002-active-dampening-cross-repo-oscillation.md` (en inglés)
 - Gramática: `grammars/sci-cybernetics.ebnf` (sección 6, variedad requerida)
 - Departamento: `state/streeling/departments/cybernetics.department.json`
 - Política: `policies/seldon-plan-policy.yaml`

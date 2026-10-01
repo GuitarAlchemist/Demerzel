@@ -266,11 +266,12 @@ Un `null` marque une grandeur pas encore mesurée, pas un zéro. `persona_select
 
 ### Métrique 3 : mesure des issues et de l'atténuation
 
-Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne parvient à l'atténuateur (N_in = 0), le cycle n'est pas une observation : consignez-le comme inactif, pas comme un blocage. Si des entrées lui parviennent et qu'aucune ne passe (N_in > 0, N_out = 0), V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les structures distinctes que génèrent les grammaires (V_S), les réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les perturbations distinctes qu'elle rencontre (V_D).
+Pour chaque atténuateur, consignez à chaque cycle ce qui lui parvient et ce qu'il laisse passer : les actions que chaque persona propose et celles que ses contraintes autorisent, les changements de grammaire proposés et ceux que les portes acceptent, les décisions candidates et celles que les politiques et les articles autorisent. Consignez à part les actions refusées, les changements rejetés et les décisions exclues : ils montrent ce qui a été retiré, pas ce qui est passé. Avec N_in issues distinctes qui parviennent à un atténuateur et N_out issues distinctes qui le franchissent, V_in = log2(N_in), V_out = log2(N_out), et A = V_in - V_out = log2(N_in / N_out) bits : un atténuateur qui laisse passer 4 propositions distinctes sur 8 retire 1 bit. Si rien ne parvient à l'atténuateur (N_in = 0), le cycle n'est pas une observation : consignez-le comme inactif, pas comme un blocage. Si des entrées lui parviennent et qu'aucune ne passe (N_in > 0, N_out = 0), V_out n'est pas défini ; consignez ce cycle comme un blocage total, pas comme un nombre. Consignez de la même façon, en log2 de chaque nombre, les N_S structures distinctes que génèrent les grammaires (V_S), les N_R réponses distinctes que donne la gouvernance, escalades comprises (V_R_amp), et les N_D perturbations distinctes qu'elle rencontre (V_D). Un nombre nul n'a pas de log2 et reçoit une étiquette, pas un nombre : un cycle qui ne rencontre aucune perturbation (N_D = 0) est calme ; un cycle qui rencontre des perturbations sans donner de réponse (N_D > 0, N_R = 0) est sans réponse ; un cycle où les grammaires ne génèrent aucune structure (N_S = 0) est inactif pour V_S. L'écart V_D - V_R_amp n'est calculé que pour les cycles où N_D > 0 et N_R > 0.
 
 Suivez ces grandeurs sur des cycles consécutifs. Alertez quand :
 - Une sonde de contrôle passe : une entrée que l'atténuateur doit refuser, injectée exprès, le franchit. A = 0 seul n'est pas une alerte, puisqu'un cycle dont toutes les entrées sont valides donne à bon droit A = 0
-- L'écart V_D - V_R_amp augmente d'au moins 1 bit en un cycle (la variété des perturbations double par rapport à celle des réponses)
+- Un cycle est sans réponse : des perturbations ont été rencontrées et aucune réponse n'a été donnée (N_D > 0, N_R = 0)
+- L'écart V_D - V_R_amp augmente d'au moins 1 bit depuis le dernier cycle où il a été calculé (la variété des perturbations double par rapport à celle des réponses)
 - L'inventaire change (une persona, une règle de grammaire ou une politique a été ajoutée ou retirée), pour que les nombres soient rafraîchis
 
 Un pas de 1 bit, soit un doublement ou une division par deux, est un seuil de départ, pas un seuil calibré.
@@ -304,7 +305,7 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 ## Lien avec CYB-001 et CYB-002
 
 - **CYB-001** a établi que la loi d'Ashby s'applique à Demerzel et a listé qualitativement les amplificateurs et atténuateurs de variété. CYB-003 rend cela quantitatif.
-- **La recommandation 5 de CYB-001** (« Surveiller le ratio de variété ») est désormais opérationnalisée avec des formules précises, des sens sains et un protocole de mesure.
+- **La recommandation 5 de CYB-001** demandait de suivre le ratio de variété. CYB-003 dit sur quoi il doit être compté (des issues, pas des nombres de politiques et de personas) et donne des formules, des sens sains et un protocole de mesure.
 - **CYB-002** traitait de l'amortissement du Système 2. Les mécanismes de zone morte et d'hystérésis de CYB-002 sont eux-mêmes des atténuateurs de variété — ils réduisent la variété des signaux qui circulent dans les canaux de coordination. La métrique d'atténuation structurelle de CYB-003 devrait les inclure une fois implémentés.
 
 ## Sources
@@ -325,8 +326,8 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 
 ## Références croisées
 
-- Prérequis : `state/streeling/courses/cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md`
-- Prérequis : `state/streeling/courses/cybernetics/fr/cyb-002-active-dampening-cross-repo-oscillation.fr.md`
+- Prérequis : `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md` (en anglais)
+- Prérequis : `state/streeling/courses/cybernetics/en/cyb-002-active-dampening-cross-repo-oscillation.md` (en anglais)
 - Grammaire : `grammars/sci-cybernetics.ebnf` (section 6, variété requise)
 - Département : `state/streeling/departments/cybernetics.department.json`
 - Politique : `policies/seldon-plan-policy.yaml`

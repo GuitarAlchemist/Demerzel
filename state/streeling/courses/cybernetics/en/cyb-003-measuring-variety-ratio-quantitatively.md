@@ -266,11 +266,12 @@ A `null` marks a quantity not yet measured, not a zero. `persona_selection` come
 
 ### Metric 3: Outcome and Attenuation Measurement
 
-For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the distinct structures the grammars generate (V_S), the distinct responses governance gives, escalations included (V_R_amp), and the distinct disturbances it meets (V_D).
+For each attenuator, record per cycle what reaches it and what it lets through: the actions each persona proposes and those its constraints allow, the grammar changes proposed and those the gates accept, the candidate decisions and those policies and articles allow. Keep the refused actions, rejected changes and excluded decisions as a separate record: they show what was removed, not what passed. With N_in distinct outcomes reaching an attenuator and N_out distinct outcomes passing it, V_in = log2(N_in), V_out = log2(N_out), and A = V_in - V_out = log2(N_in / N_out) bits: an attenuator that lets 4 of 8 distinct proposals through removes 1 bit. If nothing reaches the attenuator (N_in = 0), the cycle is no observation: record it as idle, not as a block. If inputs reach it and none passes (N_in > 0, N_out = 0), V_out is undefined; record that cycle as a full block, not as a number. Record in the same way, as log2 of each count, the N_S distinct structures the grammars generate (V_S), the N_R distinct responses governance gives, escalations included (V_R_amp), and the N_D distinct disturbances it meets (V_D). A zero count has no log2 and gets a label, not a number: a cycle that meets no disturbance (N_D = 0) is quiet; one that meets disturbances and gives no response (N_D > 0, N_R = 0) is unanswered; one in which the grammars generate no structure (N_S = 0) is idle for V_S. The gap V_D - V_R_amp is computed only for cycles with N_D > 0 and N_R > 0.
 
 Track these over consecutive cycles. Alert when:
 - A control probe passes: an input the attenuator must refuse, seeded on purpose, gets through. A = 0 alone is not an alert, since a cycle whose inputs are all valid rightly gives A = 0
-- The gap V_D - V_R_amp rises by 1 bit or more in one cycle (disturbance variety doubling relative to response variety)
+- A cycle is unanswered: disturbances were met and no response was given (N_D > 0, N_R = 0)
+- The gap V_D - V_R_amp rises by 1 bit or more from the last cycle in which it was computed (disturbance variety doubling relative to response variety)
 - The inventory changes (a persona, grammar rule or policy was added or removed), so that the counts are refreshed
 
 A 1-bit step, a doubling or halving, is a starting threshold, not a calibrated one.
@@ -304,7 +305,7 @@ This record describes the course as first written. Points 3 and 4 concern an amp
 ## Connection to CYB-001 and CYB-002
 
 - **CYB-001** identified that Ashby's Law applies to Demerzel and listed variety amplifiers/attenuators qualitatively. CYB-003 makes this quantitative.
-- **CYB-001 Recommendation 5** ("Monitor variety ratio") is now operationalized with specific formulas, healthy directions, and a measurement protocol.
+- **CYB-001 Recommendation 5** asked to track the variety ratio. CYB-003 says what it must be counted on (outcomes, not numbers of policies and personas) and gives formulas, healthy directions and a measurement protocol.
 - **CYB-002** addressed System 2 dampening. The deadband and hysteresis mechanisms from CYB-002 are themselves variety attenuators — they reduce the variety of signals flowing through coordination channels. CYB-003's structural attenuation metric should include these when implemented.
 
 ## Sources
