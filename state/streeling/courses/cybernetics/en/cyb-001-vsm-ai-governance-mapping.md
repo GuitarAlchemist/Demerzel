@@ -73,7 +73,7 @@ Demerzel currently lacks this bypass. All escalation flows through the driver (S
 | Seldon Plan | Amplifier | Good — expands knowledge variety proactively |
 | Constitution | Attenuator | Strong — ultimate variety reducer (Zeroth Law) |
 
-Overall: Demerzel has strong variety attenuation but could improve variety amplification. The system is better at constraining than expanding its response repertoire.
+The ratings in the table are qualitative and were not measured, and so is the module's overall reading, that Demerzel is better at constraining than at expanding its response repertoire. The counts in the first two rows, 27 policies and 14 personas, are an inventory, not a variety: adding a duplicate policy or persona changes a count without changing the responses governance can give or the disturbances it faces. Whether attenuation outweighs amplification can only be read from the per-cycle records of Recommendation 5.
 
 ## Implications for Demerzel
 
