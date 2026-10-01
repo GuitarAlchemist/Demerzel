@@ -127,7 +127,7 @@ Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuert
 
 ### Señal 6: el cociente de variedad como parámetro de orden candidato
 
-Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones (la comprobación de la ley de Ashby) mide si la gobernanza tiene la complejidad suficiente para manejar su entorno. Compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador:
+Desde la cibernética (CYB-003), el cociente entre la variedad de respuesta regulatoria y la variedad de las perturbaciones compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador:
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -135,11 +135,13 @@ variety_ratio = governance_variety / environmental_variety
 
 Es un **parámetro de orden candidato** para los regímenes de gobernanza, con 1.0 como frontera elegida:
 
-- `variety_ratio < 1.0`: régimen reactivo (variedad insuficiente, la gobernanza va por detrás del entorno)
-- `variety_ratio ≈ 1.0`: frontera (la ley de la variedad requerida de Ashby se cumple exactamente)
-- `variety_ratio > 1.0`: régimen proactivo (la gobernanza tiene capacidad excedente)
+- `variety_ratio < 1.0`: régimen reactivo (menos respuestas distintas que perturbaciones distintas)
+- `variety_ratio ≈ 1.0`: frontera (tantas respuestas distintas como perturbaciones distintas)
+- `variety_ratio > 1.0`: régimen proactivo (más respuestas distintas que perturbaciones distintas)
 
-Cruzar 1.0 significa solo que el regulador cumple por primera vez la desigualdad de Ashby; no es por sí mismo una transición de fase. El cociente puede pasar por 1 de forma suave, cuando se dispone de una respuesta más, sin ningún cambio cualitativo en el sistema. Llamar a un cruce transición de segundo orden exigiría un modelo del parámetro de orden que muestre comportamiento crítico cerca de 1.0, como las fluctuaciones crecientes de la señal 5; hasta entonces, trata 1.0 como una frontera de régimen.
+El cociente no dice si la gobernanza regula. CYB-003 enuncia la ley de Ashby sobre los resultados: si N_η resultados son aceptables, con V_η = log2(N_η) bits, regular cada perturbación requiere V_R >= V_D - V_η; así que un cociente menor que 1 es compatible con una regulación completa cuando hay bastantes resultados aceptables, y una misma respuesta puede llevar varias perturbaciones al mismo resultado aceptable. Un cociente mayor que 1 puede fallar igualmente, cuando las respuestas dadas no son las que necesitan las perturbaciones. La regulación se lee en el resultado de cada perturbación, dada la respuesta. CYB-003 aún no ha medido ninguna de las dos variedades, así que el cociente no tiene un valor actual en esta escala.
+
+Cruzar 1.0 significa solo que las respuestas distintas igualan por primera vez en número a las perturbaciones distintas; no es por sí mismo una transición de fase. El cociente puede pasar por 1 de forma suave, cuando se dispone de una respuesta más, sin ningún cambio cualitativo en el sistema. Llamar a un cruce transición de segundo orden exigiría un modelo del parámetro de orden que muestre comportamiento crítico cerca de 1.0, como las fluctuaciones crecientes de la señal 5; hasta entonces, trata 1.0 como una frontera de régimen.
 
 ---
 
@@ -189,7 +191,7 @@ Usando el estado actual de la gobernanza de Demerzel:
 
 - Las transiciones de fase de la gobernanza son cambios cualitativos en el funcionamiento del sistema, no solo un crecimiento cuantitativo
 - Seis señales medibles pueden detectar la proximidad de una transición: asimetría de creencias, velocidad de la salud, saturación de políticas, intensidad del acoplamiento, frecuencia de señales de conciencia y cociente de variedad
-- El cociente de variedad (de la cibernética) es un parámetro de orden candidato: cruzar 1.0 marca la frontera de régimen donde la desigualdad de Ashby se cumple por primera vez, no por sí mismo una transición de fase
+- El cociente de variedad (de la cibernética) es un parámetro de orden candidato: cruzar 1.0 marca una frontera de régimen, no por sí mismo una transición de fase, y la regulación se lee en los resultados, no en el cociente
 - La mayoría de las transiciones de gobernanza son de segundo orden (continuas): detectables, pero no abruptas
 - Ninguna señal por sí sola basta; busca la convergencia de 3 o más señales
 

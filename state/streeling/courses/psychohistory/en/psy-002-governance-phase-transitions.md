@@ -127,7 +127,7 @@ A 2x increase in signal rate over 3 cycles is a strong indicator that the system
 
 ### Signal 6: Variety Ratio as a Candidate Order Parameter
 
-From cybernetics (CYB-003), the ratio of regulatory response variety to disturbance variety (the Ashby's Law check) measures whether governance has sufficient complexity to handle its environment. It compares the regulator with its environment, not amplifiers with attenuators inside the regulator:
+From cybernetics (CYB-003), the ratio of regulatory response variety to disturbance variety compares the regulator with its environment, not amplifiers with attenuators inside the regulator:
 
 ```
 variety_ratio = governance_variety / environmental_variety
@@ -135,11 +135,13 @@ variety_ratio = governance_variety / environmental_variety
 
 It is a **candidate order parameter** for governance regimes, with 1.0 as a chosen boundary:
 
-- `variety_ratio < 1.0`: Reactive regime (insufficient variety, governance lags environment)
-- `variety_ratio ≈ 1.0`: Boundary (Ashby's Law of Requisite Variety exactly met)
-- `variety_ratio > 1.0`: Proactive regime (governance has surplus capacity)
+- `variety_ratio < 1.0`: Reactive regime (fewer distinct responses than distinct disturbances)
+- `variety_ratio ≈ 1.0`: Boundary (as many distinct responses as distinct disturbances)
+- `variety_ratio > 1.0`: Proactive regime (more distinct responses than distinct disturbances)
 
-Crossing 1.0 means only that the regulator first meets Ashby's inequality; it is not by itself a phase transition. The ratio can pass through 1 smoothly, when one more response becomes available, with no qualitative change in the system. Calling a crossing a second-order transition would need a model of the order parameter that shows critical behavior near 1.0, such as the growing fluctuations of Signal 5; until then, treat 1.0 as a regime boundary.
+The ratio does not say whether governance regulates. CYB-003 states Ashby's Law on outcomes: if N_η outcomes are acceptable, carrying V_η = log2(N_η) bits, regulating every disturbance needs V_R >= V_D - V_η, so a ratio below 1 is compatible with full regulation when enough outcomes are acceptable, and one response can bring several disturbances to the same acceptable outcome. A ratio above 1 can still fail, when the responses given are not the ones the disturbances need. Whether governance regulates is read from the outcome of each disturbance, given the response. CYB-003 has measured neither variety yet, so the ratio has no current value on this scale.
+
+Crossing 1.0 means only that distinct responses first match distinct disturbances in number; it is not by itself a phase transition. The ratio can pass through 1 smoothly, when one more response becomes available, with no qualitative change in the system. Calling a crossing a second-order transition would need a model of the order parameter that shows critical behavior near 1.0, such as the growing fluctuations of Signal 5; until then, treat 1.0 as a regime boundary.
 
 ---
 
@@ -189,7 +191,7 @@ Using the current Demerzel governance state:
 
 - Phase transitions in governance are qualitative shifts in how the system operates, not just quantitative growth
 - Six measurable signals can detect approaching transitions: belief skew, health velocity, policy saturation, coupling strength, conscience frequency, and variety ratio
-- The variety ratio (from cybernetics) is a candidate order parameter — crossing 1.0 marks the regime boundary where Ashby's inequality is first met, not by itself a phase transition
+- The variety ratio (from cybernetics) is a candidate order parameter — crossing 1.0 marks a regime boundary, not by itself a phase transition, and whether governance regulates is read from outcomes, not from the ratio
 - Most governance transitions are second-order (continuous) — detectable but not abrupt
 - No single signal is sufficient; look for convergence of 3+ signals
 
