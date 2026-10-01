@@ -44,7 +44,7 @@ Le Système 5 du VSM suppose un jugement humain pour l'identité et la finalité
 
 ### 3. La loi de la variété requise d'Ashby s'applique directement
 
-La loi d'Ashby s'énonce sur les issues : là où chaque perturbation reçoit une réponse et où aucune réponse ne mène deux perturbations à la même issue, garder chaque issue acceptable exige au moins autant de variété régulatrice que les perturbations en portent, moins la variété des issues que la gouvernance peut accepter (CYB-003, métrique 3). En termes de Demerzel :
+La loi d'Ashby s'énonce sur les issues : là où chaque perturbation reçoit une réponse et où aucune réponse ne mène deux perturbations à la même issue, garder chaque issue acceptable exige au moins autant de variété régulatrice que les perturbations en portent, moins la variété des issues que la gouvernance peut accepter. En termes de Demerzel :
 
 - **Amplificateurs de variété :** Plan Seldon (recherche), instinct de complétude (détection des lacunes), évolution des grammaires (adaptation structurelle)
 - **Atténuateurs de variété :** politiques (contraignent le comportement des agents), constitutions (réduisent l'espace de décision), contraintes de persona (limitent le périmètre de chaque rôle)
@@ -85,7 +85,7 @@ Ces évaluations sont qualitatives. Un nombre de politiques ou de personas est u
 2. **Couches de gouvernance à vitesses d'horloge** — Séparation explicite de la gouvernance en boucle rapide (par requête) et en boucle lente (par cycle), correspondant aux échelles de temps opérationnelle et stratégique du VSM.
 3. **Modèle de gouvernance récursive** — Le répertoire templates/ fournit déjà des extraits de CLAUDE.md pour les dépôts consommateurs ; l'étendre à la gouvernance des sous-agents approfondirait la récursion du VSM.
 4. **La conscience comme S5 synthétique** — La politique de proto-conscience de Demerzel est une extension inédite au-delà du VSM classique, qui fournit une capacité de réflexion sur les valeurs sans jugement humain. Cela mérite des recherches plus poussées.
-5. **Mesurer la variété sur les issues** — Le rapport du nombre de politiques au nombre de personas est un bilan d'inventaire, pas un ratio de variété : une politique ou une persona en double le modifie sans changer les réponses que la gouvernance peut donner ni les perturbations qu'elle affronte. Mesurer plutôt chaque cycle, comme le fait la métrique 3 de CYB-003 : consigner chaque perturbation rencontrée, la réponse donnée (aucune, s'il n'y en a pas) et son issue sur les variables essentielles, puis compter les perturbations, les réponses et les issues distinctes.
+5. **Mesurer la variété sur les issues** — Le rapport du nombre de politiques au nombre de personas est un bilan d'inventaire, pas un ratio de variété : une politique ou une persona en double le modifie sans changer les réponses que la gouvernance peut donner ni les perturbations qu'elle affronte. Mesurer plutôt chaque cycle : consigner chaque perturbation rencontrée, la réponse donnée (aucune, s'il n'y en a pas) et son issue sur les variables essentielles, puis compter les perturbations, les réponses et les issues distinctes.
 
 ## Sources
 

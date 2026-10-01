@@ -127,7 +127,7 @@ Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le syst
 
 ### Signal 6 : le ratio de variété comme paramètre d'ordre candidat
 
-D'après la cybernétique (CYB-003), le ratio de variété compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur. Il se calcule à chaque cycle à partir des nombres de réponses distinctes que donne la gouvernance et de perturbations distinctes qu'elle rencontre :
+D'après la cybernétique, le ratio de variété compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur. Il se calcule à chaque cycle à partir des nombres de réponses distinctes que donne la gouvernance et de perturbations distinctes qu'elle rencontre :
 
 ```
 variety_ratio = distinct_responses / distinct_disturbances

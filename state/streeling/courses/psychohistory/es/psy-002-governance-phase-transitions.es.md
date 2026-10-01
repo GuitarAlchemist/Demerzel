@@ -127,7 +127,7 @@ Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuert
 
 ### Señal 6: el cociente de variedad como parámetro de orden candidato
 
-Desde la cibernética (CYB-003), el cociente de variedad compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador. Se calcula en cada ciclo a partir de los recuentos de respuestas distintas que da la gobernanza y de perturbaciones distintas que encuentra:
+Desde la cibernética, el cociente de variedad compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador. Se calcula en cada ciclo a partir de los recuentos de respuestas distintas que da la gobernanza y de perturbaciones distintas que encuentra:
 
 ```
 variety_ratio = distinct_responses / distinct_disturbances

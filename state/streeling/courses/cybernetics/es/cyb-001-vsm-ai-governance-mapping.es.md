@@ -44,7 +44,7 @@ El Sistema 5 del VSM supone juicio humano para la identidad y el propósito. El 
 
 ### 3. La ley de la variedad requerida de Ashby se aplica directamente
 
-La ley de Ashby se enuncia sobre los resultados: donde cada perturbación recibe una respuesta y ninguna respuesta lleva dos perturbaciones al mismo resultado, mantener aceptables todos los resultados exige al menos tanta variedad reguladora como la que llevan las perturbaciones, menos la variedad de los resultados que la gobernanza puede aceptar (CYB-003, métrica 3). En términos de Demerzel:
+La ley de Ashby se enuncia sobre los resultados: donde cada perturbación recibe una respuesta y ninguna respuesta lleva dos perturbaciones al mismo resultado, mantener aceptables todos los resultados exige al menos tanta variedad reguladora como la que llevan las perturbaciones, menos la variedad de los resultados que la gobernanza puede aceptar. En términos de Demerzel:
 
 - **Amplificadores de variedad:** Plan Seldon (investigación), instinto de completitud (detección de brechas), evolución de gramáticas (adaptación estructural)
 - **Atenuadores de variedad:** políticas (restringen el comportamiento de los agentes), constituciones (reducen el espacio de decisión), restricciones de persona (limitan el alcance de cada rol)
@@ -85,7 +85,7 @@ Estas evaluaciones son cualitativas. Un número de políticas o de personas es u
 2. **Capas de gobernanza por velocidad de reloj** — Separación explícita entre gobernanza de bucle rápido (por solicitud) y de bucle lento (por ciclo), en línea con las escalas temporales operativa y estratégica del VSM.
 3. **Plantilla de gobernanza recursiva** — El directorio templates/ ya proporciona fragmentos de CLAUDE.md para los repositorios consumidores; extenderlo a la gobernanza de subagentes profundizaría la recursión del VSM.
 4. **La conciencia como S5 sintético** — La política de protoconciencia de Demerzel es una extensión novedosa más allá del VSM clásico, que aporta capacidad de reflexión sobre valores sin juicio humano. Merece más investigación.
-5. **Medir la variedad sobre los resultados** — La razón entre el número de políticas y el de personas es un balance de inventario, no un cociente de variedad: una política o una persona duplicada la modifica sin cambiar las respuestas que la gobernanza puede dar ni las perturbaciones que enfrenta. Medir en cambio cada ciclo, como hace la métrica 3 de CYB-003: registrar cada perturbación encontrada, la respuesta dada (ninguna, si no la hay) y su resultado sobre las variables esenciales, y contar después las perturbaciones, las respuestas y los resultados distintos.
+5. **Medir la variedad sobre los resultados** — La razón entre el número de políticas y el de personas es un balance de inventario, no un cociente de variedad: una política o una persona duplicada la modifica sin cambiar las respuestas que la gobernanza puede dar ni las perturbaciones que enfrenta. Medir en cambio cada ciclo: registrar cada perturbación encontrada, la respuesta dada (ninguna, si no la hay) y su resultado sobre las variables esenciales, y contar después las perturbaciones, las respuestas y los resultados distintos.
 
 ## Fuentes
 

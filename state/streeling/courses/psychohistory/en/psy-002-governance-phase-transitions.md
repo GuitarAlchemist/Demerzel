@@ -127,7 +127,7 @@ A 2x increase in signal rate over 3 cycles is a strong indicator that the system
 
 ### Signal 6: Variety Ratio as a Candidate Order Parameter
 
-From cybernetics (CYB-003), the variety ratio compares the regulator with its environment, not amplifiers with attenuators inside the regulator. It is computed per cycle from counts of the distinct responses governance gives and the distinct disturbances it meets:
+From cybernetics, the variety ratio compares the regulator with its environment, not amplifiers with attenuators inside the regulator. It is computed per cycle from counts of the distinct responses governance gives and the distinct disturbances it meets:
 
 ```
 variety_ratio = distinct_responses / distinct_disturbances
