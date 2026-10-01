@@ -75,9 +75,7 @@ Lorsque ce module a été rédigé, Demerzel ne disposait pas de ce contournemen
 | Plan Seldon | Amplificateur | Bon — étend la variété des connaissances de manière proactive |
 | Constitution | Atténuateur | Fort — réducteur de variété ultime (Loi Zéro) |
 
-Bilan : Demerzel a une forte atténuation de la variété mais pourrait améliorer l'amplification de la variété. Le système est meilleur pour contraindre que pour étendre son répertoire de réponses.
-
-Ces évaluations sont qualitatives. Un nombre de politiques ou de personas est un inventaire, pas une variété : ajouter une politique ou une persona en double change le décompte sans changer les réponses que la gouvernance peut donner ni les perturbations qu'elle affronte.
+Les évaluations du tableau sont qualitatives et n'ont pas été mesurées, tout comme le bilan du module, selon lequel Demerzel est meilleur pour contraindre que pour étendre son répertoire de réponses. Les décomptes des deux premières lignes, 27 politiques et 14 personas, sont un inventaire, pas une variété : ajouter une politique ou une persona en double change un décompte sans changer les réponses que la gouvernance peut donner ni les perturbations qu'elle affronte. Seuls les relevés par cycle de la recommandation 5 peuvent dire si l'atténuation l'emporte sur l'amplification.
 
 ## Implications pour Demerzel
 

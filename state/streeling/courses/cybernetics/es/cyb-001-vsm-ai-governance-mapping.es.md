@@ -75,9 +75,7 @@ Cuando se escribió este módulo, Demerzel carecía de este atajo. Toda escalada
 | Plan Seldon | Amplificador | Bueno — amplía la variedad de conocimiento de forma proactiva |
 | Constitución | Atenuador | Fuerte — reductor de variedad último (Ley Cero) |
 
-En conjunto: Demerzel tiene una fuerte atenuación de la variedad, pero podría mejorar su amplificación. El sistema es mejor restringiendo que ampliando su repertorio de respuestas.
-
-Estas evaluaciones son cualitativas. Un número de políticas o de personas es un inventario, no una variedad: añadir una política o una persona duplicada cambia el recuento sin cambiar las respuestas que la gobernanza puede dar ni las perturbaciones que enfrenta.
+Las evaluaciones de la tabla son cualitativas y no se midieron, como tampoco el balance del módulo, según el cual Demerzel restringe mejor de lo que amplía su repertorio de respuestas. Los recuentos de las dos primeras filas, 27 políticas y 14 personas, son un inventario, no una variedad: añadir una política o una persona duplicada cambia un recuento sin cambiar las respuestas que la gobernanza puede dar ni las perturbaciones que enfrenta. Solo los registros por ciclo de la recomendación 5 pueden decir si la atenuación pesa más que la amplificación.
 
 ## Implicaciones para Demerzel
 
