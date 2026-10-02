@@ -108,7 +108,7 @@ The blues is not a scale — it is a language. It has its own grammar, vocabular
 
 The "blue notes" are the pitches that give blues its distinctive sound. They exist in the cracks between standard scale degrees:
 
-- **b3 (minor 3rd):** The note that makes minor sound minor. In A blues, this is C. But blues players bend the major 2nd (B) up toward C, hovering in the ambiguous zone between major and minor. This is the sound of the blues — neither happy nor sad, but something more complex.
+- **b3 (minor 3rd):** The note that makes minor sound minor. In A blues, this is C. But blues players bend that C up toward C# (the major 3rd), hovering in the ambiguous zone between minor and major. This is the sound of the blues — neither happy nor sad, but something more complex.
 - **b5 (diminished 5th):** The "blue note" proper. In A, this is Eb. Adding it to the pentatonic creates the six-note "blues scale": A, C, D, Eb, E, G. The b5 is a passing tone — it sounds tense and wants to resolve up to E (the 5th) or down to D (the 4th). Never rest on it; move through it.
 - **b7 (minor 7th):** Already in your pentatonic scale (G in A minor). This note is the soul of dominant 7th chords and the engine of blues harmony.
 
@@ -125,7 +125,7 @@ A|---------------------------0----|
 E|----------------------------0---|
 ```
 
-This chromatic descent (C-B-Bb-A on the G string) over the V-IV-I chords is one of the most recognizable figures in all of music. Learn it in multiple keys by shifting the starting fret.
+This chromatic descent (C-B-Bb-A on the G string) sits over the I chord and lands on the V (E7) that ends the form. It is one of the most recognizable figures in all of music. Learn it in multiple keys by shifting the starting fret.
 
 **12-Bar Blues Navigation:**
 
@@ -133,7 +133,7 @@ The standard 12-bar blues in A:
 
 | Bar  | 1-4 | 5-6 | 7-8 | 9 | 10 | 11-12 |
 |------|-----|-----|-----|---|----|-------|
-| Chord | A7 | D7 | A7 | E7 | D7 | A7 (turnaround) |
+| Chord | A7 | D7 | A7 | E7 | D7 | A7 then E7 (turnaround) |
 
 When improvising over the 12-bar form, you do not need to change scales for each chord — the A minor pentatonic works over the entire progression. But awareness of where you are in the form transforms generic noodling into storytelling. Start conservatively over bars 1-4, build intensity over the IV chord (bars 5-6), peak at the V chord (bar 9), and resolve through the turnaround.
 
@@ -193,17 +193,17 @@ Box 1 is home, but home is not the whole world. The minor pentatonic has five po
 | 1 | 5-8 | E shape | 6th and 1st strings, 5th fret |
 | 2 | 7-10 | D shape | 4th string, 7th fret |
 | 3 | 9-12 | C shape | 5th string, 12th fret |
-| 4 | 12-15 | A shape | 5th string, 12th fret; 6th string, 12th fret |
-| 5 | 2-5 | G shape | 6th string, 3rd fret (wraps below Box 1) |
+| 4 | 12-15 | A shape | 5th string, 12th fret; 3rd string, 14th fret |
+| 5 | 2-5 | G shape | 6th and 1st strings, 5th fret; 3rd string, 2nd fret (wraps below Box 1) |
 
 **Slide Connections:** The simplest way to move between boxes is to slide on a single string. Play a note in Box 1, slide up to the corresponding note in Box 2 on the same string. Your ear follows the slide, so the position shift sounds intentional rather than accidental. Practice sliding on the 3rd (G) string: 5th fret to 7th fret takes you from Box 1 into Box 2 territory.
 
 **Three-Note-Per-String Patterns:** Instead of the standard two-notes-per-string pentatonic, rearrange the same notes into three-per-string groupings. This enables faster alternate picking and wider intervallic leaps:
 
 ```
-e|---5--7--8----|
-B|---5--7--8----|
-G|---5--7-------|
+e|-------------------------8--10--12--|
+B|-------------5--8--10---------------|
+G|--2--5--7---------------------------|
 ```
 
 Three-note-per-string patterns naturally span multiple boxes, breaking the rectangular confinement of a single position.
@@ -252,7 +252,7 @@ This narrative arc mirrors the structure of a good story: introduction, complica
 
 ### Practice Exercise
 
-Choose a 3-note motif (e.g., A-C-E in Box 1: 5th fret low E, 3rd fret A string, 2nd fret D string — or any three notes you like). Over a backing track, spend 4 bars repeating the motif exactly. Spend the next 4 bars transposing it (move it up to start on D). Spend 4 bars fragmenting it (just the first two notes). Then spend the final 4 bars playing the full motif one last time. Record yourself and listen: does it feel like a complete musical statement?
+Choose a 3-note motif (e.g., A-C-E in Box 1: 5th and 8th frets of the low E string, then the 7th fret of the A string — or any three notes you like). Over a backing track, spend 4 bars repeating the motif exactly. Spend the next 4 bars transposing it (move it up to start on D). Spend 4 bars fragmenting it (just the first two notes). Then spend the final 4 bars playing the full motif one last time. Record yourself and listen: does it feel like a complete musical statement?
 
 ---
 
@@ -280,15 +280,15 @@ Lydian is the brightest mode — ethereal, floating, dreamlike. In A Lydian: A-B
 
 To improvise in Lydian: play the major scale but raise the 4th degree. Emphasize the #4 on strong beats. Lydian sounds like the "answer" to a question the major scale cannot resolve. Film composers (John Williams, Howard Shore) use it for wonder and transcendence.
 
-**Avoid Notes:**
+**Notes Outside the Mode:**
 
-In modal improvisation, certain notes undermine the modal character. These are called "avoid notes" — not because they are forbidden, but because resting on them on strong beats obscures the mode's identity:
+In modal improvisation, certain notes undermine the modal character: the notes of a neighboring mode, which replace your mode's characteristic note. They are not forbidden, but resting on them on strong beats obscures the mode's identity. (They are not "avoid notes" in the chord-scale sense of mus-005, which are notes inside the scale that clash with the chord.)
 
 - In Dorian: the b6 (F natural) — it pulls toward Aeolian
 - In Mixolydian: the natural 7th (G#) — it pulls toward Ionian (major)
 - In Lydian: the natural 4th (D natural) — it pulls toward Ionian
 
-Avoid notes can appear as passing tones on weak beats. They become problems only when emphasized.
+These notes can appear as chromatic passing tones on weak beats. They become problems only when emphasized.
 
 **Modal Vamps:**
 
@@ -332,11 +332,11 @@ Phrases that start before or after the barline create a sense of floating above 
 
 **Hemiola (Preview):**
 
-Hemiola is the superimposition of a 3-beat grouping over a 4-beat meter (or vice versa). Play a repeating 3-note pattern over 4/4 time: the pattern cycles against the beat, creating a polyrhythmic tension that resolves when the two cycles realign (every 12 beats). This is an advanced technique, but even a single hemiola phrase within an otherwise straight solo creates a moment of rhythmic magic.
+Hemiola (Greek for "one and a half") is the 3:2 ratio: three notes in the time of two, as when 6/8 (two dotted quarters) and 3/4 (three quarters) are heard together. A related cross-rhythm is a repeating 3-note pattern over 4/4 time: the pattern cycles against the beat, creating a polyrhythmic tension that resolves when the two cycles realign (every 12 beats). This is an advanced technique, but even a single such phrase within an otherwise straight solo creates a moment of rhythmic magic.
 
 ### Practice Exercise
 
-Take a single phrase from Box 1 (4 notes, any rhythm). Play it starting on beat 1. Then start it on beat 2. Then beat 3. Then beat 4. Then the "and" of beat 1. Notice how the feel changes with each displacement, even though the notes are identical. Next, try a 3-note repeating pattern (e.g., A-C-D, A-C-D, A-C-D...) over 4/4 time. Count aloud and feel when the pattern realigns with beat 1 — that is hemiola.
+Take a single phrase from Box 1 (4 notes, any rhythm). Play it starting on beat 1. Then start it on beat 2. Then beat 3. Then beat 4. Then the "and" of beat 1. Notice how the feel changes with each displacement, even though the notes are identical. Next, try a 3-note repeating pattern (e.g., A-C-D, A-C-D, A-C-D...) over 4/4 time. Count aloud and feel when the pattern realigns with beat 1 — that is a 3-against-4 cross-rhythm; hemiola is the same idea at 3:2.
 
 ---
 
@@ -444,7 +444,7 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 
 | Term | Definition |
 |------|-----------|
-| **Pentatonic scale** | A five-note scale (1, b3, 4, 5, b7 in minor form) with no semitone steps, making it universally consonant |
+| **Pentatonic scale** | A five-note scale (1, b3, 4, 5, b7 in minor form) with no semitone steps, which makes it forgiving over minor chords and in the blues |
 | **Box (position)** | A fretboard region where a scale can be played without shifting the hand; the pentatonic has five boxes |
 | **Blue note** | A note (typically b3, b5, or b7) bent or inflected to create the characteristic blues sound |
 | **Call-and-response** | A musical phrase structure where one phrase (call) is answered by another (response) |
@@ -456,7 +456,7 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 | **Syncopation** | Accenting weak beats or off-beats to create rhythmic tension and forward momentum |
 | **Comping** | Providing rhythmic and harmonic accompaniment to a soloist, itself an act of improvisation |
 | **Trading fours** | Alternating 4-bar improvised solos between musicians in a jazz performance context |
-| **Hemiola** | The superimposition of a grouping of 3 over a meter of 4 (or vice versa), creating polyrhythmic tension |
+| **Hemiola** | The 3:2 ratio (three notes in the time of two), as in 6/8 against 3/4, creating polyrhythmic tension |
 | **Highway** | A mental model of the fretboard as a continuous path rather than isolated box positions |
 
 ---
@@ -464,10 +464,10 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 ## Self-Check Assessment
 
 **1. Name the five notes of the A minor pentatonic scale and explain why it is called a "safe zone" for improvisation.**
-> A, C, D, E, G. It is a safe zone because it contains no semitone intervals, which means no note clashes harshly against minor or dominant chords in A. Every note is at least a whole step from its neighbor, ensuring consonance regardless of order or combination.
+> A, C, D, E, G. It is called a safe zone because it contains no semitone steps. Over Am or Am7 none of its notes lies a half step from a chord tone, so no order or combination makes a half-step clash with the chord. Over a dominant chord such as A7 that no longer holds: C lies a half step below the chord's C#, and D a half step above it. In a blues that friction is the idiomatic sound of the b3 blue note, so the scale stays forgiving there, but having no semitones inside the scale does not make it consonant with every chord.
 
 **2. Describe three techniques from the "motivic development toolkit" and give an example of each using a 3-note motif A-C-D.**
-> (a) Transpose: shift the motif up a 4th to D-F-G. (b) Augment: play A-C-D as half notes instead of eighth notes, doubling the duration. (c) Fragment: use only the first two notes (A-C) as a shortened version of the motif.
+> (a) Transpose: shift the motif up a 4th to D-F-G. (b) Augment: play A-C-D as quarter notes instead of eighth notes, doubling the duration. (c) Fragment: use only the first two notes (A-C) as a shortened version of the motif.
 
 **3. What is the characteristic note of Dorian mode and why is it important?**
 > The natural 6th (e.g., F# in A Dorian). It distinguishes Dorian from the natural minor (Aeolian) scale, which has a b6 (F natural). Emphasizing the natural 6th on strong beats is what makes an improvisation sound Dorian rather than generically minor.

@@ -84,8 +84,8 @@ Cadences are the punctuation marks of music:
 
 | Cadence | Symbol | Function | Feels Like |
 |---------|--------|----------|-----------|
-| Perfect Authentic (PAC) | V - I (both in root position, I on strong beat) | Full stop | Period (.) |
-| Imperfect Authentic (IAC) | V - I (weaker voicing) | Minor stop | Semicolon (;) |
+| Perfect Authentic (PAC) | V - I (both in root position, tonic in the soprano) | Full stop | Period (.) |
+| Imperfect Authentic (IAC) | V - I (an inverted chord, or the soprano not on the tonic) | Minor stop | Semicolon (;) |
 | Half Cadence (HC) | ends on V | Pause, expectation | Comma (,) |
 | Deceptive | V - vi (not V - I as expected) | Surprise turn | Dash (—) |
 | Plagal | IV - I | Soft resolution | "Amen" ending |
@@ -151,7 +151,7 @@ As forms grew more ambitious in the 18th century, composers developed structures
 A principal theme (the **refrain**, labeled A) alternates with contrasting episodes:
 
 - **Five-part rondo:** A B A C A
-- **Seven-part rondo:** A B A C A B A (also called sonata-rondo)
+- **Seven-part rondo:** A B A C A B A (the layout of the sonata-rondo, but the letters alone do not make one: in a sonata-rondo, B first comes in a contrasting key and returns in the tonic, as a sonata form's second theme does, and C often works like a development)
 
 The key feature is the recurring A. Every time the A returns, the listener feels "we're home again." The episodes (B, C) take us to contrasting keys and characters.
 
@@ -184,7 +184,7 @@ The drama of sonata form comes from the second theme appearing in the "wrong" ke
 
 ### Guitar Application
 
-- **Giuliani Sonata Op. 15:** A textbook Classical sonata form movement for guitar. The first movement follows sonata form strictly. Listen for the first theme in A major, a transition, a second theme in E major, development through various keys, then recapitulation with both themes now in A major.
+- **Giuliani Sonata Op. 15:** A textbook Classical sonata form movement for guitar. The first movement follows sonata form strictly. Listen for the first theme in C major, a transition, a second theme in G major, development through various keys, then recapitulation with both themes now in C major.
 - **Sor Grand Sonata Op. 22:** Sor's most ambitious solo guitar work. The first movement is a large-scale sonata form with a substantial development section. This piece proves that the guitar can sustain Classical-era forms at full weight.
 
 When you study or perform a sonata form movement, mark the boundaries between sections in your score. Knowing where the development starts changes how you phrase every measure.
@@ -296,7 +296,7 @@ Through-composed form matches the text or narrative directly — the music follo
 
 - **Kansas, "Carry On Wayward Son":** Verse-chorus with a distinctive bridge and an instrumental section — progressive rock expanding pop forms.
 - **Robert Johnson, "Cross Road Blues":** Classic 12-bar blues, the form that shaped most rock guitar vocabulary.
-- **Autumn Leaves (Jazz Standard):** AABA-adjacent form (actually 32 bars in AB or ABAC depending on arrangement), one of the first jazz standards every guitarist learns.
+- **Autumn Leaves (Jazz Standard):** AABC over 32 bars — four eight-bar sections, the second a repeat of the first, one of the first jazz standards every guitarist learns.
 
 ---
 
@@ -331,7 +331,7 @@ Usually several of these align at the same point. When three or four formal sign
 Villa-Lobos's Prelude No. 1 (from the Five Preludes, 1940) is one of the most-played classical guitar pieces. Its form is a clear ternary:
 
 - **A section (measures 1-18):** Homage to the Brazilian country dweller. Slow, lyrical melody on the low strings, arpeggiated accompaniment. Key: E minor. Ends with a half cadence leading into the B section.
-- **B section (measures 19-52):** Faster, more agitated. Chromatic melodic motion, arpeggiated texture in a higher register, modulations through related keys. This is the contrasting middle.
+- **B section (measures 19-52):** Faster (*più mosso*), more agitated. Chromatic melodic motion, arpeggiated texture in a higher register, and a turn to E major — the parallel major of the A section, which is the real source of the contrast. This is the contrasting middle.
 - **A section return (measures 53-end):** The opening material returns, nearly identical, closing the piece with symmetry. The return gives emotional payoff — we are home.
 
 Label this piece as A B A. Listen to it with this map in hand and notice how the return of A at measure 53 lands — the relief, the inevitability. That is form working on the listener.
@@ -417,7 +417,7 @@ In sonata form, the development section often passes through multiple keys — n
 
 - Phrase, period, and sentence definitions follow William Caplin, *Classical Form: A Theory of Formal Functions for the Instrumental Music of Haydn, Mozart, and Beethoven* (Oxford, 1998) — the standard modern theory of Classical-era phrase structure
 - Sonata form analysis follows Charles Rosen, *Sonata Forms* (Norton, 1980) — the canonical treatment of sonata form as a flexible principle rather than a fixed template
-- Popular music form analysis follows Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blues Eyes"* (Oxford, 2009) — rigorous application of formal analysis to rock and pop repertoire
+- Popular music form analysis follows Walter Everett, *The Foundations of Rock: From "Blue Suede Shoes" to "Suite: Judy Blue Eyes"* (Oxford, 2009) — rigorous application of formal analysis to rock and pop repertoire
 - Guitar repertoire references drawn from standard pedagogical canon: Sor etudes (Op. 6, Op. 31), Villa-Lobos Five Preludes, Bach lute/cello transcriptions, Giuliani sonatas
 - Cadence typology and harmonic-formal interaction consistent with Aldwell & Schachter, *Harmony and Voice Leading*
 - Chaconne/passacaglia distinction acknowledged as contested — modern scholarship (Silbiger, Hudson) shows Baroque composers used terms interchangeably
