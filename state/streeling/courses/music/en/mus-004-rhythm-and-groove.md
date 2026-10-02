@@ -348,7 +348,7 @@ The thumb provides the quarter-note pulse; the fingers add syncopated melody abo
 
 ```
 Count:    1   &   2   &   3   &   4   &
-Bass:     X           X           X           X     (thumb, root)
+Bass:     X               X                         (thumb, root)
 Chord:        X       X       X       X             (fingers, chord stab)
 ```
 
@@ -417,11 +417,11 @@ The memory phrase for 3:2 is **"pass the god-damn but-ter"** — say it out loud
 
 ```
 3 group:  pass   the    god   damn   but   ter
-2 group:  ONE           -     -      TWO   -
-          (1st)         (1)   (2)    (3rd of 3)
+3 hits:   X             X            X       (on syllables 1, 3, 5)
+2 hits:   ONE                 TWO            (on syllables 1, 4)
 ```
 
-The "pass" and "but" align with the two beats; "the god damn" fill in between, creating the three-against-two feel.
+"pass" and "damn" align with the two beats, while "pass", "god" and "but" mark the three — the two groupings meet only on "pass".
 
 ### 3:4 Cross-Rhythm
 
@@ -486,7 +486,7 @@ Classical performers, singers, and jazz soloists all use rubato to shape phrases
 
 ### Odd Meters in Prog Rock
 
-Progressive rock bands built entire musical languages on shifting meters. Rush, King Crimson, Tool, and Dream Theater routinely move between 4/4, 7/8, 5/4, and 9/8 within a single song — sometimes within a single measure (metric modulation) and sometimes as abrupt shifts.
+Progressive rock bands built entire musical languages on shifting meters. Rush, King Crimson, Tool, and Dream Theater routinely move between 4/4, 7/8, 5/4, and 9/8 within a single song — sometimes by metric modulation, where a note value is held constant across the change, and sometimes as abrupt shifts.
 
 For the listener, the effect is a sense of asymmetric drive — the music refuses to settle into predictable patterns. For the performer, these shifts require deep internalization of each meter's character and smooth execution of transitions.
 
@@ -547,7 +547,7 @@ Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100
 
 - Pulse, rhythm, and meter as independent layers is the standard distinction in music cognition research (London, *Hearing in Time*, 2004)
 - Counting systems ("1 e and a" for 16ths, "1 trip let" for triplets) are pedagogical standards in Western music education
-- Swing ratios documented empirically by Friberg & Sundstrom (2002) show professional jazz drummers typically use 1.7:1 to 2.5:1 (62:38 to 71:29) ratios
+- Swing ratios documented empirically by Friberg & Sundstrom (2002) show professional jazz drummers typically use 1.7:1 to 2.5:1 (63:37 to 71:29) ratios
 - Travis picking pattern named for Merle Travis; spread through country and folk via Chet Atkins adaptation
 - Polyrhythm pedagogy relies on language mnemonics (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - Metric modulation theorized systematically by Elliott Carter in his string quartets from the 1950s onward

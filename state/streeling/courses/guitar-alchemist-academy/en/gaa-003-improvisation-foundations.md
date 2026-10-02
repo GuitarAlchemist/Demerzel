@@ -108,7 +108,7 @@ The blues is not a scale — it is a language. It has its own grammar, vocabular
 
 The "blue notes" are the pitches that give blues its distinctive sound. They exist in the cracks between standard scale degrees:
 
-- **b3 (minor 3rd):** The note that makes minor sound minor. In A blues, this is C. But blues players bend the major 2nd (B) up toward C, hovering in the ambiguous zone between major and minor. This is the sound of the blues — neither happy nor sad, but something more complex.
+- **b3 (minor 3rd):** The note that makes minor sound minor. In A blues, this is C. But blues players bend that C up toward C# (the major 3rd), hovering in the ambiguous zone between minor and major. This is the sound of the blues — neither happy nor sad, but something more complex.
 - **b5 (diminished 5th):** The "blue note" proper. In A, this is Eb. Adding it to the pentatonic creates the six-note "blues scale": A, C, D, Eb, E, G. The b5 is a passing tone — it sounds tense and wants to resolve up to E (the 5th) or down to D (the 4th). Never rest on it; move through it.
 - **b7 (minor 7th):** Already in your pentatonic scale (G in A minor). This note is the soul of dominant 7th chords and the engine of blues harmony.
 
@@ -125,7 +125,7 @@ A|---------------------------0----|
 E|----------------------------0---|
 ```
 
-This chromatic descent (C-B-Bb-A on the G string) over the V-IV-I chords is one of the most recognizable figures in all of music. Learn it in multiple keys by shifting the starting fret.
+This chromatic descent (C-B-Bb-A on the G string) sits over the I chord and lands on the V (E7) that ends the form. It is one of the most recognizable figures in all of music. Learn it in multiple keys by shifting the starting fret.
 
 **12-Bar Blues Navigation:**
 
@@ -133,7 +133,7 @@ The standard 12-bar blues in A:
 
 | Bar  | 1-4 | 5-6 | 7-8 | 9 | 10 | 11-12 |
 |------|-----|-----|-----|---|----|-------|
-| Chord | A7 | D7 | A7 | E7 | D7 | A7 (turnaround) |
+| Chord | A7 | D7 | A7 | E7 | D7 | A7 then E7 (turnaround) |
 
 When improvising over the 12-bar form, you do not need to change scales for each chord — the A minor pentatonic works over the entire progression. But awareness of where you are in the form transforms generic noodling into storytelling. Start conservatively over bars 1-4, build intensity over the IV chord (bars 5-6), peak at the V chord (bar 9), and resolve through the turnaround.
 
@@ -252,7 +252,7 @@ This narrative arc mirrors the structure of a good story: introduction, complica
 
 ### Practice Exercise
 
-Choose a 3-note motif (e.g., A-C-E in Box 1: 5th fret low E, 3rd fret A string, 2nd fret D string — or any three notes you like). Over a backing track, spend 4 bars repeating the motif exactly. Spend the next 4 bars transposing it (move it up to start on D). Spend 4 bars fragmenting it (just the first two notes). Then spend the final 4 bars playing the full motif one last time. Record yourself and listen: does it feel like a complete musical statement?
+Choose a 3-note motif (e.g., A-C-E in Box 1: 5th and 8th frets of the low E string, then the 7th fret of the A string — or any three notes you like). Over a backing track, spend 4 bars repeating the motif exactly. Spend the next 4 bars transposing it (move it up to start on D). Spend 4 bars fragmenting it (just the first two notes). Then spend the final 4 bars playing the full motif one last time. Record yourself and listen: does it feel like a complete musical statement?
 
 ---
 
@@ -467,7 +467,7 @@ Set a backing track in A minor (medium tempo, bluesy). Record yourself improvisi
 > A, C, D, E, G. It is a safe zone because it contains no semitone intervals, which means no note clashes harshly against minor or dominant chords in A. Every note is at least a whole step from its neighbor, ensuring consonance regardless of order or combination.
 
 **2. Describe three techniques from the "motivic development toolkit" and give an example of each using a 3-note motif A-C-D.**
-> (a) Transpose: shift the motif up a 4th to D-F-G. (b) Augment: play A-C-D as half notes instead of eighth notes, doubling the duration. (c) Fragment: use only the first two notes (A-C) as a shortened version of the motif.
+> (a) Transpose: shift the motif up a 4th to D-F-G. (b) Augment: play A-C-D as quarter notes instead of eighth notes, doubling the duration. (c) Fragment: use only the first two notes (A-C) as a shortened version of the motif.
 
 **3. What is the characteristic note of Dorian mode and why is it important?**
 > The natural 6th (e.g., F# in A Dorian). It distinguishes Dorian from the natural minor (Aeolian) scale, which has a b6 (F natural). Emphasizing the natural 6th on strong beats is what makes an improvisation sound Dorian rather than generically minor.
