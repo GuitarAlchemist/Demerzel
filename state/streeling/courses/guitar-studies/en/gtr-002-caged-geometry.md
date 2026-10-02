@@ -26,15 +26,17 @@ version: "1.0.0"
 
 Every guitarist learns these five open major chords early on. Each has a distinct geometric fingerprint:
 
+Diagrams read from string 6 (low E) to string 1 (high E); `x` marks a string that is not played.
+
 ### C Shape
 ```
-x 3 2 0 1 0    Strings: 5-4-3-2-1
+x 3 2 0 1 0    Strings: 6-5-4-3-2-1
   R 3 5 R 3    Intervals: Root-M3-P5-Root-M3
 ```
 
 ### A Shape
 ```
-x 0 2 2 2 0    Strings: 5-4-3-2-1
+x 0 2 2 2 0    Strings: 6-5-4-3-2-1
   R 5 R 3 5    Intervals: Root-P5-Root-M3-P5
 ```
 
@@ -52,8 +54,8 @@ R 5 R 3 5 R    Intervals: Root-P5-Root-M3-P5-Root
 
 ### D Shape
 ```
-x x 0 2 3 2    Strings: 4-3-2-1
-  R 5 R 3      Intervals: Root-P5-Root-M3
+x x 0 2 3 2    Strings: 6-5-4-3-2-1
+    R 5 R 3    Intervals: Root-P5-Root-M3
 ```
 
 **Key observation:** Every shape contains only three pitch classes: Root, Major 3rd, and Perfect 5th. The differences are in *voicing* -- which octave each note appears in and which strings carry them.

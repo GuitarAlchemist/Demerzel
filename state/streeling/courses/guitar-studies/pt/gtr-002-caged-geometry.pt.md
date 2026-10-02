@@ -26,15 +26,17 @@ version: "1.0.0"
 
 Todo guitarrista aprende estes cinco acordes maiores abertos logo no início. Cada um tem uma impressão geométrica distinta:
 
+Os diagramas são lidos da corda 6 (Mi grave) à corda 1 (Mi agudo); `x` marca uma corda que não é tocada.
+
 ### Forma C
 ```
-x 3 2 0 1 0    Cordas: 5-4-3-2-1
+x 3 2 0 1 0    Cordas: 6-5-4-3-2-1
   T 3 5 T 3    Intervalos: Tônica-3M-5J-Tônica-3M
 ```
 
 ### Forma A
 ```
-x 0 2 2 2 0    Cordas: 5-4-3-2-1
+x 0 2 2 2 0    Cordas: 6-5-4-3-2-1
   T 5 T 3 5    Intervalos: Tônica-5J-Tônica-3M-5J
 ```
 
@@ -52,8 +54,8 @@ T 5 T 3 5 T    Intervalos: Tônica-5J-Tônica-3M-5J-Tônica
 
 ### Forma D
 ```
-x x 0 2 3 2    Cordas: 4-3-2-1
-  T 5 T 3      Intervalos: Tônica-5J-Tônica-3M
+x x 0 2 3 2    Cordas: 6-5-4-3-2-1
+    T 5 T 3    Intervalos: Tônica-5J-Tônica-3M
 ```
 
 **Observação-chave:** Toda forma contém apenas três classes de nota: Tônica, Terça Maior e Quinta Justa. As diferenças estão na *disposição* -- em qual oitava cada nota aparece e quais cordas as carregam.
