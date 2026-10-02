@@ -130,7 +130,7 @@ Die gleichstufige Temperatur passt diese Verhältnisse leicht an, damit alle Ton
 
 ### Übung
 
-Messen Sie den Abstand vom Sattel zum 12. Bund auf Ihrer Gitarre, dann messen Sie vom 12. Bund zum Steg. Sie sollten fast exakt gleich sein — was bestätigt, dass der 12. Bund die Saitenlänge halbiert und die Frequenz verdoppelt (eine Oktave). Messen Sie nun Sattel bis Bund 7: Es sollte ungefähr 2/3 der Gesamtsaitenlänge sein, passend zum 3:2-Verhältnis einer reinen Quinte.
+Messen Sie den Abstand vom Sattel zum 12. Bund auf Ihrer Gitarre, dann messen Sie vom 12. Bund zum Steg. Sie sollten fast exakt gleich sein — was bestätigt, dass der 12. Bund die Saitenlänge halbiert und die Frequenz verdoppelt (eine Oktave). Messen Sie nun von Bund 7 bis zum Steg: Es sollte ungefähr 2/3 der Gesamtsaitenlänge sein (die Strecke vom Sattel bis Bund 7 ist das restliche Drittel), passend zum 3:2-Verhältnis einer reinen Quinte.
 
 ---
 
