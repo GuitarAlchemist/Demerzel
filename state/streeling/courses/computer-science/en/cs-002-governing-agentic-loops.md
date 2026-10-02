@@ -37,8 +37,8 @@ guarantee it. The guarantee must come from the framework.
 ### The Halting Parallel
 
 Alan Turing proved (1936) that no algorithm can decide for all programs whether they will halt.
-An LLM-in-a-loop faces the same problem: the system running the loop cannot reliably determine
-whether that loop will terminate. The check must be external.
+No general procedure can settle it for an arbitrary agent loop either. So termination is imposed
+rather than detected: a framework-enforced cap bounds the number of iterations, and a framework-enforced deadline on each whole iteration stops it when it expires, if need be by killing the process that runs it. Only the two together make the loop halt by construction: an iteration that never ends never reaches the counter, and a deadline on each call is not enough, since an iteration can make any number of calls or compute between them.
 
 **Implication:** Any agentic framework that relies on the model to declare its own completion
 is unsound by construction.
@@ -62,38 +62,45 @@ terminal state. It is **pathological** when it generates tokens without generati
 
 ## 3. Six Required Properties of a Governed Loop
 
-These properties are necessary and sufficient for a bounded, auditable iteration:
+These six properties make an iteration bounded and auditable. A loop that must be paused and resumed also needs serializable state (sections 2 and 6):
 
 ### Property 1: Hard Iteration Cap
 A maximum iteration count enforced by the framework, not the model. When reached: halt,
-log the cap, escalate to human review.
+log the cap, escalate to human review. The counter advances only when an iteration ends, so the cap also needs a deadline around each whole iteration, enforced by the framework, which stops the iteration when it expires, if need be by killing the process that runs it. Timeouts on model calls, tool calls and network requests are useful but do not bound an iteration by themselves. The configuration below sets only the cap.
 
 ```yaml
-# Example: Demerzel autonomous-loop configuration
+# Example: one loop's configuration (policy default 10, absolute max 25)
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
 
 ### Property 2: Progress Test
 Each iteration must produce a measurable state change. The framework compares state hashes
-before and after each step. If `hash(state_n) == hash(state_n-1)`, the loop is stalled.
+before and after each step. If `hash(state_n) == hash(state_n-1)`, the loop is stalled. Hash the
+fields that carry the result, not the iteration counter — that one differs at every step, so the
+stall test would never fire. And a stall test catches repetition, not drift: a loop that keeps
+changing without converging never meets the external criterion, and the cap stops it, not this test.
 
 ```python
-def progress_test(state_before, state_after):
-    return hash(state_before) != hash(state_after)
+def stall_test(state_before, state_after):
+    return hash(state_before) == hash(state_after)
 
-if not progress_test(prev_state, curr_state):
+if stall_test(prev_state, curr_state):
     raise StallDetected("No state change — possible infinite loop")
 ```
 
 ### Property 3: External Termination Criterion
 The exit condition is specified before the loop starts, not generated during execution.
-The model cannot redefine convergence mid-loop.
+The model cannot redefine convergence mid-loop. The iteration cap is not part of the criterion: a loop that reaches the cap has not converged, and it halts and escalates as Property 1 requires, rather than reporting its work as complete.
 
 ```python
 # Good: criterion is external
 def is_complete(state) -> bool:
-    return state.belief_confidence >= 0.85 or state.iteration >= MAX
+    return state.belief_confidence >= 0.85
+
+# Reaching the cap is not success: halt and escalate (Property 1)
+def cap_reached(state) -> bool:
+    return state.iteration >= MAX
 
 # Bad: model declares its own completion
 result = model.run("keep going until you think you're done")
@@ -115,7 +122,7 @@ treated as a vote, not a command.
 
 ## 4. The Demerzel Governed Loop Pattern
 
-The Demerzel framework implements this via the `autonomous-loop-policy.yaml`:
+The Demerzel framework specifies this pattern in `autonomous-loop-policy.yaml`, with iteration and stall limits but no per-iteration deadline:
 
 ```
 GOVERNED LOOP
@@ -138,10 +145,10 @@ GOVERNED LOOP
     └── Anomaly detected → conscience signal + halt
 ```
 
-This pattern appears in three places in the Demerzel ecosystem:
-- **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test
-- **Demerzel Driver:** 12 consecutive cycle cap, conscience signals as anomaly detection
-- **Ralph Loop:** iteration cap + convergence metric (test pass rate) as external criterion
+This pattern appears in three places in the Demerzel ecosystem, and only the first two bound the duration of an iteration:
+- **Seldon Plan:** 6 cycles/day cap, novelty registry as progress test, a 30-minute soft limit per cycle (`policies/seldon-plan-policy.yaml`) and a hard kill at 35 minutes (`timeout-minutes` in `.github/workflows/seldon-plan.yml`)
+- **Demerzel Driver:** a pause for human review after 5 consecutive unattended cycles, conscience signals as anomaly detection, cycle timeout (2 hours soft, then a hard kill at 2h15m)
+- **Ralph Loop:** iteration cap + convergence metric (test pass rate) as external criterion, but no per-iteration deadline: neither `policies/autonomous-loop-policy.yaml` nor `.claude/skills/demerzel-loop/SKILL.md` defines one, so an iteration that blocks never reaches the counter
 
 ---
 
@@ -178,8 +185,8 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 ## Key Takeaways
 
 - An LLM cannot reliably detect its own infinite loops — termination must be external
-- A governed loop has exactly six properties: hard cap, progress test, external criterion, checkpoint, dedup, external exit decision
-- The Demerzel framework implements these in seldon-plan, demerzel-drive, and Ralph Loop
+- A governed loop has six properties: hard cap with a deadline on every iteration, progress test, external criterion, checkpoint, dedup, external exit decision — plus serializable state if it must be paused and resumed
+- The Demerzel framework applies the pattern in seldon-plan, demerzel-drive, and Ralph Loop; only the first two set a per-iteration deadline, so Ralph Loop does not yet halt by construction
 - Article 9 (Bounded Autonomy) is the constitutional basis — bounds are predefined, extension requires escalation
 
 ## Further Reading
@@ -187,7 +194,7 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 - `policies/autonomous-loop-policy.yaml` — Demerzel governed loop specification
 - `policies/seldon-plan-policy.yaml` — Phase 1 (WAKE) kill switch and cap logic
 - `policies/continuous-learning-policy.yaml` — Iteration bounds in learning pipelines
-- `.claude/skills/demerzel-drive/SKILL.md` — Driver cycle (12-cycle cap pattern)
+- `.claude/skills/demerzel-drive/SKILL.md` — Driver cycle (pause after 5 unattended cycles)
 - `.claude/skills/seldon-plan/SKILL.md` — Research cycle (6/day cap + novelty registry as progress test)
 
 ---
