@@ -62,7 +62,7 @@ Dominant chords create the strongest pull back to the tonic. They contain the **
 | Dominant | V | D |
 | Leading-tone diminished | viio | F#dim |
 
-The **V** chord is the engine of tonal music. The **viio** is its incomplete form — it contains the same tritone but lacks the dominant's root, making it less stable and used more sparingly.
+The **V** chord is the engine of tonal music. The **viio** is an incomplete form of **V7** (D F# A C in G major): it contains V7's tritone, F#–C (see "The Tritone Within V7" below), but lacks the dominant's root, making it less stable and used more sparingly.
 
 ### The Functional Cycle
 
@@ -104,7 +104,7 @@ A **cadence** is a harmonic punctuation mark — the way a musical phrase comes 
 
 This is the strongest possible ending — the period at the end of a definitive statement. The bass moves from scale degree 5 up to 1 (or down a fifth), and the melody resolves to the tonic.
 
-**Guitar example (G major):** D → G, with the high G string ringing as the melody note.
+**Guitar example (G major):** D → G, with the high G (3rd fret, high E string) ringing as the melody note.
 
 #### Imperfect Authentic Cadence (IAC)
 
@@ -154,7 +154,7 @@ Listen to any song you know well. Try to identify where phrases end and what typ
 
 ## 3. Why the Dominant Wants to Resolve
 
-The pull from V to I is not arbitrary convention — it is rooted in acoustic physics and interval mechanics. Understanding **why** the dominant resolves is the key to understanding all of tonal harmony.
+The pull from V to I is a convention of common-practice tonality, not a law of acoustics — but it is not arbitrary: it rests on voice leading, the smallest possible steps from the dominant's tense notes to the tonic's stable ones. Understanding **why** the dominant resolves is the key to understanding all of tonal harmony.
 
 ### The Tritone Within V7
 
@@ -185,7 +185,7 @@ F# ─── ↑½ ───→   G     ← leading tone resolves UP
 C  ─── ↓½ ───→   B     ← 7th resolves DOWN
 ```
 
-This is **contrary motion** — two voices moving toward each other, collapsing the tritone into the stable major third (G to B) or minor sixth. The acoustic tension literally converges to consonance.
+This is **contrary motion** — the two voices move in opposite directions, a semitone each. If F# is below C (a diminished fifth), they close in to the major third G–B; if C is below F# (an augmented fourth), they open out to the minor sixth B–G. Either way the tritone gives way to a consonance.
 
 ### Guitar Example — D7 to G Voice Movements
 
@@ -193,17 +193,17 @@ Play this slowly on guitar, one note at a time, and listen for each resolution:
 
 ```
 D7 chord:          G chord:
-e|--1-- (C)   →   e|--3-- (G)    C falls to B (on the B string: open)
-B|--1-- (F#)  →   B|--0-- (B)    F# would resolve to G, but here
-G|--2-- (A)   →   G|--0-- (G)    we hear the full chord redistribution
-D|--0-- (D)   →   D|--0-- (D→G bass)
+e|--2-- (F#)  →   e|--3-- (G)    F# rises a half step to G
+B|--1-- (C)   →   B|--0-- (B)    C falls a half step to B
+G|--2-- (A)   →   G|--0-- (G)    A moves down a step to G
+D|--0-- (D)   →   D|--0-- (D)    D stays (common tone)
 ```
 
 In practice on guitar, the voice leading is distributed across the chord shape rather than following strict four-part writing. But the principle holds: the tension notes find their targets.
 
 ### Why This Matters
 
-Every instance of dominant-to-tonic resolution in all of Western tonal music — from Bach chorales to blues turnarounds to pop hooks — is driven by this same tritone resolution. When you hear a V7-I and feel satisfaction, you are hearing contrary motion collapsing a tritone into consonance.
+Every V7–I and viio–I resolution in Western tonal music — from Bach chorales to blues turnarounds to pop hooks — carries this same tritone resolution; a plain V–I triad motion has no tritone and pulls through its leading tone alone. When you hear a V7-I and feel satisfaction, you are hearing contrary motion collapsing a tritone into consonance.
 
 ### Practice Exercise
 
@@ -300,10 +300,10 @@ In G major:
 | V (D) | D | V7/V = A7 | A-C#-E-G | C# |
 | vi (Em) | E | V7/vi = B7 | B-D#-F#-A | D# |
 | ii (Am) | A | V7/ii = E7 | E-G#-B-D | G# |
-| IV (C) | C | V7/IV = D7 | D-F#-A-C | (already diatonic!) |
+| IV (C) | C | V7/IV = G7 | G-B-D-F | F |
 | iii (Bm) | B | V7/iii = F#7 | F#-A#-C#-E | A#, C# |
 
-Note: V7/IV looks identical to V7, so it is usually only labeled as a secondary dominant when the IV chord follows in a context where it sounds like a local resolution rather than a predominant.
+Note: V7/IV is the tonic triad with a minor seventh added (I7). Its F natural turns the tonic into a dominant pointing at C, so it is heard as a secondary dominant rather than as a colored tonic.
 
 ### Guitar Example — A Chain of Secondary Dominants
 
@@ -530,7 +530,7 @@ Then experiment with harmonic rhythm: play the same progression with one chord p
 > E7 = V7/vi (targets Am). D7 = V7/V (targets G). Both are secondary dominants creating a descending-fifths chain: E7 → Am → D7 → G → C.
 
 **4. Why is the ii-V-I progression stronger than IV-V-I, even though both follow PD → D → T?**
-> The ii chord provides smoother voice leading into V. In the move from ii to V, most voices move by step (common tones and half steps), while IV to V creates more disjunct motion. Additionally, ii-V-I forms a cycle-of-fifths root motion (down a 5th, down a 5th), which is the strongest root progression pattern in tonal music.
+> The ii chord provides smoother voice leading into V. In the move from ii to V, the two chords share notes that can be held (D and F of Dm7 are the 5th and 7th of G7), while IV and V have no note in common, so every upper voice has to move. Additionally, ii-V-I forms a cycle-of-fifths root motion (down a 5th, down a 5th), which is the strongest root progression pattern in tonal music.
 
 **Pass criteria:** Given any diatonic chord progression in a major key, assign Roman numerals, label functions (T/PD/D), identify cadences, and spot secondary dominants with their targets.
 
@@ -541,7 +541,7 @@ Then experiment with harmonic rhythm: play the same progression with one chord p
 - Hugo Riemann's *Vereinfachte Harmonielehre* (1893) established the three-function model (T/S/D) that all modern functional harmony descends from
 - Kostka & Payne, *Tonal Harmony* (7th ed., 2013) — standard undergraduate text for diatonic and chromatic harmony
 - Aldwell & Schachter, *Harmony and Voice Leading* (4th ed., 2011) — authoritative treatment of voice-leading principles and phrase structure
-- The tritone resolution mechanism is acoustically grounded in combination tones and frequency-ratio convergence
+- The tritone's resolution is a voice-leading convention of common-practice tonality — the contrary stepwise motion described in Kostka & Payne and in Aldwell & Schachter — not an acoustic necessity
 - Secondary dominant and modulation pedagogy follows the graduated approach: diatonic → tonicization → modulation
 - Sources: Streeling Department of Music curriculum, Western harmony pedagogy consensus
 - Belief state: T(0.85) F(0.03) U(0.08) C(0.04)

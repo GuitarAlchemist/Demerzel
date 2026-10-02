@@ -136,11 +136,11 @@ Each note value is half the duration of the next longer one:
 | Note Value | Duration in 4/4 | Symbol |
 |-----------|-----------------|--------|
 | Whole note | 4 beats | ○ |
-| Half note | 2 beats | ♩ with stem |
+| Half note | 2 beats | ○ with stem |
 | Quarter note | 1 beat | ♩ |
 | Eighth note | 1/2 beat | ♪ |
 | Sixteenth note | 1/4 beat | ♬ |
-| Thirty-second note | 1/8 beat | (beamed twice) |
+| Thirty-second note | 1/8 beat | (three beams) |
 
 This halving tree means any rhythmic figure is decomposable into units that relate by factors of 2.
 
@@ -221,13 +221,13 @@ When you count along with a rock song, you will find yourself clapping on 2 and 
 An **anticipation** (sometimes called "the push") is when a chord change arrives slightly early — typically on the "and" of beat 4 in the previous measure, tied into beat 1 of the next measure.
 
 ```
-Measure 1:            |  C     C     C     C-tie  |
+Measure 1:            |  C     C     C     C  G~  |
                       |  1  &  2  &  3  &  4  &   |
-Measure 2 (tied):     |  G     G     G     G      |
+Measure 2 (tied):     | ~G     G     G     G      |
                       |  1  &  2  &  3  &  4  &   |
 ```
 
-Instead of the G arriving on beat 1 of measure 2, it arrives on the "and of 4" in measure 1 and is held across the barline. This creates rhythmic propulsion — you feel the new chord pushing forward before the new measure begins.
+The `~` marks the tie: the G struck on the "and" of 4 is held through beat 1 of measure 2, which is not struck again. Instead of the G arriving on beat 1 of measure 2, it arrives on the "and of 4" in measure 1 and is held across the barline. This creates rhythmic propulsion — you feel the new chord pushing forward before the new measure begins.
 
 The push is essential in Latin music, country, and pop. Guitarists who cannot feel or execute pushes will sound stiff no matter how clean their chords are.
 
@@ -237,11 +237,10 @@ Ties create syncopation by sustaining notes across beat boundaries. Consider thi
 
 ```
 Count:   1   e   &   a   2   e   &   a   3   e   &   a   4   e   &   a
-Notes:   X           X       X           X           X       X
-         (8th)       (8th tied to 16th)  (16th)       (8th tied to 16th) (16th)
+Notes:   X   -   X   -   -   X   X   -   X   -   X   -   -   X   X   -
 ```
 
-When an eighth note begins on the "&" of beat 1 and ties over beat 2, the accent lands between beats, creating a characteristic funky displacement.
+Each column is one sixteenth: `X` strikes a note and `-` holds it. The pattern is an eighth, an eighth tied to a sixteenth, a sixteenth and an eighth, played twice. When an eighth note begins on the "&" of beat 1 and ties over beat 2, the accent lands between beats, creating a characteristic funky displacement.
 
 ### Syncopation on Guitar
 
@@ -348,7 +347,7 @@ The thumb provides the quarter-note pulse; the fingers add syncopated melody abo
 
 ```
 Count:    1   &   2   &   3   &   4   &
-Bass:     X           X           X           X     (thumb, root)
+Bass:     X               X                         (thumb, root)
 Chord:        X       X       X       X             (fingers, chord stab)
 ```
 
@@ -386,7 +385,13 @@ Count:  1 & 2 & 3 & 4 &
 Notes:  M M M M M M X M   (M = muted, X = open/ringing)
 ```
 
-The 16th-note variant (galloping triplets "down-down-up") is the foundation of metal rhythm guitar.
+The 16th-note variant, the gallop, is the foundation of metal rhythm guitar. It is not a triplet: each beat holds an eighth and two sixteenths, long-short-short, on "1 & a", picked down-down-up while the hand keeps its 16th-note motion and skips the "e":
+
+```
+Count:  1 e & a 2 e & a
+Play:   X . X X X . X X   (eighth + two sixteenths per beat)
+Pick:   D   D U D   D U
+```
 
 ### Reggae Skank
 
@@ -417,11 +422,11 @@ The memory phrase for 3:2 is **"pass the god-damn but-ter"** — say it out loud
 
 ```
 3 group:  pass   the    god   damn   but   ter
-2 group:  ONE           -     -      TWO   -
-          (1st)         (1)   (2)    (3rd of 3)
+3 hits:   X             X            X       (on syllables 1, 3, 5)
+2 hits:   ONE                 TWO            (on syllables 1, 4)
 ```
 
-The "pass" and "but" align with the two beats; "the god damn" fill in between, creating the three-against-two feel.
+"pass" and "damn" align with the two beats, while "pass", "god" and "but" mark the three — the two groupings meet only on "pass".
 
 ### 3:4 Cross-Rhythm
 
@@ -429,8 +434,8 @@ Three beats against four — each grouping lands together only every 12 subdivis
 
 ```
 12 subdivisions:  1  2  3  4  5  6  7  8  9 10 11 12
-4 grouping:       X     X        X        X  (every 3)
-3 grouping:       X        X        X        X  (every 4)
+4 grouping:       X        X        X        X  (every 3)
+3 grouping:       X           X           X     (every 4)
 Align at:         X (only at beat 1 of each cycle)
 ```
 
@@ -451,7 +456,7 @@ Progressive rock and modern classical music use both techniques heavily. African
 
 ### Guitar Application
 
-Many guitarists find polyrhythms easier to feel than to count. A practical entry point: strum quarter notes with the picking hand while tapping triplets with your foot. Once you can hold both simultaneously, you are feeling 4:3 polyrhythm in your body.
+Many guitarists find polyrhythms easier to feel than to count. A practical entry point: strum quarter notes with the picking hand while tapping quarter-note triplets with your foot (three evenly spaced taps across every two strums). Once you can hold both simultaneously, you are feeling a 3:2 polyrhythm in your body.
 
 ### Practice Exercise
 
@@ -486,13 +491,13 @@ Classical performers, singers, and jazz soloists all use rubato to shape phrases
 
 ### Odd Meters in Prog Rock
 
-Progressive rock bands built entire musical languages on shifting meters. Rush, King Crimson, Tool, and Dream Theater routinely move between 4/4, 7/8, 5/4, and 9/8 within a single song — sometimes within a single measure (metric modulation) and sometimes as abrupt shifts.
+Progressive rock bands built entire musical languages on shifting meters. Rush, King Crimson, Tool, and Dream Theater routinely move between 4/4, 7/8, 5/4, and 9/8 within a single song — sometimes by metric modulation, where a note value is held constant across the change, and sometimes as abrupt shifts.
 
 For the listener, the effect is a sense of asymmetric drive — the music refuses to settle into predictable patterns. For the performer, these shifts require deep internalization of each meter's character and smooth execution of transitions.
 
 ### Practice Exercise
 
-Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100 BPM. Without stopping, reinterpret your quarter notes as dotted eighths in a faster 4/4 (where the new quarter = old dotted eighth). This is a metric modulation: same physical pulse, different metric meaning. Feel how your body understands the same notes as belonging to a faster tempo.
+Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100 BPM. Without stopping, reinterpret your quarter notes as dotted eighths in a slower 4/4 (where the new dotted eighth = old quarter, so the new quarter is at 75 BPM). This is a metric modulation: same physical pulse, different metric meaning. Feel how your body understands the same notes as belonging to a slower tempo.
 
 ---
 
@@ -527,10 +532,10 @@ Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100
 **1. What is the difference between 6/8 and 3/4, given that both contain six eighth notes per measure?**
 > In 6/8, the eighths are grouped as two groups of three (1-2-3, 4-5-6), producing two felt beats per measure with each beat divided into three. In 3/4, the eighths are grouped as three pairs of two (1-and, 2-and, 3-and), producing three felt beats per measure with each beat divided into two. The accent pattern — two strong beats vs three — is entirely different.
 
-**2. Count the rhythm of the following 16th-note pattern in 4/4 using the standard syllables: X-_-X-X-_-X-_-X (where X = play, _ = rest, over one beat).**
+**2. Count the rhythm of the following 16th-note pattern in 4/4 using the standard syllables: X-_-X-X (where X = play, _ = rest, over one beat).**
 > The syllables are "1 e and a" for one beat. So this pattern over one beat reads "1 - and a" (playing on 1, &, a, and rest on e). Over a full beat: play on "1", rest on "e", play on "and", play on "a". Extended across the measure: "1 - & a 2 - & a 3 - & a 4 - & a" with the same accent pattern.
 
-**3. If standard jazz swing uses approximately a 60:40 ratio for eighth-note pairs, and a hard shuffle uses 67:33 (triplet-based), what is the practical difference a listener hears?**
+**3. If standard jazz swing uses approximately a 60:40 ratio for eighth-note pairs, and hard swing uses 67:33 (triplet-based), what is the practical difference a listener hears?**
 > At 60:40, the swing is relatively relaxed — the first eighth is slightly longer but not exaggerated. At 67:33, the feel is the full triplet division where the first note is exactly twice as long as the second. Listeners hear the 60:40 as smooth and elegant (cool jazz, bebop), while 67:33 sounds bouncy and heavier (blues, gospel shuffles). The 67:33 ratio creates a clear "dotted" lilt; the 60:40 is more understated.
 
 **4. Describe a basic Travis picking pattern in terms of which hand plays what, and which beats are covered.**
@@ -547,7 +552,7 @@ Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100
 
 - Pulse, rhythm, and meter as independent layers is the standard distinction in music cognition research (London, *Hearing in Time*, 2004)
 - Counting systems ("1 e and a" for 16ths, "1 trip let" for triplets) are pedagogical standards in Western music education
-- Swing ratios documented empirically by Friberg & Sundstrom (2002) show professional jazz drummers typically use 1.7:1 to 2.5:1 (62:38 to 71:29) ratios
+- Swing ratios documented empirically by Friberg & Sundstrom (2002) show professional jazz drummers typically use 1.7:1 to 2.5:1 (63:37 to 71:29) ratios
 - Travis picking pattern named for Merle Travis; spread through country and folk via Chet Atkins adaptation
 - Polyrhythm pedagogy relies on language mnemonics (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - Metric modulation theorized systematically by Elliott Carter in his string quartets from the 1950s onward

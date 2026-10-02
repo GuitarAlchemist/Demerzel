@@ -49,27 +49,27 @@ Root  +  Quality  +  Extensions/Alterations  +  Slash Bass
 
 **Quality** encodes the triad and seventh:
 
-| Symbol | Meaning | Third | Seventh |
-|--------|---------|-------|---------|
-| (nothing) or `maj` | Major triad | Major 3rd | — |
-| `m` or `min` or `-` | Minor triad | Minor 3rd | — |
-| `7` | Dominant seventh | Major 3rd | Minor 7th |
-| `maj7` or `M7` or triangle | Major seventh | Major 3rd | Major 7th |
-| `m7` or `min7` or `-7` | Minor seventh | Minor 3rd | Minor 7th |
-| `m7b5` or half-diminished | Half-diminished | Minor 3rd | Minor 7th (b5) |
-| `dim7` or `o7` | Diminished seventh | Minor 3rd | Diminished 7th |
+| Symbol | Meaning | Third | Fifth | Seventh |
+|--------|---------|-------|-------|---------|
+| (nothing) or `maj` | Major triad | Major 3rd | Perfect 5th | — |
+| `m` or `min` or `-` | Minor triad | Minor 3rd | Perfect 5th | — |
+| `7` | Dominant seventh | Major 3rd | Perfect 5th | Minor 7th |
+| `maj7` or `M7` or triangle | Major seventh | Major 3rd | Perfect 5th | Major 7th |
+| `m7` or `min7` or `-7` | Minor seventh | Minor 3rd | Perfect 5th | Minor 7th |
+| `m7b5` or half-diminished | Half-diminished | Minor 3rd | Diminished 5th (b5) | Minor 7th |
+| `dim7` or `o7` | Diminished seventh | Minor 3rd | Diminished 5th (b5) | Diminished 7th |
 
 **Extensions** add upper chord tones (9, 11, 13). The highest number implies all odd-numbered tones below it:
 
 - `Cmaj9` = C E G B D (implies the 7th is present)
-- `Cmaj13` = C E G B D (F#) A (implies 9 and 7; the 11 is typically #11 in a major context)
+- `Cmaj13` = C E G B D (F) A (implies 9 and 7; the implied 11th, F, sits a half step above the major 3rd E and is usually omitted; an F# must be written, as in `Cmaj13#11`)
 
 **Alterations** modify specific tones:
 
 - `#11` — raised 11th (avoids clash with major 3rd)
 - `b9`, `#9` — lowered or raised 9th
 - `b13` — lowered 13th (enharmonic to #5)
-- `alt` — shorthand for dominant with b9, #9, #11/b5, b13/#5
+- `alt` — an altered dominant: root, third and b7, with tensions chosen from b9, #9, #11/b5 and b13/#5; the symbol does not say which, and a voicing rarely uses them all
 
 ### The C7 vs Cmaj7 Ambiguity
 
@@ -85,7 +85,7 @@ The bare "7" always means dominant. You must write "maj7" to get a major seventh
 `C/E` means "C major chord with E in the bass." The note after the slash is the bass note, not necessarily a chord tone. Common uses:
 
 - Inversions: `C/E` (first inversion), `C/G` (second inversion)
-- Polychords implied: `Db/C` = Db triad over C bass (creates a Cmaj7#11 sound)
+- Polychords implied: `Db/C` = Db triad over C bass (Db, F and Ab over C are b9, 11 and b13 — a Phrygian colour; the Lydian one is `D/C`)
 - Pedal tones: `Dm7/G` = creates a G11 sound without stating G as root
 
 ### Practice Exercise
@@ -97,15 +97,15 @@ Read the following chord symbols and spell out the notes. Do not use your instru
 3. `Ebm11`
 4. `Ab13`
 5. `Dm7b5`
-6. `G7#9/Db` (what substitution does this imply?)
+6. `G7#9/Db` (is this a tritone substitution?)
 
 Answers:
 1. F A C E G B (F major with major 7th, 9th, #11th)
-2. Bb D Ab B/Cb Eb/D# Gb (dominant with all altered upper extensions)
+2. Bb D Ab: the root, the third and the b7. The symbol adds altered tensions without naming them: any of Cb/B (b9), Db/C# (#9), Fb/E (#11/b5) and Gb (b13/#5). All seven notes together make the Bb altered scale, the palette a soloist draws from, not a chord every voicing must sound.
 3. Eb Gb Bb Db F Ab (minor 7th with 11th)
-4. Ab C Eb Gb Bb Db F (dominant 7th with 9th, 11th implicit, 13th)
+4. Ab C Eb Gb Bb (Db) F (dominant 7th with 9th and 13th; the implied 11th, Db, sits a half step above the major 3rd C and is usually omitted)
 5. D F Ab C (minor triad with flatted 5th and minor 7th)
-6. G B D F A#/Bb over Db bass — the Db bass implies tritone substitution of G7
+6. G B D F A#/Bb over a Db bass. It is not a tritone substitution: the upper structure is still G7#9, now over its b5. The substitute itself is Db7 (Db F Ab Cb), which shares G7's tritone B–F (as Cb–F).
 
 ---
 
@@ -122,7 +122,7 @@ In C major:
   ii7         V7         Imaj7
 ```
 
-Why does this work? Each chord resolves to the next by the strongest root motion in tonal music — descending fifths (D→G→C). The voice leading is equally powerful: the 3rd of Dm7 (F) resolves down to the 3rd of G7 (B is not F, but the 7th of Dm7, C, becomes the 7th relationship). More precisely:
+Why does this work? Each chord resolves to the next by the strongest root motion in tonal music — descending fifths (D→G→C). The voice leading is equally powerful: at each change the guide tones move by a half step or stay put. More precisely:
 
 - The **7th of ii** (C) steps down to the **3rd of V** (B)
 - The **3rd of V** (B) steps up to the **root of I** (C)
@@ -139,7 +139,7 @@ In C minor:
   ii-half      V7alt        i
 ```
 
-The half-diminished ii provides the minor-key color. The altered dominant (G7alt) contains both b9 (Ab) and b13 (Eb), which are the b6 and b3 of C minor — the very notes that define the minor key.
+The half-diminished ii provides the minor-key color. The altered dominant (G7alt) draws its tensions from the G altered scale, whose b9 (Ab) and b13 (Eb) are the b6 and b3 of C minor — the very notes that define the minor key.
 
 ### Extended ii-V Chains
 
@@ -163,18 +163,18 @@ The turnaround — the last bars of a form that lead back to the top — is the 
 Here is the chord progression to **"All The Things You Are"** (Kern/Hammerstein). Circle every ii-V-I (major or minor). Mark whether each resolves or is left hanging:
 
 ```
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dm7    | G7     | Cmaj7  |
-Cm7   | Fm7    | Bb7    | Ebmaj7 |
-Abmaj7| Am7    | D7     | Gmaj7  |
-Am7   | D7     | Gmaj7  |        |
-F#m7  | B7     | Emaj7  | C7alt  |
-Fm7   | Bbm7   | Eb7    | Abmaj7 |
-Dbmaj7| Dbm7   | Cm7    | Bdim7  |
-Bbm7  | Eb7    | Abmaj7 |        |
+A1  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dm7 G7 | Cmaj7  | Cmaj7  |
+A2  | Cm7    | Fm7    | Bb7    | Ebmaj7 |
+    | Abmaj7 | Am7 D7 | Gmaj7  | Gmaj7  |
+B   | Am7    | D7     | Gmaj7  | Gmaj7  |
+    | F#m7   | B7     | Emaj7  | C7alt  |
+A3  | Fm7    | Bbm7   | Eb7    | Abmaj7 |
+    | Dbmaj7 | Dbm7   | Cm7    | Bdim7  |
+    | Bbm7   | Eb7    | Abmaj7 | Abmaj7 |
 ```
 
-You should find at least six ii-V-I progressions in three different keys, plus several ii-V's that resolve deceptively or chain into the next key area.
+The form is 36 bars: eight, eight, eight, then a twelve-bar last A; bars 6 and 14 hold two chords each, two beats apiece. You should find eight ii-V-I progressions in five different keys (the last A holds two), plus several ii-V's that resolve deceptively or chain into the next key area. Charts differ in bars 6 and 14: some write Dm7 and Am7, as here, others the half-diminished Dm7b5 and Am7b5, which keep the Ab and the Eb of the preceding key; either way, each of these bars begins a ii-V-I.
 
 ---
 
@@ -189,17 +189,17 @@ The root, 3rd, and 7th are the **essential tones** that define a chord's quality
 **Root on 6th string:**
 
 ```
-Dm7:        G7:         Cmaj7:
-e ----      e ----      e ----
-B ----      B ----      B ----
-G ----      G ----      G ----
-D ----      D ----      D ----
-A --5--     A ----      A --3--
-E --x--     E --3--     E --x--
-   1 b3 b7     1 3 b7      1 3 7
+Dm7:         G7:          Cmaj7:
+e ----       e ----       e ----
+B ----       B ----       B ----
+G --10--     G --4--      G --9--
+D --10--     D --3--      D --9--
+A ----       A ----       A ----
+E --10--     E --3--      E --8--
+   1 b7 b3      1 b7 3       1 7 3
 ```
 
-(Actual fret positions depend on root location; the concept is root-3rd-7th on adjacent strings.)
+(Read from the bottom up: root on the 6th string, 7th on the 4th, 3rd on the 3rd — the 5th string is skipped. The shape moves as a unit, so the same fingering at another fret gives the same chord type on another root.)
 
 **Root on 5th string:**
 
@@ -209,20 +209,20 @@ Shells on the 5th string keep the voicing in a comfortable middle register. The 
 
 Take a close-position four-note chord and "drop" the second-highest note down an octave. This spreads the voicing across four adjacent strings — perfect for guitar.
 
-**Close position Cmaj7:** B-E-G-C (top to bottom: C-G-E-B in ascending order, then rearrange with second from top dropped)
+**Close position Cmaj7:** G-B-C-E (low to high, second inversion). Drop the second note from the top (C) an octave to get C-G-B-E, with the root in the bass.
 
 **Drop-2 Cmaj7 (string set 5-4-3-2):**
 
 ```
 e ----
-B --0-- (B, the 7th)
-G --0-- (G, the 5th)
-D --2-- (E, the 3rd — dropped from close position)
-A --3-- (C, the root)
+B --5-- (E, the 3rd)
+G --4-- (B, the 7th)
+D --5-- (G, the 5th)
+A --3-- (C, the root — dropped from close position)
 E ----
 ```
 
-Drop-2 voicings exist on four string sets:
+Drop-2 voicings exist on three string sets:
 
 | String Set | Range | Best For |
 |-----------|-------|----------|
@@ -267,14 +267,14 @@ Rule: the 7th of one chord should resolve by step to the 3rd (or nearby tone) of
 The **3rd** and **7th** of each chord are called **guide tones** because they:
 
 1. **Define quality:** The 3rd tells you major vs minor. The 7th tells you dominant vs major vs minor.
-2. **Create motion:** When chords change, the guide tones move by half step or whole step — the smallest, smoothest possible intervals.
+2. **Create motion:** When the roots fall by fifths through a key's chords, as in ii-V-I, the guide tones move by half step or whole step, or stay put — the smallest, smoothest intervals available. Other progressions can require a larger leap, as in the exercise below.
 
 The central miracle of ii-V-I voice leading:
 
 ```
 Chord:    Dm7    G7     Cmaj7
-3rd:       F  →   B  →   E
-7th:       C  →   F  →   B
+Voice 1:   F  →   F  →   E     (3rd → 7th → 3rd)
+Voice 2:   C  →   B  →   B     (7th → 3rd → 7th)
 ```
 
 Notice:
@@ -304,7 +304,9 @@ Bbmaj7 | G7    | Cm7   | F7    |
 Dm7    | G7    | Cm7   | F7    |
 ```
 
-Start on the 3rd of Bbmaj7 (D). At each chord change, move to the nearest guide tone (3rd or 7th) of the new chord. Your line should move by half step or whole step at most. Write out the resulting eight-note line.
+Start on the 7th of Bbmaj7 (A): from its 3rd, D, both guide tones of G7 lie a minor third away. At each chord change, move to the nearest guide tone (3rd or 7th) of the new chord. Every move is then a half step or a whole step except one: from F7 to Dm7, the nearest guide tone is a minor third away. Write out the resulting eight-note line.
+
+Answer: A B Bb A C B Bb A, with the minor third A → C from F7 to Dm7.
 
 ---
 
@@ -339,7 +341,7 @@ With ii:     Abm7 | Db7   | Cmaj7  (Abm7 is the related ii of Db7)
 
 A diminished 7th chord can substitute for a dominant 7th chord a half step below any of its four notes (because dim7 is symmetric — every note is a minor third from the next).
 
-**Bdim7 can substitute for:** C7, Eb7, Gb7, or A7 (dominant chords rooted a half step above each diminished chord tone: B, D, F, Ab).
+**Bdim7 can substitute for:** G7, Bb7, Db7, or E7 (dominant chords whose roots G, Bb, Db and E lie a half step below the diminished chord tones Ab, B, D and F). Bdim7 is each of these chords' 7b9 without its root.
 
 ### Passing Diminished Chords
 
@@ -392,15 +394,15 @@ Chord-scale theory assigns a scale to each chord, providing a pool of melody not
 | Chord Quality | Scale | Source | Avoid Notes |
 |--------------|-------|--------|-------------|
 | **Imaj7** | Ionian (major) | Major scale | 4 (F in C) |
-| **Imaj7#11** | Lydian | Melodic minor on 4th degree | None |
-| **ii-7** | Dorian | Major scale from 2nd degree | None (b6 adds color) |
+| **Imaj7#11** | Lydian | Major scale from 4th degree | None |
+| **ii-7** | Dorian | Major scale from 2nd degree | None (natural 6 adds color) |
 | **V7** (resolving) | Mixolydian | Major scale from 5th degree | 4 (but usable as passing tone) |
 | **V7#11** | Lydian Dominant | Melodic minor from 4th degree | None |
 | **V7alt** | Altered | Melodic minor from 7th degree | None |
-| **ii-7b5** | Locrian | Major scale from 7th degree | 2 (natural 9) — or use Locrian #2 |
+| **ii-7b5** | Locrian | Major scale from 7th degree | b2 (b9) — or use Locrian #2 (natural 9) |
 | **i-7** | Dorian | — | — |
 | **bVII7** (backdoor) | Lydian Dominant | — | — |
-| **dim7** | Diminished (half-whole) | Symmetric | — |
+| **dim7** | Diminished (whole-half) | Symmetric | — |
 
 ### The Melodic Minor Mother Scale
 
@@ -449,15 +451,15 @@ Then play through the progression on guitar, improvising a simple melody that us
 
 Traditional harmony stacks **thirds**. Quartal harmony stacks **fourths**. The sound is open, ambiguous, and modern — it avoids the strong major/minor pull of tertian harmony.
 
-**McCoy Tyner's approach:** Over a D Dorian vamp, stack perfect fourths from various degrees of the scale:
+**McCoy Tyner's approach:** Over a D Dorian vamp, stack fourths from various degrees of the scale, using only the mode's notes:
 
 ```
 From D: D - G - C - F     (stacked 4ths)
 From E: E - A - D - G     (stacked 4ths)
-From G: G - C - F - Bb    (stacked 4ths — includes b6, outside Dorian)
+From G: G - C - F - B     (stacked 4ths — F-B is a tritone)
 ```
 
-These voicings can be moved around within the mode, creating a shimmering, non-functional harmonic landscape. The individual voicings do not "resolve" — they float.
+These voicings can be moved around within the mode, creating a shimmering, non-functional harmonic landscape. The individual voicings do not "resolve" — they float. Most of these fourths are perfect; F-B, the mode's one augmented fourth, adds tension. A perfect fourth above F would be Bb, the b6, which is outside D Dorian.
 
 ### The "So What" Voicing
 
@@ -498,7 +500,7 @@ The beauty of upper structures is that you play a **simple triad** — something
 
 ### Practice Exercise
 
-Build quartal voicings from every degree of D Dorian (D E F G A B C) on string set 4-3-2-1. Stack three perfect fourths from each starting note. Write out the four notes of each voicing and identify the resulting chord quality (some will be familiar tertian chords in disguise).
+Build quartal voicings from every degree of D Dorian (D E F G A B C) on string set 4-3-2-1. Stack three fourths taken from inside the mode — most are perfect, but the one from F to B is a tritone, and every voicing that reaches across it inherits that tritone. Write out the four notes of each voicing and identify the resulting chord quality (some will be familiar tertian chords in disguise).
 
 Then: over a C7 vamp, play D major triad, Ab major triad, and Eb major triad shapes in the upper register while a bass note of C sustains. Listen to how each upper structure changes the color of the dominant chord.
 
@@ -510,7 +512,7 @@ Then: over a C7 vamp, play D major triad, Ab major triad, and Eb major triad sha
 
 In 1959, John Coltrane introduced a substitution system that divides the octave into three equal parts (major thirds): **B - G - Eb** (or equivalently, any three notes a major third apart). This creates three tonal centers equidistant from each other.
 
-The cycle: Starting from any key, move down a major third, then down another major third, arriving back where you started:
+The cycle: Starting from any key, move down a major third three times, arriving back where you started:
 
 ```
 C → Ab → E → C  (descending major thirds)
@@ -538,15 +540,15 @@ The harmonic rhythm is blistering: two chords per measure at a fast tempo, with 
 **"Countdown"** demonstrates how Coltrane Changes work as a reharmonization technique. The original tune is "Tune Up" by Miles Davis:
 
 ```
-Tune Up:   Em7  | A7   | Dmaj7 | Dmaj7 |
-Countdown: Em7  | F7 Bbmaj7 | Db7 Gbmaj7 | A7 Dmaj7 |
+Tune Up:   | Em7     | A7          | Dmaj7      | Dmaj7 |
+Countdown: | Em7 F7  | Bbmaj7 Db7  | Gbmaj7 A7  | Dmaj7 |
 ```
 
 Coltrane replaces the simple ii-V-I with a chain of V-I's descending by major thirds:
 
 - From the target (Dmaj7), he backs up through the major-third cycle: Dmaj7 ← Gbmaj7 ← Bbmaj7
 - Each key center is preceded by its V7: A7→D, Db7→Gb, F7→Bb
-- The result: three ii-V-I resolutions compressed into four bars
+- The result: the original ii, then three V-I resolutions, compressed into four bars
 
 ### The Geometry
 
@@ -556,9 +558,10 @@ The Coltrane cycle is a **triangle inscribed in the circle of fifths** — three
        C
    F       G
  Bb           D
-  Eb         A
-    Ab     E
-       B(Db)
+Eb             A
+ Ab           E
+   Db      B
+       F#
 
 Triangle 1: C - E - Ab
 Triangle 2: D - F# - Bb
@@ -566,7 +569,7 @@ Triangle 3: Eb - G - B  ← Giant Steps triangle
 Triangle 4: F - A - Db
 ```
 
-There are only four distinct major-third triangles. Each divides the twelve tones into three groups of four.
+There are only four distinct major-third triangles. Together they divide the twelve tones into four groups of three.
 
 ### Applying Coltrane Changes to Any ii-V-I
 
@@ -583,17 +586,17 @@ Original:  Dm7     | G7      | Cmaj7   |
 Coltrane:  Dm7 Eb7 | Abmaj7 B7 | Emaj7 G7 | Cmaj7 |
 ```
 
-Or more compactly:
+Or, regrouped with the ii chord alone in the first bar:
 
 ```
-Dm7 | Eb7 Abmaj7 | B7 Emaj7 | Cmaj7 |
+Dm7 | Eb7 Abmaj7 | B7 Emaj7 | G7 Cmaj7 |
 ```
 
 ### Practice Exercise
 
 1. Write out the three major-third key centers for a ii-V-I in **F major** (target: Fmaj7).
 2. Reharmonize `Gm7 | C7 | Fmaj7` using the Coltrane cycle, inserting V7→I pairs for each key center.
-3. Play through your reharmonization slowly on guitar, using shell voicings. Focus on the bass motion — it should move in a pattern of descending major thirds connected by ascending half steps (the V7 roots).
+3. Play through your reharmonization slowly on guitar, using shell voicings. Focus on the bass motion — the key centres fall by major thirds, so after the single half step that leaves the ii chord the roots alternate up a perfect fourth (each V7 to its I) and up three half steps (each I to the next V7): a minor third such as E→G, or, where the chord names give Ab→B or Db→E, its enharmonic spelling, an augmented second.
 
 ---
 
@@ -604,7 +607,7 @@ The following jazz standards are referenced throughout this course as study mate
 | Standard | Composer | Key Concepts | Why Study It |
 |----------|----------|-------------|--------------|
 | **Autumn Leaves** | Kosma/Mercer | ii-V-I in major and relative minor | The perfect first jazz tune — two ii-V-Is in related keys |
-| **All The Things You Are** | Kern/Hammerstein | Chained ii-V-Is through four key centers | The most harmonically rich standard in the repertoire |
+| **All The Things You Are** | Kern/Hammerstein | Chained ii-V-Is through five key centers | The most harmonically rich standard in the repertoire |
 | **Rhythm Changes** | Gershwin (I Got Rhythm) | Turnarounds, bridge dominants, substitution playground | The second most common jazz form after blues |
 | **Stella by Starlight** | Young | ii-V chains, modal mixture, deceptive resolution | Tests your ability to track rapidly shifting key centers |
 | **Giant Steps** | Coltrane | Major-third symmetric division, Coltrane Changes | The ultimate harmonic obstacle course |
@@ -627,7 +630,7 @@ These tunes form a core vocabulary. A jazz guitarist who can voice lead, comp, a
 | **Chord-scale theory** | The practice of assigning a parent scale to each chord quality for improvisation |
 | **Avoid note** | A scale degree that creates a minor 9th against a chord tone when sustained |
 | **Melodic minor** | The jazz minor "mother scale" (1 2 b3 4 5 6 7) whose modes generate altered and extended dominant scales |
-| **Quartal voicing** | A chord built by stacking perfect fourths rather than thirds |
+| **Quartal voicing** | A chord built by stacking fourths, mostly perfect, rather than thirds |
 | **Upper-structure triad** | A major or minor triad superimposed over a dominant 7th to create extensions |
 | **Coltrane Changes** | A reharmonization technique dividing the octave into three key centers a major third apart |
 | **Voice leading** | The art of connecting chords through minimal melodic motion in each voice |
@@ -651,7 +654,7 @@ These tunes form a core vocabulary. A jazz guitarist who can voice lead, comp, a
 > B, G, and Eb. They are equidistant on the chromatic circle, each a major third apart, forming an equilateral triangle on the circle of fifths.
 
 **5. Build a quartal voicing starting on A using stacked perfect fourths (four notes). What familiar chord does this voicing resemble?**
-> A - D - G - C. This is an Am7(11) or equivalently a C/A voicing. The quartal stack contains the notes of Am7 (A C G) plus D (the 11th), but without the tertian ordering.
+> A - D - G - C. This is an Am7(11) without its fifth, or equivalently D7sus4/A, which has the same four notes. The quartal stack contains the notes of Am7 without its fifth E (A C G), plus D (the 11th), but without the tertian ordering.
 
 **Pass criteria:** Identify all ii-V-I progressions in an unfamiliar lead sheet, voice lead through them using at least two voicing types, apply one substitution technique, and explain the voice-leading rationale for each chord connection.
 
