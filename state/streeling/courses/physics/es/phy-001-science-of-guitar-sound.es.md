@@ -128,7 +128,7 @@ El temperamento igual ajusta ligeramente estas relaciones para que todas las ton
 
 ### Ejercicio práctico
 
-Mide la distancia desde la cejuela hasta el traste 12 en tu guitarra, luego mide desde el traste 12 hasta la selleta. Deberían ser casi exactamente iguales — confirmando que el traste 12 divide la longitud de la cuerda a la mitad, duplicando la frecuencia (una octava). Ahora mide de la cejuela al traste 7: debería ser aproximadamente 2/3 de la longitud total de la cuerda, coincidiendo con la relación 3:2 de una quinta justa.
+Mide la distancia desde la cejuela hasta el traste 12 en tu guitarra, luego mide desde el traste 12 hasta la selleta. Deberían ser casi exactamente iguales — confirmando que el traste 12 divide la longitud de la cuerda a la mitad, duplicando la frecuencia (una octava). Ahora mide del traste 7 a la selleta: debería ser aproximadamente 2/3 de la longitud total de la cuerda (la distancia de la cejuela al traste 7 es el tercio restante), coincidiendo con la relación 3:2 de una quinta justa.
 
 ---
 

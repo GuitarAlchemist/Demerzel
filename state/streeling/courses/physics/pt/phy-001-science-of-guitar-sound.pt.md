@@ -128,7 +128,7 @@ O temperamento igual ajusta ligeiramente essas razões para fazer com que todas 
 
 ### Exercício Prático
 
-Meça a distância da pestana até o 12o traste no seu violão, depois meça do 12o traste até o cavalete. Devem ser quase exatamente iguais — confirmando que o 12o traste divide o comprimento da corda ao meio, dobrando a frequência (uma oitava). Agora meça da pestana ao traste 7: deve ser aproximadamente 2/3 do comprimento total da corda, correspondendo à razão 3:2 de uma quinta justa.
+Meça a distância da pestana até o 12o traste no seu violão, depois meça do 12o traste até o cavalete. Devem ser quase exatamente iguais — confirmando que o 12o traste divide o comprimento da corda ao meio, dobrando a frequência (uma oitava). Agora meça do traste 7 até o cavalete: deve ser aproximadamente 2/3 do comprimento total da corda (a distância da pestana ao traste 7 é o terço restante), correspondendo à razão 3:2 de uma quinta justa.
 
 ---
 
