@@ -379,7 +379,7 @@ The **K** relation adds a further layer (considering equivalence up to set-class
 | Term | Definition |
 |------|-----------|
 | **Common-practice tonality** | The harmonic system of Western art music from roughly 1600-1900, based on functional harmony and key centers |
-| **Emancipation of dissonance** | Schoenberg's 1908 claim that dissonant sonorities need not resolve to consonance |
+| **Emancipation of dissonance** | Schoenberg's principle, applied in his music from 1908 and named in 1926, that dissonant sonorities need not resolve to consonance |
 | **Atonality** | Music organized without a tonal center or key |
 | **Free atonality** | Atonal music organized intuitively through motivic cells, registral distribution, and pitch centricity |
 | **Serialism (twelve-tone)** | Systematic organization of atonal music based on an ordered row of 12 pitch classes |

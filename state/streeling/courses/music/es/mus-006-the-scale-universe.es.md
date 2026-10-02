@@ -272,11 +272,11 @@ El catálogo exhaustivo de William Zeitler (allthescales.org) define una escala 
 
 1. **La tónica está presente** — el bit 0 debe estar activo. Una escala debe contener su propia tónica. Esto elimina 2048 escalas (la mitad del universo).
 
-2. **Ningún salto mayor de 4 semitonos** — dos notas consecutivas de la escala no pueden estar a más de una tercera mayor. Un salto de 5 o más semitonos crea un hueco audible que rompe la continuidad de la escala.
+2. **Ningún salto mayor de 4 semitonos** — dos notas consecutivas de la escala, contando alrededor de la octava, de modo que también cuenta el paso de la nota más aguda hasta la tónica, no pueden estar a más de una tercera mayor. Un salto de 5 o más semitonos crea un hueco audible que rompe la continuidad de la escala.
 
 3. **Entre 5 y 8 notas** — las escalas fuera de este rango suenan o demasiado dispersas (para oírse como escala) o demasiado densas (para distinguirse del cromatismo). Es una restricción pragmática, no matemática.
 
-4. **Ningún grupo de más de 3 semitonos consecutivos** — cuatro o más notas cromáticas seguidas forman un clúster cromático que pierde el carácter de escala.
+4. **Ningún grupo de más de 3 semitonos consecutivos** — cuatro o más notas cromáticas seguidas, contando alrededor de la octava como Si, Do, Do#, Re, forman un clúster cromático que pierde el carácter de escala.
 
 Los criterios 1 y 2 reducen por sí solos las 4096 escalas a exactamente **1490**, el recuento de Zeitler. Aplicar los cuatro criterios tal como se enuncian aquí deja **716**. Siguen siendo muchísimas más que el repertorio conocido de escalas con nombre.
 

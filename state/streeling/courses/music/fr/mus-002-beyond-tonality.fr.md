@@ -379,7 +379,7 @@ La relation **K** ajoute une couche supplémentaire (l'équivalence à l'apparte
 | Terme | Définition |
 |------|-----------|
 | **Tonalité de la pratique commune** | Le système harmonique de la musique savante occidentale d'environ 1600 à 1900, fondé sur l'harmonie fonctionnelle et les centres tonals |
-| **Émancipation de la dissonance** | L'affirmation de Schoenberg, en 1908, selon laquelle les sonorités dissonantes n'ont pas besoin de se résoudre sur une consonance |
+| **Émancipation de la dissonance** | Le principe de Schoenberg, appliqué dans sa musique dès 1908 et nommé en 1926, selon lequel les sonorités dissonantes n'ont pas besoin de se résoudre sur une consonance |
 | **Atonalité** | Musique organisée sans centre tonal ni tonalité |
 | **Atonalité libre** | Musique atonale organisée intuitivement par des cellules motiviques, la distribution des registres et la centralité de hauteur |
 | **Sérialisme (dodécaphonique)** | Organisation systématique de la musique atonale fondée sur une série ordonnée des 12 classes de hauteur |

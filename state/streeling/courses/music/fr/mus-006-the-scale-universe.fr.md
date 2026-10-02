@@ -272,11 +272,11 @@ Le catalogue exhaustif de William Zeitler (allthescales.org) définit une gamme 
 
 1. **La fondamentale est présente** — le bit 0 doit être à 1. Une gamme doit contenir sa propre tonique. Cela élimine 2 048 gammes (la moitié de l'univers).
 
-2. **Aucun écart supérieur à 4 demi-tons** — deux notes consécutives de la gamme ne peuvent être distantes de plus d'une tierce majeure. Un écart de 5 demi-tons ou plus crée un trou audible qui rompt la continuité de la gamme.
+2. **Aucun écart supérieur à 4 demi-tons** — deux notes consécutives de la gamme, en comptant autour de l'octave, de sorte que le pas de la note la plus haute jusqu'à la fondamentale compte aussi, ne peuvent être distantes de plus d'une tierce majeure. Un écart de 5 demi-tons ou plus crée un trou audible qui rompt la continuité de la gamme.
 
 3. **Entre 5 et 8 notes** — les gammes hors de cet intervalle sonnent soit trop clairsemées (pour être entendues comme des gammes), soit trop denses (pour être distinguées du chromatisme). C'est une contrainte pragmatique, pas mathématique.
 
-4. **Aucun agrégat de plus de 3 demi-tons consécutifs** — quatre notes chromatiques ou plus à la suite forment un cluster chromatique qui perd son caractère de gamme.
+4. **Aucun agrégat de plus de 3 demi-tons consécutifs** — quatre notes chromatiques ou plus à la suite, en comptant autour de l'octave comme pour Si, Do, Do#, Ré, forment un cluster chromatique qui perd son caractère de gamme.
 
 Les critères 1 et 2 réduisent à eux seuls les 4 096 gammes à exactement **1 490**, le compte de Zeitler. L'application des quatre critères tels qu'énoncés ici en laisse **716**. C'est encore bien plus que le répertoire familier des gammes qui portent un nom.
 

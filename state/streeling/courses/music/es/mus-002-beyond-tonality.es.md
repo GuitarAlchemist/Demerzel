@@ -379,7 +379,7 @@ La relación **K** añade una capa más (la equivalencia salvo pertenencia a una
 | Término | Definición |
 |------|-----------|
 | **Tonalidad de la práctica común** | El sistema armónico de la música académica occidental de aproximadamente 1600-1900, basado en la armonía funcional y los centros tonales |
-| **Emancipación de la disonancia** | La afirmación de Schoenberg de 1908 de que las sonoridades disonantes no necesitan resolver en una consonancia |
+| **Emancipación de la disonancia** | El principio de Schoenberg, aplicado en su música desde 1908 y nombrado en 1926, según el cual las sonoridades disonantes no necesitan resolver en una consonancia |
 | **Atonalidad** | Música organizada sin centro tonal ni tonalidad |
 | **Atonalidad libre** | Música atonal organizada intuitivamente mediante células motívicas, distribución de registros y centralidad de altura |
 | **Serialismo (dodecafónico)** | Organización sistemática de la música atonal basada en una serie ordenada de las 12 clases de altura |

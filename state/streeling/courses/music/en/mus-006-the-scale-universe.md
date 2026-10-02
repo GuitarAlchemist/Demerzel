@@ -272,11 +272,11 @@ William Zeitler's exhaustive catalog (allthescales.org) defines a scale by crite
 
 1. **The root is present** — bit 0 must be set. A scale must contain its own tonic. This eliminates 2,048 scales (half the universe).
 
-2. **No gap larger than 4 semitones** — consecutive scale tones cannot be more than a major 3rd apart. A gap of 5+ semitones creates an audible hole that breaks scalar continuity.
+2. **No gap larger than 4 semitones** — consecutive scale tones, counted around the octave so that the step from the highest note back up to the root counts too, cannot be more than a major 3rd apart. A gap of 5+ semitones creates an audible hole that breaks scalar continuity.
 
 3. **Between 5 and 8 notes** — scales outside this range either sound too sparse (to be heard as scalar) or too dense (to be heard as distinct from chromaticism). This is a pragmatic constraint, not a mathematical one.
 
-4. **No cluster longer than 3 consecutive semitones** — four or more chromatic notes in a row create a chromatic cluster that loses scalar character.
+4. **No cluster longer than 3 consecutive semitones** — four or more chromatic notes in a row, counted around the octave as B, C, C#, D are, create a chromatic cluster that loses scalar character.
 
 Criteria 1 and 2 alone reduce the 4,096 scales to exactly **1,490**, Zeitler's own count. Applying all four criteria as stated here leaves **716**. This is still vastly more than the familiar repertoire of named scales.
 
