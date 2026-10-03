@@ -1212,15 +1212,20 @@ def _eval_event_producer(
             ))
             continue
 
-        correlated = any(
+        # A run's head_sha is the commit it executed against, so an exact match
+        # discharges the obligation on its own and needs no pull identity to
+        # confirm it. It has to stand alone because the identities below cannot
+        # be recovered for a pull CLOSED WITHOUT MERGING whose head branch was
+        # then deleted: GitHub drops `pull_requests` from the run payload once
+        # the branch is gone, and the `/commits/{sha}/pulls` fallback only finds
+        # the association for merged pulls. `identity_pulls` is then empty and
+        # `any()` over it is False however plainly the workflow ran — which
+        # reported Demerzel PR #1104 stale even though run 35288036450 had
+        # succeeded against its exact head.
+        correlated = run_head_sha == head_sha or any(
             run_pull["number"] == pull_number
-            and (
-                run_head_sha == head_sha
-                or (
-                    isinstance(run_pull.get("head"), dict)
-                    and run_pull["head"].get("sha") == head_sha
-                )
-            )
+            and isinstance(run_pull.get("head"), dict)
+            and run_pull["head"].get("sha") == head_sha
             for run_pull in identity_pulls
         )
         status = run.get("status")
