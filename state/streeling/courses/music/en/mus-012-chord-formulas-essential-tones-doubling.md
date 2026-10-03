@@ -149,7 +149,7 @@ Only [`ChordBuilder.WithInterval`](https://github.com/GuitarAlchemist/ga/blob/5c
 - the custom voicing ([L127](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L127));
 - the polychord ([L156](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L156)).
 
-No code outside those two files calls `ChordBuilder`. [`EssentialIntervals` and `OptionalIntervals`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L93-L100) have no caller.
+No code outside those two files calls `ChordBuilder`. [`EssentialIntervals` and `OptionalIntervals`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L93-L100) have no caller, and `OptionalIntervals` is the only reader of the interval's `IsOptional`, the negation of `IsEssential`.
 
 Besides the polychord builder, which [copies it](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L146), and the uncalled properties above, `IsEssential` is read in two places:
 - the interval's [`ToString`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L67-L72);

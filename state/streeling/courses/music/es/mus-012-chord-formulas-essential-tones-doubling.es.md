@@ -44,7 +44,7 @@ Una fórmula de acorde enumera las notas del acorde como grados sobre su fundame
 | C11 | 1 3 5 ♭7 9 11 | 0 4 7 10 14 17 | do mi sol si♭ re fa |
 | C13 | 1 3 5 ♭7 9 11 13 | 0 4 7 10 14 17 21 | do mi sol si♭ re fa la |
 
-Más allá de la séptima, los grados son intervalos compuestos, como en MUS-008: el 9 es una novena mayor, 14 semitonos, el 2 una octava arriba; el 11 es una oncena justa, 17, el 4 una octava arriba; el 13 una decimotercera mayor, 21, el 6 una octava arriba. Por convención, un acorde llamado 9, 11 o 13 contiene las notas de la pila de terceras bajo su número: C13 es la séptima de dominante do mi sol si♭ con re, fa y la encima. Cada letra aparece una sola vez, y siete letras son todas las letras que hay. Sobre sol, la fórmula 1 3 5 ♭7 9 11 13 da sol si re fa la do mi, las siete notas de do mayor.
+Más allá de la séptima, los grados son intervalos compuestos, como en MUS-008: el 9 es una novena mayor, 14 semitonos, el 2 una octava arriba; el 11 es una oncena justa, 17, el 4 una octava arriba; el 13 una decimotercera mayor, 21, el 6 una octava arriba. Por convención, un acorde llamado 9, 11 o 13 contiene las notas de la pila de terceras bajo su número: C13 es la séptima de dominante do mi sol si♭ con re, fa y la encima. Cada nombre de nota aparece una sola vez, y siete nombres son todos los nombres de nota que hay. Sobre sol, la fórmula 1 3 5 ♭7 9 11 13 da sol si re fa la do mi, las siete notas de do mayor.
 
 ### Ejercicio práctico
 
@@ -149,7 +149,7 @@ Solo [`ChordBuilder.WithInterval`](https://github.com/GuitarAlchemist/ga/blob/5c
 - el voicing personalizado ([L127](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L127));
 - el poliacorde ([L156](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L156)).
 
-Ningún código fuera de esos dos archivos llama a `ChordBuilder`. [`EssentialIntervals` y `OptionalIntervals`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L93-L100) no tienen ningún llamador.
+Ningún código fuera de esos dos archivos llama a `ChordBuilder`. [`EssentialIntervals` y `OptionalIntervals`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L93-L100) no tienen ningún llamador, y `OptionalIntervals` es el único lector del `IsOptional` del intervalo, la negación de `IsEssential`.
 
 Aparte del constructor de poliacordes, que [lo copia](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L146), y de las propiedades sin llamador de arriba, `IsEssential` se lee en dos lugares:
 - el [`ToString`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L67-L72) del intervalo;
@@ -164,7 +164,7 @@ En el archivo exportado que está en GA, [`all-chords.json`](https://github.com/
 - todo valor que no enumera a `Root`, incluidos 13 (♭9), 15 (♯9), 18 (♯11) y 20 (♭13).
 
 Esto afecta a las fórmulas del analizador de símbolos:
-- su «Altered Dominant», 4 7 10 13 15 ([`ChordSymbolParser.cs#L176-L177`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/Parsing/ChordSymbolParser.cs#L176-L177)), contiene dos intervalos etiquetados `Root`;
+- su «Altered Dominant» (dominante alterada), 4 7 10 13 15 ([`ChordSymbolParser.cs#L176-L177`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/Parsing/ChordSymbolParser.cs#L176-L177)), contiene dos intervalos etiquetados `Root`;
 - sus fórmulas ♭9, ♯9, ♯11 y ♭13 ([L181-L188](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/Parsing/ChordSymbolParser.cs#L181-L188)) contienen uno cada una.
 
 [`ChordDegree`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L52-L62) da a cada uno el grado 1. Una regla que quitara notas según su función no podría distinguir esas tensiones de la fundamental.
