@@ -9,9 +9,9 @@
   "hypothesis": "Phase transitions in governance systems produce measurable precursor signals analogous to statistical mechanics — belief distribution skew, health score velocity changes, policy density saturation, cross-repo coupling shifts, conscience signal frequency spikes, and variety ratio threshold crossings.",
   "test_method": "cross_validation",
   "evidence": [
-    "Statistical mechanics analogy: governance health score R as thermodynamic potential, belief states as microstates, variety ratio as order parameter",
+    "Statistical mechanics analogy: governance health score R as thermodynamic potential, belief states as microstates, variety ratio as a candidate order parameter",
     "GPT-4o independent validation: agrees (confidence 0.7) with reservations about threshold universality and policy quality weighting",
-    "Cybernetics CYB-003 (variety ratio) provides empirical grounding for the order parameter signal",
+    "Cybernetics CYB-003 defines the variety ratio this signal uses but has not measured it, and reads regulation from the outcome of each disturbance, not from the ratio (qualified 2026-10-01, PR #1164)",
     "Existing conscience observability infrastructure (state/conscience/signals/) supports signal frequency measurement",
     "Six signals identified with specific measurement formulas and data sources in governance state files"
   ],
