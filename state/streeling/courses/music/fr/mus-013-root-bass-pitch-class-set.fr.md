@@ -28,7 +28,7 @@ version: "1.0.0"
 
 Un accord joué à la guitare a trois propriétés, et un nom d'accord les mêle.
 
-- **L'ensemble de classes de hauteurs** est l'ensemble des notes de l'accord, sans les octaves ni les redoublements (MUS-020). La forme x32010 sonne do3 mi3 sol3 do4 mi4, et son ensemble est {do, mi, sol}, ou {0, 4, 7} avec do = 0.
+- **L'ensemble de classes de hauteurs** est l'ensemble des notes de l'accord, sans les octaves ni les redoublements (MUS-020). La forme x32010 fait sonner do3 mi3 sol3 do4 mi4, et son ensemble est {do, mi, sol}, ou {0, 4, 7} avec do = 0.
 - **La basse** est la note la plus grave qui sonne : do3 dans x32010. Elle appartient au voicing, pas à l'ensemble.
 - **La fondamentale** est la note qui donne son nom à l'accord. Pour un accord construit en tierces, l'article « Root (chord) » de Wikipédia donne la méthode : « reorganize the pitches as a stack of thirds and then identify the lowest note in the stack » (réorganiser les hauteurs en un empilement de tierces, puis repérer la note la plus grave de l'empilement). Les notes do, mi et sol forment un empilement de tierces sur do, donc la fondamentale est do, où que do sonne.
 
@@ -46,7 +46,7 @@ Un symbole d'accord fixe une fondamentale et un ensemble. Une barre oblique ajou
 
 Donnez l'ensemble, la basse, la fondamentale et le symbole de 2x0232.
 
-> *Solution :* 2x0232 sonne fa♯2 ré3 la3 ré4 fa♯4. L'ensemble est {ré, fa♯, la}, ou {2, 6, 9}, et la basse est fa♯. La fondamentale est ré, puisque ré fa♯ la est un empilement de tierces sur ré. Le symbole est D/F♯, l'accord du milieu de la descente G – D/F♯ – Em que l'article « Slash chord » de Wikipédia donne en exemple.
+> *Solution :* 2x0232 fait sonner fa♯2 ré3 la3 ré4 fa♯4. L'ensemble est {ré, fa♯, la}, ou {2, 6, 9}, et la basse est fa♯. La fondamentale est ré, puisque ré fa♯ la est un empilement de tierces sur ré. Le symbole est D/F♯, l'accord du milieu de la descente G – D/F♯ – Em que l'article « Slash chord » de Wikipédia donne en exemple.
 
 ---
 
@@ -92,7 +92,7 @@ Les accords à barre oblique servent aussi les arrangeurs. L'article « Slash ch
 
 Une grille en do majeur se termine par Dm7 – G7 – ?, et le dernier accord est joué x35555. Nommez-le.
 
-> *Solution :* x35555 sonne do3 sol3 do4 mi4 la4 : l'ensemble {do, mi, sol, la} avec do à la basse. Après G7, la cadence arrive sur la tonique do, donc l'accord est C6. Am7/C nomme les mêmes notes, mais avec la fondamentale la.
+> *Solution :* x35555 fait sonner do3 sol3 do4 mi4 la4 : l'ensemble {do, mi, sol, la} avec do à la basse. Après G7, la cadence arrive sur la tonique do, donc l'accord est C6. Am7/C nomme les mêmes notes, mais avec la fondamentale la.
 
 ---
 
@@ -119,7 +119,7 @@ Deux formes, x02230 et xx0230, contiennent le même ensemble {la, ré, mi} : seu
 
 Nommez 3x0013 comme le ferait une grille, et donnez l'autre lecture de son ensemble.
 
-> *Solution :* 3x0013 sonne sol2 ré3 sol3 do4 sol4 : l'ensemble {sol, do, ré} avec sol à la basse. Une grille le nomme Gsus4, puisque le do descend d'ordinaire sur si et donne G. Le même ensemble est Csus2, écrit sur cette basse Csus2/G.
+> *Solution :* 3x0013 fait sonner sol2 ré3 sol3 do4 sol4 : l'ensemble {sol, do, ré} avec sol à la basse. Une grille le nomme Gsus4, puisque le do descend d'ordinaire sur si et donne G. Le même ensemble est Csus2, écrit sur cette basse Csus2/G.
 
 ---
 
@@ -145,7 +145,7 @@ Un test passe [les 4096 ensembles avec chacune des 12 basses](https://github.com
 
 **L'exemple symétrique du test n'est pas symétrique.** La liste d'exclusions dit que [« dominant-7-sharp-5 [0,4,8,10] is T4-symmetric — multiple roots, same set »](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L43) (dominant-7-sharp-5 est symétrique par T4 : plusieurs fondamentales, même ensemble). Transposé de 4 demi-tons, do mi sol♯ si♭ devient mi sol♯ do ré, un autre ensemble. Ses seules lectures exactes sont sur do, sous deux noms pour les mêmes intervalles, [augmented-7](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L68) et [dominant-7-sharp-5](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L95). L'aller-retour rend augmented-7, priorité 8 avant 30, et l'exclusion tient pour cette raison. Les accords de quatre notes du catalogue contiennent bien deux ensembles symétriques : la septième diminuée du §2, et [dominant-7-b5](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L94), do mi sol♭ si♭, qu'une transposition d'un triton envoie sur lui-même : C7♭5 est aussi G♭7♭5.
 
-**Les ensembles sans correspondance reçoivent un nom de Forte et pas de fondamentale.** Un ensemble dont aucun motif ne s'approche à un intervalle manquant et un intervalle en trop près est nommé par son [numéro de Forte](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L320-L356), sans fondamentale, et [seule une correspondance avec un motif](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L43-L44) peut porter un suffixe à barre oblique. Pour un tel ensemble, l'analyseur de voicings de GA [enregistre la basse comme fondamentale du voicing](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Fretboard/Voicings/Analysis/VoicingHarmonicAnalyzer.cs#L84), écrite par [`PitchClass.ToString`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/PitchClass.cs#L83-L88) sous forme de nombre, avec T pour 10 et E pour 11, là où un ensemble reconnu enregistre un nom de note. Le nom de l'accord n'en est pas affecté. MUS-020 traite du catalogue de Forte.
+**Les ensembles sans correspondance reçoivent un nom de Forte et pas de fondamentale.** Un ensemble qu'aucun motif n'atteint avec au plus un intervalle manquant et un intervalle en trop est nommé par son [numéro de Forte](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L320-L356), sans fondamentale, et [seule une correspondance avec un motif](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L43-L44) peut porter un suffixe à barre oblique. Pour un tel ensemble, l'analyseur de voicings de GA [enregistre la basse comme fondamentale du voicing](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Fretboard/Voicings/Analysis/VoicingHarmonicAnalyzer.cs#L84), écrite par [`PitchClass.ToString`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/PitchClass.cs#L83-L88) sous forme de nombre, avec T pour 10 et E pour 11, là où un ensemble reconnu enregistre un nom de note. Le nom de l'accord n'en est pas affecté. MUS-020 traite du catalogue de Forte.
 
 Corriger quoi que ce soit ici revient aux responsables de GA ; cette leçon ne fait que le décrire.
 
@@ -227,7 +227,7 @@ L'étape 2 prédit 124 ensembles ayant des lectures exactes sur deux fondamental
 ## Auto-évaluation
 
 **1. Donnez l'ensemble, la basse et les deux lectures de 8x798x, et le nom qu'écrirait une grille après G7 en do majeur.**
-> 8x798x sonne do3 la3 mi4 sol4 : l'ensemble {do, mi, sol, la}, avec do à la basse. Les lectures sont C6 et Am7, écrites sur cette basse C6 et Am7/C. Après G7 en do majeur, la grille écrit C6.
+> 8x798x fait sonner do3 la3 mi4 sol4 : l'ensemble {do, mi, sol, la}, avec do à la basse. Les lectures sont C6 et Am7, écrites sur cette basse C6 et Am7/C. Après G7 en do majeur, la grille écrit C6.
 
 **2. Pourquoi n'importe quelle note d'un accord de septième diminuée peut-elle être sa fondamentale, et qu'est-ce qui indique la fondamentale dans la musique écrite ?**
 > Ses quatre notes divisent l'octave en quatre tierces mineures, si bien que l'ensemble est le même empilement de tierces mineures à partir de chacune d'elles. L'orthographe indique la fondamentale, là où commence l'empilement de tierces écrit, et la résolution indique la fonction.

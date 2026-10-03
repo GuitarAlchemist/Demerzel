@@ -28,7 +28,7 @@ Al terminar esta lección, podrás:
 
 Un acorde tocado en una guitarra tiene tres propiedades, y un nombre de acorde las mezcla.
 
-- **El conjunto de clases de altura** son las notas del acorde sin las octavas ni las duplicaciones (MUS-020). La forma x32010 suena do3 mi3 sol3 do4 mi4, y su conjunto es {do, mi, sol}, o {0, 4, 7} con do = 0.
+- **El conjunto de clases de altura** es el conjunto de las notas del acorde sin las octavas ni las duplicaciones (MUS-020). La forma x32010 hace sonar do3 mi3 sol3 do4 mi4, y su conjunto es {do, mi, sol}, o {0, 4, 7} con do = 0.
 - **El bajo** es la nota más grave que suena: do3 en x32010. Pertenece al voicing, no al conjunto.
 - **La fundamental** es la nota que da nombre al acorde. Para un acorde construido por terceras, el artículo «Root (chord)» de Wikipedia da el método: «reorganize the pitches as a stack of thirds and then identify the lowest note in the stack» (reorganizar las alturas como un apilamiento de terceras y luego identificar la nota más grave del apilamiento). Las notas do, mi y sol forman un apilamiento de terceras sobre do, así que la fundamental es do, dondequiera que suene do.
 
@@ -46,13 +46,13 @@ Un símbolo de acorde fija una fundamental y un conjunto. Una barra añade el ba
 
 Da el conjunto, el bajo, la fundamental y el símbolo de 2x0232.
 
-> *Solución:* 2x0232 suena fa♯2 re3 la3 re4 fa♯4. El conjunto es {re, fa♯, la}, o {2, 6, 9}, y el bajo es fa♯. La fundamental es re, ya que re fa♯ la es un apilamiento de terceras sobre re. El símbolo es D/F♯, el acorde central del descenso G – D/F♯ – Em que el artículo «Slash chord» de Wikipedia da como ejemplo.
+> *Solución:* 2x0232 hace sonar fa♯2 re3 la3 re4 fa♯4. El conjunto es {re, fa♯, la}, o {2, 6, 9}, y el bajo es fa♯. La fundamental es re, ya que re fa♯ la es un apilamiento de terceras sobre re. El símbolo es D/F♯, el acorde central del descenso G – D/F♯ – Em que el artículo «Slash chord» de Wikipedia da como ejemplo.
 
 ---
 
 ## 2. Un conjunto, varias fundamentales
 
-Apilar terceras da una sola fundamental para una tríada o un acorde de séptima sin huecos en su apilamiento, salvo si el apilamiento cierra la octava: la tríada aumentada y la séptima disminuida son apilamientos de terceras desde cualquiera de sus notas, como muestra el tercer punto de abajo. Algunos conjuntos se leen desde más de una de sus notas, y cada lectura es correcta. Las notas la, do, mi y sol forman un apilamiento de terceras sobre la: es el acorde de séptima menor Am7. También es una tríada de do mayor con la añadida una sexta por encima de do: es C6. El artículo «Sixth chord» de Wikipedia dice de C6: «Because it is also an A minor seventh chord in first inversion, it is tonally ambiguous. Identifying the root depends on context.» (Como también es un acorde de la menor séptima en primera inversión, es tonalmente ambiguo. Identificar su fundamental depende del contexto).
+Apilar terceras da una sola fundamental para una tríada o un acorde de séptima sin huecos en su apilamiento, salvo si el apilamiento cierra la octava: la tríada aumentada y la séptima disminuida son apilamientos de terceras desde cualquiera de sus notas, como muestra el tercer punto de abajo. Algunos conjuntos se leen desde más de una de sus notas, y cada lectura es correcta. Las notas la, do, mi y sol forman un apilamiento de terceras sobre la: es el acorde de séptima menor Am7. También es una tríada de do mayor con un la añadido, una sexta por encima de do: es C6. El artículo «Sixth chord» de Wikipedia dice de C6: «Because it is also an A minor seventh chord in first inversion, it is tonally ambiguous. Identifying the root depends on context.» (Como también es un acorde de la menor séptima en primera inversión, es tonalmente ambiguo. Identificar su fundamental depende del contexto).
 
 | Notas | Conjunto | Lecturas |
 |------|------|------|
@@ -92,7 +92,7 @@ Los acordes con barra también sirven a los arreglistas. El artículo «Slash ch
 
 Un cifrado en do mayor termina Dm7 – G7 – ?, y el último acorde se toca x35555. Nómbralo.
 
-> *Solución:* x35555 suena do3 sol3 do4 mi4 la4: el conjunto {do, mi, sol, la} con do en el bajo. Después de G7, la cadencia llega a la tónica do, así que el acorde es C6. Am7/C nombra las mismas notas, pero con fundamental la.
+> *Solución:* x35555 hace sonar do3 sol3 do4 mi4 la4: el conjunto {do, mi, sol, la} con do en el bajo. Después de G7, la cadencia llega a la tónica do, así que el acorde es C6. Am7/C nombra las mismas notas, pero con fundamental la.
 
 ---
 
@@ -113,13 +113,13 @@ Muchas formas habituales contienen uno de los conjuntos del §2 o una de sus tra
 
 La columna de notas nombra cada traste con sostenidos; no es la grafía del acorde. Como Ddim7, xx0101 se escribe re fa la♭ do♭, y como Eaug, 032110 se escribe mi sol♯ si♯.
 
-Dos formas, x02230 y xx0230, contienen el mismo conjunto {la, re, mi}: solo el bajo y la resolución separan Asus4 de Dsus2. Cada forma sus4 resuelve a un traste: xx0233 a D xx0232 (sol4 baja a fa♯4), x02230 a A x02220 (re4 a do♯4), y 022200 a E 022100 (la3 a sol♯3). Las dos últimas filas contienen conjuntos simétricos que Wikipedia usa como ejemplos. El conjunto de xx0101 es el de G♯dim7, «G♯–B–D–F» (sol♯–si–re–fa), del que «Diminished seventh chord» dice que es «enharmonically equivalent to three other inverted diminished chords» (enarmónicamente equivalente a otros tres acordes disminuidos invertidos); el conjunto de 032110 es el de A♭+, la♭–do–mi, el ejemplo con el que empieza «Augmented triad».
+Dos formas, x02230 y xx0230, contienen el mismo conjunto {la, re, mi}: solo el bajo y la resolución separan Asus4 de Dsus2. Cada forma sus4 se resuelve un traste más abajo: xx0233 a D xx0232 (sol4 baja a fa♯4), x02230 a A x02220 (re4 a do♯4), y 022200 a E 022100 (la3 a sol♯3). Las dos últimas filas contienen conjuntos simétricos que Wikipedia usa como ejemplos. El conjunto de xx0101 es el de G♯dim7, «G♯–B–D–F» (sol♯–si–re–fa), del que «Diminished seventh chord» dice que es «enharmonically equivalent to three other inverted diminished chords» (enarmónicamente equivalente a otros tres acordes disminuidos invertidos); el conjunto de 032110 es el de A♭+, la♭–do–mi, el ejemplo con el que empieza «Augmented triad».
 
 ### Ejercicio práctico
 
 Nombra 3x0013 como lo haría un cifrado, y da la otra lectura de su conjunto.
 
-> *Solución:* 3x0013 suena sol2 re3 sol3 do4 sol4: el conjunto {sol, do, re} con sol en el bajo. Un cifrado lo nombra Gsus4, ya que el do suele bajar a si y da G. El mismo conjunto es Csus2, escrito sobre este bajo Csus2/G.
+> *Solución:* 3x0013 hace sonar sol2 re3 sol3 do4 sol4: el conjunto {sol, do, re} con sol en el bajo. Un cifrado lo nombra Gsus4, ya que el do suele bajar a si y da G. El mismo conjunto es Csus2, escrito sobre este bajo Csus2/G.
 
 ---
 
@@ -137,7 +137,7 @@ Una prueba recorre [los 4096 conjuntos con cada uno de los 12 bajos](https://git
 
 **El conjunto la do mi sol siempre es Am7.** Minor-7 tiene [prioridad 5](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L63) y major-6 [prioridad 10](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L55). Las dos lecturas son exactas, así que Am7 gana sea cual sea el bajo, y la forma de C6 x35555 se nombra `Am7/C`. La lista de exclusiones de la prueba de ida y vuelta lo dice: [«major-6 [0,4,7,9] ≡ minor-7 at root 9 (priority 5 beats 10)»](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L39) (major-6 equivale a minor-7 sobre la fundamental 9; la prioridad 5 gana a 10). Su corpus de referencia espera [Am7 para x02010](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L424-L426). El reconocedor no puede dar el C6 de la cadencia del §3.
 
-**Los empates van a la fundamental más frecuente.** sus2 y sus4 tienen ambos [prioridad 8](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L51-L52), así que entre dos lecturas de un conjunto sus decide la puntuación de frecuencia de la fundamental. Sol vale 1 y re 2, así que el Dsus4 xx0233 se nombra `Gsus2/D`. El corpus de referencia [espera Gsus2](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L451-L456), y su comentario explica la elección como sus4 sobre re «(prio 8)» frente a sus2 sobre sol «(prio 7)». El catálogo da 8 a ambos: desempata la puntuación de la fundamental, no la prioridad. El mismo comentario dice que el «Dsus4» del guitarrista se «recovered» (recupera) como `Gsus2/D`; esa es la otra lectura de la tabla del §4, no el nombre del cifrado. Csus4 y Dsus2 [salen como en el cifrado](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L443-L449), porque do tiene una puntuación más baja que fa, y re más baja que la. La séptima disminuida tiene [prioridad 7](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L66) en cada una de sus cuatro fundamentales, y la tríada aumentada [prioridad 3](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L50) en cada una de sus tres, así que la puntuación de la fundamental basta para nombrarlas.
+**Los empates van a la fundamental más frecuente.** sus2 y sus4 tienen ambos [prioridad 8](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L51-L52), así que entre dos lecturas de un conjunto sus decide la puntuación de frecuencia de la fundamental. Sol vale 1 y re 2, así que el Dsus4 xx0233 se nombra `Gsus2/D`. El corpus de referencia [espera Gsus2](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L451-L456), y su comentario explica la elección como sus4 sobre re «(prio 8)» frente a sus2 sobre sol «(prio 7)». El catálogo da 8 a ambos: desempata la puntuación de la fundamental, no la prioridad. El mismo comentario dice que el «Dsus4» del guitarrista es «recovered» (recuperado) como `Gsus2/D`; esa es la otra lectura de la tabla del §4, no el nombre del cifrado. Csus4 y Dsus2 [salen como en el cifrado](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Voicings/ChordRecognitionRoundTripTests.cs#L443-L449), porque do tiene una puntuación más baja que fa, y re más baja que la. La séptima disminuida tiene [prioridad 7](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L66) en cada una de sus cuatro fundamentales, y la tríada aumentada [prioridad 3](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L50) en cada una de sus tres, así que la puntuación de la fundamental basta para nombrarlas.
 
 **Los nombres se escriben con bemoles.** Las fundamentales y los sufijos vienen de una misma [lista de doce nombres](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L379-L383), C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B, que también construye los [sufijos](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L51-L52). Un acorde de fa♯ menor es `Gbm`, y el D/F♯ del descenso es `D/Gb`. El reconocedor trabaja con clases de altura, que no llevan grafía (MUS-007), así que la pista que Wikipedia da para la fundamental de una séptima disminuida no está a su alcance.
 
@@ -227,7 +227,7 @@ El paso 2 predice 124 conjuntos con lecturas exactas sobre dos fundamentales o m
 ## Autoevaluación
 
 **1. Da el conjunto, el bajo y las dos lecturas de 8x798x, y el nombre que escribiría un cifrado después de G7 en do mayor.**
-> 8x798x suena do3 la3 mi4 sol4: el conjunto {do, mi, sol, la}, con do en el bajo. Las lecturas son C6 y Am7, escritas sobre este bajo C6 y Am7/C. Después de G7 en do mayor, el cifrado escribe C6.
+> 8x798x hace sonar do3 la3 mi4 sol4: el conjunto {do, mi, sol, la}, con do en el bajo. Las lecturas son C6 y Am7, escritas sobre este bajo C6 y Am7/C. Después de G7 en do mayor, el cifrado escribe C6.
 
 **2. ¿Por qué cualquier nota de un acorde de séptima disminuida puede ser su fundamental, y qué indica la fundamental en la música escrita?**
 > Sus cuatro notas dividen la octava en cuatro terceras menores, así que el conjunto es el mismo apilamiento de terceras menores desde cada una de ellas. La grafía indica la fundamental, donde empieza el apilamiento de terceras escrito, y la resolución indica la función.
