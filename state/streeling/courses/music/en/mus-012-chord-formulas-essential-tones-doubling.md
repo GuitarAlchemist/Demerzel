@@ -62,10 +62,10 @@ A tone is **essential** when leaving it out changes the chord's name, and **opti
 - **The seventh** decides the kind of seventh chord: C7 and Cmaj7 differ only there. It is essential in every seventh chord and in every chord named 9, 11 or 13, since those contain the seventh.
 - **The perfect fifth** is the same in C, Cm, C7, Cmaj7 and Cm7: no name depends on it, so it is the first tone to drop. A fifth that is not perfect is essential, since it is what separates Cm7♭5 from Cm7 and Caug from C.
 - **The root** names the chord, but a voicing can leave it to someone else: in a band, the bass plays it, and the guitar's voicing is then rootless (MUS-005). Alone, a guitarist keeps it, usually in the bass.
-- **The highest extension** is what the number in the symbol announces: a C13 without its A is a C9 or a C7. The extensions under it are optional.
+- **The highest extension** is what the number in the symbol announces: a C13 without its A is a C11, a C9 or a C7, depending on what remains. The extensions under it are optional.
 - **The natural 11 over a major third** clashes: it lies a semitone above the third, or a minor ninth if it sits above it in a higher octave. In a dominant or major thirteenth chord it is left out, or raised to ♯11, which a symbol must then say (MUS-005). Over a minor third, as in Cm11, the 11 lies a whole tone above the third and stays.
 
-For the dominant thirteenth, Wikipedia's "Thirteenth (interval)" summarises common-practice usage this way, after Benward and Saker: the tones most often present are the root, the 3rd, the 7th and the 13th, with the 5th, the 9th and the 11th "typically omitted". The same article gives the reason for the 11: "It is customary to omit the eleventh on dominant or major thirteenth chords because the eleventh conflicts with the third". For the dominant ninth it gives the root, 3rd, 7th and 9th, with the 5th "typically omitted". Jazz voicings go one step further and drop the root and the fifth, "because the root is played by the bass player" ("Extended chord").
+For the dominant thirteenth, Wikipedia's "Thirteenth (interval)" summarises common-practice usage this way, after Benward and Saker: the tones most often present are the root, the 3rd, the 7th and the 13th, with the 5th, the 9th and the 11th "typically omitted". The same article gives the reason for the 11: "It is customary to omit the eleventh on dominant or major thirteenth chords because the eleventh conflicts with the third". For the dominant ninth, Wikipedia's "Ninth chord", again after Benward and Saker, gives the root, 3rd, 7th and 9th, with the 5th "typically omitted". Jazz voicings often go one step further and drop the root and the fifth, "because the root is played by the bass player" ("Extended chord").
 
 ### Practice Exercise
 
@@ -77,7 +77,7 @@ Which tones of Cmaj9 can a guitarist accompanying a bassist leave out without ch
 
 ## 3. Doubling
 
-A tone is **doubled** when it sounds in more than one octave, or at the same pitch in more than one voice (Wikipedia, "Voicing (music)"); on a guitar, on more than one string. A six-string chord of three tones must double some of them. Reading the open shapes from string 6 in standard tuning, E2 A2 D3 G3 B3 E4 (MUS-009), and counting the strings on each tone:
+A tone is **doubled** when it sounds in more than one octave, or at the same pitch in more than one voice (Wikipedia, "Voicing (music)"); on a guitar, on more than one string. A six-string chord of three tones must double some of them. Reading the common first-position shapes from string 6 in standard tuning, E2 A2 D3 G3 B3 E4 (MUS-009), and counting the strings on each tone:
 
 | Shape | Notes, string 6 first | Root | Third | Fifth |
 |------|------|------|------|------|
@@ -90,7 +90,7 @@ A tone is **doubled** when it sounds in more than one octave, or at the same pit
 | D, xx0232 | D3 A3 D4 F♯4 | 2 | 1 | 1 |
 | F, 133211 | F2 C3 F3 A3 C4 F4 | 3 | 1 | 2 |
 
-Every shape doubles its root, and six of the eight play their third on one string only. That agrees with the old rule of four-part writing: in a triad, "the root is generally doubled" ("Four-part harmony"). The rule has a reason in voice leading, which avoids parallel octaves between any two voices ("Voice leading"). A tone with a strong pull, such as the leading tone, the third of a dominant chord, has one usual resolution, and two voices taking it together would move in parallel octaves; so the leading tone is not doubled. On the guitar, the shape usually decides the doubling: C and G double their thirds because an open string, E4 in C and B3 in G, is the third.
+Every shape doubles its root, and six of the eight play their third on one string only. That agrees with the old rule of four-part writing: in a triad, "the root is generally doubled" ("Four-part harmony"). For a dominant seventh chord, "the root may be doubled and the fifth omitted" ("Dominant seventh chord"). The rule has a reason in voice leading, which avoids parallel octaves between any two voices ("Voice leading"). A tone with a strong pull, such as the leading tone, the third of a dominant chord, has one usual resolution, and two voices taking it together would move in parallel octaves; so the leading tone is not doubled. On the guitar, the shape usually decides the doubling: C and G double their thirds because an open string, E4 in C and B3 in G, is the third.
 
 Doubling is a property of the voicing, not of the chord: C x32010 and C x35553 are the same chord, C E G, with doublings 2, 2, 1 and 2, 1, 2.
 
@@ -129,7 +129,7 @@ A guitarist plays 3x3455 with a bassist who plays G. Which note could the guitar
 
 GA is the music-theory library and chatbot of the GuitarAlchemist ecosystem. The facts below are read from its code at commit [`5c3a52a`](https://github.com/GuitarAlchemist/ga/tree/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26). This lesson documents that code and does not change it. It has not run GA or its tests. The files it cites are unchanged on GA's `main` at `6b8b8bd`. Learn, the ecosystem's course site, has a music-theory-ga course whose lessons compile an earlier version of GA, `a826864`.
 
-**A formula interval can be marked optional or doubled, but no formula marks one.** [`ChordFormulaInterval`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L12-L17) takes three flags beside the interval and its function:
+**A formula interval can be marked optional or doubled. No code marks one doubled, and only builder methods that nothing calls mark one optional.** [`ChordFormulaInterval`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L12-L17) takes three more arguments beside the interval and its function:
 - `isEssential`, true by default;
 - `isTypicallyDoubled`, false by default;
 - a voice-leading tendency, `Stable` by default.
@@ -139,6 +139,7 @@ The class comment's example calls the major third ["essential, typically doubled
 The formula factories pass only the interval and its function:
 - [`FromSemitones`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L137-L153);
 - both [`FromIntervalNames`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L159-L186);
+- [`ChordTemplateFactory.CreateModalChordFormula`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordTemplateFactory.cs#L429-L433), which builds every chord [the data tool exports](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tools/GaDataCLI/Program.cs#L262);
 - [`Chord.AnalyzeChordFormula`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L322-L342), which computes a chord's formula from its notes.
 
 Every interval they build is therefore essential, and none is doubled.
@@ -150,7 +151,7 @@ Only [`ChordBuilder.WithInterval`](https://github.com/GuitarAlchemist/ga/blob/5c
 
 No code outside those two files calls `ChordBuilder`. [`EssentialIntervals` and `OptionalIntervals`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormula.cs#L93-L100) have no caller.
 
-`IsEssential` is read in two places:
+Besides the polychord builder, which [copies it](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/ChordBuilderEx.cs#L146), and the uncalled properties above, `IsEssential` is read in two places:
 - the interval's [`ToString`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L67-L72);
 - the [chord export](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tools/GaDataCLI/Program.cs#L292-L297) of GA's data tool.
 
@@ -169,7 +170,7 @@ This affects the symbol parser's formulas:
 [`ChordDegree`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/ChordFormulaInterval.cs#L52-L62) gives each of them degree 1. A rule that dropped tones by function could not tell these tensions from the root.
 
 **GA gives three answers for the thirteenth chord.**
-- **The symbol parser** reads the symbol "13" as [4 7 10 14 17 21](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L203), the full stack of §1 with its 11. A test expects C13 to [spell C E G B♭ D F A](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/Theory/Harmony/ChordTests.cs#L288).
+- **`Chord.FromSymbol`** reads the symbol "13" as [4 7 10 14 17 21](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L203), the full stack of §1 with its 11, and so does [`ChordSymbolParser`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/Parsing/ChordSymbolParser.cs#L162-L163). A test expects C13 to [spell C E G B♭ D F A](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/Theory/Harmony/ChordTests.cs#L288).
 - **The chord recogniser's** dominant-13 pattern, [0 2 4 7 9 10](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/CanonicalChordPatternCatalog.cs#L88), has no 11 and keeps the fifth and the ninth. A match may [miss one tone and add one](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L160-L162). At equal distance, the ranking [prefers a candidate with nothing missing](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L178-L183): an omitted tone counts against a name more than an added one.
 - **GA's configuration file `AdvancedHarmony.yaml`** says ["Often omit 11th to avoid dissonance"](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.Config/AdvancedHarmony.yaml#L32-L38). It gives G13 as G B F A E, the five notes of §4's 3x3455. Under ninth chords, the same file lists [G13 with all seven notes](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.Config/AdvancedHarmony.yaml#L14-L16).
 
@@ -186,7 +187,7 @@ Downstream, nothing can recover them:
 - the ["Shell" tag](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Musical/Enrichment/AutoTaggingService.cs#L106-L115) needs guide tones and a missing fifth;
 - the harmonic analyser [sets `IsRootless` to false](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Fretboard/Voicings/Analysis/VoicingHarmonicAnalyzer.cs#L40-L42) for every voicing.
 
-As a result, no voicing GA indexes is tagged as a shell, and none is marked rootless. `Chord.AnalyzeChordFormula` also [folds every note to an interval mod 12 and drops repeats](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L328-L331), so the formula it computes keeps no doubling.
+As a result, no voicing GA indexes gets that "Shell" tag, and none is marked rootless. The physical analyser has a tag of its own, `shell-voicing`, [added](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Fretboard/Voicings/Analysis/VoicingPhysicalAnalyzer.cs#L209) to any voicing [played on three or four strings](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Fretboard/Voicings/Analysis/VoicingPhysicalAnalyzer.cs#L126-L128), whatever its tones: D xx0232, a plain triad, gets it, and 3x3455 does not. `Chord.AnalyzeChordFormula` also [folds every note to an interval mod 12 and drops repeats](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L328-L331), so the formula it computes keeps no doubling.
 
 **OPTIC-K counts doublings, but with weight zero.** GA's voicing embedding is [OPTIC-K](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L98), a vector of numbers GA's voicing search compares. Its EXTENSIONS partition holds doubling dimensions:
 - 80, the [doubling ratio](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L495-L500), (N − distinct pitch classes) / N;
@@ -215,7 +216,7 @@ By the generator's formula, what does dimension 80 give for G 320003 and for D x
 
 ## 6. Proposed Experiment (Not Yet Run)
 
-**Status: not run.** This section proposes an experiment for Learn's music-theory-ga lab, which compiles GA. The lab's GA pin would first move to `5c3a52a`. Nothing in this section is a measurement:
+**Status: not run.** This section proposes an experiment for Learn's music-theory-ga lab, which compiles GA. The lab's GA pin would first move to `5c3a52a`, and its sparse checkout of GA would add GA.Business.ML for step 4. Nothing in this section is a measurement:
 - the predictions come from §2 to §5 and are written down before any run;
 - the chord names in steps 2 and 3 come from a line-by-line Python transcription of the recogniser and its pattern catalogue;
 - a later version of this lesson will report the results.
@@ -229,7 +230,7 @@ Every step calls GA's types in the lab's own process, never a running MCP server
    - 3x345x is Em/G;
    - xx3455 is Asus2/F;
    - 3x34xx is G7(shell), an exact match.
-4. **Doubling dimensions.** For the eight open shapes of §3 and x35553, build the voicing document and its OPTIC-K vector through GA's analyser, document factory and embedding generator. Record dimensions 80, 81, 91, 92 and 95 and the `ToneInventory`. Prediction:
+4. **Doubling dimensions.** For the eight first-position shapes of §3 and x35553, build the voicing document and its OPTIC-K vector through GA's analyser, document factory and embedding generator. Record dimensions 80, 81, 91, 92 and 95 and the `ToneInventory`. Prediction:
    - dimension 80 is 0.5 for E, Em, G and F, 0.4 for A, Am, C and x35553, and 0.25 for D;
    - dimensions 81, 91, 92 and 95 are 0 for all nine;
    - every inventory is empty.
@@ -291,6 +292,7 @@ Step 3 predicts A7sus2 for 3x3455. Which notes of G B F A E does that name read 
 
 - B. Benward and M. Saker, *Music in Theory and Practice*, vol. II, 8th ed., McGraw-Hill, 2009, pp. 183–184: the usual tones of V9 and V13, as quoted in Wikipedia's "Ninth chord" and "Thirteenth (interval)".
 - Wikipedia, "Thirteenth (interval)": the thirteenth chord, the omitted 11, and the guitar's omitted fifth and ninth.
+- Wikipedia, "Ninth chord": the usual tones of V9.
 - Wikipedia, "Extended chord": the omitted fifth, and the root left to the bass in jazz.
 - Wikipedia, "Voicing (music)": doubling.
 - Wikipedia, "Four-part harmony": the doubled root of a triad.
