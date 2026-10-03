@@ -17,7 +17,7 @@ version: "1.0.0"
 ## Objetivos
 
 Al terminar esta lección, podrás:
-- Construir cualquier escala sobre cualquier tónica a partir de su fórmula de intervalos, y escribir una escala de siete notas con una letra por grado
+- Construir cualquier escala sobre cualquier tónica a partir de su fórmula de intervalos, y escribir una escala de siete notas con un nombre por grado
 - Distinguir la fórmula de una escala, su conjunto de clases de altura y su vector de clases de intervalo, y decir qué olvida cada uno
 - Calcular los vectores de las escalas mayor, pentatónica y de tonos enteros, y usar el teorema de las notas comunes para decir cuántas notas comparten dos tonalidades
 - Reconocer la propiedad de escala profunda, la propiedad de Myhill, la regularidad máxima y la generación por quintas, y decir cuáles tienen la escala mayor, la pentatónica y la escala de tonos enteros
@@ -38,15 +38,15 @@ Una escala enumera notas en orden dentro de una octava. Su **fórmula de interva
 
 Escrita en tonos (T) y semitonos (S), la fórmula mayor es T T S T T T S. El artículo «Major scale» de Wikipedia señala que «a major scale may be seen as two identical tetrachords separated by a whole tone» (una escala mayor puede verse como dos tetracordios idénticos separados por un tono): T T S, luego T, luego T T S.
 
-Para construir una escala sobre otra tónica, se aplican los mismos pasos desde esa tónica. Una escala de siete notas toma entonces una letra por grado, y cada alteración se deduce de la letra (MUS-007). Mi mayor se escribe mi fa♯ sol♯ la si do♯ re♯. Fa mayor se escribe fa sol la si♭ do re mi: el cuarto grado está un semitono por encima de la, y se escribe si♭, no la♯, porque la ya es el tercer grado.
+Para construir una escala sobre otra tónica, se aplican los mismos pasos desde esa tónica. Una escala de siete notas toma entonces un nombre por grado, y cada alteración se deduce del nombre (MUS-007). Mi mayor se escribe mi fa♯ sol♯ la si do♯ re♯. Fa mayor se escribe fa sol la si♭ do re mi: el cuarto grado está un semitono por encima de la, y se escribe si♭, no la♯, porque la ya es el tercer grado.
 
 En la guitarra, una fórmula tocada en una sola cuerda es una lista de distancias entre trastes. En la cuerda de la, la fórmula mayor desde la cuerda al aire da los trastes 0 2 4 5 7 9 11 12: la si do♯ re mi fa♯ sol♯ la. Las mismas distancias desde el traste 3 dan do mayor: trastes 3 5 7 8 10 12 14 15.
 
 ### Ejercicio práctico
 
-Construye si♭ mayor y re menor natural a partir de sus fórmulas, con una letra por grado.
+Construye si♭ mayor y re menor natural a partir de sus fórmulas, con un nombre por grado.
 
-> *Solución:* Si♭ mayor: si♭ do re mi♭ fa sol la, pasos 2 2 1 2 2 2 1. Re menor natural: re mi fa sol la si♭ do, pasos 2 1 2 2 1 2 2. En las dos, cada letra aparece una vez.
+> *Solución:* Si♭ mayor: si♭ do re mi♭ fa sol la, pasos 2 2 1 2 2 2 1. Re menor natural: re mi fa sol la si♭ do, pasos 2 1 2 2 1 2 2. En las dos, cada nombre aparece una vez.
 
 ---
 
@@ -54,7 +54,7 @@ Construye si♭ mayor y re menor natural a partir de sus fórmulas, con una letr
 
 Una fórmula no dice dónde empezar; una tónica fija las notas. El **conjunto de clases de altura** conserva las notas y olvida la tónica, el orden y las octavas (MUS-020): do mayor es {0, 2, 4, 5, 7, 9, 11} con do = 0.
 
-Dos escalas pueden compartir un conjunto y diferir en su fórmula. La menor natural, la si do re mi fa sol, contiene las notas de do mayor. Su fórmula, 2 1 2 2 1 2 2, es la fórmula mayor leída desde su sexto paso: los pasos la–si, si–do, y luego de do–re a sol–la. Leer una fórmula desde otro paso da un **modo**; MUS-006 cuenta los modos como rotaciones.
+Dos escalas pueden compartir un conjunto y diferir en su fórmula. La escala de la menor natural, la si do re mi fa sol, contiene las notas de do mayor. Su fórmula, 2 1 2 2 1 2 2, es la fórmula mayor leída desde su sexto paso: los pasos la–si, si–do, y luego de do–re a sol–la. Leer una fórmula desde otro paso da un **modo**; MUS-006 cuenta los modos como rotaciones.
 
 Transportar una escala suma el mismo número a cada clase de altura. Conserva la fórmula y cambia el conjunto: las doce escalas mayores son doce conjuntos distintos. Una escala que se transforma en sí misma por una transposición tiene menos: solo hay dos escalas de tonos enteros, {0, 2, 4, 6, 8, 10} y {1, 3, 5, 7, 9, 11} (MUS-006, MAT-022).
 
@@ -113,18 +113,18 @@ Wikipedia enuncia el teorema para la escala diatónica: «However many times an 
 | Transposición (semitonos) | Tonalidades | Notas comunes |
 |------|------|------|
 | 0 | do | 7 |
-| 1 o 11 | re♭, si | 2 |
+| 1 u 11 | re♭, si | 2 |
 | 2 o 10 | re, si♭ | 5 |
 | 3 o 9 | mi♭, la | 4 |
-| 4 o 8 | mi, la♭ | 3 |
+| 4 u 8 | mi, la♭ | 3 |
 | 5 o 7 | fa, sol | 6 |
 | 6 | fa♯ | 2: si, y fa, escrito mi♯ en fa♯ mayor |
 
 Las dos vecinas de do en el círculo de quintas, fa y sol, conservan seis notas: pasar de do mayor a sol mayor solo cambia fa por fa♯, un dedo movido un traste. Wikipedia: «Six of seven possible common tones are shared by closely related keys» (las tonalidades vecinas comparten seis de las siete notas comunes posibles). Como la escala es profunda, las transposiciones de 1 a 5 semitonos conservan cinco números de notas distintos, los mismos hacia arriba o hacia abajo.
 
-La fila del tritono pide cuidado. Wikipedia da al tritono 1 nota común, «as there is only one tritone in a diatonic scale» (ya que solo hay un tritono en una escala diatónica), y su tabla pone si para fa♯ mayor y fa para sol♭ mayor en filas separadas. Contadas como clases de altura, do mayor y fa♯ mayor comparten a la vez si y fa; fa♯ mayor escribe fa como mi♯. Cada tritono cuenta desde sus dos extremos. Eso da dos notas, tantas como una transposición de un semitono; el 1 de Wikipedia solo vale para las notas escritas igual. El número doblado del tritono puede repetir otro: la propiedad de escala profunda solo garantiza números distintos para las clases de intervalo 1 a 5.
+La fila del tritono pide cuidado. Wikipedia da al tritono 1 nota común, «as there is only one tritone in a diatonic scale» (ya que solo hay un tritono en una escala diatónica), y su tabla pone si para fa♯ mayor y fa para sol♭ mayor en filas separadas. En clases de altura, do mayor y fa♯ mayor comparten a la vez si y fa; fa♯ mayor escribe fa como mi♯. Cada tritono cuenta desde sus dos extremos. Eso da dos notas, tantas como una transposición de un semitono; el 1 de Wikipedia solo vale para las notas escritas igual. El número doblado del tritono puede repetir otro: la propiedad de escala profunda solo garantiza números distintos para las clases de intervalo 1 a 5.
 
-La escala de tonos enteros muestra el caso opuesto: «every even transposition of the whole tone scale is identical with the original and every odd transposition has no common tones whatsoever» (toda transposición par de la escala de tonos enteros es idéntica a la original, y toda transposición impar no tiene ninguna nota común) (Wikipedia, «Common tone (scale)»).
+La escala de tonos enteros muestra el caso opuesto: «every even transposition of the whole tone scale is identical with the original and every odd transposition has no common tones whatsoever» (toda transposición par de la escala de tonos enteros es idéntica a la original, y toda transposición impar no tiene ninguna nota común; Wikipedia, «Common tone (scale)»).
 
 **¿Qué conjuntos son profundos?** Seis números enteros distintos suman al menos 0 + 1 + 2 + 3 + 4 + 5 = 15, así que un conjunto profundo tiene al menos 15 pares, y por tanto al menos seis notas. Un recuento sobre los 4096 conjuntos de clases de altura encuentra 48 conjuntos profundos, doce transposiciones en cada una de cuatro clases de conjuntos:
 
@@ -135,7 +135,7 @@ La escala de tonos enteros muestra el caso opuesto: «every even transposition o
 | 7-1 | do do♯ re mi♭ mi fa fa♯ | <6 5 4 3 2 1> | semitonos |
 | 7-35 | do re mi fa sol la si | <2 5 4 3 6 1> | quintas, de fa a si |
 
-Entre los conjuntos de siete notas, solo la escala diatónica y el segmento cromático de siete notas son, pues, profundos. El artículo «Common tone (scale)» de Wikipedia enuncia la regla así: «In twelve-tone equal temperament, all scales with the deep scale property can be generated with any interval coprime with twelve» (en el temperamento igual de doce sonidos, todas las escalas con la propiedad de escala profunda pueden generarse con cualquier intervalo coprimo con doce). Leída junto con la tabla, cada escala profunda es una cadena de uno solo de esos intervalos, no de cada uno: el semitono o la quinta, los dos únicos salvo inversión. Multiplicar cada clase de altura por 5, la operación que MUS-020 llama M5, intercambia los números de las clases 1 y 5: envía cada fila cromática de la tabla a la fila de quintas del mismo tamaño.
+Entre los conjuntos de siete notas, solo la escala diatónica y el segmento cromático de siete notas son, pues, profundos. El artículo «Common tone (scale)» de Wikipedia enuncia la regla así: «In twelve-tone equal temperament, all scales with the deep scale property can be generated with any interval coprime with twelve» (en el temperamento igual de doce sonidos, todas las escalas con la propiedad de escala profunda pueden generarse con cualquier intervalo coprimo con doce). Leída junto con la tabla, cada conjunto profundo es una cadena de uno solo de esos intervalos, no de cada uno: el semitono o la quinta, los dos únicos salvo inversión. Multiplicar cada clase de altura por 5, la operación que MUS-020 llama M5, intercambia los recuentos de las clases de intervalo 1 y 5: envía cada fila cromática de la tabla a la fila de quintas del mismo tamaño.
 
 ### Ejercicio práctico
 
@@ -155,9 +155,9 @@ Un **intervalo genérico** «is the number of scale steps between notes of a col
 | Pentatónica mayor | 2, 3 | 4, 5 | 7, 8 | 9, 10 | | |
 | Tonos enteros | 2 | 4 | 6 | 8 | 10 | |
 
-- La **propiedad de Myhill** consiste en tener «exactly two specific intervals for every generic interval» (exactamente dos intervalos específicos para cada intervalo genérico) (Wikipedia, «Generic and specific intervals»). Las escalas mayor y pentatónica la tienen; la escala de tonos enteros, con un solo tamaño por paso, no.
-- La **regularidad máxima** (maximal evenness, Clough y Douthett, 1991) es otra condición: cada intervalo genérico toma un solo tamaño o dos tamaños consecutivos, de modo que las notas estén «spread out as much as possible» (repartidas tanto como sea posible) (Wikipedia, «Maximal evenness»). Las escalas mayor, pentatónica y de tonos enteros son máximamente regulares; la menor armónica no lo es, ya que sus segundas miden 1, 2 y 3 semitonos. Ninguna de las dos propiedades implica la otra. La escala de tonos enteros es máximamente regular sin tener la propiedad de Myhill, y el segmento cromático de siete notas de do a fa♯ del §4 tiene la propiedad de Myhill sin ser máximamente regular: sus segundas miden 1 o 6 semitonos, dos tamaños pero no consecutivos.
-- Una **colección generada** es «formed by repeatedly adding a constant interval in integer notation, the generator» (formada añadiendo repetidamente un intervalo constante en notación entera, el generador) (Wikipedia, «Generated collection»). La escala mayor es una cadena de siete notas unidas por seis quintas: «F-C-G-D-A-E-B» (fa-do-sol-re-la-mi-si). Una cadena está **bien formada** cuando el generador abarca siempre el mismo número de pasos: en la escala mayor, cada quinta de la cadena abarca 4 pasos. «The major and minor pentatonic scales are also well formed.» (Las escalas pentatónicas mayor y menor también están bien formadas.) Las seis notas fa do sol re la mi dan do re mi fa sol la, cuyos pasos son 2 2 1 2 2 3: una quinta abarca 4 pasos de do a sol pero 3 de fa a do, así que esta cadena es generada y no está bien formada. El artículo «Maximal evenness» de Wikipedia une la buena formación a la propiedad de Myhill, «a scale with Myhill's property is said to be a well-formed scale» (de una escala con la propiedad de Myhill se dice que está bien formada), y dice que la escala de tonos enteros «is not well-formed since each generic interval comes in only one size» (no está bien formada, ya que cada intervalo genérico tiene un solo tamaño). Su artículo «Generated collection» llama a la misma escala una «degenerate well-formed collection» (colección bien formada degenerada), en la que cada paso es el generador. Para los conjuntos de dos notas o más, dejando aparte las cadenas degeneradas, buena formación y propiedad de Myhill quieren decir lo mismo.
+- La **propiedad de Myhill** consiste en tener «exactly two specific intervals for every generic interval» (exactamente dos intervalos específicos para cada intervalo genérico; Wikipedia, «Generic and specific intervals»). Las escalas mayor y pentatónica la tienen; la escala de tonos enteros, con un solo tamaño por paso, no.
+- La **regularidad máxima** (maximal evenness, Clough y Douthett, 1991) es otra condición: cada intervalo genérico toma un solo tamaño o dos tamaños consecutivos, de modo que las notas estén «spread out as much as possible» (repartidas tanto como sea posible; Wikipedia, «Maximal evenness»). Las escalas mayor, pentatónica y de tonos enteros son máximamente regulares; la menor armónica no lo es, ya que sus segundas miden 1, 2 y 3 semitonos. Ninguna de las dos propiedades implica la otra. La escala de tonos enteros es máximamente regular sin tener la propiedad de Myhill, y el segmento cromático de siete notas de do a fa♯ del §4 tiene la propiedad de Myhill sin ser máximamente regular: sus segundas miden 1 o 6 semitonos, dos tamaños pero no consecutivos.
+- Una **colección generada** es «formed by repeatedly adding a constant interval in integer notation, the generator» (formada añadiendo repetidamente un intervalo constante en notación entera, el generador; Wikipedia, «Generated collection»). La escala mayor es una cadena de siete notas unidas por seis quintas: «F-C-G-D-A-E-B» (fa-do-sol-re-la-mi-si). Una cadena está **bien formada** cuando el generador abarca siempre el mismo número de pasos: en la escala mayor, cada quinta de la cadena abarca 4 pasos. «The major and minor pentatonic scales are also well formed.» (Las escalas pentatónicas mayor y menor también están bien formadas.) Las seis notas fa do sol re la mi dan do re mi fa sol la, cuyos pasos son 2 2 1 2 2 3: una quinta abarca 4 pasos de do a sol pero 3 de fa a do, así que esta cadena es generada y no está bien formada. El artículo «Maximal evenness» de Wikipedia une la buena formación a la propiedad de Myhill, «a scale with Myhill's property is said to be a well-formed scale» (de una escala con la propiedad de Myhill se dice que está bien formada), y dice que la escala de tonos enteros «is not well-formed since each generic interval comes in only one size» (no está bien formada, ya que cada intervalo genérico tiene un solo tamaño). Su artículo «Generated collection» llama a la misma escala una «degenerate well-formed collection» (colección bien formada degenerada), en la que cada paso es el generador. Para los conjuntos de dos notas o más, dejando aparte las cadenas degeneradas, buena formación y propiedad de Myhill quieren decir lo mismo.
 
 | Escala | Profunda | Propiedad de Myhill | Máximamente regular | Generada |
 |------|------|------|------|------|
@@ -175,7 +175,7 @@ Son hechos de estructura. No prueban que la escala mayor suene equilibrada; mues
 
 ¿Tiene la menor armónica de la la propiedad de Myhill? ¿Es máximamente regular?
 
-> *Solución:* Ninguna de las dos cosas. Sus segundas la–si, 2 semitonos, si–do, 1, y fa–sol♯, 3: un mismo intervalo genérico en tres tamaños. El artículo «Maximal evenness» de Wikipedia da este ejemplo.
+> *Solución:* Ninguna de las dos cosas. Sus segundas son la–si, 2 semitonos, si–do, 1, y fa–sol♯, 3: un mismo intervalo genérico en tres tamaños. El artículo «Maximal evenness» de Wikipedia da este ejemplo.
 
 ---
 
@@ -189,14 +189,14 @@ GA es la biblioteca de teoría musical y el chatbot del ecosistema GuitarAlchemi
 
 **La propiedad de Myhill y la propiedad de Rothenberg siguen las definiciones.** [`HasMyhillProperty`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L40-L68) reúne los tamaños de cada intervalo genérico y exige exactamente dos; transcrita, es verdadera para las escalas mayor y pentatónica y falsa para la escala de tonos enteros. [`GetRothenbergPropriety`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L76-L123) compara el mayor tamaño de cada intervalo genérico con el menor tamaño de cada intervalo más grande; transcrita, devuelve `Proper` para la escala mayor y `StrictlyProper` para la pentatónica, como Wikipedia. La prueba de Myhill se llama [`Dorian_HasMyhillProperty_ReturnsTrue`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/Theory/Atonal/ScaleStructuralPropertiesTests.cs#L10-L16) y construye `Scale.Major`; su comentario dice «Major / Dorian (1709)», pero 1709 es el identificador de do dórico, un conjunto distinto del 2741 de do mayor. Las cinco pruebas del archivo construyen `Scale.Major`, así que ninguna comprueba una escala para la que `HasMyhillProperty` o `IsWellFormed` sea falso.
 
-**`IsWellFormed` prueba la generación, no la buena formación.** El resumen del método define una escala bien formada como una escala [«generated by repeatedly stacking a single generator interval mod 12»](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L151-L154) (generada apilando repetidamente un solo intervalo generador módulo 12), y el [método](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L163-L187) acepta cualquier cadena de un solo intervalo. Es la colección generada del §5. Transcrita sobre los 4096 conjuntos, 89 conjuntos pasan `IsWellFormed` sin tener la propiedad de Myhill:
+**`IsWellFormed` prueba la generación, no la buena formación.** El resumen del método define una escala bien formada como una escala [«generated by repeatedly stacking a single generator interval mod 12»](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L151-L154) (generada apilando repetidamente un solo intervalo generador módulo 12), y el [método](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L163-L187) acepta cualquier cadena de un solo intervalo. Es la colección generada del §5. Según la transcripción, 89 de los 4096 conjuntos pasan `IsWellFormed` sin tener la propiedad de Myhill:
 - 13 conjuntos de una nota como mucho: el conjunto vacío y las 12 notas sueltas;
 - 16 divisiones iguales de la octava: el tritono, la tríada aumentada, la séptima disminuida, la escala de tonos enteros y el total cromático, que Wikipedia llama degeneradas;
 - 60 cadenas de quintas de 4, 6, 8, 9 o 10 notas, como do re sol la y el do re mi fa sol la del §5, que tienen cada una un intervalo genérico en tres tamaños.
 
 Ningún conjunto tiene la propiedad de Myhill y falla `IsWellFormed`. Para la escala mayor, el método devuelve el generador 5, el primero que funciona en el orden de 1 a 11: la cadena de cuartas si mi la re sol do fa, que es la cadena de quintas del §5 leída al revés.
 
-**La puntuación de regularidad depende de la transposición.** [`GetMaximalEvennessDiscrepancy`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L129-L149) toma las clases de altura de un conjunto de n notas en orden ascendente desde do, las compara con los puntos 0, 12 / n, 2 × 12 / n y así sucesivamente, y devuelve la media cuadrática de las diferencias. Su resumen cita a Clough y Douthett y promete [«0.0 for perfectly even sets like Whole Tone or Augmented»](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L125-L128) (0.0 para los conjuntos perfectamente regulares, como la escala de tonos enteros o la aumentada). Transcrita, redondeada a cuatro decimales:
+**La puntuación de regularidad depende de la transposición.** [`GetMaximalEvennessDiscrepancy`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L129-L149) toma las clases de altura de un conjunto de n notas en orden ascendente desde do, las compara con los puntos 0, 12 / n, 2 × 12 / n y así sucesivamente, y devuelve la media cuadrática de las diferencias. Su resumen cita a Clough y Douthett y promete [«0.0 for perfectly even sets like Whole Tone or Augmented»](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Atonal/ScaleStructuralProperties.cs#L125-L128) (0,0 para los conjuntos perfectamente regulares, como la escala de tonos enteros o el conjunto aumentado). Transcrita, redondeada a cuatro decimales:
 - la escala de tonos enteros obtiene 0,0000 sobre do y 1,0000 sobre do♯, y la tríada aumentada 0,0000 sobre do y 1,0000 sobre do♯;
 - el propio [`Scale.Augmented`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Tonal/Scales/Scale.cs#L61) de GA, do re♯ mi sol sol♯ si, es la escala aumentada de seis notas, no la tríada, y obtiene 0,7071;
 - las doce escalas mayores obtienen de 0,2857, si♭ mayor, a 1,1780, fa♯ mayor; do mayor obtiene 0,4041.
@@ -249,8 +249,8 @@ El paso 4 predice exactamente 1,0000 para la escala de tonos enteros sobre do♯
 
 ## 8. Errores comunes
 
-- **Tomar la fórmula por el conjunto.** La menor natural y do mayor comparten un conjunto, no una fórmula.
-- **Escribir con la letra equivocada.** Fa mayor tiene si♭, no la♯: una letra por grado.
+- **Tomar la fórmula por el conjunto.** La escala de la menor natural y la de do mayor comparten un conjunto, no una fórmula.
+- **Escribir con el nombre equivocado.** Fa mayor tiene si♭, no la♯: un nombre por grado.
 - **Tomar profunda por regular.** La escala de tonos enteros es perfectamente regular y no es profunda; el conjunto profundo do re mi fa sol la no es máximamente regular.
 - **Contar el tritono una sola vez.** En clases de altura, una transposición de un tritono conserva el doble de notas que tritonos tiene el conjunto: do mayor y fa♯ mayor comparten si y fa.
 - **Leer el `IsWellFormed` de GA como la buena formación de Carey y Clampitt.** Solo comprueba que un conjunto es una cadena de un solo intervalo.
