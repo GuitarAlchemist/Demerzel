@@ -6,7 +6,11 @@
 
 ## Courses
 
-*No courses produced yet. Run `/seldon research-cycle guitar-acoustics` to generate the first course.*
+| Code | Course | Status | Languages |
+|---|---|---|---|
+| [GAS-001](en/gas-001-open-string-audio-evidence.md) | What an Open-String Recording Can Teach a Guitar WASM Engine | Draft; review and localization pending | [EN](en/gas-001-open-string-audio-evidence.md), [FR](fr/gas-001-open-string-audio-evidence.fr.md), [ES](es/gas-001-open-string-audio-evidence.es.md) |
+
+GAS-001 includes [recorded and rendered E2 fixtures](../../fixtures/guitar-acoustics/gas-001/README.md), measurements, and exercises. Browser WASM capture, ComfyUI integration, listening validation, subject and native-language review, and the policy's PT/IT/DE localizations remain pending. Do not present this draft as a verified course.
 
 ## Curriculum Areas
 

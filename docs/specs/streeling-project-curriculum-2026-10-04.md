@@ -40,12 +40,18 @@ The pilots span learner, domain, interface, and system boundaries. Their codes a
 |---|---|---|---|
 | DV-001 | When does a GA quality chart show an observation, an outage, or an old value? | GA `state/quality/chatbot-qa` snapshots and `docs/quality/README.md` | Classify four dated snapshots; draw a timeline with a gap and a separate availability lane; explain which trend claim remains unknown. |
 | VC-001 | Can a guitarist use the same fretboard diagram with pointer, keyboard, and screen reader? | GA fretboard UI and a fixed chord/voicing fixture | Navigate, name, and compare a voicing by all three paths; record any missing information. |
-| GAS-001 | What can a measured open string spectrum establish about a synthesized guitar note? | One recorded open string and one rendered synthesis fixture | Measure pitch, partials, and decay; name two audible properties the spectrum does not settle. |
+| GAS-001 | What can an open-string recording establish about GA's guitar WASM engine? | A pinned recorded E2, a render of GA's existing Rust engine, and onset-aligned FFT/wavelet measurements | Compare pitch, partials, and time courses; name two audible properties the measurements do not settle; specify an offline ComfyUI candidate gate. |
 | CS-003 | Where should a chord-name parser return uncertainty instead of inventing a chord? | GA chord parsing boundary and a small positive/negative input corpus | Trace each input through parsing, domain result, and user-visible error; verify no unsupported name is silently accepted. |
 | GAA-004 | Can a novice select and play a useful voicing from a GA answer? | A fixed GA chord query and fretboard output | Play two candidate voicings, compare their physical demands, and explain a choice in musical context. |
 | GTR-003 | Which playability claim can a voicing model actually support? | GA voicing generation and playability criteria | Compare three shapes and record the criteria that require a human hand test. |
 
 Produce these as six separate reviewable modules, starting with DV-001. A pilot is not published on the strength of its outline. The first pilot is a tracer for the research, course, localization, review, and Learn synchronization path. Later modules should use what that tracer reveals rather than copying its format blindly.
+
+### Audio project direction, clarified during GAS-001
+
+GA already has a Rust/WASM guitar prototype running through an AudioWorklet and an offline recording/critic loop. ComfyUI audio is a proposed offline refinement input, not a currently wired GA audio stage or a real-time dependency. A useful course should teach the evidence path from a licensed recording and a pinned engine render through onset-aligned FFT/wavelet measurements and level-matched listening, then to a controlled engine parameter experiment. Treat the candidate workflow, its provenance, and the parameter change as hypotheses until the measurements and listening checks support them.
+
+This is also agentic dogfooding: an agent may propose a bounded change using GA's own rendered output, while a fixed external recording, repeatable signal measurements, and independent listening decide whether the change helped. Preserve rejected iterations as evidence. Cybernetics can teach feedback stability, Computer Science can teach the agent's proposal/evaluation boundary, and Product and Project Management can teach the acceptance gate; GAS-001 supplies the concrete audio case.
 
 ## Data Visualization: 25-course path
 
