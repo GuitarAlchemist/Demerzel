@@ -26,6 +26,8 @@ El [material GAS-001](../../../fixtures/guitar-acoustics/gas-001/README.md) cont
 
 Primero fija **candidato = audio inicial**. Al utilizar `ga-engine-e2-open-4s.wav` dos veces, `deb-low-e-open.wav` como referencia, `--reference-offset 1.1` y `--seconds 1.5`, el comparador dio el mismo error absoluto medio RMS en intervalos de 250 ms para ambos: `0.124158746`. También coincidieron todos los errores FFT y Haar. Este control negativo es útil: si la cadena anuncia una mejora, la regla de decisión está mal, aunque todas las órdenes hayan terminado sin error.
 
+Una revisión independiente en wmux señaló que este control también pasaría si el comparador siempre dijera «igual». Un [control con cambios conocidos](../../../fixtures/computer-science/cs-004/review-followup-20261004.md) reduce a la mitad la amplitud del audio nativo y, en otro ensayo, aplica un filtro estrecho cerca del segundo armónico de E2. Cambiaron las medidas RMS y espectrales, respectivamente. Esos controles muestran sensibilidad a los cambios, **no** una guitarra más realista: reducir la amplitud disminuyó el error RMS, el filtro lo aumentó y nadie escuchó estos archivos a ciegas.
+
 ### Ejercicio 1
 
 ¿Qué debes concluir si el candidato y el audio inicial comparten el SHA-256 `a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98`?
@@ -92,11 +94,25 @@ node scripts/compare-audio.js `
 
 Comprueba en el JSON la igualdad de los hashes y de los errores. Después, y solo si conoces un modelo de audio local y su licencia, prueba un workflow ComfyUI real. Mantén fijos el audio inicial y la referencia, cambia un único parámetro, registra modelo, seed y hashes, vuelve a medir y pide una escucha a ciegas con volúmenes igualados. El recibo debe contener la observación del usuario, las medidas, la decisión y el próximo experimento. Esto es dogfooding: usar nuestro motor y nuestras herramientas para descubrir problemas de preparación, errores, recuperación y revisión. Si un agente no puede leer la fixture o escribir el recibo, registra esa fricción como hallazgo del producto; enviar un prompt no demuestra progreso.
 
+Antes de escuchar, registra quién evaluará, qué notas e intensidades oirá, cómo se igualarán los niveles y con qué tolerancia, cómo se aleatorizará el orden y cuál será la regla de decisión. Un grupo de tres guitarristas es una **propuesta por probar**, no un umbral validado. Conserva las elecciones y los comentarios individuales, incluso cuando discrepen. Si una comparación manual más sencilla llega a las mismas decisiones con menos preparación, descarta por ahora el flujo de agentes hasta que aporte un valor medible.
+
 ### Ejercicio 5
 
 Propón una condición de éxito y un criterio de rechazo. ¿Quién decide si cambia el motor en tiempo real?
 
 > **Respuesta:** Por ejemplo, exigir un candidato reproducible, archivos inicial y de referencia fijos, ningún deterioro del ataque o de la altura, y una preferencia documentada en escucha a ciegas. Una salida idéntica, procedencia ausente o rechazo repetido por los oyentes refutan la mejora. El agente propone; una evaluación independiente y una persona autorizada deciden si merece la pena probar un cambio Rust/WASM. El candidato sin conexión no se convierte por sí solo en el motor en tiempo real.
+
+## 5. Mejorar el ciclo siguiente, no solo el resultado actual
+
+El [registro de mejora recursiva](../../../fixtures/computer-science/cs-004/recursive-improvement-evidence.json) reúne dos pares de ensayos. La primera revisión en wmux leyó solo una de tres fuentes declaradas y no escribió un recibo. Tras añadir al lanzador reglas exactas de acceso a archivos autorizadas por el usuario, otra lane leyó cuatro de cuatro fuentes y escribió una revisión con marcador verificado. El primer control de audio mostró que un candidato idéntico no podía mejorar el punto de partida; las transformaciones conocidas posteriores mostraron que el comparador detectaba determinados cambios de nivel y espectro. Cada fallo cambió el **harness o la evaluación** y otro ensayo probó el cambio. Dos pares no demuestran crecimiento exponencial.
+
+En los próximos tres experimentos de cursos y audio, asigna un único responsable de escritura a cada artefacto independiente, con entrada inmutable y recibo esperado. La preparación de fixtures, la localización y los candidatos pueden avanzar en colas separadas cuando sus entradas estén listas. Automatiza esquema, enlaces, cobertura de idiomas y controles; agrupa la revisión independiente de los recibos preparados. Reserva la escucha de músicos para juicios que las medidas no resuelven y la autorización humana para cambios difíciles de deshacer o publicación. Prueba cada evaluador nuevo con al menos un caso que no se usó para diseñarlo. Mide el tiempo desde la entrada lista hasta el curso revisado, la espera de revisión, los recibos fallidos, el éxito de los aprendices y los defectos posteriores. Cuenta **módulos útiles y revisados**, no palabras redactadas. Si la espera de coordinación crece más deprisa que la producción verificada, limita el trabajo en curso o simplifica el ciclo. Un método manual puede resultar mejor.
+
+### Ejercicio 6
+
+Tres agentes redactan 30 módulos en un día, pero solo dos tienen fixtures utilizables y ejercicios revisados. ¿Ha mejorado el sistema? Propón un cambio y un criterio de rechazo.
+
+> **Respuesta:** No hay una mejora demostrada: la producción verificada es de dos módulos y la cola de revisión puede ser el cuello de botella. Localiza los recibos sin pruebas, automatiza las verificaciones repetibles de las fixtures y limita los nuevos borradores hasta vaciar la cola. Rechaza la supuesta aceleración si varios ciclos no reducen el tiempo por módulo útil y revisado sin aumentar defectos o rechazos.
 
 ## Fuentes y límites
 

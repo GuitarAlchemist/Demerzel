@@ -12,13 +12,13 @@
     },
     "outline": {
       "completed": true,
-      "sections": 4,
+      "sections": 5,
       "estimated_duration": "45 minutes"
     },
     "content": {
       "completed": true,
-      "word_count": 1383,
-      "exercises": 5
+      "word_count": 1855,
+      "exercises": 6
     },
     "translation": {
       "completed": false,
@@ -26,11 +26,11 @@
     },
     "review": {
       "completed": false,
-      "feedback": "Subject and native-language review are pending; PT/IT/DE are not drafted. A bounded wmux Claude review attempt was denied access to the sibling Demerzel course files and denied permission to write its receipt, so no independent review was produced. The GA ComfyUI bridge is a local unmerged commit with mock-only testing and no live model candidate, blinded listening, or browser WASM capture. The negative control demonstrates equal errors, not perceptual validity."
+      "feedback": "Subject and native-language review are pending; PT/IT/DE are not drafted. The first bounded wmux attempt was denied; a user-authorized narrow retry read the declared sources and wrote a marker-verified advisory review. Its known-perturbation and listening-protocol gaps were incorporated as testable drafts. A recursive-improvement exercise now compares verified throughput with raw draft volume; compounding is not yet demonstrated. The GA ComfyUI bridge remains a local unmerged commit with mock-only testing and no live model candidate, blinded listening, or browser WASM capture. Neither negative nor positive controls establish perceptual validity."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-04T17:49:40Z"
+  "timestamp": "2026-10-04T18:20:43Z"
 }

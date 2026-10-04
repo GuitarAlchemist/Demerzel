@@ -26,6 +26,8 @@ La [paire GAS-001](../../../fixtures/guitar-acoustics/gas-001/README.md) compren
 
 Commençons par poser **candidat = son de départ**. En utilisant deux fois `ga-engine-e2-open-4s.wav`, la référence `deb-low-e-open.wav`, `--reference-offset 1.1` et `--seconds 1.5`, le comparateur a donné la même erreur RMS moyenne sur 250 ms aux deux fichiers : `0.124158746`. Toutes les erreurs FFT et Haar étaient également identiques. Ce témoin négatif est utile : si la chaîne annonce un progrès, c'est sa règle de décision qui est défectueuse, même si les commandes se sont bien exécutées.
 
+Une revue indépendante dans wmux a relevé que ce témoin passerait aussi si le comparateur annonçait toujours « égal ». Un [témoin avec modification connue](../../../fixtures/computer-science/cs-004/review-followup-20261004.md) réduit maintenant de moitié l'amplitude du rendu natif et applique, dans un second essai, un filtre étroit près du deuxième harmonique de E2. Les mesures RMS et spectrales ont changé. Ces essais montrent une sensibilité à ces modifications, **pas** une meilleure sonorité de guitare : la réduction d'amplitude diminue l'erreur RMS, le filtre l'augmente, et personne n'a écouté ces fichiers à l'aveugle.
+
 ### Exercice 1
 
 Que conclure lorsque le candidat et le son de départ ont tous deux l'empreinte SHA-256 `a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98` ?
@@ -92,11 +94,25 @@ node scripts/compare-audio.js `
 
 Dans le JSON, vérifiez l'égalité des empreintes et des erreurs. Ensuite seulement, si un modèle audio local et sa licence sont connus, utilisez un vrai workflow ComfyUI. Gardez les mêmes fichiers de départ et de référence, changez un seul paramètre, notez modèle, seed et empreintes, puis mesurez et faites écouter à l'aveugle, à niveau égal. Le reçu doit contenir l'observation de l'utilisateur, les mesures, la décision et la prochaine expérience. Le dogfooding consiste à utiliser notre propre moteur et nos propres outils pour découvrir les problèmes de préparation, d'erreur, de reprise et de révision. Un agent qui ne peut ni lire la fixture ni écrire son reçu a découvert un défaut d'expérience; l'envoi d'un prompt ne vaut pas progrès.
 
+Avant l'écoute, consignez qui jugera les sons, les notes et intensités jouées, la méthode et la tolérance d'égalisation du niveau, l'ordre aléatoire et la règle de décision. Un petit groupe de trois guitaristes est une **hypothèse à tester**, pas un seuil validé. Conservez les choix et commentaires individuels, y compris les désaccords. Si une comparaison manuelle plus simple conduit aux mêmes décisions avec moins de préparation, écartez la couche agentique jusqu'à ce qu'elle apporte un avantage mesurable.
+
 ### Exercice 5
 
 Proposez une condition de réussite et un critère de rejet. Qui décide d'une modification du moteur temps réel ?
 
 > **Réponse :** Par exemple, exiger un candidat reproductible, un son de départ et une référence fixes, aucune régression de l'attaque ou de la hauteur, et une préférence notée lors d'une écoute à l'aveugle. Une sortie identique, une provenance absente ou des refus répétés à l'écoute réfutent l'amélioration. L'agent propose; une évaluation indépendante et une personne habilitée décident du test d'un changement Rust/WASM. Le candidat hors ligne ne devient pas à lui seul le moteur temps réel.
+
+## 5. Améliorer la boucle suivante, pas seulement la sortie actuelle
+
+Le [journal d'amélioration récursive](../../../fixtures/computer-science/cs-004/recursive-improvement-evidence.json) rassemble deux paires d'essais. La première revue wmux n'a lu qu'une source sur trois et n'a produit aucun reçu. Après l'ajout de règles de fichiers exactes et autorisées au lanceur, une seconde lane a lu quatre sources sur quatre et écrit une revue dont le marqueur a été vérifié. Le premier témoin audio montrait qu'un candidat identique ne pouvait pas améliorer le son de départ; les modifications connues suivantes ont montré que le comparateur détectait certains changements de niveau et de spectre. Chaque échec a modifié le **harness ou l'évaluation**, puis un nouvel essai a testé cette modification. Deux paires ne prouvent aucune croissance exponentielle.
+
+Pour les trois prochains essais de cours et d'audio, confiez chaque artefact indépendant à une seule personne ou lane, avec une entrée immuable et un reçu attendu. La préparation des fixtures, la localisation et les candidats peuvent avancer dans des files distinctes dès que leurs entrées sont prêtes. Automatisez les vérifications de schéma, de liens, de couverture linguistique et de témoins; regroupez la revue indépendante des reçus prêts. Réservez l'écoute musicale aux jugements que les mesures ne tranchent pas, et l'autorisation humaine aux changements difficiles à annuler ou à la publication. Testez tout nouvel évaluateur sur au moins un cas qui n'a pas servi à le concevoir. Mesurez le temps entre entrée prête et cours révisé, l'attente de revue, les reçus ratés, la réussite des exercices par les apprenants et les défauts après revue. Comptez les **modules utiles et révisés**, pas les mots produits. Si l'attente de coordination augmente plus vite que le débit vérifié, réduisez le travail en cours ou simplifiez la boucle. Une méthode manuelle peut être meilleure.
+
+### Exercice 6
+
+Trois agents rédigent 30 modules en une journée, mais deux seulement ont des fixtures utilisables et des exercices révisés. Le système a-t-il progressé ? Proposez un changement et un critère de rejet.
+
+> **Réponse :** Aucun progrès démontré : le débit vérifié est de deux modules, et la revue risque d'être le goulot. Repérez les reçus sans preuve, automatisez les vérifications répétables des fixtures et limitez les nouveaux brouillons jusqu'à résorption de la file. Rejetez la promesse d'accélération si les cycles suivants ne réduisent pas le temps par module utile et révisé sans augmenter les défauts ni les rejets.
 
 ## Sources et limites
 

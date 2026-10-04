@@ -26,6 +26,8 @@ Use the [GAS-001 fixture](../../../fixtures/guitar-acoustics/gas-001/README.md):
 
 First set **candidate = baseline**. With both pointing to `ga-engine-e2-open-4s.wav`, reference `deb-low-e-open.wav`, `--reference-offset 1.1`, and `--seconds 1.5`, the actual comparator produced identical baseline and candidate errors: 250 ms RMS mean absolute error `0.124158746` for each; every reported FFT and Haar error also matched. This is a useful negative control. A pipeline that calls this an improvement has a broken decision rule, even though it ran successfully.
 
+An independent wmux review noted that this alone would also pass if the comparator always reported equality. A [known-perturbation control](../../../fixtures/computer-science/cs-004/review-followup-20261004.md) now halves the native render's amplitude and separately applies a narrow equalizer near E2's second harmonic. The comparator changed its RMS and spectral results respectively. These controls show sensitivity to those changes, **not** better guitar sound: half amplitude lowered the RMS error while the equalizer increased it, and neither file was heard blind.
+
 ### Practice exercise 1
 
 What should the acceptance decision be when the candidate and baseline SHA-256 values are both `a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98`?
@@ -92,11 +94,25 @@ node scripts/compare-audio.js `
 
 Open the JSON and verify equal baseline/candidate hashes and errors. Then use a local ComfyUI workflow only when an audio model and its license are known. Keep the same baseline and reference, change one workflow parameter, record model/seed/hash, measure again, and have a guitarist listen blind at matched level. Write one receipt with the user's observation, the automated measurements, a rejected or accepted decision, and the next experiment. This is dogfooding: the team uses its own engine and tooling to discover friction in the entire experience, including setup, errors, recovery, and review. If the agent cannot access a fixture or write a receipt, record that failure as a product observation rather than treating a submitted prompt as progress.
 
+Before listening, record who will judge, which notes and velocities they will hear, the level-matching method and tolerance, the randomization method, and the decision rule. A small panel of three guitarists is a **proposal to test**, not a validated threshold. Preserve individual choices and comments, including disagreement. If a simpler manual comparison reaches the same decisions with less setup, reject the added agent workflow until it provides measurable value.
+
 ### Practice exercise 5
 
 Name a success condition and a falsifier for the next iteration. Who decides whether the real-time engine changes?
 
 > **Answer:** One possible condition is a reproducible candidate with a fixed baseline/reference, no attack or pitch regression, and a blind listener preference recorded for the same note. A byte-identical output, missing provenance, or consistent listener rejection falsifies improvement. The agent proposes; an independent evaluator and authorized project reviewer decide whether a specific Rust/WASM change is worth testing. The offline candidate alone cannot become the real-time engine.
+
+## 5. Improve the next loop, not just the current output
+
+The [recursive improvement log](../../../fixtures/computer-science/cs-004/recursive-improvement-evidence.json) records two small pairs of runs. The first wmux review read only one of three declared sources and wrote no receipt. After the bounded launcher gained exact, user-authorized file rules, a second lane read four of four sources and wrote a marker-verified review. The first audio control proved that an identical candidate cannot improve the baseline; the next two known perturbations showed that the comparator can detect particular level and spectral changes. Each failure changed the **harness or evaluation**, then a new run tested the change. Neither pair proves an exponential trend.
+
+For the next three course and audio experiments, give each independent artifact one writer and an immutable input/expected-output receipt. Let fixture preparation, localization, and candidate generation proceed in separate queues when their inputs are ready. Automate schema, link, translation-coverage, and control checks; batch independent review of ready receipts. Reserve musician listening for judgments that measurements cannot settle and human authorization for one-way changes or publication. Test a new evaluator on at least one case it was not designed around. Measure elapsed time from ready input to reviewed course, review wait, failed receipts, learner task success, and defects after review. Count **reviewed, useful modules**, not drafted words. If coordination or review waiting grows faster than verified throughput, reduce work in progress or simplify the loop. A manual baseline may beat the agent-assisted path.
+
+### Practice exercise 6
+
+Three agents draft 30 modules in a day, but only two have usable fixtures and reviewed exercises. Has the learning system improved? Name the next change and a falsifier.
+
+> **Answer:** No demonstrated improvement: the verified throughput is two modules, and the review queue may be the bottleneck. Inspect which receipts lack evidence, automate repeatable fixture checks, and limit new drafts until review catches up. Reject the claimed compounding if repeated cycles do not reduce time per independently reviewed, learner-useful module without raising defect or rejection rates.
 
 ## Sources and limits
 
