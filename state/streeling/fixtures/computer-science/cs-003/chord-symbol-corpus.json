@@ -1,0 +1,16 @@
+{
+  "fixture_id": "cs-003-chord-symbol-boundary",
+  "source_revision": "GA local checkout, 2026-10-04; pin a GA commit before publishing",
+  "status": "source-traced predictions; executable regression pending",
+  "consumer": "GA.Domain.Services.Chords.Parsing.ChordSymbolParser",
+  "cases": [
+    { "input": "C", "category": "supported", "expected": "major triad", "current_source_trace": "exact empty-suffix case" },
+    { "input": "Am", "category": "supported", "expected": "minor triad", "current_source_trace": "exact m case" },
+    { "input": "G7", "category": "supported", "expected": "dominant seventh", "current_source_trace": "exact 7 case" },
+    { "input": "Hmaj7", "category": "invalid root", "expected": "structured rejection", "current_source_trace": "root regex does not match H" },
+    { "input": "Cnope", "category": "unknown suffix", "expected": "structured rejection", "current_source_trace": "unknown suffix falls through to Major" },
+    { "input": "Galtxyz", "category": "unconsumed tail", "expected": "structured rejection", "current_source_trace": "Contains(alt) returns altered dominant despite xyz" },
+    { "input": "C7b5", "category": "partial interpretation", "expected": "dominant seventh with flat fifth or explicit unsupported", "current_source_trace": "Contains(b5) returns Flat5 formula without the seventh" },
+    { "input": "C/E", "category": "slash bass", "expected": "C major with E bass or explicit unsupported", "current_source_trace": "unknown suffix falls through to Major; Chord.Symbol keeps C/E but Bass is root C" }
+  ]
+}

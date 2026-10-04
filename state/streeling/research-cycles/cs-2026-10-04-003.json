@@ -1,0 +1,25 @@
+{
+  "cycle_id": "cs-2026-10-04-003",
+  "department": "computer-science",
+  "question": "At which GA chord-symbol boundary should unsupported or ambiguous notation become an explicit result instead of a plausible but wrong chord?",
+  "production_path": [
+    "investigation: inspect parser consumer tests",
+    "functional_composition: tokenize validate construct map_error",
+    "adversarial: positive_negative_partial_interpretation_corpus",
+    "test: source_trace"
+  ],
+  "hypothesis": "GA's tolerant chord-symbol parser accepts unknown or partially interpreted suffixes, allowing a user-visible voicing response to carry an invented musical meaning. A small corpus and explicit parse outcomes can expose the boundary before changing the public API.",
+  "test_method": "adversarial",
+  "evidence": [
+    "GA Common/GA.Domain.Services/Chords/Parsing/ChordSymbolParser.cs matches a valid root followed by any suffix, maps unrecognized suffixes to Major, and uses substring checks for alterations. Its TryParse catches every exception and returns only a boolean.",
+    "GA Tests/Common/GA.Business.Core.Tests/Chords/ChordSymbolParserTests.cs asserts only non-null/root/symbol on accepted cases and does not test an unknown suffix; C/E is listed as valid without a bass assertion.",
+    "GA Common/GA.Domain.Core/Theory/Harmony/Chord.cs has a separate TryFromSymbol path that rejects an unknown suffix but supports fewer chord forms; Chord.Bass is Notes[0], not parsed slash-bass metadata.",
+    "GA Apps/ga-server/GaApi/Services/VoicingFilterService.cs uses ChordSymbolParser.TryParse; Apps/ga-server/GaApi/Controllers/ContextualChordsController.cs returns 400 for ArgumentException and 200 for successfully parsed voicings.",
+    "state/streeling/fixtures/computer-science/cs-003/chord-symbol-corpus.json records source-traced predictions and desired outcomes; runtime regression and subject review are pending."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.78,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-04T18:20:00Z"
+}
