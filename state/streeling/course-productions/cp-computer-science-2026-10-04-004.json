@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-04-004",
+  "department": "computer-science",
+  "research_cycle_id": "cs-2026-10-04-004",
+  "module_id": "cs-004-composable-agentic-audio-loop",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.72
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1383,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en", "fr", "es"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Subject and native-language review are pending; PT/IT/DE are not drafted. A bounded wmux Claude review attempt was denied access to the sibling Demerzel course files and denied permission to write its receipt, so no independent review was produced. The GA ComfyUI bridge is a local unmerged commit with mock-only testing and no live model candidate, blinded listening, or browser WASM capture. The negative control demonstrates equal errors, not perceptual validity."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-04T17:49:40Z"
+}

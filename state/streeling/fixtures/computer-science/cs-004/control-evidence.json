@@ -1,0 +1,34 @@
+{
+  "experiment": "cs-004-candidate-equals-baseline",
+  "ga_commit": "6fac5735f7ffbb4116ebee05cfc9d7911bb12ce9",
+  "comparator": "Rust/guitar-web-wasm-demo/scripts/compare-audio.js",
+  "files": {
+    "baseline": {
+      "path": "../../guitar-acoustics/gas-001/ga-engine-e2-open-4s.wav",
+      "sha256": "a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98",
+      "offset_seconds": 0
+    },
+    "candidate": {
+      "path": "../../guitar-acoustics/gas-001/ga-engine-e2-open-4s.wav",
+      "sha256": "a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98",
+      "offset_seconds": 0
+    },
+    "reference": {
+      "path": "../../guitar-acoustics/gas-001/deb-low-e-open.wav",
+      "sha256": "03a1965f275f0858be70476dab2bf55d2cbf2272ef7a50c61453d45e7f38b248",
+      "offset_seconds": 1.1
+    }
+  },
+  "analysis_seconds": 1.5,
+  "analyzed_frames": 6,
+  "frame_seconds": 0.25,
+  "observations": {
+    "rms_250ms_baseline_mae": 0.12415874627653194,
+    "rms_250ms_candidate_mae": 0.12415874627653194,
+    "spectral_centroid_baseline_abs_error_hz": 502.9456866794162,
+    "spectral_centroid_candidate_abs_error_hz": 502.9456866794162,
+    "all_fft_and_haar_errors_equal": true
+  },
+  "decision": "reject_improvement_claim",
+  "limitations": "Native Rust source render, not browser WASM capture; no ComfyUI candidate or blind listening; reference onset is approximate."
+}

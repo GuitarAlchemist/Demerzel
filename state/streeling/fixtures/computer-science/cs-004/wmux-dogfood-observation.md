@@ -1,0 +1,9 @@
+# Wmux review attempt: cross-repository permissions
+
+On 2026-10-04, a single bounded, read-only Claude Code lane was launched in a separate pane of an existing wmux workspace. Its correlation ID was `STREELING-AGENTIC-20261004`. The requested output was a short review of the GA agentic-engineering method, the Streeling syllabus, and GAS-001, with one receipt and an exact completion marker. The lane used the subscription Claude binary `2.1.289`, model `claude-sonnet-5-5` as reported by its initialization event, low effort, `dontAsk` permission mode, and a restricted tool list. No paid API key was supplied.
+
+The pane showed a successful read of GA's `docs/methodology/agentic-engineering.md`. Reads of the two files in the sibling Demerzel worktree were denied. The attempted write to GA's `state/handoffs/streeling-agentic-dogfood-review-20261004.md` was also denied. The provider exited with code 0, but the marker-aware wrapper reported that the completion marker and artifact were missing. The coordinator verified the absent artifact, stopped the exact temporary agent, and reaped only its exited surface. The pre-existing Wayfinder session was left in place.
+
+**Outcome:** a prompt was delivered and a provider ran, but no course review was completed. Neither the wrapper's earlier `running` status nor the provider's zero exit code is a valid completion claim. The next agent-experience slice should make the required cross-repository read paths and receipt write path part of a tested capability preflight before a lane is counted as active. A changed permission scope needs an explicit bounded decision; do not silently bypass the denial, copy source material to evade it, or route through another peer.
+
+This is one observed attempt, not evidence that wmux or Claude always denies such tasks. The screen output, permission mode, and absence of the result file support the narrow conclusion above.
