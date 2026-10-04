@@ -1,0 +1,28 @@
+{
+  "cycle_id": "visual-computing-2026-10-04-001",
+  "department": "visual-computing",
+  "question": "Can a guitarist obtain the same GA fretboard position information and available selection action through pointer, keyboard, and screen-reader paths across render modes?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "rendering_2d: svg_domain canvas_2d_domain",
+    "accessibility_domain: aria_domain screen_reader_domain",
+    "screen_reader_domain: svg_title_desc canvas_fallback",
+    "test: cross_validation"
+  ],
+  "hypothesis": "A shared position model plus a synchronized textual list, with native selection controls only when selection exists, can preserve the same musical facts and available action across SVG, Canvas, and 3D views.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, ReactComponents/ga-react-components/src/components/GuitarFretboard.tsx renders SVG circles with mouse enter/leave and click handlers, but the inspected markers have no explicit accessible name, role, focus target, or keyboard activation.",
+    "At the same GA commit, ReactComponents/ga-react-components/src/components/RealisticFretboard.tsx attaches pointerdown/over/out handlers to Pixi markers, and StringedInstrumentFretboard.tsx routes positions and callbacks to SVG, Canvas, and 3D modes.",
+    "At the same GA commit, Apps/ga-client/src/components/SmartVoicingDisplay.tsx renders a voicing card without an onPositionClick callback; ReactComponents/ga-react-components/tests/fretboard.spec.ts checks rendering and console errors but does not establish keyboard or screen-reader operation.",
+    "W3C WCAG 2.2 Understanding 2.1.1 addresses keyboard operation of functionality: https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html",
+    "W3C WCAG 2.2 Understanding 4.1.2 addresses programmatic name, role, value, and state: https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+    "W3C WCAG 2.2 Understanding 1.1.1 addresses text alternatives for non-text content: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html",
+    "The proposed shared list and equivalence across modes have not been implemented or tested in GA; browser and assistive-technology results are pending."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-04T16:26:49Z"
+}

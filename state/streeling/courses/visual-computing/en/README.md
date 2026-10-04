@@ -6,6 +6,14 @@
 
 Teach AI to master the full visual rendering spectrum: 2D graphics, 3D engines, WebGPU, game engines, data visualization, animation, spatial computing, 3D modeling, and accessible design.
 
+## Courses
+
+| Code | Course | Status | Languages |
+|---|---|---|---|
+| [VC-001](vc-001-accessible-fretboard-paths.md) | One Fretboard, Three Access Paths | Draft; localization and review pending | [EN](vc-001-accessible-fretboard-paths.md), [FR](../fr/vc-001-accessible-fretboard-paths.fr.md), [ES](../es/vc-001-accessible-fretboard-paths.es.md) |
+
+VC-001 uses source inspection of a pinned GA commit. Live keyboard and assistive-technology testing, subject and native-language review, and the policy's PT/IT/DE localizations remain pending; it is not a verified course.
+
 ## Curriculum
 
 ### Foundations
