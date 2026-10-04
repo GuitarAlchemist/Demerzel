@@ -6,7 +6,11 @@
 
 ## Courses
 
-*No courses produced yet. Run `/seldon research-cycle data-visualization` to generate the first course.*
+| Code | Course | Status | Languages |
+|---|---|---|---|
+| [DV-001](en/dv-001-observed-degraded-stale-quality.md) | Observed, Degraded, and Stale Quality Runs | Draft; localization and review pending | [EN](en/dv-001-observed-degraded-stale-quality.md), [FR](fr/dv-001-observed-degraded-stale-quality.fr.md), [ES](es/dv-001-observed-degraded-stale-quality.es.md) |
+
+DV-001 is a draft grounded in pinned GA QA snapshots. Subject and native-language review and the policy's PT/IT/DE localizations are pending; do not present it as a verified course.
 
 ## Curriculum Areas
 

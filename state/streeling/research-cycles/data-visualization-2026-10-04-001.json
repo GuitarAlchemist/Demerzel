@@ -1,0 +1,26 @@
+{
+  "cycle_id": "data-visualization-2026-10-04-001",
+  "department": "data-visualization",
+  "question": "How should a GA chatbot QA timeline distinguish measured quality, backend-unavailable runs, and carried-forward historical values?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "data_relationship: temporal_trend",
+    "chart_type: line_chart",
+    "design_pattern: annotation_layer",
+    "design_principle: accessibility_compliance"
+  ],
+  "hypothesis": "A separate measured-quality lane and availability lane, with dated historical references, preserves the distinctions recorded by GA snapshots and avoids presenting missing quality as zero or as a new measurement.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "GA commit dc2e74cbd992a298f67efb928b5b3754615e1924: state/quality/chatbot-qa/2026-06-08.json reports pass_pct null, degraded true, backend_unavailable, and a carried-forward 94.0 from May 16.",
+    "The same GA commit: state/quality/chatbot-qa/2026-06-15.json, 2026-06-19.json, and 2026-07-19.json report non-null pass rates of 75.00, 7.69, and 98.08; each lists 52 prompts but does not prove identical evaluator and corpus revisions.",
+    "The same GA commit: docs/quality/README.md distinguishes stale feeds, degraded counts, observation dates, and measured metric values.",
+    "W3C WCAG 2.2 Understanding 1.4.1 requires a visual indicator besides color when color conveys information: https://www.w3.org/WAI/WCAG22/Understanding/use-of-color",
+    "W3C WCAG 2.2 Understanding 1.1.1 describes text alternatives and data tables for charts: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content"
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 154,
+  "timestamp": "2026-10-04T16:00:52Z"
+}

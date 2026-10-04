@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-data-visualization-2026-10-04-001",
+  "department": "data-visualization",
+  "research_cycle_id": "data-visualization-2026-10-04-001",
+  "module_id": "dv-001-observed-degraded-stale-quality",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.65
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1327,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en", "fr", "es"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Subject accuracy and native-language review are pending. The Learn site languages EN/FR/ES are drafted; PT/IT/DE from the active multilingual policy are not drafted. The two-lane display has not been user-tested."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-04T16:04:32Z"
+}
