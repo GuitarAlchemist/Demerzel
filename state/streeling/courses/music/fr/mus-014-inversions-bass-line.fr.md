@@ -44,7 +44,7 @@ Seule la basse compte. L'ordre des notes au-dessus d'elle, leurs octaves et leur
 | xxx988 | mi4 sol4 do5 | mi | premier renversement |
 | xxx010 | sol3 do4 mi4 | sol | deuxième renversement |
 
-Les formes ouvertes x32010, 032010 et 332010 de MUS-013 contiennent les trois mêmes positions sur cinq ou six cordes. Les renversements permettent aussi à une ligne de basse d'avancer par degrés conjoints pendant que les accords changent : C – G/B – Am, joué x32010 – x20003 – x02210, fait descendre la basse do3, si2, la2, avec G au premier renversement.
+Les formes ouvertes x32010, 032010 et 332010 de MUS-013 contiennent les trois mêmes positions sur cinq ou six cordes. Les renversements permettent aussi à une ligne de basse d'avancer par degrés conjoints pendant que les accords changent : C – G/B – Am, joué x32010 – x20003 – x02210, fait descendre la basse par do3, si2, la2, avec G au premier renversement.
 
 ### Exercice pratique
 
@@ -56,7 +56,7 @@ Donnez la position de 2x0232 et de x00232.
 
 ## 2. La basse chiffrée
 
-La basse chiffrée écrit un accord en chiffres placés à côté de sa basse. L'article « Figured bass » de Wikipédia les place « above or below (or next to) a bass note » (au-dessus ou au-dessous d'une note de basse, ou à côté) : « The numbers indicate the number of scale steps above the given bass-line that a note should be played. » (Les chiffres indiquent à combien de degrés au-dessus de la ligne de basse donnée une note doit être jouée.) Les degrés se comptent par noms de notes, comme pour les numéros d'intervalles (MUS-008) : au-dessus de sol, do est une quarte (sol la si do) et mi une sixte. Les chiffres « do not express notes in upper voices that double, or are unison with, the bass note » (n'expriment pas les notes des voix supérieures qui redoublent la basse ou sont à l'unisson avec elle ; « Inversion (music) »), et ils ignorent les octaves : un chiffrage nomme une position, pas un voicing.
+La basse chiffrée écrit un accord en chiffres placés à côté de sa basse. L'article « Figured bass » de Wikipédia les place « above or below (or next to) a bass note » (au-dessus ou au-dessous d'une note de basse, ou à côté) : « The numbers indicate the number of scale steps above the given bass-line that a note should be played. » (Les chiffres indiquent à combien de degrés au-dessus de la ligne de basse donnée une note doit être jouée.) Les degrés se comptent par noms de notes, comme pour les numéros d'intervalles (MUS-008) : au-dessus de sol, do est une quarte (sol la si do) et mi une sixte. Les chiffres « do not express notes in upper voices that double, or are unison with, the bass note » (n'expriment pas les notes des voix supérieures qui redoublent la basse ou sont à l'unisson avec elle ; « Inversion (music) »), et ils ignorent d'ordinaire les octaves : un chiffrage nomme une position, pas un voicing.
 
 Chaque position a un chiffrage complet et une abréviation usuelle. Les triades à l'état fondamental « appear without symbols (the 53 is understood) » (apparaissent sans symbole, le 53 étant sous-entendu), et « first-inversion triads are customarily abbreviated as just 6 » (les triades au premier renversement s'abrègent d'ordinaire en un simple 6 ; « Inversion (music) ») :
 
@@ -97,15 +97,15 @@ Parmi les positions d'une triade, seul le deuxième renversement place une quart
 | Arpège de basse | C – C/E – C/G | x32010 – 032010 – 332010 | La basse joue do3, mi2, sol2 sous un seul accord |
 
 - **De cadence.** « Six-four chord » en donne deux lectures. L'une, celle de la plupart des anciens manuels d'harmonie, voit dans l'accord une tonique au deuxième renversement, I6/4 – V – I. L'autre, que préfèrent plusieurs manuels modernes, entend la dominante avec « a double appoggiatura on the V that resolves down by step » (une double appoggiature sur le V qui se résout en descendant par degré conjoint), notée V6/4 – 5/3 : la basse sol est déjà la dominante, et do et mi sont des dissonances qui se résolvent sur si et ré.
-- **De passage.** Dans un quarte et sixte de passage, « the bass passes between two tones a third apart » (la basse passe entre deux notes à distance de tierce), et l'accord tombe « on the weaker beat between these two chords » (sur le temps le plus faible, entre ces deux accords).
+- **De passage.** Dans un accord de quarte et sixte de passage, « the bass passes between two tones a third apart » (la basse passe entre deux notes à distance de tierce), et l'accord, placé entre deux accords plus stables, tombe « on the weaker beat between these two chords » (sur le temps le plus faible, entre ces deux accords).
 - **De broderie.** Le IV6/4 harmonise une note de broderie : « the third and fifth rise a step each and then fall back » (la tierce et la quinte montent chacune d'un degré, puis redescendent).
-- **Arpège de basse.** La basse parcourt la fondamentale, la tierce et la quinte d'un même accord ; la quinte à la basse fait un quarte et sixte, mais rien n'a besoin de se résoudre.
+- **Arpège de basse.** La basse parcourt la fondamentale, la tierce et la quinte d'un même accord ; la quinte à la basse fait un accord de quarte et sixte, mais rien n'a besoin de se résoudre.
 
 ### Exercice pratique
 
-Une progression en do majeur enchaîne Am – C/G – G7 – C. Quelle sorte de quarte et sixte est C/G, et comment peut-on le lire ?
+Une progression en do majeur enchaîne Am – C/G – G7 – C. Quelle sorte d'accord de quarte et sixte est C/G, et comment peut-on le lire ?
 
-> *Solution :* C'est un quarte et sixte de cadence : il tombe avant la dominante d'une cadence. Une lecture l'appelle I6/4, la tonique au deuxième renversement. L'autre entend la dominante déjà à la basse, sol, avec do et mi en double appoggiature qui descend sur si et ré : V6/4 – 5/3, G7 ajoutant sa septième, fa, à la résolution.
+> *Solution :* C'est un accord de quarte et sixte de cadence : il tombe avant la dominante d'une cadence. Une lecture l'appelle I6/4, la tonique au deuxième renversement. L'autre entend la dominante déjà à la basse, sol, avec do et mi en double appoggiature qui descend sur si et ré : V6/4 – 5/3, G7 ajoutant sa septième, fa, à la résolution.
 
 ---
 
@@ -127,7 +127,7 @@ Donnez le chiffrage et la position de la♭ si ré fa sur la♭, et du même son
 
 ## 5. Où en est GA
 
-GA est la bibliothèque de théorie musicale et le chatbot de l'écosystème GuitarAlchemist. Les faits ci-dessous sont lus dans son code au commit [`5c3a52a`](https://github.com/GuitarAlchemist/ga/tree/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26). Cette leçon documente ce code et ne le modifie pas. Elle n'a exécuté ni GA ni ses tests. Les fichiers qu'elle cite sont inchangés sur la branche `main` de GA, à `e610b77`, sauf deux : dans `Modes.yaml`, les lignes citées sont inchangées, et dans `ModesSkill.cs`, le code cité est inchangé mais à d'autres numéros de ligne. GA traite les renversements à trois endroits.
+GA est la bibliothèque de théorie musicale et le chatbot de l'écosystème GuitarAlchemist. Les faits ci-dessous sont lus dans son code au commit [`5c3a52a`](https://github.com/GuitarAlchemist/ga/tree/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26). Cette leçon documente ce code et ne le modifie pas. Elle n'a exécuté ni GA ni ses tests. Les fichiers qu'elle cite sont inchangés sur la branche `main` de GA, à `e610b77`, sauf deux : dans `Modes.yaml`, les lignes citées sont inchangées, et dans `ModesSkill.cs`, le code cité est inchangé mais à d'autres numéros de ligne. Cette leçon suit les renversements à travers trois endroits de GA.
 
 **`Chord` compte par rotation.** [`Bass`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L260-L263) vaut `Notes[0]`, documentée comme la « lowest note in the voicing » (note la plus grave du voicing). [`GetInversion`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L281-L298) renvoie 0 quand la basse est la fondamentale ; sinon, elle cherche la fondamentale dans la liste des notes et renvoie le nombre de notes qui vont de la fondamentale à la fin de la liste. [`ToInversion`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L300-L320) fait tourner la liste. Un accord construit à partir d'un symbole range ses notes dans l'[ordre de sa formule](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Core/Theory/Harmony/Chord.cs#L25-L43), do mi sol pour C, si bien que les rotations mi sol do et sol do mi comptent 1 et 2. Les tests [`Inversions_ShouldWorkCorrectly`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/Theory/Harmony/ChordTests.cs#L123-L143) et [`ToInversion_PreservesFormulaAndSymbol`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/CoreHardeningRegressionTests.cs#L134-L154) le vérifient pour C, Cm, Cmaj7, C9 et C13.
 
@@ -144,7 +144,7 @@ Learn, le site de cours de l'écosystème, a un cours music-theory-ga dont le la
 | sol do mi | sol, la quinte | deuxième renversement | 2 |
 | sol mi do | sol, la quinte | deuxième renversement | 1 |
 
-`GetInversion` ne regarde que la place de la fondamentale dans la liste. Un accord renversé ne compte juste que si la fondamentale est à la place que lui donne la position serrée, sans note redoublée : mi sol do mi, en ordre serré avec mi redoublé, compte 2. Un accord à l'état fondamental compte 0 dans n'importe quel ordre, puisque la basse est la fondamentale. `ToInversion` hérite de l'erreur : à partir de mi do sol, `ToInversion(1)` renvoie sol mi do, avec la quinte à la basse, et `GetInversion` dit alors 1. Le [test de ce constructeur](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/CoreHardeningRegressionTests.cs#L156-L162) passe mi sol do, un ordre qui compte juste, et vérifie la qualité et la formule, pas le renversement. La leçon 3 de Learn juge `GetInversion` correct ; il l'est, pour les rotations que cette leçon teste.
+`GetInversion` ne regarde que la première place de la fondamentale dans la liste, et compte les notes de là jusqu'à la fin. La position serrée met la fondamentale là où ce compte correspond à la position ; d'autres ordres et des redoublements peuvent la déplacer : mi sol do mi, en ordre serré avec mi redoublé en haut, compte 2. Un accord à l'état fondamental compte 0 dans n'importe quel ordre, puisque la basse est la fondamentale. `ToInversion` hérite de l'erreur : à partir de mi do sol, `ToInversion(1)` renvoie sol mi do, avec la quinte à la basse, et `GetInversion` dit alors 1. Le [test de ce constructeur](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/GA.Domain.Core.Tests/CoreHardeningRegressionTests.cs#L156-L162) passe mi sol do, un ordre qui compte juste, et vérifie la qualité et la formule, pas le renversement. La leçon 3 de Learn juge `GetInversion` correcte ; elle l'est, pour les rotations que cette leçon teste.
 
 **Le document de voicing compte des demi-tons.** GA décrit un voicing par un document pour sa recherche. [`VoicingDocumentFactory`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Rag/VoicingDocumentFactory.cs#L22-L28) prend la note la plus grave comme basse et, comme fondamentale, celle du reconnaisseur d'accords de MUS-013, via [`TryGetRootPitchClass`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Musical/Analysis/ChordIdentificationExtensions.cs#L19-L29). [`CalculateInversion`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Rag/VoicingDocumentFactory.cs#L88-L96) convertit ensuite les demi-tons qui mènent de la fondamentale à la basse, en montant : 0 donne l'état fondamental ; 3 ou 4 donnent 1 ; 6 ou 7 donnent 2 ; 10 ou 11 donnent 3 ; toute autre distance donne −1. Lu, pas exécuté, avec les noms du reconnaisseur transcrits depuis son code ; comme dans MUS-013, la colonne des notes nomme chaque case avec des dièses :
 
@@ -161,7 +161,7 @@ Learn, le site de cours de l'écosystème, a un cours music-theory-ga dont le la
 
 - **Le nombre suit la fondamentale de GA.** Le C6 et le Dsus4 des grilles sont à l'état fondamental ; GA les lit comme Am7 et Gsus2, et donne donc 1 et 2. Eaug, A♭aug et Ddim7 sont aussi à l'état fondamental sur une grille, mais GA les mesure depuis do, do et fa.
 - **Le document laisse tomber la barre oblique.** Son `ChordName` [préfère le nom canonique du reconnaisseur](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Rag/VoicingDocumentFactory.cs#L43-L46), que le nom avec barre oblique [ne fait que prolonger](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Domain.Services/Chords/CanonicalChordRecognizer.cs#L417-L419) : le document de 032010 s'appelle `C`, et celui de 4x2110 `Caug`.
-- **Deux distances manquent.** Une triade augmentée avec sa quinte à la basse est à 8 demi-tons au-dessus de la fondamentale, et une septième diminuée avec sa septième à la basse, à 9 : toutes deux reçoivent −1, là où les lectures choisies par GA en font un deuxième et un troisième renversement. De même pour toute basse à 1, 2 ou 5 demi-tons au-dessus de la fondamentale.
+- **Deux distances de notes de l'accord manquent.** Une triade augmentée avec sa quinte à la basse a cette basse à 8 demi-tons au-dessus de la fondamentale, et une septième diminuée avec sa septième à la basse l'a à 9 : toutes deux reçoivent −1, là où les lectures choisies par GA en font un deuxième et un troisième renversement. De même pour toute basse à 1, 2 ou 5 demi-tons au-dessus de la fondamentale.
 - **Les consommateurs le lisent tel quel.** Quand le service de recherche de GA indexe des documents, il [copie chaque renversement](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Search/EnhancedVoicingSearchService.cs#L120) dans l'entrée, et [`VoicingFilterEngine`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Search/VoicingFilterEngine.cs#L105) ne garde une entrée que si son renversement est égal à celui du filtre, si bien qu'une recherche de deuxièmes renversements écarte 4x2110. [`AutoTaggingService`](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Common/GA.Business.ML/Musical/Enrichment/AutoTaggingService.cs#L164-L168) n'ajoute une étiquette `Inversion:n` que si n est supérieur à 0, si bien qu'un −1 ne reçoit pas d'étiquette, comme un état fondamental.
 - **Les tests s'arrêtent à C/E.** Le test de la fabrique [attend 1 pour C/E et 0 pour quatre formes à l'état fondamental](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.ML.Tests/Unit/VoicingDocumentFactoryTests.cs#L21-L25). Un test de recherche filtre sur 2, avec un [document de fixture](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Fretboard/Voicings/Search/SemanticSearchTestFixture.cs#L243-L246) dont le renversement est fixé à la main. Un test d'indexation [passe 100 voicings générés à l'indexeur](https://github.com/GuitarAlchemist/ga/blob/5c3a52ab40d0d433f8f68dbbd0590f70c8d8cf26/Tests/Common/GA.Business.Core.Tests/Fretboard/Voicings/Search/VoicingIndexingServiceTests.cs#L18-L34), qui construit des documents par la fabrique, mais il ne vérifie aucun renversement. Aucun test ne vérifie ce que `CalculateInversion` donne pour un deuxième ou un troisième renversement, ni pour une distance qu'il convertit en −1.
 
@@ -210,7 +210,7 @@ Chaque étape appelle les types de GA dans le processus même du laboratoire, ja
 
 L'étape 3 prédit −1 pour 4x2110. Comment une grille le nomme-t-elle, quelle position la lecture de GA lui donne-t-elle, et quelle distance `CalculateInversion` manque-t-il ?
 
-> *Solution :* Une grille nomme la lecture dont la fondamentale est à la basse : A♭aug, à l'état fondamental. Le reconnaisseur prend do pour fondamentale, `Caug/Ab` ; pour do, la basse est la quinte augmentée sol♯, si bien que la forme est un deuxième renversement, avec la basse à 8 demi-tons au-dessus de do. `CalculateInversion` ne reconnaît une quinte à la basse qu'à 6 ou 7 demi-tons, la quinte diminuée et la quinte juste.
+> *Solution :* Une grille nomme d'ordinaire la lecture dont la fondamentale est à la basse : A♭aug, à l'état fondamental. Le reconnaisseur prend do pour fondamentale, `Caug/Ab` ; pour do, la basse est la quinte augmentée sol♯, si bien que la forme est un deuxième renversement, avec la basse à 8 demi-tons au-dessus de do. `CalculateInversion` ne reconnaît une quinte à la basse qu'à 6 ou 7 demi-tons, la quinte diminuée et la quinte juste.
 
 ---
 
@@ -218,7 +218,7 @@ L'étape 3 prédit −1 pour 4x2110. Comment une grille le nomme-t-elle, quelle 
 
 - **Lire la position sur la note du dessus ou sur la forme.** Seule la basse compte : xxx988 et 032010 sont tous deux des premiers renversements.
 - **Lire le C6 du jazz comme le chiffrage 6.** C6 ajoute la à une triade de do sur do ; le chiffrage E6 est une triade de do sur mi.
-- **Traiter un quarte et sixte comme un accord de repos.** La quarte au-dessus de la basse est une dissonance ; l'accord passe, brode, arpège ou se résout sur une dominante.
+- **Traiter un accord de quarte et sixte comme un accord de repos.** La quarte au-dessus de la basse est une dissonance ; l'accord passe, brode, arpège ou se résout sur une dominante.
 - **Donner une position sans fondamentale.** Sur do, do mi sol la est à l'état fondamental comme C6 et au premier renversement comme Am7/C.
 - **Lire une position en demi-tons.** La septième diminuée a 3, 6 et 9 demi-tons au-dessus de sa basse dans toutes ses positions ; seule l'orthographe les distingue.
 - **Se fier aux noms de GA pour les renversements de triades.** Aucune des huit entrées de `Modes.yaml` ne nomme ses notes.
@@ -236,7 +236,7 @@ L'étape 3 prédit −1 pour 4x2110. Comment une grille le nomme-t-elle, quelle 
 | **Chiffrage** | Ces chiffres, d'ordinaire abrégés : 6, 6/4, 7, 6/5, 4/3, 4/2 |
 | **Accord de quarte et sixte** | Une triade au deuxième renversement, avec une quarte et une sixte au-dessus de la basse |
 | **Quarte et sixte de cadence** | I6/4 avant V, ou la dominante avec une double appoggiature, V6/4 – 5/3 |
-| **Quarte et sixte de passage, de broderie, d'arpège** | Un quarte et sixte sur une basse qui passe par degrés entre deux notes à distance de tierce ; sur une basse tenue, avec deux voix qui montent d'un degré et reviennent ; sous une basse qui parcourt un seul accord |
+| **Quarte et sixte de passage, de broderie, d'arpège** | Un accord de quarte et sixte sur une basse qui passe par degrés entre deux notes à distance de tierce ; sur une basse tenue, avec deux voix qui montent d'un degré et reviennent ; sous une basse qui parcourt un seul accord |
 
 ---
 
@@ -248,13 +248,13 @@ L'étape 3 prédit −1 pour 4x2110. Comment une grille le nomme-t-elle, quelle 
 **2. Sur do, pourquoi do mi sol la est-il à l'état fondamental comme C6 et au premier renversement comme Am7/C, et quel chiffrage écrit la basse chiffrée ?**
 > Une position se mesure depuis la fondamentale, et les deux lectures ont des fondamentales différentes, do et la. La basse chiffrée ne nomme aucune fondamentale : au-dessus de do, mi est une tierce, sol une quinte et la une sixte, donc elle écrit 6/5 pour les deux.
 
-**3. Dans C – F/C – C, quelle sorte de quarte et sixte est F/C, et qu'est-ce qui bouge ?**
-> Un quarte et sixte de broderie (pédale ou auxiliaire), IV6/4. Sur le do tenu, mi et sol montent d'un degré vers fa et la, puis redescendent.
+**3. Dans C – F/C – C, quelle sorte d'accord de quarte et sixte est F/C, et qu'est-ce qui bouge ?**
+> Un accord de quarte et sixte de broderie (pédale ou auxiliaire), IV6/4. Sur le do tenu, mi et sol montent d'un degré vers fa et la, puis redescendent.
 
 **4. Quel renversement le document de voicing de GA donne-t-il à Ddim7, xx0101, et pourquoi ?**
 > −1. Le reconnaisseur nomme la forme `Fdim7/D`, donc la fondamentale est fa, et ré se trouve à 9 demi-tons au-dessus de fa, une distance que `CalculateInversion` ne convertit pas.
 
-**Critères de réussite :** Nommer la position de n'importe quel voicing d'après sa basse. Écrire les chiffrages des triades et des accords de septième dans toutes les positions, et les distinguer des symboles d'accords. Nommer les quatre sortes de quarte et sixte et jouer chacune. Dire où le son seul ne fixe pas la position, et où le `Chord`, les documents de voicing et le catalogue de GA se trompent.
+**Critères de réussite :** Nommer la position de n'importe quel voicing d'après sa basse. Écrire les chiffrages des triades et des accords de septième dans toutes les positions, et les distinguer des symboles d'accords. Nommer les quatre sortes d'accord de quarte et sixte et jouer chacune. Dire où le son seul ne fixe pas la position, et où le `Chord`, les documents de voicing et le catalogue de GA se trompent.
 
 ---
 
