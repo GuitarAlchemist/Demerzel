@@ -19,7 +19,15 @@
     },
     {
       "kind": "failed_run",
+      "workflow": "ga-chatbot-discussions.yml"
+    },
+    {
+      "kind": "failed_run",
       "workflow": "jules-auto-delegate.yml"
+    },
+    {
+      "kind": "stale",
+      "workflow": "streeling-daily.yml"
     }
   ]
 }
