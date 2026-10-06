@@ -78,3 +78,22 @@ This first complete department syllabus is organized as five progressions. Each 
 For every proposed module: check existing and in-flight IDs; record the repo revision and source evidence; require an exercise with an answer; run the repository verifier; review subject accuracy separately from prose and localization; verify the EN/FR/ES public readback after Learn synchronization. The public Streeling index currently warns that generated modules have not been reviewed. Preserve that disclosure until a real review process supports a stronger claim.
 
 After DV-001, assess whether its exercise can be completed using only the pinned fixtures. Then author VC-001 and GAS-001 against fixed UI/audio fixtures, followed by CS-003, GAA-004, and GTR-003. Expand the other 20 department syllabi only after checking their current courses and consumers, so the 25-course quota does not generate duplicate or decorative lessons.
+
+### Pilot authoring status, 2026-10-05
+
+All six planned pilot questions now have EN/FR/ES **drafts**: DV-001, VC-001,
+GAS-001, CS-003, GAA-004, and GTR-003. CS-004 is an additional agentic audio
+dogfooding draft. GAA-004 and GTR-003 share a hand-checked C-major teaching
+fixture and source-traced GA voicing rules; the shapes are not claimed to be
+captured GA generator output. Focused GA voicing tests passed 18/18 with an
+existing test binary, without a fresh build. Demerzel's `scripts/verify.ps1`
+passed after these drafts were added; it ran 783 Python tests (one skipped),
+the IXQL grammar tests, and the BAML drift check. An independent read-only
+review found no substantive issue in the two new lessons or translations.
+
+This is authoring progress, not seven reviewed or published courses. The next
+gate is a fresh GA build and captured result for the two voicing lessons,
+musician exercises, independent subject and native-language reviews, the
+remaining policy localizations, then Learn sync and
+anonymous EN/FR/ES readback. Record failures and changes to the lessons before
+expanding the remaining department quotas.

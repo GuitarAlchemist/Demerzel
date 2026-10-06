@@ -1,0 +1,23 @@
+{
+  "cycle_id": "guitar-studies-2026-10-05-003",
+  "department": "guitar-studies",
+  "question": "Which claims about a voicing's playability can GA's geometric and barre heuristics support, and what still requires a guitarist to test?",
+  "production_path": [
+    "investigation: inspect voicing geometry and ranking predicates",
+    "comparison: same-chord teaching shapes and algorithmic counterexamples",
+    "test: cross_validation"
+  ],
+  "hypothesis": "GA's fret geometry and barre flags provide useful screening indicators, but different ranking predicates and missing player-specific information prevent a universal comfort claim.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "GA commit dc2e74cbd992a298f67efb928b5b3754615e1924: Common/GA.Domain.Services/Fretboard/Voicings/Analysis/VoicingPhysicalAnalyzer.cs scores physical fret distance, open strings, distinct positive frets, and a three-adjacent-strings barre heuristic.",
+    "The same commit: Apps/ga-server/GaApi/Services/VoicingComfortService.cs ranks by positive-fret-number span and defines full barre as four or more fretted strings at the lowest fret; its predicate is not the analyzer's barre predicate.",
+    "The same commit: Tests/Apps/GaApi.Tests/Services/VoicingComfortServiceTests.cs checks stretch and barre filtering; 18 focused GA voicing/comfort tests passed locally with --no-build on 2026-10-05, not a fresh build.",
+    "state/streeling/fixtures/guitar-studies/gtr-003/voicing-comparison.json provides three hand-checked C-major shapes with equal numeric fret spans; no hand-size, pain, technique, or listening observations were collected."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.66,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-06T03:16:03Z"
+}
