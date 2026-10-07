@@ -3,7 +3,7 @@ module_id: cyb-021-iteration-budget-admission
 department: cybernetics
 course: "Governed loops: resource admission"
 level: intermediate
-prerequisites: [CYB-010, CYB-014]
+prerequisites: [cyb-010-observable-stop, cyb-014-saturation-queue-conservation]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -60,7 +60,7 @@ Two concurrent workers can both read one remaining slot and both pass a local ch
 Run the package fixture from any working directory, supplying its actual path:
 
 ```text
-python <package>/overlay/scripts/course-exercises/cyb_governed_loops.py --json
+python <package>/scripts/course-exercises/cyb_governed_loops.py --json
 ```
 
 Here `<package>` is a placeholder to replace, not executable shell syntax. The `CYB-021` record has test ID `budget_admission`. Its solution function is `budget_trace`: it rejects before modifying counters and reports every exceeded limit. Positive control: exactly three affordable candidates are admitted. Negative controls: a fourth candidate, excessive credit reservation, excessive duration reservation, and an invalid zero estimate are rejected. An implementation that checks only attempts misses the two resource counterexamples.

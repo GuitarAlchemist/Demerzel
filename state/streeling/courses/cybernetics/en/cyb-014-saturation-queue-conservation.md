@@ -83,7 +83,7 @@ A review queue reports 12 arrivals, three waiting, seven accepted reviews and on
 Run the supplied fixture:
 
 ```powershell
-python overlay/scripts/course-exercises/cyb_resilience.py --json
+python scripts/course-exercises/cyb_resilience.py --json
 ```
 
 Record `CYB-014`, test `queue_conservation_and_admission`, includes all five ticks, the bounded totals, an unbounded counterexample and a balanced-arrival positive control. With two arrivals and two service slots for five ticks, ten items finish with no rejection or waiting. This confirms that the controller permits feasible work; a controller rejecting everything would protect capacity but fail the positive control.

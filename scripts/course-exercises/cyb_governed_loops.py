@@ -266,7 +266,7 @@ def main():
         output["execution"] = {"utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                                "runtime": "Python " + platform.python_version(), "platform": platform.system(),
                                "script_sha256": hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest(),
-                               "command": ["python", "<package>/overlay/scripts/course-exercises/cyb_governed_loops.py", "--json", "--receipt", "<package>/evidence/group_governed_loops.json"],
+                               "command": ["python", "<package>/scripts/course-exercises/cyb_governed_loops.py", "--json", "--receipt", "<package>/evidence/group_governed_loops.json"],
                                "arbitrary_cwd": pathlib.Path.cwd().resolve() != pathlib.Path(__file__).parent.resolve(),
                                "exit_code": 0 if output["passed"] else 1}
         args.receipt.parent.mkdir(parents=True, exist_ok=True)

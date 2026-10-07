@@ -27,3 +27,12 @@ Three existing courses were preserved, not pedagogically recertified. Translatio
 ## Publication authorization and scope
 
 On 2026-10-07 the owner requested publishing the validated English courses on Streeling, followed by French and Spanish translations. The original local-draft metadata and review boundary are retained as provenance. Publishing does not certify learner assessment or the three previous courses. Translation review and public accessibility are separate checks.
+
+
+## 2026-10-07 - Canonical integration corrections
+
+At 2026-10-07T04:31:39.095309+00:00, the independent GitHub Codex integration review identified two publication defects: commands still referenced the authoring ZIP's `overlay/scripts` layout, and some prerequisite fields used shorthand codes rather than canonical module IDs. The publishing checkout now references `scripts/course-exercises` and resolves every new prerequisite to its canonical Cybernetics module ID. The original authoring package remains unchanged as historical evidence. The three pre-existing canonical courses are unchanged.
+
+All five scripts were rerun from outside their own directory after these path-only corrections: 22 synthetic experiments passed with exit code zero. Receipt command paths now describe the canonical checkout. The initial full Windows verification ran 783 unit tests and failed one existing overlap test; that exact test passed independently on both the baseline and this branch. This establishes that the isolated test passes, not that the full suite has passed or that the intermittent cause is proven.
+
+The source PR's governance, CodeQL and required `risk-report` checks passed. Its cross-model review failed with an invalid API key, which has not been changed. Publication and translations remain pending that review and integration approval. The separately reviewed global navigation change is in the Learn repository and does not publish these courses. These are integration and authoring records, not learner progress.

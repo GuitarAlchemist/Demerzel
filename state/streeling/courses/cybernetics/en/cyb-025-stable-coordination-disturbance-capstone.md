@@ -3,7 +3,7 @@ module_id: cyb-025-stable-coordination-disturbance-capstone
 department: cybernetics
 course: "Governed loops: coordination capstone"
 level: advanced
-prerequisites: [CYB-011, CYB-017, CYB-019, CYB-021, CYB-022, CYB-023]
+prerequisites: [cyb-011-lane-transition-graph, cyb-017-local-versus-global-stability, cyb-019-cross-repository-coupling, cyb-021-iteration-budget-admission, cyb-022-external-progress-measurement, cyb-023-receipt-chain-verification]
 estimated_duration: "45 minutes"
 produced_by: codex-local-authoring
 research_cycle: null

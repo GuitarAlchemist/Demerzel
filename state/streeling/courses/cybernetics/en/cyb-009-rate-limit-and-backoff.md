@@ -3,7 +3,7 @@ module_id: cyb-009-rate-limit-and-backoff
 department: cybernetics
 course: "Operational feedback: admission and retry timing"
 level: intermediate
-prerequisites: [CYB-002]
+prerequisites: [cyb-002-active-dampening-cross-repo-oscillation]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -76,7 +76,7 @@ A timeout follows a submitted write; its outcome is unknown. A backoff timer exp
 From any directory, run the package's standard-library solution using its absolute path:
 
 ```text
-python <package>/overlay/scripts/course-exercises/cyb_operations.py --json
+python <package>/scripts/course-exercises/cyb_operations.py --json
 ```
 
 The path placeholder must be replaced. Test ID `admission_backoff` reports inputs, expected and actual schedule, server wait, delayed response, deadline stop, budget stop and control verdicts. `valid_schedule` checks this fixed teaching sequence's origin zero, at most four starts, finite timestamps, every eligibility gap and the inclusive deadline 40. It rejects [0,1,2,3] and [0,3,6,9], which respects admission but ignores growing failure backoff. It also rejects [0,100], [0,39,40], an empty sequence and a missing timestamp. Returning false when no eligible next time exists avoids comparing a timestamp with `None`; spacing alone cannot enforce a deadline.

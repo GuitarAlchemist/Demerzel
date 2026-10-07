@@ -181,7 +181,7 @@ def main():
     receipt = dict(schema="streeling.synthetic-course-experiments/1", group="foundations",
         utc=datetime.now(timezone.utc).isoformat(), runtime=platform.python_version(),
         platform=platform.system(), source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-        command="python <overlay>/scripts/course-exercises/cyb_foundations.py --json",
+        command="python <package>/scripts/course-exercises/cyb_foundations.py --json",
         synthetic=True, live_calls=0, outcome="passed" if passed else "failed", records=results)
     print(json.dumps(receipt, indent=2, allow_nan=False) if args.json else
           "foundations: " + receipt["outcome"] + " (5 experiments, positive and mutant controls)")

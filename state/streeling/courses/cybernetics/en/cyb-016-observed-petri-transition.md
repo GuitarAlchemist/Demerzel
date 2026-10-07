@@ -80,7 +80,7 @@ A controller checks the version, launches a worker, then updates the version. A 
 Record conceptual belief state and evidence separately from exercise grades. Advance to behavioral assessment only for justified True with confidence >= 0.7; never infer or invent confidence from a score. Adapt teaching for Unknown, investigate Contradictory evidence, and follow the policy's three-attempt limit and escalation requirement if comprehension remains unresolved. These are assessment instructions; no belief transition or escalation has been performed.
 
 ```powershell
-python overlay/scripts/course-exercises/cyb_resilience.py --json
+python scripts/course-exercises/cyb_resilience.py --json
 ```
 
 Inspect `CYB-016`, test `observed_firing_with_resource_token`. The JSON records arc weights, all three markings, the valid observed trace, two rejected observations and one committed stale proposal. The source includes the solution; run from an isolated copy when changing arcs.

@@ -3,7 +3,7 @@ module_id: cyb-010-observable-stop
 department: cybernetics
 course: "Operational feedback: evidence of termination"
 level: intermediate
-prerequisites: [CYB-001, CYB-002]
+prerequisites: [cyb-001-vsm-ai-governance-mapping, cyb-002-active-dampening-cross-repo-oscillation]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -74,7 +74,7 @@ The chain is valid at sequence five. Sequence six records newly admitted work in
 Run the offline solution, substituting the package path:
 
 ```text
-python <package>/overlay/scripts/course-exercises/cyb_operations.py --json
+python <package>/scripts/course-exercises/cyb_operations.py --json
 ```
 
 Test ID `ordered_stop_evidence` invokes `stopped`. The complete five-event chain is the positive control. Busy drain, stale epoch, unvalidated checkpoint, late admission and an acknowledgement alone are rejected. The mutant “accept any stop_ack” returns true for the last case, exposing precisely why phrase matching is insufficient. No session receives this code or any stop command.

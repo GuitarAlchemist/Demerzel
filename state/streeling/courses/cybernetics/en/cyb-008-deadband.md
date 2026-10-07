@@ -3,7 +3,7 @@ module_id: cyb-008-deadband
 department: cybernetics
 course: "Feedback foundations"
 level: beginner
-prerequisites: ["CYB-005", "CYB-007"]
+prerequisites: ["cyb-005-measured-signal-and-setpoint", "cyb-007-hysteresis"]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -67,7 +67,7 @@ An emergency flag accompanies residual 1. A programmer checks `abs(e)<=2` first 
 
 ## 4. Apply and audit the exact function
 
-Run the [offline solution fixture](../../../../../scripts/course-exercises/cyb_foundations.py) with `python <overlay>/scripts/course-exercises/cyb_foundations.py --json`. Inspect CYB-008 test ID `deadband-budget`. Function `deadband_action` rejects negative widths, preserves emergency precedence, returns zero within the inclusive band, and returns full error outside. Its receipt records the eight expected actions, emergency bypass, zero-width noise actions, and width-10 hidden fault. The functions assume finite numeric input; broader type and nonfinite validation belong to the measurement boundary, not an untested promise about this helper.
+Run the [offline solution fixture](../../../../../scripts/course-exercises/cyb_foundations.py) with `python <package>/scripts/course-exercises/cyb_foundations.py --json`. Inspect CYB-008 test ID `deadband-budget`. Function `deadband_action` rejects negative widths, preserves emergency precedence, returns zero within the inclusive band, and returns full error outside. Its receipt records the eight expected actions, emergency bypass, zero-width noise actions, and width-10 hidden fault. The functions assume finite numeric input; broader type and nonfinite validation belong to the measurement boundary, not an untested promise about this helper.
 
 Hysteresis and deadband can coexist, but they solve different problems. At error 1, this deadband outputs zero regardless of history. CYB-007's relay can remain active at an intermediate score after earlier activation. If the application needs both, specify their order and whether silence affects stored state. Do not assemble them merely because both are called damping.
 

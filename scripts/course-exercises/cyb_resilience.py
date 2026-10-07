@@ -249,7 +249,7 @@ def main():
                "utc": datetime.now(timezone.utc).isoformat(),
                "runtime": platform.python_version(), "synthetic": True,
                "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-               "command": "python overlay/scripts/course-exercises/cyb_resilience.py --json",
+               "command": "python scripts/course-exercises/cyb_resilience.py --json",
                "outcome": "pass", "records": records}
     print(json.dumps(receipt, indent=2) if args.json else "PASS CYB-013..016 (four synthetic controls)")
 

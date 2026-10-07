@@ -208,7 +208,7 @@ def main():
     result = {"synthetic": True, "utc": datetime.now(timezone.utc).isoformat(),
               "runtime": platform.python_version(),
               "sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-              "command": "python <package>/overlay/scripts/course-exercises/cyb_operations.py --json",
+              "command": "python <package>/scripts/course-exercises/cyb_operations.py --json",
               "experiments": rows,
               "passed": all(r["positive_control"] and r["negative_control_rejected"] for r in rows)}
     print(json.dumps(result, indent=2) if args.json else result["passed"])

@@ -3,7 +3,7 @@ module_id: cyb-024-agentic-audio-loop-audit
 department: cybernetics
 course: "Governed loops: evidence in audio iteration"
 level: intermediate
-prerequisites: [CYB-021, CYB-022, CYB-023]
+prerequisites: [cyb-021-iteration-budget-admission, cyb-022-external-progress-measurement, cyb-023-receipt-chain-verification]
 estimated_duration: "45 minutes"
 produced_by: codex-local-authoring
 research_cycle: null

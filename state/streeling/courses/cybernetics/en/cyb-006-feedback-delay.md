@@ -3,7 +3,7 @@ module_id: cyb-006-feedback-delay
 department: cybernetics
 course: "Feedback foundations"
 level: intermediate
-prerequisites: ["CYB-004", "CYB-005"]
+prerequisites: ["cyb-004-open-and-closed-loops", "cyb-005-measured-signal-and-setpoint"]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -67,7 +67,7 @@ A reviewer says “the experiment proves low-gain coordination is stable.” Rew
 
 ## 4. Apply timestamp and sequence checks in code
 
-Run `python <overlay>/scripts/course-exercises/cyb_foundations.py --json` and inspect `delay-gain-counterexample`. Function `delayed_loop` reads history at `tick-delay`, explicitly using zero before the first available historical sample. Compare the first nine states and final errors, not only the final pass flag. The positive controls are immediate feedback at 0.8 and delayed feedback at 0.2; the negative control is delayed feedback at 0.8.
+Run `python <package>/scripts/course-exercises/cyb_foundations.py --json` and inspect `delay-gain-counterexample`. Function `delayed_loop` reads history at `tick-delay`, explicitly using zero before the first available historical sample. Compare the first nine states and final errors, not only the final pass flag. The positive controls are immediate feedback at 0.8 and delayed feedback at 0.2; the negative control is delayed feedback at 0.8.
 
 For message-based systems, observation identity also matters. A sequence number identifies a new sample within a stream. A second delivery of sample 17 is not sample 18. Storing the last accepted sequence prevents duplicate receipt from masquerading as fresh progress, but does not replace timestamp or scope checks. After restart, persist or safely reconstruct that checkpoint. This sequence exercise is manual here; the fixture tests delay dynamics, not a transport implementation.
 

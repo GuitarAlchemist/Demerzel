@@ -3,7 +3,7 @@ module_id: cyb-022-external-progress-measurement
 department: cybernetics
 course: "Governed loops: measurement integrity"
 level: intermediate
-prerequisites: [CYB-005, CYB-021]
+prerequisites: [cyb-005-measured-signal-and-setpoint, cyb-021-iteration-budget-admission]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null

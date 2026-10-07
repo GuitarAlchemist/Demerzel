@@ -3,7 +3,7 @@ module_id: cyb-004-open-and-closed-loops
 department: cybernetics
 course: "Feedback foundations"
 level: beginner
-prerequisites: ["CYB-002"]
+prerequisites: ["cyb-002-active-dampening-cross-repo-oscillation"]
 estimated_duration: "35 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -67,7 +67,7 @@ An operator sees a falling error on surface A after commanding B. Is the loop cl
 
 ## 4. Apply the model in code
 
-Run `python <overlay>/scripts/course-exercises/cyb_foundations.py --json` from any working directory. Record `loop-disturbance`, the test ID for this module. The solution function `scalar_loop` maintains both actual state and nominal planned state. Its `open_loop` branch uses the plan as the controller input while both branches experience the same disturbance. That isolates the causal difference rather than comparing unrelated schedules.
+Run `python <package>/scripts/course-exercises/cyb_foundations.py --json` from any working directory. Record `loop-disturbance`, the test ID for this module. The solution function `scalar_loop` maintains both actual state and nominal planned state. Its `open_loop` branch uses the plan as the controller input while both branches experience the same disturbance. That isolates the causal difference rather than comparing unrelated schedules.
 
 The positive control checks exact final values. The negative control checks that the reversed-sign controller's final error exceeds the initial error. No network, session, or production actuator is contacted. Passing verifies the fixture's bounded predictions; it does not teach a learner or validate a fleet.
 

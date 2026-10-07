@@ -80,7 +80,7 @@ The first caller reserves a probe but never produces a result. What does this mo
 Run the existing stdlib fixture from the package root:
 
 ```powershell
-python overlay/scripts/course-exercises/cyb_resilience.py --json
+python scripts/course-exercises/cyb_resilience.py --json
 ```
 
 Inspect record `CYB-013`, test ID `breaker_probe_budget`. The solution compares the whole eight-event trace, tests that success clears the consecutive counter, and requests the half-open slot twice. The negative control is an explicitly defective timer-only design admitting five calls at tick 4; the one-probe rule rejects it. This tests the intended admission budget rather than merely asserting that a state string exists.

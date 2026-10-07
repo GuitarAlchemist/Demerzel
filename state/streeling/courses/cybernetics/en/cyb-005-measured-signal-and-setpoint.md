@@ -3,7 +3,7 @@ module_id: cyb-005-measured-signal-and-setpoint
 department: cybernetics
 course: "Feedback foundations"
 level: beginner
-prerequisites: ["CYB-004"]
+prerequisites: ["cyb-004-open-and-closed-loops"]
 estimated_duration: "35 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -67,7 +67,7 @@ Classify six changes to the fixture: different department, different phase, mill
 
 ## 4. Connect the signal to a bounded code decision
 
-Run `python <overlay>/scripts/course-exercises/cyb_foundations.py --json`; inspect `signal-contract`. Function `contract_error` validates matching fields, checks `0 <= now-observed_at <= max_age`, checks a finite observation, and only then subtracts. Six deliberate invalid samples must raise `ValueError`. The positive control must return 22. The fixture also records the naive catalogue calculation as a rejected interpretation.
+Run `python <package>/scripts/course-exercises/cyb_foundations.py --json`; inspect `signal-contract`. Function `contract_error` validates matching fields, checks `0 <= now-observed_at <= max_age`, checks a finite observation, and only then subtracts. Six deliberate invalid samples must raise `ValueError`. The positive control must return 22. The fixture also records the naive catalogue calculation as a rejected interpretation.
 
 An application can use a valid positive deficit to propose a bounded drafting batch. It still needs scope authorization and a resource budget. A valid negative error does not authorize deleting courses: it means the chosen quantity exceeds its setpoint. Counting should inform decisions rather than silently becoming a destructive command.
 

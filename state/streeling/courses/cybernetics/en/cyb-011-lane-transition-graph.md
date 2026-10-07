@@ -3,7 +3,7 @@ module_id: cyb-011-lane-transition-graph
 department: cybernetics
 course: "Operational feedback: guarded execution states"
 level: intermediate
-prerequisites: [CYB-010]
+prerequisites: [cyb-010-observable-stop]
 estimated_duration: "45 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -66,7 +66,7 @@ Running generation four receives verified completion generation three and count 
 Execute the fixture with an absolute package path:
 
 ```text
-python <package>/overlay/scripts/course-exercises/cyb_operations.py --json
+python <package>/scripts/course-exercises/cyb_operations.py --json
 ```
 
 Test ID `guarded_lane_graph` covers the five-state stop/resume path and a separate verified completion. Six rejection cases check illegal shortcut, busy drain, stale completion, unauthorized resume, unverified completion and restart from done. `transition` returns a new state/generation tuple only after validation. No mutable shared lane or external effect exists in this lesson's code.

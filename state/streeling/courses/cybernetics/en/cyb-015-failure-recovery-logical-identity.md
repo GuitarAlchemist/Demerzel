@@ -70,7 +70,7 @@ Suppose receipt writing and effect writing are separate durable steps. Can the i
 Run:
 
 ```powershell
-python overlay/scripts/course-exercises/cyb_resilience.py --json
+python scripts/course-exercises/cyb_resilience.py --json
 ```
 
 Inspect `CYB-015`, test `lost_reply_same_logical_key`. Expected results are one effect, equality of recovered and replayed results, and rejection of changed intent. The executed mutant has two effects. The solution uses only memory; it writes no external artifact and makes no claim about exactly-once distributed execution.

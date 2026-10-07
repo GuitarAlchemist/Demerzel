@@ -3,7 +3,7 @@ module_id: cyb-023-receipt-chain-verification
 department: cybernetics
 course: "Governed loops: delivery evidence"
 level: intermediate
-prerequisites: [CYB-010, CYB-022]
+prerequisites: [cyb-010-observable-stop, cyb-022-external-progress-measurement]
 estimated_duration: "45 minutes"
 produced_by: codex-local-authoring
 research_cycle: null

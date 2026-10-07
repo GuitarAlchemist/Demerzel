@@ -3,7 +3,7 @@ module_id: cyb-012-oscillation-detection
 department: cybernetics
 course: "Operational feedback: measured reversal patterns"
 level: intermediate
-prerequisites: [CYB-002, CYB-005]
+prerequisites: [cyb-002-active-dampening-cross-repo-oscillation, cyb-005-measured-signal-and-setpoint]
 estimated_duration: "45 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -66,7 +66,7 @@ The observed errors alternate, but timestamps are uneven. A reviewer interpolate
 Run the self-contained solution with the package path substituted:
 
 ```text
-python <package>/overlay/scripts/course-exercises/cyb_operations.py --json
+python <package>/scripts/course-exercises/cyb_operations.py --json
 ```
 
 Test ID `windowed_error_reversals` reports metrics for persistent alternation, damped convergence, tiny noise, monotonic drift and a positive sawtooth [1,5,1,5,1,5]. Only persistent alternation is flagged. The sawtooth is an intentional blind spot: changes alternate, but error never crosses target. This rule detects repeated target crossings; it does not detect every periodic waveform.

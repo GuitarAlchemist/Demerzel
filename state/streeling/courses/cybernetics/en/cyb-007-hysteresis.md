@@ -3,7 +3,7 @@ module_id: cyb-007-hysteresis
 department: cybernetics
 course: "Feedback foundations"
 level: beginner
-prerequisites: ["CYB-002", "CYB-005"]
+prerequisites: ["cyb-002-active-dampening-cross-repo-oscillation", "cyb-005-measured-signal-and-setpoint"]
 estimated_duration: "40 minutes"
 produced_by: codex-local-authoring
 research_cycle: null
@@ -67,7 +67,7 @@ After observing 6, a worker restarts and then observes 5. Why is a passing test 
 
 ## 4. Apply a relay without hiding evidence
 
-Run the [offline solution fixture](../../../../../scripts/course-exercises/cyb_foundations.py) with `python <overlay>/scripts/course-exercises/cyb_foundations.py --json`. Inspect test ID `hysteresis-memory` for CYB-007. Function `relay` carries `active` across the loop; `switches` accepts the initial state explicitly. The receipt includes exact states, four correct switches, the six-switch mutant, threshold rejection, and the two histories ending at input 4. All are synthetic; no live session or controller is contacted.
+Run the [offline solution fixture](../../../../../scripts/course-exercises/cyb_foundations.py) with `python <package>/scripts/course-exercises/cyb_foundations.py --json`. Inspect test ID `hysteresis-memory` for CYB-007. Function `relay` carries `active` across the loop; `switches` accepts the initial state explicitly. The receipt includes exact states, four correct switches, the six-switch mutant, threshold rejection, and the two histories ending at input 4. All are synthetic; no live session or controller is contacted.
 
 An alert can retain on while a new measurement is unavailable, but that does not make the old reading fresh. Report alert state and observation age separately. A timeout is not a clearing measurement. Emergency handling belongs to a separate path: a genuine emergency should be observed and escalated according to its authorization contract, without waiting for normal threshold clearing. This lesson does not implement such a live channel.
 
