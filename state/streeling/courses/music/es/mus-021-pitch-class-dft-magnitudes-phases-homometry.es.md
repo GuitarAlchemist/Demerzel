@@ -189,7 +189,7 @@ Según la transcripción, `GetSpectralCentroid` de GA da 5.044 para la tríada m
 
 El paso 5 predice 1,500 pares con S = 1 que no son transposiciones, y sin embargo la prueba aleatoria de GA seguiría pasando. ¿Qué prueba detectaría el «iff»?
 
-> *Solución:* Una que tome pares que no sean transposiciones uno del otro y afirme S < 1. La prueba de GA solo toma un conjunto y una de sus transposiciones, así que comprueba el sentido que demuestra el teorema 3. Según la transcripción del §6, la afirmación contraria fallaría en 270 pares de tipos Tn distintos del mismo tamaño.
+> *Solución:* Una que tome pares que no sean transposiciones uno del otro y afirme S < 1 − 10⁻⁶, la tolerancia de la prueba de GA sobre los pares en relación Z. La prueba aleatoria de GA solo toma un conjunto y una de sus transposiciones, así que comprueba el sentido que demuestra el teorema 3. Según la transcripción del §6, esa afirmación fallaría en los 1,500 pares del paso 5, 270 de ellos del mismo tamaño.
 
 ---
 

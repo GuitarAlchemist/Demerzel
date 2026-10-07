@@ -164,7 +164,7 @@ GA est la bibliothèque de théorie musicale et le chatbot de l'écosystème Gui
 
 **Ce que dit l'outil MCP.** L'outil [`GaHomometricDistinguish`](https://github.com/GuitarAlchemist/ga/blob/40d337479af36d987df3f06c8c638ffd35f13458/GaMcpServer/Tools/ChordAtonalTool.cs#L198) affiche, dès que S ≥ 1 − 10⁻⁶, [« Same shape up to transposition — one is a transposition of the other. »](https://github.com/GuitarAlchemist/ga/blob/40d337479af36d987df3f06c8c638ffd35f13458/GaMcpServer/Tools/ChordAtonalTool.cs#L231-L232) D'après la transcription, Csus2 contre C9 et Cmaj7 contre Cdim7 atteignent cette branche. L'outil lit les deux accords avec l'analyseur de `GaChordToSet`, qui demande à la closure `domain.chordIntervals` les intervalles d'un accord, et les tests de GA fixent les quatre lectures : `GaChordToSet` transforme [Cdim7 en `{C, Eb, F#, A}` et C9 en `{C, D, E, G, Bb}`](https://github.com/GuitarAlchemist/ga/blob/40d337479af36d987df3f06c8c638ffd35f13458/Tests/Apps/GaMcpServer.Tests/ChordAtonalToolTests.cs#L17-L18), et la closure épelle [Csus2 `P1 M2 P5`](https://github.com/GuitarAlchemist/ga/blob/40d337479af36d987df3f06c8c638ffd35f13458/Tests/Common/GA.Business.DSL.Tests/ClosureChordIntervalsTests.cs#L36) et [Cmaj7 `P1 M3 P5 M7`](https://github.com/GuitarAlchemist/ga/blob/40d337479af36d987df3f06c8c638ffd35f13458/Tests/Common/GA.Business.DSL.Tests/ClosureChordIntervalsTests.cs#L41). Les deux classes de tests appellent d'abord [`GaClosureBootstrap.init()`](https://github.com/GuitarAlchemist/ga/blob/40d337479af36d987df3f06c8c638ffd35f13458/Tests/Apps/GaMcpServer.Tests/ChordAtonalToolTests.cs#L14).
 
-Au moment où cette leçon est écrite, aucune issue de GA ne couvre ces points. Corriger l'un ou l'autre de ces points revient aux responsables de GA ; cette leçon ne fait que les décrire.
+Au moment où cette leçon est écrite, aucune issue de GA ne couvre ces points. Les corriger revient aux responsables de GA ; cette leçon ne fait que les décrire.
 
 ### Exercice pratique
 
@@ -189,7 +189,7 @@ D'après la transcription, `GetSpectralCentroid` de GA donne 5,044 pour l'accord
 
 L'étape 5 prédit 1 500 paires avec S = 1 qui ne sont pas des transpositions, et pourtant le test aléatoire de GA passerait quand même. Quel test détecterait le « iff » ?
 
-> *Solution :* Un test qui tire des paires qui ne sont pas des transpositions l'une de l'autre et affirme S < 1. Le test de GA ne tire qu'un ensemble et l'une de ses transpositions, donc il vérifie le sens que démontre le théorème 3. D'après la transcription du §6, l'affirmation contraire échouerait sur 270 paires de types Tn distincts de même taille.
+> *Solution :* Un test qui tire des paires qui ne sont pas des transpositions l'une de l'autre et affirme S < 1 − 10⁻⁶, la tolérance du test de GA sur les paires en relation Z. Le test aléatoire de GA ne tire qu'un ensemble et l'une de ses transpositions, donc il vérifie le sens que démontre le théorème 3. D'après la transcription du §6, cette affirmation échouerait sur les 1 500 paires de l'étape 5, dont 270 de même taille.
 
 ---
 

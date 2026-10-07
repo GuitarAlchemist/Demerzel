@@ -189,7 +189,7 @@ By the transcription, GA's `GetSpectralCentroid` gives 5.044 for the major triad
 
 Step 5 predicts 1,500 pairs with S = 1 that are not transpositions, yet GA's randomized test would still pass. What test would catch the "iff"?
 
-> *Solution:* One that draws pairs that are not transpositions of each other and asserts S < 1. GA's test only draws a set and one of its transpositions, so it checks the direction that Theorem 3 proves. By the transcription of §6, the opposite assertion would fail on 270 pairs of distinct Tn-types of the same size.
+> *Solution:* One that draws pairs that are not transpositions of each other and asserts S < 1 − 10⁻⁶, the tolerance of GA's own Z-pair test. GA's randomized test only draws a set and one of its transpositions, so it checks the direction that Theorem 3 proves. By the transcription of §6, that assertion would fail on all 1,500 pairs of step 5, 270 of them of the same size.
 
 ---
 
