@@ -35,7 +35,7 @@ H(X) = -sum(p(x) * log2(p(x))) for all symbols x in alphabet X
 
 Where `p(x)` is the probability of symbol `x` appearing. Entropy is maximized when all symbols are equally likely (maximum surprise) and minimized when one symbol dominates (no surprise).
 
-**Key insight:** Entropy measures how *unpredictable* the next symbol is. A document where every line looks the same has low entropy. A document with wildly varied structure has high entropy.
+**Key insight:** Computed from symbol frequencies alone, as in this lesson, entropy measures how *unpredictable* a symbol is when it is picked at random from the document, without regard to order: it measures how evenly the document uses its symbol types. How unpredictable the *next* symbol is, given the one before it, is the conditional entropy H(X_n | X_(n-1)). It is estimated from the frequencies of consecutive pairs as H(pairs) - H(first), where H(first) is the entropy of the pairs' first symbols, that is, of every symbol but the last. It never exceeds the entropy of the pairs' second symbols, and equals it only when the two symbols of a pair are independent; over a long document, both marginals are close to H(X). A document that uses a few symbol types has low entropy by both measures; a document that repeats one pattern made of many symbol types has high frequency entropy and low conditional entropy.
 
 ---
 
@@ -53,7 +53,7 @@ A YAML governance policy is a structured document. We can define a **structural 
 | `COMMENT` | Lines starting with `#` |
 | `SEPARATOR` | `---` document separators |
 
-By converting a policy into this token sequence, we get a string over a finite alphabet. Shannon entropy then tells us how structurally varied the document is.
+By converting a policy into this token sequence, we get a string over a finite alphabet. The Shannon entropy of the token frequencies then tells us how varied the document's token types are, not in what order they come: shuffling the tokens leaves it unchanged, so two policies with the same count of each token type have the same entropy, even if one repeats a single pattern and the other orders its tokens erratically. Structural regularity is a matter of order, and the measure that sees it is the conditional entropy of section 1, estimated from consecutive pairs of tokens.
 
 ---
 
@@ -66,8 +66,8 @@ Consider two hypothetical policies:
 **Policy B** (high entropy): A deeply nested document with tables, lists within lists, conditional blocks, cross-references, and mixed value types. Token sequence uses all token types roughly equally. Entropy is high.
 
 **Interpretation:**
-- **Low entropy** suggests regularity and predictability — the policy has a simple, repeating structure.
-- **High entropy** suggests structural variety — many different organizational patterns coexist. This *may* indicate:
+- **Low entropy** says that a few token types dominate the policy, which suggests a simple structure. It does not show that the structure repeats: a low conditional entropy shows that.
+- **High entropy** says that many token types are used about equally, which suggests structural variety, although a single pattern made of many token types gives it too. This *may* indicate:
   - The policy covers genuinely complex territory (justified complexity)
   - The policy has grown organically without consistent structure (accidental complexity)
   - The policy is trying to do too many things (scope creep)
@@ -100,9 +100,9 @@ Shannon entropy as a complexity proxy has real limits:
 
 2. **Token granularity matters.** Coarse tokens (just KEY/SCALAR) give different entropy than fine-grained tokens (individual key names). The choice of alphabet shapes the measurement.
 
-3. **Size confounds.** Longer documents naturally explore more of the token space. Normalize by document length or compare within similar-sized documents.
+3. **Size confounds.** Longer documents naturally explore more of the token space, and entropy estimated from a short document is noisier and tends to come out low. Do not divide H by the length: it is already an average per token. Compare documents of similar size, or state how uncertain each estimate is.
 
-4. **Regularity is not simplicity.** A deeply nested but perfectly regular structure (like a decision tree) has low entropy but may still be hard to understand.
+4. **Regularity is not simplicity.** A deeply nested but perfectly regular structure (like a decision tree) becomes predictable once enough preceding tokens are taken into account, so its conditional entropy given them is low, whatever its token frequencies; it may still be hard to understand.
 
 5. **Context is everything.** A governance policy for nuclear safety *should* be complex. Entropy must be interpreted relative to the domain's inherent complexity.
 
@@ -113,6 +113,7 @@ Shannon entropy as a complexity proxy has real limits:
 | Term | Definition |
 |------|-----------|
 | **Shannon entropy** | A measure of the average information content (surprise) per symbol in a message |
+| **Conditional entropy** | The average surprise of a symbol given the symbols before it; unlike the entropy of symbol frequencies, it depends on their order |
 | **Symbol alphabet** | The set of distinct token types used to encode a document's structure |
 | **Structural complexity** | The variety and depth of organizational patterns in a document |
 | **Essential complexity** | Complexity inherent to the problem domain that cannot be removed |
@@ -124,16 +125,16 @@ Shannon entropy as a complexity proxy has real limits:
 ## Self-Check Assessment
 
 **1. What does high Shannon entropy in a policy document indicate?**
-> High structural variety — many different token types appear with similar frequency, suggesting the document uses diverse organizational patterns.
+> Token-type variety — many different token types appear with similar frequency, suggesting the document uses diverse organizational patterns. It says nothing about the order of the tokens, so it does not show whether the structure is regular.
 
 **2. Why can't entropy alone tell you whether a policy needs simplification?**
 > Because entropy measures structural variety, not whether that variety is justified by the domain. Complex domains require complex policies. Entropy flags candidates for review, not automatic refactoring.
 
 **3. How would you compare entropy across policies of different lengths?**
-> Normalize by document length (entropy per token) or by maximum possible entropy (H/log2(N) where N is alphabet size) to get a comparable 0-1 scale.
+> Not by dividing by the length: H is already an average in bits per token, so two documents with the same token frequencies have the same H whatever their lengths. Compare H directly over the same alphabet, or divide it by the maximum possible entropy (H/log2(N) where N is alphabet size) to get a comparable 0-1 scale. Length matters in another way: H is estimated from observed frequencies, and a short document gives a noisier estimate that tends to come out low, so compare documents of similar length or state the uncertainty.
 
 **4. A policy has very low entropy but users report it is confusing. What might explain this?**
-> Low entropy means repetitive structure, but the content within that structure could be unclear, contradictory, or poorly worded. Structural simplicity does not guarantee semantic clarity.
+> Low entropy means that a few token types dominate, a simple structure, but the content within that structure could be unclear, contradictory, or poorly worded. Structural simplicity does not guarantee semantic clarity.
 
 **Pass criteria:** Explain Shannon entropy, identify tokens in a structured document, and articulate the difference between structural and semantic complexity.
 
