@@ -750,6 +750,30 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertEqual(finding["kind"], "healthy")
         self.assertEqual(ef.exit_code(findings), 0)
 
+    def test_shared_head_run_belonging_to_another_pull_is_not_proof(self):
+        # One head branch opened against two bases: each pull gets its own run,
+        # reviewing its own base diff. PR #99's run shares PR #17's head commit
+        # but is not an answer to PR #17, and the surviving identity says so.
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "shared-head",
+            "pull_state": "open",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/other-pull-run",
+            "head_sha": "shared-head",
+            "pull_requests": [{"number": 99}],
+        }
+        findings = self._event_findings(lambda *args: [(obligation, run)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertIn(finding["kind"], {"silent_green", "stale"})
+        self.assertEqual(ef.exit_code(findings), 1)
+
     def test_recent_absent_run_is_pending_within_response_allowance(self):
         obligation = {
             "activities": ["opened", "synchronize"],

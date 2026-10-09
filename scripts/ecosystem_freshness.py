@@ -1212,21 +1212,35 @@ def _eval_event_producer(
             ))
             continue
 
-        # A run's head_sha is the commit it executed against, so an exact match
-        # discharges the obligation on its own and needs no pull identity to
-        # confirm it. It has to stand alone because the identities below cannot
-        # be recovered for a pull CLOSED WITHOUT MERGING whose head branch was
+        # When the run still carries pull identities, the obligation's pull
+        # number must be among them: two pulls can share one head commit (the
+        # same head branch opened against two bases), and each gets its own run
+        # reviewing its own base diff, so one pull's run never answers the
+        # other's even though the heads match.
+        #
+        # The head_sha alone is accepted only when NO identity survives, which
+        # is the state of a pull CLOSED WITHOUT MERGING whose head branch was
         # then deleted: GitHub drops `pull_requests` from the run payload once
-        # the branch is gone, and the `/commits/{sha}/pulls` fallback only finds
-        # the association for merged pulls. `identity_pulls` is then empty and
-        # `any()` over it is False however plainly the workflow ran — which
+        # the branch is gone, and the `/commits/{sha}/pulls` fallback recovers
+        # the association only for merged pulls. `identity_pulls` is then empty
+        # and `any()` over it is False however plainly the workflow ran — which
         # reported Demerzel PR #1104 stale even though run 35288036450 had
-        # succeeded against its exact head.
-        correlated = run_head_sha == head_sha or any(
-            run_pull["number"] == pull_number
-            and isinstance(run_pull.get("head"), dict)
-            and run_pull["head"].get("sha") == head_sha
-            for run_pull in identity_pulls
+        # succeeded against its exact head. With nothing else left to go on, the
+        # commit the run executed against is the evidence.
+        correlated = (
+            any(
+                run_pull["number"] == pull_number
+                and (
+                    run_head_sha == head_sha
+                    or (
+                        isinstance(run_pull.get("head"), dict)
+                        and run_pull["head"].get("sha") == head_sha
+                    )
+                )
+                for run_pull in identity_pulls
+            )
+            if identity_pulls
+            else run_head_sha == head_sha
         )
         status = run.get("status")
         if status not in {"queued", "in_progress", "completed"}:
