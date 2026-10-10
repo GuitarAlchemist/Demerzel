@@ -725,6 +725,124 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertEqual(finding["kind"], "healthy")
         self.assertEqual(ef.exit_code(findings), 0)
 
+    def test_head_sha_alone_correlates_a_run_for_a_closed_unmerged_pull(self):
+        # A pull closed without merging, branch deleted: GitHub empties the
+        # run's `pull_requests` and `/commits/{sha}/pulls` recovers nothing, so
+        # the head_sha is the only identity left. It is enough.
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "abandoned-head",
+            "pull_state": "closed",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/abandoned-pr-run",
+            "head_sha": "abandoned-head",
+            "pull_requests": [],
+            "associated_pull_requests": [],
+        }
+        findings = self._event_findings(lambda *args: [(obligation, run)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertEqual(ef.exit_code(findings), 0)
+
+    def test_shared_head_run_belonging_to_another_pull_is_not_proof(self):
+        # One head branch opened against two bases: each pull gets its own run,
+        # reviewing its own base diff. PR #99's run shares PR #17's head commit
+        # but is not an answer to PR #17, and the surviving identity says so.
+        obligation = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "shared-head",
+            "pull_state": "open",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/other-pull-run",
+            "head_sha": "shared-head",
+            "pull_requests": [{"number": 99}],
+        }
+        findings = self._event_findings(lambda *args: [(obligation, run)])
+        finding = self._one(findings, "reviewer.yml")
+        self.assertIn(finding["kind"], {"silent_green", "stale"})
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_identityless_run_on_a_sha_shared_by_two_pulls_is_not_proof(self):
+        # Both pulls closed unmerged with the branch deleted: no run carries an
+        # identity any more, so the surviving-conflict guard has nothing to
+        # catch. The supply adapter queries by head_sha with per_page=1 and
+        # hands both obligations the same newest run. One run must not discharge
+        # two obligations, or an unanswered pull reads healthy off the other's.
+        def _obligation(pull_number):
+            return {
+                "activities": ["opened", "synchronize"],
+                "occurred_at": _iso(NOW - timedelta(days=30)),
+                "pull_number": pull_number,
+                "head_sha": "shared-head",
+                "pull_state": "closed",
+            }
+
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/ambiguous-run",
+            "head_sha": "shared-head",
+            "pull_requests": [],
+            "associated_pull_requests": [],
+        }
+        findings = self._event_findings(
+            lambda *args: [(_obligation(17), run), (_obligation(99), run)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertIn(finding["kind"], {"silent_green", "stale"})
+        self.assertIn("heads 2 pulls", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
+    def test_a_waived_pull_does_not_make_a_shared_commit_ambiguous(self):
+        # PR #99's event predates the activation cutoff, so it is waived and
+        # never judged. It must not deny PR #17 the only identity left to it:
+        # counting a waived pull toward the commit's ambiguity would refuse a
+        # run that did answer PR #17 and report a stale finding for a pull that
+        # was in fact answered.
+        waived_pull = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=1000)),
+            "pull_number": 99,
+            "head_sha": "shared-head",
+            "pull_state": "closed",
+        }
+        judged_pull = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "shared-head",
+            "pull_state": "closed",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/shared-head-run",
+            "head_sha": "shared-head",
+            "pull_requests": [],
+            "associated_pull_requests": [],
+        }
+        findings = self._event_findings(
+            lambda *args: [(waived_pull, run), (judged_pull, run)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertIn("1 pre-cutoff obligation(s) waived", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 0)
+
     def test_recent_absent_run_is_pending_within_response_allowance(self):
         obligation = {
             "activities": ["opened", "synchronize"],

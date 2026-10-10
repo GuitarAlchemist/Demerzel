@@ -1082,6 +1082,16 @@ def _eval_event_producer(
 
     results: list[tuple[str, str]] = []
     waived = 0
+
+    # First pass: separate the obligations this run actually judges from the
+    # ones it waives or reports malformed. The ambiguity test further down needs
+    # to know which pulls a head commit carries, and it has to count exactly the
+    # obligations that reach the correlation step — a pull waived for predating
+    # the activation cutoff, or reported malformed, is never judged, so letting
+    # it make a commit "ambiguous" would refuse a legitimate identityless run
+    # and fabricate a stale finding. Deriving the set from this pass's output
+    # rather than from `supplies` keeps the two in step by construction.
+    judged: list[tuple[object, int, str, datetime, str]] = []
     for item in supplies:
         if not isinstance(item, (list, tuple)) or len(item) != 2:
             results.append((
@@ -1154,6 +1164,17 @@ def _eval_event_producer(
             ))
             continue
 
+        judged.append((run, pull_number, head_sha, occurred_at, obligation_label))
+
+    # One commit can head several pulls (the same head branch opened against two
+    # bases, or a branch reused), and the identityless fallback below leans on
+    # the commit alone — so it has to know when the commit does not identify a
+    # single judged pull.
+    head_sha_pulls: dict[str, set[int]] = {}
+    for _run, judged_pull, judged_sha, _occurred_at, _label in judged:
+        head_sha_pulls.setdefault(judged_sha, set()).add(judged_pull)
+
+    for run, pull_number, head_sha, occurred_at, obligation_label in judged:
         event_age = _age_days(occurred_at, now)
         if run is None:
             if event_age <= max_days:
@@ -1212,16 +1233,45 @@ def _eval_event_producer(
             ))
             continue
 
-        correlated = any(
-            run_pull["number"] == pull_number
-            and (
-                run_head_sha == head_sha
-                or (
-                    isinstance(run_pull.get("head"), dict)
-                    and run_pull["head"].get("sha") == head_sha
+        # When the run still carries pull identities, the obligation's pull
+        # number must be among them: two pulls can share one head commit (the
+        # same head branch opened against two bases), and each gets its own run
+        # reviewing its own base diff, so one pull's run never answers the
+        # other's even though the heads match.
+        #
+        # The head_sha alone is accepted only when NO identity survives, which
+        # is the state of a pull CLOSED WITHOUT MERGING whose head branch was
+        # then deleted: GitHub drops `pull_requests` from the run payload once
+        # the branch is gone, and the `/commits/{sha}/pulls` fallback recovers
+        # the association only for merged pulls. `identity_pulls` is then empty
+        # and `any()` over it is False however plainly the workflow ran — which
+        # reported Demerzel PR #1104 stale even though run 35288036450 had
+        # succeeded against its exact head. With nothing else left to go on, the
+        # commit the run executed against is the evidence.
+        #
+        # Unless that commit heads several pulls. Once both of them are closed
+        # unmerged with the branch deleted, neither run carries an identity and
+        # the guard above has no surviving conflict left to catch, while
+        # `default_event_supply_runner` queries by head_sha with `per_page=1`
+        # and hands the same newest run to both obligations. Discharging both
+        # from one run would let an unanswered pull read healthy off the other
+        # pull's run, so an ambiguous commit is refused as evidence instead.
+        shared_pulls = head_sha_pulls.get(head_sha, set())
+        sha_is_ambiguous = len(shared_pulls) > 1
+        correlated = (
+            any(
+                run_pull["number"] == pull_number
+                and (
+                    run_head_sha == head_sha
+                    or (
+                        isinstance(run_pull.get("head"), dict)
+                        and run_pull["head"].get("sha") == head_sha
+                    )
                 )
+                for run_pull in identity_pulls
             )
-            for run_pull in identity_pulls
+            if identity_pulls
+            else run_head_sha == head_sha and not sha_is_ambiguous
         )
         status = run.get("status")
         if status not in {"queued", "in_progress", "completed"}:
@@ -1234,11 +1284,17 @@ def _eval_event_producer(
 
         if not correlated:
             kind = "pending" if event_age <= max_days else "stale"
+            reason = (
+                f"candidate run carries no pull identity and its head commit "
+                f"heads {len(shared_pulls)} pulls, so it cannot be attributed "
+                f"to this one"
+                if sha_is_ambiguous and not identity_pulls
+                else "candidate belongs to another PR/head"
+            )
             results.append((
                 kind,
                 f"{obligation_label} has no correlated run after {event_age:.1f}d "
-                f"(allowance {max_days:g}d); candidate belongs to another PR/head: "
-                f"{url}",
+                f"(allowance {max_days:g}d); {reason}: {url}",
             ))
             continue
         if status in {"queued", "in_progress"}:
