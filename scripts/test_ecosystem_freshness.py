@@ -774,6 +774,38 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertIn(finding["kind"], {"silent_green", "stale"})
         self.assertEqual(ef.exit_code(findings), 1)
 
+    def test_identityless_run_on_a_sha_shared_by_two_pulls_is_not_proof(self):
+        # Both pulls closed unmerged with the branch deleted: no run carries an
+        # identity any more, so the surviving-conflict guard has nothing to
+        # catch. The supply adapter queries by head_sha with per_page=1 and
+        # hands both obligations the same newest run. One run must not discharge
+        # two obligations, or an unanswered pull reads healthy off the other's.
+        def _obligation(pull_number):
+            return {
+                "activities": ["opened", "synchronize"],
+                "occurred_at": _iso(NOW - timedelta(days=30)),
+                "pull_number": pull_number,
+                "head_sha": "shared-head",
+                "pull_state": "closed",
+            }
+
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/ambiguous-run",
+            "head_sha": "shared-head",
+            "pull_requests": [],
+            "associated_pull_requests": [],
+        }
+        findings = self._event_findings(
+            lambda *args: [(_obligation(17), run), (_obligation(99), run)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertIn(finding["kind"], {"silent_green", "stale"})
+        self.assertIn("heads 2 pulls", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 1)
+
     def test_recent_absent_run_is_pending_within_response_allowance(self):
         obligation = {
             "activities": ["opened", "synchronize"],

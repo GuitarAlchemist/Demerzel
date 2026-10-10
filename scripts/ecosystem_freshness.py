@@ -1080,6 +1080,24 @@ def _eval_event_producer(
                 f"{cutoff.isoformat()} activation cutoff, so no run was owed "
                 "(event-triggered loops are judged by event supply, not by a clock)")
 
+    # Which pulls each head commit carries. One commit can head several pulls
+    # (the same head branch opened against two bases, or a branch reused), and
+    # the identityless fallback below leans on the commit alone — so it has to
+    # know when the commit does not identify a single pull.
+    head_sha_pulls: dict[str, set[int]] = {}
+    for item in supplies:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            continue
+        candidate_obligation = item[0]
+        if not isinstance(candidate_obligation, dict):
+            continue
+        candidate_sha = candidate_obligation.get("head_sha")
+        candidate_pull = candidate_obligation.get("pull_number")
+        if (isinstance(candidate_sha, str) and candidate_sha
+                and isinstance(candidate_pull, int)
+                and not isinstance(candidate_pull, bool)):
+            head_sha_pulls.setdefault(candidate_sha, set()).add(candidate_pull)
+
     results: list[tuple[str, str]] = []
     waived = 0
     for item in supplies:
@@ -1227,6 +1245,16 @@ def _eval_event_producer(
         # reported Demerzel PR #1104 stale even though run 35288036450 had
         # succeeded against its exact head. With nothing else left to go on, the
         # commit the run executed against is the evidence.
+        #
+        # Unless that commit heads several pulls. Once both of them are closed
+        # unmerged with the branch deleted, neither run carries an identity and
+        # the guard above has no surviving conflict left to catch, while
+        # `default_event_supply_runner` queries by head_sha with `per_page=1`
+        # and hands the same newest run to both obligations. Discharging both
+        # from one run would let an unanswered pull read healthy off the other
+        # pull's run, so an ambiguous commit is refused as evidence instead.
+        shared_pulls = head_sha_pulls.get(head_sha, set())
+        sha_is_ambiguous = len(shared_pulls) > 1
         correlated = (
             any(
                 run_pull["number"] == pull_number
@@ -1240,7 +1268,7 @@ def _eval_event_producer(
                 for run_pull in identity_pulls
             )
             if identity_pulls
-            else run_head_sha == head_sha
+            else run_head_sha == head_sha and not sha_is_ambiguous
         )
         status = run.get("status")
         if status not in {"queued", "in_progress", "completed"}:
@@ -1253,11 +1281,17 @@ def _eval_event_producer(
 
         if not correlated:
             kind = "pending" if event_age <= max_days else "stale"
+            reason = (
+                f"candidate run carries no pull identity and its head commit "
+                f"heads {len(shared_pulls)} pulls, so it cannot be attributed "
+                f"to this one"
+                if sha_is_ambiguous and not identity_pulls
+                else "candidate belongs to another PR/head"
+            )
             results.append((
                 kind,
                 f"{obligation_label} has no correlated run after {event_age:.1f}d "
-                f"(allowance {max_days:g}d); candidate belongs to another PR/head: "
-                f"{url}",
+                f"(allowance {max_days:g}d); {reason}: {url}",
             ))
             continue
         if status in {"queued", "in_progress"}:
