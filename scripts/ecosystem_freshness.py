@@ -1080,26 +1080,18 @@ def _eval_event_producer(
                 f"{cutoff.isoformat()} activation cutoff, so no run was owed "
                 "(event-triggered loops are judged by event supply, not by a clock)")
 
-    # Which pulls each head commit carries. One commit can head several pulls
-    # (the same head branch opened against two bases, or a branch reused), and
-    # the identityless fallback below leans on the commit alone — so it has to
-    # know when the commit does not identify a single pull.
-    head_sha_pulls: dict[str, set[int]] = {}
-    for item in supplies:
-        if not isinstance(item, (list, tuple)) or len(item) != 2:
-            continue
-        candidate_obligation = item[0]
-        if not isinstance(candidate_obligation, dict):
-            continue
-        candidate_sha = candidate_obligation.get("head_sha")
-        candidate_pull = candidate_obligation.get("pull_number")
-        if (isinstance(candidate_sha, str) and candidate_sha
-                and isinstance(candidate_pull, int)
-                and not isinstance(candidate_pull, bool)):
-            head_sha_pulls.setdefault(candidate_sha, set()).add(candidate_pull)
-
     results: list[tuple[str, str]] = []
     waived = 0
+
+    # First pass: separate the obligations this run actually judges from the
+    # ones it waives or reports malformed. The ambiguity test further down needs
+    # to know which pulls a head commit carries, and it has to count exactly the
+    # obligations that reach the correlation step — a pull waived for predating
+    # the activation cutoff, or reported malformed, is never judged, so letting
+    # it make a commit "ambiguous" would refuse a legitimate identityless run
+    # and fabricate a stale finding. Deriving the set from this pass's output
+    # rather than from `supplies` keeps the two in step by construction.
+    judged: list[tuple[object, int, str, datetime, str]] = []
     for item in supplies:
         if not isinstance(item, (list, tuple)) or len(item) != 2:
             results.append((
@@ -1172,6 +1164,17 @@ def _eval_event_producer(
             ))
             continue
 
+        judged.append((run, pull_number, head_sha, occurred_at, obligation_label))
+
+    # One commit can head several pulls (the same head branch opened against two
+    # bases, or a branch reused), and the identityless fallback below leans on
+    # the commit alone — so it has to know when the commit does not identify a
+    # single judged pull.
+    head_sha_pulls: dict[str, set[int]] = {}
+    for _run, judged_pull, judged_sha, _occurred_at, _label in judged:
+        head_sha_pulls.setdefault(judged_sha, set()).add(judged_pull)
+
+    for run, pull_number, head_sha, occurred_at, obligation_label in judged:
         event_age = _age_days(occurred_at, now)
         if run is None:
             if event_age <= max_days:

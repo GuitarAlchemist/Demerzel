@@ -806,6 +806,43 @@ class EcosystemFreshnessTest(unittest.TestCase):
         self.assertIn("heads 2 pulls", finding["detail"])
         self.assertEqual(ef.exit_code(findings), 1)
 
+    def test_a_waived_pull_does_not_make_a_shared_commit_ambiguous(self):
+        # PR #99's event predates the activation cutoff, so it is waived and
+        # never judged. It must not deny PR #17 the only identity left to it:
+        # counting a waived pull toward the commit's ambiguity would refuse a
+        # run that did answer PR #17 and report a stale finding for a pull that
+        # was in fact answered.
+        waived_pull = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=1000)),
+            "pull_number": 99,
+            "head_sha": "shared-head",
+            "pull_state": "closed",
+        }
+        judged_pull = {
+            "activities": ["opened", "synchronize"],
+            "occurred_at": _iso(NOW - timedelta(days=30)),
+            "pull_number": 17,
+            "head_sha": "shared-head",
+            "pull_state": "closed",
+        }
+        run = {
+            "status": "completed",
+            "conclusion": "success",
+            "run_started_at": _iso(NOW - timedelta(days=30)),
+            "html_url": "https://example.test/shared-head-run",
+            "head_sha": "shared-head",
+            "pull_requests": [],
+            "associated_pull_requests": [],
+        }
+        findings = self._event_findings(
+            lambda *args: [(waived_pull, run), (judged_pull, run)]
+        )
+        finding = self._one(findings, "reviewer.yml")
+        self.assertEqual(finding["kind"], "healthy")
+        self.assertIn("1 pre-cutoff obligation(s) waived", finding["detail"])
+        self.assertEqual(ef.exit_code(findings), 0)
+
     def test_recent_absent_run_is_pending_within_response_allowance(self):
         obligation = {
             "activities": ["opened", "synchronize"],
