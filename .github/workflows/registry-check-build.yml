@@ -1,0 +1,83 @@
+name: Registry Check Build
+
+# Proves that a PR changing the registry checker's build inputs still builds.
+#
+# registry-check.yml reads .github/registry-check/ (pins.env, Cargo.toml,
+# Cargo.lock) from the default branch, so a bump only takes effect after
+# merge. This unprivileged `pull_request` job builds the PR's own versions
+# first, the same way (`--locked`, pinned toolchain, fresh cargo home, no
+# cache), runs the same check of what was built against pins.env, then
+# smoke-runs the binary on the registry against itself. It is not the gate
+# and uses no secrets.
+
+on:
+  pull_request:
+    paths:
+      - '.github/registry-check/**'
+      - '.github/workflows/registry-check.yml'
+      - '.github/workflows/registry-check-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: registry-check-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      # Same parsing as registry-check.yml.
+      - name: Read build pins
+        id: pins
+        run: |
+          set -euo pipefail
+          pins=.github/registry-check/pins.env
+          body=$(grep -vE '^(#.*)?$' "$pins" || true)
+          ix_sha=$(printf '%s\n' "$body" | sed -n 's/^IX_SHA=\([0-9a-f]\{40\}\)$/\1/p')
+          toolchain=$(printf '%s\n' "$body" | sed -n 's/^RUST_TOOLCHAIN=\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)$/\1/p')
+          if [ "$(printf '%s\n' "$body" | wc -l)" != 2 ] || [ -z "$ix_sha" ] || [ -z "$toolchain" ]; then
+            echo "::error::$pins must contain exactly one IX_SHA=<40 hex> line and one RUST_TOOLCHAIN=<x.y.z> line."
+            exit 1
+          fi
+          echo "ix_sha=$ix_sha" >> "$GITHUB_OUTPUT"
+          echo "toolchain=$toolchain" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout ix-registry-check source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: GuitarAlchemist/ix
+          ref: ${{ steps.pins.outputs.ix_sha }}
+          path: ix-src
+          persist-credentials: false
+
+      - name: Build with the vendored manifest
+        env:
+          PIN_IX_SHA: ${{ steps.pins.outputs.ix_sha }}
+          PIN_TOOLCHAIN: ${{ steps.pins.outputs.toolchain }}
+          CARGO_HOME: ${{ runner.temp }}/cargo-home
+          CARGO_TARGET_DIR: ${{ runner.temp }}/registry-check-target
+        run: |
+          set -euo pipefail
+          rustup toolchain install "$PIN_TOOLCHAIN" --profile minimal --no-self-update
+          cargo "+$PIN_TOOLCHAIN" build --locked --release \
+            --manifest-path .github/registry-check/Cargo.toml
+          checker=$CARGO_TARGET_DIR/release/ix-registry-check
+          # Verify what was built, not what the lines above asked for. Same
+          # check as registry-check.yml.
+          built_from=$(git -C ix-src rev-parse HEAD)
+          if [ "$built_from" != "$PIN_IX_SHA" ]; then
+            echo "::error::The checked-out ix commit $built_from is not the pinned $PIN_IX_SHA."
+            exit 1
+          fi
+          built_with=$(grep -aoE 'rustc version [0-9]+\.[0-9]+\.[0-9]+' "$checker" | sort -u || true)
+          if [ "$built_with" != "rustc version $PIN_TOOLCHAIN" ]; then
+            echo "::error::The checker records '${built_with:-no rustc version}', not the pinned rustc $PIN_TOOLCHAIN."
+            exit 1
+          fi
+          "$checker" \
+            --old schemas/capability-registry.json --new schemas/capability-registry.json
