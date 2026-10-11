@@ -131,3 +131,10 @@ subject check on 2026-10-11 approved the English facts and five answers, with it
 scope and remaining gates recorded in `state/streeling/reviews/`. This adds one module to
 the six-language source-coverage count, but changes neither the reviewed nor
 the published count.
+
+DV-004 is an English-only draft against the same pinned 52-prompt GA QA
+snapshots. It teaches the exact percentage-point effect of one changed verdict
+and keeps that calculation separate from a statistical confidence interval.
+Its exercise asks the learner to repair a misleading “98.08% ± 1.92%
+confidence” label. The source inventory is now 75 English modules, 450 short of
+25 in each department directory; DV-004 is neither reviewed nor published.
