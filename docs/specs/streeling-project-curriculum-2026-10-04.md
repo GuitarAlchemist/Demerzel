@@ -136,5 +136,8 @@ DV-004 is an English-only draft against the same pinned 52-prompt GA QA
 snapshots. It teaches the exact percentage-point effect of one changed verdict
 and keeps that calculation separate from a statistical confidence interval.
 Its exercise asks the learner to repair a misleading “98.08% ± 1.92%
-confidence” label. The source inventory is now 75 English modules, 450 short of
-25 in each department directory; DV-004 is neither reviewed nor published.
+confidence” label. At the pre-rebase pilot tip, the source inventory was 75
+English modules, 450 short of 25 in each department directory. After rebasing
+onto Demerzel `origin/master` at `260226f`, upstream MUS-019 and MUS-021 bring
+the source inventory to 77 English modules, 448 short. DV-004 is neither
+reviewed nor published.

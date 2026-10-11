@@ -36,4 +36,4 @@ For each language, a fluent reviewer should confirm that the technical meaning o
 
 ## Learner test and publication gate
 
-Ask a learner to classify the four runs and sketch a two-lane chart without seeing the answers first. Record task success, confusion, and corrections. Keep the production record at `review_pending` until the subject, language, and learner findings have been addressed. Only then consider Learn synchronization and anonymous EN/FR/ES readback. The current Learn synchronizer does not render PT/IT/DE pages.
+Give a learner `dv-001-learner-task.md` without the lesson answers, then use the separate `dv-001-learner-scorecard.md` after the response. Record task success, confusion, and corrections. Neither document is a completed learner attempt. Keep the production record at `review_pending` until the subject, language, and learner findings have been addressed. Only then consider Learn synchronization and anonymous EN/FR/ES readback. The current Learn synchronizer does not render PT/IT/DE pages.
