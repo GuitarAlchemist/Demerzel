@@ -164,3 +164,15 @@ Engineering have no course directories yet. The progress script now reports
 all three counts and the missing sets; its 447-course gap still uses the 21
 existing course directories. Do not silently choose 21 or 23 as the final
 department scope while the curriculum decision in [Demerzel #1209](https://github.com/GuitarAlchemist/Demerzel/issues/1209) is pending.
+
+The next bounded authoring batch adds DV-006 (quantitative encoding choices),
+PM-002 (release evidence gates), and CS-005 (agent handoff evidence contracts).
+All three use pinned project artifacts, five answered exercises, and an English
+source draft. The source inventory is 81 English modules across 21 directories,
+444 short of the provisional 525 target. DV-006's bounded AI subject review
+found and corrected a description of three historical snapshots. PM-002's
+bounded AI subject and evidence check found no factual or answer-key errors.
+CS-005's bounded AI review found and corrected a synthetic fixture's revision
+comparison; its focused recheck approved that correction.
+These checks do not satisfy the human subject, fluent-language, learner, or
+public readback gates; all three pipeline records keep review and publish open.

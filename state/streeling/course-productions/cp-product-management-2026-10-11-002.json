@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-product-management-2026-10-11-002",
+  "department": "product-management",
+  "research_cycle_id": "product-management-2026-10-11-002",
+  "module_id": "pm-002-release-evidence-gate",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.65
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "30 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1384,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "PM-002 is an English draft with five answered exercises checked against pinned Demerzel and Learn artifacts. A bounded AI subject and evidence review found no concrete error. Human subject, fluent-language, and learner reviews remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T18:08:49Z"
+}

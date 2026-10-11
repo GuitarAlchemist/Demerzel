@@ -13,8 +13,9 @@
 | [DV-003](en/dv-003-instrument-cohorts-and-units.md) | Compare Instrument Cohorts Without Hiding Their Sizes | Draft; localization and review pending | [EN](en/dv-003-instrument-cohorts-and-units.md) |
 | [DV-004](en/dv-004-uncertainty-in-small-qa-suites.md) | Uncertainty in Small QA Suites | Draft; bounded AI subject check passed; human and localization review pending | [EN](en/dv-004-uncertainty-in-small-qa-suites.md) |
 | [DV-005](en/dv-005-baselines-alerts-and-targets.md) | Baselines, Alert Thresholds, and Historical Targets | English draft; bounded AI subject check passed; human, learner, and localization review pending | [EN](en/dv-005-baselines-alerts-and-targets.md) |
+| [DV-006](en/dv-006-position-length-area-comparisons.md) | Position, Length, Area, and the Comparison Task | English draft; bounded AI subject check passed after correction; human, learner, and localization review pending | [EN](en/dv-006-position-length-area-comparisons.md) |
 
-DV-001 through DV-005 are drafts grounded in pinned GA snapshots or reports. DV-001 has all six active-language drafts and a bounded AI subject check, but still needs human subject, native-language, and learner review. DV-004 and DV-005 passed bounded AI subject checks after corrections to an exercise stem and measurement-date provenance, respectively. DV-002 through DV-005 need localization and human review. Do not present them as verified courses.
+DV-001 through DV-006 are drafts grounded in pinned GA snapshots or reports. DV-001 has all six active-language drafts and a bounded AI subject check, but still needs human subject, native-language, and learner review. DV-004 through DV-006 passed bounded AI subject checks, with corrections recorded for each where needed. DV-002 through DV-006 need localization and human review. Do not present them as verified courses.
 
 ## Curriculum Areas
 

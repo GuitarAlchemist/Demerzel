@@ -1,0 +1,25 @@
+{
+  "cycle_id": "computer-science-2026-10-11-005",
+  "department": "computer-science",
+  "question": "What must a GA agent handoff prove before another actor can safely continue the work, and why does a note or running wrapper not prove completion?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "system_boundary: producer note receiver checkout artifact",
+    "evidence_contract: actor revision write_scope tests artifact next_action",
+    "test: cross_validation against pinned source and fixed scenario"
+  ],
+  "hypothesis": "A handoff with a resolved revision, bounded write scope, inspectable test and artifact evidence, and an explicit next action lets the receiver distinguish a verifiable result from a stale note or process-status claim.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Scripts/antigravity-bridge.ps1 -Handoff writes a local note with from, at, branch, abbreviated head, working_tree_dirty_lines, and caller text. It does not run tests, capture a full SHA, check write scope, or verify a result artifact.",
+    "At the same GA commit, CLAUDE.md's handoff map calls for actor, branch, goal, write scope, tests, evidence, and next ask; the script's automatic fields cover only part of that guidance.",
+    "At Demerzel commit 6bc584d7ca1cd9eb1b1481e1100eeeb74e983863, state/streeling/fixtures/computer-science/cs-004/wmux-dogfood-observation.md records a delivered prompt and provider exit 0, but denied sibling reads, denied receipt write, and missing marker and artifact; no review was completed.",
+    "The same Demerzel commit's cs-004/review-followup-20261004.md describes a separate bounded retry with observed reads, a receipt file, and a verified marker. That supports only the stated advisory review, not general agent reliability or publication.",
+    "The CS-005 lesson's H1/H2 scenario is explicitly synthetic. Its five exercises each have a source- or fixture-grounded answer; the scenario identifies different committed revisions while leaving their ancestry and the uncommitted-content continuity unknown. A bounded AI subject review found and corrected the original revision comparison error; human subject and learner review remain untested. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.72,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T17:57:36Z"
+}
