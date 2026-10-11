@@ -77,6 +77,8 @@ This first complete department syllabus is organized as five progressions. Each 
 
 For every proposed module: check existing and in-flight IDs; record the repo revision and source evidence; require an exercise with an answer; run the repository verifier; review subject accuracy separately from prose and localization; verify the EN/FR/ES public readback after Learn synchronization. The public Streeling index currently warns that generated modules have not been reviewed. Preserve that disclosure until a real review process supports a stronger claim.
 
+The source progress report now exposes conservative content signals for an exercise paired with an answer, a pinned Git revision link, and a resolvable local fixture link. On 2026-10-11 it found 48, 45, and 6 English modules respectively out of 77. These are review-queue signals only; absence can reflect a different course format, and presence cannot prove subject accuracy or project usefulness. The [CYB-003 correction receipt](../../state/streeling/reviews/cyb-003-correction-2026-10-11.md) shows why a quantitative-looking lesson must be checked against a real project task before it counts toward the 25-course outcome.
+
 After DV-001, assess whether its exercise can be completed using only the pinned fixtures. Then author VC-001 and GAS-001 against fixed UI/audio fixtures, followed by CS-003, GAA-004, and GTR-003. Expand the other 20 department syllabi only after checking their current courses and consumers, so the 25-course quota does not generate duplicate or decorative lessons.
 
 ### Pilot authoring status, 2026-10-05

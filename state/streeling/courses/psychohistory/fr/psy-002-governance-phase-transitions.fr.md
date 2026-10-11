@@ -19,9 +19,9 @@ version: "1.0.0"
 
 Après cette leçon, vous serez capable de :
 - Définir ce que signifie une transition de phase dans un système de gouvernance
-- Identifier six signaux mesurables qui précèdent les changements de régime
+- Repérer cinq indicateurs proposés et une hypothèse non mesurée sur la variété pour étudier les changements de régime
 - Distinguer les transitions de gouvernance du premier ordre (brutales) de celles du second ordre (continues)
-- Utiliser le ratio de variété comme paramètre d'ordre candidat pour classer les régimes de gouvernance
+- Expliquer quelles preuves seraient nécessaires avant de tester la variété requise comme signal de transition de gouvernance
 - Concevoir un tableau de bord de surveillance à partir des fichiers d'état de la gouvernance
 
 ---
@@ -41,11 +41,11 @@ Les systèmes de gouvernance font la même chose. Un cadre à 3 politiques et 2 
 | Premier ordre | Eau → glace (brutale, chaleur latente) | Activation de l'arrêt d'urgence, amendement majeur de la constitution |
 | Second ordre | Ferromagnétique à la température de Curie (continue) | Passage progressif d'une gouvernance réactive à une gouvernance proactive |
 
-La plupart des transitions de gouvernance sont du second ordre — continues, difficiles à situer précisément, mais mesurables après coup. Les signaux ci-dessous vous aident à les détecter *avant* qu'elles ne s'achèvent.
+On n'a pas établi ici qu'un changement de gouvernance possède la structure d'une transition de phase physique. Les indicateurs ci-dessous servent à enquêter ; leur pouvoir prédictif n'a pas été validé sur des transitions passées.
 
 ---
 
-## 2. Les six signaux mesurables
+## 2. Cinq indicateurs proposés et une mesure à construire
 
 ### Signal 1 : asymétrie de la distribution des croyances
 
@@ -121,29 +121,15 @@ L'analogie en gouvernance vaut donc pour les transitions continues : les signaux
 signal_rate = conscience_signals_count / time_window
 ```
 
-Un doublement du taux de signaux sur 3 cycles est un indicateur fort que le système est proche d'un point de transition. Les signaux eux-mêmes vous indiquent *dans quelle direction* va la transition.
+Un doublement sur 3 cycles invite à examiner les événements et leur dénominateur. Aucun seuil ni aucune direction de transition n'ont été validés pour cet indicateur.
 
 **Où mesurer :** le répertoire `state/conscience/signals/`
 
-### Signal 6 : le ratio de variété comme paramètre d'ordre candidat
+### Signal 6 : la variété requise, une piste non validée
 
-D'après la cybernétique, le ratio de variété compare le régulateur à son environnement, et non les amplificateurs aux atténuateurs à l'intérieur du régulateur. Il se calcule à chaque cycle à partir des nombres de réponses distinctes que donne la gouvernance et de perturbations distinctes qu'elle rencontre :
+La version révisée de [CYB-003](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) retire son ancien ratio fondé sur les nombres de politiques et de personas. Compter les catégories de réponses et de perturbations rencontrées pendant un cycle serait reproductible, mais leur quotient ne dirait pas quelle réponse convient à quelle perturbation. Aucune série appariant perturbation → réponse → issue n'a été mesurée ici. Il n'y a donc **ni signal opérationnel de variété ni frontière de régime à 1,0** à tracer pour l'instant.
 
-```
-variety_ratio = distinct_responses / distinct_disturbances
-```
-
-En bits, log2(variety_ratio) = V_R - V_D, avec V = log2 de chaque nombre. Un rapport des valeurs en bits, V_R / V_D, romprait cette identité, et diviserait par zéro dans un cycle qui rencontre une seule perturbation distincte, où V_D = log2(1) = 0. Un cycle qui ne rencontre aucune perturbation n'a pas de ratio.
-
-C'est un **paramètre d'ordre candidat** pour les régimes de gouvernance, avec 1.0 comme frontière choisie :
-
-- `variety_ratio < 1.0` : régime réactif (moins de réponses distinctes que de perturbations distinctes)
-- `variety_ratio ≈ 1.0` : frontière (autant de réponses distinctes que de perturbations distinctes)
-- `variety_ratio > 1.0` : régime proactif (plus de réponses distinctes que de perturbations distinctes)
-
-Le ratio ne dit pas si la gouvernance régule. La loi d'Ashby s'énonce sur les issues : là où aucune réponse ne mène deux perturbations à la même issue et où N_η issues sont acceptables, portant V_η = log2(N_η) bits, réguler chaque perturbation demande V_R >= V_D - V_η. Un ratio inférieur à 1 est donc compatible avec une régulation complète quand assez d'issues sont acceptables, ou quand une même réponse mène plusieurs perturbations à la même issue acceptable, cas où la loi ne s'applique pas. Un ratio supérieur à 1 peut encore échouer, quand les réponses données ne sont pas celles dont les perturbations ont besoin. La régulation se lit sur l'issue de chaque perturbation, compte tenu de la réponse, et les nombres eux-mêmes viennent des relevés des perturbations rencontrées et des réponses données à chaque cycle.
-
-Franchir 1.0 signifie seulement que les réponses distinctes égalent pour la première fois en nombre les perturbations distinctes ; ce n'est pas en soi une transition de phase. Le ratio peut passer 1 en douceur, quand une réponse de plus devient disponible, sans aucun changement qualitatif du système. Qualifier un franchissement de transition du second ordre exigerait un modèle du paramètre d'ordre qui montre un comportement critique près de 1.0, comme les fluctuations croissantes du signal 5 ; d'ici là, traitez 1.0 comme une frontière de régime.
+Un essai utile définirait à l'avance les classes de perturbations, les réponses permises et les issues acceptables, puis conserverait chaque événement apparié sur plusieurs cycles. Il faudrait comparer les réussites vérifiées indépendamment et les cas non résolus avant d'interpréter une mesure d'information. L'idée d'un paramètre d'ordre pour les transitions de gouvernance reste une hypothèse, et non un résultat de CYB-003.
 
 ---
 
@@ -155,7 +141,7 @@ Franchir 1.0 signifie seulement que les réponses distinctes égalent pour la pr
      Autonome       │         ╱
      R >= 0.9       │       ╱
                     │     ╱
-     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ variety_ratio = 1.0
+     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ signal de variété proposé (non mesuré)
      Proactif       │ ╱
      R >= 0.7       │╱
                     ╱
@@ -169,7 +155,7 @@ Franchir 1.0 signifie seulement que les réponses distinctes égalent pour la pr
                     └────────────────── t (temps/cycles)
 ```
 
-Chaque ligne horizontale est une frontière de régime choisie, pas une frontière de phase mesurée. Le système de gouvernance franchit ces frontières quand suffisamment de signaux s'alignent. Aucun signal isolé ne suffit — cherchez la **convergence** d'au moins 3 signaux indiquant la même direction de transition.
+Chaque ligne horizontale est une frontière de régime proposée, pas une frontière de phase mesurée. Ce diagramme reste une hypothèse à confronter à des changements observés indépendamment ; aucun nombre d'indicateurs alignés ne démontre actuellement une transition.
 
 ---
 
@@ -192,15 +178,15 @@ Chaque ligne horizontale est une frontière de régime choisie, pas une frontiè
 ## Points clés à retenir
 
 - Les transitions de phase de la gouvernance sont des changements qualitatifs dans le fonctionnement du système, et pas seulement une croissance quantitative
-- Six signaux mesurables permettent de détecter l'approche d'une transition : asymétrie des croyances, vitesse de la santé, saturation des politiques, force du couplage, fréquence des signaux de conscience et ratio de variété
-- Le ratio de variété (issu de la cybernétique) est un paramètre d'ordre candidat — franchir 1.0 marque une frontière de régime, pas en soi une transition de phase, et la régulation se lit sur les issues, pas sur le ratio
-- La plupart des transitions de gouvernance sont du second ordre (continues) — détectables mais pas brutales
-- Aucun signal isolé ne suffit ; cherchez la convergence d'au moins 3 signaux
+- Cinq signaux proposés peuvent être examinés dans les relevés existants ; la variété requise reste une sixième piste non mesurée
+- Une mesure de variété exige des perturbations, des réponses et des issues appariées avant d'être testée comme signal de transition
+- Aucun ordre de transition physique ni seuil de prévision n'a été établi ici pour les changements de gouvernance
+- Examiner plusieurs indicateurs et issues mesurés indépendamment ; la règle des « 3 signaux ou plus » n'est pas validée
 
 ## Pour aller plus loin
 
 - [PSY-001 : Introduction à la capitalisation fractale](psy-001-intro-fractal-compounding.fr.md) — prérequis sur D_c et ERGOL/LOLLI
-- [CYB-003 : Mesurer quantitativement le ratio de variété](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en anglais) — le paramètre d'ordre candidat
+- [CYB-003 : Mesurer la variété requise sans inventer de capacité](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en anglais) — limites de mesure et expérience proposée
 - [CYB-001 : Correspondance entre le VSM et la gouvernance de l'IA](../../cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md) — prérequis structurels
 - Mécanique statistique des transitions de phase (théorie de Landau, paramètres d'ordre, exposants critiques)
 - Fondation d'Asimov — la psychohistoire prédit des tendances agrégées, pas des événements individuels

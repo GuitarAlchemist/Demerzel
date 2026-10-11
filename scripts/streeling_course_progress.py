@@ -7,6 +7,7 @@ The public Learn catalog and human review evidence need separate verification.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -14,6 +15,14 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_PER_DEPARTMENT = 25
+EXERCISE_HEADING = re.compile(r"^#{2,4}\s+(?:practice\s+)?exercise\b", re.IGNORECASE)
+ANSWER_LINE = re.compile(r"^\s*>\s*(?:\*\*Answer:?\*\*|\*Solution:?\*|Answer:|Solution:)", re.IGNORECASE)
+HEADING = re.compile(r"^#{1,4}\s+")
+PINNED_REVISION_LINK = re.compile(
+    r"https://github\.com/(?:GuitarAlchemist|spareilleux)/[^\s)]+/(?:blob|tree)/[0-9a-f]{40}(?:/|\b)",
+    re.IGNORECASE,
+)
+MARKDOWN_LINK = re.compile(r"\]\(([^)#]+)(?:#[^)]*)?\)")
 
 
 def active_languages(policy: dict) -> list[str]:
@@ -24,6 +33,41 @@ def active_languages(policy: dict) -> list[str]:
         for entry in entries
         if entry["status"] == "active"
     ]
+
+
+def content_signals(source: Path, root: Path) -> dict:
+    """Conservative triage signals, never a pedagogical or publication verdict."""
+    lesson = source.read_text(encoding="utf-8")
+    lines = lesson.splitlines()
+    paired_exercises = 0
+    in_exercise = False
+    has_answer = False
+    for line in lines:
+        if EXERCISE_HEADING.match(line):
+            paired_exercises += int(in_exercise and has_answer)
+            in_exercise = True
+            has_answer = False
+        elif HEADING.match(line):
+            paired_exercises += int(in_exercise and has_answer)
+            in_exercise = False
+        elif in_exercise and ANSWER_LINE.match(line):
+            has_answer = True
+    paired_exercises += int(in_exercise and has_answer)
+
+    fixture_link = False
+    for match in MARKDOWN_LINK.finditer(lesson):
+        target = match.group(1)
+        if "fixtures/" not in target.replace("\\", "/"):
+            continue
+        candidate = (source.parent / target).resolve()
+        if candidate.is_relative_to(root.resolve()) and candidate.is_file():
+            fixture_link = True
+            break
+    return {
+        "exercise_answer_pairs_signal": paired_exercises,
+        "pinned_revision_link_signal": bool(PINNED_REVISION_LINK.search(lesson)),
+        "existing_fixture_link_signal": fixture_link,
+    }
 
 
 def inventory(root: Path = ROOT) -> dict:
@@ -57,6 +101,7 @@ def inventory(root: Path = ROOT) -> dict:
                 "languages_present": present,
                 "missing_active_languages": [lang for lang in languages if lang not in present],
                 "pipeline_review_approved": bool(approvals),
+                "content_signals": content_signals(source, root),
             })
         departments.append({
             "department": department.name,
@@ -79,10 +124,22 @@ def inventory(root: Path = ROOT) -> dict:
             "remaining_to_25": sum(item["remaining_to_25"] for item in departments),
             "active_language_complete": sum(item["active_language_complete"] for item in departments),
             "pipeline_review_approved": sum(item["pipeline_review_approved"] for item in departments),
+            "with_exercise_answer_pair_signal": sum(
+                module["content_signals"]["exercise_answer_pairs_signal"] > 0
+                for department in departments for module in department["modules"]
+            ),
+            "with_pinned_revision_link_signal": sum(
+                module["content_signals"]["pinned_revision_link_signal"]
+                for department in departments for module in department["modules"]
+            ),
+            "with_existing_fixture_link_signal": sum(
+                module["content_signals"]["existing_fixture_link_signal"]
+                for department in departments for module in department["modules"]
+            ),
         },
         "unregistered_course_directories": sorted(directory_names - registered),
         "registered_without_course_directory": sorted(registered - directory_names),
-        "caveat": "Source inventory only. Approval records do not prove native review or public Learn publication.",
+        "caveat": "Source inventory and conservative content signals only. A signal is not proof of project usefulness, subject accuracy, native review, learner success, or public Learn publication.",
     }
 
 

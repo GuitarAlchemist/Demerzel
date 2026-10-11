@@ -19,9 +19,9 @@ version: "1.0.0"
 
 After this lesson, you will be able to:
 - Define what a phase transition means in a governance system
-- Identify six measurable signals that precede regime shifts
+- Identify five proposed indicators and one unmeasured variety hypothesis for investigating regime shifts
 - Distinguish first-order (abrupt) from second-order (continuous) governance transitions
-- Apply the variety ratio as a candidate order parameter for governance regime classification
+- Explain what evidence would be needed before requisite variety could be tested as a governance transition signal
 - Design a monitoring dashboard from governance state files
 
 ---
@@ -41,11 +41,11 @@ Governance systems do the same thing. A framework with 3 policies and 2 personas
 | First-order | Water → ice (abrupt, latent heat) | Kill switch activation, major constitution amendment |
 | Second-order | Ferromagnet at Curie temperature (continuous) | Gradual shift from reactive to proactive governance |
 
-Most governance transitions are second-order — continuous, hard to pinpoint, but measurable in retrospect. The signals below help you detect them *before* they complete.
+Whether any governance change has the structure of a physical phase transition is untested here. The indicators below are investigation prompts, not predictors validated on past transitions.
 
 ---
 
-## 2. The Six Measurable Signals
+## 2. Five Proposed Indicators and One Open Measurement
 
 ### Signal 1: Belief Distribution Skew
 
@@ -121,29 +121,15 @@ The governance analogy therefore applies to continuous transitions: conscience s
 signal_rate = conscience_signals_count / time_window
 ```
 
-A 2x increase in signal rate over 3 cycles is a strong indicator that the system is near a transition point. The signals themselves tell you *which direction* the transition goes.
+A 2x increase over 3 cycles is a reason to inspect the underlying events and their denominator. No transition threshold or direction has been validated for this signal.
 
 **Where to measure:** `state/conscience/signals/` directory
 
-### Signal 6: Variety Ratio as a Candidate Order Parameter
+### Signal 6: Requisite Variety as an Unvalidated Candidate
 
-From cybernetics, the variety ratio compares the regulator with its environment, not amplifiers with attenuators inside the regulator. It is computed per cycle from counts of the distinct responses governance gives and the distinct disturbances it meets:
+The revised [CYB-003](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) withdraws its earlier ratio of policy and persona counts. Counting distinct response labels and disturbance labels in one cycle would be reproducible, but their quotient would still ignore which response works for which disturbance. No matched disturbance → response → outcome series has been measured here. Therefore there is **no operational variety signal or 1.0 regime boundary** to plot yet.
 
-```
-variety_ratio = distinct_responses / distinct_disturbances
-```
-
-In bits, log2(variety_ratio) = V_R - V_D, with V = log2 of each count. A ratio of the bit values, V_R / V_D, would break this identity, and would divide by zero in a cycle that meets a single distinct disturbance, where V_D = log2(1) = 0. A cycle that meets no disturbance has no ratio.
-
-It is a **candidate order parameter** for governance regimes, with 1.0 as a chosen boundary:
-
-- `variety_ratio < 1.0`: Reactive regime (fewer distinct responses than distinct disturbances)
-- `variety_ratio ≈ 1.0`: Boundary (as many distinct responses as distinct disturbances)
-- `variety_ratio > 1.0`: Proactive regime (more distinct responses than distinct disturbances)
-
-The ratio does not say whether governance regulates. Ashby's Law is stated on outcomes: where no response brings two disturbances to the same outcome and N_η outcomes are acceptable, carrying V_η = log2(N_η) bits, regulating every disturbance needs V_R >= V_D - V_η. So a ratio below 1 is compatible with full regulation when enough outcomes are acceptable, or when one response brings several disturbances to the same acceptable outcome, where the law does not apply. A ratio above 1 can still fail, when the responses given are not the ones the disturbances need. Whether governance regulates is read from the outcome of each disturbance, given the response, and the counts themselves come from records of the disturbances met and the responses given in each cycle.
-
-Crossing 1.0 means only that distinct responses first match distinct disturbances in number; it is not by itself a phase transition. The ratio can pass through 1 smoothly, when one more response becomes available, with no qualitative change in the system. Calling a crossing a second-order transition would need a model of the order parameter that shows critical behavior near 1.0, such as the growing fluctuations of Signal 5; until then, treat 1.0 as a regime boundary.
+A useful experiment would predefine disturbance classes, permitted responses, and acceptable outcomes, then record each matched event across cycles. Compare independently checked success and unresolved cases before interpreting any information measure. The claim that this becomes an order parameter for governance transitions remains a hypothesis, not a result of CYB-003.
 
 ---
 
@@ -155,7 +141,7 @@ Crossing 1.0 means only that distinct responses first match distinct disturbance
      Autonomous     │         ╱
      R >= 0.9       │       ╱
                     │     ╱
-     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ variety_ratio = 1.0
+     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ proposed variety signal (unmeasured)
      Proactive      │ ╱
      R >= 0.7       │╱
                     ╱
@@ -169,7 +155,7 @@ Crossing 1.0 means only that distinct responses first match distinct disturbance
                     └────────────────── t (time/cycles)
 ```
 
-Each horizontal line is a chosen regime boundary, not a measured phase boundary. The governance system crosses these boundaries when enough signals align. No single signal is sufficient — look for **convergence** of 3+ signals indicating the same transition direction.
+Each horizontal line is a proposed regime boundary, not a measured phase boundary. This diagram is a hypothesis to test against independently observed changes; no number of aligned indicators currently establishes a transition.
 
 ---
 
@@ -192,15 +178,15 @@ Using the current Demerzel governance state:
 ## Key Takeaways
 
 - Phase transitions in governance are qualitative shifts in how the system operates, not just quantitative growth
-- Six measurable signals can detect approaching transitions: belief skew, health velocity, policy saturation, coupling strength, conscience frequency, and variety ratio
-- The variety ratio (from cybernetics) is a candidate order parameter — crossing 1.0 marks a regime boundary, not by itself a phase transition, and whether governance regulates is read from outcomes, not from the ratio
-- Most governance transitions are second-order (continuous) — detectable but not abrupt
-- No single signal is sufficient; look for convergence of 3+ signals
+- Five proposed signals can be inspected in existing records; requisite variety remains an unmeasured sixth candidate
+- A variety measure needs matched disturbances, responses, and outcomes before it can be tested as a transition signal
+- No physical transition order or advance-warning threshold has been established for governance changes here
+- Inspect several independently measured indicators and outcomes; the “3+ signals” rule is unvalidated
 
 ## Further Reading
 
 - [PSY-001: Introduction to Fractal Compounding](psy-001-intro-fractal-compounding.md) — prerequisite on D_c and ERGOL/LOLLI
-- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the candidate order parameter
+- [CYB-003: Measuring Requisite Variety Without Inventing Capacity](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the measurement limits and proposed experiment
 - [CYB-001: VSM and AI Governance Mapping](../../cybernetics/en/cyb-001-vsm-ai-governance-mapping.md) — structural prerequisites
 - Statistical mechanics of phase transitions (Landau theory, order parameters, critical exponents)
 - Asimov's Foundation — psychohistory predicts aggregate trends, not individual events

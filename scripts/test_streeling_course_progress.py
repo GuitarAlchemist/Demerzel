@@ -5,10 +5,37 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.streeling_course_progress import inventory
+from scripts.streeling_course_progress import content_signals, inventory
 
 
 class StreelingCourseProgressTests(unittest.TestCase):
+    def test_content_signals_require_a_paired_answer_and_existing_fixture(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "state/streeling/courses/example/en/ex-001.md"
+            source.parent.mkdir(parents=True)
+            fixture = root / "state/streeling/fixtures/example/input.json"
+            fixture.parent.mkdir(parents=True)
+            fixture.write_text("{}", encoding="utf-8")
+            source.write_text(
+                "### Practice Exercise\nSolve the project case.\n"
+                "> *Solution:* Checked answer.\n"
+                "### Practice exercise 2\nThis answer is missing.\n"
+                "## Evidence\n"
+                "[fixture](../../../fixtures/example/input.json)\n"
+                "[missing](../../../fixtures/example/missing.json)\n"
+                "[source](https://github.com/GuitarAlchemist/ga/blob/"
+                + "a" * 40 + "/state/quality/example.json)\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(content_signals(source, root), {
+                "exercise_answer_pairs_signal": 1,
+                "pinned_revision_link_signal": True,
+                "existing_fixture_link_signal": True,
+            })
+            fixture.unlink()
+            self.assertFalse(content_signals(source, root)["existing_fixture_link_signal"])
+
     def test_draft_is_counted_but_not_approved_or_published(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

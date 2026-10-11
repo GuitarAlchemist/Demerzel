@@ -19,9 +19,9 @@ version: "1.0.0"
 
 Al terminar esta lección, serás capaz de:
 - Definir qué significa una transición de fase en un sistema de gobernanza
-- Identificar seis señales medibles que preceden a los cambios de régimen
+- Identificar cinco indicadores propuestos y una hipótesis no medida sobre la variedad para investigar cambios de régimen
 - Distinguir las transiciones de gobernanza de primer orden (abruptas) de las de segundo orden (continuas)
-- Aplicar el cociente de variedad como parámetro de orden candidato para clasificar los regímenes de gobernanza
+- Explicar qué pruebas harían falta antes de probar la variedad requerida como señal de transición de gobernanza
 - Diseñar un panel de monitorización a partir de los archivos de estado de la gobernanza
 
 ---
@@ -41,11 +41,11 @@ Los sistemas de gobernanza hacen lo mismo. Un marco con 3 políticas y 2 persona
 | Primer orden | Agua → hielo (abrupta, calor latente) | Activación del interruptor de emergencia, enmienda importante de la constitución |
 | Segundo orden | Ferroimán a la temperatura de Curie (continua) | Paso gradual de una gobernanza reactiva a una proactiva |
 
-La mayoría de las transiciones de gobernanza son de segundo orden: continuas, difíciles de situar con precisión, pero medibles en retrospectiva. Las señales siguientes te ayudan a detectarlas *antes* de que se completen.
+Aquí no se ha demostrado que un cambio de gobernanza tenga la estructura de una transición de fase física. Los indicadores siguientes sirven para investigar; su capacidad predictiva no se ha validado con transiciones anteriores.
 
 ---
 
-## 2. Las seis señales medibles
+## 2. Cinco indicadores propuestos y una medición pendiente
 
 ### Señal 1: asimetría de la distribución de creencias
 
@@ -121,29 +121,15 @@ Por eso la analogía en gobernanza se aplica a las transiciones continuas: las s
 signal_rate = conscience_signals_count / time_window
 ```
 
-Que la tasa de señales se duplique a lo largo de 3 ciclos es un indicador fuerte de que el sistema está cerca de un punto de transición. Las propias señales te dicen *en qué dirección* va la transición.
+Que la tasa se duplique en 3 ciclos invita a examinar los eventos y su denominador. No se ha validado ningún umbral ni dirección de transición para este indicador.
 
 **Dónde medir:** el directorio `state/conscience/signals/`
 
-### Señal 6: el cociente de variedad como parámetro de orden candidato
+### Señal 6: la variedad requerida, una propuesta sin validar
 
-Desde la cibernética, el cociente de variedad compara el regulador con su entorno, no los amplificadores con los atenuadores dentro del regulador. Se calcula en cada ciclo a partir de los recuentos de respuestas distintas que da la gobernanza y de perturbaciones distintas que encuentra:
+La revisión de [CYB-003](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) retira su antiguo cociente basado en el número de políticas y personas. Contar las categorías de respuestas y perturbaciones de un ciclo sería reproducible, pero su cociente no diría qué respuesta funciona para cada perturbación. Aquí no se ha medido ninguna serie que empareje perturbación → respuesta → resultado. Por tanto, **aún no hay señal operativa de variedad ni frontera de régimen en 1,0** que se pueda trazar.
 
-```
-variety_ratio = distinct_responses / distinct_disturbances
-```
-
-En bits, log2(variety_ratio) = V_R - V_D, con V = log2 de cada recuento. Un cociente de los valores en bits, V_R / V_D, rompería esta identidad, y dividiría por cero en un ciclo que encuentra una sola perturbación distinta, donde V_D = log2(1) = 0. Un ciclo que no encuentra ninguna perturbación no tiene cociente.
-
-Es un **parámetro de orden candidato** para los regímenes de gobernanza, con 1.0 como frontera elegida:
-
-- `variety_ratio < 1.0`: régimen reactivo (menos respuestas distintas que perturbaciones distintas)
-- `variety_ratio ≈ 1.0`: frontera (tantas respuestas distintas como perturbaciones distintas)
-- `variety_ratio > 1.0`: régimen proactivo (más respuestas distintas que perturbaciones distintas)
-
-El cociente no dice si la gobernanza regula. La ley de Ashby se enuncia sobre los resultados: donde ninguna respuesta lleva dos perturbaciones al mismo resultado y N_η resultados son aceptables, con V_η = log2(N_η) bits, regular cada perturbación requiere V_R >= V_D - V_η. Así que un cociente menor que 1 es compatible con una regulación completa cuando hay bastantes resultados aceptables, o cuando una misma respuesta lleva varias perturbaciones al mismo resultado aceptable, caso en el que la ley no se aplica. Un cociente mayor que 1 puede fallar igualmente, cuando las respuestas dadas no son las que necesitan las perturbaciones. La regulación se lee en el resultado de cada perturbación, dada la respuesta, y los recuentos mismos vienen de los registros de las perturbaciones encontradas y de las respuestas dadas en cada ciclo.
-
-Cruzar 1.0 significa solo que las respuestas distintas igualan por primera vez en número a las perturbaciones distintas; no es por sí mismo una transición de fase. El cociente puede pasar por 1 de forma suave, cuando se dispone de una respuesta más, sin ningún cambio cualitativo en el sistema. Llamar a un cruce transición de segundo orden exigiría un modelo del parámetro de orden que muestre comportamiento crítico cerca de 1.0, como las fluctuaciones crecientes de la señal 5; hasta entonces, trata 1.0 como una frontera de régimen.
+Un experimento útil definiría de antemano las clases de perturbación, las respuestas permitidas y los resultados aceptables, y conservaría cada evento emparejado durante varios ciclos. Habría que comparar los éxitos comprobados de forma independiente y los casos sin resolver antes de interpretar una medida de información. La idea de un parámetro de orden para transiciones de gobernanza sigue siendo una hipótesis, no un resultado de CYB-003.
 
 ---
 
@@ -155,7 +141,7 @@ Cruzar 1.0 significa solo que las respuestas distintas igualan por primera vez e
      Autónomo       │         ╱
      R >= 0.9       │       ╱
                     │     ╱
-     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ variety_ratio = 1.0
+     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ señal de variedad propuesta (sin medir)
      Proactivo      │ ╱
      R >= 0.7       │╱
                     ╱
@@ -169,7 +155,7 @@ Cruzar 1.0 significa solo que las respuestas distintas igualan por primera vez e
                     └────────────────── t (tiempo/ciclos)
 ```
 
-Cada línea horizontal es una frontera de régimen elegida, no una frontera de fase medida. El sistema de gobernanza cruza estas fronteras cuando se alinean suficientes señales. Ninguna señal por sí sola basta: busca la **convergencia** de 3 o más señales que indiquen la misma dirección de transición.
+Cada línea horizontal es una frontera de régimen propuesta, no una frontera de fase medida. Este diagrama es una hipótesis que debe contrastarse con cambios observados de forma independiente; ningún número de indicadores alineados demuestra por ahora una transición.
 
 ---
 
@@ -192,15 +178,15 @@ Usando el estado actual de la gobernanza de Demerzel:
 ## Conclusiones clave
 
 - Las transiciones de fase de la gobernanza son cambios cualitativos en el funcionamiento del sistema, no solo un crecimiento cuantitativo
-- Seis señales medibles pueden detectar la proximidad de una transición: asimetría de creencias, velocidad de la salud, saturación de políticas, intensidad del acoplamiento, frecuencia de señales de conciencia y cociente de variedad
-- El cociente de variedad (de la cibernética) es un parámetro de orden candidato: cruzar 1.0 marca una frontera de régimen, no por sí mismo una transición de fase, y la regulación se lee en los resultados, no en el cociente
-- La mayoría de las transiciones de gobernanza son de segundo orden (continuas): detectables, pero no abruptas
-- Ninguna señal por sí sola basta; busca la convergencia de 3 o más señales
+- Cinco señales propuestas se pueden examinar en los registros existentes; la variedad requerida sigue siendo una sexta propuesta sin medir
+- Una medida de variedad necesita perturbaciones, respuestas y resultados emparejados antes de poder probarse como señal de transición
+- Aquí no se ha establecido ningún orden de transición física ni umbral de aviso previo para cambios de gobernanza
+- Examinar varios indicadores y resultados medidos de forma independiente; la regla de «3 o más señales» no está validada
 
 ## Lecturas adicionales
 
 - [PSY-001: Introducción a la capitalización fractal](psy-001-intro-fractal-compounding.es.md): requisito previo sobre D_c y ERGOL/LOLLI
-- [CYB-003: Medir cuantitativamente el cociente de variedad](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en inglés): el parámetro de orden candidato
+- [CYB-003: Medir la variedad requerida sin inventar capacidad](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) (en inglés): límites de medición y experimento propuesto
 - [CYB-001: Correspondencia entre el VSM y la gobernanza de la IA](../../cybernetics/es/cyb-001-vsm-ai-governance-mapping.es.md): requisitos previos estructurales
 - Mecánica estadística de las transiciones de fase (teoría de Landau, parámetros de orden, exponentes críticos)
 - Fundación de Asimov: la psicohistoria predice tendencias agregadas, no sucesos individuales
