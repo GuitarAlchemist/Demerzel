@@ -1,0 +1,24 @@
+{
+  "cycle_id": "guitar-acoustics-2026-10-11-002",
+  "department": "guitar-acoustics",
+  "question": "What controlled brightness-parameter test could determine whether GA's guitar engine narrows its measured E2 second-partial gap without harming other output?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin GA Rust engine, browser message path, offline loop, and Demerzel GAS-001 fixture",
+    "test: calculate effective brightness and threshold from source; cross-check five answered exercises without claiming an audio run"
+  ],
+  "hypothesis": "At the pinned revisions, GA exposes a clamped base brightness setter but computes effective brightness from base value, frequency, and pluck mix; changing that value is an experiment whose spectral and perceptual outcome requires new measured renders.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Rust/guitar-web-wasm-demo/rust-engine/src/lib.rs initializes profile 0 with base brightness 0.80, clamps the exported setter to [0,1], and computes effective brightness as clamp(base + 0.45*f_norm + 0.30*pluck_mix, 0, 1). A later profile selection resets the base value.",
+    "The pinned source computes pluck_mix=0.15+0.35*velocity and f_norm=clamp((frequency-82)/248,0,1). At 82.4069 Hz and velocity 0.1, pluck_mix=0.185 and f_norm about 0.001641; effective brightness is about 0.85624 for base 0.80 and 0.95624 for a proposed base 0.90. At 330 Hz with the same velocity, both clamp to 1.",
+    "At the same GA commit, src/audio/audioEngine.js posts set_brightness messages; src/audio/guitar-worklet.js forwards them only while ready and sets ready after asynchronous WASM initialization. The browser bridge returning a node does not itself establish worklet readiness. The GAS-001 source fixture is a native engine render, not a browser capture.",
+    "Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b contains state/streeling/fixtures/guitar-acoustics/gas-001/measurements.json and README.md. They report recorded open-E2 second partial +7.0 dB and GA native render -16.9 dB relative to each file's first partial, a 23.9 dB selected-window gap. No new brightness candidate was rendered.",
+    "The pinned GA full-auto.ps1 contains optional DDSP coloration and local/spectral critics. A ComfyUI E2 third arm and a 3.0 dB gap-reduction classroom gate are proposals, not present pipeline output or validated perceptual criteria. No listener outcome, browser capture, or ComfyUI artifact was created for this cycle. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "T",
+  "belief_confidence": 0.9,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:20:32Z"
+}
