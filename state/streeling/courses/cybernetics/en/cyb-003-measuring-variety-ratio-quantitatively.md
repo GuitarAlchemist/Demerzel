@@ -52,7 +52,7 @@ Calculate the maximum variety for the configured status alphabet and for the two
 
 Shannon's entropy of a sampled symbol distribution is `H = -Σ p(x) log2 p(x)`. For the eight pinned records, status frequencies are `7/8` and `1/8`, so `H ≈ 0.544` bits per sampled status. This is a descriptive statistic of this small, selected set of course-production records, not an estimate of future agent behavior. The formula comes from Shannon's [original paper](https://reach.ieee.org/primary-sources/a-mathematical-theory-of-communication/).
 
-The configured status alphabet, observed alphabet, and empirical entropy are different measurements. Do not sum the variety of “five statuses” with “three verdicts”: the verdict can be missing, the phases constrain which combinations make sense, and no independence has been demonstrated. The arithmetic `log2(5 × 3) ≈ 3.907` is a **hypothetical Cartesian-product upper bound**, not 15 reachable pipeline states.
+The configured status alphabet, observed alphabet, and empirical entropy are different measurements. Do not sum the variety of “five statuses” with “three verdicts”: the verdict can be missing, the phases constrain which combinations make sense, and no independence has been demonstrated. The arithmetic `log2(5 × 3) ≈ 3.907` describes only a hypothetical set of **15 nonmissing label pairs**. If “missing verdict” is counted as a fourth symbol, the unrestricted Cartesian product has 20 pairs, but neither number establishes which combinations are reachable or useful.
 
 ### Practice exercise 2
 

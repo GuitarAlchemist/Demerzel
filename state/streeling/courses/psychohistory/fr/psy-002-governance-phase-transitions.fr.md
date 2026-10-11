@@ -1,45 +1,42 @@
 ---
 module_id: psy-002-governance-phase-transitions
 department: psychohistory
-course: "Théorie des transitions de phase : quand les systèmes de gouvernance changent de régime"
+course: "Tester l'analogie des transitions de phase en gouvernance"
 level: intermediate
 prerequisites: [psy-001-intro-fractal-compounding]
 estimated_duration: "35 minutes"
 produced_by: seldon-auto-research
 research_cycle: psychohistory-2026-03-23-001
-cross_model_agreement: {claude: "T", gpt4o: "agree (0.7)", notebooklm: "unavailable"}
-version: "1.0.0"
+version: "1.1.0"
 ---
 
-# Les transitions de phase de la gouvernance
+# Tester les changements de régime en gouvernance
 
-> **Département de psychohistoire** | Niveau : Intermédiaire | Durée : 35 minutes
+> **Département de psychohistoire** | Niveau : Intermédiaire | Durée : 35 minutes | Statut : brouillon révisé, revue de fond et essai apprenant en attente
 
 ## Objectifs
 
 Après cette leçon, vous serez capable de :
-- Définir ce que signifie une transition de phase dans un système de gouvernance
+- Distinguer une transition de phase physique d'une analogie proposée pour la gouvernance
 - Repérer cinq indicateurs proposés et une hypothèse non mesurée sur la variété pour étudier les changements de régime
-- Distinguer les transitions de gouvernance du premier ordre (brutales) de celles du second ordre (continues)
+- Nommer les preuves requises avant de qualifier un changement de gouvernance de brutal, continu ou prévisible
 - Expliquer quelles preuves seraient nécessaires avant de tester la variété requise comme signal de transition de gouvernance
 - Concevoir un tableau de bord de surveillance à partir des fichiers d'état de la gouvernance
 
 ---
 
-## 1. Qu'est-ce qu'une transition de phase de la gouvernance ?
+## 1. L'analogie et ses limites
 
 En physique, l'eau devient glace à 0 degré C. Les molécules sont les mêmes, mais leur comportement collectif change qualitativement. C'est une **transition de phase** — le système passe d'un régime à un autre.
 
-Les systèmes de gouvernance font la même chose. Un cadre à 3 politiques et 2 personas ne fonctionne pas comme un cadre à 28 politiques et 14 personas. À un moment donné, le système n'est pas seulement devenu plus grand — il a changé *sa façon de fonctionner*. Les interactions sont devenues qualitativement différentes.
-
-**Idée clé de la psychohistoire :** Les effets de chaque changement de politique pris isolément sont imprévisibles. Mais le comportement *agrégé* du système de gouvernance suit des lois statistiques. Les transitions de phase sont les points où ces lois statistiques changent.
+Pour Demerzel, la « transition de phase » est une analogie à tester, pas une loi observée. Un inventaire plus grand peut modifier le travail, mais le nombre de fichiers ne démontre ni un changement qualitatif ni le moment où il surviendrait. Un essai définirait le comportement étudié, figerait les observations avant et après un changement et comparerait d'autres explications.
 
 ### Transitions du premier ordre et du second ordre
 
 | Type | Analogie physique | Exemple en gouvernance |
 |------|----------------|-------------------|
-| Premier ordre | Eau → glace (brutale, chaleur latente) | Activation de l'arrêt d'urgence, amendement majeur de la constitution |
-| Second ordre | Ferromagnétique à la température de Curie (continue) | Passage progressif d'une gouvernance réactive à une gouvernance proactive |
+| Premier ordre | Eau → glace (brutale, chaleur latente) | Activation de l'arrêt d'urgence comme **analogie** d'un changement brutal |
+| Second ordre | Ferromagnétique à la température de Curie (continue) | Changement graduel du travail comme **analogie** ; aucun point critique mesuré |
 
 On n'a pas établi ici qu'un changement de gouvernance possède la structure d'une transition de phase physique. Les indicateurs ci-dessous servent à enquêter ; leur pouvoir prédictif n'a pas été validé sur des transitions passées.
 
@@ -55,16 +52,16 @@ La logique de Demerzel est hexavalente : T (Vrai), P (Probable), U (Inconnu), D 
 crystallization_index = total_T / max(total_U, 1)
 ```
 
-Quand ce ratio change rapidement — `d(T/U)/dt` s'écartant de plus de 2 écarts-types de sa moyenne glissante — le système approche d'une transition.
+Si ce ratio s'écarte de plus de deux écarts-types historiques, examinez les comptes et leur méthode de collecte. Ce seuil illustre un déclencheur d'enquête, pas un prédicteur validé ; sur quelques cycles, l'écart-type lui-même peut être instable.
 
-- **Hausse rapide :** Le système se cristallise. La phase exploratoire se termine, la consolidation commence.
-- **Baisse rapide :** Le système se déstabilise. De nouvelles inconnues apparaissent plus vite qu'elles ne sont résolues.
+- **Hausse rapide :** Davantage de T que de U sont consignés ; vérifiez les reclassements et la couverture.
+- **Baisse rapide :** Davantage de U que de T sont consignés ; vérifiez l'entrée de nouveaux sujets.
 
 **Où mesurer :** `state/streeling/departments/*.weights.json` → `metadata.total_T`, `metadata.total_U`
 
 ### Signal 2 : vitesse du score de santé
 
-Le score de santé de la gouvernance R est le score de résilience de Demerzel, défini dans `CONTEXT.md` par `R = injections_caught / injections_total` : la part des défauts injectés dans la gouvernance que sa détection intercepte. `state/resilience/history.json` l'enregistre sous `overall_score`, un enregistrement par cycle de chaos, et le fichier `governance-health.json` à la racine en garde la dernière valeur. R joue le rôle d'un potentiel thermodynamique, et sa dérivée renseigne sur la proximité d'un changement de régime :
+Le score R de Demerzel est défini dans `CONTEXT.md` par `R = injections_caught / injections_total` : la part des défauts injectés que la détection intercepte. `state/resilience/history.json` consigne `overall_score` par cycle de chaos, et `governance-health.json` garde la dernière valeur. Une variation de R décrit ces tests ; ce n'est ni un potentiel thermodynamique ni une mesure de proximité d'une frontière de régime :
 
 ```
 velocity = dR/dt (variation du score de santé par cycle)
@@ -72,28 +69,24 @@ velocity = dR/dt (variation du score de santé par cycle)
 
 | Profil | Signification |
 |---------|---------|
-| Vitesse positive, en accélération | Approche d'un régime supérieur |
-| Vitesse positive, en décélération | Approche d'un plateau (saturation) |
-| Vitesse proche de zéro | À une frontière de régime ou à l'équilibre |
-| Vitesse négative | Régression — une transition antérieure est peut-être en train de s'inverser |
+| Vitesse positive, en accélération | Le score déclaré croît plus vite ; vérifier les cas de test modifiés |
+| Vitesse positive, en décélération | Le score déclaré croît encore, mais moins vite |
+| Vitesse proche de zéro | Le score déclaré varie peu ; cela ne prouve aucun équilibre |
+| Vitesse négative | Le score déclaré baisse ; examiner les cas et la détection |
 
-**Seuils de régime (empiriques) :**
-- R < 0.5 : **régime réactif** — la gouvernance répond aux problèmes
-- 0.5 <= R < 0.7 : **régime structuré** — la gouvernance prévient les problèmes connus
-- 0.7 <= R < 0.9 : **régime proactif** — la gouvernance anticipe les problèmes
-- R >= 0.9 : **régime autonome** — la gouvernance s'améliore d'elle-même
+**Tranches de tableau de bord illustratives, pas des seuils empiriques de régime :** `<0,5`, `0,5–<0,7`, `0,7–<0,9` et `≥0,9` peuvent regrouper les valeurs affichées de R. Ces tranches ne démontrent aucun comportement réactif, structuré, proactif ou autonome. De telles interprétations exigent des issues mesurées séparément et des cas d'injection stables.
 
 ### Signal 3 : saturation de la densité de politiques
 
-Chaque nouvelle politique devrait améliorer la santé de la gouvernance. Quand ce n'est plus le cas, vous avez atteint la saturation :
+Une politique ajoutée peut aider, ne rien changer ou alourdir le travail. Un calcul descriptif de variation par fichier est :
 
 ```
 marginal_return = delta_R / delta_policy_count
 ```
 
-Quand `marginal_return → 0` sur 3 ajouts de politiques consécutifs ou plus, le système a extrait toute la valeur disponible de son régime actuel. Toute amélioration supplémentaire exige un changement qualitatif (nouvelle architecture, nouvel article constitutionnel, nouvelle couche d'observabilité) — une transition de phase.
+Trois valeurs proches de zéro ne prouvent pas une saturation. Les politiques peuvent changer avec les tests, leur application, les personnes ou d'autres politiques : `delta_R / delta_policy_count` n'isole donc pas l'effet causal d'une politique. Comparez des cas d'injection appariés et consignez les autres changements avant de décider qu'une nouvelle conception s'impose.
 
-**Réserve issue de la revue par GPT-4o :** Toutes les politiques ne sont pas également efficaces. Une meilleure mesure pondère chaque politique par sa portée (le nombre de personas qu'elle contraint). C'est un domaine de recherche ouvert.
+Pondérer par le nombre de personas contraints mesurerait encore la portée déclarée, pas l'efficacité. Ce peut être un champ descriptif, pas une mesure validée du rendement.
 
 ### Signal 4 : force du couplage entre dépôts
 
@@ -105,17 +98,17 @@ coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 
 | Couplage | Régime |
 |----------|--------|
-| < 0.3 | Faiblement couplé — les dépôts évoluent indépendamment |
-| 0.3 - 0.7 | Couplage normal — les dépôts évoluent en partie en phase, ensemble ou en opposition |
-| > 0.7 | Fortement couplé — les changements se propagent partout |
+| < 0,3 | Faible corrélation absolue observée dans cette fenêtre |
+| 0,3 - 0,7 | Tranche intermédiaire illustrative ; chercher des causes communes |
+| > 0,7 | Forte corrélation absolue observée ; la propagation n'est pas prouvée |
 
-Un saut soudain du couplage (faible → fort) signifie que les dépôts se sont mis à évoluer en phase, mais pas dans quel sens : la moyenne écarte les signes, si bien que deux dépôts qui s'améliorent pendant que les deux autres déclinent en phase donnent |r| = 1 pour chaque paire, le couplage maximal, alors que l'écosystème se polarise au lieu de se centraliser. Avant de lire un saut comme une centralisation, regardez les signes des six corrélations : toutes positives, les dépôts évoluent ensemble ; positives à l'intérieur de deux groupes et négatives entre eux, ce sont deux camps. Une chute soudaine signifie que les dépôts évoluent plus indépendamment, comme dans une fragmentation. L'un comme l'autre peut marquer une transition de phase si d'autres signaux convergent vers elle (section 3).
+Un saut signifie que ces séries sont devenues plus corrélées dans la fenêtre choisie ; il ne démontre pas un couplage causal. La moyenne ignore les signes : deux dépôts qui progressent et deux qui déclinent ensemble peuvent donner `|r| = 1` pour chaque paire. Examinez les corrélations signées et les changements communs avant de proposer une explication. Une variation de corrélation ne démontre pas à elle seule une transition de phase.
 
 ### Signal 5 : fréquence des signaux de conscience
 
 En mécanique statistique, les fluctuations croissent sans limite à l'approche d'un point critique, où la transition est continue (du second ordre). Près du point critique liquide–gaz, cela se manifeste par l'**opalescence critique** : les fluctuations de densité atteignent l'échelle de la longueur d'onde de la lumière, et le fluide devient laiteux. L'ébullition ordinaire, transition du premier ordre, n'a pas de tel signe avant-coureur.
 
-L'analogie en gouvernance vaut donc pour les transitions continues : les signaux de conscience (anomalies, escalades, contradictions) deviendraient plus fréquents à l'approche de l'une d'elles. Une transition brutale, du premier ordre, comme l'activation d'un coupe-circuit, peut survenir sans prévenir.
+L'idée que le taux d'anomalies ou d'escalades changerait avant certaines modifications de gouvernance est une hypothèse. Cette leçon ne dispose d'aucune série temporelle qui la teste. Un coupe-circuit est un événement administratif ; le qualifier de « premier ordre » est une métaphore, pas une classification physique mesurée.
 
 ```
 signal_rate = conscience_signals_count / time_window
@@ -133,29 +126,16 @@ Un essai utile définirait à l'avance les classes de perturbations, les répons
 
 ---
 
-## 3. Tout assembler : le diagramme de phases
+## 3. Comparer les preuves avant de nommer un régime
 
-```
-                    R (score de santé)
-                    │
-     Autonome       │         ╱
-     R >= 0.9       │       ╱
-                    │     ╱
-     ─ ─ ─ ─ ─ ─ ─│─ ─╱─ ─ ─ ─ ─ signal de variété proposé (non mesuré)
-     Proactif       │ ╱
-     R >= 0.7       │╱
-                    ╱
-     ─ ─ ─ ─ ─ ─ ╱│─ ─ ─ ─ ─ ─ ─ saturation des politiques
-     Structuré    ╱ │
-     R >= 0.5   ╱   │
-              ╱     │
-     ─ ─ ─ ╱─ ─ ─ ─│─ ─ ─ ─ ─ ─ ─ couplage critique
-     Réactif        │
-     R < 0.5        │
-                    └────────────────── t (temps/cycles)
-```
+| Quantité consignée | Comparaison utile | Preuve manquante |
+|---|---|---|
+| R par cycle de chaos | Comparer des cas appariés d'injection de défauts | Jeu de cas stable et issues vérifiées indépendamment |
+| Comptes T et U | Examiner la répartition des croyances consignées | Couverture stable et comptes P/D |
+| Taux de conformité des dépôts | Comparer des fenêtres alignées et des corrélations signées | Dénominateur commun et enquête causale |
+| Variété requise | Expérience proposée perturbation → réponse → issue | Série d'événements appariés ; aucun ratio actuel |
 
-Chaque ligne horizontale est une frontière de régime proposée, pas une frontière de phase mesurée. Ce diagramme reste une hypothèse à confronter à des changements observés indépendamment ; aucun nombre d'indicateurs alignés ne démontre actuellement une transition.
+Aucun nombre d'indicateurs alignés ne démontre actuellement une transition de phase. Une affirmation utile nomme le changement de travail observé, la révision, la période et l'autre explication examinée.
 
 ---
 
@@ -167,17 +147,19 @@ Chaque ligne horizontale est une frontière de régime proposée, pas une fronti
    - `total_T = ?`, `total_U = ?`
    - `crystallization_index = total_T / max(total_U, 1)`
 
-2. Prenez pour R l'`overall_score` du dernier enregistrement de `state/resilience/history.json`. Dans quel régime se trouve le système ? Que faudrait-il changer pour franchir la frontière suivante ?
+2. Prenez pour R l'`overall_score` du dernier enregistrement de `state/resilience/history.json`. Dans quelle tranche illustrative tombe-t-il ? Quelle valeur franchirait la tranche suivante, et quelles autres preuves permettraient de conclure à un changement réel du travail ?
 
 3. Dans le même fichier, le cycle chaos-003 consigne, dans `metafixes_applied`, un nouveau fichier de politique et une section ajoutée à une politique existante, et dans `level_deltas` un gain au niveau L4, pendant que R passait de 0.64 (chaos-002) à 0.73. Calculez le rendement global des changements de ce cycle. Pourquoi la hausse de 0.09 ne peut-elle pas être attribuée à la seule nouvelle politique, et quelle observation isolerait son rendement ? Entre chaos-003 et chaos-004, R est monté à 0.82 sans nouveau fichier de politique : qu'est-ce que cela dit de la mesure des rendements par nombre de politiques ?
 
-4. **Expérience de pensée :** Si les trois dépôts consommateurs (ix, tars, ga) atteignaient soudain 100 % de conformité, quelle transition de phase cela représenterait-il ? Est-ce souhaitable ?
+4. **Expérience de pensée :** Si les trois dépôts consommateurs (ix, tars, ga) annonçaient soudain 100 % de conformité, cela démontrerait-il une transition de phase ou même une amélioration réelle ? Quelles preuves demanderiez-vous ?
+
+> **Réponse à 4 :** Non. Vérifiez le dénominateur et les versions des politiques, les changements de tests, les exceptions qui auraient disparu des relevés et les issues indépendantes. Le saut déclaré ne classe aucune transition physique ou de gouvernance.
 
 ---
 
 ## Points clés à retenir
 
-- Les transitions de phase de la gouvernance sont des changements qualitatifs dans le fonctionnement du système, et pas seulement une croissance quantitative
+- Un changement qualitatif du travail ne démontre à lui seul ni transition de phase physique ni loi prédictive
 - Cinq signaux proposés peuvent être examinés dans les relevés existants ; la variété requise reste une sixième piste non mesurée
 - Une mesure de variété exige des perturbations, des réponses et des issues appariées avant d'être testée comme signal de transition
 - Aucun ordre de transition physique ni seuil de prévision n'a été établi ici pour les changements de gouvernance
