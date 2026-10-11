@@ -1,0 +1,24 @@
+{
+  "cycle_id": "philosophy-2026-10-11-002",
+  "department": "philosophy",
+  "question": "When is a Demerzel advisory recommendation about GA PR readiness justified by evidence, and what authority does that recommendation confer?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin Demerzel advisory document, output schema, and AIW rule-pack guide",
+    "test: validate a labeled synthetic decision against the pinned schema and cross-check five answered exercises"
+  ],
+  "hypothesis": "At the pinned Demerzel revision, schema conformance alone does not enforce the advisory document's specific-evidence requirement or grant merge authority.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit 9ba9a29f6424ac8c1a6654c9b979b282a8cf216f, docs/architecture/demerzel-advisory-decisions.md requires specific Streeling event or Seldon fact IDs, describes human approval for merge, and disallows auto-merge in the MVP.",
+    "At the same commit, schemas/advisory-decision.schema.json requires evidence_refs but gives its array no minItems or source-specific pattern; a labeled synthetic rule_result with decision recommend, confidence high, and evidence_refs [] validates against the schema.",
+    "The pinned advisory document lists recommend_merge, numeric confidence 0 to 1, and reasons, while the schema uses recommend, categorical confidence low/medium/high, and reason_codes. This is artifact-level vocabulary drift, not verified runtime behavior.",
+    "The pinned docs/governance/aiw-rule-packs.md calls the engine advisory and dry-run and says it does not replace final human judgment, mutate GitHub state directly, or bypass review and merge gates.",
+    "The English lesson contains five answered exercises and marks its PR and JSON fixture as synthetic. No live policy engine, real GA PR, operational decision corpus, learner trial, or publication was examined. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "T",
+  "belief_confidence": 0.94,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T21:55:13Z"
+}

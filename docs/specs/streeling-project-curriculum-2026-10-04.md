@@ -212,3 +212,15 @@ source and answer-key check with no finding. The source inventory is now 90
 English modules across 21 provisional course directories, 435 short of the
 525 target. Human subject, learner, fluent-language, pipeline review, and
 public Learn publication remain open.
+
+COG-002, PHI-002, and SEM-002 add project-grounded English drafts in three
+more one-module departments. COG-002 uses a pinned GA fretboard demo to show
+that one of six displayed note labels disagrees with its string and fret; it
+does not claim a learner encountered the error. PHI-002 checks the gap between
+a schema-valid advisory decision with empty evidence and Demerzel's stated
+evidence and human-merge requirements. SEM-002 traces chord-symbol input,
+canonical rendering, and projected pitch class through GA's F# DSL. Each has
+five answered exercises and a bounded independent AI source/answer-key check
+with no finding. The source inventory is 93 English modules across 21
+provisional course directories, 432 short of 525. Human subject, learner,
+language, pipeline review, and public readback remain open.

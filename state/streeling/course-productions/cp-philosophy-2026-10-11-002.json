@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-philosophy-2026-10-11-002",
+  "department": "philosophy",
+  "research_cycle_id": "philosophy-2026-10-11-002",
+  "module_id": "phi-002-when-is-an-advisory-decision-justified",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "T",
+      "belief_confidence": 0.94
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1852,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source-grounded draft. A bounded independent AI subject and answer-key review validated the synthetic JSON against the pinned schema and found no source or exercise issue. Human philosophy and governance review, learner testing, localization, and checks against any operational policy engine remain pending. The PR scenario and JSON decision are synthetic."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T21:55:13Z"
+}
