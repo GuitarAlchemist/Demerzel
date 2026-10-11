@@ -143,3 +143,14 @@ English modules, 450 short of 25 in each department directory. After rebasing
 onto Demerzel `origin/master` at `260226f`, upstream MUS-019 and MUS-021 bring
 the source inventory to 77 English modules, 448 short. DV-004 is neither
 reviewed nor published.
+
+DV-005 adds an English draft on historical baselines, moving averages,
+regression alerts, drift, and release targets using GA's pinned July 23 quality
+report. Its five exercises require the learner to keep comparison scope,
+metric-series denominators, and degraded observations visible. Source inventory
+is now 78 English modules across 21 directories, 447 short of 25 each; 49 have
+a detectable exercise/answer pair and 46 a pinned revision link. The new
+course received a bounded AI subject check: the first pass found a report-date
+versus observation-date error, and a focused recheck approved the correction.
+Human subject and learner review, localization, and public Learn readback remain
+pending. Its pipeline record remains `in_progress`.

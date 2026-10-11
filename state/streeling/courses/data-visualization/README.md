@@ -12,8 +12,9 @@
 | [DV-002](en/dv-002-denominators-and-test-populations.md) | Denominators and Changing Test Populations | Draft; localization and review pending | [EN](en/dv-002-denominators-and-test-populations.md) |
 | [DV-003](en/dv-003-instrument-cohorts-and-units.md) | Compare Instrument Cohorts Without Hiding Their Sizes | Draft; localization and review pending | [EN](en/dv-003-instrument-cohorts-and-units.md) |
 | [DV-004](en/dv-004-uncertainty-in-small-qa-suites.md) | Uncertainty in Small QA Suites | Draft; bounded AI subject check passed; human and localization review pending | [EN](en/dv-004-uncertainty-in-small-qa-suites.md) |
+| [DV-005](en/dv-005-baselines-alerts-and-targets.md) | Baselines, Alert Thresholds, and Historical Targets | English draft; bounded AI subject check passed; human, learner, and localization review pending | [EN](en/dv-005-baselines-alerts-and-targets.md) |
 
-DV-001 through DV-004 are drafts grounded in pinned GA snapshots. DV-001 has all six active-language drafts and a bounded AI subject check, but still needs human subject, native-language, and learner review. DV-004 also passed a bounded AI subject check after an exercise-stem correction. DV-002 through DV-004 need localization and human review. Do not present them as verified courses.
+DV-001 through DV-005 are drafts grounded in pinned GA snapshots or reports. DV-001 has all six active-language drafts and a bounded AI subject check, but still needs human subject, native-language, and learner review. DV-004 and DV-005 passed bounded AI subject checks after corrections to an exercise stem and measurement-date provenance, respectively. DV-002 through DV-005 need localization and human review. Do not present them as verified courses.
 
 ## Curriculum Areas
 

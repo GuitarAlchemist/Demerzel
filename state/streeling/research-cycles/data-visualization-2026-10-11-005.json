@@ -1,0 +1,26 @@
+{
+  "cycle_id": "data-visualization-2026-10-11-005",
+  "department": "data-visualization",
+  "question": "How can a GA quality chart distinguish a historical reference, an alert threshold, detected drift, and a release target without making an unsupported decision claim?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "data_relationship: time_series_with_quality_metadata",
+    "chart_type: dated_metric_with_separate_alert_and_drift_marks",
+    "design_pattern: label_comparison_and_decision_rule_separately",
+    "design_principle: preserve_source_date_population_and_missingness"
+  ],
+  "hypothesis": "Separating a moving reference, an alert rule, and a product acceptance target may prevent readers from treating a missing regression flag as release evidence.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, docs/quality/README.md was generated 2026-07-23, reports chatbot latest and 7d average both 98.08%, no regressions flagged, and chatbot drift around 2026-06-15. The latest chatbot QA measurement is the 2026-07-19 snapshot.",
+    "The same report's chatbot metric row lists n=26 and n_degraded=23; its methodology describes a 5.0% bad-direction threshold against the 7d average and Page-Hinkley drift detection.",
+    "At that GA commit, state/quality/README.md describes --baseline YYYY-MM-DD as an informational marker and the default regression-threshold-pct as 5.0. No product release target is specified there or in the report.",
+    "The 2026-06-15 and 2026-07-19 chatbot snapshots both report 52 prompts but omit prompt identities and evaluator revision; their equality of size does not establish a matched suite.",
+    "The lesson's five answers were checked against these pinned files. Research duration was not instrumented; duration_seconds=0 records that limitation. Learner benefit remains untested."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T17:36:13Z"
+}
