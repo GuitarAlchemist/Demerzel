@@ -7,10 +7,10 @@
   ],
   "artifact_type": "skill",
   "metrics": {
-    "citation_count": 27,
+    "citation_count": 29,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-07-29T23:09:40Z",
+    "last_cited": "2026-10-02T20:05:16Z",
     "last_violated": null,
     "promotion_candidate": false,
     "deprecation_candidate": true,

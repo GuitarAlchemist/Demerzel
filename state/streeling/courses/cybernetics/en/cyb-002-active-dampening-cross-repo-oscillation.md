@@ -3,7 +3,7 @@
 **Department:** Cybernetics
 **Module ID:** CYB-002
 **Produced by:** Seldon Plan Cycle cybernetics-2026-03-23-002
-**Belief:** T (probable), confidence 0.83
+**Belief:** T, confidence 0.83
 **Date:** 2026-03-23
 **Prerequisite:** CYB-001 (VSM-to-AI Governance Mapping)
 
@@ -95,7 +95,7 @@ The Galactic Protocol's six message types (directive, knowledge-package, complia
 
 **Control theory:** After repeated failed corrections, the controller increases wait time exponentially before retrying, preventing resource exhaustion and giving the system time to stabilize.
 
-**Governance application:** If a directive is issued and compliance is not achieved after one cycle, wait 2 cycles before re-issuing. If still non-compliant, wait 4 cycles. This prevents Demerzel from hammering a repo that may need structural changes (not just quick fixes).
+**Governance application:** If a directive is issued and compliance is not achieved after one cycle, re-issue it at the next cycle. If still non-compliant, wait 2 cycles, then 4. This prevents Demerzel from hammering a repo that may need structural changes (not just quick fixes).
 
 **Implementation:**
 - First non-compliance: re-issue directive next cycle
@@ -108,7 +108,7 @@ The Galactic Protocol's six message types (directive, knowledge-package, complia
 
 ## Coordination Transparency Framework
 
-The 2026 Springer paper "Coordination transparency: governing distributed agency in AI systems" provides academic validation for this approach through four components:
+Bohr's 2026 paper "Coordination transparency: governing distributed agency in AI systems" (*AI & Society* 41(5)) provides academic validation for this approach through four components:
 
 ### Component 1: Interaction Logging
 Record every Galactic Protocol message with sender, receiver, timestamp, and content hash. Demerzel already partially supports this via Article 7 (Auditability), but the logs need to capture *interaction patterns*, not just individual messages.
@@ -153,7 +153,7 @@ Constrain interaction topologies:
 
 ## Relationship to CYB-001
 
-This course directly addresses **Gap B** from CYB-001: "System 2 contracts are static, not actively dampening." The five mechanisms transform the Galactic Protocol from a passive interface specification (open-loop) into an active anti-oscillation coordinator (closed-loop), fulfilling System 2's core function in Beer's VSM.
+This course addresses a System 2 gap that CYB-001 does not name among its lettered gaps (A temporal dynamics, B recursive depth, C non-human S5, D the algedonic channel): CYB-001 maps System 2 to the Galactic Protocol contracts, and those contracts are static, not actively dampening. The five mechanisms transform the Galactic Protocol from a passive interface specification (open-loop) into an active anti-oscillation coordinator (closed-loop), fulfilling System 2's core function in Beer's VSM.
 
 The algedonic channel (CYB-001 Gap D) was resolved separately via `policies/algedonic-channel-policy.yaml`. Dampening and algedonic bypass are complementary: dampening slows normal coordination to prevent oscillation; the algedonic channel bypasses all dampening for genuine emergencies.
 
@@ -162,10 +162,10 @@ The algedonic channel (CYB-001 Gap D) was resolved separately via `policies/alge
 - Beer, S. (1972). *Brain of the Firm*. Allen Lane.
 - Beer, S. (1979). *The Heart of Enterprise*. John Wiley.
 - Beer, S. (1985). *Diagnosing the System for Organizations*. John Wiley.
-- Coordination transparency: governing distributed agency in AI systems. (2026). *AI & Society*, Springer. https://link.springer.com/article/10.1007/s00146-026-02853-w
+- Bohr, J. (2026). "Coordination transparency: governing distributed agency in AI systems." *AI & Society*, 41(5). https://doi.org/10.1007/s00146-026-02853-w
 - Gorelkin, M. (2025). "Stafford Beer's VSM for Building Enterprise Agentic Systems." Medium. https://medium.com/@magorelkin/stafford-beers-viable-system-model-for-building-enterprise-agentic-systems-81982d6f59c0
 - Fearne, D. (2025). "Applying Stafford Beer's VSM to Create The Autonomous AI Organisation." Medium. https://medium.com/@fearney/applying-stafford-beers-viable-system-model-to-create-the-autonomous-ai-organisation-aaaed39b37e2
-- IBM Research. (2025). "Agentic AI Needs a Systems Theory."
+- Miehling, E. et al. (IBM Research, 2025). "Agentic AI Needs a Systems Theory." arXiv:2503.00237. https://arxiv.org/abs/2503.00237
 - NI. (2025). "PID Theory Explained." https://www.ni.com/en/shop/labview/pid-theory-explained.html
 - GeeksforGeeks. (2025). "Feedback Loops in Distributed Systems." https://www.geeksforgeeks.org/system-design/feedback-loops-in-distributed-systems/
 
