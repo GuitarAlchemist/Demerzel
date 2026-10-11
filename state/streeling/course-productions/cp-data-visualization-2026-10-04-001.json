@@ -26,7 +26,7 @@
     },
     "review": {
       "completed": false,
-      "feedback": "All six active-language drafts have matching sections, five exercises, five answers, and pinned GA links. A bounded independent AI subject review on 2026-10-11 approved the English facts and answers; human subject review, fluent language review, and the two-lane learner exercise remain pending. Research confidence 0.65 is unchanged."
+      "feedback": "All six active-language drafts have matching sections, five exercises, five answers, and pinned GA links. Bounded independent AI subject and multilingual semantic checks on 2026-10-11 found no remaining high-confidence factual issues; human subject review, fluent language review, and the two-lane learner exercise remain pending. Research confidence 0.65 is unchanged."
     },
     "publish": {
       "completed": false

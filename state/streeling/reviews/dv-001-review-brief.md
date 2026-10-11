@@ -1,6 +1,6 @@
 # DV-001 review brief
 
-Status: **open**. A bounded AI subject check passed on 2026-10-11; fluent language review and a learner test remain open. This brief is not a publication receipt.
+Status: **open**. Bounded AI subject and multilingual semantic checks passed on 2026-10-11; human subject, fluent language, and learner reviews remain open. This brief is not a publication receipt.
 
 ## Material to review
 
@@ -23,16 +23,16 @@ An independent AI subject check is recorded in `dv-001-subject-review-2026-10-11
 
 ## Localization review
 
-For each language, a fluent reviewer should confirm that the technical meaning of `null`, `degraded`, and `carryforward` survives; all five exercise answers remain correct; dates and decimal separators are clear; and the prose reads naturally. Record a separate verdict and reviewer for each language. Structural parity alone is insufficient.
+For each language, a fluent reviewer should confirm that the technical meaning of `null`, `degraded`, and `carryforward` survives; all five exercise answers remain correct; dates and decimal separators are clear; and the prose reads naturally. A bounded AI comparison is recorded in `dv-001-ai-multilingual-check-2026-10-11.md`; it narrows the human review queue but does not replace it. Record a separate human verdict and reviewer for each language. Structural parity alone is insufficient.
 
-| Language | Structural draft | Fluent review | Verdict |
-|---|---|---|---|
-| EN | present | pending | pending |
-| FR | present | pending | pending |
-| ES | present | pending | pending |
-| PT (Brazil) | present | pending | pending |
-| IT | present | pending | pending |
-| DE | present | pending | pending |
+| Language | Structural draft | AI semantic check | Fluent review | Final verdict |
+|---|---|---|---|---|
+| EN | present | subject check passed | pending | pending |
+| FR | present | passed | pending | pending |
+| ES | present | passed | pending | pending |
+| PT (Brazil) | present | passed | pending | pending |
+| IT | present | passed | pending | pending |
+| DE | present | passed | pending | pending |
 
 ## Learner test and publication gate
 
