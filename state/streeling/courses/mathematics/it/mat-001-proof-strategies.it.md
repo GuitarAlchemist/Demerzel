@@ -159,6 +159,16 @@ In pratica, i matematici tentano spesso prima la dimostrazione diretta. Se si bl
 
 Alcune affermazioni possono essere dimostrate con ciascuno dei tre metodi. Con l'esperienza, si sviluppa l'intuizione per capire quale approccio sarà il più pulito.
 
+### Caso del progetto: che cosa dimostra un test del punteggio di GA?
+
+Guitar Alchemist cerca embedding musicali mediante un punteggio di similarità ponderato. Al [commit `dc2e74c` di GA](https://github.com/GuitarAlchemist/ga/tree/dc2e74cbd992a298f67efb928b5b3754615e1924), [`EmbeddingSchema.ExtractCompact`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L266) normalizza ogni partizione di similarità e la moltiplica per `SqrtWeight`; [`WeightedPartitionCosine`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L269-L302) somma il coseno di ciascuna partizione moltiplicato per `SimilarityWeight`. Il [test di contratto](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L31-L50) confronta i due percorsi di calcolo del punteggio per una sola coppia di vettori deterministici di lunghezza completa, con partizioni di similarità non nulle, ammettendo una differenza di `1e-6`. Il test verifica quella coppia; non stabilisce un'affermazione universale su tutti gli input.
+
+### Esercizio Pratico
+
+Si consideri una partizione con peso positivo *w* e porzioni dei vettori grezzi non nulle *x* e *y*. Nell'aritmetica reale esatta, si definisca la corrispondente porzione compatta come *c(x) = sqrt(w) x / ||x||*. Dimostrare direttamente che *c(x) · c(y) = w cosine(x, y)*. Il test di contratto di GA dimostra che l'uguaglianza implementata vale per tutti i vettori grezzi?
+
+> *Soluzione:* Si sviluppi il prodotto scalare: *c(x) · c(y) = sqrt(w)^2 (x · y) / (||x|| ||y||) = w cosine(x, y)*. Questa dimostrazione diretta copre le porzioni non nulle indicate nell'aritmetica esatta; non dipende da esempi campionati. Il test di GA verifica una sola coppia deterministica entro `1e-6`, non tutti i vettori. Nell'implementazione, `SqrtWeight` è una radice quadrata `float` arrotondata, quindi il suo quadrato potrebbe non coincidere esattamente con il peso `float` memorizzato. Per una partizione interamente nulla, l'estrazione compatta lascia la sua porzione a zero e il calcolo ponderato ignora il coseno `NaN` risultante; la divisione mostrata per una norma nulla non è definita, perciò serve un caso separato. L'estrazione lascia inoltre una porzione a zero quando la somma dei quadrati calcolata non supera `double.Epsilon`, un altro caso limite escluso dalla semplice algebra. Il calcolo ponderato ignora una partizione che oltrepassa uno dei due vettori grezzi corti, mentre l'estrazione compatta indicizza direttamente tutte le partizioni dichiarate; l'affermazione di uguaglianza non va estesa a input corti. Questi sono limiti ricavati dal codice sorgente, non risultati di un test esaustivo in esecuzione.
+
 ---
 
 ## 6. Errori Comuni
@@ -209,4 +219,5 @@ Alcune affermazioni possono essere dimostrate con ciascuno dei tre metodi. Con l
 - Gli errori comuni nelle dimostrazioni (ragionamento circolare, caso base mancante) sono ben documentati nella ricerca sull'educazione matematica
 - Dal punto di vista pedagogico, imparare le strategie di dimostrazione prima dei contenuti matematici specifici migliora la capacità di ragionamento a lungo termine
 - Fonti: consenso nell'educazione matematica, curriculum del Dipartimento di Matematica di Streeling
+- Fonte del progetto: [GA `EmbeddingSchema` al commit `dc2e74c`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L302) e il suo [test di contratto su una sola coppia](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L14-L50). La dimostrazione algebrica sopra esplicita le ipotesi sugli input e sull'aritmetica; il test fornisce un'evidenza finita, non una prova universale.
 - Stato di credenza: V(0.92) F(0.01) I(0.05) C(0.02)

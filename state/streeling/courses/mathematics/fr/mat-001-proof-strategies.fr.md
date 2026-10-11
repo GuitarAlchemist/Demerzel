@@ -159,6 +159,16 @@ En pratique, les mathématiciens tentent souvent d'abord la démonstration direc
 
 Certains énoncés peuvent être démontrés par chacune des trois méthodes. Avec l'expérience, on développe l'intuition de l'approche la plus élégante.
 
+### Cas du projet : que démontre un test du calcul de similarité de GA ?
+
+Guitar Alchemist recherche des représentations vectorielles musicales (embeddings) à l'aide d'un score de similarité pondéré. Au [commit GA `dc2e74c`](https://github.com/GuitarAlchemist/ga/tree/dc2e74cbd992a298f67efb928b5b3754615e1924), [`EmbeddingSchema.ExtractCompact`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L266) normalise chaque partition de similarité et la multiplie par `SqrtWeight` ; [`WeightedPartitionCosine`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L269-L302) additionne le cosinus de chaque partition multiplié par `SimilarityWeight`. Le [test de contrat](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L31-L50) compare les deux méthodes de calcul pour une seule paire de vecteurs déterministes de longueur complète, dont les partitions de similarité sont non nulles, avec une différence admise de `1e-6`. Ce test vérifie cette paire ; il ne démontre rien pour l'ensemble des entrées.
+
+### Exercice pratique
+
+Considérez une partition de poids positif *w* et deux segments bruts non nuls *x* et *y*. Dans l'arithmétique exacte des réels, définissez son segment compact par *c(x) = sqrt(w) x / ||x||*. Démontrez directement que *c(x) · c(y) = w cosine(x, y)*. Le test de contrat de GA prouve-t-il que l'égalité implémentée vaut pour tout vecteur brut ?
+
+> *Solution :* Développons le produit scalaire : *c(x) · c(y) = sqrt(w)^2 (x · y) / (||x|| ||y||) = w cosine(x, y)*. Cette démonstration directe couvre les segments non nuls indiqués, dans l'arithmétique exacte ; elle ne repose pas sur un échantillon d'exemples. Le test de GA vérifie une seule paire déterministe à `1e-6` près, pas tous les vecteurs. Dans l'implémentation, `SqrtWeight` est une racine carrée arrondie de type `float` : son carré n'est donc pas nécessairement égal exactement au poids `float` enregistré. Si une partition est entièrement nulle, l'extraction compacte laisse son segment à zéro et le calcul pondéré ignore le cosinus `NaN` qui en résulte ; la division affichée par une norme nulle est indéfinie, et la démonstration exige donc un traitement distinct de ce cas. L'extraction laisse aussi un segment à zéro lorsque la somme calculée de ses carrés ne dépasse pas `double.Epsilon`, autre cas limite que l'algèbre simple ne couvre pas. Le calcul pondéré ignore une partition qui dépasse la longueur de l'un ou l'autre des vecteurs bruts trop courts, alors que l'extraction compacte accède directement à chaque partition déclarée ; il ne faut donc pas étendre l'égalité aux entrées trop courtes. Ces limites viennent de la lecture du code, et non d'un test d'exécution exhaustif.
+
 ---
 
 ## 6. Pièges courants
@@ -209,4 +219,5 @@ Certains énoncés peuvent être démontrés par chacune des trois méthodes. Av
 - Les erreurs courantes en démonstration (raisonnement circulaire, cas de base oublié) sont bien documentées dans la recherche en didactique des mathématiques
 - Sur le plan pédagogique, apprendre les stratégies de démonstration avant les contenus mathématiques spécifiques améliore la capacité de raisonnement à long terme
 - Sources : Consensus en enseignement des mathématiques, programme du Département de mathématiques de Streeling
+- Source du projet : [GA `EmbeddingSchema` au commit `dc2e74c`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L302) et son [test de contrat sur une seule paire](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L14-L50). La démonstration algébrique ci-dessus précise ses hypothèses sur les entrées et l'arithmétique ; le test ne fournit qu'un élément de preuve portant sur un cas, pas une démonstration universelle.
 - État de croyance : T(0.92) F(0.01) U(0.05) C(0.02)

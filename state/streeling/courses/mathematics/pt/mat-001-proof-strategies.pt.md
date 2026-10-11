@@ -159,6 +159,16 @@ Na prática, matemáticos frequentemente tentam a demonstração direta primeiro
 
 Algumas afirmações podem ser demonstradas por qualquer um dos três métodos. Conforme ganha experiência, você desenvolve intuição para qual abordagem será mais limpa.
 
+### Caso do projeto: o que um teste de pontuação do GA demonstra?
+
+O Guitar Alchemist pesquisa embeddings musicais com uma pontuação de similaridade ponderada. No [commit `dc2e74c` do GA](https://github.com/GuitarAlchemist/ga/tree/dc2e74cbd992a298f67efb928b5b3754615e1924), [`EmbeddingSchema.ExtractCompact`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L266) normaliza cada partição de similaridade e a multiplica por `SqrtWeight`; [`WeightedPartitionCosine`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L269-L302) soma o cosseno de cada partição multiplicado por `SimilarityWeight`. O [teste de contrato](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L31-L50) compara os dois caminhos de pontuação para um par de vetores determinísticos de comprimento completo, com partições de similaridade não nulas, admitindo uma diferença de `1e-6`. O teste verifica esse par; não estabelece uma afirmação universal sobre todas as entradas.
+
+### Exercício Prático
+
+Considere uma partição de peso positivo *w* e fatias brutas não nulas *x* e *y*. Em aritmética real exata, defina sua fatia compacta como *c(x) = sqrt(w) x / ||x||*. Demonstre diretamente que *c(x) · c(y) = w cosine(x, y)*. O teste de contrato do GA demonstra que a igualdade implementada vale para todos os vetores brutos?
+
+> *Solução:* Expanda o produto escalar: *c(x) · c(y) = sqrt(w)^2 (x · y) / (||x|| ||y||) = w cosine(x, y)*. Esta demonstração direta cobre as fatias não nulas indicadas, em aritmética exata; não depende da amostragem de exemplos. O teste do GA verifica um único par determinístico dentro da tolerância de `1e-6`, não todos os vetores. Na implementação, `SqrtWeight` é uma raiz quadrada `float` arredondada, de modo que seu quadrado pode não ser exatamente igual ao peso `float` armazenado. Para uma partição inteiramente nula, a extração compacta deixa a fatia em zero e o pontuador ponderado ignora o cosseno `NaN` resultante; a divisão exibida por uma norma zero é indefinida, portanto essa situação exige um caso separado. A extração também deixa uma fatia em zero quando sua soma calculada dos quadrados não excede `double.Epsilon`, outro limite fora da álgebra simples. O pontuador ponderado ignora uma partição que ultrapasse qualquer um dos vetores brutos curtos, enquanto a extração compacta indexa diretamente todas as partições declaradas; a afirmação de igualdade não deve ser estendida a entradas curtas. Esses são limites identificados no código-fonte, não resultados de um teste exaustivo em execução.
+
 ---
 
 ## 6. Armadilhas Comuns
@@ -209,4 +219,5 @@ Algumas afirmações podem ser demonstradas por qualquer um dos três métodos. 
 - Erros comuns de demonstração (raciocínio circular, caso base ausente) são bem documentados na pesquisa de educação matemática
 - Pedagogicamente, aprender estratégias de demonstração antes de conteúdo matemático específico melhora a capacidade de raciocínio a longo prazo
 - Fontes: Consenso da educação matemática, currículo do Departamento de Matemática de Streeling
+- Fonte do projeto: [GA `EmbeddingSchema` em `dc2e74c`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L302) e seu [teste de contrato com um único par](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L14-L50). A demonstração algébrica acima explicita suas hipóteses sobre entradas e aritmética; o teste fornece evidência finita, não uma prova universal.
 - Estado de crença: T(0.92) F(0.01) U(0.05) C(0.02)

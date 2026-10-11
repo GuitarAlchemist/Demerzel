@@ -159,6 +159,16 @@ In der Praxis versuchen Mathematiker oft zuerst den direkten Beweis. Wenn das st
 
 Manche Aussagen können mit jeder der drei Methoden bewiesen werden. Mit zunehmender Erfahrung entwickeln Sie ein Gespür dafür, welcher Ansatz am elegantesten sein wird.
 
+### Projektbeispiel: Was beweist ein GA-Test für die Bewertung?
+
+Guitar Alchemist durchsucht musikalische Embeddings mit einem gewichteten Ähnlichkeitswert. Im [GA-Commit `dc2e74c`](https://github.com/GuitarAlchemist/ga/tree/dc2e74cbd992a298f67efb928b5b3754615e1924) normiert [`EmbeddingSchema.ExtractCompact`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L266) jede Ähnlichkeitspartition und skaliert sie mit `SqrtWeight`; [`WeightedPartitionCosine`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L269-L302) summiert den Kosinus jeder Partition, multipliziert mit `SimilarityWeight`. Der [Vertragstest](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L31-L50) vergleicht die beiden Bewertungswege für ein einziges Paar deterministischer Vektoren in voller Länge mit von null verschiedenen Ähnlichkeitspartitionen und lässt eine Abweichung von `1e-6` zu. Der Test prüft dieses Paar; eine allgemeine Aussage über alle Eingaben beweist er nicht.
+
+### Übung
+
+Betrachten Sie eine Partition mit positivem Gewicht *w* und von null verschiedenen Ausschnitten *x* und *y* aus den Rohvektoren. Definieren Sie in exakter reeller Arithmetik den kompakten Ausschnitt als *c(x) = sqrt(w) x / ||x||*. Beweisen Sie direkt, dass *c(x) · c(y) = w cosine(x, y)* gilt. Beweist der GA-Vertragstest, dass die implementierte Gleichheit für alle Rohvektoren gilt?
+
+> *Lösung:* Multiplizieren Sie die Skalarprodukte aus: *c(x) · c(y) = sqrt(w)^2 (x · y) / (||x|| ||y||) = w cosine(x, y)*. Dieser direkte Beweis gilt für die genannten von null verschiedenen Ausschnitte in exakter Arithmetik; er beruht nicht auf Stichproben. Der GA-Test prüft ein einziges deterministisches Paar mit einer Toleranz von `1e-6`, nicht alle Vektoren. In der Implementierung ist `SqrtWeight` eine gerundete `float`-Quadratwurzel; ihr Quadrat muss daher nicht exakt dem gespeicherten `float`-Gewicht entsprechen. Bei einer vollständig aus Nullen bestehenden Partition belässt die kompakte Extraktion deren Ausschnitt bei null, und die gewichtete Bewertung überspringt den dabei entstehenden `NaN`-Kosinus. Die gezeigte Division durch eine Nullnorm ist undefiniert, daher muss dieser Fall gesondert behandelt werden. Die Extraktion belässt einen Ausschnitt auch dann bei null, wenn seine berechnete Quadratsumme `double.Epsilon` nicht überschreitet: eine weitere Grenze der einfachen algebraischen Herleitung. Die gewichtete Bewertung überspringt eine Partition, die über einen der beiden kurzen Rohvektoren hinausreicht, während die kompakte Extraktion jede deklarierte Partition direkt indiziert; die Gleichheitsaussage darf nicht auf kurze Eingaben ausgedehnt werden. Dies sind Grenzen, die sich aus dem Quellcode ergeben, keine Ergebnisse eines erschöpfenden Laufzeittests.
+
 ---
 
 ## 6. Häufige Fehler
@@ -209,4 +219,5 @@ Manche Aussagen können mit jeder der drei Methoden bewiesen werden. Mit zunehme
 - Häufige Beweisfehler (Zirkelschluss, fehlender Induktionsanfang) sind in der mathematikdidaktischen Forschung gut dokumentiert
 - Pädagogisch verbessert das Erlernen von Beweisstrategien vor spezifischen mathematischen Inhalten die langfristige Denkfähigkeit
 - Quellen: Konsens der Mathematikdidaktik, Lehrplan des Fachbereichs Mathematik der Streeling-Universität
+- Projektquelle: [GA `EmbeddingSchema` bei `dc2e74c`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L302) und der [Vertragstest mit einem einzigen Paar](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L14-L50). Der obige algebraische Beweis setzt die angegebenen Eingaben und exakte Arithmetik voraus; der Test liefert endliche Evidenz, keinen allgemeinen Beweis.
 - Überzeugungszustand: T(0.92) F(0.01) U(0.05) C(0.02)
