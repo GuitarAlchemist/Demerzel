@@ -1,3 +1,13 @@
+---
+module_id: cyb-002-active-dampening-cross-repo-oscillation
+department: cybernetics
+course: "Cybernetic governance foundations"
+prerequisites: [cyb-001-vsm-ai-governance-mapping]
+produced_by: seldon-plan
+research_cycle: cybernetics-2026-03-23-002
+version: "1.0.0"
+---
+
 # CYB-002: Active Dampening Mechanisms for Cross-Repo Oscillation Control
 
 **Department:** Cybernetics
