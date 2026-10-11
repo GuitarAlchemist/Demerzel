@@ -332,8 +332,8 @@ Ce relevé décrit le cours tel qu'il a d'abord été écrit. Les points 3 et 4 
 
 ## Références croisées
 
-- Prérequis : `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md` (en anglais)
-- Prérequis : `state/streeling/courses/cybernetics/en/cyb-002-active-dampening-cross-repo-oscillation.md` (en anglais)
+- Prérequis : `state/streeling/courses/cybernetics/fr/cyb-001-vsm-ai-governance-mapping.fr.md`
+- Prérequis : `state/streeling/courses/cybernetics/fr/cyb-002-active-dampening-cross-repo-oscillation.fr.md`
 - Grammaire : `grammars/sci-cybernetics.ebnf` (section 6, variété requise)
 - Département : `state/streeling/departments/cybernetics.department.json`
 - Politique : `policies/seldon-plan-policy.yaml`

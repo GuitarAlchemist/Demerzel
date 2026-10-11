@@ -332,8 +332,8 @@ Este registro describe el curso tal como se escribió al principio. Los puntos 3
 
 ## Referencias cruzadas
 
-- Requisito previo: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md` (en inglés)
-- Requisito previo: `state/streeling/courses/cybernetics/en/cyb-002-active-dampening-cross-repo-oscillation.md` (en inglés)
+- Requisito previo: `state/streeling/courses/cybernetics/es/cyb-001-vsm-ai-governance-mapping.es.md`
+- Requisito previo: `state/streeling/courses/cybernetics/es/cyb-002-active-dampening-cross-repo-oscillation.es.md`
 - Gramática: `grammars/sci-cybernetics.ebnf` (sección 6, variedad requerida)
 - Departamento: `state/streeling/departments/cybernetics.department.json`
 - Política: `policies/seldon-plan-policy.yaml`
