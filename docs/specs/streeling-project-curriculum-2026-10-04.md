@@ -117,3 +117,9 @@ The next Data Visualization draft, DV-002, teaches denominators and test
 populations using two pinned GA QA snapshots and an explicitly labeled
 counterfactual. It raises the pilot branch source count to 73 English modules
 and lowers the source gap to 452, while remaining English-only and unreviewed.
+DV-003 adds a separate unit-of-analysis exercise against the pinned GA voicing
+audit: instrument corpus shares count voicings, while the 793/793 consistency
+result counts shared pitch-class sets and retained representatives. It also
+distinguishes inferred zero null/unknown counts from unmeasured musical naming
+correctness. The branch now has 74 English source modules, 451 short of 25 in
+each of its 21 department directories. DV-003 is English-only and unreviewed.

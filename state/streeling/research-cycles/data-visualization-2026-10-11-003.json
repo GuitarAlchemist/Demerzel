@@ -1,0 +1,25 @@
+{
+  "cycle_id": "data-visualization-2026-10-11-003",
+  "department": "data-visualization",
+  "question": "What do GA's per-instrument voicing counts and cross-instrument consistency metric actually measure?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "data_relationship: cohort_comparison",
+    "chart_type: horizontal_bar_chart",
+    "design_pattern: unit_of_analysis_annotation",
+    "design_principle: preserve_denominators"
+  ],
+  "hypothesis": "Separating corpus-size bars from the shared-set consistency result may prevent readers from interpreting a set-level agreement check as per-instrument naming accuracy.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "GA commit dc2e74cbd992a298f67efb928b5b3754615e1924: state/quality/voicing-analysis/2026-07-23.json reports 297910 guitar, 7795 bass, 7342 ukulele, 313047 total, and 793/793 shared sets consistent.",
+    "The same commit: Demos/VoicingAnalysisAudit/Program.cs records the first canonical name per instrument and pitch-class mask, then compares masks observed on at least two instruments.",
+    "The global zero null/unknown counts imply zero in each instrument cohort, but the snapshot has no independently reviewed musical-correctness labels or pairwise breakdown for the shared-set metric.",
+    "Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T16:02:15Z"
+}

@@ -1,0 +1,16 @@
+{
+  "pipeline_id": "cp-data-visualization-2026-10-11-003",
+  "department": "data-visualization",
+  "research_cycle_id": "data-visualization-2026-10-11-003",
+  "module_id": "dv-003-instrument-cohorts-and-units",
+  "status": "in_progress",
+  "phases": {
+    "research": {"completed": true, "belief_value": "P", "belief_confidence": 0.65},
+    "outline": {"completed": true, "sections": 4, "estimated_duration": "30 minutes"},
+    "content": {"completed": true, "word_count": 1282, "exercises": 5},
+    "translation": {"completed": false, "languages": ["en"]},
+    "review": {"completed": false, "feedback": "Subject, learner, and localization reviews pending; no independently reviewed musical-correctness labels are in the historical snapshot."},
+    "publish": {"completed": false}
+  },
+  "timestamp": "2026-10-11T16:02:15Z"
+}
