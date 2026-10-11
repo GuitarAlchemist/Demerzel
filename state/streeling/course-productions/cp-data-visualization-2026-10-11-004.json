@@ -17,7 +17,7 @@
     },
     "content": {
       "completed": true,
-      "word_count": 1162,
+      "word_count": 1165,
       "exercises": 5
     },
     "translation": {
@@ -28,7 +28,7 @@
     },
     "review": {
       "completed": false,
-      "feedback": "Subject, learner, and localization reviews pending; count-based step size is not a statistical confidence interval."
+      "feedback": "A bounded independent AI subject check on 2026-10-11 found and rechecked a corrected exercise-stem error. Human subject, learner, and localization reviews remain pending; count-based step size is not a statistical confidence interval."
     },
     "publish": {
       "completed": false

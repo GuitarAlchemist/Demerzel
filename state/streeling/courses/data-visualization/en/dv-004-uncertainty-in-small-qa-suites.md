@@ -43,7 +43,7 @@ The June and July reported rates differ by 23.08 percentage points, equivalent t
 
 ### Practice exercise
 
-If exactly one of June's 52 reconstructed failures became a pass **in a hypothetical fixed suite**, what rate would the calculation produce? May it be plotted as a new GA run?
+If exactly one of June's 13 reconstructed failures became a pass **in a hypothetical fixed suite of 52 prompts**, what rate would the calculation produce? May it be plotted as a new GA run?
 
 > **Answer:** `(39 + 1) / 52 × 100 ≈ 76.92%`, a rise of about 1.92 percentage points. This is a hypothetical sensitivity calculation; no new GA run was observed.
 
