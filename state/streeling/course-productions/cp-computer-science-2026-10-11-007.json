@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-11-007",
+  "department": "computer-science",
+  "research_cycle_id": "computer-science-2026-10-11-007",
+  "module_id": "cs-007-typed-agent-evidence-and-backpressure",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1899,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Independent AI static review found a draft-to-wire-schema contradiction; the lesson was corrected and the reviewer confirmed the finding resolved. Typed envelopes, failure policy, and semantic backpressure remain proposed designs, not demonstrated IXQL behavior. Human subject and learner review, runtime validation, measurement, localization, and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T22:50:38Z"
+}

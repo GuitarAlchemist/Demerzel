@@ -1,0 +1,7 @@
+# CS-007 independent AI subject preflight — 2026-10-11
+
+An independent Codex agent that did not author CS-007 reviewed its English draft and records against Demerzel's Phase 0 IXQL QA pipeline and vendored QA verdict schema pinned at `c3bf6224386374fc0f74cfb36643e543b4bdcce2`. This was a static source/schema review, not execution or human approval.
+
+The first pass found one actionable contradiction: the lesson defined an internal `VerdictDraft` with fields that the pinned wire schema does not accept, then proposed validating that draft directly against the wire schema. The schema forbids extra fields and requires a complete verdict object. The lesson now explicitly maps and completes the draft into a schema-shaped `QaVerdict`, validates that wire object, and only then proposes authorizing a write. Exercise 3 now uses a synthetic wire-format verdict. The same independent reviewer re-read the correction and reported the finding resolved, with no remaining issue in the focused retest.
+
+The reviewer checked the pinned pipeline's declared write-before-narrow-validation order, the schema version constraint, five exercise answers, all thirteen pinned links, both JSON schemas, and the updated 1,899-word count. The production record stays `in_progress` with translation, review, and publish incomplete. No IXQL run, emitted verdict, file-state trace, reviewer call, semantic-backpressure experiment, human subject review, learner test, Learn build, or public readback was performed in this preflight.

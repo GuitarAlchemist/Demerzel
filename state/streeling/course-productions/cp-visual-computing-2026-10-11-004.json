@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-visual-computing-2026-10-11-004",
+  "department": "visual-computing",
+  "research_cycle_id": "visual-computing-2026-10-11-004",
+  "module_id": "vc-004-godot-observatory-capture-gate",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2120,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Independent AI pinned-source and synthetic-answer preflight found no actionable issue. The Godot scene, web export, screenshot critic, camera captures, click traces, and human task results were not observed. Human subject, learner, accessibility, localization, and publication review remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T22:48:53Z"
+}

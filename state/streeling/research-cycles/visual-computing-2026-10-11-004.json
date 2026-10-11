@@ -1,0 +1,26 @@
+{
+  "cycle_id": "visual-computing-2026-10-11-004",
+  "department": "visual-computing",
+  "question": "What repeatable capture and measured gate would justify a future camera-framing change in GA's planned Godot observatory when the pinned tree supports a React host but not a verified scene or export?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_artifact: pinned_GA_Godot_host_and_integration_plan",
+    "visual_decision: future_camera_framing_change",
+    "test: synthetic_safe_zone_repeatability_and_click_gate_fixture",
+    "evidence_boundary: source_supported_host_vs_unchecked_scene_export_critic"
+  ],
+  "hypothesis": "A versioned build and capture manifest, fixed comparison controls, raw repeated frames, target visibility checks, user identification task, and click trace can make a future observatory camera change reviewable without treating an unchecked plan or a pleasing screenshot as implementation evidence.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, docs/plans/parked/2026-03-28-feat-godot-integration-plan.md marks the constitutional-gravity Godot scene, WASM web export, and screenshot-to-critic loop unchecked in Phases 2, 4, and 5. The plan path is parked although its older header says active.",
+    "At the same pinned commit, ReactComponents/ga-react-components/src/components/PrimeRadiant/GodotScene.tsx declares panel and fullscreen iframe modes, default /godot/index.html, and handlers for godot:ready and godot:node-clicked. Its host declarations do not prove a rendered Godot scene. The pinned handler's source check is conditional on an iframe ref, and it does not validate origin or nodeId at runtime.",
+    "A tracked-tree path scan at the pinned GA commit found no .tscn, .gd, .wasm, Apps/ga-godot/, or godot/index.html path. This is a finding about that one tree, not every branch or external deployment. An unversioned local scratch prototype was not used as pinned source evidence.",
+    "The lesson's 1280x720 safe rectangle, five-percent inset, two-pixel repeat drift, synthetic boxes, and candidate outcomes are an explicit thought experiment. Its 20/20 known-click and zero foreign-source thresholds are proposed future acceptance criteria. No screenshot, browser, Godot export, visual critic, real click trace, or user task was executed for this cycle.",
+    "Five exercise answers were checked by source tracing and arithmetic. Human subject review, learner attempt, localization, and publication are pending. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:48:53Z"
+}

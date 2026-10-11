@@ -26,7 +26,7 @@
     },
     "review": {
       "completed": false,
-      "feedback": "All six active-language drafts preserve the original lesson and add the pinned GA scoring case with an answered direct proof. Source and test were inspected but not executed for this cycle. Fluent-language, subject, learner, and publication review remain pending."
+      "feedback": "All six active-language drafts preserve the original lesson and add the pinned GA scoring case with an answered direct proof. Independent AI static source-and-math preflight found no actionable issue; the GA test was inspected but not rerun. Human subject, fluent-language, learner, and publication review remain pending."
     },
     "publish": {
       "completed": false

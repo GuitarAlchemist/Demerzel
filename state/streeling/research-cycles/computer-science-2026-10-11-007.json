@@ -1,0 +1,26 @@
+{
+  "cycle_id": "computer-science-2026-10-11-007",
+  "department": "computer-science",
+  "question": "How could an agent/node contract carry typed evidence and failures across Demerzel's Phase 0 QA verdict composition, and what would falsify a proposed semantic backpressure rule?",
+  "production_path": [
+    "investigation: inspect pinned Phase 0 IXQL declaration and vendored verdict schema",
+    "contract_model: separate schema shape, evidence receipt, and runtime effect",
+    "composition: propose typed Ok and Err propagation before a write",
+    "hypothesis: defer operational readiness when required evidence is unresolved",
+    "test: source cross_validation and five fixed reasoning exercises"
+  ],
+  "hypothesis": "A proposed typed evidence envelope and claim-specific readiness rule could reduce unsupported downstream verdict claims, but its runtime enforcement and operational effect remain unmeasured.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit c3bf6224386374fc0f74cfb36643e543b4bdcce2, pipelines/qa-architect-cycle.ixql lines 1-15 identify Phase 0 as a skeleton without a real blast-radius analyzer, tribunal, PR follow-up, or derived algedonic signal.",
+    "The same IXQL file lines 23-55 declares a trigger read and fallback, empty blast radius, and one placeholder reviewer; lines 66-90 declares informational/P3 and manual_note/n/a evidence. These are source declarations, not an observed execution.",
+    "The vendored schemas/contracts/qa-verdict.schema.json at the pinned commit requires key verdict fields, requires P3 for informational, permits a manual_note/n/a evidence item, and requires at least one reviewer entry. JSON Schema shape does not authenticate a runtime receipt.",
+    "The IXQL source lines 93-102 places ix.io.write before tars.validate, whose displayed check compares only schema_version with 1. This ordering does not by itself prove a before-write full-schema gate or that an invalid file was actually persisted.",
+    "The lesson's Result envelopes, missing-versus-denied policy, and semantic backpressure queue are explicitly proposed teaching fixtures. Five exercises have five answers. No IXQL execution, emitted-verdict schema validation, write trace, reviewer run, or operational backpressure measurement was performed. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:50:38Z"
+}
