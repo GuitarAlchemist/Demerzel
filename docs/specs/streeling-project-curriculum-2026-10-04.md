@@ -187,3 +187,15 @@ wording in PM-003; CS-006 had no finding in its bounded source and answer-key
 review. DV-007's caption sentence count was corrected and rechecked. The six
 production records from both batches keep human subject, learner, language,
 and public readback gates open.
+
+The next three English drafts are AUD-002 (level-matched GA guitar comparison),
+PHY-002 (global FFT, STFT, and wavelet interpretation for guitar transients),
+and VC-002 (evidence for the React-to-Godot message bridge). Each has a pinned
+project source or reproducible fixture and five answered exercises. The source
+inventory is 87 English modules across the provisional 21 course directories,
+438 short of 525. Independent bounded AI checks found and corrected two
+PHY-002 interpretation errors and a VC-002 test-host assumption; AUD-002 had
+no finding in its source, arithmetic, and answer-key check. The PHY-002 STFT,
+AUD-002 listening comparison, and VC-002 browser/Godot checks remain proposed
+experiments, not measured outcomes. All three remain English drafts with
+human subject, learner, localization, and public readback gates open.

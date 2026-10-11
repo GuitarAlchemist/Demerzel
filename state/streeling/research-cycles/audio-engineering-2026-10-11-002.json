@@ -1,0 +1,25 @@
+{
+  "cycle_id": "audio-engineering-2026-10-11-002",
+  "department": "audio-engineering",
+  "question": "How can a GA native-rendered open-E WAV and the pinned GAS-001 recording be prepared for a fair, falsifiable audio comparison without treating one metric as a realism verdict?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_case: pinned GAS-001 recorded and GA native-rendered E2 WAVs",
+    "comparison_gate: source_hash onset_alignment gain_match waveform_checks blind_listening",
+    "decision_boundary: reproducible_metric_then_independent_listener_result"
+  ],
+  "hypothesis": "Preserving the original WAVs, matching a stated post-onset level window on playback copies, and checking later windows before blinded listening will make a single-note GA comparison reproducible while exposing what level matching cannot settle.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel revision 5c4967454ddc740ed937c87719ca4d71a3522e4b, the GAS-001 fixture README identifies the licensed recorded open E2 and a native GA Rust-engine E2 render, both four-second mono 44.1 kHz WAVs. Local SHA-256 readback matched the README and measurements.json: recorded 03a1965f275f0858be70476dab2bf55d2cbf2272ef7a50c61453d45e7f38b248; render a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98.",
+    "The fixture's measure-pair.py sets approximate first onsets at recording file time 1.1 seconds and render time 0.0 seconds. The README notes another recorded attack near 2.75 seconds. Its early RMS window is 0.2-0.4 seconds and later window 1.0-1.2 seconds after each first onset.",
+    "The pinned measurements.json records early RMS of -34.6 dBFS for the recording and -16.6 dBFS for the render, and later RMS of -38.5 and -17.7 dBFS. The derived render playback-copy gain is -18.0 dB, approximately 0.1259 linear amplitude. After uniform gain, the predicted render later RMS is -35.7 dBFS, 2.8 dB above the recorded later-window level; this is arithmetic from rounded source values, not a newly measured WAV.",
+    "The fixture records whole-file absolute peaks 0.1297 for the recording and 0.4602 for the render. A -18.0 dB gain predicts a render-copy peak near 0.0579; boosting the recording by +18.0 dB predicts a peak near 1.03 and could clip in fixed-point export. Neither prediction is a new render or listening result.",
+    "AUD-002's five exercise answers were checked against the pinned fixture and the stated gain formula. No gained playback copy, blinded listener test, candidate engine change, browser AudioWorklet capture, or subject/learner review was performed. The proposed 1.8 dB gap gate is explicitly illustrative, not a GA acceptance standard. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:37:09Z"
+}

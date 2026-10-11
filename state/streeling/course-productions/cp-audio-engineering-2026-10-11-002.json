@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-audio-engineering-2026-10-11-002",
+  "department": "audio-engineering",
+  "research_cycle_id": "audio-engineering-2026-10-11-002",
+  "module_id": "aud-002-level-matched-guitar-comparison",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.65
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "30 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1790,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "AUD-002 is an English draft with five answered exercises grounded in pinned GAS-001 WAVs, measurement code, and JSON. A bounded independent AI subject check found no error in the WAV hashes, level-match arithmetic, source links, or answers. The level-match examples are derived calculations; the candidate gate is illustrative. Human subject, learner, and fluent-language reviews remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T18:37:09Z"
+}

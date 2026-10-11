@@ -6,7 +6,12 @@
 
 ## Courses
 
-*No courses produced yet. Run `/seldon research-cycle audio-engineering` to generate the first course.*
+| Code | Course | Status | Languages |
+|---|---|---|---|
+| [AUD-001](en/aud-001-eq-compression-order.md) | EQ and compression order | Existing source module; review status tracked separately | EN, ES, PT, FR, IT, DE |
+| [AUD-002](en/aud-002-level-matched-guitar-comparison.md) | Compare a GA Guitar Render at Matched Playback Level | English draft; subject, learner, localization, and publication gates open | EN |
+
+AUD-002 uses the pinned [GAS-001 audio fixture](../../fixtures/guitar-acoustics/gas-001/README.md) to teach a level-matched comparison. Its arithmetic and source links had a bounded AI check; no listening trial or course approval is recorded.
 
 ## Curriculum Areas
 
