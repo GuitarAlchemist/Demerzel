@@ -123,6 +123,9 @@ result counts shared pitch-class sets and retained representatives. It also
 distinguishes inferred zero null/unknown counts from unmeasured musical naming
 correctness. The branch now has 74 English source modules, 451 short of 25 in
 each of its 21 department directories. DV-003 is English-only and unreviewed.
-DV-001 now also has a Brazilian Portuguese draft. Its five exercises and five
-answers align structurally with EN/FR/ES; IT/DE and native-language review are
-still open, so its review and publication counts have not changed.
+DV-001 now has EN/FR/ES/PT/IT/DE drafts. Each has eight level-two sections,
+five exercises, five answers, and the pinned GA source links. Its production
+record is `review_pending` because the research confidence is 0.65 and subject,
+native-language, and learner reviews have not happened. This adds one module to
+the six-language source-coverage count, but changes neither the reviewed nor
+the published count.

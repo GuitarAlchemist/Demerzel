@@ -3,7 +3,7 @@
   "department": "data-visualization",
   "research_cycle_id": "data-visualization-2026-10-04-001",
   "module_id": "dv-001-observed-degraded-stale-quality",
-  "status": "in_progress",
+  "status": "review_pending",
   "phases": {
     "research": {
       "completed": true,
@@ -21,12 +21,12 @@
       "exercises": 5
     },
     "translation": {
-      "completed": false,
-      "languages": ["en", "fr", "es", "pt"]
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
     },
     "review": {
       "completed": false,
-      "feedback": "Subject accuracy and native-language review are pending. EN/FR/ES/PT drafts exist; IT/DE from the active multilingual policy are not drafted. The two-lane display has not been user-tested."
+      "feedback": "All six active-language drafts have matching sections, five exercises, five answers, and pinned GA links. Subject accuracy, native-language review, and the two-lane learner exercise are still pending; research confidence 0.65 requires review."
     },
     "publish": {
       "completed": false
