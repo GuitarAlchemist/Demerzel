@@ -97,3 +97,23 @@ musician exercises, independent subject and native-language reviews, the
 remaining policy localizations, then Learn sync and
 anonymous EN/FR/ES readback. Record failures and changes to the lessons before
 expanding the remaining department quotas.
+
+### Reproducible source progress, 2026-10-11
+
+Run `python scripts/streeling_course_progress.py` from Demerzel to measure the
+source tree without counting a draft as a reviewed or public course. At pilot
+commit `7fca60e`, the report finds 21 course directories, 72 English modules
+(excluding `README.md`), and 453 remaining English modules to reach 25 in each
+directory. Only 15 modules have files for all six active languages in the
+multilingual policy. No course-production record on this branch records an
+approved pipeline review. Four course directories (cybernetics,
+information-theory, network-science, semiotics) are absent from
+`state/streeling/university.json`; resolve that registry discrepancy before
+using it as an authoritative department list. These are source-tree counts;
+the public Learn index, native-language review, subject review, and learner
+validation remain separate evidence.
+
+The next Data Visualization draft, DV-002, teaches denominators and test
+populations using two pinned GA QA snapshots and an explicitly labeled
+counterfactual. It raises the pilot branch source count to 73 English modules
+and lowers the source gap to 452, while remaining English-only and unreviewed.
