@@ -154,3 +154,13 @@ course received a bounded AI subject check: the first pass found a report-date
 versus observation-date error, and a focused recheck approved the correction.
 Human subject and learner review, localization, and public Learn readback remain
 pending. Its pipeline record remains `in_progress`.
+
+The department denominator needs a decision before treating 525 as the final
+quota. `university.json` registers 17 names, 21 names have course directories,
+and 23 have `*.department.json` records marked as departments. Six records are
+absent from the university list: cybernetics, information-theory, metaqa,
+network-science, semiotics, and systems-engineering. MetaQA and Systems
+Engineering have no course directories yet. The progress script now reports
+all three counts and the missing sets; its 447-course gap still uses the 21
+existing course directories. Do not silently choose 21 or 23 as the final
+department scope while the curriculum decision in [Demerzel #1209](https://github.com/GuitarAlchemist/Demerzel/issues/1209) is pending.

@@ -114,12 +114,17 @@ def inventory(root: Path = ROOT) -> dict:
 
     registered = set(json.loads((root / "state" / "streeling" / "university.json").read_text(encoding="utf-8"))["departments"])
     directory_names = {item["department"] for item in departments}
+    definition_names = {
+        path.name.removesuffix(".department.json")
+        for path in (root / "state" / "streeling" / "departments").glob("*.department.json")
+    }
     return {
         "target_per_department": TARGET_PER_DEPARTMENT,
         "active_languages": languages,
         "departments": departments,
         "totals": {
             "department_directories": len(departments),
+            "department_records": len(definition_names),
             "authored_en": sum(item["authored_en"] for item in departments),
             "remaining_to_25": sum(item["remaining_to_25"] for item in departments),
             "active_language_complete": sum(item["active_language_complete"] for item in departments),
@@ -139,7 +144,9 @@ def inventory(root: Path = ROOT) -> dict:
         },
         "unregistered_course_directories": sorted(directory_names - registered),
         "registered_without_course_directory": sorted(registered - directory_names),
-        "caveat": "Source inventory and conservative content signals only. A signal is not proof of project usefulness, subject accuracy, native review, learner success, or public Learn publication.",
+        "department_records_missing_from_university": sorted(definition_names - registered),
+        "department_records_without_course_directory": sorted(definition_names - directory_names),
+        "caveat": "Target and remaining counts currently use course directories, not department records. Source inventory and conservative content signals are not proof of project usefulness, subject accuracy, native review, learner success, or public Learn publication.",
     }
 
 

@@ -47,6 +47,10 @@ class StreelingCourseProgressTests(unittest.TestCase):
             (root / "state/streeling/university.json").write_text(
                 json.dumps({"departments": ["example"]}), encoding="utf-8"
             )
+            definitions = root / "state/streeling/departments"
+            definitions.mkdir()
+            (definitions / "example.department.json").write_text("{}", encoding="utf-8")
+            (definitions / "missing.department.json").write_text("{}", encoding="utf-8")
             policy = root / "policies/multilingual-policy.yaml"
             policy.parent.mkdir()
             policy.write_text(
@@ -60,6 +64,10 @@ class StreelingCourseProgressTests(unittest.TestCase):
             self.assertEqual(item["active_language_complete"], 0)
             self.assertEqual(item["pipeline_review_approved"], 0)
             self.assertEqual(item["modules"][0]["missing_active_languages"], ["fr"])
+            self.assertEqual(result["totals"]["department_directories"], 1)
+            self.assertEqual(result["totals"]["department_records"], 2)
+            self.assertEqual(result["department_records_missing_from_university"], ["missing"])
+            self.assertEqual(result["department_records_without_course_directory"], ["missing"])
 
     def test_review_record_is_reported_only_after_explicit_approval(self):
         with tempfile.TemporaryDirectory() as directory:
