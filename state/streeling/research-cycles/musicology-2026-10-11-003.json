@@ -1,0 +1,25 @@
+{
+  "cycle_id": "musicology-2026-10-11-003",
+  "department": "musicology",
+  "question": "When may GA display a progression's catalog Category as metadata, and what further evidence would support a claim about the style of a performed recording?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin GA catalog and domain record revision",
+    "test: cross_validate lesson fields, counts, and five answers against pinned sources"
+  ],
+  "hypothesis": "A lesson that distinguishes stored progression labels from observed performances can make GA's style captions useful without presenting catalog associations as independently verified history or listening evidence.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Common/GA.Business.Config/ChordProgressions.yaml gives ii-V-I Category Jazz, C Major, RomanNumerals ii7/V7/I, and Chords Dm7/G7/Cmaj7.",
+    "The pinned YAML gives 12-Bar Blues Category Blues and twelve chord positions E/E/E/E/A/A/E/E/B/A/E/B, while its AAB lyrical Structure is a descriptive field without lyrics or audio in the record.",
+    "The pinned Rhythm Changes entry says AABA and gives ASection Bb/Gm/Cm/F and BSection D/G/Cm/F, but has no top-level Chords or RomanNumerals list and no performance timing.",
+    "The pinned I-vi-IV-V record contains a vi-IV-I-V variation with Am/F/C/G and Context Pop ballad version but no variation Category. A separate top-level vi–IV–I–V (Pop Loop) record has Category Pop and the same chords; two records within one catalog are not independent performance evidence.",
+    "At the same GA commit, Common/GA.Domain.Core/Theory/Harmony/Progressions/ProgressionCorpusItem.cs declares required StyleLabel and Source strings and a Chords list defaulting to empty. The source does not establish a YAML-to-corpus mapping or independently validate style labels.",
+    "The English draft has five answered source-based exercises. No recording, score, listener trial, or classifier was analyzed. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "T",
+  "belief_confidence": 0.9,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:55:54Z"
+}

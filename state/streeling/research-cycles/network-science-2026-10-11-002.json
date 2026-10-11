@@ -1,0 +1,26 @@
+{
+  "cycle_id": "network-science-2026-10-11-002",
+  "department": "network-science",
+  "question": "What can Demerzel's static repo-to-tool-family graph establish about shared labels, and what further evidence is needed before claiming cross-repo runtime connectivity?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_case: pinned Demerzel capability registry and cross-repo contract note",
+    "graph_type: bipartite repo-to-exact-family-name declarations",
+    "derived_view: repo one-mode projection",
+    "counterexample: declared BAML producer-to-consumer seam"
+  ],
+  "hypothesis": "Explicit node and edge semantics, plus a separate layer for intended contracts, will prevent a shared family label or projected component from being mistaken for a live tool route or outage.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b, schemas/capability-registry.json is version 1.1.0 and lists three repos under repos: ix, tars, and ga. A Python read of that committed blob counted 27, 4, and 5 distinct tools-family keys respectively: 36 repo-to-family incidences, 35 distinct family names, and 38 nodes including repos.",
+    "Exact tools-family-key intersections in the pinned JSON are ix with tars = {grammar}, ix with ga = empty, and tars with ga = empty. The repo projection therefore has one edge and two components, {ix,tars} and {ga}. Removing the grammar family node leaves 34 family nodes, 34 incidence edges, and three isolated repos in the projection.",
+    "The pinned JSON lists ix_grammar_weights, ix_grammar_evolve, and ix_grammar_search under ix grammar; tars_grammar_weight and tars_grammar_evolve under tars grammar; and ga_chord under ga music-theory. Shared family spelling does not establish shared argument schemas or a successful call.",
+    "At the same Demerzel commit, docs/architecture/cross-repo-contracts.md names baml_src/schema.baml as Demerzel-produced and ix, ga, and hari as intended consumers, while explicitly stating that consumer generation was undelivered. Those declared directed seams are a different graph from the registry's undirected repo-to-family declarations; the note's liveness status is dated.",
+    "NET-001 already discusses scale-free networks and hub inference. NET-002's five answers were checked against the pinned three-repo registry and contract note; no live MCP query, consumer-generation receipt, learner attempt, or human subject review was performed. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:54:54Z"
+}

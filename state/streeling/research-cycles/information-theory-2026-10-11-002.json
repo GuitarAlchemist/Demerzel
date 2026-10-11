@@ -1,0 +1,26 @@
+{
+  "cycle_id": "information-theory-2026-10-11-002",
+  "department": "information-theory",
+  "question": "Which distinctions in a 240-slot raw OPTIC-K vector survive the 124-slot compact similarity mapping, and which cannot be reconstructed?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_artifact: pinned GA OPTIC-K-v1.8 embedding schema and contract test",
+    "information_theory: many_to_one_mapping_and_information_loss",
+    "fixture: four synthetic 240-slot vectors with omitted-slot, magnitude, and ROOT-direction changes",
+    "verification: independent calculation parsed pinned registry and reproduced source normalization and weighted cosine"
+  ],
+  "hypothesis": "The compact representation preserves the schema's weighted partition cosine within floating-point tolerance for full nonzero similarity slices, but cannot reconstruct omitted identity/info values or original positive per-partition magnitudes.",
+  "test_method": "simulation",
+  "evidence": [
+    "GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs:95-148 declares OPTIC-K-v1.8, 240 raw slots, six Similarity partitions totaling 124 slots, and five omitted Identity/Info partitions totaling 116 slots. The checked-out schema file was modified, so inspection used git show at this pinned commit.",
+    "The same pinned source at lines 235-299 extracts each Similarity slice by per-partition L2 normalization and sqrt(weight) scaling, then defines weighted partition cosine over those slices. The pinned Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs:31-65 asserts compact dot equals weighted score within 1e-6 for deterministic nonzero vectors and that identical-vector score sums the weights; the C# tests were not rerun in this cycle.",
+    "A small independent Python calculation parsed the pinned registry and used four explicitly synthetic 240-slot vectors. It observed 124 compact slots and compact offsets STRUCTURE 0-23, MORPHOLOGY 24-47, CONTEXT 48-59, SYMBOLIC 60-71, MODAL 72-111, ROOT 112-123.",
+    "The fixture calculation observed A/A=1.15, A/B=1.15, A/C=1.10, and A/D=1.15 for both weighted score and compact dot at displayed precision. A/B changed only IDENTITY and EXTENSIONS slots; A/D changed only the positive magnitude of STRUCTURE's sole nonzero slot; A/C changed ROOT one-hot direction. A, B, and D produced identical compact vectors; C did not.",
+    "The fixture establishes a mapping and scoring example, not complete search equivalence, actual guitar-embedding behavior, index serialization, or current deployment status. IDENTITY may affect hard filters outside this score. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:54:53Z"
+}

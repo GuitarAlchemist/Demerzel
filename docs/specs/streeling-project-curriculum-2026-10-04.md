@@ -199,3 +199,16 @@ no finding in its source, arithmetic, and answer-key check. The PHY-002 STFT,
 AUD-002 listening comparison, and VC-002 browser/Godot checks remain proposed
 experiments, not measured outcomes. All three remain English drafts with
 human subject, learner, localization, and public readback gates open.
+
+INF-002, NET-002, and MCL-003 extend three departments with only one or two
+previous modules. INF-002 demonstrates the information lost by GA's 124-slot
+compact OPTIC-K vector with an executed synthetic calculation, while keeping
+full retrieval behavior unclaimed. NET-002 computes a graph from Demerzel's
+static capability registry and contrasts it with an intended but undelivered
+BAML seam; it does not infer live tool connectivity. MCL-003 separates a GA
+progression catalog's style labels from claims about unheard performances.
+Each English draft has five answered exercises and a bounded independent AI
+source and answer-key check with no finding. The source inventory is now 90
+English modules across 21 provisional course directories, 435 short of the
+525 target. Human subject, learner, fluent-language, pipeline review, and
+public Learn publication remain open.
