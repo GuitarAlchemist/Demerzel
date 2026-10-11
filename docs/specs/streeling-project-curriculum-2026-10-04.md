@@ -176,3 +176,14 @@ CS-005's bounded AI review found and corrected a synthetic fixture's revision
 comparison; its focused recheck approved that correction.
 These checks do not satisfy the human subject, fluent-language, learner, or
 public readback gates; all three pipeline records keep review and publish open.
+
+The following bounded batch adds DV-007 (OPTIC-K partition small multiples),
+PM-003 (review queue flow metrics), and CS-006 (IXQL stage composition). Each
+has a pinned project source or an explicitly synthetic teaching fixture and
+five answered exercises. The source count is now 84 English modules across 21
+course directories, leaving 441 to the provisional 525 target. Cross-checks
+corrected a five-feed versus ROOT attribution in DV-007 and repeated-module
+wording in PM-003; CS-006 had no finding in its bounded source and answer-key
+review. DV-007's caption sentence count was corrected and rechecked. The six
+production records from both batches keep human subject, learner, language,
+and public readback gates open.

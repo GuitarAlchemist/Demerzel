@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-11-006",
+  "department": "computer-science",
+  "research_cycle_id": "computer-science-2026-10-11-006",
+  "module_id": "cs-006-ixql-pipeline-composition",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1498,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft only. A bounded independent AI subject check found no concrete error in the pinned IXQL grammar/example/validator claims or five answers. The refute fixture is synthetic and unexecuted. Human subject, learner, localization, and IX runtime/editor validation remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T18:20:27Z"
+}
