@@ -22,11 +22,11 @@
     },
     "translation": {
       "completed": false,
-      "languages": ["en", "fr", "es"]
+      "languages": ["en", "fr", "es", "pt"]
     },
     "review": {
       "completed": false,
-      "feedback": "Subject accuracy and native-language review are pending. The Learn site languages EN/FR/ES are drafted; PT/IT/DE from the active multilingual policy are not drafted. The two-lane display has not been user-tested."
+      "feedback": "Subject accuracy and native-language review are pending. EN/FR/ES/PT drafts exist; IT/DE from the active multilingual policy are not drafted. The two-lane display has not been user-tested."
     },
     "publish": {
       "completed": false

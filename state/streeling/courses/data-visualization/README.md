@@ -8,7 +8,7 @@
 
 | Code | Course | Status | Languages |
 |---|---|---|---|
-| [DV-001](en/dv-001-observed-degraded-stale-quality.md) | Observed, Degraded, and Stale Quality Runs | Draft; localization and review pending | [EN](en/dv-001-observed-degraded-stale-quality.md), [FR](fr/dv-001-observed-degraded-stale-quality.fr.md), [ES](es/dv-001-observed-degraded-stale-quality.es.md) |
+| [DV-001](en/dv-001-observed-degraded-stale-quality.md) | Observed, Degraded, and Stale Quality Runs | Draft; localization and review pending | [EN](en/dv-001-observed-degraded-stale-quality.md), [FR](fr/dv-001-observed-degraded-stale-quality.fr.md), [ES](es/dv-001-observed-degraded-stale-quality.es.md), [PT](pt/dv-001-observed-degraded-stale-quality.pt.md) |
 | [DV-002](en/dv-002-denominators-and-test-populations.md) | Denominators and Changing Test Populations | Draft; localization and review pending | [EN](en/dv-002-denominators-and-test-populations.md) |
 | [DV-003](en/dv-003-instrument-cohorts-and-units.md) | Compare Instrument Cohorts Without Hiding Their Sizes | Draft; localization and review pending | [EN](en/dv-003-instrument-cohorts-and-units.md) |
 
