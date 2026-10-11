@@ -125,7 +125,9 @@ correctness. The branch now has 74 English source modules, 451 short of 25 in
 each of its 21 department directories. DV-003 is English-only and unreviewed.
 DV-001 now has EN/FR/ES/PT/IT/DE drafts. Each has eight level-two sections,
 five exercises, five answers, and the pinned GA source links. Its production
-record is `review_pending` because the research confidence is 0.65 and subject,
-native-language, and learner reviews have not happened. This adds one module to
+record is `review_pending` because the research confidence is 0.65 and human subject,
+native-language, and learner reviews have not happened. A bounded independent AI
+subject check on 2026-10-11 approved the English facts and five answers, with its
+scope and remaining gates recorded in `state/streeling/reviews/`. This adds one module to
 the six-language source-coverage count, but changes neither the reviewed nor
 the published count.
