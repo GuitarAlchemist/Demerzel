@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-world-music-languages-2026-10-11-002",
+  "department": "world-music-languages",
+  "research_cycle_id": "world-music-languages-2026-10-11-002",
+  "module_id": "wml-002-dadgad-layout-and-cultural-claims",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "T",
+      "belief_confidence": 0.92
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1910,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source-grounded draft. The cultural Flavor text and named artist associations are attributed to GA code, not independently verified. Human subject and cultural review, learner testing, named DADGAD runtime test, chatbot trace, and localization remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T22:08:48Z"
+}
