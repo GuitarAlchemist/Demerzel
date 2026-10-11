@@ -21,12 +21,12 @@
       "exercises": 5
     },
     "translation": {
-      "completed": false,
-      "languages": ["en"]
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
     },
     "review": {
       "completed": false,
-      "feedback": "Independent AI source-and-arithmetic preflight found no actionable issue in five answers or pinned IX/GAS-001 claims. The STFT and Haar examples are derived synthetic calculations; WAV evaluation and listening gates are proposed and unrun. Human subject, learner, fluent-language, and publication review remain pending."
+      "feedback": "Independent AI source-and-arithmetic preflight found no actionable issue in five answers or pinned IX/GAS-001 claims. All six active-language source drafts exist, but fluent review remains pending. The STFT and Haar examples are derived synthetic calculations; WAV evaluation and listening gates are proposed and unrun. Human subject, learner, and publication review remain pending."
     },
     "publish": {
       "completed": false
