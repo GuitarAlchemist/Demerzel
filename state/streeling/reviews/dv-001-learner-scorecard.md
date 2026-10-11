@@ -6,8 +6,8 @@ Give the learner `dv-001-learner-task.md` first. Keep this scorecard out of view
 
 | Task | Pass condition | Common error to record |
 |---|---|---|
-| 1. Classify rows | June 8 has no measured pass rate and is degraded; June 15, June 19, and July 19 have reported rates. No row is 0%. | `null` plotted as 0%, or 94% treated as June 8 quality. |
-| 2. Two lanes | Quality lane has no June 8 point; availability lane marks backend unavailable. The three later measured points have actual dates, with no invented observations or smooth path through missing days. | A line through June 8 or equal spacing presented as consecutive daily data. |
+| 1. Classify rows | June 8 has no reported pass rate and is degraded; June 15, June 19, and July 19 have reported rates and are not flagged degraded. No row is 0%. The response does not treat `degraded: false` as complete service-health evidence. | `null` plotted as 0%, 94% treated as June 8 quality, or the full service called healthy from one snapshot flag. |
+| 2. Two lanes | Quality lane has no June 8 point; run-status lane marks backend unavailable. The three later measured points have actual dates and their recorded status, with no invented observations or smooth path through missing days. | A line through June 8, equal spacing presented as consecutive daily data, or status invented for unshown days. |
 | 3. Historical reference | Caption labels June 8 QA unavailable and 94% as last known good dated May 16. | “June 8: 94% pass rate.” |
 | 4. Causal claim | Response reports the June 19 and July 19 rates without asserting a software cause or continuous recovery; requests evidence such as prompt identities/corpus revision, evaluator revision, backend/model configuration, logs, or adjacent runs. | “Regression fixed” inferred from the two percentages alone. |
 | 5. Text alternative | Text includes dates, values or missing value, degraded status, and an unresolved-cause note without depending on color. | Color name alone or omitted June 8 status. |

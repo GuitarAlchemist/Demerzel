@@ -2,6 +2,8 @@
 
 Use this sheet before opening the DV-001 lesson or its answer blocks. The four records below are historical GA chatbot QA snapshots at commit `dc2e74cbd992a298f67efb928b5b3754615e1924`. They do not describe today's service.
 
+In this task, the status lane reports what each **QA snapshot** says about its run. A reported pass rate or `degraded: false` is not a complete health check of the chatbot service.
+
 | Date | Total prompts | Reported `pass_pct` | `degraded` | Other source detail |
 |---|---:|---:|---|---|
 | 2026-06-08 | 52 | `null` | `true` | Backend unavailable; `last_known_good_pass_pct: 94.0`, source `carryforward`, dated May 16. |
@@ -11,8 +13,8 @@ Use this sheet before opening the DV-001 lesson or its answer blocks. The four r
 
 ## Tasks
 
-1. For each date, write whether a pass rate was measured and what should be shown as the run's availability status. If you would put any date at 0% on a pass-rate chart, identify it and explain why.
-2. Sketch a two-lane display: one lane for reported pass rates and one for run availability. Put dates on the display. Show how you would handle June 8 and the unshown days between the recorded dates.
+1. For each date, write whether a pass rate was reported and what the QA snapshot says about degradation. If you would put any date at 0% on a pass-rate chart, identify it and explain why.
+2. Sketch a two-lane display: one lane for reported pass rates and one for reported QA run status. Put dates on the display. Show how you would handle June 8 and the unshown days between the recorded dates.
 3. Write a one-sentence dashboard caption for June 8 that mentions the 94% reference without making it a June 8 measurement.
 4. A teammate writes, “GA recovered from a software regression by July 19.” State what the four records actually establish and name two further pieces of evidence needed to test the teammate's claim.
 5. Write a short text alternative for your sketch that a reader could use without seeing its colors or shapes.
