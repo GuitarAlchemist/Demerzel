@@ -1,0 +1,25 @@
+{
+  "cycle_id": "futurology-2026-10-12-003",
+  "department": "futurology",
+  "question": "How could GA and Streeling rehearse an agent or tool substitution while preserving source-bound review and publication evidence, without assuming a future model is better?",
+  "production_path": [
+    "investigation: read pinned GA harness methodology and Streeling source-bound review triage",
+    "contract sketch: define source identity, checks, human verdict, and public readback as stage outputs",
+    "simulation: compare four imaginary adapters on the same three cases using hard gates",
+    "adversarial: reject faster cases with source drift, missing readback, or pending review",
+    "test: deterministic fixture rerun, five answered exercises, and explicit real-trial falsifier"
+  ],
+  "hypothesis": "A future agent replacement is worth a bounded trial only when it can preserve auditable stage evidence and improve accepted outcomes after setup and correction costs, rather than increasing draft speed alone.",
+  "test_method": "simulation",
+  "evidence": [
+    "GA docs/methodology/agentic-engineering.md at dc2e74cbd992a298f67efb928b5b3754615e1924 describes harness quality, clear seams, bounded queues, and efficient human review; these are project design principles, not measured agent interchangeability.",
+    "Demerzel scripts/streeling_review_candidates.py at 74d425dcd2ad92b4712160e3f5df7b2472c12b97 indexes exact Git source blobs for triage and explicitly does not authenticate a human verdict. Learn PR #170 is draft exact-source receipt work, not a deployed production guarantee.",
+    "Synthetic fixture at 789239053dfeca9f044d2f893a3f277cb4ed9d8d evaluates three identical labeled cases per adapter: current and portable pass 3/3 with median fixture times 40 and 32 minutes and two corrections each; fast passes 1/3 because of source drift and missing public-readback check; shortcut passes 0/3 because all review labels are pending. These labels are not real Git identities, human verdicts, or network fetches.",
+    "A byte-identical evaluator rerun and course preflight check the fixture and five answered exercises. No actual alternate-agent run, authenticated human subject or learner review, localization, production switch, or public page readback was measured. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T21:08:41Z"
+}

@@ -1,0 +1,19 @@
+{
+  "pipeline_id": "cp-futurology-2026-10-12-003",
+  "department": "futurology",
+  "research_cycle_id": "futurology-2026-10-12-003",
+  "module_id": "fut-003-agent-substitution-readiness-drill",
+  "status": "in_progress",
+  "phases": {
+    "research": {"completed": true, "belief_value": "P", "belief_confidence": 0.7},
+    "outline": {"completed": true, "sections": 3, "estimated_duration": "35 minutes"},
+    "content": {"completed": true, "word_count": 1566, "exercises": 5},
+    "translation": {"completed": false, "languages": ["en"]},
+    "review": {
+      "completed": false,
+      "feedback": "English project-grounded draft. A deterministic synthetic adapter drill demonstrates source, review, and public-readback hard gates; it is not a live agent comparison or an authenticated approval. Subject review, learner trial, localization, and public readback remain pending."
+    },
+    "publish": {"completed": false}
+  },
+  "timestamp": "2026-10-12T21:08:41Z"
+}
