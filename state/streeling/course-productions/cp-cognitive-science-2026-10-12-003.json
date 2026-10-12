@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-cognitive-science-2026-10-12-003",
+  "department": "cognitive-science",
+  "research_cycle_id": "cognitive-science-2026-10-12-003",
+  "module_id": "cog-003-calibrating-fretboard-confidence",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.82
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2041,
+      "exercises": 6
+    },
+    "translation": {
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source and five AI-drafted localizations use the pinned GA fretboard demo and SVG source as an answer-key fixture. Independent AI subject and cross-language semantic preflights found no actionable issue in their stated scope. The six learner predictions are synthetic; Brier arithmetic is calculated, and the learner study is proposed. Human cognitive-science/guitar subject review, a real learner trial, fluent-language review, Learn publication, and public readback remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T04:05:22Z"
+}
