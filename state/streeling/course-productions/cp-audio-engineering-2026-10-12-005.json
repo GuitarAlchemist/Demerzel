@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-audio-engineering-2026-10-12-005",
+  "department": "audio-engineering",
+  "research_cycle_id": "audio-engineering-2026-10-12-005",
+  "module_id": "aud-004-wavelet-guitar-attack-evidence",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "U",
+      "belief_confidence": 0.5
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2166,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source draft with five answered exercises. Pinned source and arithmetic checked locally. The STFT/Morlet comparison is a proposed experiment, not a measured result. Independent subject, learner, language, Learn-sync, and public publication review remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T05:49:30Z"
+}
