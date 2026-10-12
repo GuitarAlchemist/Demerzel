@@ -16,9 +16,13 @@
     "mathematics",
     "physics",
     "computer-science",
+    "cybernetics",
+    "information-theory",
+    "network-science",
     "product-management",
     "futurology",
     "philosophy",
+    "semiotics",
     "cognitive-science",
     "guitar-alchemist-academy",
     "world-music-languages",
@@ -28,6 +32,7 @@
     "guitar-acoustics",
     "visual-computing"
   ],
+  "curriculum_scope_note": "The departments array is the current course-bearing set for the 21-by-25 target (525 core courses). MetaQA and Systems Engineering have department records but no course directories and are outside this catalog until a separate scope decision adds them.",
   "principles": [
     "Interdisciplinary research is encouraged — departments collaborate, not compete",
     "All findings must be expressible as tetravalent beliefs (T/F/U/C) with evidence",
