@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-world-music-languages-2026-10-12-003",
+  "department": "world-music-languages",
+  "research_cycle_id": "world-music-languages-2026-10-12-003",
+  "module_id": "wml-003-term-preservation-and-cultural-review",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 3,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1502,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source-grounded draft. The deterministic 40/42 lexical inventory and five answers need independent subject, cultural, language, and learner review. Literal presence is not translation approval."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T07:18:23Z"
+}

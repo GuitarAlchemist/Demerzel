@@ -1,0 +1,25 @@
+{
+  "cycle_id": "world-music-languages-2026-10-12-003",
+  "department": "world-music-languages",
+  "question": "Can a pinned six-language term audit improve Streeling localization without treating lexical presence as translation or cultural approval?",
+  "production_path": [
+    "investigation: inspect WML-001 six-language source and WML-002's fact-versus-cultural-claim boundary",
+    "audit: read Git blobs at pinned Demerzel commit and check seven selected terms in six locales",
+    "adversarial: contrast loose prefix matching with exact accent-sensitive casefold matching",
+    "composition: separate source identity, lexical observation, human meaning review, generated page, and public readback",
+    "test: deterministic receipt rerun, source cross_validation, and five answered reasoning exercises"
+  ],
+  "hypothesis": "A commit-bound literal term inventory can expose precise localization review questions while leaving semantic and cultural verdicts to qualified humans.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit f5b040ae040a5a7f1fe6c3f609f878c00a3a1859, WML-001 has English, French, Spanish, Portuguese, Italian, and German source files. The script records their six Git blob IDs and checks seven selected term strings per file.",
+    "The deterministic term-presence-f5b040a.json receipt contains 42 term-locale pairs, of which 40 are exact case-insensitive matches. It lists fr:alzapúa and fr:compás as absent; the pinned French text has Alzapua and Compas. A fresh script run produced byte-identical JSON.",
+    "The initial loose search for alzap and comp.s returned all six files, showing that the choice of lexical predicate changes the result. Neither predicate validates translated meaning or cultural claims.",
+    "The lesson contains five answered exercises and source-pinned links. No WML-001 or WML-003 human subject, cultural, language, or learner verdict was produced; no public site readback was performed. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T07:18:23Z"
+}
