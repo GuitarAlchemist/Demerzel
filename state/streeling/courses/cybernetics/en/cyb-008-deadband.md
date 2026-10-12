@@ -59,7 +59,7 @@ The solution function receives a separate `emergency` Boolean. When true, it ret
 
 The example does not establish who can declare an emergency or authorize a real escalation. That decision requires an independent provenance and permission contract. CYB-002 already states that ordinary dampening must preserve the algedonic bypass; this exercise makes the precedence visible without sending a live governance message. A false emergency label could itself be harmful, so preserving the bypass is distinct from trusting every label.
 
-A measurement also needs CYB-005's scope and freshness checks. A plausible small residual from the wrong surface cannot justify quieting the intended surface. The verified offline routing incident supports this identity check, while the cause of the related SaveAs dialog remains unknown. No threshold choice here diagnoses that incident.
+A measurement also needs CYB-005's scope and freshness checks. In a synthetic wrong-surface scenario, a plausible small residual from A cannot justify quieting B. The example illustrates identity checking; no threshold choice or actual routing diagnosis follows from it.
 
 ### Practice exercise and worked correction
 

@@ -73,7 +73,7 @@ Run `python <package>/scripts/course-exercises/cyb_foundations.py --json`; inspe
 
 An application can use a valid positive deficit to propose a bounded drafting batch. It still needs scope authorization and a resource budget. A valid negative error does not authorize deleting courses: it means the chosen quantity exceeds its setpoint. Counting should inform decisions rather than silently becoming a destructive command.
 
-In the verified offline routing incident, caller B could receive a browser route to A. The measurement contract explains the risk: a plausible value from the wrong scope cannot close B's loop. That incident is evidence for identity checks, not proof that every measurement channel is defective.
+In a synthetic routing scenario, a caller requesting B receives a reading from A. The measurement contract explains the risk: a plausible value from the wrong scope cannot close B's loop. This example illustrates an identity check; it is not an observed channel defect.
 
 ### Practice exercise and worked correction
 

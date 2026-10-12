@@ -59,7 +59,7 @@ The fixture's deliberate mutant resets `active=False` before each sample. On the
 
 This matters after process restart. Persisting state, reconstructing it from a trustworthy event history, or deliberately resetting according to a documented policy are different designs. None can be substituted silently. A retained alert may also be wrong if the controlled object changes: an alert for queue A must not be reused as queue B's memory. CYB-005's scope and freshness checks therefore come before the relay.
 
-In the verified offline routing incident, an intended browser surface could resolve to another surface. That motivates identity checking; it supplies no measured hysteresis thresholds. Similarly, a nearby SaveAs dialog's cause remains unknown. An operational incident should sharpen the contract without becoming an invented tuning experiment.
+Consider a synthetic routing mix-up in which a reading from one browser surface is assigned to another. It motivates identity checking but supplies no measured hysteresis thresholds. An illustrative mix-up should sharpen the contract without becoming an invented tuning experiment.
 
 ### Practice exercise and worked correction
 

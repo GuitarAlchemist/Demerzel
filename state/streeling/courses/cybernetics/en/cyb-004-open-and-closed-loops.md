@@ -29,7 +29,7 @@ status: local_draft
 
 A **plant** is the process being influenced; a **controller** chooses an action; a **sensor** reports an outcome. An open-loop controller chooses actions without using the resulting plant output to revise them. A closed-loop controller uses a measured output to choose a later action. Logging output is insufficient if the next action never depends on that log. NI's controller documentation describes measurement, comparison with a setpoint, and actuator adjustment as the closed-loop path. [Primary reference: NI](https://www.ni.com/en/shop/labview/pid-theory-explained.html).
 
-Consider a coordinator submitting one bounded task to a worker. Submission changes the worker's input. An acceptance receipt indicates that input reached a processing stage. A durable result plus an independent check measures a different outcome. A verified 2026-10-06 continuation produced acceptance first and completion later. This supports separating those observations; it does not establish a universal worker latency or reliability rate.
+Consider a coordinator submitting one bounded task to a worker. Submission changes the worker's input. An acceptance receipt indicates that input reached a processing stage. A durable result plus an independent check measures a different outcome. In this synthetic continuation, acceptance precedes verified completion. The example separates those observations without supplying a measured worker latency or reliability rate.
 
 The loop closes only when the coordinator's later decision depends on the relevant outcome: stop after verified completion, investigate an explicit blocker, or continue observing while work genuinely progresses. Repeatedly sending the same instruction is not itself feedback control. It may simply add input while the plant is already responding.
 
@@ -59,7 +59,7 @@ With no disturbance, substituting the control equation gives `e[k+1] = (1-K)e[k]
 
 Reverse the sign: choose `K=-0.5`. A positive error now causes negative movement, enlarging the error. In the disturbed ten-tick fixture, the final state is -597.025390625. This deliberately bad controller has a sensor and a return path, yet fails badly. Feedback topology and stable behavior are separate claims.
 
-Measurement can also refer to the wrong plant. An offline browser-routing incident showed that an ordinary caller intended for surface B could resolve to A, while an explicit engine selection resolved to B. A reading from A cannot validate work on B. Terminal routing was separately inspected; the browser result must not be generalized to every interface. The cause of a nearby SaveAs dialog remained unknown.
+Measurement can also refer to the wrong plant. Consider a synthetic browser-routing case: a caller intends surface B but receives a reading from A. A reading from A cannot validate work on B, even if the numbers look plausible. This illustrates a scope check; it is not evidence that an actual browser or terminal route misbehaved.
 
 ### Practice exercise and worked correction
 

@@ -25,7 +25,7 @@ status: local_draft
 - Reject busy, stale and incomplete stop evidence.
 - State the observation interval and residual visibility limits of a stop claim.
 
-An authorized continuation observed on 2026-10-06 produced a distinct acceptance acknowledgement and later a durable completion artifact with an independent output check. The permitted incident facts contain no session details and no interruption experiment. They motivate a general lesson: acknowledgement is evidence of acceptance, not execution completion. The stop protocol below is a synthetic teaching contract, not a claim about that system's shutdown implementation.
+Consider a synthetic continuation in which a worker first acknowledges acceptance, then produces a durable completion artifact that a checker verifies. The ordering motivates a general lesson: acknowledgement is evidence of acceptance, not execution completion. The stop protocol below is another synthetic teaching contract; neither example supplies evidence about a deployed shutdown implementation.
 
 ## 1. Define what must cease
 
