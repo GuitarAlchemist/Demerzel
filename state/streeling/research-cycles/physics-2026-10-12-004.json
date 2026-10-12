@@ -1,0 +1,25 @@
+{
+  "cycle_id": "physics-2026-10-12-004",
+  "department": "physics",
+  "question": "In GA's pinned Rust guitar engine, does note velocity change only excitation gain, or does it also move the heuristic pick offset and a brightness input? What evidence would isolate their audible contributions?",
+  "production_path": [
+    "source_review: inspect pinned GA engine_note_on, Engine::excite, and Engine::render; compare with PHY-001 to PHY-003 to avoid repetition",
+    "formal_model: distinguish ideal triangular-pluck modal zeros from the engine's filtered-noise excitation heuristic",
+    "simulation: execute dependency-free arithmetic fixture at 44.1 kHz and E2 for three velocities, assert buffer length, offsets, and pluck_mix ordering",
+    "test_design: propose controlled render interventions, parameter traces, matched-level onset windows, and a rejection observation",
+    "evidence_limit: no GA audio render, browser capture, spectrum, learner trial, or listening test was run"
+  ],
+  "hypothesis": "The pinned GA source couples velocity to pick offset and pluck_mix in addition to excitation amplitude, so a velocity-only gain explanation is false at the parameter level; the acoustic size of each contribution remains unmeasured.",
+  "test_method": "simulation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Rust/guitar-web-wasm-demo/rust-engine/src/lib.rs lines 281-365 clamp velocity, compute length from sample_rate/frequency, set pick_ratio=0.18+0.60*(1-velocity), round a pick_offset, set pluck_mix=0.15+0.35*velocity, and multiply filtered noise by velocity and a clamped shape. Render lines 419-443 use pluck_mix in brightness and update feedback.",
+    "At Demerzel commit c781729a2bcbffed1bd8567ca94aae695960ea7e, the PHY-004 fixture evaluate_pick.py with declared 44,100 Hz and 82.4069 Hz calculates active length 535, fractional delay about 0.14936, offsets 337/257/177 at velocities 0.25/0.50/0.75, and pluck_mix 0.2375/0.325/0.4125. Its assertions pass. This is selected-formula simulation, not a Rust render or a waveform measurement.",
+    "The ideal fixed-end triangular-displacement model yields modal coefficients proportional to sin(n*pi*p)/(n^2*p*(1-p)); this predicts every fourth mode zero at p=1/4 under ideal assumptions. GA's filtered-noise excitation is not that ideal displacement, so those zeros are not inferred for GA output.",
+    "A proposed controlled comparison would pin engine build, rate, note, noise seed where possible, recording path, and declared analysis window, then intervene on pick offset and other coupled controls. This comparison was not executed. Research duration was not instrumented; duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.84,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T22:02:41Z"
+}

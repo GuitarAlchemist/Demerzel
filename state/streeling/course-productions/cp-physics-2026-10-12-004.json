@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-physics-2026-10-12-004",
+  "department": "physics",
+  "research_cycle_id": "physics-2026-10-12-004",
+  "module_id": "phy-004-velocity-pick-position-guitar-engine",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.84
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1950,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source, five answered exercises, and a deterministic selected-formula fixture. Human physics/audio review, fluent-language review, and a learner trial are pending. No Rust render, WAV, browser capture, or listening result is claimed."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T22:02:41Z"
+}
