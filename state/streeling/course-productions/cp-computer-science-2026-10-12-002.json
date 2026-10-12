@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-12-002",
+  "department": "computer-science",
+  "research_cycle_id": "computer-science-2026-10-12-002",
+  "module_id": "cs-002-governing-agentic-loops",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 7,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2370,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en", "fr", "es"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Historical lesson revised with five source-bound answered exercises in three available languages and a correction to the policy-default claim. Static parity and preflight are not human subject, fluent-language, or learner review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T07:08:08Z"
+}

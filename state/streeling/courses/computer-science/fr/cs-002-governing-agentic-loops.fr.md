@@ -4,16 +4,18 @@ department: computer-science
 course: "IA agentique — Systèmes multi-agents, utilisation d'outils, boucles de raisonnement"
 level: intermediate
 prerequisites: ["Modèles d'orchestration multi-agents"]
-estimated_duration: "25 minutes"
+estimated_duration: "35 minutes"
 produced_by: seldon-auto-research
-research_cycle: cs-2026-03-22-001
+revised_by: codex-project-pilot
+research_cycle: computer-science-2026-10-12-002
+original_research_cycle: cs-2026-03-22-001
 coverage_ratio_at_selection: 0.0
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # Gouverner les boucles agentiques : empêcher l'itération illimitée dans les systèmes pilotés par LLM
 
-> **Département d'informatique** | Niveau : Intermédiaire | Durée : 25 minutes
+> **Département d'informatique** | Niveau : Intermédiaire | Durée : 35 minutes | Brouillon révisé ; relecture humaine du contenu et essai apprenant en attente
 
 ## Objectifs
 
@@ -39,6 +41,8 @@ la garantir. La garantie doit venir du framework.
 Alan Turing a prouvé (1936) qu'aucun algorithme ne peut décider, pour tous les programmes, s'ils s'arrêteront.
 Aucune procédure générale ne peut davantage trancher pour une boucle d'agent quelconque. La terminaison est donc imposée
 plutôt que détectée : un plafond appliqué par le framework borne le nombre d'itérations, et un délai maximal appliqué par le framework à chaque itération entière l'arrête à son expiration, au besoin en tuant le processus qui l'exécute. Seuls les deux ensemble font s'arrêter la boucle par construction : une itération qui ne finit jamais n'atteint jamais le compteur, et un délai sur chaque appel ne suffit pas, puisqu'une itération peut enchaîner autant d'appels qu'elle veut ou calculer entre eux.
+
+Le théorème de l'arrêt ne prouve **pas** que tout agent se trompe lorsqu'il annonce avoir terminé. Il exclut une procédure de décision universelle pour les programmes arbitraires. Pour les cours et les releases de ce projet, la règle pratique est plus simple : vérifier l'achèvement à partir d'artefacts externes plutôt que d'accepter la déclaration de l'agent.
 
 **Conséquence :** Tout framework agentique qui compte sur le modèle pour déclarer lui-même qu'il a terminé
 est défectueux par construction.
@@ -73,6 +77,8 @@ journaliser le plafond, escalader vers une revue humaine. Le compteur n'avance q
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
+
+La valeur `12` est un exemple de configuration, pas le défaut actuel de Demerzel. La [politique de boucles épinglée](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/policies/autonomous-loop-policy.yaml) indique `default_max: 10`, `absolute_max: 25` et `stall_limit: 3`. Le journal de recherche de mars parlait d'un « plafond de 12 cycles » ; la présente vérification corrige cette ancienne affirmation sans la reprendre comme règle actuelle.
 
 ### Propriété 2 : test de progression
 Chaque itération doit produire un changement d'état mesurable. Le framework compare les empreintes de l'état
@@ -181,6 +187,42 @@ Les points de contrôle et les journaux de déduplication des sorties y satisfon
 | État non sérialisé | La boucle ne peut pas être mise en pause/reprise | Utiliser une machine à états, sérialiser chaque étape |
 
 ---
+
+## Atelier pratique : décider à partir des traces
+
+Consultez la [politique de boucles épinglée](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/policies/autonomous-loop-policy.yaml) et le [workflow Seldon](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/.github/workflows/seldon-plan.yml) avant de répondre. Les cas ci-dessous sont des **situations fictives**, sauf lorsqu'une source est citée. Une règle écrite, une configuration de workflow et une exécution observée ne constituent pas la même preuve.
+
+### Exercice pratique 1
+
+Une boucle a `max_iterations: 10`. Elle termine deux itérations, puis reste bloquée pour toujours dans le troisième appel d'outil. Le plafond borne-t-il cette boucle ? Nommez la limite manquante et le fichier du projet qui configure un délai maximal pour un job entier.
+
+> **Réponse :** Non. Le compteur n'atteint trois qu'à la fin de la troisième itération ; le plafond de dix ne peut donc pas interrompre cet appel. Il faut un délai maximal appliqué à l'itération entière, ou un délai strict englobant le job et capable de terminer son processus. Le workflow GitHub de Seldon déclare `timeout-minutes: 35` pour son job ; la politique générale donne un nombre d'itérations et une limite de stagnation, mais aucun délai par itération. Une configuration de timeout ne prouve pas qu'une exécution locale arbitraire a été interrompue.
+
+### Exercice pratique 2
+
+Un état passe de `{payload: "A", iteration: 4}` à `{payload: "A", iteration: 5}`. Un autre passe de `{payload: "A", iteration: 5}` à `{payload: "B", iteration: 6}`, mais l'artefact cible reste absent. Quelle transition est une stagnation exacte si l'on exclut le compteur ? La seconde prouve-t-elle la convergence ?
+
+> **Réponse :** La première est une stagnation exacte si l'empreinte ne porte que sur `payload`. Dans la seconde, la valeur change : le test d'égalité ne se déclenche pas, mais cela ne prouve aucun rapprochement de l'artefact cible. Un critère de réussite distinct doit inspecter cet artefact ou les autres preuves requises. La politique distingue ainsi les vérifications de convergence, de régression et de dérive ; changer d'empreinte ne suffit pas à réussir.
+
+### Exercice pratique 3
+
+Un agent chargé d'un cours atteint sa dixième itération terminée, annonce une confiance de `0.90` et a rédigé le cours promis. Le verdict humain sur le contenu et la lecture de la page publique manquent. Choisissez `complete`, `halt_and_escalate` ou `continue`, puis expliquez pourquoi l'exemple `is_complete` de la section 3 ne suffit pas pour publier.
+
+> **Réponse :** `halt_and_escalate` pour cette boucle bornée : elle a atteint le plafond sans satisfaire le critère externe complet. Le brouillon est un progrès, mais ni la confiance ni le fichier seul ne prouvent la revue humaine ou la publication. La fonction `belief_confidence >= 0.85` montre où placer un contrôle externe ; ce n'est pas un critère suffisant pour Streeling. Un nouveau travail autorisé peut avancer sur d'autres cours, mais cette boucle épuisée ne doit pas appeler son résultat partiel « terminé ».
+
+### Exercice pratique 4
+
+La politique indique `default_max: 10`, `absolute_max: 25` et `stall_limit: 3` ; un journal de 2026 affirme « plafond de 12 cycles » ; l'exemple de cours configure 12. Quelle valeur est le défaut ? Quelle valeur est un exemple permis si les surcharges sont autorisées ? Quelle preuve montrerait qu'une boucle précise utilisait effectivement 12 ?
+
+> **Réponse :** Dix est le défaut de la politique épinglée et 25 son plafond absolu. Douze est un exemple de plafond particulier situé dans ces bornes, pas le défaut. Le libellé de l'ancien journal contredit la politique épinglée et ne doit pas être repris comme règle actuelle. Pour une exécution précise, il faut sa configuration effective et une trace qui la rattache à cette exécution ; la politique générale et ce cours ne suffisent pas.
+
+### Exercice pratique 5
+
+Un relecteur demande si `timeout-minutes: 35` prouve que chaque boucle Demerzel ou Ralph possède un délai par itération et s'arrête toujours proprement. Répondez en deux phrases limitées aux preuves, puis nommez une observation nécessaire pour vérifier un timeout lors d'une vraie exécution Seldon.
+
+> **Réponse :** Le workflow épinglé configure une limite de 35 minutes pour ce job Seldon, tandis que la politique générale ne fixe aucun délai par itération ; on ne peut pas généraliser à toutes les boucles Demerzel ou Ralph. Un timeout strict peut terminer le travail sans point de contrôle propre, ce qui exige aussi une trace pour parler d'arrêt propre. Pour une exécution réelle, examinez la conclusion et les horodatages du job ainsi que le dernier point de contrôle ou la preuve de sortie du processus ; le YAML seul reste une déclaration.
+
+Ces réponses vérifient un raisonnement sur des sources épinglées et des cas fixes. Elles n'attestent ni l'observation d'un agent en activité, ni l'application des six propriétés par tout le framework. Une revue humaine du contenu et un essai apprenant sans réponses restent nécessaires ; cette traduction n'a pas été relue par un francophone désigné.
 
 ## Points clés à retenir
 

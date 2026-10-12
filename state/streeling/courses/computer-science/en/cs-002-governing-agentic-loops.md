@@ -4,16 +4,18 @@ department: computer-science
 course: "Agentic AI — Multi-Agent Systems, Tool Use, Reasoning Loops"
 level: intermediate
 prerequisites: ["Multi-agent orchestration patterns"]
-estimated_duration: "25 minutes"
+estimated_duration: "35 minutes"
 produced_by: seldon-auto-research
-research_cycle: cs-2026-03-22-001
+revised_by: codex-project-pilot
+research_cycle: computer-science-2026-10-12-002
+original_research_cycle: cs-2026-03-22-001
 coverage_ratio_at_selection: 0.0
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # Governing Agentic Loops: Preventing Unbounded Iteration in LLM-Driven Systems
 
-> **Department of Computer Science** | Level: Intermediate | Duration: 25 minutes
+> **Department of Computer Science** | Level: Intermediate | Duration: 35 minutes | Revised draft; human subject and learner review pending
 
 ## Objectives
 
@@ -39,6 +41,8 @@ guarantee it. The guarantee must come from the framework.
 Alan Turing proved (1936) that no algorithm can decide for all programs whether they will halt.
 No general procedure can settle it for an arbitrary agent loop either. So termination is imposed
 rather than detected: a framework-enforced cap bounds the number of iterations, and a framework-enforced deadline on each whole iteration stops it when it expires, if need be by killing the process that runs it. Only the two together make the loop halt by construction: an iteration that never ends never reaches the counter, and a deadline on each call is not enough, since an iteration can make any number of calls or compute between them.
+
+The halting theorem does **not** prove that every agent's own completion report is false. It rules out a universal decision procedure for arbitrary programs. For this project's courses and releases, the practical requirement is simpler: check completion against external artifacts rather than accepting an agent's declaration.
 
 **Implication:** Any agentic framework that relies on the model to declare its own completion
 is unsound by construction.
@@ -73,6 +77,8 @@ log the cap, escalate to human review. The counter advances only when an iterati
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
+
+The `12` above is an example configuration, not Demerzel's current default. The pinned [autonomous-loop policy](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/policies/autonomous-loop-policy.yaml) states `default_max: 10`, `absolute_max: 25`, and `stall_limit: 3`. The original March research record says "12-cycle cap"; this October source check corrects that historical claim rather than silently adopting it.
 
 ### Property 2: Progress Test
 Each iteration must produce a measurable state change. The framework compares state hashes
@@ -181,6 +187,42 @@ Checkpoints and output dedup logs satisfy this: the loop is auditable even mid-e
 | State not serialized | Loop can't be paused/resumed | Use state machine, serialize each step |
 
 ---
+
+## Practice lab: decide from traces, not declarations
+
+Read the [pinned loop policy](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/policies/autonomous-loop-policy.yaml) and the [Seldon workflow](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/.github/workflows/seldon-plan.yml) before answering. The numbers in the following cases are **synthetic fixtures** except where a source is named. A policy declaration, workflow setting, and observed run are different kinds of evidence.
+
+### Practice Exercise 1
+
+A loop has `max_iterations: 10`. It completes two iterations and blocks forever inside the third tool call. Is the loop bounded by its iteration cap? Name the missing boundary and identify which pinned project source configures a whole-job timeout.
+
+> **Answer:** No. The counter reaches three only after the third iteration finishes, so a cap of ten cannot stop this hang. A framework-enforced whole-iteration deadline, or an enclosing hard job deadline that can terminate the process, is needed. The pinned Seldon GitHub workflow declares `timeout-minutes: 35` for its job; the autonomous-loop policy's iteration limits declare a count and stall limit but no per-iteration deadline. A configured job timeout is source evidence of a bound for that workflow, not evidence that an arbitrary local loop was killed.
+
+### Practice Exercise 2
+
+A candidate state changes from `{payload: "A", iteration: 4}` to `{payload: "A", iteration: 5}`. Another changes from `{payload: "A", iteration: 5}` to `{payload: "B", iteration: 6}`, but the target artifact remains absent. Which transition is an exact stall after projecting away bookkeeping? Does the second prove convergence?
+
+> **Answer:** The first is an exact stall if the progress hash covers `payload` and excludes the iteration counter. The second changes payload, so an equality-based stall test does not fire, but it does not prove movement toward the target artifact. A separate goal criterion must inspect the artifact or other required evidence. This is why the policy describes convergence, regression, and drift checks separately; a changing hash alone is not success.
+
+### Practice Exercise 3
+
+A course agent reaches its tenth completed iteration, reports confidence `0.90`, and has drafted the promised course. The human subject verdict and public page readback are absent. Classify `complete`, `halt_and_escalate`, or `continue`, and explain why the `is_complete` example in Section 3 is insufficient for a publication goal.
+
+> **Answer:** `halt_and_escalate` for this bounded loop: it reached the cap without satisfying the full external completion criterion. The course draft is progress, but confidence and a file alone cannot prove human review or public publication. The `belief_confidence >= 0.85` function in Section 3 illustrates an external check's location; it is not a sufficient predicate for Streeling publication. An authorized new work unit may continue other independent courses after the capped loop is recorded; the exhausted loop must not rename its partial result “complete.”
+
+### Practice Exercise 4
+
+The policy file states `default_max: 10`, `absolute_max: 25`, `stall_limit: 3`; a 2026 research record claims a "12-cycle cap"; and a course example configures 12. Which number is the policy default, which is an admissible example if overrides are allowed, and what evidence would establish that a specific running loop actually used 12?
+
+> **Answer:** Ten is the pinned policy default and 25 its absolute ceiling. Twelve is an example per-loop cap within those limits, not the default. The old record's wording is inconsistent with the pinned policy and should not be repeated as a current rule. To establish that a running loop used 12, inspect its effective configuration and a run trace showing that configuration; neither the generic policy nor this lesson proves a particular run's setting.
+
+### Practice Exercise 5
+
+A reviewer asks whether the Seldon job's `timeout-minutes: 35` proves that every Demerzel or Ralph loop has a per-iteration deadline and always halts cleanly. Give a two-sentence evidence-bounded answer, then name one observation needed to verify a timeout in an actual Seldon run.
+
+> **Answer:** The pinned workflow configures a 35-minute upper bound for that Seldon job, while the general loop policy does not specify a per-iteration deadline; this does not generalize to every Demerzel or Ralph execution. A hard job timeout can terminate work without a clean checkpoint, so “halts cleanly” also needs a trace. For an actual run, inspect its job conclusion and timestamps, plus the last persisted checkpoint or process exit evidence; the YAML alone is a declaration.
+
+These answers are reasoning checks on pinned source and fixed fixtures, not a claim that a live agent was observed or that the entire framework enforces the six properties. Human subject review and a learner attempt with the answers hidden are still required. The French and Spanish versions carry the same lab but have not had fluent-language review.
 
 ## Key Takeaways
 

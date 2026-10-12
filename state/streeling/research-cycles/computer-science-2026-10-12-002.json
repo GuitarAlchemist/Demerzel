@@ -1,0 +1,25 @@
+{
+  "cycle_id": "computer-science-2026-10-12-002",
+  "department": "computer-science",
+  "question": "How can the existing CS-002 agent-loop lesson become a source-bound, answerable Streeling exercise without confusing policy defaults, examples, and observed executions?",
+  "production_path": [
+    "investigation: compare the March CS-002 course and research record with pinned October loop policy, constitution, and Seldon workflow",
+    "correction: distinguish the 12-iteration example from policy default_max 10 and absolute_max 25",
+    "scope: distinguish halting-theorem limits from a practical external completion criterion",
+    "exercise: create five fixed cases with explicit answers in English, French, and Spanish",
+    "test: source cross_validation, content signals, translation section parity, and course-package preflight"
+  ],
+  "hypothesis": "Fixed trace-classification exercises tied to pinned policy files can make CS-002's loop-governance claims testable while preserving the distinction between a declared bound and an observed run.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e, policies/autonomous-loop-policy.yaml declares default_max 10, absolute_max 25, stall_limit 3, convergence, regression, and drift checks, but no per-iteration deadline in its iteration_limits section.",
+    "The pinned .github/workflows/seldon-plan.yml configures a 35-minute job timeout and policies/seldon-plan-policy.yaml states a 30-minute cycle limit. These source declarations do not prove that any particular job timed out or checkpointed cleanly.",
+    "The historical state/streeling/research-cycles/cs-2026-03-22-001.json says 12-cycle cap; the revised course identifies 12 as an example override rather than the pinned policy default.",
+    "The revised English CS-002 source has five exercise/answer pairs and pinned policy links; the French and Spanish sources contain corresponding five-section labs. Human subject, fluent-language, and learner review have not occurred. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "revise",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T07:08:08Z"
+}
