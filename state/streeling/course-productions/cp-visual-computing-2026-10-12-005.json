@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-visual-computing-2026-10-12-005",
+  "department": "visual-computing",
+  "research_cycle_id": "visual-computing-2026-10-12-005",
+  "module_id": "vc-005-craft-details-through-blender-to-godot",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.6
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1766,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English craft-to-scene hypothesis lesson with five answered exercises and pinned Learn pipeline/report evidence. The sample report is checked-in reference data. The lesson found a zero-filter return-shape bug on Learn main and links draft fix PR #168, which has focused source-level verification but no Blender run here. No new Blender or Godot run, craft asset, recognition study, forked DLSS benchmark, or DSL implementation is claimed. Independent subject, human learner, localization, and publication reviews remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T05:45:00Z"
+}
