@@ -2,6 +2,19 @@
 
 Status: **open**. Bounded AI subject and multilingual semantic checks passed on 2026-10-11; human subject, fluent language, and learner reviews remain open. This brief is not a publication receipt.
 
+## Frozen course sources
+
+At Demerzel commit `be3e3fc73fb447d28a7e1ad85e311f327f804964`, the DV-001 course has these exact Git blobs. A later edit to any locale needs an explicit diff review before a verdict can cover the new file. This course-source revision is distinct from the historical GA snapshot used for the quality data below.
+
+| Locale | Git blob |
+|---|---|
+| EN | `37047b77f21f91afeec137378f5cd398d3cc1520` |
+| ES | `d75e33c3fef9f2b0f882a96f7cdf818b0f67ddef` |
+| PT | `60bedcb591a421244b45abea6e6bd199b112339a` |
+| FR | `b293b732747650a0b701371a0ed5f7f40edc715d` |
+| IT | `2d06e75496b66cc902f52f4910441282891e1114` |
+| DE | `b71bf6a78b74232a06b96f8ee7e0f7d83b068d16` |
+
 ## Material to review
 
 - Source lesson: `state/streeling/courses/data-visualization/en/dv-001-observed-degraded-stale-quality.md`
