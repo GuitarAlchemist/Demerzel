@@ -21,12 +21,12 @@
       "exercises": 5
     },
     "translation": {
-      "completed": false,
+      "completed": true,
       "languages": ["en", "fr", "es", "pt", "it", "de"]
     },
     "review": {
       "completed": false,
-      "feedback": "English draft with five answered exercises. Independent AI static graph and answer preflight found no actionable issue before the replay addendum. A local offline replay on 2026-10-12 matched the pinned policy and selector Git blobs and confirmed the four predicted mode counts and three decision controls; this is not live routing evidence. The English addendum has not yet been propagated to the other five source languages or reviewed. Fluent language, human subject, learner, runtime routing, and publication reviews remain pending."
+      "feedback": "English draft with five answered exercises. Independent AI static graph and answer preflight found no actionable issue before the replay addendum. A local offline replay on 2026-10-12 matched the pinned policy and selector Git blobs and confirmed the four predicted mode counts and three decision controls; this is not live routing evidence. The replay addendum is present in all five AI-drafted translations. Fluent language, human subject, learner, runtime routing, and publication reviews remain pending."
     },
     "publish": {
       "completed": false
