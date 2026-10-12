@@ -10,7 +10,7 @@
     "persona": 17,
     "pipeline": 23,
     "policy": 46,
-    "schema": 50,
+    "schema": 49,
     "seldon_schema": 7,
     "skill": 69,
     "streeling_schema": 1,
@@ -538,10 +538,6 @@
       {
         "name": "standing-order.schema",
         "path": "schemas/standing-order.schema.json"
-      },
-      {
-        "name": "streeling-review-receipt.schema",
-        "path": "schemas/streeling-review-receipt.schema.json"
       },
       {
         "name": "trigger.schema",
