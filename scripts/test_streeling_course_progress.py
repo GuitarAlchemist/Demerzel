@@ -101,6 +101,43 @@ class StreelingCourseProgressTests(unittest.TestCase):
             self.assertEqual(result["totals"]["active_language_complete"], 1)
             self.assertEqual(result["totals"]["pipeline_review_approved"], 1)
 
+    def test_two_slugs_with_one_numbered_code_leave_one_target_slot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            english = root / "state/streeling/courses/example/en"
+            english.mkdir(parents=True)
+            (english / "ex-004-first-topic.md").write_text("first", encoding="utf-8")
+            (english / "ex-004-second-topic.md").write_text("second", encoding="utf-8")
+            (root / "state/streeling/university.json").write_text(
+                json.dumps({"departments": ["example"]}), encoding="utf-8"
+            )
+            policy = root / "policies/multilingual-policy.yaml"
+            policy.parent.mkdir()
+            policy.write_text(
+                "supported_languages:\n  primary:\n    - {code: en, status: active}\n",
+                encoding="utf-8",
+            )
+            (root / "state/streeling/course-productions").mkdir()
+            (root / "state/streeling/departments").mkdir()
+            result = inventory(root)
+            item = result["departments"][0]
+            self.assertEqual(item["authored_en"], 2)
+            self.assertEqual(item["distinct_course_codes"], 1)
+            self.assertEqual(item["core_course_codes"], 1)
+            self.assertEqual(item["remaining_to_25"], 24)
+            self.assertEqual(item["course_code_collisions"], [{
+                "code": "ex-004",
+                "module_ids": ["ex-004-first-topic", "ex-004-second-topic"],
+            }])
+            self.assertEqual(result["totals"]["course_code_collisions"], 1)
+
+            (english / "ex-026-optional-case.md").write_text("optional", encoding="utf-8")
+            optional = inventory(root)["departments"][0]
+            self.assertEqual(optional["authored_en"], 3)
+            self.assertEqual(optional["distinct_course_codes"], 2)
+            self.assertEqual(optional["core_course_codes"], 1)
+            self.assertEqual(optional["remaining_to_25"], 24)
+
 
 if __name__ == "__main__":
     unittest.main()

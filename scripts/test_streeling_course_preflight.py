@@ -161,6 +161,13 @@ class CoursePreflightTests(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertIn("filename ID differs from pipeline_id", output)
 
+    def test_numbered_code_collision_fails_even_when_slugs_differ(self):
+        other = self.english.with_name("ex-001-other-topic.md")
+        other.write_text("---\nmodule_id: ex-001-other-topic\n---\n", encoding="utf-8")
+        status, output = self.run_preflight()
+        self.assertEqual(status, 1)
+        self.assertIn("numbered course code ex-001 also belongs to ['ex-001-other-topic']", output)
+
 
 if __name__ == "__main__":
     unittest.main()

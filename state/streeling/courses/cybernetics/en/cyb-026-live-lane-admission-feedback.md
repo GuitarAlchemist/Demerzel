@@ -1,5 +1,5 @@
 ---
-module_id: cyb-004-live-lane-admission-feedback
+module_id: cyb-026-live-lane-admission-feedback
 department: cybernetics
 course: Live-Lane Admission as Bounded Feedback
 level: intermediate
@@ -29,7 +29,7 @@ Gaia coordinates agent lanes through a bus and a peer surface tool. A coordinato
 
 This is a compact cybernetic case: a controller observes a variable, compares it with a limit, and either admits or refuses a requested change. The **choice of observed variable** determines whether the feedback is useful. A bus message's age is a signal about bus contact; it is not the same observation as a peer surface's running state. A running surface, in turn, does not prove its agent is making productive progress. This lesson tests the admission rule, not that stronger productivity claim.
 
-[CYB-001](cyb-001-vsm-ai-governance-mapping.md) maps a broad governance model. [CYB-002](cyb-002-active-dampening-cross-repo-oscillation.md) proposes dampening mechanisms for cross-repo oscillation. [CYB-003](cyb-003-measuring-variety-ratio-quantitatively.md) separates configured state labels from measured regulatory capacity. CYB-004 narrows the view to one implemented Gaia gate, its feedback input, and a paired negative control. A limit is not automatically a queue, retry system, or measure of throughput.
+[CYB-001](cyb-001-vsm-ai-governance-mapping.md) maps a broad governance model. [CYB-002](cyb-002-active-dampening-cross-repo-oscillation.md) proposes dampening mechanisms for cross-repo oscillation. [CYB-003](cyb-003-measuring-variety-ratio-quantitatively.md) separates configured state labels from measured regulatory capacity. CYB-026 is an optional applied case beyond the proposed 25-course core sequence; it narrows the view to one implemented Gaia gate, its feedback input, and a paired negative control. A limit is not automatically a queue, retry system, or measure of throughput.
 
 ## 1. Define the sensor and the controlled action
 

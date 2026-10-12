@@ -16,9 +16,9 @@ import jsonschema
 import yaml
 
 if __package__:
-    from .streeling_course_progress import EXERCISE_HEADING, HEADING, content_signals
+    from .streeling_course_progress import COURSE_CODE, EXERCISE_HEADING, HEADING, content_signals
 else:
-    from streeling_course_progress import EXERCISE_HEADING, HEADING, content_signals
+    from streeling_course_progress import COURSE_CODE, EXERCISE_HEADING, HEADING, content_signals
 
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
@@ -149,6 +149,16 @@ def check_package(root: Path, item: str, production_schema: dict, research_schem
 
     course_dir = root / "state/streeling/courses" / department
     english = course_dir / "en" / f"{module_id}.md"
+    numbered_code = COURSE_CODE.match(module_id)
+    if numbered_code:
+        conflicting = sorted(
+            source.stem for source in (course_dir / "en").glob(f"{numbered_code.group(1)}-*.md")
+            if source.stem != module_id
+        )
+        if conflicting:
+            errors.append(
+                f"{module_id}: numbered course code {numbered_code.group(1)} also belongs to {conflicting}"
+            )
     for language in dict.fromkeys(["en", *languages]):
         if not LANGUAGE.fullmatch(language):
             errors.append(f"invalid declared language code {language!r}")

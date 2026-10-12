@@ -23,6 +23,7 @@ PINNED_REVISION_LINK = re.compile(
     re.IGNORECASE,
 )
 MARKDOWN_LINK = re.compile(r"\]\(([^)#]+)(?:#[^)]*)?\)")
+COURSE_CODE = re.compile(r"^([a-z]+-\d{3})(?:-|$)")
 
 
 def active_languages(policy: dict) -> list[str]:
@@ -103,10 +104,26 @@ def inventory(root: Path = ROOT) -> dict:
                 "pipeline_review_approved": bool(approvals),
                 "content_signals": content_signals(source, root),
             })
+        by_code: dict[str, list[str]] = {}
+        for module in modules:
+            match = COURSE_CODE.match(module["id"])
+            code = match.group(1) if match else module["id"]
+            by_code.setdefault(code, []).append(module["id"])
+        collisions = [
+            {"code": code, "module_ids": ids}
+            for code, ids in sorted(by_code.items()) if len(ids) > 1
+        ]
+        core_codes = {
+            code for code in by_code
+            if COURSE_CODE.fullmatch(code) and 1 <= int(code.rsplit("-", 1)[1]) <= TARGET_PER_DEPARTMENT
+        }
         departments.append({
             "department": department.name,
             "authored_en": len(modules),
-            "remaining_to_25": max(0, TARGET_PER_DEPARTMENT - len(modules)),
+            "distinct_course_codes": len(by_code),
+            "core_course_codes": len(core_codes),
+            "remaining_to_25": TARGET_PER_DEPARTMENT - len(core_codes),
+            "course_code_collisions": collisions,
             "active_language_complete": sum(not item["missing_active_languages"] for item in modules),
             "pipeline_review_approved": sum(item["pipeline_review_approved"] for item in modules),
             "modules": modules,
@@ -126,7 +143,10 @@ def inventory(root: Path = ROOT) -> dict:
             "department_directories": len(departments),
             "department_records": len(definition_names),
             "authored_en": sum(item["authored_en"] for item in departments),
+            "distinct_course_codes": sum(item["distinct_course_codes"] for item in departments),
+            "core_course_codes": sum(item["core_course_codes"] for item in departments),
             "remaining_to_25": sum(item["remaining_to_25"] for item in departments),
+            "course_code_collisions": sum(len(item["course_code_collisions"]) for item in departments),
             "active_language_complete": sum(item["active_language_complete"] for item in departments),
             "pipeline_review_approved": sum(item["pipeline_review_approved"] for item in departments),
             "with_exercise_answer_pair_signal": sum(
@@ -146,7 +166,7 @@ def inventory(root: Path = ROOT) -> dict:
         "registered_without_course_directory": sorted(registered - directory_names),
         "department_records_missing_from_university": sorted(definition_names - registered),
         "department_records_without_course_directory": sorted(definition_names - directory_names),
-        "caveat": "Target and remaining counts currently use course directories, not department records. Source inventory and conservative content signals are not proof of project usefulness, subject accuracy, native review, learner success, or public Learn publication.",
+        "caveat": "Target and remaining counts currently use course directories and the first 25 distinct numbered course codes per department, not department records or optional later lessons. Code collisions are reported separately; source inventory and conservative content signals are not proof of project usefulness, subject accuracy, native review, learner success, or public Learn publication.",
     }
 
 

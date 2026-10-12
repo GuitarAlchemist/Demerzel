@@ -2,7 +2,7 @@
   "pipeline_id": "cp-cybernetics-2026-10-11-004",
   "department": "cybernetics",
   "research_cycle_id": "cybernetics-2026-10-11-004",
-  "module_id": "cyb-004-live-lane-admission-feedback",
+  "module_id": "cyb-026-live-lane-admission-feedback",
   "status": "in_progress",
   "phases": {
     "research": {
@@ -17,7 +17,7 @@
     },
     "content": {
       "completed": true,
-      "word_count": 1945,
+      "word_count": 1957,
       "exercises": 5
     },
     "translation": {
@@ -26,7 +26,7 @@
     },
     "review": {
       "completed": false,
-      "feedback": "English draft grounded in pinned Gaia controller, adapter tests, and scale evidence note. The five answers describe deterministic fake peer fixtures, not live mixed-agent capacity or throughput. Subject review, learner attempt, localization, and publication review remain pending."
+      "feedback": "English draft grounded in pinned Gaia controller, adapter tests, and scale evidence note. The five answers describe deterministic fake peer fixtures, not live mixed-agent capacity or throughput. Renumbered from CYB-004 to optional CYB-026 to avoid a competing foundation lesson in PR #1195; no substantive evidence claim changed. Human subject review, learner attempt, localization, and publication review remain pending."
     },
     "publish": {
       "completed": false
