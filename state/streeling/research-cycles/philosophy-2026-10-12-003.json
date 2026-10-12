@@ -1,0 +1,25 @@
+{
+  "cycle_id": "philosophy-2026-10-12-003",
+  "department": "philosophy",
+  "question": "What does 'the same chord' mean for GA users when literal MIDI notes, pitch-class sets, transposition, interval-class content, and scored similarity differ?",
+  "production_path": [
+    "investigation: inspect pinned GA embedding schema, TheoryVectorService, ICV neighbor skill, set-class domain schema, and invariance export tool",
+    "formalization: define MIDI multiset, pitch-class set, exact transposition/inversion, ICV, and toy chroma predicates",
+    "counterexamples: compare octave revoicing, D-major transposition, C-minor inversion, and C-diminished interval content",
+    "adversarial: distinguish toy chroma cosine from full GA STRUCTURE or final search score and threshold similarity from equivalence",
+    "test: deterministic fixture rerun, explicit expected pair assertions, and five answered project-useful exercises"
+  ],
+  "hypothesis": "A source-bound counterexample course can prevent GA search and lesson language from conflating pitch-class identity, transposition, ICV shape, and thresholded similarity without asserting that the product currently makes that mistake.",
+  "test_method": "formal_proof",
+  "evidence": [
+    "GA EmbeddingSchema.cs at dc2e74cbd992a298f67efb928b5b3754615e1924 declares OPTIC-K-v1.8, 240 dimensions, STRUCTURE chroma/cardinality/ICV fields, and a separate ROOT partition. Its comments explicitly say whole STRUCTURE is not transposition-invariant. TheoryVectorService.cs says literal chroma changes under transposition, while the ICV/cardinality sub-dimensions retain their stated invariance.",
+    "At the same GA commit, docs/architecture/DOMAIN_SCHEMA.md distinguishes PitchClassSet, IntervalClassVector, and T/I set class; IcvNeighborsSkill.cs uses ICV distance for nearby sets; Tools/GaStructureInvariance/Program.cs exports actual STRUCTURE vectors over set classes and 12 transpositions. Reading these files does not constitute a live search or new exhaustive invariance run.",
+    "The deterministic teaching fixture at 50c0d2f5eb6684499c3bcf95d77f0481af2cc136 computes equal PC sets and ICVs for C-major octave revoicings; equal ICV but different PC sets for C-to-D-major transposition and C-major versus C-minor inversion; and a different ICV for C-diminished. Its binary-chroma cosines are 1, 0, 2/3, and 1/3 respectively. These are toy projection values, not GA scores.",
+    "The course has five answered exercises and an explicit threshold nontransitivity counterexample. No actual OPTIC-K query, human subject or learner review, localization, guitarist usability test, or public readback was performed. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.78,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T21:28:45Z"
+}
