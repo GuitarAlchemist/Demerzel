@@ -1,0 +1,55 @@
+{
+  "schema": "streeling.release-cards/0.1",
+  "scope": "synthetic teaching cards informed by pinned project sources; not a live release audit",
+  "required_targets": ["comfyui", "blender", "godot"],
+  "cards": [
+    {
+      "id": "source-snapshot",
+      "kind": "project-source-boundary",
+      "targets": {
+        "comfyui": {"implementation": false, "runtime": false, "meaning": false, "human_review": false},
+        "blender": {"implementation": false, "runtime": false, "meaning": false, "human_review": false},
+        "godot": {"implementation": false, "runtime": false, "meaning": false, "human_review": false}
+      },
+      "contract_replay": false,
+      "artifact_hashes": false,
+      "published_tag": false
+    },
+    {
+      "id": "pretty-but-wrong",
+      "kind": "synthetic",
+      "targets": {
+        "comfyui": {"implementation": true, "runtime": true, "meaning": true, "human_review": true},
+        "blender": {"implementation": true, "runtime": true, "meaning": true, "human_review": true},
+        "godot": {"implementation": true, "runtime": true, "meaning": false, "human_review": true}
+      },
+      "contract_replay": true,
+      "artifact_hashes": true,
+      "published_tag": false
+    },
+    {
+      "id": "technical-only",
+      "kind": "synthetic",
+      "targets": {
+        "comfyui": {"implementation": true, "runtime": true, "meaning": true, "human_review": false},
+        "blender": {"implementation": true, "runtime": true, "meaning": true, "human_review": false},
+        "godot": {"implementation": true, "runtime": true, "meaning": true, "human_review": false}
+      },
+      "contract_replay": true,
+      "artifact_hashes": true,
+      "published_tag": false
+    },
+    {
+      "id": "candidate-after-reviews",
+      "kind": "synthetic",
+      "targets": {
+        "comfyui": {"implementation": true, "runtime": true, "meaning": true, "human_review": true},
+        "blender": {"implementation": true, "runtime": true, "meaning": true, "human_review": true},
+        "godot": {"implementation": true, "runtime": true, "meaning": true, "human_review": true}
+      },
+      "contract_replay": true,
+      "artifact_hashes": true,
+      "published_tag": false
+    }
+  ]
+}
