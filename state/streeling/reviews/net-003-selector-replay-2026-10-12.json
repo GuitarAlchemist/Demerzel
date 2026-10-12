@@ -1,0 +1,50 @@
+{
+  "source_revision": "ecdc6c27559bb1a11343cfad33687465893e9891",
+  "source_blobs": {
+    "scripts/aiw_lane_selector.py": "cd00994e0b38d09589b3413c7cd7ef353449752f",
+    "state/driver/aiw-worker-lanes.json": "615bdd6e0b1fdf9d43878813f5e0afc020e4e2cd"
+  },
+  "assigned_role_pairs": 22,
+  "modes": {
+    "NORMAL": {
+      "unblocked_role_paths": 22,
+      "worker_class_edges": 9,
+      "unblocked_primary_paths": 5
+    },
+    "CONSTRAINED": {
+      "unblocked_role_paths": 21,
+      "worker_class_edges": 8,
+      "unblocked_primary_paths": 4
+    },
+    "DRAINING": {
+      "unblocked_role_paths": 21,
+      "worker_class_edges": 8,
+      "unblocked_primary_paths": 4
+    },
+    "HALTED": {
+      "unblocked_role_paths": 8,
+      "worker_class_edges": 3,
+      "unblocked_primary_paths": 1
+    }
+  },
+  "controls": {
+    "forbidden_role": {
+      "decision": "block",
+      "reason_codes": [
+        "CAPABILITY.FORBIDDEN_ROLE"
+      ]
+    },
+    "unknown_role": {
+      "decision": "warn",
+      "reason_codes": [
+        "CAPABILITY.MISMATCH"
+      ]
+    },
+    "unknown_mode": {
+      "decision": "escalate",
+      "reason_codes": [
+        "SCOPE.UNDEFINED"
+      ]
+    }
+  }
+}

@@ -17,20 +17,20 @@
     },
     "content": {
       "completed": true,
-      "word_count": 1919,
+      "word_count": 1920,
       "exercises": 5
     },
     "translation": {
-      "completed": true,
+      "completed": false,
       "languages": ["en", "fr", "es", "pt", "it", "de"]
     },
     "review": {
       "completed": false,
-      "feedback": "English draft with five answered exercises. Independent AI static graph and answer preflight found no actionable issue. Graph counts are recomputed from the pinned advisory lane policy; the selector replay is a proposed falsifier, not an executed test. All six active-language source drafts exist; fluent language, human subject, learner, runtime routing, and publication reviews remain pending."
+      "feedback": "English draft with five answered exercises. Independent AI static graph and answer preflight found no actionable issue before the replay addendum. A local offline replay on 2026-10-12 matched the pinned policy and selector Git blobs and confirmed the four predicted mode counts and three decision controls; this is not live routing evidence. The English addendum has not yet been propagated to the other five source languages or reviewed. Fluent language, human subject, learner, runtime routing, and publication reviews remain pending."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-12T02:38:13Z"
+  "timestamp": "2026-10-12T05:03:00Z"
 }
