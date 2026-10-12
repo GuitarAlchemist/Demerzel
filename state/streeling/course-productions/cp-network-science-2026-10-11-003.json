@@ -21,16 +21,16 @@
       "exercises": 5
     },
     "translation": {
-      "completed": false,
-      "languages": ["en"]
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
     },
     "review": {
       "completed": false,
-      "feedback": "English draft with five answered exercises. Independent AI static graph and answer preflight found no actionable issue. Graph counts are recomputed from the pinned advisory lane policy; the selector replay is a proposed falsifier, not an executed test. Human subject and learner reviews, localization, runtime routing evidence, and publication remain pending."
+      "feedback": "English draft with five answered exercises. Independent AI static graph and answer preflight found no actionable issue. Graph counts are recomputed from the pinned advisory lane policy; the selector replay is a proposed falsifier, not an executed test. All six active-language source drafts exist; fluent language, human subject, learner, runtime routing, and publication reviews remain pending."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-11T23:20:44Z"
+  "timestamp": "2026-10-12T02:38:13Z"
 }

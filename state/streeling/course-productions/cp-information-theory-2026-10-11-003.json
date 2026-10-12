@@ -21,16 +21,16 @@
       "exercises": 5
     },
     "translation": {
-      "completed": false,
-      "languages": ["en"]
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
     },
     "review": {
       "completed": false,
-      "feedback": "English draft with pinned IX source and an independently calculated synthetic fixture. Independent AI preflight found and resolved a witness-cap precision issue: Fails can have no reported witness when max_reported_deadlocks is zero. Human subject, learner, localization, and publication review remain pending. No real analyzer or DuckDB workload was run."
+      "feedback": "English draft with pinned IX source and an independently calculated synthetic fixture. Independent AI preflight found and resolved a witness-cap precision issue: Fails can have no reported witness when max_reported_deadlocks is zero. All six active-language source drafts exist; fluent language, human subject, learner, and publication reviews remain pending. No real analyzer or DuckDB workload was run."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-11T23:30:49Z"
+  "timestamp": "2026-10-12T02:38:13Z"
 }
