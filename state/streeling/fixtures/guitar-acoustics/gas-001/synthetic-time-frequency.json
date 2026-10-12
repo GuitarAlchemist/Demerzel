@@ -5,7 +5,7 @@
     "gas_001_morlet_method": "5c4967454ddc740ed937c87719ca4d71a3522e4b"
   },
   "implementation": {
-    "script_sha256": "1dc67a492140f5d5977bd01416fc45edb272fef37be91235fbf25556c0c440e7",
+    "script_sha256_lf_normalized": "40a4cfb79b3b133a3d1a0d4b224f151d20ebf1fa00a93ffedc8f282e38813129",
     "numpy": "2.4.2",
     "scipy": "1.17.1"
   },

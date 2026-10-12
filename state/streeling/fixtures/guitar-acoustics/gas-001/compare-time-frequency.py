@@ -170,7 +170,7 @@ def run():
     return {
         "scope": "Synthetic Python reproduction of pinned IX spectrogram arithmetic and GAS-001 Morlet kernel; not IX binary, recorded guitar, browser, or learner evidence",
         "source_revisions": {"ix_spectral_and_window": IX_SOURCE_REVISION, "gas_001_morlet_method": GAS_METHOD_REVISION},
-        "implementation": {"script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), "numpy": np.__version__, "scipy": scipy.__version__},
+        "implementation": {"script_sha256_lf_normalized": hashlib.sha256(Path(__file__).read_bytes().replace(b"\r\n", b"\n")).hexdigest(), "numpy": np.__version__, "scipy": scipy.__version__},
         "parameters": {"sample_rate": RATE, "samples_per_trial": SAMPLES, "harmonics": list(HARMONICS), "fundamental_hz": BASE_HZ, "burst_centers_seconds": BURST_CENTERS, "burst_duration_seconds": BURST_SECONDS, "burst_peak_amplitude": 0.5, "noise_rms": NOISE_RMS, "noise_seed": SEED, "stft_hop_samples": HOP, "search_radius_seconds": SEARCH_SECONDS, "noise_detection_margin_db": 6, "timing_improvement_threshold_ms": 5, "wrong_center_separation_threshold_db": 6},
         "selected_stft_bins": selected_bins,
         "calibration_gains": gains,
