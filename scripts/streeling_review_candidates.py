@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """List bounded Streeling review candidates at the current clean Git HEAD.
 
-Content signals and packet presence help triage; they never grant approval.
+Content signals, packet presence, and exact-blob mentions help triage; they never grant approval.
 """
 
 from __future__ import annotations
@@ -51,6 +51,7 @@ def review_candidates(root: Path = ROOT) -> dict:
     candidates = []
     full_locale_with_answers = 0
     packet_count = 0
+    packets_with_all_blobs = 0
     for department in report["departments"]:
         for module in department["modules"]:
             match = COURSE_CODE.match(module["id"])
@@ -73,6 +74,13 @@ def review_candidates(root: Path = ROOT) -> dict:
                 if path not in blobs:
                     raise ValueError(f"missing committed blob for {path}")
                 locale_blobs[locale] = blobs[path]
+            missing_blob_pins = None
+            if has_packet:
+                committed_packet = git(root, "cat-file", "blob", blobs[packet])
+                missing_blob_pins = sorted(
+                    locale for locale, blob in locale_blobs.items() if blob not in committed_packet
+                )
+                packets_with_all_blobs += int(not missing_blob_pins)
             candidates.append({
                 "department": department["department"],
                 "module_id": module["id"],
@@ -82,6 +90,7 @@ def review_candidates(root: Path = ROOT) -> dict:
                 "pinned_revision_link_signal": signal["pinned_revision_link_signal"],
                 "six_active_locale_sources": full_locale,
                 "review_brief": packet if has_packet else None,
+                "review_brief_missing_locale_blob_pins": missing_blob_pins,
                 "learner_task": learner_task if learner_task in blobs else None,
                 "pipeline_review_flag": module["pipeline_review_approved"],
             })
@@ -96,9 +105,10 @@ def review_candidates(root: Path = ROOT) -> dict:
         "authored_english": report["totals"]["authored_en"],
         "six_locale_and_five_answer_pair_candidates": full_locale_with_answers,
         "committed_review_briefs": packet_count,
+        "listed_review_briefs_with_all_locale_blobs_signal": packets_with_all_blobs,
         "listed_candidates": len(candidates),
         "candidates": candidates,
-        "caveat": "This is source and triage evidence only. A five-answer signal, six locale files, a review brief, or a pipeline flag does not authenticate a human verdict, learner outcome, or public publication.",
+        "caveat": "This is source and triage evidence only. A blob mentioned in a committed review brief checks packet freshness, not reviewer identity, scope, or verdict. A five-answer signal, six locale files, a review brief, or a pipeline flag does not authenticate a human verdict, learner outcome, or public publication.",
     }
 
 
