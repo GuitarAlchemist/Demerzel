@@ -1,0 +1,99 @@
+{
+  "module_id": "wml-001-guitar-around-the-world",
+  "source_commit": "f5b040ae040a5a7f1fe6c3f609f878c00a3a1859",
+  "terms": [
+    "rasgueado",
+    "picado",
+    "alzapúa",
+    "compás",
+    "golpe",
+    "batidas",
+    "la pompe"
+  ],
+  "languages": {
+    "en": {
+      "path": "state/streeling/courses/world-music-languages/en/wml-001-guitar-around-the-world.md",
+      "blob": "34a172aaa9ea90f47e786831b70fcad56bfe31b4",
+      "present": {
+        "rasgueado": true,
+        "picado": true,
+        "alzapúa": true,
+        "compás": true,
+        "golpe": true,
+        "batidas": true,
+        "la pompe": true
+      }
+    },
+    "fr": {
+      "path": "state/streeling/courses/world-music-languages/fr/wml-001-guitar-around-the-world.fr.md",
+      "blob": "09910885147627ec4f840e22e1d8d486600ea5c9",
+      "present": {
+        "rasgueado": true,
+        "picado": true,
+        "alzapúa": false,
+        "compás": false,
+        "golpe": true,
+        "batidas": true,
+        "la pompe": true
+      }
+    },
+    "es": {
+      "path": "state/streeling/courses/world-music-languages/es/wml-001-guitar-around-the-world.es.md",
+      "blob": "e5cbf9db117333bc6c4340f5b086c1a40bb374bf",
+      "present": {
+        "rasgueado": true,
+        "picado": true,
+        "alzapúa": true,
+        "compás": true,
+        "golpe": true,
+        "batidas": true,
+        "la pompe": true
+      }
+    },
+    "pt": {
+      "path": "state/streeling/courses/world-music-languages/pt/wml-001-guitar-around-the-world.pt.md",
+      "blob": "af9ef14a127225d3f96c54ed48487d8f2bc0841e",
+      "present": {
+        "rasgueado": true,
+        "picado": true,
+        "alzapúa": true,
+        "compás": true,
+        "golpe": true,
+        "batidas": true,
+        "la pompe": true
+      }
+    },
+    "it": {
+      "path": "state/streeling/courses/world-music-languages/it/wml-001-guitar-around-the-world.it.md",
+      "blob": "2c2e0f456d0bd088787d7235c4c757655d67dbfa",
+      "present": {
+        "rasgueado": true,
+        "picado": true,
+        "alzapúa": true,
+        "compás": true,
+        "golpe": true,
+        "batidas": true,
+        "la pompe": true
+      }
+    },
+    "de": {
+      "path": "state/streeling/courses/world-music-languages/de/wml-001-guitar-around-the-world.de.md",
+      "blob": "0138fc8a9227b77f2af5ad83b13cd708f34cc355",
+      "present": {
+        "rasgueado": true,
+        "picado": true,
+        "alzapúa": true,
+        "compás": true,
+        "golpe": true,
+        "batidas": true,
+        "la pompe": true
+      }
+    }
+  },
+  "checked_pairs": 42,
+  "missing": [
+    "fr:alzapúa",
+    "fr:compás"
+  ],
+  "limit": "Case-insensitive literal presence anywhere in each source file; no semantic, cultural, or publication verdict."
+}
