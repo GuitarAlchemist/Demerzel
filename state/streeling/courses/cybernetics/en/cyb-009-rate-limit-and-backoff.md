@@ -89,13 +89,19 @@ Replace the mental schedule with [0,3,7,14]. Which constraint fails?
 
 **Correction:** The third consecutive failure at time seven requires eight seconds, making fifteen earliest. The seven-second gap passes the resource interval but fails backoff. A validator that checks only adjacent spacing three would miss it. In a scratch copy, change the delay cap to four and predict 0,3,7,11 before running; restore no shared files.
 
+## 5. Project transfer: keep reporting retries separate from the verdict
+
+At Demerzel commit [`9cf71f4`](https://github.com/GuitarAlchemist/Demerzel/blob/9cf71f4152918d20d2c601cfb1c22488dbcb8294/.github/workflows/agent-blackbox.yml), inspect the `Comment risk report` and `Enforce verdict` steps. The [pinned invariant test](https://github.com/GuitarAlchemist/Demerzel/blob/9cf71f4152918d20d2c601cfb1c22488dbcb8294/scripts/test_agent_blackbox_gate.py) checks their failure policies. Predict the gate outcome when the comment API returns a transient 503 and when the risk report's verdict blocks a merge. Which step has retry attempts, and what operational timing can you infer from these files?
+
+**Worked answer:** The comment step configures `retries: 3` and `continue-on-error: true`; the test rejects a 5xx retry exemption. A comment failure may leave the report unposted, but it must not turn a blocking verdict into a passing one. The later enforcement step does not set `continue-on-error: true`, so a blocking verdict must fail the gate. The workflow and its eight passing local invariant tests establish configuration and ordering, not the actual delay between attempts, a measured 503 recovery, a shared rate limit, or a safe replay rule for arbitrary writes. The three-second gate and `min(8,2^k)` schedule above remain synthetic teaching choices.
+
 ## Assessment, journal and synthesis
 
 Record conceptual belief state and evidence separately from exercise grades. Advance to behavioral assessment only for justified True with confidence >= 0.7; never infer or invent confidence from a score. Adapt teaching for Unknown, investigate Contradictory evidence, and follow the policy's three-attempt limit and escalation requirement if comprehension remains unresolved. These are assessment instructions; no belief transition or escalation has been performed.
 
 Stage one is conceptual: explain admission versus failure count, calculate candidate thirteen, and explain unknown outcome. Award two points each; pass at five of six, with the unknown-outcome answer mandatory. This score is not a fabricated belief-confidence measurement.
 
-Stage two is behavioral: independently change one fixture input, record the predicted schedule first, run it, and preserve a rejected negative case. Award one point for prediction, one for matching trace, one for budget/deadline evidence, and one for rejection explanation; require all four. A grader must observe this work before marking transfer learned, with the policy's bounded reassessment process.
+Stage two is behavioral: independently change one fixture input, record the predicted schedule first, run it, and preserve a rejected negative case. Award one point for prediction, one for matching trace, one for budget/deadline evidence, and one for rejection explanation; require all four. Also require the learner to classify the pinned reporting and enforcement steps without inventing retry timing. A grader must observe this work before marking transfer learned, with the policy's bounded reassessment process.
 
 Journal UTC, script hash, parameters, command, exit code, expected versus actual, and any mismatch. Synthesize: the controls demonstrate single-client timing composition and bounded attempts. They do not demonstrate distributed admission, jitter throughput, parser correctness, or safe duplicate effects. Keep these limitations beside the successful trace rather than converting a passing simulation into a production claim.
 

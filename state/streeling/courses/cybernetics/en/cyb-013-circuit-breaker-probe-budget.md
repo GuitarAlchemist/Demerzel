@@ -95,13 +95,19 @@ Change the threshold to three. State the revised expectation before running code
 
 **Worked correction:** Two initial failures should leave the circuit closed, so the original expected trace must change. Keep the probe-budget mutant, but also add three consecutive failures and an intervening success. Otherwise the changed threshold could be ignored and the test would fail to exercise it.
 
+## 5. Project transfer: classify a failed review without inventing a breaker
+
+At Demerzel source commit [`9cf71f4`](https://github.com/GuitarAlchemist/Demerzel/blob/9cf71f4152918d20d2c601cfb1c22488dbcb8294/.github/workflows/cross-model-review.yml), the cross-model workflow exits with `llm_call`'s nonzero status instead of writing a placeholder review. The [PR #1195 check at that head](https://github.com/GuitarAlchemist/Demerzel/actions/runs/38206826495/job/114672039728) failed in `Run Claude review` with `llm_call exit 3` and `API error: invalid x-api-key` on 2026-10-12. Classify the observed review, credential-dependent operation and course-publication gate. Can this single result tell you that a breaker opened, that a half-open probe was attempted, or that the provider recovered?
+
+**Worked answer:** No review was produced by that step; the credential-dependent call failed, and the cross-model review gate remained red for this revision. The log reports a rejected key, not two consecutive dependency failures, a cooldown, a suppressed call, or a successful probe. No breaker transition is evidenced, so its state is **not observed**. A proposed breaker around this operation would need a failure taxonomy, one-probe reservation and a durable result criterion; a credential error also requires credential repair rather than timer-only retry. This is a real fail-closed workflow receipt used to test classification, while the eight-event breaker trace remains a synthetic control. It establishes neither production recovery nor publication approval.
+
 ## Two-stage assessment
 
 Record conceptual belief state and evidence separately from exercise grades. Advance to behavioral assessment only for justified True with confidence >= 0.7; never infer or invent confidence from a score. Adapt teaching for Unknown, investigate Contradictory evidence, and follow the policy's three-attempt limit and escalation requirement if comprehension remains unresolved. These are assessment instructions; no belief transition or escalation has been performed.
 
 **Conceptual assessment, 4 points:** explain the three states (1), compute the opening and probe boundaries (1), distinguish fallback success (1), and identify the serialized-concurrency limit (1). Require all four before application. Capture the learner's initial and revised belief with reasons; points are not calibrated confidence probabilities.
 
-**Behavioral application, 4 points:** implement a changed threshold in an isolated copy (1), predict the new trace (1), pass a reset positive control (1), and reject an unrestricted reopening mutant (1). Observe the learner's actual receipt. An author test run does not establish learning. Retry teaching at most three times before escalating the unresolved gap under Streeling policy.
+**Behavioral application, 4 points:** implement a changed threshold in an isolated copy (1), predict the new trace (1), pass a reset positive control (1), and reject an unrestricted reopening mutant (1). Also require the learner to classify the pinned failed-review receipt without claiming a deployed breaker. Observe the learner's actual receipt. An author test run does not establish learning. Retry teaching at most three times before escalating the unresolved gap under Streeling policy.
 
 ## Journal, proof and synthesis
 
