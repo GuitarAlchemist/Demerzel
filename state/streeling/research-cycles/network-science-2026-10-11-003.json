@@ -1,0 +1,26 @@
+{
+  "cycle_id": "network-science-2026-10-11-003",
+  "department": "network-science",
+  "question": "How does a fan-out mode cut change the declared coverage and single-worker fragility of Demerzel's worker-to-work-class graph?",
+  "production_path": [
+    "investigation: inspect pinned Demerzel worker-lane policy and advisory selector",
+    "graph: worker to assigned role to work class with mode-filtered paths",
+    "metric: covered assigned classes and classes with at least two worker neighbors",
+    "counterfactual: delete one worker vertex in DRAINING",
+    "experiment: predict selector replay outcomes from the pinned graph"
+  ],
+  "hypothesis": "A mode-filtered worker-class graph can identify declared routing coverage and fragile single-worker classes, provided its edges are not mistaken for worker availability, exact-role equivalence, or permission to act.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit ecdc6c27559bb1a11343cfad33687465893e9891, state/driver/aiw-worker-lanes.json declares five workers and primary, secondary, and forbidden role lists, with each named role mapped to a work class and four fan-out mode block lists. The file calls the selector advisory and dry-run.",
+    "A read-only calculation over the pinned JSON found 22 primary-or-secondary worker-role assignments. Five work classes occur in those assignments. After mapping and deduplicating worker-class pairs, NORMAL has 9 edges with class degrees fix 2, groom 2, navigate 1, net_new_feature 1, review 3.",
+    "Filtering the pinned mode_blocks gives 8 worker-class edges and 4/5 class coverage in CONSTRAINED and DRAINING, and 3 edges and 1/5 coverage in HALTED. In DRAINING, removing augment eliminates navigate and reduces coverage to 3/5; removing any other single worker loses no whole class.",
+    "At the same commit, scripts/aiw_lane_selector.py checks forbidden role membership before assigned-role membership, blocks mode-filtered classes, yields allow for an unblocked primary role and recommend for an unblocked secondary role, and says exit code 0 means evaluated rather than allowed.",
+    "The proposed offline replay predicts 22, 21, 21, and 8 unblocked assigned-role paths across NORMAL, CONSTRAINED, DRAINING, and HALTED. It was not run for this lesson. Five source- and calculation-grounded exercises have answers; no live worker, authorization, task completion, learner attempt, or publication was verified. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T23:20:44Z"
+}
