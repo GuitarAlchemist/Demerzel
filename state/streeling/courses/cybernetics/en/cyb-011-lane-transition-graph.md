@@ -16,6 +16,8 @@ status: local_draft
 
 > **Cybernetics** | Intermediate | 45 minutes | Provisional CYB-011
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Draw the five-state execution graph and identify forbidden shortcuts.
@@ -85,7 +87,7 @@ Record conceptual belief state and evidence separately from exercise grades. Adv
 
 Stage one: draw every allowed edge, give a failed guard example, and explain the generation-four stale event. Award two points each; require five of six and correct stale rejection. Stage two: change one event generation in a scratch trace, predict rejection, execute it and preserve the unchanged prior state. Require a correct trace, a negative receipt and an explanation of atomic integration limits before recording applied knowledge.
 
-Journal the initial identity, event sequence, guards, resulting state and script hash. Synthesize graph validity separately from race safety: this model rejects the documented illegal transitions and stale events, but no concurrent scheduler, durable store or terminal integration was exercised. CYB-010 validates stop evidence; this course validates reachable states and fencing identities. CYB-016 will address token/transition behavior rather than duplicate this single-lane graph. IDs remain provisional, translations and independent review pending, and no learner result or publication is asserted.
+Journal the initial identity, event sequence, guards, resulting state and script hash. Synthesize graph validity separately from race safety: this model rejects the documented illegal transitions and stale events, but no concurrent scheduler, durable store or terminal integration was exercised. CYB-010 validates stop evidence; this course validates reachable states and fencing identities. CYB-016 will address token/transition behavior rather than duplicate this single-lane graph. IDs remain provisional, translations and human subject-matter review pending, and no learner result or publication is asserted.
 
 ## Offline Solution
 

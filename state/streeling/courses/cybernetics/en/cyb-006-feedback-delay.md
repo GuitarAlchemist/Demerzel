@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Intermediate | 40 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Separate action-to-observation delay, transport delay, and sample age.
@@ -87,7 +89,7 @@ Record conceptual belief state and evidence separately from exercise grades. Adv
 
 ## Journal, proof, and synthesis
 
-Save clock origin, timestamps, delay units, gain, initial history, horizon, predicted first states, actual receipt, and script hash. State whether an operational delay was measured or merely modeled. CYB-002 surveys damping and CYB-004 derives immediate feedback; this lesson isolates delayed measurement. CYB-012 separately addresses oscillation detection. Evidence permits a finite-horizon counterexample and a timestamp audit; it does not identify the SaveAs cause, measure worker latency, or prove global stability. Translations and independent review remain pending.
+Save clock origin, timestamps, delay units, gain, initial history, horizon, predicted first states, actual receipt, and script hash. State whether an operational delay was measured or merely modeled. CYB-002 surveys damping and CYB-004 derives immediate feedback; this lesson isolates delayed measurement. CYB-012 separately addresses oscillation detection. Evidence permits a finite-horizon counterexample and a timestamp audit; it does not identify the SaveAs cause, measure worker latency, or prove global stability. Translations and human subject-matter review remain pending.
 
 ## Further reading
 

@@ -22,7 +22,7 @@ For an exercise, record a prediction before execution, exact script hash/runtime
 
 ## Remaining gates
 
-Three existing courses were preserved, not pedagogically recertified. Translations and native review remain pending. Target-repository integration, full Learn build, publication, deployed page visibility and learner assessment require their own evidence. No source repository, other collection, session, permission or global configuration was modified; no commit, push, merge or publication occurred.
+Three existing courses were preserved, not pedagogically recertified. Translations and native review remain pending. Target-repository integration, full Learn build, publication, deployed page visibility and learner assessment require their own evidence. At this initial local-draft checkpoint, no commit, push, merge or publication had occurred; the later source commits and open PR are recorded below. No other collection, session, permission or global configuration was modified by that drafting step.
 
 ## Publication authorization and scope
 
@@ -36,3 +36,9 @@ At 2026-10-07T04:31:39.095309+00:00, the independent GitHub Codex integration re
 All five scripts were rerun from outside their own directory after these path-only corrections: 22 synthetic experiments passed with exit code zero. Receipt command paths now describe the canonical checkout. The initial full Windows verification ran 783 unit tests and failed one existing overlap test; that exact test passed independently on both the baseline and this branch. This establishes that the isolated test passes, not that the full suite has passed or that the intermittent cause is proven.
 
 The source PR's governance, CodeQL and required `risk-report` checks passed. Its cross-model review failed with an invalid API key, which has not been changed. Publication and translations remain pending that review and integration approval. The separately reviewed global navigation change is in the Learn repository and does not publish these courses. These are integration and authoring records, not learner progress.
+
+## 2026-10-12 - Review scope and reopened questions
+
+The 2026-10-07 independent AI/local English manuscript review is a completed historical check, not human subject-matter approval, learner assessment, fluent translation review, a successful cross-model CI review, or public readback. The `local_draft` metadata remains accurate. A later content audit raised unresolved questions about the traceability of the 2026-10-06 browser-routing and continuation claims in CYB-004, CYB-005, CYB-007 and CYB-008, and about the named project decision or artifact served by the synthetic scenarios in CYB-009, CYB-011 and CYB-013. These questions need source evidence or manuscript revisions before publication; the earlier 22/22 local review result does not close them. CYB-024 also retains its explicitly noted CS-004 overlap check.
+
+The CYB-023 offline validator now rejects a four-stage chain whose final `verification_passed` field is missing, even when its final digest has been recomputed. A focused regression test covers that malformed input and the valid control. This fixes a fixture failure; it is not evidence of authenticated production receipts or learner success.

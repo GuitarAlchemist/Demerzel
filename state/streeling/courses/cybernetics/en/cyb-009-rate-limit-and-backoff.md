@@ -16,6 +16,8 @@ status: local_draft
 
 > **Cybernetics** | Intermediate | 40 minutes | Provisional CYB-009
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Calculate admission times under a minimum-spacing rule.
@@ -99,7 +101,7 @@ Journal UTC, script hash, parameters, command, exit code, expected versus actual
 
 ## Further reading and boundary
 
-Preserve CYB-002 for coordination context and CS-004 for uncertain effect recovery. This provisional local draft has no learner outcome, independent review, translations or publication approval.
+Preserve CYB-002 for coordination context and CS-004 for uncertain effect recovery. This provisional local draft has no learner outcome, human subject-matter review, translations or publication approval.
 
 ## Offline Solution
 

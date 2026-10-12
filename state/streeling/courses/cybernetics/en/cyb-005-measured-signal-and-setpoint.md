@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Beginner | 35 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Specify a measurement's quantity, scope, unit, phase, and observation time.
@@ -29,7 +31,7 @@ A **setpoint** is a desired value for a defined quantity. A **measured signal** 
 
 A goal of 25 courses per department looks simple until “course” is defined. A catalogue position describes an intention. A source page shows that material exists. An exercise receipt establishes a particular local check. An indexed page can be counted by a site, while a deployed visible page requires separate access evidence. These are related stages with different predicates. None is automatically equivalent to independently reviewed, teachable material.
 
-Choose a predicate before arithmetic: “one distinct English module in this department with substantive sections, corrected exercises, and a passing local exercise receipt.” This is a local batch acceptance rule, not a replacement for Streeling's publication policy. Translations and independent review remain separate gates. Counting translated copies as new modules would change the unit halfway through the calculation.
+Choose a predicate before arithmetic: “one distinct English module in this department with substantive sections, corrected exercises, and a passing local exercise receipt.” This is a local batch acceptance rule, not a replacement for Streeling's publication policy. Translations and human subject-matter review remain separate gates. Counting translated copies as new modules would change the unit halfway through the calculation.
 
 ### Practice exercise and worked correction
 
@@ -89,7 +91,7 @@ Record conceptual belief state and evidence separately from exercise grades. Adv
 
 ## Journal, proof, and synthesis
 
-Record the quantity predicate, scope, unit, source revision, observation time, decision time, error or rejection, and resulting bounded action. Link the JSON test receipt and script hash. Summarize which counts can legitimately be compared and which require new evidence. CYB-002 introduces target and measured state; this lesson operationalizes their compatibility. CYB-003 concerns distinguishable states and variety rather than count provenance. The fixture verifies contract cases under a shared-clock assumption; it does not validate deployed counters or certify existing course quality. Independent review and translations remain pending.
+Record the quantity predicate, scope, unit, source revision, observation time, decision time, error or rejection, and resulting bounded action. Link the JSON test receipt and script hash. Summarize which counts can legitimately be compared and which require new evidence. CYB-002 introduces target and measured state; this lesson operationalizes their compatibility. CYB-003 concerns distinguishable states and variety rather than count provenance. The fixture verifies contract cases under a shared-clock assumption; it does not validate deployed counters or certify existing course quality. Human subject and learner review and translations remain pending.
 
 ## Further reading
 

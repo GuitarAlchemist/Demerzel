@@ -14,7 +14,9 @@ status: local_draft
 
 # CYB-017: Local Versus Global Stability
 
-> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration candidate; English draft, review and translations pending
+> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration candidate; English draft, human subject-matter review and translations pending
+
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
 
 ## Objectives
 
@@ -55,7 +57,7 @@ A queue reaches zero, but the requested artifact is absent. Can the task be reco
 
 ## 4. Apply the counterexample to code
 
-From the package overlay root, run:
+From the Demerzel repository root, run:
 
 ```powershell
 python scripts/course-exercises/cyb_systems.py --json

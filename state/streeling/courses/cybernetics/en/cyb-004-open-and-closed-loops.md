@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Beginner | 35 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Draw the causal return path that distinguishes an open loop from a closed loop.
@@ -87,7 +89,7 @@ Record conceptual belief state and evidence separately from exercise grades. Adv
 
 ## Journal, proof, and synthesis
 
-Save target, scope, tick definitions, predicted traces, actual JSON, script hash, and one failed-control explanation. State what decision changed because of output evidence. The lesson extends CYB-002's mechanism survey with a causal test and derivation; CYB-005 checks measurement contracts and CYB-006 tests delay. The evidence supports this scalar comparison and the acceptance/completion distinction. It does not establish general stability, live routing correctness, or production throughput. Translation and independent review are pending.
+Save target, scope, tick definitions, predicted traces, actual JSON, script hash, and one failed-control explanation. State what decision changed because of output evidence. The lesson extends CYB-002's mechanism survey with a causal test and derivation; CYB-005 checks measurement contracts and CYB-006 tests delay. The evidence supports this scalar comparison and the acceptance/completion distinction. It does not establish general stability, live routing correctness, or production throughput. Translation and human subject-matter review are pending.
 
 ## Further reading
 

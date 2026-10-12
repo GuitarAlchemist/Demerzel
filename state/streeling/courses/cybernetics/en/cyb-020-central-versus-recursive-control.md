@@ -14,7 +14,9 @@ status: local_draft
 
 # CYB-020: Central Versus Recursive Control
 
-> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration candidate; English draft, review and translations pending
+> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration candidate; English draft, human subject-matter review and translations pending
+
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
 
 ## Objectives
 
@@ -57,7 +59,7 @@ Two concurrent callers both read spent=1, cap=3, then request 2. Can both rely o
 
 ## 4. Connect the contract to executable evidence
 
-From the package overlay root, run:
+From the Demerzel repository root, run:
 
 ```powershell
 python scripts/course-exercises/cyb_systems.py --json

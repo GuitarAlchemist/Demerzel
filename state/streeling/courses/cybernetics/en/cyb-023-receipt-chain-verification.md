@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Intermediate | 45 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 An acknowledgement and a completion receipt can both be genuine while referring to different work. A retry may produce generation two while a late result from generation one arrives afterward. A controller needs evidence that binds identity, stage, and artifact rather than a search for the word done. This lesson constructs a small inspectable chain; it is an integrity exercise, not a new transport or cryptographic authentication system.
 
 ## Objectives
@@ -85,4 +87,4 @@ Record request label, generation, artifact identity, ordered stages, verifier id
 
 ## Further Reading and Overlap Boundary
 
-[Python hashlib documentation](https://docs.python.org/3/library/hashlib.html) documents the digest API used by the fixture. [Lamport, Time, Clocks, and the Ordering of Events](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) supports the distinction between causal relations and clock readings. CYB-022 measures progress; CYB-023 binds delivery stages to identity and content. CS-002's checkpoint overview does not supply these replay and artifact-mismatch exercises. Translation and independent review remain pending.
+[Python hashlib documentation](https://docs.python.org/3/library/hashlib.html) documents the digest API used by the fixture. [Lamport, Time, Clocks, and the Ordering of Events](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) supports the distinction between causal relations and clock readings. CYB-022 measures progress; CYB-023 binds delivery stages to identity and content. CS-002's checkpoint overview does not supply these replay and artifact-mismatch exercises. Translation and human subject-matter review remain pending.

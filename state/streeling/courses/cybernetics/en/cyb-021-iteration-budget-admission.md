@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Intermediate | 40 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 A request to keep improving an artifact is not a resource contract. Three unsuccessful attempts may consume three attempts, even when they leave the artifact unchanged. Conversely, three cheap successes may fit a credit limit but exceed a deadline. This lesson turns a budget into an admission decision made before an action. All quantities below are synthetic teaching units: they are neither prices nor measured execution times.
 
 ## Objectives
@@ -89,4 +91,4 @@ Record initial allowances, estimates, admitted actions, failed actions, rejectio
 
 ## Further Reading and Overlap Boundary
 
-CS-002 introduces the general governed-loop pattern; CYB-021 contributes multi-limit arithmetic and reservation counterexamples rather than repeating its six-property survey. CYB-010 covers observable stopping and CYB-014 capacity; this lesson covers authorization of individual actions. [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) supplies broader risk-management context, not our invented numerical limits. The existing Streeling two-stage assessment policy supplies the assessment structure. Translation and independent review remain pending.
+CS-002 introduces the general governed-loop pattern; CYB-021 contributes multi-limit arithmetic and reservation counterexamples rather than repeating its six-property survey. CYB-010 covers observable stopping and CYB-014 capacity; this lesson covers authorization of individual actions. [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) supplies broader risk-management context, not our invented numerical limits. The existing Streeling two-stage assessment policy supplies the assessment structure. Translation and human subject-matter review remain pending.

@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Advanced | 45 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 A worker can finish the wrong generation while the coordinator still displays healthy queue sizes. Another can repeat a valid completion and make a naive counter reach its target twice as fast. This capstone combines bounded admission, measurement, and receipt identity in one small event model. Stability here means preserving declared invariants and settling a finite trace; it is not a proof of dynamical stability for every distributed execution.
 
 ## Objectives
@@ -85,4 +87,4 @@ Record event index, request, owner, epoch, classification, state counts, invaria
 
 ## Further Reading and Overlap Boundary
 
-CYB-002 surveys dampening mechanisms; this capstone tests the composition of identity and conservation controls. MAT-024 addresses mathematical stability, a stronger and different objective than finite event invariants. CS-002 surveys governed loops; the capstone requires reconstructing an adversarial trace. [Lamport's event-ordering paper](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) gives causal-order context; our request model and epoch contract are authored teaching choices. Translation and independent review remain pending.
+CYB-002 surveys dampening mechanisms; this capstone tests the composition of identity and conservation controls. MAT-024 addresses mathematical stability, a stronger and different objective than finite event invariants. CS-002 surveys governed loops; the capstone requires reconstructing an adversarial trace. [Lamport's event-ordering paper](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) gives causal-order context; our request model and epoch contract are authored teaching choices. Translation and human subject-matter review remain pending.

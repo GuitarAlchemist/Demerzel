@@ -16,6 +16,8 @@ status: local_draft
 
 > **Cybernetics** | Intermediate | 45 minutes | Provisional CYB-012
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Compute sign reversals, span and endpoint contraction from measured error.
@@ -85,7 +87,7 @@ Record conceptual belief state and evidence separately from exercise grades. Adv
 
 Stage one: calculate the persistent trace's five reversals, span eight and ratio one; explain noise rejection and the positive sawtooth blind spot. Award two points per task and require five of six with the blind spot identified. Stage two: predict a changed synthetic trace, run the code, preserve the sign-only mutant rejection and explain the timestamp failure. Require all four artifacts before recording demonstrated application; no learner was tested by this authoring run.
 
-Journal units, target, sample times, tolerance, window choice, script hash, expected result and observed result. Synthesize the positive and negative controls together: the code implements the declared target-crossing rule and resists the noise counterexample. It cannot establish global stability, causality, optimum thresholds or completeness for periodic behavior. CYB-002 retains regulation mechanisms, MAT-024 retains formal dynamics, and CYB-017 will examine local versus global stability. This provisional draft still requires independent review and translations before integration approval.
+Journal units, target, sample times, tolerance, window choice, script hash, expected result and observed result. Synthesize the positive and negative controls together: the code implements the declared target-crossing rule and resists the noise counterexample. It cannot establish global stability, causality, optimum thresholds or completeness for periodic behavior. CYB-002 retains regulation mechanisms, MAT-024 retains formal dynamics, and CYB-017 will examine local versus global stability. This provisional draft still requires human subject-matter review and translations before integration approval.
 
 ## Offline Solution
 

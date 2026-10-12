@@ -14,7 +14,9 @@ status: local_draft
 
 # CYB-018: Responding to Known Disturbances
 
-> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration candidate; English draft, review and translations pending
+> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration candidate; English draft, human subject-matter review and translations pending
+
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
 
 ## Objectives
 
@@ -57,7 +59,7 @@ Which diagnosis fits accurate forecast, requested service 8, actual service 6? *
 
 ## 4. Apply the comparison without rewriting history
 
-Run from the package overlay root:
+Run from the Demerzel repository root:
 
 ```powershell
 python scripts/course-exercises/cyb_systems.py --json

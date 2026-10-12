@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Intermediate | 45 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 An automated audio iteration may generate a file, report a numerical improvement, and still sound worse. This lesson concerns the control of claims across that loop: what was transformed, which measurements belong to it, and what remains untested. It teaches no compressor recipe and requires no recording device, model download, GPU, or paid service. The only signal is four invented normalized samples.
 
 ## Objectives
@@ -85,4 +87,4 @@ Record signal definition, gain, input/configuration/output identities, metric fo
 
 ## Further Reading and Overlap Boundary
 
-AUD-001 covers EQ/compression order; CYB-024 covers measurement provenance and termination claims, not signal-chain design. CS-004's composable audio-loop topic overlaps the application context. CYB-024 centers the distinction between numerical acceptance and unobserved perception; independent semantic review against the complete CS-004 source remains required. [Python hashlib documentation](https://docs.python.org/3/library/hashlib.html) documents the digest API. [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) provides broader evaluation context; the synthetic acceptance rule is ours. Translation and independent review remain pending.
+AUD-001 covers EQ/compression order; CYB-024 covers measurement provenance and termination claims, not signal-chain design. CS-004's composable audio-loop topic overlaps the application context. CYB-024 centers the distinction between numerical acceptance and unobserved perception; independent semantic review against the complete CS-004 source remains required. [Python hashlib documentation](https://docs.python.org/3/library/hashlib.html) documents the digest API. [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) provides broader evaluation context; the synthetic acceptance rule is ours. Translation and human subject-matter review remain pending.

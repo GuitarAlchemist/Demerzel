@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Intermediate | 40 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 A busy worker can repeatedly rewrite a report without resolving a single defect. A changed file hash establishes a change, not useful progress. An observed authorized continuation produced an acknowledgement before a durable result and a separate exact-output verification. That abstract incident motivates the distinction; this lesson uses invented artifact revisions, not the original material, identities, or sessions.
 
 ## Objectives
@@ -85,4 +87,4 @@ Record target version, baseline revision, candidate identity, measured revision,
 
 ## Further Reading and Overlap Boundary
 
-CS-002 introduces an external progress test; this lesson exposes its hash-only simplification through measurement counterexamples. CYB-005 concerns signals and setpoints; CYB-022 adds artifact-to-validator binding. CYB-023 will add an ordered receipt chain. [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) offers general context for documenting evaluation limits. Our checklist and classifications are authored teaching definitions, not findings measured across a fleet. Translation and independent review remain pending.
+CS-002 introduces an external progress test; this lesson exposes its hash-only simplification through measurement counterexamples. CYB-005 concerns signals and setpoints; CYB-022 adds artifact-to-validator binding. CYB-023 will add an ordered receipt chain. [NIST AI RMF 1.0](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf) offers general context for documenting evaluation limits. Our checklist and classifications are authored teaching definitions, not findings measured across a fleet. Translation and human subject-matter review remain pending.

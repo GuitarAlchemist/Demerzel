@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Beginner | 40 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Define a deadband using the signal's units and an explicit boundary rule.
@@ -85,7 +87,7 @@ A reviewer claims zero output proves the timing residual meets every requirement
 
 ## Journal, proof, and synthesis
 
-Save units, width, boundary rule, raw trace, action trace, residual budget, emergency precedence, predicted results, JSON receipt, and script hash. Explain why both no-band and over-wide-band controls are necessary. CYB-002 introduces deadbands; this module supplies executable tolerance and failure budgets. CYB-007 covers memory, CYB-009 cadence, and MAT-024 mathematical stability. Evidence supports this bounded gate and its controls, not a physical actuator model, universal stability, learner completion, or production fault coverage. Translation, integration, and independent review remain separate gates.
+Save units, width, boundary rule, raw trace, action trace, residual budget, emergency precedence, predicted results, JSON receipt, and script hash. Explain why both no-band and over-wide-band controls are necessary. CYB-002 introduces deadbands; this module supplies executable tolerance and failure budgets. CYB-007 covers memory, CYB-009 cadence, and MAT-024 mathematical stability. Evidence supports this bounded gate and its controls, not a physical actuator model, universal stability, learner completion, or production fault coverage. Translation, integration, and human subject-matter review remain separate gates.
 
 ## Further reading
 

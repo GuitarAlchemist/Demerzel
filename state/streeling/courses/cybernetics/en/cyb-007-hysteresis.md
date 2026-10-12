@@ -16,6 +16,8 @@ status: local_draft
 
 > **Department of Cybernetics** | Beginner | 40 minutes
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Trace a two-threshold relay with an explicit initial state and equality rule.
@@ -85,7 +87,7 @@ The alert is on and the next measurement is missing. Should it clear? What belon
 
 ## Journal, proof, and synthesis
 
-Save thresholds, equality rules, initial state, input trace, predicted states, actual JSON, source hash, restart policy, and the reset mutant's failed criterion. Summarize why four switches replace six for this trace. CYB-002 surveys hysteresis; this module supplies state-memory semantics and an executable counterexample. CYB-008 isolates memoryless tolerance, and CYB-009 treats timing. This evidence establishes a bounded relay contract, not global stability, fleet reliability, a production parameter choice, or completed learning. Translation, integration, and independent review are separate pending gates.
+Save thresholds, equality rules, initial state, input trace, predicted states, actual JSON, source hash, restart policy, and the reset mutant's failed criterion. Summarize why four switches replace six for this trace. CYB-002 surveys hysteresis; this module supplies state-memory semantics and an executable counterexample. CYB-008 isolates memoryless tolerance, and CYB-009 treats timing. This evidence establishes a bounded relay contract, not global stability, fleet reliability, a production parameter choice, or completed learning. Translation, integration, and human subject-matter review are separate pending gates.
 
 ## Further reading
 

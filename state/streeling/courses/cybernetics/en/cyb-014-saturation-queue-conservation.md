@@ -14,7 +14,9 @@ status: local_draft
 
 # Saturation, Queues and Conservation of Work
 
-> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration ID; translations and review pending
+> **Department of Cybernetics** | Intermediate | 40 minutes | Provisional integration ID; translations and human subject-matter review pending
+
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
 
 ## Objectives
 

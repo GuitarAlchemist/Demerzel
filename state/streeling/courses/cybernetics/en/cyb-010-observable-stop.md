@@ -16,6 +16,8 @@ status: local_draft
 
 > **Cybernetics** | Intermediate | 40 minutes | Provisional CYB-010
 
+**Review status:** The batch journal records a completed independent AI/local English manuscript review on 2026-10-07; a later audit reopened source-evidence and project-grounding questions. Human subject-matter review, learner assessment, fluent translation review, cross-model CI review, publication approval, and anonymous public readback remain pending.
+
 ## Objectives
 
 - Distinguish a stop request, an acknowledgement and observed quiescence.
@@ -93,7 +95,7 @@ Stage one: identify what ACK proves, explain stale epoch rejection, and describe
 
 Stage two: submit a predicted classification for complete, busy and stale traces, execute the checker and explain a late-work contradiction. Require all three classifications plus a preserved failure receipt. Observe the learner's actual action before marking knowledge transfer; a supplied solution file is not proof that someone learned it.
 
-Journal the UTC interval, request/epoch scope, source of each assertion, exact script hash and rejected trace. Synthesize the successful chain as “valid under this complete-event-list model.” Do not extend it to unseen children, crash recovery, distributed drains or permanent inactivity. CYB-001 supplies governance context and CS-002 supplies externally bounded loops; this module contributes explicit stop evidence rather than a new loop framework. Independent review, localization and real stop implementation remain pending.
+Journal the UTC interval, request/epoch scope, source of each assertion, exact script hash and rejected trace. Synthesize the successful chain as “valid under this complete-event-list model.” Do not extend it to unseen children, crash recovery, distributed drains or permanent inactivity. CYB-001 supplies governance context and CS-002 supplies externally bounded loops; this module contributes explicit stop evidence rather than a new loop framework. Human subject and learner review, localization and real stop implementation remain pending.
 
 ## Offline Solution
 

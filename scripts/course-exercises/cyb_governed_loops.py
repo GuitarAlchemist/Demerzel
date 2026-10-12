@@ -86,7 +86,7 @@ def verify_chain(chain, artifact, request="exercise-job", generation=2):
         if observed_hash != digest(row):
             return False
         previous = observed_hash
-    return chain[-1]["verification_passed"] is True
+    return chain[-1].get("verification_passed") is True
 
 
 def audit_audio(samples, gain, receipt):
