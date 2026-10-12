@@ -35,3 +35,13 @@ python measure-pair.py --output measurements.json
 | Wavelet second-partial change, late minus early | −4.5 dB | −12.9 dB |
 
 The complete output is in `measurements.json`. These values establish differences in the selected windows and analysis method. They do **not** rank perceived realism. A 1-second FFT is only a local summary; the wavelet track adds a time-resolved view whose result depends on its center frequency and six-cycle width. Absolute RMS levels are not comparable without playback-level calibration, and the recorded file's second attack must not be folded into a single-note decay estimate. The GA demo's existing [`compute-spectral-profile.js`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Rust/guitar-web-wasm-demo/scripts/compute-spectral-profile.js) reports approximate features and should not be treated as a pitch or perceptual oracle.
+
+## AUD-004 synthetic time-frequency comparison
+
+`compare-time-frequency.py` generates declared 40 ms Hann-gated bursts at E2 harmonics 1, 2, and 4, then compares a Python reproduction of the pinned IX Hann-window/rFFT spectrogram arithmetic at 2,048 and 8,192 samples with this fixture's Morlet-style kernel. It runs clean and fixed-noise arms and writes `synthetic-time-frequency.json`. Regenerate from this directory with NumPy and SciPy installed:
+
+```powershell
+python compare-time-frequency.py --output synthetic-time-frequency.json
+```
+
+All four fourth-partial bursts were detected per method. The saved medians are 2.313 ms absolute timing error for each fixed-window STFT and 0.034 ms for Morlet. The 2.279 ms difference against the longer STFT falls short of the lesson's declared 5 ms teaching threshold, despite 51.021 dB minimum wrong-center separation for Morlet. The threshold claim therefore fails in this **synthetic** run. The receipt records the script hash, library versions, selected bins, calibration gains, and all event scores. It does not run an IX binary, process either guitar WAV, measure listening quality, or establish a WASM engine benefit.

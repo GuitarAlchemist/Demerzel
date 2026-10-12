@@ -17,7 +17,7 @@
     },
     "content": {
       "completed": true,
-      "word_count": 2166,
+      "word_count": 2328,
       "exercises": 5
     },
     "translation": {
@@ -26,7 +26,7 @@
     },
     "review": {
       "completed": false,
-      "feedback": "English source draft with five answered exercises. Pinned source and arithmetic checked locally. The STFT/Morlet comparison is a proposed experiment, not a measured result. Independent subject, learner, language, Learn-sync, and public publication review remain pending."
+      "feedback": "English source draft with five answered exercises. A checked-in synthetic Python simulation reproduces the pinned IX STFT arithmetic and GAS-001 Morlet kernel and rejects the declared 5 ms timing-advantage threshold. This is not an IX executable run or real-guitar comparison. Independent subject, learner, language, Learn-sync, and public publication review remain pending."
     },
     "publish": {
       "completed": false
