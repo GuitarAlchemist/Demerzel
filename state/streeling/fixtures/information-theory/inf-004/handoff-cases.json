@@ -1,0 +1,11 @@
+{
+  "schema": "streeling.handoff-decision-cases/0.1",
+  "note": "Synthetic classroom cases; not observed agent sessions.",
+  "cases": [
+    {"id": "A", "headline": "ready", "tests_passed": true, "single_writer": true, "review_approved": true},
+    {"id": "B", "headline": "ready", "tests_passed": false, "single_writer": true, "review_approved": true},
+    {"id": "C", "headline": "ready", "tests_passed": true, "single_writer": false, "review_approved": true},
+    {"id": "D", "headline": "ready", "tests_passed": true, "single_writer": true, "review_approved": false}
+  ],
+  "costs": {"false_accept": 10, "false_reject": 1}
+}
