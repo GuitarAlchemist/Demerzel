@@ -1,0 +1,24 @@
+{
+  "cycle_id": "visual-computing-2026-10-12-007",
+  "department": "visual-computing",
+  "question": "Can a small weave program preserve declared crossing alternation across odd-sized tile seams before a Godot renderer is trusted?",
+  "production_path": [
+    "baseline: use pinned GA Godot plan and VC-005 asset-cleanup lesson to define a proposed scene boundary, without claiming an import",
+    "model: use global crossing IDs and an over-under parity rule on a 3-by-3 base tile repeated to 6 by 6",
+    "experiment: execute a synthetic evaluator for global parity and restarted tile parity, count adjacent relation violations",
+    "counterargument: a labeled 2D grid and ordinary JSON manifest may be clearer and cheaper than a 3D weave or a new DSL",
+    "falsifier: reject a 3D educational candidate if an ID binding is wrong, a seam breaks alternation, or task comprehension falls below a fixed 2D baseline"
+  ],
+  "hypothesis": "A global-coordinate crossing rule can expose odd-tile seam errors that local tile checks miss, but this alone cannot validate a Godot scene or justify a new DSL.",
+  "test_method": "simulation",
+  "evidence": [
+    "At Demerzel commit f23ccae6c049d9066a1be2221c68f3b0bcf48373, the synthetic fixture and evaluator define both variants and an exact adjacency checker; one 6-by-6 evaluation produced 36 unique IDs per variant, 0 global-parity violations, and 12 restarted-tile violations.",
+    "The pinned GA Godot integration plan at dc2e74cbd992a298f67efb928b5b3754615e1924 is a proposal, not an import receipt. No renderer, learner trial, or human review is measured by this research cycle.",
+    "Five answered exercises include invented future click, viewer, and frame-time outcomes. The executable fixture is the only measured artifact. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T21:54:09Z"
+}
