@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1.0",
+  "scope": "Teaching examples from explicitly supplied MIDI notes and declared roots; not GA OPTIC-K vectors or search results",
+  "cases": [
+    {"id": "c_major_low", "midi": [48, 52, 55], "declared_root_pc": 0},
+    {"id": "c_major_high", "midi": [60, 64, 67], "declared_root_pc": 0},
+    {"id": "d_major", "midi": [50, 54, 57], "declared_root_pc": 2},
+    {"id": "c_minor", "midi": [48, 51, 55], "declared_root_pc": 0},
+    {"id": "c_diminished", "midi": [48, 51, 54], "declared_root_pc": 0}
+  ],
+  "comparisons": [
+    ["c_major_low", "c_major_high"],
+    ["c_major_low", "d_major"],
+    ["c_major_low", "c_minor"],
+    ["c_major_low", "c_diminished"]
+  ]
+}
