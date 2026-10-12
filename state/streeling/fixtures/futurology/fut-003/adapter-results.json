@@ -1,0 +1,144 @@
+{
+  "fixture_status": "synthetic teaching fixture; no live agents, costs, or human verdicts measured",
+  "expected_cases": [
+    "A",
+    "B",
+    "C"
+  ],
+  "adapters": {
+    "current": {
+      "comparable_cases": true,
+      "all_admissible": true,
+      "admissible_count": 3,
+      "run_count": 3,
+      "median_minutes_if_admitted": 40,
+      "corrections_if_admitted": 2,
+      "runs": [
+        {
+          "case": "A",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 40,
+          "corrections": 1
+        },
+        {
+          "case": "B",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 44,
+          "corrections": 0
+        },
+        {
+          "case": "C",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 39,
+          "corrections": 1
+        }
+      ]
+    },
+    "fast": {
+      "comparable_cases": true,
+      "all_admissible": false,
+      "admissible_count": 1,
+      "run_count": 3,
+      "median_minutes_if_admitted": null,
+      "corrections_if_admitted": null,
+      "runs": [
+        {
+          "case": "A",
+          "admissible": false,
+          "reasons": [
+            "source_identity_mismatch"
+          ],
+          "minutes": 15,
+          "corrections": 2
+        },
+        {
+          "case": "B",
+          "admissible": false,
+          "reasons": [
+            "missing_checks:public_readback"
+          ],
+          "minutes": 16,
+          "corrections": 1
+        },
+        {
+          "case": "C",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 14,
+          "corrections": 2
+        }
+      ]
+    },
+    "portable": {
+      "comparable_cases": true,
+      "all_admissible": true,
+      "admissible_count": 3,
+      "run_count": 3,
+      "median_minutes_if_admitted": 32,
+      "corrections_if_admitted": 2,
+      "runs": [
+        {
+          "case": "A",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 31,
+          "corrections": 1
+        },
+        {
+          "case": "B",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 32,
+          "corrections": 0
+        },
+        {
+          "case": "C",
+          "admissible": true,
+          "reasons": [],
+          "minutes": 34,
+          "corrections": 1
+        }
+      ]
+    },
+    "shortcut": {
+      "comparable_cases": true,
+      "all_admissible": false,
+      "admissible_count": 0,
+      "run_count": 3,
+      "median_minutes_if_admitted": null,
+      "corrections_if_admitted": null,
+      "runs": [
+        {
+          "case": "A",
+          "admissible": false,
+          "reasons": [
+            "review_not_approved"
+          ],
+          "minutes": 20,
+          "corrections": 0
+        },
+        {
+          "case": "B",
+          "admissible": false,
+          "reasons": [
+            "review_not_approved"
+          ],
+          "minutes": 19,
+          "corrections": 0
+        },
+        {
+          "case": "C",
+          "admissible": false,
+          "reasons": [
+            "review_not_approved"
+          ],
+          "minutes": 21,
+          "corrections": 0
+        }
+      ]
+    }
+  }
+}

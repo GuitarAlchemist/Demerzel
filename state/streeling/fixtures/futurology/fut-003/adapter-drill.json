@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1.0",
+  "status": "synthetic teaching fixture; no live agents, costs, or human verdicts measured",
+  "required_checks": ["build", "targeted_test", "public_readback"],
+  "runs": [
+    {"adapter": "current", "case": "A", "source": "fixture-A-v1", "output_source": "fixture-A-v1", "review_source": "fixture-A-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 40, "corrections": 1},
+    {"adapter": "current", "case": "B", "source": "fixture-B-v1", "output_source": "fixture-B-v1", "review_source": "fixture-B-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 44, "corrections": 0},
+    {"adapter": "current", "case": "C", "source": "fixture-C-v1", "output_source": "fixture-C-v1", "review_source": "fixture-C-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 39, "corrections": 1},
+    {"adapter": "portable", "case": "A", "source": "fixture-A-v1", "output_source": "fixture-A-v1", "review_source": "fixture-A-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 31, "corrections": 1},
+    {"adapter": "portable", "case": "B", "source": "fixture-B-v1", "output_source": "fixture-B-v1", "review_source": "fixture-B-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 32, "corrections": 0},
+    {"adapter": "portable", "case": "C", "source": "fixture-C-v1", "output_source": "fixture-C-v1", "review_source": "fixture-C-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 34, "corrections": 1},
+    {"adapter": "fast", "case": "A", "source": "fixture-A-v1", "output_source": "fixture-A-v2", "review_source": "fixture-A-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 15, "corrections": 2},
+    {"adapter": "fast", "case": "B", "source": "fixture-B-v1", "output_source": "fixture-B-v1", "review_source": "fixture-B-v1", "review_verdict": "approved", "checks": ["build", "targeted_test"], "minutes": 16, "corrections": 1},
+    {"adapter": "fast", "case": "C", "source": "fixture-C-v1", "output_source": "fixture-C-v1", "review_source": "fixture-C-v1", "review_verdict": "approved", "checks": ["build", "targeted_test", "public_readback"], "minutes": 14, "corrections": 2},
+    {"adapter": "shortcut", "case": "A", "source": "fixture-A-v1", "output_source": "fixture-A-v1", "review_source": "fixture-A-v1", "review_verdict": "pending", "checks": ["build", "targeted_test", "public_readback"], "minutes": 20, "corrections": 0},
+    {"adapter": "shortcut", "case": "B", "source": "fixture-B-v1", "output_source": "fixture-B-v1", "review_source": "fixture-B-v1", "review_verdict": "pending", "checks": ["build", "targeted_test", "public_readback"], "minutes": 19, "corrections": 0},
+    {"adapter": "shortcut", "case": "C", "source": "fixture-C-v1", "output_source": "fixture-C-v1", "review_source": "fixture-C-v1", "review_verdict": "pending", "checks": ["build", "targeted_test", "public_readback"], "minutes": 21, "corrections": 0}
+  ]
+}
