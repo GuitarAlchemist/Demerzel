@@ -1,0 +1,25 @@
+{
+  "cycle_id": "semiotics-2026-10-12-003",
+  "department": "semiotics",
+  "question": "What does agentic status language such as draft, ready, reviewed, and published establish about a Streeling course, and which pinned artifacts support or limit each claim?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin SEM-002 course-production record, bounded AI review receipt, production schema, source-progress reporter, course preflight, and dated public baseline at Demerzel c453a91d1c4d913af72c28779eff826659c1d654",
+    "test: cross-check five exercise answers against those artifacts and separate synthetic examples from observed outcomes"
+  ],
+  "hypothesis": "In the pinned SEM-002 case, a status word or passing structural check alone does not establish final review or public publication; the linked record, scoped receipt, and public readback distinguish those claims and expose missing gates.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit c453a91d1c4d913af72c28779eff826659c1d654, state/streeling/course-productions/cp-semiotics-2026-10-11-002.json states in_progress, translation languages en, review.completed false, and publish.completed false.",
+    "At that commit, state/streeling/reviews/sem-002-subject-review-2026-10-11.md records no findings only in a bounded AI source and answer-key review; it explicitly leaves human subject, learner, fluent-language, and public Learn checks open.",
+    "The pinned schemas/course-production.schema.json status enum contains in_progress, review_pending, published, rejected, and failed; it does not define draft, ready, or reviewed, and does not require status published to imply publish.completed true.",
+    "The pinned scripts/streeling_course_progress.py counts a pipeline review approval only when review.completed is true and verdict is approved; scripts/streeling_course_preflight.py checks source and record consistency but does not assess subject quality or fetch the public Learn route. Its explicit status consistency check applies to in_progress.",
+    "The dated state/streeling/reviews/public-baseline-2026-10-11.md records local DV-001 page generation and anonymous 404 responses for the corresponding public routes on 2026-10-11. It is historical DV-001 evidence, not a live SEM-002 or SEM-003 readback.",
+    "Five answered exercises test evidence/claim distinctions on paper. Whether evidence-scoped handoffs reduce agent overclaiming remains untested: no controlled handoff or learner study was executed; duration_seconds=0 indicates that research duration was not instrumented."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T03:28:30Z"
+}
