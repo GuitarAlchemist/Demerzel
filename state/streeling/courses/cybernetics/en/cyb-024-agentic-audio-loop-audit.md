@@ -69,11 +69,21 @@ The implementation computes the transformed sequence rather than trusting suppli
 
 [Offline solution and executable controls](../../../../../scripts/course-exercises/cyb_governed_loops.py): record `audio_audit`.
 
+## 5. Project transfer: audit GA's open-E evidence before proposing a new arm
+
+The [GA Rust guitar engine at `dc2e74cb`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Rust/guitar-web-wasm-demo/rust-engine/src/lib.rs) has a profile-0 base decay of `0.9978` and an `engine_set_decay` setter. A separate, pinned [GAS-001 measurement record at Demerzel `5c496745`](https://github.com/GuitarAlchemist/Demerzel/blob/5c4967454ddc740ed937c87719ca4d71a3522e4b/state/streeling/fixtures/guitar-acoustics/gas-001/measurements.json) reports a labeled recorded open E2 and a **native** GA E2 render, each at 44,100 Hz for four seconds. It lists saved WAV hashes and measured windows. The recorded note's late-minus-early RMS change is `−3.9 dB`; the GA render's is `−1.1 dB`. The render's sample peak is `0.4602`. These are saved measurements of two different sources, not before/after outputs of a ComfyUI or decay-adjustment run.
+
+**Project exercise.** Calculate the rounded magnitude of the decay-measure gap. Classify the saved GA peak, the input/configuration/output binding required by `audit_audio`, a claim that changing decay improved timbre, and listener preference as **observed**, **partially evidenced**, or **not tested**. Name one controlled next experiment and its falsifying result.
+
+**Worked correction.** `|−1.1 − (−3.9)| = 2.8 dB` on the saved rounded figures. Peak `0.4602` is an observed sample-peak measurement for the saved native render; it is not a true-peak or musical-quality verdict. WAV hashes and measurement windows partially establish provenance, but this JSON is **not** the three-part input/configuration/output receipt required by the synthetic `audit_audio` function, so do not feed it in as a passing receipt. A decay-improvement claim and listener preference are **not tested**. A next arm could render the same E2 input twice from fresh engines at the pinned build, hold profile, note, velocity, duration, and analysis windows fixed, vary only the documented decay setter, and save both WAV hashes plus a measurement receipt. A candidate that fails a preregistered decay-error gate would falsify that narrow improvement claim. Listening and the browser AudioWorklet would still need their own checks; this exercise runs neither arm.
+
 ## Two-Stage Assessment
 
 Record conceptual belief state and evidence separately from exercise grades. Advance to behavioral assessment only for justified True with confidence >= 0.7; never infer or invent confidence from a score. Adapt teaching for Unknown, investigate Contradictory evidence, and follow the policy's three-attempt limit and escalation requirement if comprehension remains unresolved. These are assessment instructions; no belief transition or escalation has been performed.
 
 Conceptual stage, four points: compute peak, compute RMS squared, explain provenance mismatch, and distinguish range acceptance from listening judgment. Require all four with calculations. Behavioral stage, four points: preserve the positive record, provoke excessive peak, provoke configuration mismatch, and retain `not_tested` for perception. Require all cases. No learner performance or confidence score has been observed; the package supplies questions and a grading contract.
+
+**Project-transfer check:** additionally require the rounded `2.8 dB` saved gap, the GA render's `0.4602` sample peak, and an explicit statement that the GAS-001 record lacks the complete synthetic audit receipt and any listener or processed-candidate result. Do not convert these answers into a listening score.
 
 ## Key Takeaways
 

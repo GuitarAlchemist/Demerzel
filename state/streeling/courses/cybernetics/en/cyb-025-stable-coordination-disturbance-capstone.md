@@ -69,11 +69,21 @@ For a deliberately wrong design, delete the epoch-and-worker match and accept an
 
 [Offline solution and executable controls](../../../../../scripts/course-exercises/cyb_governed_loops.py): record `disturbance_capstone`.
 
+## 5. Project transfer: classify the Streeling review-to-publication chain
+
+At **2026-10-12 04:58 UTC**, [Demerzel source PR #1195](https://github.com/GuitarAlchemist/Demerzel/pull/1195) was open at `c0db174f21a5b88b960cd47b0f51d7a9b79e16d3`, with human subject-matter and learner review still open. [Learn import PR #161](https://github.com/spareilleux/learn/pull/161) was a draft at `0975c47902a1d28e55af607bb3f3f9e46c19397c`. Its [source lock](https://github.com/spareilleux/learn/blob/0975c47902a1d28e55af607bb3f3f9e46c19397c/streeling.lock.json) named the older Demerzel `5d6dcb9077120db2f50235e7bbe3db8f34e2f2de`, while the [clean-source guard from Learn #167](https://github.com/spareilleux/learn/blob/3f4de745f56e81f237159997473253546d7f6d64/scripts/sync-streeling.mjs) was already merged. Anonymous reads of the [CYB-019](https://spareilleux.github.io/learn/streeling/cybernetics/cyb-019-cross-repository-coupling/), [CYB-024](https://spareilleux.github.io/learn/streeling/cybernetics/cyb-024-agentic-audio-loop-audit/), and [CYB-025](https://spareilleux.github.io/learn/streeling/cybernetics/cyb-025-stable-coordination-disturbance-capstone/) routes each returned HTTP 404 at that snapshot. These observations are time-bound; the immutable SHAs preserve what was inspected even if PRs later move.
+
+**Project exercise.** Treat source revision, import revision, human review, merge, deployment, public readback, and learner assessment as separate gates. Fill each as **evidenced**, **open**, or **mismatched** at this snapshot. A teammate points to passing local tests and the merged #167 guard as proof that CYB-025 is delivered. Identify the first missing proof and state the strongest defensible status.
+
+**Worked correction.** Source authoring and a locally tested import candidate are evidenced. The import's `5d6dcb9` source lock is **mismatched** with the observed `c0db174` source head. Human subject-matter and learner review are **open**; #1195 and draft #161 have not merged, so merge/deployment are **open**; three HTTP 404 responses contradict public readback at this time. The first revision gate is an approved clean source head represented accurately by the Learn lock; passing tests of the older import do not close it. The strongest claim is **prepared, revision-stale draft import with unpublished pages and no observed learner outcome**. After content and review resolution, resync, review, merge, deployment, anonymous readback, and learner assessment each need their own receipt. This is a status reconstruction, not a claim that the fictional three-request `Coordinator` controls GitHub or Learn.
+
 ## Two-Stage Assessment
 
 Record conceptual belief state and evidence separately from exercise grades. Advance to behavioral assessment only for justified True with confidence >= 0.7; never infer or invent confidence from a score. Adapt teaching for Unknown, investigate Contradictory evidence, and follow the policy's three-attempt limit and escalation requirement if comprehension remains unresolved. These are assessment instructions; no belief transition or escalation has been performed.
 
 Conceptual stage, four points: reconstruct the count trace, state disjointness, explain stale epochs, and distinguish safety from liveness. Require all four. Behavioral stage, four points: run the eleven-event trace, preserve the stale-retry counterexample, add the busy-worker assignment rejection, and document the incomplete trace without its last completion. Require correct outputs and truthful claims. No learner or live coordination system has been assessed by writing this lesson.
+
+**Project-transfer check:** require a separate source-lock comparison and a gate table that leaves human/learner review, merge, deployment and public readback open at the stated snapshot. Passing the synthetic coordinator cannot substitute for this evidence table.
 
 ## Key Takeaways
 

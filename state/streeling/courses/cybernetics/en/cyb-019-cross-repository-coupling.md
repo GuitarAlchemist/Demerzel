@@ -73,6 +73,16 @@ For a deeper exercise, draw a diamond A→B, A→C, B→D, C→D. Under the same
 
 Why can a changed filename be an insufficient generation key? **Correction:** repeated changes to the same filename are distinct changes, while one causal change may affect several filenames. Use a domain-specific immutable change identity or equivalent verified content/version identity, and preserve the rule in the receipt. This fixture uses g1/g2 labels solely to teach that distinction.
 
+## 5. Project transfer: inspect the Demerzel-to-Learn edge
+
+At **2026-10-12 04:57 UTC**, [Demerzel PR #1195](https://github.com/GuitarAlchemist/Demerzel/pull/1195) had source head `c0db174f21a5b88b960cd47b0f51d7a9b79e16d3`. The [draft Learn PR #161 at `0975c479`](https://github.com/spareilleux/learn/pull/161) had a [`streeling.lock.json` pinned to `5d6dcb9`](https://github.com/spareilleux/learn/blob/0975c47902a1d28e55af607bb3f3f9e46c19397c/streeling.lock.json) and its [generated CYB-019 source link](https://github.com/spareilleux/learn/blob/0975c47902a1d28e55af607bb3f3f9e46c19397c/src/content/docs/streeling/cybernetics/cyb-019-cross-repository-coupling.md) named that same older commit. This is a real **Demerzel source → Learn import** dependency, with a revision mismatch; it is not evidence that either repository automatically schedules writes to the other.
+
+[Learn PR #167](https://github.com/spareilleux/learn/pull/167) merged as `3f4de745f56e81f237159997473253546d7f6d64`. Its [sync guard](https://github.com/spareilleux/learn/blob/3f4de745f56e81f237159997473253546d7f6d64/scripts/sync-streeling.mjs) rejects a local source checkout with tracked, untracked, or ignored changes under `state/streeling` before generating output. This protects the source SHA recorded in the lock and links. It does not resync #161, approve its courses, or create a Learn → Demerzel feedback edge.
+
+**Project exercise.** Draw only observed edges, then answer: (1) does #161 represent the `c0db174` source head at this snapshot, (2) may a dirty `state/streeling` checkout be synchronized under the merged guard, and (3) does the source/import relationship prove a two-repository cycle? Name the next bounded action without claiming publication.
+
+**Worked correction.** Draw Demerzel `5d6dcb9` → Learn `0975c479` for the prepared import and Demerzel `c0db174` as a newer source state not yet represented there. The SHA comparison is unequal, so answer (1) **no**. The merged guard rejects that dirty checkout, so (2) **no**; use a committed, clean source revision for a later sync and review its generated diff. Answer (3) **no**: no observed Learn output schedules a new Demerzel generation. The action is to resolve the source review and content questions, then refresh the import from an approved clean source head and verify the lock, links, build, and public result through separate gates. A future Learn issue could be a feedback input only after its identity, authorization, and effect are evidenced. The A↔B fixture remains a synthetic counterexample, not a measurement of these PRs.
+
 ## Two-stage assessment
 
 Record conceptual belief state and evidence separately from exercise grades. Advance to behavioral assessment only for justified True with confidence >= 0.7; never infer or invent confidence from a score. Adapt teaching for Unknown, investigate Contradictory evidence, and follow the policy's three-attempt limit and escalation requirement if comprehension remains unresolved. These are assessment instructions; no belief transition or escalation has been performed.
@@ -80,6 +90,8 @@ Record conceptual belief state and evidence separately from exercise grades. Adv
 **Conceptual, 4 points:** define the arrow, trace the mutant, explain both key components, and identify the crash/concurrency gap. Require all four before application. Record initial and revised beliefs and explain disagreements; numerical confidence is not generated from this score.
 
 **Behavioral, 4 points:** run the four scenarios, retain pending-work evidence, demonstrate g2 is not suppressed, and predict the diamond result under a stated identity rule. Require four points plus observed code execution before marking transfer. No learner outcome is claimed by the author. If understanding remains unresolved after three attempts, follow the existing policy escalation.
+
+**Project-transfer check:** separately require the learner to name the `5d6dcb9` lock, the newer `c0db174` source snapshot, the merged clean-source guard, and the absence of an observed reverse scheduling edge. Keep this evidence classification distinct from the four synthetic-code points.
 
 ## Journal, proof and synthesis
 
