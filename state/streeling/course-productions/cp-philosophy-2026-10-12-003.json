@@ -7,7 +7,7 @@
   "phases": {
     "research": {"completed": true, "belief_value": "P", "belief_confidence": 0.78},
     "outline": {"completed": true, "sections": 4, "estimated_duration": "40 minutes"},
-    "content": {"completed": true, "word_count": 1596, "exercises": 5},
+    "content": {"completed": true, "word_count": 1622, "exercises": 5},
     "translation": {"completed": false, "languages": ["en"]},
     "review": {
       "completed": false,
