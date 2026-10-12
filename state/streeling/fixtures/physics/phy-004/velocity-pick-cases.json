@@ -1,0 +1,11 @@
+{
+  "source_commit": "dc2e74cbd992a298f67efb928b5b3754615e1924",
+  "source_path": "Rust/guitar-web-wasm-demo/rust-engine/src/lib.rs",
+  "sample_rate_hz": 44100,
+  "note_hz": 82.4069,
+  "cases": [
+    {"velocity": 0.25, "expected_buffer_len": 535, "expected_pick_offset": 337, "expected_pluck_mix": 0.2375},
+    {"velocity": 0.5, "expected_buffer_len": 535, "expected_pick_offset": 257, "expected_pluck_mix": 0.325},
+    {"velocity": 0.75, "expected_buffer_len": 535, "expected_pick_offset": 177, "expected_pluck_mix": 0.4125}
+  ]
+}
