@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1.0",
+  "observed_snapshot_commit": "3d175ab88b06f6fd06cfa8475b3f7e9be6323a6b",
+  "observed_source_counts": {
+    "department_directories": 21,
+    "target_core_courses": 525,
+    "core_course_codes": 113,
+    "six_locale_five_answer_candidates": 9,
+    "committed_review_briefs": 4,
+    "pipeline_review_flags_approved": 0
+  },
+  "simulation_limits": "The weekly arrivals, accepted review capacities, and publication capacities below are synthetic upper-bound assumptions, not measured throughput or a forecast. Every review completion is assumed approved and publishable for the arithmetic exercise.",
+  "scenarios": {
+    "flat": {
+      "initial_review_queue": 0,
+      "initial_publication_queue": 0,
+      "new_review_ready_per_week": [12, 12, 12, 12],
+      "accepted_review_capacity_per_week": [4, 4, 4, 4],
+      "publication_capacity_per_week": [4, 4, 4, 4]
+    },
+    "growing_review_fixed_publication": {
+      "initial_review_queue": 0,
+      "initial_publication_queue": 0,
+      "new_review_ready_per_week": [12, 12, 12, 12],
+      "accepted_review_capacity_per_week": [4, 8, 16, 32],
+      "publication_capacity_per_week": [4, 4, 4, 4]
+    }
+  }
+}
