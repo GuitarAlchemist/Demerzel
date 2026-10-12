@@ -4,14 +4,14 @@ department: cognitive-science
 course: "Grundlagen der Kognitionswissenschaft"
 level: beginner
 prerequisites: []
-estimated_duration: "25 minutes"
+estimated_duration: "40 minutes"
 produced_by: cognitive-science
 version: "1.0.0"
 ---
 
 # Dein Gehirn belügt dich — Kognitive Verzerrungen, die jeder kennen sollte
 
-> **Fachbereich Kognitionswissenschaft** | Stufe: Einführung | Dauer: 25 Minuten
+> **Fachbereich Kognitionswissenschaft** | Stufe: Einführung | Dauer: 40 Minuten
 
 ## Lernziele
 
@@ -51,7 +51,7 @@ Ein Entwickler ist überzeugt, dass Framework X die beste Wahl ist. Er liest fü
 
 ### Governance-Relevanz
 
-Der Bestätigungsfehler ist der Grund, warum Demerzels tetravalente Logik den **C (Widersprüchlich)**-Zustand enthält. Wenn Belege einander widersprechen, löst das System den Konflikt nicht stillschweigend zugunsten der bestehenden Überzeugung auf — es markiert den Widerspruch zur Untersuchung.
+Demerzels aktuelle hexavalente Logik enthält **C (Widersprüchlich)** für einander widersprechende Belege. Das Festhalten eines Widerspruchs kann übersehene Belege sichtbar machen; der Zustand allein beseitigt keinen Bestätigungsfehler.
 
 ---
 
@@ -121,7 +121,7 @@ Ein Berufseinsteiger, der gerade ein Online-Tutorial abgeschlossen hat, verkünd
 
 ### Governance-Relevanz
 
-Der **U (Unbekannt)**-Zustand in der tetravalenten Logik existiert genau dafür. Wenn ein Agent nicht genügend Belege hat, ist die richtige Antwort keine Vermutung — sondern „Unbekannt." Dies löst eine Untersuchung aus anstelle falscher Gewissheit.
+Der Zustand **U (Unbekannt)** in der aktuellen hexavalenten Logik hält unzureichende Belege fest. „Unbekannt“ statt einer Vermutung kann übermäßige Sicherheit begrenzen und eine Untersuchung auslösen; es diagnostiziert keine Fähigkeit einer Person.
 
 ---
 
@@ -247,6 +247,46 @@ Das Wissen um die eigenen Verzerrungen beseitigt sie nicht. Aber es ermöglicht 
 
 ---
 
+## Projektübung: Eine Streeling-Veröffentlichung prüfen
+
+Der [COG‑001-Fall](../../../fixtures/cognitive-science/cog-001/bias-release-case.json) ist **erfunden**; seine Zahlen sind keine Messung von GA oder Learn. Er bildet eine echte Projektgrenze ab: Die [Demerzel-Vorprüfung](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_course_preflight.py) prüft Quelldateien und Datensätze, aber weder fachliche Qualität noch menschliche Prüfung oder Veröffentlichung. Der [Kandidatenbericht](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_review_candidates.py) dient der Sichtung, nicht der Freigabe. Die aktuelle kanonische Logik ist **hexavalent** (T/P/U/D/F/C); T/F/U/C oben ist nur ihre didaktische Teilmenge.
+
+Beantworten Sie die Fragen anhand der Falldatei, bevor Sie die Lösungen lesen. Nennen Sie jeweils eine Beobachtung, die Ihre Schlussfolgerung ändern würde. Die Aufgaben prüfen Entscheidungen und diagnostizieren keine Person.
+
+### Exercise 1 — Bestätigung und fehlender Nachweis
+
+Vier lokale Vorschauen waren erfolgreich. Ein Kollege behauptet, alle zwölf Kurse seien veröffentlicht. Was widerspricht dem, und welche Prüfung fehlt?
+
+> **Answer:** Die einzige öffentliche Prüfung ergab 404 unter der angegebenen URL zum angegebenen Zeitpunkt; elf weitere öffentliche Ergebnisse sind unbekannt. Jede URL und die ausgelieferte Revision prüfen sowie menschliche Prüfbelege einholen. Vier lokale Vorschauen beweisen keine zwölf Veröffentlichungen.
+
+### Exercise 2 — Überlebensverzerrung und Nenner
+
+Welcher Anteil der geplanten Kurse hat eine geprüfte, erfolgreiche lokale Vorschau? Ist das die öffentliche Veröffentlichungsrate?
+
+> **Answer:** 4/12 = 1/3 = 33,3 %. Die acht ungeprüften Kurse bleiben im Nenner der geplanten Kurse. Für keinen der zwölf ist hier eine Veröffentlichung bestätigt: Eine URL ergab 404, elf wurden nicht geprüft. Weder 4/4 noch 4/12 ist eine gemessene Veröffentlichungsrate.
+
+### Exercise 3 — Anker bei 80 %
+
+Die erste Schätzung lautete 80 % Bereitschaft. Tragen die Daten diese Zahl?
+
+> **Answer:** Nein. Nur 4/12 lokale Vorschauen bestanden; 1/12 öffentliche URLs wurde geprüft und ergab 404. Diese Werte definieren und belegen keine 80 %. Zuerst eine Regel für Quellprüfungen, Prüfbelege und öffentliche Abrufe jeder erforderlichen Sprache festlegen; dann Zähler und Nenner messen.
+
+### Exercise 4 — Verfügbarkeit nach einem 404
+
+Jemand erinnert sich lebhaft an den 404 und will alle künftigen Releases dauerhaft stoppen. Was vermeidet diese Verallgemeinerung?
+
+> **Answer:** URL, Zeitpunkt und ausgelieferte Revision festhalten; die elf anderen URLs prüfen und nach der Korrektur erneut testen. Ein Abruf schätzt keine systemweite Fehlerrate. Die betroffene Veröffentlichung bis zum erfolgreichen Abruf sperren; künftige Kontrollen anhand gemessener Grundrate und Ursachen wählen.
+
+### Exercise 5 — Versunkene Kosten und künftiger Nutzen
+
+Nach acht Monaten Arbeit prognostiziert der Fall zwei Stunden Nutzen und fünf Stunden Wartung pro Woche. Welche Entscheidung folgt aus diesen Annahmen?
+
+> **Answer:** Die *prognostizierte* Bilanz beträgt 2 − 5 = −3 Stunden pro Woche. Die vergangenen acht Monate verbessern diese künftige Bilanz nicht. Den breiten Rollout pausieren, Prognose und Nutzwert in einem kleinen reversiblen Pilotversuch prüfen und nur bei neuer positiver Evidenz fortfahren. Das sind keine beobachteten GA-Kosten.
+
+**Transferkriterium:** Vorschau, Prüfung und öffentlichen Abruf unterscheiden; 4/12 berechnen; eine Beobachtung nennen, die die Veröffentlichungsbehauptung widerlegt. Die separate Lernaufgabe enthält keine Antworten.
+
+---
+
 ## Forschungsgrundlage
 
 - Taxonomie kognitiver Verzerrungen nach Daniel Kahneman, *Schnelles Denken, langsames Denken* (2011)
@@ -254,5 +294,5 @@ Das Wissen um die eigenen Verzerrungen beseitigt sie nicht. Aber es ermöglicht 
 - Versunkene-Kosten-Forschung nach Arkes & Blumer, „The Psychology of Sunk Cost" (1985)
 - Überlebensverzerrung nach Abraham Walds Analyse der Flugzeugpanzerung im Zweiten Weltkrieg
 - Ankerexperimente nach Tversky & Kahneman, „Judgment Under Uncertainty" (1974)
-- Governance-Gegenmaßnahmen basieren auf Demerzels tetravalenter Logik, Rollback-, Kaizen- und Belief-Currency-Politiken
+- Die Governance-Beispiele beziehen sich auf Demerzels hexavalente Logik sowie Rollback-, Kaizen- und Belief-Currency-Politiken; eine Wirkung auf menschliche Verzerrungen wurde hier nicht gemessen
 - Überzeugungszustand: T(0.85) F(0.02) U(0.10) C(0.03)

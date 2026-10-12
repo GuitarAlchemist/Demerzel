@@ -1,0 +1,25 @@
+{
+  "cycle_id": "cognitive-science-2026-10-12-001",
+  "department": "cognitive-science",
+  "question": "Can a bounded Streeling release case teach learners to distinguish a local preview, a human review, and a public readback while resisting confirmation, survivorship, anchoring, availability, and sunk-cost errors?",
+  "production_path": [
+    "observe: inspect Demerzel course preflight, review-candidate reporter, and canonical hexavalent vocabulary at commit af4e9a3a6f242745730f2d0d28e2535fe7477666",
+    "hypothesize: a synthetic twelve-course evidence packet can expose five distinct decision errors without claiming a learner effect",
+    "test: derive denominator, public-observation bounds, and prospective cost arithmetic; check six exercise/answer pairs",
+    "reflect: require human subject and fluent-language review plus an answer-free learner attempt before claiming teaching value"
+  ],
+  "hypothesis": "A case that separates observed preview passes from missing public and human-review evidence can support a falsifiable, project-useful exercise without presenting invented counts as production measurements.",
+  "test_method": "simulation",
+  "evidence": [
+    "At Demerzel commit af4e9a3a6f242745730f2d0d28e2535fe7477666, scripts/streeling_course_preflight.py states that source and record checks do not establish subject quality, review, or publication; scripts/streeling_review_candidates.py explicitly treats answer and blob signals as triage, not approval.",
+    "CONTEXT.md at that commit names T/P/U/D/F/C as canonical hexavalent states and T/F/U/C as the older four-value subset. The new course section adds that correction in six languages.",
+    "The fixture's 12 planned lessons, four passing local previews, one public 404, 80% proposal, eight elapsed months, and 2/5 weekly-hour forecasts are invented teaching data, not GA/Learn observations.",
+    "Formal case arithmetic: checked local preview coverage is 4/12=1/3; no public publication is confirmed from one failing public check and eleven unknown results; forecast net is 2-5=-3 hours per week. These calculations do not estimate real release readiness.",
+    "Five answered exercise sections now exist in each of EN/FR/ES/PT/IT/DE. No learner response, fluent-language verdict, or public page readback was observed. Duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T22:14:04Z"
+}

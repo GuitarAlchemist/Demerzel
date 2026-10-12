@@ -4,14 +4,14 @@ department: cognitive-science
 course: "Cognitive Science Foundations"
 level: beginner
 prerequisites: []
-estimated_duration: "25 minutes"
+estimated_duration: "40 minutes"
 produced_by: cognitive-science
 version: "1.0.0"
 ---
 
 # Your Brain Lies to You — Cognitive Biases Everyone Should Know
 
-> **Department of Cognitive Science** | Level: Beginner | Duration: 25 minutes
+> **Department of Cognitive Science** | Level: Beginner | Duration: 40 minutes
 
 ## Objectives
 
@@ -51,7 +51,7 @@ A developer is convinced that Framework X is the best choice. They read five art
 
 ### Governance Relevance
 
-Confirmation bias is why Demerzel's tetravalent logic includes the **C (Contradictory)** state. When evidence conflicts, the system does not silently resolve it in favor of the existing belief — it flags the contradiction for investigation.
+Demerzel's current hexavalent logic includes **C (Contradictory)** for conflicting evidence. Recording a conflict can expose evidence that confirmation bias might otherwise hide; the state alone does not remove the bias.
 
 ---
 
@@ -121,7 +121,7 @@ A junior developer who just completed an online tutorial announces they can "def
 
 ### Governance Relevance
 
-The **U (Unknown)** state in tetravalent logic exists precisely for this. When an agent does not have enough evidence, the correct answer is not a guess — it is "Unknown." This triggers investigation rather than false certainty.
+The **U (Unknown)** state in the current hexavalent logic records insufficient evidence. Reporting Unknown instead of guessing can limit overconfidence and trigger investigation; it does not diagnose a person's skill.
 
 ---
 
@@ -247,6 +247,46 @@ Knowing your biases does not eliminate them. But it lets you build systems — h
 
 ---
 
+## Project exercise: challenge a Streeling release claim
+
+The [COG-001 teaching case](../../../fixtures/cognitive-science/cog-001/bias-release-case.json) is **invented**, not a measurement of GA or Learn. It models a real project boundary: Demerzel's [course preflight](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_course_preflight.py) checks source and records but explicitly does not establish subject quality, human review, or publication. The [candidate reporter](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_review_candidates.py) similarly labels source signals as triage rather than approval. In current Demerzel, T/P/U/D/F/C is the canonical **hexavalent** vocabulary; the older T/F/U/C terms above are its four-value teaching subset, not a claim that a four-state gate publishes a course.
+
+Work from the case file before opening the answers. For each conclusion, name the observation that would change your mind. These are decision-quality exercises, not a diagnosis of any person's thinking.
+
+### Exercise 1 — Confirmation bias and the missing gate
+
+A teammate cites four local preview passes as proof that all twelve lessons are published. Which evidence contradicts that claim, and what check is required next?
+
+> **Answer:** The single observed public 404 contradicts publication at that URL and observation time; the other eleven public results are unobserved. Inspect the exact public URLs and deployed source revision, obtain human review evidence, and record each result. Four local builds cannot establish twelve public publications.
+
+### Exercise 2 — Survivorship and the denominator
+
+Compute the fraction of the planned lessons with a checked passing local preview. May you call it the public publication rate?
+
+> **Answer:** Four of twelve, or 1/3 (33.3%), have a passing local preview. The eight unchecked lessons must remain in the denominator of *planned* lessons. Public publication is a different event: zero of twelve are confirmed by this case, one tested URL returned 404, and eleven public results are unknown. Neither 4/4 nor 4/12 is a measured publication rate.
+
+### Exercise 3 — Anchoring on 80%
+
+The first readiness proposal was 80%. Use the available evidence to decide whether that estimate is calibrated.
+
+> **Answer:** No. The only known coverage is 4/12 passing local previews and 1/12 public URLs checked, with that URL returning 404. Those measures do not define or support 80% readiness. Define a readiness rule first (for example: source checks, review receipts, and public readback for every required locale), then measure its numerator and denominator.
+
+### Exercise 4 — Availability after one 404
+
+Someone remembers the 404 vividly and demands that every future release be stopped indefinitely. What evidence-based response avoids the opposite overreaction?
+
+> **Answer:** Record the failing URL, time, and deployed revision; check the other eleven URLs and repeat after a fix. The fixture contains only one public check, so it cannot estimate a system-wide failure frequency. Gate the affected publication until its readback succeeds, but choose future controls from a measured base rate and failure causes, not one vivid case.
+
+### Exercise 5 — Sunk cost and future value
+
+The team spent eight months on the release path. The case forecasts two hours of weekly benefit and five hours of weekly maintenance. What decision follows from these assumptions?
+
+> **Answer:** The *forecast* net is 2 − 5 = −3 hours per week. The eight elapsed months cannot improve that future balance. Pause the broad rollout, verify the forecast and user value in a small reversible pilot, and continue only if new evidence changes the net benefit. These numbers are synthetic, not an observed GA cost model.
+
+**Transfer criterion:** Distinguish a preview, review, and public readback; calculate the 4/12 denominator; state one falsifier for the proposed release conclusion. The separate learner task removes these answers.
+
+---
+
 ## Research Basis
 
 - Cognitive bias taxonomy from Daniel Kahneman, *Thinking, Fast and Slow* (2011)
@@ -254,5 +294,5 @@ Knowing your biases does not eliminate them. But it lets you build systems — h
 - Sunk cost research from Arkes & Blumer, "The Psychology of Sunk Cost" (1985)
 - Survivorship bias from Abraham Wald's WWII aircraft armor analysis
 - Anchoring experiments from Tversky & Kahneman, "Judgment Under Uncertainty" (1974)
-- Governance countermeasures map to Demerzel's tetravalent logic, rollback, kaizen, and belief-currency policies
+- The governance examples refer to Demerzel's hexavalent logic, rollback, kaizen, and belief-currency policies; their effect on human bias has not been measured here
 - Belief state: T(0.85) F(0.02) U(0.10) C(0.03)

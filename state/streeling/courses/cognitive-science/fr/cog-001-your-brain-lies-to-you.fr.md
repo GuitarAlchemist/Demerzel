@@ -4,14 +4,14 @@ department: cognitive-science
 course: "Fondements des sciences cognitives"
 level: beginner
 prerequisites: []
-estimated_duration: "25 minutes"
+estimated_duration: "40 minutes"
 produced_by: cognitive-science
 version: "1.0.0"
 ---
 
 # Votre cerveau vous ment — Les biais cognitifs que tout le monde devrait connaître
 
-> **Département de sciences cognitives** | Niveau : Débutant | Durée : 25 minutes
+> **Département de sciences cognitives** | Niveau : Débutant | Durée : 40 minutes
 
 ## Objectifs
 
@@ -51,7 +51,7 @@ Un développeur est convaincu que le Framework X est le meilleur choix. Il lit c
 
 ### Pertinence pour la gouvernance
 
-Le biais de confirmation est la raison pour laquelle la logique tétravalente de Demerzel inclut l'état **C (Contradictoire)**. Quand les preuves s'opposent, le système ne résout pas silencieusement le conflit en faveur de la croyance existante — il signale la contradiction pour investigation.
+La logique hexavalente actuelle de Demerzel comprend l'état **C (Contradictoire)** pour les preuves incompatibles. Consigner le conflit peut révéler une preuve qu'un biais de confirmation ferait négliger ; cet état ne supprime pas le biais à lui seul.
 
 ---
 
@@ -121,7 +121,7 @@ Un développeur junior qui vient de terminer un tutoriel en ligne annonce qu'il 
 
 ### Pertinence pour la gouvernance
 
-L'état **U (Inconnu)** dans la logique tétravalente existe précisément pour cela. Quand un agent n'a pas assez de preuves, la bonne réponse n'est pas une supposition — c'est « Inconnu ». Cela déclenche une investigation plutôt qu'une fausse certitude.
+L'état **U (Inconnu)** de la logique hexavalente actuelle signale un manque de preuves. Répondre « Inconnu » plutôt que deviner peut limiter l'excès de confiance et déclencher une enquête ; cela ne diagnostique pas la compétence d'une personne.
 
 ---
 
@@ -247,12 +247,53 @@ Connaître ses biais ne les élimine pas. Mais cela permet de construire des sys
 
 ---
 
+## Exercice de projet : contester une affirmation de publication Streeling
+
+Le [cas COG‑001](../../../fixtures/cognitive-science/cog-001/bias-release-case.json) est **inventé** : ses chiffres ne décrivent ni GA ni Learn. Il reflète une vraie limite du projet : le [précontrôle Demerzel](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_course_preflight.py) valide les fichiers et les registres, mais ne prouve ni la qualité disciplinaire, ni la revue humaine, ni la publication. Le [rapport des candidats](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_review_candidates.py) sert aussi au tri, sans approuver les cours. La logique canonique actuelle de Demerzel est **hexavalente** (T/P/U/D/F/C) ; les quatre états T/F/U/C mentionnés plus haut n'en sont qu'un sous-ensemble pédagogique.
+
+Répondez d'abord à partir du fichier de cas, puis lisez les solutions. Pour chaque conclusion, indiquez quelle observation pourrait vous faire changer d'avis. Ces questions évaluent une décision, pas la psychologie d'une personne.
+
+### Exercise 1 — Confirmation et preuve manquante
+
+Un collègue présente quatre aperçus locaux réussis comme preuve que les douze cours sont publiés. Quelle preuve contredit sa conclusion et quel contrôle manque ?
+
+> **Answer:** Le seul contrôle public renvoie 404 à l'URL et au moment indiqués. Les onze autres résultats publics sont inconnus. Il faut vérifier chaque URL et la révision déployée, puis obtenir la preuve de revue humaine. Quatre aperçus locaux ne prouvent pas douze publications.
+
+### Exercise 2 — Biais du survivant et dénominateur
+
+Quelle fraction des cours prévus possède un aperçu local réussi et vérifié ? Est-ce le taux de publication publique ?
+
+> **Answer:** 4/12 = 1/3, soit 33,3 %. Les huit cours non vérifiés restent dans le dénominateur des cours prévus. Aucun des douze n'a ici de publication confirmée : une URL testée renvoie 404 et les onze autres sont inconnues. Ni 4/4 ni 4/12 ne mesure le taux de publication.
+
+### Exercise 3 — Ancrage à 80 %
+
+Une première estimation donne 80 % de préparation. Les preuves disponibles justifient-elles ce chiffre ?
+
+> **Answer:** Non. Seuls 4/12 aperçus locaux passent et 1/12 URL publiques a été contrôlée ; celle-ci renvoie 404. Ces mesures ne définissent ni ne justifient 80 % de préparation. Définissez d'abord une règle comprenant les sources, les reçus de revue et la lecture publique de chaque langue requise, puis mesurez son numérateur et son dénominateur.
+
+### Exercise 4 — Disponibilité après un 404
+
+Une personne se souvient du 404 et veut arrêter toutes les publications futures pour toujours. Quelle réponse évite cette généralisation ?
+
+> **Answer:** Consignez l'URL, l'heure et la révision déployée ; contrôlez les onze autres URL et retestez après correction. Un seul contrôle ne permet pas d'estimer la fréquence des pannes. Bloquez la publication touchée jusqu'à une lecture réussie, puis fondez les contrôles futurs sur les causes et un taux de base mesuré.
+
+### Exercise 5 — Coûts irrécupérables et valeur future
+
+Après huit mois d'effort, le cas prévoit deux heures de bénéfice et cinq heures de maintenance par semaine. Que faire selon ces hypothèses ?
+
+> **Answer:** Le solde *prévu* est 2 − 5 = −3 heures par semaine. Les huit mois passés ne changent pas ce solde futur. Suspendez le déploiement large, vérifiez les prévisions et la valeur pour les utilisateurs dans un petit pilote réversible, puis poursuivez seulement si de nouvelles preuves changent le bilan. Ce n'est pas un coût observé chez GA.
+
+**Critère de transfert :** Distinguer aperçu, revue et lecture publique ; calculer 4/12 ; citer un résultat qui réfuterait la conclusion de publication. La tâche apprenant séparée omet ces réponses.
+
+---
+
 ## Bases de recherche
+
 
 - Taxonomie des biais cognitifs d'après Daniel Kahneman, *Système 1 / Système 2 : Les deux vitesses de la pensée* (2011)
 - Effet Dunning-Kruger d'après Kruger & Dunning, "Unskilled and Unaware of It" (1999)
 - Recherche sur les coûts irrécupérables d'après Arkes & Blumer, "The Psychology of Sunk Cost" (1985)
 - Biais du survivant d'après l'analyse d'Abraham Wald sur le blindage des avions pendant la Seconde Guerre mondiale
 - Expériences d'ancrage d'après Tversky & Kahneman, "Judgment Under Uncertainty" (1974)
-- Les contre-mesures de gouvernance correspondent à la logique tétravalente, aux politiques de retour en arrière, kaizen et monnaie-croyance de Demerzel
+- Les exemples de gouvernance renvoient à la logique hexavalente et aux politiques de retour en arrière, kaizen et belief-currency de Demerzel ; leur effet sur les biais humains n'est pas mesuré ici
 - État de croyance : T(0.85) F(0.02) U(0.10) C(0.03)
