@@ -1,0 +1,12 @@
+{
+  "schema": "streeling.weave-trial/0.1",
+  "sample_id": "odd-tile-seam-a",
+  "base_warp": 3,
+  "base_weft": 3,
+  "warp_tiles": 2,
+  "weft_tiles": 2,
+  "phase": 0,
+  "spacing_mm": 5,
+  "diameter_mm": 2,
+  "variants": ["global-parity", "restarted-tile-parity"]
+}
