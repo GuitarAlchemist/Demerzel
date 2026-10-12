@@ -73,10 +73,10 @@ The chain is valid at sequence five. Sequence six records newly admitted work in
 
 ## 4. Apply and falsify the stop checker
 
-Run the offline solution, substituting the package path:
+Run the offline solution from the Demerzel repository root:
 
 ```text
-python <package>/scripts/course-exercises/cyb_operations.py --json
+python scripts/course-exercises/cyb_operations.py --json
 ```
 
 Test ID `ordered_stop_evidence` invokes `stopped`. The complete five-event chain is the positive control. Busy drain, stale epoch, unvalidated checkpoint, late admission and an acknowledgement alone are rejected. The mutant “accept any stop_ack” returns true for the last case, exposing precisely why phrase matching is insufficient. No session receives this code or any stop command.

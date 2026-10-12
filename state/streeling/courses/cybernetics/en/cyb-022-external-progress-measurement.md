@@ -59,7 +59,7 @@ Suppose a report changes only its timestamp while its residual stays eight. Hash
 
 ## 4. Apply the Checker and Challenge It
 
-Run `cyb_governed_loops.py --json` using the script's actual package path. The `CYB-022` record, test ID `external_progress`, preserves the residual trace and classification sequence. Read solution function `assess_progress`: validation identity is checked before arithmetic is used. Positive control accepts eight, then five, then zero. Negative controls reject stale validation, a moved target, an unexplained same-artifact improvement, and an increased residual. The changed-artifact/equal-residual case defeats a hash-only implementation.
+From the Demerzel repository root, run `python scripts/course-exercises/cyb_governed_loops.py --json`. The `CYB-022` record, test ID `external_progress`, preserves the residual trace and classification sequence. Read solution function `assess_progress`: validation identity is checked before arithmetic is used. Positive control accepts eight, then five, then zero. Negative controls reject stale validation, a moved target, an unexplained same-artifact improvement, and an increased residual. The changed-artifact/equal-residual case defeats a hash-only implementation.
 
 The fixture uses simple identifiers as stand-ins for artifact identities. A real integration should use stable content identities and pin checker versions; string inequality alone cannot authenticate content. Nor does an externally calculated residual cover requirements absent from the checklist. These are explicit limits to the evidence, not reasons to abandon measurement.
 

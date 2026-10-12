@@ -59,7 +59,7 @@ This repeats CYB-023's content-binding principle in an audio-specific setting. I
 
 ## 4. Apply the Audit and Preserve Unknowns
 
-Run `cyb_governed_loops.py --json` by the fixture's actual package path. Record `CYB-024`, test ID `audio_audit`, uses `audio_receipt` and `audit_audio`. Positive control accepts gain `0.5` with its matching receipt. Negative controls reject gain two because peak exceeds one, reject a receipt from gain one, and reject a nonfinite sample. The accepted record still says `perceptual: not_tested`; that field is a substantive result, not a placeholder to delete.
+From the Demerzel repository root, run `python scripts/course-exercises/cyb_governed_loops.py --json`. Record `CYB-024`, test ID `audio_audit`, uses `audio_receipt` and `audit_audio`. Positive control accepts gain `0.5` with its matching receipt. Negative controls reject gain two because peak exceeds one, reject a receipt from gain one, and reject a nonfinite sample. The accepted record still says `perceptual: not_tested`; that field is a substantive result, not a placeholder to delete.
 
 The implementation computes the transformed sequence rather than trusting supplied peak values. It refuses nonfinite numbers before hashing, so a not-a-number value cannot flow through arithmetic as apparently valid evidence. It uses only Python's standard library and synthetic arrays. No real audio was generated, decoded, heard, or scored. Passing tests therefore supports the audit logic under modeled conditions, not a claim about actual music.
 

@@ -65,10 +65,10 @@ The observed errors alternate, but timestamps are uneven. A reviewer interpolate
 
 ## 4. Apply a detector and challenge its meaning
 
-Run the self-contained solution with the package path substituted:
+Run the self-contained solution from the Demerzel repository root:
 
 ```text
-python <package>/scripts/course-exercises/cyb_operations.py --json
+python scripts/course-exercises/cyb_operations.py --json
 ```
 
 Test ID `windowed_error_reversals` reports metrics for persistent alternation, damped convergence, tiny noise, monotonic drift and a positive sawtooth [1,5,1,5,1,5]. Only persistent alternation is flagged. The sawtooth is an intentional blind spot: changes alternate, but error never crosses target. This rule detects repeated target crossings; it does not detect every periodic waveform.

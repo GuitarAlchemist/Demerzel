@@ -59,7 +59,7 @@ Changing the completed entry's artifact without recomputing its hash fails integ
 
 ## 4. Apply the Validator to Counterexamples
 
-Run the package's `cyb_governed_loops.py --json` by its actual path. Record `CYB-023`, test ID `receipt_chain`, uses `make_chain` and `verify_chain`. The positive control accepts the four-stage chain for the expected answer and generation. Negative controls reject a two-stage chain, a tampered completed entry, an incorrect generation, a different request, reordered entries, and an altered answer. These controls test different bindings; six identical malformed strings would not provide comparable coverage.
+From the Demerzel repository root, run `python scripts/course-exercises/cyb_governed_loops.py --json`. Record `CYB-023`, test ID `receipt_chain`, uses `make_chain` and `verify_chain`. The positive control accepts the four-stage chain for the expected answer and generation. Negative controls reject a two-stage chain, a tampered completed entry, an incorrect generation, a different request, reordered entries, and an altered answer. These controls test different bindings; six identical malformed strings would not provide comparable coverage.
 
 The final record must contain `verification_passed: true`. That field is a claim whose trust depends on the boundary discussed above. The exercise deliberately does not implement a production signing service, persistent transport, or retry scheduler. Its code belongs to offline course fixtures and must not become a consumer runtime dependency.
 

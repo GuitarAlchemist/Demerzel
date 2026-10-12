@@ -59,13 +59,13 @@ Two concurrent workers can both read one remaining slot and both pass a local ch
 
 ## 4. Apply and Report the Boundary
 
-Run the package fixture from any working directory, supplying its actual path:
+Run the package fixture from the Demerzel repository root, supplying its actual path:
 
 ```text
-python <package>/scripts/course-exercises/cyb_governed_loops.py --json
+python scripts/course-exercises/cyb_governed_loops.py --json
 ```
 
-Here `<package>` is a placeholder to replace, not executable shell syntax. The `CYB-021` record has test ID `budget_admission`. Its solution function is `budget_trace`: it rejects before modifying counters and reports every exceeded limit. Positive control: exactly three affordable candidates are admitted. Negative controls: a fourth candidate, excessive credit reservation, excessive duration reservation, and an invalid zero estimate are rejected. An implementation that checks only attempts misses the two resource counterexamples.
+The command above uses a path relative to the Demerzel repository root. The `CYB-021` record has test ID `budget_admission`. Its solution function is `budget_trace`: it rejects before modifying counters and reports every exceeded limit. Positive control: exactly three affordable candidates are admitted. Negative controls: a fourth candidate, excessive credit reservation, excessive duration reservation, and an invalid zero estimate are rejected. An implementation that checks only attempts misses the two resource counterexamples.
 
 **Exercise.** Design the receipt after the fourth cheap candidate is denied. Is this task completed?
 

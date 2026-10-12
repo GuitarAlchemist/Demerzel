@@ -59,7 +59,7 @@ CYB-022 contributes the external completion measure: accepted unique requests, n
 
 ## 4. Apply the Capstone and Inspect a Mutant
 
-Run `cyb_governed_loops.py --json` using its actual package path. Record `CYB-025`, test ID `disturbance_capstone`, uses the `Coordinator` solution. Read `apply`: assignment checks capacity and worker ownership; completion and failure require exact active-tuple equality; every event checks the invariant. Positive control finishes the three unique requests. Negative controls preserve the active retry after the stale result, reject a duplicate, and reject the invented future epoch.
+From the Demerzel repository root, run `python scripts/course-exercises/cyb_governed_loops.py --json`. Record `CYB-025`, test ID `disturbance_capstone`, uses the `Coordinator` solution. Read `apply`: assignment checks capacity and worker ownership; completion and failure require exact active-tuple equality; every event checks the invariant. Positive control finishes the three unique requests. Negative controls preserve the active retry after the stale result, reject a duplicate, and reject the invented future epoch.
 
 For a deliberately wrong design, delete the epoch-and-worker match and accept any completion with a known request ID. The stale event would complete `r1` while B still owns its retry. Conservation alone might remain apparently correct if the mutant deletes the active entry and adds done; the identity contract would nevertheless be violated. This illustrates why several invariants must be checked rather than treating one reassuring count as a complete correctness argument.
 

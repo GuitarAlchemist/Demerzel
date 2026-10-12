@@ -65,10 +65,10 @@ Running generation four receives verified completion generation three and count 
 
 ## 4. Apply the graph without claiming a race fix
 
-Execute the fixture with an absolute package path:
+Execute the fixture from the Demerzel repository root:
 
 ```text
-python <package>/scripts/course-exercises/cyb_operations.py --json
+python scripts/course-exercises/cyb_operations.py --json
 ```
 
 Test ID `guarded_lane_graph` covers the five-state stop/resume path and a separate verified completion. Six rejection cases check illegal shortcut, busy drain, stale completion, unauthorized resume, unverified completion and restart from done. `transition` returns a new state/generation tuple only after validation. No mutable shared lane or external effect exists in this lesson's code.
