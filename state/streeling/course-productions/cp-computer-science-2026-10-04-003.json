@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-04-003",
+  "department": "computer-science",
+  "research_cycle_id": "cs-2026-10-04-003",
+  "module_id": "cs-003-chord-parser-uncertainty",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.78
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1274,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en", "fr", "es"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Source-traced GA behavior and the eight-case corpus need an executable regression pinned to a GA commit. Music-domain and native-language review are pending; PT/IT/DE are not drafted. No public API change or parser fix is part of this course draft."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-04T18:20:43Z"
+}

@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-guitar-acoustics-2026-10-11-002",
+  "department": "guitar-acoustics",
+  "research_cycle_id": "guitar-acoustics-2026-10-11-002",
+  "module_id": "gas-002-brightness-control-and-evaluation-gate",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "T",
+      "belief_confidence": 0.9
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1881,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source-grounded draft. A proposed brightness candidate, classroom gate, ComfyUI arm, browser capture, and listening panel were not run. Human guitar-acoustics review, learner testing, and localization remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T22:20:32Z"
+}

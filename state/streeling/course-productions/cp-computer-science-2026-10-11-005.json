@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-11-005",
+  "department": "computer-science",
+  "research_cycle_id": "computer-science-2026-10-11-005",
+  "module_id": "cs-005-agent-handoff-evidence-contract",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.72
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "30 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1578,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft only. A bounded independent AI subject check found and corrected a synthetic revision-comparison error, then approved that focused correction. Human subject, learner, and localization review remain pending. The synthetic H1/H2 scenario is not a live GA handoff."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T18:08:49Z"
+}

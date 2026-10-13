@@ -1,0 +1,25 @@
+{
+  "cycle_id": "product-management-2026-10-11-002",
+  "department": "product-management",
+  "question": "Which separate receipts let Streeling and GA distinguish an authored course draft from a reviewed, locally built, and anonymously readable release?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_case: DV-001 pilot",
+    "decision_boundary: source record review sync build public_readback",
+    "learner_task: classify claims against dated receipts"
+  ],
+  "hypothesis": "A receipt per release boundary will prevent a schema-valid production record or a successful local Learn build from being presented as a reviewed and publicly published course.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "Demerzel pilot commit 6bc584d7ca1cd9eb1b1481e1100eeeb74e983863 contains PM-001, the DV-001 source and production record, the course-production schema, the DV-001 review brief, its local Learn preflight, and the dated public baseline. The DV-001 production record says status=review_pending, review.completed=false, and publish.completed=false.",
+    "The DV-001 review brief records bounded AI checks but says human subject, fluent-language, and learner reviews remain open. Its linked subject check approves only the English facts and exercise answers within that scope.",
+    "The 2026-10-11 local Learn preflight records a successful sync and Astro build that generated DV-001 EN/FR/ES HTML. The separate 2026-10-11 public baseline records anonymous 404 responses for those three routes. These dated observations do not establish current public status.",
+    "Learn commit fe8e38444d882c28691dce9f12c21ac2ad404ec0 scripts/sync-streeling.mjs declares EN/FR/ES generated pages and streeling.lock.json, and preserves journals. The DV-001 preflight used that base plus a local generator fix.",
+    "PM-002's five exercise answers were checked against those pinned files, and a bounded independent AI subject and evidence review found no concrete error. Research duration was not instrumented, so duration_seconds=0. No human subject review, fluent-language review, or learner attempt has occurred."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T17:55:51Z"
+}

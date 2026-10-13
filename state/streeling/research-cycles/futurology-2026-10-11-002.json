@@ -1,0 +1,26 @@
+{
+  "cycle_id": "futurology-2026-10-11-002",
+  "department": "futurology",
+  "question": "Which future measurements would justify retaining, recalibrating, or reconsidering GA's pinned bge-large routing embedder and 0.64 confidence-threshold decision?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_decision: pinned GA routing embedder promotion and threshold calibration",
+    "scenario_method: measurement-triggered retain, recalibrate, and compare-or-rollback branches",
+    "fixture: Phase 0 numeric bake-off, Phase 2 threshold sweep, and dated local OOS rerun",
+    "falsifier: fresh comparable full-harness or latency gate failure"
+  ],
+  "hypothesis": "A bounded trigger ledger tied to the pinned evaluation gates can identify what to measure before revisiting the routing decision without treating a proxy benchmark or eight OOS prompts as a future forecast.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, state/quality/embedder-bakeoff/bakeoff-latest.md records Phase 0 on 166 in-scope prompts/16 intents, a cosine 1-NN five-fold router proxy, and a 500 ms p95 budget. Its paired JSON records bge-large single-embed p95 238.27479999454226 ms and nomic p95 101.44889999355655 ms. An independent arithmetic check gives bge 261.72520000545774 ms of numeric margin to 500 and 136.8259000009857 ms additional single-embed p95 versus nomic; these are not full-chat measurements.",
+    "At the same commit, state/quality/embedder-bakeoff/phase2-validation-2026-06-16.md:9-55 records the full RoutingEvalHarness baseline nomic 0.934 in-scope/0.875 OOS-decline at T=0.55, bge-large 0.946/0.375 at T=0.55, and bge-large 0.946/1.000 at T=0.64. Its threshold sweep records T=0.72 in-scope 0.934 and T=0.75 in-scope 0.916. The report warns that the OOS sample contains eight prompts.",
+    "An independent arithmetic check of the pinned validation gives bge's 1.2-point full-harness in-scope gain over nomic, an OOS increase from 3/8 to 8/8 when threshold changes from 0.55 to 0.64, and a 1.8-point in-scope deficit versus the 0.934 baseline at T=0.75.",
+    "The pinned docs/plans/2026-06-16-ml-text-embedder-evaluation-plan.md:112-146 records a shipped bge-large routing swap at 0.64, a later local OOS result 7/8 versus validation 8/8, config rollback, and a deferred optional memory-store migration. Apps/GaChatbot.Api/appsettings.json at that commit names routing bge-large and MinConfidence 0.64; this file is not live process evidence. One OOS prompt out of eight changes the observed rate by 12.5 percentage points.",
+    "No future performance, deployment state, end-to-end chat latency, or larger OOS sample was measured for this lesson. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:10:45Z"
+}

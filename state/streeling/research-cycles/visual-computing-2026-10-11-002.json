@@ -1,0 +1,26 @@
+{
+  "cycle_id": "visual-computing-2026-10-11-002",
+  "department": "visual-computing",
+  "question": "What evidence would establish that the GA React host and a future Godot 3D observatory exchange ready and node-clicked messages reliably, rather than merely declaring the bridge?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "rendering_3d: godot_react_host_and_planned_scene",
+    "bridge_event: readiness_and_node_click_source",
+    "test: fixed_synthetic_message_fixture",
+    "design_principle: separate_source_contract_from_live_scene_evidence"
+  ],
+  "hypothesis": "A fixed event trace and explicit source, origin, readiness, and exactly-once click criteria can make the React-Godot bridge reviewable while keeping the absent scene/export and untested runtime behavior visible.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, ReactComponents/ga-react-components/src/components/PrimeRadiant/GodotScene.tsx exists and declares panel/fullscreen iframe views, default src /godot/index.html, typed inbound/outbound messages, and handlers for godot:ready and godot:node-clicked.",
+    "The pinned handler rejects a different event.source only when iframeRef.current exists. It checks msg.type but not ev.origin or nodeId's runtime type, does not require ready before a click, and calls onReady again for a repeated ready message. The 15-second timeout clears loading without setting the ready ref.",
+    "At the same GA commit, docs/plans/parked/2026-03-28-feat-godot-integration-plan.md checks Phase 1's React bridge/embed but leaves the Godot gravity scene and WASM export unchecked. A tracked-tree path scan at this revision found no .gd, .tscn, .wasm, godot/index.html, or DLSS-named file; this absence is limited to the inspected paths and tree.",
+    "The lesson's six-step message trace is synthetic: with a mounted iframe and callbacks installed, it predicts two ready and two click callbacks, including one click before ready. No browser or Godot runtime execution was performed. The proposed live criterion of 20/20 known clicks, zero foreign-source callbacks, and zero pre-ready clicks requires a future scene/export and trace.",
+    "All five exercise answers were checked against the pinned source and the fixed fixture. Human subject review, learner success, localization, and public readback have not been observed. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:37:18Z"
+}

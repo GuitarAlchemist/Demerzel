@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-visual-computing-2026-10-11-002",
+  "department": "visual-computing",
+  "research_cycle_id": "visual-computing-2026-10-11-002",
+  "module_id": "vc-002-godot-react-bridge-evidence",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.65
+    },
+    "outline": {
+      "completed": true,
+      "sections": 3,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1709,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft based on a pinned React host and parked integration plan plus a synthetic message fixture. A bounded independent AI subject review found that the original 20-click proposal conflicted with the product host changing panels after a click; the lesson now specifies a dedicated persistent test host and a separate product-host reentry check, then passed focused recheck. No live Godot scene/export, browser bridge run, human subject review, learner attempt, or localization review is recorded."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T18:37:18Z"
+}

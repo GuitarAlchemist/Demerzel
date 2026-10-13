@@ -1,0 +1,161 @@
+{
+  "scope": "Teaching examples from explicitly supplied MIDI notes and declared roots; not GA OPTIC-K vectors or search results",
+  "comparisons": [
+    {
+      "pair": [
+        "c_major_low",
+        "c_major_high"
+      ],
+      "same_midi_note_multiset": false,
+      "left_pitch_classes": [
+        0,
+        4,
+        7
+      ],
+      "right_pitch_classes": [
+        0,
+        4,
+        7
+      ],
+      "same_pitch_class_set": true,
+      "same_declared_root_pc": true,
+      "left_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "right_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "same_icv": true,
+      "related_by_transposition": true,
+      "related_by_transposition_or_inversion": true,
+      "toy_binary_chroma_cosine": 1.0
+    },
+    {
+      "pair": [
+        "c_major_low",
+        "d_major"
+      ],
+      "same_midi_note_multiset": false,
+      "left_pitch_classes": [
+        0,
+        4,
+        7
+      ],
+      "right_pitch_classes": [
+        2,
+        6,
+        9
+      ],
+      "same_pitch_class_set": false,
+      "same_declared_root_pc": false,
+      "left_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "right_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "same_icv": true,
+      "related_by_transposition": true,
+      "related_by_transposition_or_inversion": true,
+      "toy_binary_chroma_cosine": 0.0
+    },
+    {
+      "pair": [
+        "c_major_low",
+        "c_minor"
+      ],
+      "same_midi_note_multiset": false,
+      "left_pitch_classes": [
+        0,
+        4,
+        7
+      ],
+      "right_pitch_classes": [
+        0,
+        3,
+        7
+      ],
+      "same_pitch_class_set": false,
+      "same_declared_root_pc": true,
+      "left_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "right_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "same_icv": true,
+      "related_by_transposition": false,
+      "related_by_transposition_or_inversion": true,
+      "toy_binary_chroma_cosine": 0.666667
+    },
+    {
+      "pair": [
+        "c_major_low",
+        "c_diminished"
+      ],
+      "same_midi_note_multiset": false,
+      "left_pitch_classes": [
+        0,
+        4,
+        7
+      ],
+      "right_pitch_classes": [
+        0,
+        3,
+        6
+      ],
+      "same_pitch_class_set": false,
+      "same_declared_root_pc": true,
+      "left_icv": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "right_icv": [
+        0,
+        0,
+        2,
+        0,
+        0,
+        1
+      ],
+      "same_icv": false,
+      "related_by_transposition": false,
+      "related_by_transposition_or_inversion": false,
+      "toy_binary_chroma_cosine": 0.333333
+    }
+  ]
+}

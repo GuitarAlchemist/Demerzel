@@ -1,0 +1,25 @@
+{
+  "cycle_id": "physics-2026-10-12-003",
+  "department": "physics",
+  "question": "What sampling and aliasing limits must a GA analyst distinguish between the fixed 44.1 kHz GAS-001 native render and the browser guitar AudioWorklet's actual context rate, and what experiment would test an alias hypothesis?",
+  "production_path": [
+    "source_review: inspect pinned GAS-001 provenance and GA browser bridge, AudioWorklet, and Rust engine",
+    "formal_example: calculate sample counts, Nyquist frequencies, E2 harmonic-index boundaries, and ideal sine aliases",
+    "test_design: compare known synthetic-rate references, then controlled native or browser GA renders at logged rates",
+    "evidence_limit: no high-frequency alias survey or browser capture was performed"
+  ],
+  "hypothesis": "A project-grounded lesson can show why the browser rate must be observed rather than inferred from a native WAV, and can calculate predicted single-sine alias folds while keeping the GA engine's actual alias behavior unmeasured.",
+  "test_method": "formal_proof",
+  "evidence": [
+    "The GAS-001 README at Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b documents four-second mono 44,100 Hz recorded and GA-native-rendered open E2 WAVs; the render calls engine_note_on(82.4069, 0.1). The recording label is dataset metadata. Neither WAV is a browser AudioWorklet capture.",
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, audioEngine.js passes audioContext.sampleRate to guitar-worklet.js, which calls engine_init(srToUse). The Rust engine stores the rate and uses it for resonator coefficients and delay-line lengths. This source path does not fix a universal browser rate.",
+    "Formal arithmetic: 4*44100=176400 mono samples; 4*48000=192000. Nyquist limits are 22050 and 24000 Hz. For f0=82.4069 Hz, 267*f0=22002.6423 and 268*f0=22085.0492; 291*f0=23980.4079 and 292*f0=24062.8148 Hz. These are ideal harmonic indices, not measured harmonics.",
+    "Ideal continuous 23000 Hz sine sampling folds to |23000-44100|=21100 Hz at 44.1 kHz, while it remains below Nyquist at 48 kHz. A 30000 Hz sine folds to 14100 Hz at 44.1 kHz and 18000 Hz at 48 kHz. These exact single-tone examples do not establish any GA waveform peak.",
+    "The pinned GAS-001 measurements report selected low harmonic and decay values, not an alias survey. The proposed synthetic-reference and rate-controlled GA comparisons were not run. No subject reviewer, learner, translation, public readback, or audio listening experiment completed this course. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.78,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T03:26:00Z"
+}

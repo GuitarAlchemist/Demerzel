@@ -4,16 +4,18 @@ department: computer-science
 course: "IA agéntica — Sistemas multiagente, uso de herramientas, bucles de razonamiento"
 level: intermediate
 prerequisites: ["Patrones de orquestación multiagente"]
-estimated_duration: "25 minutes"
+estimated_duration: "35 minutes"
 produced_by: seldon-auto-research
-research_cycle: cs-2026-03-22-001
+revised_by: codex-project-pilot
+research_cycle: computer-science-2026-10-12-002
+original_research_cycle: cs-2026-03-22-001
 coverage_ratio_at_selection: 0.0
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # Gobernar los bucles agénticos: evitar la iteración ilimitada en sistemas impulsados por LLM
 
-> **Departamento de Ciencias de la Computación** | Nivel: Intermedio | Duración: 25 minutos
+> **Departamento de Ciencias de la Computación** | Nivel: Intermedio | Duración: 35 minutos | Borrador revisado; pendientes la revisión humana del contenido y la prueba con un alumno
 
 ## Objetivos
 
@@ -39,6 +41,8 @@ garantizarla. La garantía debe venir del framework.
 Alan Turing demostró (1936) que ningún algoritmo puede decidir, para todos los programas, si se detendrán.
 Tampoco hay un procedimiento general que pueda decidirlo para un bucle de agente arbitrario. Por eso la terminación se impone
 en lugar de detectarse: un límite impuesto por el framework acota el número de iteraciones, y un plazo máximo impuesto por el framework a cada iteración completa la detiene cuando vence, si hace falta matando el proceso que la ejecuta. Solo los dos juntos hacen que el bucle se detenga por construcción: una iteración que nunca termina nunca llega al contador, y un plazo en cada llamada no basta, porque una iteración puede encadenar cualquier número de llamadas o calcular entre ellas.
+
+El teorema de la parada **no** demuestra que todos los agentes se equivoquen cuando declaran haber terminado. Descarta un procedimiento de decisión universal para programas arbitrarios. Para los cursos y las releases de este proyecto, la regla práctica es más concreta: comprobar los artefactos externos en vez de aceptar la declaración del agente.
 
 **Implicación:** Cualquier framework agéntico que dependa de que el modelo declare su propia finalización
 es defectuoso por construcción.
@@ -73,6 +77,8 @@ registrar el límite y escalar a revisión humana. El contador solo avanza cuand
 max_iterations: 12
 cap_behavior: halt_and_escalate
 ```
+
+El valor `12` es un ejemplo de configuración, no el valor por defecto actual de Demerzel. La [política de bucles fijada](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/policies/autonomous-loop-policy.yaml) indica `default_max: 10`, `absolute_max: 25` y `stall_limit: 3`. El registro de investigación de marzo hablaba de un «límite de 12 ciclos»; esta comprobación corrige esa afirmación histórica sin convertirla en una regla vigente.
 
 ### Propiedad 2: prueba de progreso
 Cada iteración debe producir un cambio de estado medible. El framework compara los hashes del estado
@@ -181,6 +187,42 @@ Los puntos de control y los registros de deduplicación de salidas lo cumplen: e
 | Estado no serializado | El bucle no puede pausarse/reanudarse | Usar una máquina de estados, serializar cada paso |
 
 ---
+
+## Práctica: decidir a partir de trazas
+
+Lee la [política de bucles fijada](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/policies/autonomous-loop-policy.yaml) y el [workflow de Seldon](https://github.com/GuitarAlchemist/Demerzel/blob/bb034ca0e7ab2b391401c1f042d73a5c4e5dc67e/.github/workflows/seldon-plan.yml) antes de responder. Los casos siguientes son **ejemplos ficticios**, salvo donde se cita una fuente. Una política escrita, una configuración de workflow y una ejecución observada son pruebas distintas.
+
+### Ejercicio práctico 1
+
+Un bucle tiene `max_iterations: 10`. Termina dos iteraciones y se bloquea para siempre dentro de la tercera llamada a una herramienta. ¿Lo acota el límite de iteraciones? Nombra el límite que falta y el archivo del proyecto que configura un plazo para un job completo.
+
+> **Respuesta:** No. El contador llega a tres solo cuando termina la tercera iteración, así que el límite de diez no detiene esa llamada. Hace falta un plazo impuesto a la iteración completa, o un plazo estricto que abarque el job y pueda terminar su proceso. El workflow de Seldon declara `timeout-minutes: 35` para su job; la política general declara recuento y límite de estancamiento, pero no un plazo por iteración. Una configuración de timeout no demuestra que una ejecución local arbitraria haya sido detenida.
+
+### Ejercicio práctico 2
+
+Un estado cambia de `{payload: "A", iteration: 4}` a `{payload: "A", iteration: 5}`. Otro cambia de `{payload: "A", iteration: 5}` a `{payload: "B", iteration: 6}`, pero sigue faltando el artefacto objetivo. ¿Qué cambio es un estancamiento exacto si se excluye el contador? ¿El segundo demuestra convergencia?
+
+> **Respuesta:** El primero es un estancamiento exacto si el hash incluye `payload` y excluye el contador. En el segundo cambia el valor, por lo que no se activa la prueba de igualdad, pero tampoco se demuestra un avance hacia el artefacto. Un criterio de éxito independiente debe comprobar ese artefacto y las demás pruebas exigidas. Por eso la política distingue convergencia, regresión y deriva: un hash distinto no equivale a éxito.
+
+### Ejercicio práctico 3
+
+Un agente de cursos llega a su décima iteración completada, declara una confianza de `0.90` y ha redactado el curso prometido. Faltan el veredicto humano sobre el contenido y la comprobación de la página pública. Clasifica el resultado como `complete`, `halt_and_escalate` o `continue`, y explica por qué el ejemplo `is_complete` de la sección 3 no basta para publicar.
+
+> **Respuesta:** `halt_and_escalate` para este bucle acotado: alcanzó el límite sin satisfacer el criterio externo completo. El borrador es un avance, pero ni la confianza ni el archivo por sí solos prueban la revisión humana o la publicación. La función `belief_confidence >= 0.85` ilustra dónde aplicar una comprobación externa; no es un criterio suficiente para Streeling. Una nueva unidad de trabajo autorizada puede seguir con otros cursos, pero el bucle agotado no debe llamar «completo» a su resultado parcial.
+
+### Ejercicio práctico 4
+
+La política indica `default_max: 10`, `absolute_max: 25` y `stall_limit: 3`; un registro de 2026 dice «límite de 12 ciclos»; el ejemplo del curso configura 12. ¿Cuál es el valor por defecto? ¿Cuál es un ejemplo permitido si se admiten ajustes por bucle? ¿Qué prueba mostraría que una ejecución concreta utilizó 12?
+
+> **Respuesta:** Diez es el valor por defecto de la política fijada y 25 su máximo absoluto. Doce es un ejemplo de límite particular dentro de esas cotas, no el valor por defecto. La frase del registro antiguo contradice la política fijada y no debe repetirse como regla vigente. Para una ejecución concreta hay que inspeccionar su configuración efectiva y una traza que la vincule con esa ejecución; ni la política general ni este curso lo demuestran.
+
+### Ejercicio práctico 5
+
+Un revisor pregunta si `timeout-minutes: 35` demuestra que todos los bucles de Demerzel o Ralph tienen un plazo por iteración y siempre se detienen limpiamente. Responde en dos frases ajustadas a las pruebas y nombra una observación necesaria para verificar un timeout en una ejecución real de Seldon.
+
+> **Respuesta:** El workflow fijado configura un límite de 35 minutos para ese job de Seldon, mientras que la política general no define ningún plazo por iteración; no se puede extender esa conclusión a todos los bucles de Demerzel o Ralph. Un timeout estricto puede terminar el trabajo sin un punto de control limpio, por lo que esa afirmación también requiere una traza. Para una ejecución real, inspecciona el resultado y los tiempos del job y el último punto de control o la salida del proceso; el YAML solo declara la configuración.
+
+Estas respuestas comprueban razonamientos sobre fuentes fijadas y casos concretos. No acreditan que se haya observado un agente en ejecución ni que todo el framework aplique las seis propiedades. Siguen pendientes la revisión humana del contenido y una prueba con un alumno sin respuestas; esta traducción no ha sido revisada por un hablante designado.
 
 ## Conclusiones clave
 

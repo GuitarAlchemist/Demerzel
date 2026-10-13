@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-guitar-acoustics-2026-10-12-003",
+  "department": "guitar-acoustics",
+  "research_cycle_id": "guitar-acoustics-2026-10-12-003",
+  "module_id": "gas-003-decay-calibration-open-e",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1857,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source and five AI-drafted localizations use saved GAS-001 RMS measurements and pinned Rust code for the worked arithmetic. Independent AI subject and cross-language semantic preflights found no actionable issue in their static scopes. The decay candidate, native harness extension, browser capture, multi-note run, and listening panel were not performed. Human subject, learner, fluent-language, and publication reviews remain pending. The proposed threshold is not a product standard."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T04:10:10Z"
+}

@@ -1,0 +1,29 @@
+{
+  "cycle_id": "cs-2026-10-04-004",
+  "department": "computer-science",
+  "question": "How can GA compose a bounded, testable agentic audio-improvement experiment while dogfooding the actual ComfyUI bridge and preserving independent acceptance evidence?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "functional_composition: pure_transformations effect_boundaries explicit_results",
+    "agentic_systems: proposal independent_evaluation bounded_retries receipts",
+    "dogfooding: run_real_product record_friction revise_harness",
+    "test: empirical"
+  ],
+  "hypothesis": "A fixed baseline/reference, explicit pure transformations and effect boundaries, and an independent acceptance rule can expose false progress and make agent-driven audio iterations reviewable; a byte-identical candidate is a useful negative control.",
+  "test_method": "empirical",
+  "evidence": [
+    "GA local commit 6fac5735f7ffbb4116ebee05cfc9d7911bb12ce9 adds Rust/guitar-web-wasm-demo/scripts/run-comfy-audio.js, compare-audio.js, a pass-through workflow, mock tests, and documentation. It is not pushed or merged. The mock tests pass; a live ComfyUI refinement was not run.",
+    "state/streeling/fixtures/computer-science/cs-004/control-evidence.json records a rerun using identical GA-rendered E2 baseline and candidate WAVs, the recorded GAS-001 E2 reference, 1.1-second reference offset, and 1.5-second window. Both RMS errors were exactly 0.12415874627653194; all reported FFT and Haar errors also matched.",
+    "The GAS-001 fixture README identifies WAV sources, hashes, CC BY-SA 4.0 attribution for the recording, native GA render settings, and onset limits.",
+    "state/streeling/fixtures/computer-science/cs-004/positive-control-evidence.json records two deliberate FFmpeg perturbations of the pinned native render. The comparator's RMS and spectral summaries changed, showing sensitivity to those controls without establishing perceptual improvement.",
+    "state/streeling/fixtures/computer-science/cs-004/review-followup-20261004.md records a bounded wmux Claude review with verified read/write receipt. It identified a missing known-perturbation control and an underspecified listening protocol; those are now addressed in the draft as testable proposals, not validated requirements.",
+    "state/streeling/fixtures/computer-science/cs-004/recursive-improvement-evidence.json contrasts the denied and completed wmux reviews and the negative and known-perturbation audio controls. It records missing throughput and learner-outcome measures, so it does not establish compounding progress.",
+    "GA docs/methodology/agentic-engineering.md explains harness design, bounded queues, review, and quality baselines. Existing Streeling CS-002 covers governed loops, but does not walk through this audio control and composition boundary.",
+    "ComfyUI core LoadAudio/SaveAudio nodes and server upload/prompt/history/view routes are documented in source: https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_audio.py and https://github.com/Comfy-Org/ComfyUI/blob/master/server.py"
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.72,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-04T18:20:43Z"
+}

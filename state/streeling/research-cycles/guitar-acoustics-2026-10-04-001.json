@@ -1,0 +1,28 @@
+{
+  "cycle_id": "guitar-acoustics-2026-10-04-001",
+  "department": "guitar-acoustics",
+  "question": "What do onset-aligned FFT and wavelet measurements of one recorded open E2 and one GA-engine E2 establish before using offline ComfyUI candidates to refine the guitar WASM engine?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "spectral_analysis: fft stft fundamental_frequency harmonic_partial_amplitudes",
+    "realism_verification: reference_matching attack_matching decay_matching perceptual_similarity",
+    "synthesis_pipeline: excitation string_model body_resonance effects_chain output_stage",
+    "test: empirical"
+  ],
+  "hypothesis": "An onset-aligned local FFT can establish specific pitch and partial differences, while frequency-dependent wavelet tracks expose changes in the partial envelopes; neither alone validates realism, and a ComfyUI candidate must be separately versioned and listened to before guiding a GA WASM parameter change.",
+  "test_method": "empirical",
+  "evidence": [
+    "GA commit dc2e74cbd992a298f67efb928b5b3754615e1924: Rust/guitar-web-wasm-demo/rust-engine/src/lib.rs contains the procedural guitar engine; src/audio/audioEngine.js loads its WASM build in an AudioWorklet; full-auto.ps1 records and analyzes browser output with optional DDSP, not ComfyUI.",
+    "collegefishiesd/guitar-fretboard-notes revision a33a26243e88e7ccd4893bee30eac3219ec8bef8, test row 39: source deb, acoustic, low_E, fret 0, note E2, 44.1 kHz, four seconds, CC BY-SA 4.0; downloaded WAV SHA-256 03a1965f275f0858be70476dab2bf55d2cbf2272ef7a50c61453d45e7f38b248.",
+    "The pinned GA Rust engine was compiled natively and rendered one E2 at 82.4069 Hz, velocity 0.1, profile 0, 44.1 kHz for four seconds; PCM16 WAV SHA-256 a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98. This is not a browser AudioWorklet capture.",
+    "state/streeling/fixtures/guitar-acoustics/gas-001/measurements.json: recorded first onset approximately 1.1 s, second attack near 2.75 s; local FFT peaks near E2 at 83 Hz and 82 Hz; second partial relative to first +7.0 dB and -16.9 dB; six-cycle Morlet-style second-partial late-minus-early changes -4.5 dB and -12.9 dB for recorded and synth respectively.",
+    "Karplus and Strong (1983) describe time-varying harmonic decay in plucked-string synthesis: https://users.soe.ucsc.edu/~karplus/papers/digitar.pdf",
+    "Audacity documents FFT window and resolution limits: https://manual.audacityteam.org/man/plot_spectrum.html; SciPy documents time-resolved STFT: https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.ShortTimeFFT.html; guitar-timbre wavelet research: https://www.iieta.org/journals/ts/paper/10.18280/ts.380218",
+    "ComfyUI core has audio load, preview, and save nodes and audio-generation workflows, but the inspected GA audio loop has no ComfyUI handoff: https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_audio.py"
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.68,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-04T17:12:56Z"
+}

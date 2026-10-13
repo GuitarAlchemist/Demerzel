@@ -1,0 +1,9 @@
+# PHY-003 independent AI subject preflight — 2026-10-12
+
+An independent read-only Codex agent reviewed the English PHY-003 source, research and production records against pinned GA commit `dc2e74cbd992a298f67efb928b5b3754615e1924` and the GAS-001 fixture at Demerzel commit `5c4967454ddc740ed937c87719ca4d71a3522e4b`. It checked the browser bridge passing `audioContext.sampleRate`, the worklet's `engine_init(srToUse)`, Rust engine rate use, and the fixture's 44.1 kHz native-render provenance. **No actionable findings within that static scope.** This is not a measured alias or human subject verdict.
+
+The reviewer recomputed 4-second sample counts of 176,400 at 44.1 kHz and 192,000 at 48 kHz; Nyquist limits of 22,050 and 24,000 Hz; ideal E2 partial boundaries 267/268 and 291/292; a 23 kHz tone folding to 21.1 kHz at 44.1 kHz but remaining in-band at 48 kHz; and a 30 kHz tone folding to 14.1 and 18 kHz respectively. The five answer blocks, initial 1,672-word English count, JSON schemas, and local/pinned links checked out. The lesson distinguishes these calculations from any measured GA alias and leaves the proposed render/capture experiment unrun.
+
+Five AI-drafted localizations (FR, ES, PT, IT, DE) were then checked by an independent agent against EN for the five answers, arithmetic, rate and native/browser distinctions, missing measurement limit, and links. One stale EN limit sentence still said that translation and independent subject review had not occurred. It was corrected to identify the pending **human** and fluent-language gates, and the English production word count was updated to 1,689. A focused independent retest found that issue resolved and preflight passing; no other semantic-parity issue was reported. AI parity is not fluent human approval.
+
+Human subject review, learner testing, fluent-language review, Learn deployment, and public readback remain open. `review.completed` and `publish.completed` stay false.

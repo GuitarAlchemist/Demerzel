@@ -33,23 +33,16 @@ courses/
 
 **Curriculum path:** Foundations → Statistical Mechanics → Power Laws → Phase Transitions → Crisis Prediction
 
-## Departments Without Courses (Yet)
+## Current inventory
 
-These departments have grammars and research areas defined but no courses produced. Run `/seldon research-cycle {dept}` followed by `/seldon course-pipeline {dept}` to generate.
-
-| Department | Grammar | Status |
-|-----------|---------|--------|
-| Music | music-theory.ebnf | Ready for research cycles |
-| Guitar Studies | guitar-technique.ebnf | Ready |
-| Musicology | musicology-analysis.ebnf | Ready |
-| Mathematics | mathematical-proof.ebnf | Ready |
-| Physics | acoustics-physics.ebnf | Ready |
-| Computer Science | algorithms.ebnf | Ready |
-| Product Management | product-management.ebnf | Ready |
-| Futurology | futurology.ebnf | Ready |
-| Philosophy | philosophy.ebnf | Ready |
-| Cognitive Science | cognitive-science.ebnf | Ready |
-| World Music & Languages | (technique grammars) | Ready |
+The sample rows above do not enumerate all modules. Run
+`python scripts/streeling_course_progress.py` from the Demerzel repository root
+for current counts and per-department gaps. Source files, language coverage,
+review verdicts, and public Learn readback are separate measures. The 25-course
+target currently uses the 21 course directories; the university registry and
+department records disagree about the department set. See
+[`docs/specs/streeling-project-curriculum-2026-10-04.md`](../../../docs/specs/streeling-project-curriculum-2026-10-04.md)
+for the counting rule and open scope decision.
 
 ## How Courses Are Produced
 

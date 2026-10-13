@@ -1,0 +1,25 @@
+{
+  "cycle_id": "data-visualization-2026-10-11-004",
+  "department": "data-visualization",
+  "question": "How should GA display uncertainty and rate resolution for a small historical chatbot QA suite without inventing a confidence interval?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "data_relationship: part_to_whole",
+    "chart_type: bar_chart_with_counts",
+    "design_pattern: denominator_and_resolution_annotation",
+    "design_principle: separate_observation_from_inference"
+  ],
+  "hypothesis": "Showing count-based step size and category denominators may make a 98.08% headline easier to interpret without suggesting unjustified statistical confidence.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "GA commit dc2e74cbd992a298f67efb928b5b3754615e1924: state/quality/chatbot-qa/2026-06-15.json reports 75.0% of 52; state/quality/chatbot-qa/2026-07-19.json reports 98.08% of 52.",
+    "The same July snapshot reports operations 85.71% of 7, getting-started 100% of 1, and modes 100% of 13; it omits prompt IDs and evaluator revision.",
+    "Arithmetic checks: 39/52=75%; 51/52 rounds to 98.08%; one changed verdict is 100/52=1.923 percentage points overall and 100/7=14.286 in operations.",
+    "Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T16:28:50Z"
+}

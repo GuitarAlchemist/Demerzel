@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-visual-computing-2026-10-12-007",
+  "department": "visual-computing",
+  "research_cycle_id": "visual-computing-2026-10-12-007",
+  "module_id": "vc-007-weave-seams-as-scene-contracts",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1819,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English weave-composition draft with five answered exercises and a pinned synthetic evaluator. The fixture checks crossing alternation; no Godot import, mesh geometry, learner trial, human review, localization, release, or public readback is claimed."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T21:54:09Z"
+}

@@ -4,14 +4,14 @@ department: cognitive-science
 course: "Fundamentos de Ciencia Cognitiva"
 level: beginner
 prerequisites: []
-estimated_duration: "25 minutes"
+estimated_duration: "40 minutes"
 produced_by: cognitive-science
 version: "1.0.0"
 ---
 
 # Tu cerebro te miente — Sesgos cognitivos que todos deberían conocer
 
-> **Departamento de Ciencia Cognitiva** | Nivel: Principiante | Duración: 25 minutos
+> **Departamento de Ciencia Cognitiva** | Nivel: Principiante | Duración: 40 minutos
 
 ## Objetivos
 
@@ -51,7 +51,7 @@ Un desarrollador está convencido de que el Framework X es la mejor opción. Lee
 
 ### Relevancia para gobernanza
 
-El sesgo de confirmación es la razón por la que la lógica tetravalente de Demerzel incluye el estado **C (Contradictorio)**. Cuando la evidencia entra en conflicto, el sistema no lo resuelve silenciosamente a favor de la creencia existente — señala la contradicción para investigación.
+La lógica hexavalente actual de Demerzel incluye **C (Contradictorio)** para evidencia en conflicto. Registrar el conflicto puede hacer visible una prueba que el sesgo de confirmación ocultaría; el estado por sí solo no elimina el sesgo.
 
 ---
 
@@ -121,7 +121,7 @@ Un desarrollador junior que acaba de completar un tutorial en línea anuncia que
 
 ### Relevancia para gobernanza
 
-El estado **U (Desconocido)** en la lógica tetravalente existe precisamente para esto. Cuando un agente no tiene suficiente evidencia, la respuesta correcta no es una suposición — es "Desconocido." Esto dispara investigación en lugar de falsa certeza.
+El estado **U (Desconocido)** de la lógica hexavalente actual registra evidencia insuficiente. Responder «Desconocido» en vez de adivinar puede limitar el exceso de confianza y activar una investigación; no diagnostica la habilidad de una persona.
 
 ---
 
@@ -247,6 +247,46 @@ Conocer tus sesgos no los elimina. Pero te permite construir sistemas — humano
 
 ---
 
+## Ejercicio del proyecto: cuestionar una afirmación de publicación Streeling
+
+El [caso COG‑001](../../../fixtures/cognitive-science/cog-001/bias-release-case.json) es **inventado**: sus cifras no miden GA ni Learn. Representa un límite real: la [comprobación previa de Demerzel](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_course_preflight.py) verifica fuentes y registros, pero no demuestra calidad temática, revisión humana ni publicación. El [informe de candidatos](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_review_candidates.py) también sirve para seleccionar, no para aprobar. La lógica canónica actual es **hexavalente** (T/P/U/D/F/C); T/F/U/C, citado arriba, es un subconjunto didáctico.
+
+Responde con el archivo del caso antes de abrir las soluciones. Indica qué observación cambiaría cada conclusión. Las preguntas examinan decisiones, no diagnostican a una persona.
+
+### Exercise 1 — Confirmación y prueba ausente
+
+Un colega afirma que cuatro vistas previas locales exitosas prueban que los doce cursos están publicados. ¿Qué prueba lo contradice y qué falta verificar?
+
+> **Answer:** La única comprobación pública devolvió 404 en la URL y el momento indicados; los otros once resultados son desconocidos. Hay que comprobar cada URL y revisión desplegada y obtener pruebas de revisión humana. Cuatro vistas previas no demuestran doce publicaciones.
+
+### Exercise 2 — Supervivencia y denominador
+
+Calcula la fracción de cursos previstos con vista previa local comprobada y exitosa. ¿Es una tasa de publicación?
+
+> **Answer:** 4/12 = 1/3 = 33,3 %. Los ocho cursos no comprobados siguen en el denominador de los previstos. No hay publicación confirmada para ninguno de los doce: una URL devolvió 404 y las otras once no se comprobaron. Ni 4/4 ni 4/12 es una tasa de publicación medida.
+
+### Exercise 3 — Anclaje en el 80 %
+
+La primera estimación de preparación fue del 80 %. ¿La respaldan los datos?
+
+> **Answer:** No. Solo 4/12 vistas previas locales pasaron y se comprobó 1/12 URL públicas, que devolvió 404. Esas medidas no definen ni justifican el 80 %. Primero define una regla con pruebas de fuente, recibos de revisión y lectura pública de cada idioma exigido; luego mide numerador y denominador.
+
+### Exercise 4 — Disponibilidad tras un 404
+
+Alguien recuerda el 404 y quiere detener para siempre todos los lanzamientos. ¿Qué respuesta evita generalizar?
+
+> **Answer:** Registra URL, hora y revisión desplegada, comprueba las otras once URL y repite tras corregir. Una sola comprobación no estima la frecuencia global de fallos. Bloquea la publicación afectada hasta obtener una lectura correcta; diseña futuros controles a partir de causas y tasa base medidas.
+
+### Exercise 5 — Coste hundido y valor futuro
+
+Tras ocho meses de trabajo, el caso prevé dos horas de beneficio y cinco de mantenimiento por semana. ¿Qué decisión sugieren esas hipótesis?
+
+> **Answer:** El saldo *previsto* es 2 − 5 = −3 horas semanales. Los ocho meses pasados no mejoran el saldo futuro. Pausa el despliegue amplio, comprueba previsión y valor para usuarios mediante un pequeño piloto reversible, y continúa solo si nuevos datos cambian el balance. No es un coste observado de GA.
+
+**Criterio de transferencia:** Diferenciar vista previa, revisión y lectura pública; calcular 4/12; indicar una observación que refutaría la afirmación de publicación. La tarea independiente no incluye soluciones.
+
+---
+
 ## Base de investigación
 
 - Taxonomía de sesgos cognitivos de Daniel Kahneman, *Pensar rápido, pensar despacio* (2011)
@@ -254,5 +294,5 @@ Conocer tus sesgos no los elimina. Pero te permite construir sistemas — humano
 - Investigación sobre costos hundidos de Arkes & Blumer, "The Psychology of Sunk Cost" (1985)
 - Sesgo de supervivencia del análisis de blindaje de aviones de Abraham Wald en la Segunda Guerra Mundial
 - Experimentos de anclaje de Tversky & Kahneman, "Judgment Under Uncertainty" (1974)
-- Las contramedidas de gobernanza se mapean a la lógica tetravalente, rollback, kaizen y políticas de moneda-de-creencia de Demerzel
+- Los ejemplos de gobernanza remiten a la lógica hexavalente y a las políticas de rollback, kaizen y belief-currency de Demerzel; aquí no se midió su efecto sobre sesgos humanos
 - Estado de creencia: T(0.85) F(0.02) U(0.10) C(0.03)

@@ -1,0 +1,16 @@
+{
+  "pipeline_id": "cp-data-visualization-2026-10-11-002",
+  "department": "data-visualization",
+  "research_cycle_id": "data-visualization-2026-10-11-002",
+  "module_id": "dv-002-denominators-and-test-populations",
+  "status": "in_progress",
+  "phases": {
+    "research": {"completed": true, "belief_value": "P", "belief_confidence": 0.65},
+    "outline": {"completed": true, "sections": 4, "estimated_duration": "30 minutes"},
+    "content": {"completed": true, "word_count": 1224, "exercises": 5},
+    "translation": {"completed": false, "languages": ["en"]},
+    "review": {"completed": false, "feedback": "Subject, learner, and native-language reviews pending; no claim of a fixed prompt cohort."},
+    "publish": {"completed": false}
+  },
+  "timestamp": "2026-10-11T06:40:00Z"
+}

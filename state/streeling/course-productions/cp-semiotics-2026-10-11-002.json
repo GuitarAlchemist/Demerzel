@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-semiotics-2026-10-11-002",
+  "department": "semiotics",
+  "research_cycle_id": "semiotics-2026-10-11-002",
+  "module_id": "sem-002-chord-symbols-and-canonicalization",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1925,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft grounded in pinned GA parser, renderer, service, closure, AST, and checked-in test declarations. A bounded independent AI subject and answer-key review found no issue in the five source-derived examples. Human subject and learner review, a fresh pinned test run, UI observation, and localization remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T21:55:29Z"
+}

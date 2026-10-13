@@ -1,0 +1,24 @@
+{
+  "cycle_id": "visual-computing-2026-10-12-005",
+  "department": "visual-computing",
+  "question": "Can one craft feature survive the existing Learn GLB cleanup and a future Godot observatory import while reducing geometry cost without losing its declared meaning?",
+  "production_path": [
+    "baseline: inspect the pinned Learn GLB cleanup source, sample checker, expected report, and VC-004 Godot capture gate",
+    "model: give one woven, folded, or metalworked feature an ID, meaning, and viewing task",
+    "experiment proposal: compare one cleanup parameter at a time and read back geometry, UV, rendered image, and recognition result",
+    "counterargument: use the existing cleanup plus an external manifest and human checklist before proposing a DSL",
+    "falsifier: reject any gate that admits a missing feature or adds cost without better recognition or review throughput"
+  ],
+  "hypothesis": "A feature manifest and controlled cleanup trial may preserve a craft-derived scene cue better than topology-only cleanup, but the existing pipeline plus a simple checklist may be sufficient.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At Learn commit 93d424f872a576ba8bbcd3dd44c9733292373654, code/blender/scripts/glb_pipeline.py joins imported meshes, removes connected parts below --min-part, optionally voxel-remeshes, decimates, exports, and reimports a GLB; its docstring targets three.js.",
+    "The pinned code/blender/scripts/pipeline_check.py deliberately creates a flawed guitar-pick mesh. Its checked-in expected report lists 5,140 imported faces, a removed 20-face part under the one-percent threshold, and loss of the UV layer in the voxel-remesh variant. This is a reference report, not a run for this lesson. Current Learn main at 3f4de745f56e81f237159997473253546d7f6d64 retained a zero-filter return-shape defect; draft PR #168 proposes a one-line correction with focused source-level verification only.",
+    "VC-004 supplies a proposed Godot observatory capture gate but no actual craft asset, scene import, recognition study, or DLSS benchmark. Five answered exercises include synthetic craft and reviewer fixtures; no runtime craft experiment or publication occurred. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.6,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T05:45:00Z"
+}

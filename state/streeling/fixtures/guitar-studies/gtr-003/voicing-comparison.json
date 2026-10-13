@@ -1,0 +1,28 @@
+{
+  "kind": "teaching_fixture_not_ga_service_output",
+  "tuning_low_to_high": ["E", "A", "D", "G", "B", "E"],
+  "chord": "C major",
+  "shapes": [
+    {
+      "name": "open C",
+      "frets_low_to_high": [-1, 3, 2, 0, 1, 0],
+      "sounding_notes_low_to_high": ["C", "E", "G", "C", "E"],
+      "positive_fret_span": 2,
+      "open_strings": 2
+    },
+    {
+      "name": "A-form C",
+      "frets_low_to_high": [-1, 3, 5, 5, 5, 3],
+      "sounding_notes_low_to_high": ["C", "G", "C", "E", "G"],
+      "positive_fret_span": 2,
+      "open_strings": 0
+    },
+    {
+      "name": "E-form C",
+      "frets_low_to_high": [8, 10, 10, 9, 8, 8],
+      "sounding_notes_low_to_high": ["C", "G", "C", "E", "G", "C"],
+      "positive_fret_span": 2,
+      "open_strings": 0
+    }
+  ]
+}

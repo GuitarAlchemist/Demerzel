@@ -1,0 +1,17 @@
+{
+  "kind": "synthetic_teaching_case",
+  "project_context": "Streeling source-to-Learn course publication",
+  "planned_courses": 12,
+  "local_preview_passes": 4,
+  "local_preview_not_checked": 8,
+  "public_readbacks_checked": 1,
+  "public_checked_url": "https://example.invalid/streeling/synthetic-course-1",
+  "observation_time_utc": "2026-10-12T12:00:00Z",
+  "public_readback_result": "404 at the stated URL and observation time",
+  "public_readbacks_not_checked": 11,
+  "proposed_readiness_fraction": 0.8,
+  "past_effort_months": 8,
+  "forecast_weekly_benefit_hours": 2,
+  "forecast_weekly_maintenance_hours": 5,
+  "caution": "Every count and forecast in this fixture is invented for teaching. A local preview pass does not prove human review or public publication."
+}

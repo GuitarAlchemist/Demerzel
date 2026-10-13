@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-information-theory-2026-10-11-003",
+  "department": "information-theory",
+  "research_cycle_id": "information-theory-2026-10-11-003",
+  "module_id": "inf-003-verdict-distribution-drift",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.75
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1720,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft with pinned IX source and an independently calculated synthetic fixture. Independent AI preflight found and resolved a witness-cap precision issue: Fails can have no reported witness when max_reported_deadlocks is zero. All six active-language source drafts exist; fluent language, human subject, learner, and publication reviews remain pending. No real analyzer or DuckDB workload was run."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T02:38:13Z"
+}

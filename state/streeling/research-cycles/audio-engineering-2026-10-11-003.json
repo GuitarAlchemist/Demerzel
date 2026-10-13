@@ -1,0 +1,28 @@
+{
+  "cycle_id": "audio-engineering-2026-10-11-003",
+  "department": "audio-engineering",
+  "question": "How can GA's recorded open-E reference be analyzed and optionally denoised offline without silently changing the pluck transient used for comparison?",
+  "production_path": [
+    "investigation: inspect pinned GAS-001 audio provenance and prior time-frequency lessons",
+    "implementation: inspect IX FFT, STFT spectrogram, Haar wavelet denoising, handlers, and tests",
+    "fixed_fixture: derive Hann boundary-impulse and one-level Haar threshold examples",
+    "project_decision: preserve raw reference and predeclare a transient-preservation gate before optional denoising",
+    "empirical_followup: bounded local IX MCP Haar probe on one 8192-sample excerpt of the recorded WAV",
+    "evidence_limit: no full-WAV processing, IX spectrogram, verified endpoint binary provenance, or listener verdict"
+  ],
+  "hypothesis": "A whole-interval FFT cannot assign a spectral feature to a particular pluck, while an onset-labeled STFT can expose frame timing; IX's Haar soft threshold can weaken an isolated transient, so noise reduction needs an explicit attack-preservation gate before the processed reference is used in a GA comparison.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b, state/streeling/fixtures/guitar-acoustics/gas-001/README.md identifies four-second mono 44.1 kHz recorded open E2 and GA native-rendered E2 WAVs, approximate first onsets of 1.1 s and 0.0 s, and a later recorded attack near 2.75 s. Its saved FFT and Morlet-style wavelet measurements are not IX output or a listening verdict.",
+    "At IX commit bd1336b7c4045e427dcdbe80b102790e45da5ce1, crates/ix-signal/src/fft.rs:84-115 zero-pads non-power-of-two FFT input; crates/ix-agent/src/handlers.rs:1297-1315 reports normalized cycles-per-sample frequencies. The lesson does not infer event time from whole-file magnitudes.",
+    "At that IX commit, crates/ix-signal/src/spectral.rs:6-54 uses complete Hann-windowed STFT frames and returns one-sided magnitude or 20 log10 floored magnitude; crates/ix-agent/src/handlers.rs:1143-1189 enforces power-of-two window size and reports frames and bins. A derived 2048-sample window at 44.1 kHz spans 46.44 ms, a 512-sample hop spans 11.61 ms, and nominal bin spacing is 21.53 Hz. No WAV spectrogram was computed.",
+    "At that IX commit, crates/ix-signal/src/window.rs:10-15 makes a Hann endpoint zero. For a synthetic 64-sample impulse at index 16 and window 16, hop 16 places the impulse only at an endpoint with zero weight; hop 8 also puts it at offset 8 with weight about 0.989. This is a source-derived calculation, not an IX audio measurement.",
+    "At that IX commit, crates/ix-signal/src/wavelet.rs:5-82 uses pairwise Haar coefficients and soft-thresholded detail reconstruction. For [0,1,0,0,0,0,0,0], one level and threshold 1 derive [0.5,0.5,0,0,0,0,0,0]. The IX handler at crates/ix-agent/src/handlers.rs:759-797 rejects an input whose length is not divisible by 2^levels; 44,100 samples have remainder four at three levels. The checked-in smooth-ramp noise test at crates/ix-agent/src/skills/batch1.rs:1387-1411 does not establish guitar transient preservation.",
+    "The proposed 3 dB pre-onset RMS reduction, 10% peak tolerance, and 1 ms peak-time tolerance are illustrative evaluation thresholds. A bounded local ix_wavelet_denoise MCP call used 8192 rounded-float samples from recorded WAV SHA-256 03a1965f275f0858be70476dab2bf55d2cbf2272ef7a50c61453d45e7f38b248, starting at sample 46966. At levels=3, thresholds 0.002, 0.004, and 0.008 reduced RMS in the provisional 1.06499-1.1 s pre-onset interval by 0.0942, 0.0968, and 0.0968 dB, while peak ratios in the 1.1-1.25 s attack interval were 0.9697, 0.9483, and 0.9054 with zero peak-sample shift. This is documented in state/streeling/reviews/aud-003-ix-probe-2026-10-11.md. The 1.1 s onset marker is approximate, the interval is only 35 ms, and endpoint binary identity was not independently attested to the pinned source commit. No full-WAV processing, spectrogram, saved processed WAV, listening panel, or learner trial was run; research duration was not instrumented, so duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T23:30:49Z"
+}

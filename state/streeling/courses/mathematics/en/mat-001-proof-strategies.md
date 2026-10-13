@@ -159,6 +159,16 @@ In practice, mathematicians often attempt direct proof first. If that stalls, th
 
 Some statements can be proved by any of the three methods. As you gain experience, you develop intuition for which approach will be cleanest.
 
+### Project case: what does a GA scoring test prove?
+
+Guitar Alchemist searches musical embeddings with a weighted similarity score. At [GA commit `dc2e74c`](https://github.com/GuitarAlchemist/ga/tree/dc2e74cbd992a298f67efb928b5b3754615e1924), [`EmbeddingSchema.ExtractCompact`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L266) normalizes each similarity partition and scales it by `SqrtWeight`; [`WeightedPartitionCosine`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L269-L302) sums each partition's cosine times `SimilarityWeight`. The [contract test](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L31-L50) compares the two scoring paths for one pair of deterministic, full-length vectors with nonzero similarity partitions, allowing a difference of `1e-6`. The test checks that pair; it cannot establish a universal claim about all inputs.
+
+### Practice Exercise
+
+Let one partition have positive weight *w* and nonzero raw slices *x* and *y*. In exact real arithmetic, define its compact slice as *c(x) = sqrt(w) x / ||x||*. Prove directly that *c(x) · c(y) = w cosine(x, y)*. Does GA's contract test prove that the implemented equality holds for every raw vector?
+
+> *Solution:* Expand the dot product: *c(x) · c(y) = sqrt(w)^2 (x · y) / (||x|| ||y||) = w cosine(x, y)*. This direct proof covers the stated nonzero slices in exact arithmetic; it does not depend on sampling examples. GA's test checks one deterministic pair within `1e-6`, not every vector. In the implementation, `SqrtWeight` is a rounded `float` square root, so its square need not equal the stored `float` weight exactly. For an all-zero partition, compact extraction leaves its slice zero and the weighted scorer skips the resulting `NaN` cosine; the displayed division by a norm of zero is undefined, so this proof needs that separate case. Extraction also leaves a slice zero when its computed sum of squares is no greater than `double.Epsilon`, another boundary outside the simple algebra. The weighted scorer skips a partition that extends beyond either short raw vector, while compact extraction indexes every declared partition directly; the equality claim must not be extended to short inputs. These are source-level boundaries, not results of an exhaustive runtime test.
+
 ---
 
 ## 6. Common Pitfalls
@@ -209,4 +219,5 @@ Some statements can be proved by any of the three methods. As you gain experienc
 - Common proof errors (circular reasoning, missing base case) are well-documented in mathematics education research
 - Pedagogically, learning proof strategies before specific mathematical content improves long-term reasoning ability
 - Sources: Mathematics education consensus, Streeling Department of Mathematics curriculum
+- Project source: [GA `EmbeddingSchema` at `dc2e74c`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L302) and its [one-pair contract test](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L14-L50). The algebraic proof above has stated input and arithmetic assumptions; the test is finite evidence, not universal proof.
 - Belief state: T(0.92) F(0.01) U(0.05) C(0.02)

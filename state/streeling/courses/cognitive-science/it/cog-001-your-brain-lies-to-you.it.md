@@ -4,14 +4,14 @@ department: cognitive-science
 course: "Fondamenti di Scienza Cognitiva"
 level: beginner
 prerequisites: []
-estimated_duration: "25 minutes"
+estimated_duration: "40 minutes"
 produced_by: cognitive-science
 version: "1.0.0"
 ---
 
 # Il Tuo Cervello Ti Mente — Bias Cognitivi Che Tutti Dovrebbero Conoscere
 
-> **Dipartimento di Scienza Cognitiva** | Livello: Principiante | Durata: 25 minuti
+> **Dipartimento di Scienza Cognitiva** | Livello: Principiante | Durata: 40 minuti
 
 ## Obiettivi
 
@@ -51,7 +51,7 @@ Uno sviluppatore è convinto che il Framework X sia la scelta migliore. Legge ci
 
 ### Rilevanza per la Governance
 
-Il bias di conferma è il motivo per cui la logica tetravalente di Demerzel include lo stato **C (Contraddittorio)**. Quando le prove sono in conflitto, il sistema non le risolve silenziosamente a favore della credenza esistente — segnala la contraddizione per l'indagine.
+La logica esavalente attuale di Demerzel include **C (Contraddittorio)** per prove in conflitto. Registrare il conflitto può rivelare una prova che il bias di conferma farebbe trascurare; lo stato da solo non elimina il bias.
 
 ---
 
@@ -121,7 +121,7 @@ Uno sviluppatore junior che ha appena completato un tutorial online annuncia di 
 
 ### Rilevanza per la Governance
 
-Lo stato **I (Ignoto)** nella logica tetravalente esiste precisamente per questo. Quando un agente non ha prove sufficienti, la risposta corretta non è un'ipotesi — è "Ignoto." Questo attiva l'indagine piuttosto che la falsa certezza.
+Lo stato **U (Ignoto)** nella logica esavalente attuale registra prove insufficienti. Rispondere «Ignoto» invece di indovinare può limitare l'eccesso di sicurezza e avviare un'indagine; non diagnostica l'abilità di una persona.
 
 ---
 
@@ -247,6 +247,46 @@ Conoscere i propri bias non li elimina. Ma permette di costruire sistemi — uma
 
 ---
 
+## Esercizio di progetto: verificare una pubblicazione Streeling
+
+Il [caso COG‑001](../../../fixtures/cognitive-science/cog-001/bias-release-case.json) è **inventato**: i numeri non misurano GA né Learn. Rappresenta un limite reale: il [controllo preliminare Demerzel](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_course_preflight.py) verifica fonti e registri, ma non dimostra qualità disciplinare, revisione umana o pubblicazione. Il [rapporto sui candidati](https://github.com/GuitarAlchemist/Demerzel/blob/af4e9a3a6f242745730f2d0d28e2535fe7477666/scripts/streeling_review_candidates.py) serve al triage, non ad approvare. La logica canonica attuale è **esavalente** (T/P/U/D/F/C); T/F/U/C, citato sopra, è un sottoinsieme didattico.
+
+Rispondi usando il file del caso prima di aprire le soluzioni. Indica quale osservazione cambierebbe ogni conclusione. L'esercizio valuta decisioni, non diagnostica persone.
+
+### Exercise 1 — Conferma e prova mancante
+
+Quattro anteprime locali sono riuscite. Un collega sostiene che tutti e dodici i corsi siano pubblicati. Quale dato lo contraddice e quale verifica manca?
+
+> **Answer:** L'unica verifica pubblica ha restituito 404 all'URL e all'ora indicati; gli altri undici risultati pubblici sono ignoti. Verificare ogni URL e revisione distribuita e ottenere prove di revisione umana. Quattro anteprime locali non provano dodici pubblicazioni.
+
+### Exercise 2 — Sopravvivenza e denominatore
+
+Calcola la quota di corsi previsti con anteprima locale controllata e riuscita. È un tasso di pubblicazione?
+
+> **Answer:** 4/12 = 1/3 = 33,3%. Gli otto corsi non controllati restano nel denominatore dei corsi previsti. Nessuno dei dodici ha pubblicazione confermata nel caso: un URL ha restituito 404 e gli altri undici sono ignoti. Né 4/4 né 4/12 misura un tasso di pubblicazione.
+
+### Exercise 3 — Ancoraggio all'80%
+
+La prima stima di prontezza era 80%. I dati la sostengono?
+
+> **Answer:** No. Solo 4/12 anteprime locali passano e 1/12 URL pubblici è stato controllato, restituendo 404. Queste misure non definiscono né giustificano l'80%. Prima definire un criterio con controlli delle fonti, ricevute di revisione e lettura pubblica in ogni lingua richiesta; poi misurare numeratore e denominatore.
+
+### Exercise 4 — Disponibilità dopo un 404
+
+Qualcuno ricorda il 404 e vuole fermare per sempre ogni rilascio. Quale risposta evita di generalizzare?
+
+> **Answer:** Registrare URL, ora e revisione distribuita; controllare gli altri undici URL e riprovare dopo la correzione. Un solo controllo non stima la frequenza globale dei guasti. Bloccare la pubblicazione interessata finché la lettura non riesce; scegliere i controlli futuri secondo cause e tasso di base misurati.
+
+### Exercise 5 — Costi irrecuperabili e valore futuro
+
+Dopo otto mesi di lavoro, il caso prevede due ore di beneficio e cinque di manutenzione alla settimana. Quale decisione segue da queste ipotesi?
+
+> **Answer:** Il saldo *previsto* è 2 − 5 = −3 ore settimanali. Gli otto mesi trascorsi non migliorano il saldo futuro. Sospendere l'estensione, verificare la previsione e il valore per gli utenti con un piccolo pilota reversibile, e proseguire solo se nuove prove cambiano il bilancio. Non sono costi GA osservati.
+
+**Criterio di trasferimento:** Distinguere anteprima, revisione e lettura pubblica; calcolare 4/12; indicare un dato che smentirebbe la pubblicazione dichiarata. Il compito separato non include le risposte.
+
+---
+
 ## Base di Ricerca
 
 - Tassonomia dei bias cognitivi da Daniel Kahneman, *Pensieri lenti e veloci* (2011)
@@ -254,5 +294,5 @@ Conoscere i propri bias non li elimina. Ma permette di costruire sistemi — uma
 - Ricerca sui costi irrecuperabili da Arkes & Blumer, "The Psychology of Sunk Cost" (1985)
 - Bias del sopravvissuto dall'analisi delle corazze degli aerei nella Seconda Guerra Mondiale di Abraham Wald
 - Esperimenti sull'ancoraggio da Tversky & Kahneman, "Judgment Under Uncertainty" (1974)
-- Le contromisure di governance corrispondono alla logica tetravalente, al rollback, al kaizen e alle politiche di belief-currency di Demerzel
+- Gli esempi di governance rimandano alla logica esavalente e alle politiche di rollback, kaizen e belief-currency di Demerzel; il loro effetto sui bias umani non è stato misurato qui
 - Stato di credenza: V(0.85) F(0.02) I(0.10) C(0.03)

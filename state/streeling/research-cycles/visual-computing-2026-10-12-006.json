@@ -1,0 +1,24 @@
+{
+  "cycle_id": "visual-computing-2026-10-12-006",
+  "department": "visual-computing",
+  "question": "Can a folded-surface feature in a future Blender-to-Godot observatory convey a declared governance state without losing crease identity, signed pose, or meaning?",
+  "production_path": [
+    "baseline: inspect pinned GA Godot plan and React host plus Learn modeling, material, and glTF examples",
+    "model: define a synthetic three-panel, two-crease fixture with separate geometric, material, and semantic evidence",
+    "experiment proposal: compare static baseline and folded candidate under fixed scene controls, then test object-ID binding and learner recognition",
+    "counterargument: a flat panel plus text and a simple sidecar may convey the state with less cost than folded geometry or a DSL",
+    "falsifier: reject the candidate if a wrong sign or policy label passes visual review, comprehension falls below baseline, or the mapping cannot be replayed"
+  ],
+  "hypothesis": "A versioned crease-ID sidecar and controlled scene trial may make fold-state errors observable, but a flat-text interface may be clearer and cheaper.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, the parked Godot integration plan sketches an observatory scene and screenshot feedback as unchecked tasks; GodotScene.tsx declares an iframe and message handling, not a verified rendered export.",
+    "At Learn commit 93d424f872a576ba8bbcd3dd44c9733292373654, l02_modeling.py and its checked-in reference report demonstrate open and non-manifold mesh topology inspection; l03_materials.py and its checked-in report inspect UV corners and glTF material and mesh attributes on a fretboard example.",
+    "Five answered exercises use synthetic panels, crease signs, reviewer counts, and interaction outcomes. No folded asset, Blender or Godot run, human review, learner attempt, DSL implementation, or publication occurred. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.6,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T05:54:23Z"
+}

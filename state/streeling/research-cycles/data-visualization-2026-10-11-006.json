@@ -1,0 +1,25 @@
+{
+  "cycle_id": "data-visualization-2026-10-11-006",
+  "department": "data-visualization",
+  "question": "How should a GA dashboard encode instrument corpus counts and dated chatbot QA rates so readers can make the intended comparison without confusing units or overstating evidence?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "data_relationship: categorical_counts_and_dated_rates",
+    "chart_type: common_scale_bars_and_dated_dot_plot",
+    "design_pattern: compare_position_length_and_area_against_task",
+    "design_principle: preserve_unit_date_denominator_and_provenance"
+  ],
+  "hypothesis": "Naming the comparison task and unit before selecting position, length, or area can make the historical GA values easier to compare without implying unmeasured quality or matched QA improvement.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, state/quality/voicing-analysis/2026-07-23.json reports Corpus.Guitar=297910, Bass=7795, Ukulele=7342, Total=313047. The component counts sum to the reported total.",
+    "At the same commit, state/quality/chatbot-qa/2026-06-15.json reports pass_pct=75.0 and total_prompts=52; 2026-07-19.json reports pass_pct=98.08 and total_prompts=52. The files do not identify prompts or evaluator revisions, so matched-test improvement is unverified.",
+    "Checked the lesson's derived comparisons: 297910/7795=38.2181; on a 100-unit guitar bar, bass=2.6166 and ukulele=2.4645 units; the correct guitar-to-bass circle radius ratio is sqrt(38.2181)=6.1821; scaling radius by 38.2181 instead would make area ratio about 1460.62; QA rate difference is 23.08 percentage points.",
+    "The English lesson contains five practice exercises and five corresponding answers. Research duration was not instrumented; duration_seconds=0 records that limit. No human subject review, learner attempt, localization, or public publication is evidenced."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T17:56:04Z"
+}

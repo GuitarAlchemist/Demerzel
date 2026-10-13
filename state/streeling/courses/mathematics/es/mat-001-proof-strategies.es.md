@@ -159,6 +159,16 @@ En la práctica, los matemáticos a menudo intentan la demostración directa pri
 
 Algunos enunciados pueden demostrarse por cualquiera de los tres métodos. Conforme ganas experiencia, desarrollas intuición para cuál enfoque será el más limpio.
 
+### Caso del proyecto: ¿qué demuestra una prueba del cálculo de similitud de GA?
+
+Guitar Alchemist busca representaciones vectoriales musicales (embeddings) mediante una puntuación de similitud ponderada. En el [commit de GA `dc2e74c`](https://github.com/GuitarAlchemist/ga/tree/dc2e74cbd992a298f67efb928b5b3754615e1924), [`EmbeddingSchema.ExtractCompact`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L266) normaliza cada partición de similitud y la multiplica por `SqrtWeight`; [`WeightedPartitionCosine`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L269-L302) suma el coseno de cada partición multiplicado por `SimilarityWeight`. La [prueba de contrato](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L31-L50) compara ambas formas de calcular la puntuación para un solo par de vectores deterministas de longitud completa, cuyas particiones de similitud son no nulas, y admite una diferencia de `1e-6`. La prueba verifica ese par; no establece una afirmación universal sobre todas las entradas.
+
+### Ejercicio práctico
+
+Considera una partición de peso positivo *w* y dos segmentos originales no nulos *x* e *y*. En la aritmética exacta de los números reales, define su segmento compacto como *c(x) = sqrt(w) x / ||x||*. Demuestra directamente que *c(x) · c(y) = w cosine(x, y)*. ¿Demuestra la prueba de contrato de GA que la igualdad implementada se cumple para todos los vectores originales?
+
+> *Solución:* Desarrolla el producto escalar: *c(x) · c(y) = sqrt(w)^2 (x · y) / (||x|| ||y||) = w cosine(x, y)*. Esta demostración directa cubre los segmentos no nulos indicados en aritmética exacta; no depende de una muestra de ejemplos. La prueba de GA comprueba un solo par determinista con una tolerancia de `1e-6`, no todos los vectores. En la implementación, `SqrtWeight` es una raíz cuadrada de tipo `float` redondeada, de modo que su cuadrado no tiene por qué ser exactamente igual al peso `float` almacenado. Si una partición es completamente nula, la extracción compacta deja su segmento en cero y el cálculo ponderado omite el coseno `NaN` resultante; la división mostrada por una norma cero está indefinida, por lo que la demostración necesita tratar ese caso por separado. La extracción también deja un segmento en cero cuando la suma calculada de sus cuadrados no supera `double.Epsilon`, otro caso límite ajeno al álgebra simple. El cálculo ponderado omite una partición que se extiende más allá de cualquiera de los vectores originales demasiado cortos, mientras que la extracción compacta accede directamente a cada partición declarada; por ello, la afirmación de igualdad no debe extenderse a entradas demasiado cortas. Estos límites se deducen del código, no de una prueba de ejecución exhaustiva.
+
 ---
 
 ## 6. Errores comunes
@@ -209,4 +219,5 @@ Algunos enunciados pueden demostrarse por cualquiera de los tres métodos. Confo
 - Los errores comunes en demostración (razonamiento circular, caso base faltante) están bien documentados en la investigación en educación matemática
 - Pedagógicamente, aprender estrategias de demostración antes del contenido matemático específico mejora la habilidad de razonamiento a largo plazo
 - Fuentes: Consenso en educación matemática, currículo del Departamento de Matemáticas de Streeling
+- Fuente del proyecto: [GA `EmbeddingSchema` en el commit `dc2e74c`](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs#L235-L302) y su [prueba de contrato con un solo par](https://github.com/GuitarAlchemist/ga/blob/dc2e74cbd992a298f67efb928b5b3754615e1924/Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs#L14-L50). La demostración algebraica anterior explicita sus supuestos sobre las entradas y la aritmética; la prueba aporta evidencia finita, no una demostración universal.
 - Estado de creencia: T(0.92) F(0.01) U(0.05) C(0.02)

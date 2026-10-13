@@ -1,0 +1,25 @@
+{
+  "cycle_id": "information-theory-2026-10-11-003",
+  "department": "information-theory",
+  "question": "For a fixed IX Petri property and comparable net batches, what can KL and Jensen-Shannon divergence establish about changes in holds/fails/unknown verdict frequencies?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_artifact: pinned IX Petri verdict and analysis source plus IX math and DuckDB divergence functions",
+    "information_theory: aligned categorical distributions, KL support asymmetry, and bounded symmetric JS",
+    "fixture: explicitly synthetic ten-net deadlock-freedom count rows [8,0,2] and [6,2,2]",
+    "verification: independent Python calculation of normalized vectors, directional KL, JS, units, and support-zero condition"
+  ],
+  "hypothesis": "For aligned, finite, nonnegative verdict counts, IX's normalization makes proportional rows have zero JS; a new fails category makes candidate-to-baseline KL error but JS remains finite and symmetric. The divergence cannot identify changed nets or causes.",
+  "test_method": "simulation",
+  "evidence": [
+    "Pinned IX commit bd1336b7c4045e427dcdbe80b102790e45da5ce1, crates/ix-petri/src/analysis.rs:83-105 defines serialized holds/fails/unknown verdicts; lines 465-491 distinguish discovered dead markings, complete exploration, and unknown results for deadlock freedom. Reported deadlock witnesses are capped by max_reported_deadlocks, which may be zero; Fails does not guarantee a serialized witness. This was source inspection, not an executed analyzer batch.",
+    "The same pinned commit, crates/ix-math/src/inference.rs:156-222 normalizes vector inputs and implements natural-log KL and JS; KL errors when its second distribution has zero support where its first is positive, while JS is symmetric and bounded in [0, ln 2]. crates/ix-duck/src/inference.rs:186-210 wraps them as ix_kl and ix_js.",
+    "An independent Python formula calculation on synthetic p=[0.8,0,0.2], q=[0.6,0.2,0.2] observed KL(p||q)=0.23014565796142483 nats, KL(q||p) zero-support condition, m=[0.7,0.1,0.2], KL(p||m)=0.10682511409961822, KL(q||m)=0.04613902821563412, JS=0.07648207115762617 nats=0.1103403047760241 bits.",
+    "The fixture establishes reproducible distribution arithmetic only. No real IX verdict batch, DuckDB query, analyzer regression, production threshold, statistical significance, or live quality outcome was measured. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T23:20:43Z"
+}

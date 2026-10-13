@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-computer-science-2026-10-12-008",
+  "department": "computer-science",
+  "research_cycle_id": "computer-science-2026-10-12-008",
+  "module_id": "cs-008-compose-exact-source-review-verdicts",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.75
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1868,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft grounded in draft Demerzel receipt contract and Learn sync helper. Dogfooding found that reviewed_commit was only syntax-checked; Learn PR #170 now verifies its claimed blobs for matching receipts, with a focused regression test. Static course preflight, independent human subject review, learner attempt, localization, and public readback remain pending. Receipt shape and local generator tests cannot authenticate reviewers or authorize publication."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T06:55:49Z"
+}

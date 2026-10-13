@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-visual-computing-2026-10-11-003",
+  "department": "visual-computing",
+  "research_cycle_id": "visual-computing-2026-10-11-003",
+  "module_id": "vc-003-jitter-and-voicing-cloud-distance",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.78
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2204,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source-based draft with a fixed synthetic three-point fixture and hypothetical random draws. Five answers were checked against the pinned GA renderer. The proposed labels, validator, and task-based comparison are not implemented or measured; no IX payload/browser run, human subject review, learner attempt, or localization review is recorded."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T22:19:55Z"
+}

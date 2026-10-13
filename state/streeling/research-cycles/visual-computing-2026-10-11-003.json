@@ -1,0 +1,26 @@
+{
+  "cycle_id": "visual-computing-2026-10-11-003",
+  "department": "visual-computing",
+  "question": "When GA spreads an IX-supplied 3D voicing cloud, which visual comparisons remain justified, and what does the pinned renderer actually validate?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "visual_computing: projected_voicing_positions_and_overlap",
+    "source_trace: voicing_cloud_loader_and_controls",
+    "test: fixed_three_point_synthetic_fixture_and_hypothetical_jitter",
+    "design_decision: label_spread_and_compare_unspread_coordinates"
+  ],
+  "hypothesis": "Tracing a fixed three-point payload through the pinned renderer will show that positive spread can reveal overlap while changing apparent pairwise distance, and that the loader's shallow validation cannot establish complete instrument-block coverage.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, ReactComponents/ga-react-components/src/components/PrimeRadiant/VoicingCloud.ts checks binary float count against meta.total * 3, copies instrument blocks into a sequential destination, uses per-instrument RGB, and adds (Math.random() + Math.random() - 1) * spread separately to each coordinate when spread is positive.",
+    "The pinned setSpread rebuilds from retained basePositions, so zero restores coordinates and repeated positive calls resample. setPointSize changes PointsMaterial.size without rebuilding positions. Defaults are spread 1.5 and point size 0.3.",
+    "The fixed synthetic fixture has three points at x 0, approximately 0.2, and 10; nine floats satisfy the length check. Hypothetical x draw pairs (0.1, 0.1) and (0.9, 0.9) at spread 1.5 move the first two displayed x coordinates to -1.2 and approximately 1.4, increasing their apparent gap from approximately 0.2 to 2.6. These are chosen draws, not observed browser output.",
+    "A second synthetic fixture keeps total 3 and nine floats but has two one-point instrument blocks. The top-level checks can pass although only two destination slots are copied and the remaining typed-array slot stays zero. The source does not validate block coverage, finite values, or the meaning of 3D distance relative to the full OPTIC-K embedding.",
+    "ReactComponents/ga-react-components/src/components/PrimeRadiant/ForceRadiant.tsx at the same commit loads the cloud when the URL has a voicings parameter and permits a voicings_url override. No IX payload, browser run, usability measurement, subject review, learner attempt, or publication was performed for this research cycle. Duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.78,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:19:55Z"
+}

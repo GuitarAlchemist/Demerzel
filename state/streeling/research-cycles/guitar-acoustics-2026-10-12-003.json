@@ -1,0 +1,25 @@
+{
+  "cycle_id": "guitar-acoustics-2026-10-12-003",
+  "department": "guitar-acoustics",
+  "question": "Can a pinned GAS-001 open-E decay difference motivate a falsifiable one-parameter GA Rust decay test without confusing source-derived feedback coefficients with measured audio or listener preference?",
+  "production_path": [
+    "source_review: inspect GAS-001 saved WAV provenance and measurement windows, GAS-002 brightness scope, pinned GA Rust decay/profile/feedback code, and native fixture renderer",
+    "formal_example: calculate saved RMS-decline gap, E2 effective feedback coefficients, and a proposed improvement threshold",
+    "test_design: fresh-engine baseline and decay-only candidate native renders with pinned build, matched measurement windows, hashes, guards, and explicit falsifier",
+    "evidence_limit: candidate render, browser capture, listener test, learner review, and publication not executed"
+  ],
+  "hypothesis": "For the pinned E2 fixture, the saved GA render has a 2.8 dB smaller selected level decline than the recording, and the pinned Rust source computes different E2 feedback coefficients for profile-0 base decay 0.9978 and candidate 0.9976. Whether that candidate improves the WAV measurement is an untested question.",
+  "test_method": "formal_proof",
+  "evidence": [
+    "At Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b, GAS-001 README, measurements.json, and measure-pair.py document a four-second mono 44,100 Hz separately attributed recorded E2 and GA native E2 render. Their selected onset-relative late-minus-early RMS changes are -3.9 and -1.1 dB; absolute gap is 2.8 dB using rounded saved values. The recorded first onset is approximately 1.1 s, with another attack near 2.75 s; the render starts at zero.",
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Engine::new invokes profile 0, which sets base decay 0.9978; engine_set_decay clamps a requested value into [0.95,0.9999]. The render loop computes (base_decay + 0.0025*(1-f_norm))*voice.sustain, with f_norm clamped from (frequency-82)/248 and sustain capped at 0.9998. Other filtering, attack, resonance, and reverb paths prevent this coefficient alone from determining the WAV envelope.",
+    "At 82.4069 Hz, f_norm is approximately 0.00164073, uncapped sustain about 1.00099016 and capped sustain 0.9998. The source expression gives about 1.00009584 for base 0.9978 and 0.99989588 for proposed base 0.9976. These are source-derived coefficients, not observed decay rates; a value above one in this subexpression alone does not establish unstable or increasing audio.",
+    "The proposed classroom gate uses the rounded baseline absolute gap 2.8 dB and asks for at least 1.0 dB improvement, yielding an absolute candidate error at most 1.8 dB and a rounded illustrative late-minus-early candidate interval [-5.7,-2.1] dB around recorded -3.9 dB. Actual acceptance must use unrounded measurements and safety guards. The threshold is a teaching proposal, not an empirical GA standard.",
+    "The pinned render-ga-e2.py has no engine_set_decay call. No candidate 0.9976 render, modified renderer, browser capture, multi-note comparison, listener panel, human subject review, or publication was performed. GAS-002 covers brightness separately. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T03:55:46Z"
+}

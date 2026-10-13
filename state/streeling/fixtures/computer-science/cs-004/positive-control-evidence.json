@@ -1,0 +1,36 @@
+{
+  "fixture_id": "cs-004-known-perturbations",
+  "date_utc": "2026-10-04",
+  "comparator_ga_commit": "95b67785150961e7fb3b67978856ecb206e70a65",
+  "ffmpeg_version": "8.1.2-full_build-www.gyan.dev",
+  "baseline_fixture": "../../guitar-acoustics/gas-001/ga-engine-e2-open-4s.wav",
+  "baseline_sha256": "a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98",
+  "reference_fixture": "../../guitar-acoustics/gas-001/deb-low-e-open.wav",
+  "reference_offset_seconds": 1.1,
+  "analysis_seconds": 1.5,
+  "controls": [
+    {
+      "name": "half amplitude",
+      "ffmpeg_filter": "volume=0.5",
+      "candidate_sha256": "8c2b50685367bc81cd0bd3fa1cd0fc6886a76c0a1e3c37587192b8587899ad16",
+      "rms_250ms_baseline_mae": 0.12415874627653194,
+      "rms_250ms_candidate_mae": 0.05503009941984682,
+      "haar_detail_level_1_baseline_mae": 0.0011793278392654679,
+      "haar_detail_level_1_candidate_mae": 0.000052551276646906174,
+      "interpretation": "The time-domain comparator responds to a known level change; lower error does not establish better timbre or matched loudness."
+    },
+    {
+      "name": "second harmonic equalizer",
+      "ffmpeg_filter": "equalizer=f=164.8:t=q:w=1:g=6",
+      "candidate_sha256": "47a3b67c019eccd5a71084ddadeb7bee5bb0a13d1af78fae222565d21027d1e6",
+      "centroid_hz_baseline": 85.78946685791016,
+      "centroid_hz_candidate": 89.92330423990886,
+      "centroid_abs_error_baseline": 502.9456866794162,
+      "centroid_abs_error_candidate": 498.8118492974175,
+      "rms_250ms_baseline_mae": 0.12415874627653194,
+      "rms_250ms_candidate_mae": 0.13673098304835699,
+      "interpretation": "The spectral centroid responds to the deliberate equalizer change while the RMS comparison worsens. This is a sensitivity control, not an audio-improvement verdict."
+    }
+  ],
+  "limitations": "No ComfyUI model was run, no browser WASM capture was made, and no blinded listener judged these files. FFmpeg equalizer gain is a filter setting, not a measured +6 dB change of the second partial."
+}

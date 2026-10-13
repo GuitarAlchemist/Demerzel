@@ -1,0 +1,25 @@
+{
+  "cycle_id": "semiotics-2026-10-11-002",
+  "department": "semiotics",
+  "question": "Which distinctions in an entered GA chord symbol survive parsing, canonical rendering, and pitch-class projection, and how should a UI label those different representations?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin GA chord parser, AST, renderer, service, closure, and fixed tests",
+    "test: cross_validate five lesson answers against pinned source and checked-in assertions"
+  ],
+  "hypothesis": "Naming the entered sign, AST fields, canonical sign, and projected pitch class separately helps explain GA chord labels without treating code-level equivalence as a heard or context-independent musical judgment.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Common/GA.Business.DSL/Parsers/ChordParser.fs defines root, accidental, optional quality, extension or alteration components, and optional slash bass; Common/GA.Business.DSL/Types/ChordAst.fs defines their AST fields.",
+    "At the same commit, Common/GA.Business.DSL/Services/ChordDslService.fs implements Normalize as Parse followed by Render, and Common/GA.Business.DSL/Generators/ChordRenderer.fs spells Minor as m and Major as maj.",
+    "The pinned Tests/Common/GA.Business.DSL.Tests/ChordDslTests.cs declares normalization cases Cmi7 to Cm7, D-7 to Dm7, EbΔ9 to Ebmaj9, and Fmaj7/A to Fmaj7/A. It also asserts root C and three components for C13#11b9. These tests were read, not rerun for this lesson.",
+    "The parser source treats maj7 as a whole Extension rather than a bare Major quality followed by 7; its source-derived Fmaj7/A AST has Quality=None, Extension maj7, and bass A. Its alternatives source-derive Extension 13 plus #11 and b9 Alterations for C13#11b9; the test only asserts the component count.",
+    "Common/GA.Business.DSL/Closures/BuiltinClosures/DomainClosures.fs calculates projectChord root and pc separately. Its source predicts C# and Db as distinct root spellings with the same root pitch class 1; the closure was not executed for this lesson.",
+    "The parser calls run pChord without an explicit end-of-input parser. This is a reason for a future boundary test, not an executed result about trailing input. Five source-based exercises have answers. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T21:55:29Z"
+}

@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-guitar-studies-2026-10-11-004",
+  "department": "guitar-studies",
+  "research_cycle_id": "guitar-studies-2026-10-11-004",
+  "module_id": "gtr-004-hear-and-audit-parallel-motion",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1942,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source-grounded draft. The two-string fret fixture is constructed, not captured GA output; the analyzer and physical practice task were not run. Human guitar-subject review, learner trial, localization, and publication review remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T22:09:57Z"
+}

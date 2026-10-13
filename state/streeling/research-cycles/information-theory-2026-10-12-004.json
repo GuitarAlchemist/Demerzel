@@ -1,0 +1,24 @@
+{
+  "cycle_id": "information-theory-2026-10-12-004",
+  "department": "information-theory",
+  "question": "Which facts must a GA agent handoff preserve for an integration decision, and what decision loss can a shared headline cause?",
+  "production_path": [
+    "investigation: inspect the pinned GA Antigravity handoff bridge and its guaranteed fields",
+    "hypothesis: a shared ready headline cannot distinguish delivery states that require opposite decisions",
+    "test: four explicitly synthetic handoff cards with one headline, three boolean evidence gates, and asymmetric classroom costs",
+    "conclusion: measure toy decision loss and propose task-specific, checkable source and review references"
+  ],
+  "hypothesis": "If four distinct delivery states share the same ready headline but only one satisfies the toy integration rule, a headline-only receiver must make at least one wrong classification; retained gate evidence removes that ambiguity within the fixture.",
+  "test_method": "simulation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Scripts/antigravity-bridge.ps1 (Git blob cb4c999ebb615af327006045edb012c427c8858e) writes a handoff note with from, timestamp, branch, short head, dirty-line count, and caller-supplied free-form text. It does not execute or validate tests, review, or writer ownership.",
+    "The local teaching fixture state/streeling/fixtures/information-theory/inf-004/handoff-cases.json has four synthetic cases A-D all headed ready. Only A passes the three toy eligibility booleans; B, C, and D each fail one. This is not an observation of live GA handoffs.",
+    "Running evaluate_handoffs.py on the fixture yielded accept-all mean cost 7.5, reject-all mean cost 0.25, and full-evidence toy-rule mean cost 0 for invented false-accept cost 10 and false-reject cost 1. These numbers do not estimate production incident rates or actual financial loss.",
+    "No real agent handoff, merger, learner, human review, privacy-approved transcript sample, or public Learn page was evaluated. Duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.72,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T22:20:00Z"
+}

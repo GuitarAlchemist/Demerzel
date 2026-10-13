@@ -1,0 +1,26 @@
+{
+  "cycle_id": "physics-2026-10-11-002",
+  "department": "physics",
+  "question": "How should a GA analyst use a global FFT, an onset-aligned local FFT, STFT windows, and wavelet tracks to study a nonstationary open-E guitar note without confusing frequency-bin spacing with event timing or pitch certainty?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "signal_analysis: global_fft local_window stft wavelet_track",
+    "time_frequency_tradeoff: window_duration hop frequency_dependent_width",
+    "test: empirical rerun of pinned GAS-001 fixture"
+  ],
+  "hypothesis": "The existing GAS-001 measurements can teach why a whole-file FFT is valid but temporally ambiguous, why a local FFT needs an onset-aligned window, and how STFT and selected wavelet tracks answer different timing questions without implying a perceptual or engine verdict.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b, state/streeling/fixtures/guitar-acoustics/gas-001/README.md records two four-second, mono, 44,100 Hz WAVs, the recorded onset near 1.1 s and later attack near 2.75 s, source attribution, and SHA-256 identities. The GA render is a native build from GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, not a browser capture.",
+    "The pinned measure-pair.py selects a Hann-windowed one-second FFT at 0.2-1.2 s after each first onset, searches near six E2 harmonics, and computes six-cycle Morlet-style tracks centered on harmonics 1, 2, and 4. Its selected windows exclude the recorded second attack from the local FFT.",
+    "On 2026-10-11, rerunning measure-pair.py against the checked-in WAVs produced JSON equal to the checked-in measurements.json; SHA-256 checks matched the fixture README. The local first-partial peaks are 83 Hz recorded and 82 Hz rendered. The second-partial wavelet late-minus-early changes are -4.5 dB and -12.9 dB, respectively.",
+    "For a one-second, 44,100-sample unpadded FFT, nominal bins are 1 Hz apart. A proposed 50 ms, 2,205-sample STFT window has a 20 Hz unpadded bin grid. Those are arithmetic consequences of duration and sampling rate, not measured STFT output or guarantees of true spectral resolution.",
+    "SciPy ShortTimeFFT documentation describes sequential windowed FFTs separated by a hop and their time-frequency matrix: https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.ShortTimeFFT.html. PyWavelets describes continuous wavelet time-frequency analysis and scale-to-frequency conversion: https://pywavelets.readthedocs.io/en/latest/ref/cwt.html. GAS-001 uses its own convolution kernel rather than PyWavelets.",
+    "The five lesson exercises were answered from the pinned files and derived window arithmetic. No STFT run, independent subject review, learner test, listening verdict, or publication was performed. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.76,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:37:01Z"
+}

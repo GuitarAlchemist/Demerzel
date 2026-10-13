@@ -1,0 +1,556 @@
+{
+  "scope": "Synthetic Python reproduction of pinned IX spectrogram arithmetic and GAS-001 Morlet kernel; not IX binary, recorded guitar, browser, or learner evidence",
+  "source_revisions": {
+    "ix_spectral_and_window": "bd1336b7c4045e427dcdbe80b102790e45da5ce1",
+    "gas_001_morlet_method": "5c4967454ddc740ed937c87719ca4d71a3522e4b"
+  },
+  "implementation": {
+    "script_sha256_lf_normalized": "40a4cfb79b3b133a3d1a0d4b224f151d20ebf1fa00a93ffedc8f282e38813129",
+    "numpy": "2.4.2",
+    "scipy": "1.17.1"
+  },
+  "parameters": {
+    "sample_rate": 44100,
+    "samples_per_trial": 44100,
+    "harmonics": [
+      1,
+      2,
+      4
+    ],
+    "fundamental_hz": 82.4069,
+    "burst_centers_seconds": [
+      0.3,
+      0.45
+    ],
+    "burst_duration_seconds": 0.04,
+    "burst_peak_amplitude": 0.5,
+    "noise_rms": 0.01,
+    "noise_seed": 20261012,
+    "stft_hop_samples": 512,
+    "search_radius_seconds": 0.06,
+    "noise_detection_margin_db": 6,
+    "timing_improvement_threshold_ms": 5,
+    "wrong_center_separation_threshold_db": 6
+  },
+  "selected_stft_bins": {
+    "stft_2048": {
+      "1": {
+        "index": 4,
+        "hz": 86.1328125
+      },
+      "2": {
+        "index": 8,
+        "hz": 172.265625
+      },
+      "4": {
+        "index": 15,
+        "hz": 322.998046875
+      }
+    },
+    "stft_8192": {
+      "1": {
+        "index": 15,
+        "hz": 80.74951171875
+      },
+      "2": {
+        "index": 31,
+        "hz": 166.88232421875
+      },
+      "4": {
+        "index": 61,
+        "hz": 328.38134765625
+      }
+    }
+  },
+  "calibration_gains": {
+    "stft_2048": {
+      "1": 501.9644248935783,
+      "2": 473.4680254110625,
+      "4": 481.251976233368
+    },
+    "stft_8192": {
+      "1": 1925.6231722539567,
+      "2": 1860.0932884836036,
+      "4": 1977.961030360284
+    },
+    "morlet": {
+      "1": 21.279847086989363,
+      "2": 15.047134568526143,
+      "4": 10.639947053445843
+    }
+  },
+  "fourth_partial_summary": {
+    "stft_2048": {
+      "detections": 4,
+      "total_bursts": 4,
+      "median_absolute_error_ms": 2.313,
+      "minimum_wrong_center_separation_db": 50.838
+    },
+    "stft_8192": {
+      "detections": 4,
+      "total_bursts": 4,
+      "median_absolute_error_ms": 2.313,
+      "minimum_wrong_center_separation_db": 47.797
+    },
+    "morlet": {
+      "detections": 4,
+      "total_bursts": 4,
+      "median_absolute_error_ms": 0.034,
+      "minimum_wrong_center_separation_db": 51.021
+    }
+  },
+  "fourth_partial_improvement_over_8192_ms": 2.279,
+  "proposed_claim_passes_this_synthetic_trial": false,
+  "trials": [
+    {
+      "harmonic": 1,
+      "arm": "clean",
+      "method": "stft_2048",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 41.506,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 40.821,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 1,
+      "arm": "clean",
+      "method": "stft_8192",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 42.176,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 42.175,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 1,
+      "arm": "clean",
+      "method": "morlet",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.299977,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 24.675,
+          "peak_ties": 2
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.449977,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 24.675,
+          "peak_ties": 2
+        }
+      ]
+    },
+    {
+      "harmonic": 1,
+      "arm": "noise",
+      "method": "stft_2048",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": 48.289,
+          "wrong_center_separation_db": 41.239,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": 48.988,
+          "wrong_center_separation_db": 41.744,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 1,
+      "arm": "noise",
+      "method": "stft_8192",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": 47.738,
+          "wrong_center_separation_db": 42.635,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": 49.22,
+          "wrong_center_separation_db": 41.587,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 1,
+      "arm": "noise",
+      "method": "morlet",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 0.0,
+          "peak_time_seconds": 0.3,
+          "peak_over_noise_db": 48.978,
+          "wrong_center_separation_db": 24.741,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.450023,
+          "peak_over_noise_db": 49.256,
+          "wrong_center_separation_db": 24.517,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 2,
+      "arm": "clean",
+      "method": "stft_2048",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 35.843,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 36.226,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 2,
+      "arm": "clean",
+      "method": "stft_8192",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 42.717,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 42.716,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 2,
+      "arm": "clean",
+      "method": "morlet",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.299977,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 34.312,
+          "peak_ties": 2
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.449977,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 34.312,
+          "peak_ties": 2
+        }
+      ]
+    },
+    {
+      "harmonic": 2,
+      "arm": "noise",
+      "method": "stft_2048",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": 52.806,
+          "wrong_center_separation_db": 35.234,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": 51.217,
+          "wrong_center_separation_db": 36.496,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 2,
+      "arm": "noise",
+      "method": "stft_8192",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": 48.02,
+          "wrong_center_separation_db": 42.246,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": 51.963,
+          "wrong_center_separation_db": 39.703,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 2,
+      "arm": "noise",
+      "method": "morlet",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.299977,
+          "peak_over_noise_db": 52.128,
+          "wrong_center_separation_db": 33.872,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 0.0,
+          "peak_time_seconds": 0.45,
+          "peak_over_noise_db": 50.833,
+          "wrong_center_separation_db": 33.988,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 4,
+      "arm": "clean",
+      "method": "stft_2048",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 56.195,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 56.174,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 4,
+      "arm": "clean",
+      "method": "stft_8192",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 58.98,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 58.978,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 4,
+      "arm": "clean",
+      "method": "morlet",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.299977,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 59.95,
+          "peak_ties": 2
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 0.023,
+          "peak_time_seconds": 0.449977,
+          "peak_over_noise_db": null,
+          "wrong_center_separation_db": 59.95,
+          "peak_ties": 2
+        }
+      ]
+    },
+    {
+      "harmonic": 4,
+      "arm": "noise",
+      "method": "stft_2048",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": 52.94,
+          "wrong_center_separation_db": 50.838,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": 50.65,
+          "wrong_center_separation_db": 51.172,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 4,
+      "arm": "noise",
+      "method": "stft_8192",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 1.848,
+          "peak_time_seconds": 0.301848,
+          "peak_over_noise_db": 52.687,
+          "wrong_center_separation_db": 47.797,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 2.778,
+          "peak_time_seconds": 0.452778,
+          "peak_over_noise_db": 46.757,
+          "wrong_center_separation_db": 48.041,
+          "peak_ties": 1
+        }
+      ]
+    },
+    {
+      "harmonic": 4,
+      "arm": "noise",
+      "method": "morlet",
+      "events": [
+        {
+          "known_center_seconds": 0.3,
+          "detected": true,
+          "absolute_error_ms": 0.045,
+          "peak_time_seconds": 0.299955,
+          "peak_over_noise_db": 48.574,
+          "wrong_center_separation_db": 52.32,
+          "peak_ties": 1
+        },
+        {
+          "known_center_seconds": 0.45,
+          "detected": true,
+          "absolute_error_ms": 0.045,
+          "peak_time_seconds": 0.449955,
+          "peak_over_noise_db": 48.122,
+          "wrong_center_separation_db": 51.021,
+          "peak_ties": 1
+        }
+      ]
+    }
+  ]
+}

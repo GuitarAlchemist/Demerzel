@@ -1,0 +1,26 @@
+{
+  "cycle_id": "product-management-2026-10-11-003",
+  "department": "product-management",
+  "question": "How can Streeling measure review queue WIP and completed-review throughput without treating authored source counts as review flow?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_case: dated Streeling source progress and DV-001 review brief",
+    "measurement_unit: distinct module ID",
+    "measurement_window: UTC half-open interval",
+    "teaching_fixture: module-level entry approval withdrawal events"
+  ],
+  "hypothesis": "A stable module-ID unit, declared review entry and exit rules, and timestamped events will separate review WIP and completed-review throughput from a dated count of English source files.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit 0220ca84a25f59973bd6b9236cc00b7f68631a50 on 2026-10-11, the source-tree progress script reported 81 authored EN modules across 21 course directories, 16 active-language-complete modules, 0 modules with approved production-record review, and 23 department definition records.",
+    "At that commit, docs/specs/streeling-project-curriculum-2026-10-04.md records an earlier October 11 inventory of 78 English modules across 21 directories. The net increase to 81 does not identify approval events or a review throughput window.",
+    "The progress script scans English Markdown paths and matching production records; pipeline_review_approved requires review.completed=true and verdict=approved. It does not reconstruct transition events or queue-entry timestamps.",
+    "The 12 production JSON records at that commit had 11 in_progress statuses and one review_pending status, for DV-001, with no approved review verdict. The DV-001 review brief explicitly leaves human subject, fluent-language, and learner gates open.",
+    "The five PM-003 answers were checked against the pinned snapshot and the explicitly synthetic six-event ledger. The fixture has opening WIP 2, entries 2, approved exits 1, withdrawals 1, and closing WIP 2; its seven-day event window is not a claim about real project flow. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:14:33Z"
+}

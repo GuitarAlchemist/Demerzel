@@ -1,0 +1,25 @@
+{
+  "cycle_id": "cognitive-science-2026-10-12-003",
+  "department": "cognitive-science",
+  "question": "How can GA score pre-feedback confidence in fretboard note identification against a verified answer key, and what learner test could falsify a proposed calibration-feedback benefit?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin GA fretboard demo positions and SVG component string order, tuning, marker labels, and click payload at dc2e74cbd992a298f67efb928b5b3754615e1924",
+    "formal calculation: recompute corrected note key, six explicitly synthetic binary outcomes and Brier losses, and expected-loss identity",
+    "test design: propose a controlled held-out next-day learner comparison without claiming it occurred"
+  ],
+  "hypothesis": "A pre-feedback probability tied to a chosen note and a verified key permits a proper binary score that distinguishes confidence errors hidden by raw accuracy; any claim that calibration feedback improves learners needs a separate controlled test.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, ReactComponents/ga-react-components/src/pages/GuitarFretboardTest.tsx declares six positions and leaves the component default tuning in place. ReactComponents/ga-react-components/src/components/GuitarFretboard.tsx defines string 0 as high E, default tuning E,B,G,D,A,E high to low, and a click callback containing string and fret but no note answer or confidence.",
+    "The pinned sixth demo position is string 5 fret 3 with displayed label C. Pitch-class arithmetic under the pinned tuning gives low E plus three semitones = G; the source-derived corrected six-note key is E,C,G,E,C,G. This is a source-level key correction, not an observed learner outcome.",
+    "For six invented note choices and pre-feedback probabilities, binary outcomes are 1,1,0,1,1,0 and squared Brier losses are 0.01,0.04,0.49,0.16,0.01,0.81. Sum 1.52, mean 0.253333..., and accuracy 4/6. If the wrong displayed C were used as the sixth key, its loss would change to 0.01 and the spurious mean would be 0.12.",
+    "For binary correctness probability q and reported p, expected squared loss q(1-p)^2+(1-q)p^2=(p-q)^2+q(1-q), minimized at p=q. The q=0.7 example yields 0.21 for p=0.7 and 0.25 for p=0.9. This is formal arithmetic, not an empirical estimate of guitarists.",
+    "Six answered exercises cover event definition, Brier arithmetic, one small confidence bin, answer-key contamination, the expected-loss identity, and a falsifiable learner study. No confidence UI, browser run, real learner, intervention, next-day score, or subject review was observed. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.82,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T03:55:58Z"
+}

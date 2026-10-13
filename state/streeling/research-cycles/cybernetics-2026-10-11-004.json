@@ -1,0 +1,26 @@
+{
+  "cycle_id": "cybernetics-2026-10-11-004",
+  "department": "cybernetics",
+  "question": "Which observed state should Gaia use to admit a new wmux lane when bus activity is stale but the peer surface is still reported running?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_controller: Gaia wmux lane registration and four-lane default cap",
+    "feedback_signal: registered bus surface IDs intersected with peer-reported running surfaces",
+    "paired_controls: bus-stale running lanes still count and exited surfaces free slots",
+    "evidence_limit: deterministic fake peer state does not measure live mixed-agent throughput"
+  ],
+  "hypothesis": "Counting registered lanes whose peer surfaces are reported running, rather than recently active bus actors or every historical registration, keeps the default cap closed under bus silence while releasing slots after peer exit.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Gaia commit c94df3f5a53cd9f472e8a97b656dc23d7c940389, src/lanes.mjs:21-87 defines a supported default limit of four, an experimental ceiling of eight, explicit experimental authorization above four, and a `live >= limit` refusal in admitLane. The inspected source files were clean in the Gaia checkout.",
+    "At the same commit, scripts/wmux-lanes.mjs:166-212 filters the peer tool's agents to status running, intersects their surface IDs with registered bus lane actors, exposes the count as liveBefore, and calls admitLane for each unregistered running surface. The script's comments identify the former error of counting only bus-online actors after a 30-second stale window.",
+    "At the same commit, tests/wmux-adapter.test.mjs:116-139 asserts four lanes register and a fifth is refused. Lines 158-213 use aged bus events and fake still-running peer surfaces to assert liveBefore=4 and refusal at lane five, including an eight-surface negative case. Lines 215-240 assert that two exited peer surfaces release two slots and the next fifth live lane is refused.",
+    "At the same commit, tests/wmux-adapter.test.mjs:242-267 asserts six is refused without --experimental-lanes, six is labeled experimental and allowed with the flag, and nine is refused even with the flag. docs/scale-and-lanes.md distinguishes supported four from the unvalidated six/eight real-client counts and states that identical Node-worker probes establish integrity/replay properties, not mixed-agent throughput or wedged-lock recovery.",
+    "The lesson derives its five answers from pinned source and deterministic test expectations. The tests were not rerun for this cycle; no live wmux lane, real Claude/Codex load, queue delay, or current runtime state was measured. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:21:25Z"
+}

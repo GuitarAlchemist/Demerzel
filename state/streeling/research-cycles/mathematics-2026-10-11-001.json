@@ -1,0 +1,26 @@
+{
+  "cycle_id": "mathematics-2026-10-11-001",
+  "department": "mathematics",
+  "question": "What can a direct proof establish about GA's compact-vector score, and what does its finite contract test establish?",
+  "production_path": [
+    "project_problem: distinguish a scoring identity from evidence from one deterministic contract-test fixture",
+    "pinned_source: GA EmbeddingSchema and SchemaLayoutContractTests at dc2e74cbd992a298f67efb928b5b3754615e1924",
+    "method: direct algebra for one positive-weight, nonzero partition in exact real arithmetic",
+    "boundaries: rounded float square-root weights, zero or tiny slices, and short raw inputs",
+    "course_change: add one answered project case to MAT-001 while preserving its foundational lesson"
+  ],
+  "hypothesis": "For a positive weight and nonzero partition slices, the exact-real dot product of the normalized, square-root-weighted slices equals the weight times their cosine; GA's one-pair floating-point test cannot establish that statement for all implemented inputs.",
+  "test_method": "formal_proof",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs:235-266 computes a compact slice as raw/norm times the float SqrtWeight when sumSq > double.Epsilon; lines 269-302 sum SimilarityWeight times raw-slice CosineSimilarity, skip a partition beyond either raw length, and skip NaN cosine.",
+    "At that commit, EmbeddingSchema.cs:31-49 defines SqrtWeight as MathF.Sqrt(SimilarityWeight). Exact-real expansion gives (sqrt(w)x/||x||) dot (sqrt(w)y/||y||) = w(x dot y)/(||x|| ||y||) for positive w and nonzero x,y. The implementation's float square root does not promise exact equality after squaring.",
+    "At the same commit, Tests/Common/GA.Business.ML.Tests/SchemaLayoutContractTests.cs:14-50 constructs one deterministic pair with nonzero similarity partitions and asserts compact dot and weighted score agree within 1e-6. The test was inspected, not rerun; it is finite evidence only.",
+    "For an all-zero partition, extraction leaves a zero compact slice and the scorer skips NaN cosine. Extraction also leaves the slice zero when computed sumSq <= double.Epsilon. WeightedPartitionCosine skips partitions outside a short input, while ExtractCompact indexes every declared partition directly; the lesson does not assert equivalence for short inputs or all floating-point vectors.",
+    "Research duration was not instrumented; duration_seconds=0 records that limitation. No full GA or Demerzel test suite was run."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.9,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:39:47Z"
+}

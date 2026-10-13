@@ -1,0 +1,25 @@
+{
+  "cycle_id": "audio-engineering-2026-10-12-004",
+  "department": "audio-engineering",
+  "question": "How can a guitar-signal EQ/compression order lesson demonstrate noncommutativity and specify a falsifiable comparison on a pinned GA/GAS-001 fixture without claiming a compressor or test outcome already exists?",
+  "production_path": [
+    "source_review: inspect the historical AUD-001 vocal lesson, GAS-001 fixture, pinned GA guitar audio path, and pinned IX FIR source",
+    "formal_example: calculate both orders for one explicitly synthetic four-sample input, two-tap FIR, and memoryless threshold/ratio mapping",
+    "project_design: specify an offline A/B harness on one unchanged guitar WAV with matched settings, state resets, alignment, manifest, and saved outputs",
+    "evidence_limit: no verified compressor implementation, processed WAV, executed A/B test, listener result, or publication"
+  ],
+  "hypothesis": "The specified synthetic FIR and level-dependent mapping do not commute on the declared impulse-like input; a future pinned compressor and controlled guitar A/B run could test whether order changes that recording's attack and gain reduction under fixed settings, without assuming one order is universally preferable.",
+  "test_method": "formal_proof",
+  "evidence": [
+    "At Demerzel commit 5c4967454ddc740ed937c87719ca4d71a3522e4b, state/streeling/fixtures/guitar-acoustics/gas-001/README.md documents four-second mono 44,100 Hz recorded and GA native-rendered open E2 WAVs, their hashes and provenance, an approximately 1.1 s first recorded onset, another recorded attack near 2.75 s, and a render starting at zero. Its saved partial and decay measurements are not EQ/compression results or a realism verdict.",
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Rust/guitar-web-wasm-demo/src/audio/audioEngine.js loads the WASM engine into an AudioWorklet, connects it to output, and offers a MediaRecorder path; src/audio/guitar-worklet.js renders mono samples and copies them to output channels. The GAS-001 render is a native build, not a browser worklet capture. No EQ/compressor order chain or compressor implementation was established in these inspected artifacts.",
+    "At IX commit bd1336b7c4045e427dcdbe80b102790e45da5ce1, crates/ix-signal/src/filter.rs defines FirFilter design and zero-initialized sample-domain apply. This supports an offline filter choice but does not establish an IX compressor. The toy h=[0.5,0.5] is declared independently, not attributed to the IX lowpass designer.",
+    "Exact synthetic calculation with x=[0,2,0,0], zero prehistory, h=[0.5,0.5], and C(v)=sign(v) times (|v| below threshold 1, otherwise 1+(|v|-1)/2): E(C(x))=[0,0.75,0.75,0] while C(E(x))=[0,1,1,0]. The sample-1 difference is 0.25. This is a counterexample to commutativity for these defined operators, not a guitar measurement or listening judgment.",
+    "The proposed offline harness pins input hash, onset window, EQ coefficients, future compressor revision and parameters, state reset, boundary and latency treatment, output-level match, gain-reduction trace, and lossless A/B exports. It has not been executed. The historical audio-engineering-2026-03-23-001 record remains an unmodified vocal-oriented source and is not evidence for the rewritten guitar lesson. Research duration was not instrumented; duration_seconds=0 denotes that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T03:00:05Z"
+}

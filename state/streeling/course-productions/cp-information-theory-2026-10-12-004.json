@@ -1,0 +1,19 @@
+{
+  "pipeline_id": "cp-information-theory-2026-10-12-004",
+  "department": "information-theory",
+  "research_cycle_id": "information-theory-2026-10-12-004",
+  "module_id": "inf-004-information-loss-in-agent-handoffs",
+  "status": "in_progress",
+  "phases": {
+    "research": {"completed": true, "belief_value": "P", "belief_confidence": 0.72},
+    "outline": {"completed": true, "sections": 4, "estimated_duration": "35 minutes"},
+    "content": {"completed": true, "word_count": 1702, "exercises": 5},
+    "translation": {"completed": false, "languages": ["en"]},
+    "review": {
+      "completed": false,
+      "feedback": "English draft with five answered exercises and a deterministic synthetic fixture. No human subject verdict, learner attempt, fluent-language review, live agent outcome, Learn publication, or public readback is claimed."
+    },
+    "publish": {"completed": false}
+  },
+  "timestamp": "2026-10-12T22:20:00Z"
+}

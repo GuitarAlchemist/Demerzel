@@ -1,0 +1,25 @@
+{
+  "cycle_id": "computer-science-2026-10-11-006",
+  "department": "computer-science",
+  "question": "How can agents describe the inputs, outputs, effects, and falsifiable branch behavior of Demerzel's IXQL research-to-course pipeline without mistaking source declarations for observed execution?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "pipeline_composition: bindings chained_stages guarded_branches",
+    "stage_contract: input output effect evidence next_action",
+    "test: cross_validation against pinned grammar example and validator source"
+  ],
+  "hypothesis": "Annotating each declared IXQL stage with required inputs, inspectable outputs, external effects, and a falsifiable branch case may make cross-agent communication clearer while preserving the boundary between source text and runtime evidence.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At Demerzel commit 0220ca84a25f59973bd6b9236cc00b7f68631a50, grammars/sci-ml-pipelines.ebnf defines result binding with <-, chained MCP steps with the arrow, parallel calls, guarded stages, and ix.io read/write/append operations.",
+    "At the same commit, examples/ixql/research-to-course.ixql declares department and context reads, question formation, investigation, a conclusion branch, conditional course production after schema validation, and a research-cycle write. These are checked-in source declarations, not a verified execution trace.",
+    "The lesson's fixed refute conclusion is a synthetic reasoning fixture. Its proposed falsifier is an attributable course-path write despite a non-confirming conclusion; no IXQL runtime test was executed for this lesson.",
+    "scripts/ixql-validate.js describes itself as a minimal structural validator, not a full parser, and its main function scans pipelines/ rather than examples/ixql/. A clean report from that script alone cannot validate the selected cookbook example or prove execution.",
+    "docs/ixql-ui-composition-spec.md is marked brainstormed and ready for implementation. The lesson does not claim verified IX editor behavior. Five source- or fixture-grounded exercises have answers. A bounded independent AI subject check found no concrete error; human subject and learner review remain untested. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:15:50Z"
+}

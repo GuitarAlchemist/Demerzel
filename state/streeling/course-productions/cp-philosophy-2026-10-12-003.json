@@ -1,0 +1,19 @@
+{
+  "pipeline_id": "cp-philosophy-2026-10-12-003",
+  "department": "philosophy",
+  "research_cycle_id": "philosophy-2026-10-12-003",
+  "module_id": "phi-003-what-does-the-same-chord-mean",
+  "status": "in_progress",
+  "phases": {
+    "research": {"completed": true, "belief_value": "P", "belief_confidence": 0.78},
+    "outline": {"completed": true, "sections": 4, "estimated_duration": "40 minutes"},
+    "content": {"completed": true, "word_count": 1622, "exercises": 5},
+    "translation": {"completed": false, "languages": ["en"]},
+    "review": {
+      "completed": false,
+      "feedback": "English source-bound draft with five answered exercises and a deterministic toy pitch-class/ICV fixture. The fixture is not a GA OPTIC-K vector or user search result. Human music-theory and philosophy review, learner trial, localization, and publication remain pending."
+    },
+    "publish": {"completed": false}
+  },
+  "timestamp": "2026-10-12T21:28:45Z"
+}

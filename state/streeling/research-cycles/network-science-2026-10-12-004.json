@@ -1,0 +1,25 @@
+{
+  "cycle_id": "network-science-2026-10-12-004",
+  "department": "network-science",
+  "question": "Would per-action evidence dependencies prevent false course-publication admission without blocking unrelated work more effectively than existing review flags and source-SHA checks?",
+  "production_path": [
+    "baseline: inspect the pinned Demerzel advisory lane selector and its mode-blocked work classes",
+    "graph: draw action-to-receipt prerequisites and keep independent task paths separate",
+    "candidate: sketch a pure conjunction of scoped, revision-bound receipt checks",
+    "counterargument: compare against simple review and publish flags plus the Learn source guard",
+    "falsifier: predeclare false-admission, unnecessary-block, decision-time, and explanation outcomes"
+  ],
+  "hypothesis": "A per-action receipt graph might admit independent work while deferring publication when a required same-revision review is absent, but should be rejected if simple existing flags give equal or better decisions with less cost.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At Demerzel commit ecdc6c27559bb1a11343cfad33687465893e9891, scripts/aiw_lane_selector.py and state/driver/aiw-worker-lanes.json implement advisory role and mode gating, including SYSTEM.BACKPRESSURE_HIGH for blocked work classes. They do not inspect Streeling review receipts or Learn source provenance.",
+    "At Demerzel commit 29e83e08120cba99452020c54c31680c28b32c3e, the NET-003 production record has review.completed=false and publish.completed=false. Its local selector replay receipt is a bounded dry-run experiment, not a human subject or learner verdict.",
+    "The merged Learn clean-source guard at commit 3f4de745f56e81f237159997473253546d7f6d64 rejects an uncommitted Streeling source checkout that would otherwise be imported under a misleading HEAD SHA. It checks provenance, not pedagogical approval.",
+    "Five answered synthetic and project-transfer exercises state explicit outcomes and a rejection criterion for proposed semantic evidence dependencies. Independent AI adversarial review identified an incorrect one-edge graph-cut interpretation, a circular learner gate, and an overstated method; the draft was revised. No semantic-backpressure DSL, runtime comparison, learner result, human approval, or publication was performed. Research duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.6,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T05:20:47Z"
+}

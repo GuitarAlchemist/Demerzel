@@ -1,0 +1,26 @@
+{
+  "cycle_id": "guitar-studies-2026-10-11-004",
+  "department": "guitar-studies",
+  "question": "For a physically consistent two-string guitar transition, when does GA's progression analyzer predict parallel fifths, and what playing evidence would be needed to describe actual execution?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "source reading: pin GA default tuning, progression analyzer, report, and focused unit tests",
+    "fixture: construct standard-tuning two-string dyads with explicit frets, pitches, and MIDI notes",
+    "test: cross_validate five answers and arithmetic against the pinned source; specify an unrun playing check"
+  ],
+  "hypothesis": "GA's string-keyed interval-class detector can predict a parallel-fifths flag for a consistent A-to-B dyad fixture, while a contrary-motion A-to-C fixture predicts no issue; neither prediction establishes clean physical execution or musical preference.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Common/GA.Domain.Core/Instruments/Tuning.cs defines default guitar tuning E2 A2 D3 G3 B3 E4. The lesson uses string 4 D3 MIDI 50 and string 3 G3 MIDI 55 as explicitly stated fixture assumptions.",
+    "At the same commit, Common/GA.Domain.Services/Fretboard/Voicings/Analysis/ProgressionVoiceLeadingAnalyzer.cs matches played voices by guitar string, requires two shared strings and nonzero motion in the same direction, and reports Fifths for absolute MIDI interval modulo 12 equal to 7 before and after. It reports Octaves for modulo-12 zero, which also covers unisons.",
+    "The constructed A dyad is string 4 fret 2 E3/52 and string 3 fret 4 B3/59; B is string 4 fret 4 F#3/54 and string 3 fret 6 C#4/61. Both notes rise two semitones and the interval stays seven, so the source predicts one Fifths issue for a two-voicing object matching these values.",
+    "Constructed C uses string 4 fret 4 F#3/54 and string 3 fret 2 A3/57. From A the strings move in opposite directions, so the source predicts no issue under this detector; C has a different target harmony from B.",
+    "The pinned ProgressionVoiceLeadingReport.cs defines IsClean as Issues.Count==0. The pinned Tests/Common/GA.Business.Core.Tests/Fretboard/Voicings/ProgressionVoiceLeadingAnalyzerTests.cs covers algorithm cases, but its helper uses fret-zero positions with arbitrary MIDI notes and is not a physically consistent guitar demonstration. No GA analyzer execution or guitarist trial was performed for the new fixture.",
+    "The proposed physical task is ten A-to-B attempts at 60 beats per minute with a predeclared eight-of-ten clean, pitch-correct target threshold. This is an unrun classroom criterion, not a measured player result or population standard. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T22:09:57Z"
+}

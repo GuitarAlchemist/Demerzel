@@ -1,0 +1,25 @@
+{
+  "cycle_id": "product-management-2026-10-12-004",
+  "department": "product-management",
+  "question": "What evidence would justify a ComfyUI, Blender, and Godot craft-extension release without treating source experiments or plans as installed products?",
+  "production_path": [
+    "investigation: inspect pinned project source examples",
+    "hypothesis: a user-task and target-specific noncompensating gate prevents inflated release claims",
+    "test: deterministic four-card teaching fixture",
+    "conclusion: distinguish release candidate from published tag"
+  ],
+  "hypothesis": "Per-target implementation, runtime, semantic, and human receipts plus cross-tool replay and hashes will expose missing release evidence that an aggregate readiness score conceals.",
+  "test_method": "simulation",
+  "evidence": [
+    "At Demerzel commit 861b6b1891ef7017c22269d5ec6be4c50953040c, CS-004 describes a local unmerged GA ComfyUI audio bridge and a no-op load/save workflow; no sound improvement or installed ComfyUI extension is established by that lesson.",
+    "At the same Demerzel commit, VC-005 cites the pinned Learn Blender GLB cleanup script and checked-in sample report; it records no craft-feature preservation result or Godot import.",
+    "At the same Demerzel commit, VC-007 has a synthetic crossing evaluator that reports 0 global-parity and 12 restarted-tile adjacency violations; this is a composition oracle, not a Godot extension run.",
+    "The GA Godot integration plan at commit dc2e74cbd992a298f67efb928b5b3754615e1924 has unchecked scene and capture work, not a verified release.",
+    "At Demerzel commit 54e84c2c2060fc75977e469bf2a74e7cef18a4e4, the PM-004 teaching fixture yields hold_for_evidence for the source boundary, reject_candidate for a synthetic failed Godot meaning gate, hold_for_evidence for a synthetic missing-human-review card, and release_candidate for a synthetic all-gates card with published_tag=false. The fixture does not inspect external release state. Duration was not instrumented, so duration_seconds=0."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T22:03:11Z"
+}

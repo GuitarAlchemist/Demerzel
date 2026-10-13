@@ -1,0 +1,126 @@
+{
+  "recorded": {
+    "sha256": "03a1965f275f0858be70476dab2bf55d2cbf2272ef7a50c61453d45e7f38b248",
+    "sample_rate": 44100,
+    "duration_seconds": 4.0,
+    "peak_abs": 0.1297,
+    "onset_seconds_approx": 1.1,
+    "rms_dbfs_0p2_0p4_after_onset": -34.6,
+    "rms_dbfs_1p0_1p2_after_onset": -38.5,
+    "late_minus_early_db": -3.9,
+    "partials_0p2_1p2_after_onset": [
+      {
+        "harmonic": 1,
+        "peak_hz": 83.0,
+        "db_relative_to_first": 0.0
+      },
+      {
+        "harmonic": 2,
+        "peak_hz": 165.0,
+        "db_relative_to_first": 7.0
+      },
+      {
+        "harmonic": 3,
+        "peak_hz": 248.0,
+        "db_relative_to_first": -19.4
+      },
+      {
+        "harmonic": 4,
+        "peak_hz": 331.0,
+        "db_relative_to_first": -5.3
+      },
+      {
+        "harmonic": 5,
+        "peak_hz": 414.0,
+        "db_relative_to_first": -12.3
+      },
+      {
+        "harmonic": 6,
+        "peak_hz": 497.0,
+        "db_relative_to_first": -15.4
+      }
+    ],
+    "morlet_partial_tracks": [
+      {
+        "harmonic": 1,
+        "center_hz": 82.41,
+        "peak_time_first_0p6s": 0.168,
+        "late_minus_early_db": -3.5
+      },
+      {
+        "harmonic": 2,
+        "center_hz": 164.81,
+        "peak_time_first_0p6s": 0.144,
+        "late_minus_early_db": -4.5
+      },
+      {
+        "harmonic": 4,
+        "center_hz": 329.63,
+        "peak_time_first_0p6s": 0.141,
+        "late_minus_early_db": 0.1
+      }
+    ]
+  },
+  "ga_synth": {
+    "sha256": "a78a70243a81aa79d806d9ef3db7baa1385c479505f7d5e97b8bf0c7866c3f98",
+    "sample_rate": 44100,
+    "duration_seconds": 4.0,
+    "peak_abs": 0.4602,
+    "onset_seconds_approx": 0.0,
+    "rms_dbfs_0p2_0p4_after_onset": -16.6,
+    "rms_dbfs_1p0_1p2_after_onset": -17.7,
+    "late_minus_early_db": -1.1,
+    "partials_0p2_1p2_after_onset": [
+      {
+        "harmonic": 1,
+        "peak_hz": 82.0,
+        "db_relative_to_first": 0.0
+      },
+      {
+        "harmonic": 2,
+        "peak_hz": 164.0,
+        "db_relative_to_first": -16.9
+      },
+      {
+        "harmonic": 3,
+        "peak_hz": 246.0,
+        "db_relative_to_first": -22.7
+      },
+      {
+        "harmonic": 4,
+        "peak_hz": 328.0,
+        "db_relative_to_first": -39.8
+      },
+      {
+        "harmonic": 5,
+        "peak_hz": 410.0,
+        "db_relative_to_first": -54.8
+      },
+      {
+        "harmonic": 6,
+        "peak_hz": 493.0,
+        "db_relative_to_first": -51.6
+      }
+    ],
+    "morlet_partial_tracks": [
+      {
+        "harmonic": 1,
+        "center_hz": 82.41,
+        "peak_time_first_0p6s": 0.038,
+        "late_minus_early_db": -3.6
+      },
+      {
+        "harmonic": 2,
+        "center_hz": 164.81,
+        "peak_time_first_0p6s": 0.024,
+        "late_minus_early_db": -12.9
+      },
+      {
+        "harmonic": 4,
+        "center_hz": 329.63,
+        "peak_time_first_0p6s": 0.01,
+        "late_minus_early_db": -25.7
+      }
+    ]
+  }
+}

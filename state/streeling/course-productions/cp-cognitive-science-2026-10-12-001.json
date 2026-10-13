@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-cognitive-science-2026-10-12-001",
+  "department": "cognitive-science",
+  "research_cycle_id": "cognitive-science-2026-10-12-001",
+  "module_id": "cog-001-your-brain-lies-to-you",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 14,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2935,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "Existing six-locale cognitive-bias overview was augmented with five paired, project-grounded exercises in each locale and an explicitly synthetic publication decision case. Source-level preflight and arithmetic/parity checks do not constitute cognitive-science subject review, fluent-language review, a real learner trial, or publication approval. A human reviewer must check exact source blobs and the learner transfer task."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T22:14:04Z"
+}

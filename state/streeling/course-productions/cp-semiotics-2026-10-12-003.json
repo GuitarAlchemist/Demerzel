@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-semiotics-2026-10-12-003",
+  "department": "semiotics",
+  "research_cycle_id": "semiotics-2026-10-12-003",
+  "module_id": "sem-003-status-signs-and-evidence",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2023,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source and five AI-drafted localizations are grounded in pinned Demerzel SEM-002 production and bounded review artifacts, schema, progress/preflight code, and dated public baseline. Independent AI subject and cross-language semantic preflights found no remaining actionable issue after narrowing an unsupported handoff-effect claim in the research record. Human semiotics/governance subject review, learner trial, fluent-language review, live deployment, and public readback remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T03:43:59Z"
+}

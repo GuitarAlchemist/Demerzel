@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-network-science-2026-10-12-004",
+  "department": "network-science",
+  "research_cycle_id": "network-science-2026-10-12-004",
+  "module_id": "net-004-semantic-backpressure-and-evidence-dependencies",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.6
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1639,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English hypothesis lesson with five answered exercises and pinned Demerzel/Learn artifacts. Independent AI adversarial review found a mistaken graph-cut claim, a circular learner gate, and an overstated research method; the draft was revised to an AND dependency, optional prepublication pilot, and thought experiment. The semantic dependency rule and DSL notation are proposed, not implemented or measured. Human subject review, a baseline comparison, learner work, fluent translations, Learn preview, and public readback are pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T05:20:47Z"
+}

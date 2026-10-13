@@ -1,0 +1,49 @@
+{
+  "fixture_id": "cs-004-recursive-improvement",
+  "date_utc": "2026-10-04",
+  "hypothesis": "A failed agent or audio experiment can improve the next run when its failure becomes a reusable harness or evaluation change, with a fixed receipt and replay check.",
+  "observed_cycles": [
+    {
+      "cycle": "wmux-review-1",
+      "input": "GA methodology, Streeling syllabus, GAS-001; one review receipt",
+      "change_to_harness": "none",
+      "declared_source_reads": 3,
+      "successful_source_reads": 1,
+      "receipt_marker_verified": false,
+      "result": "Sibling Demerzel reads and GA receipt write denied in dontAsk; no completed review."
+    },
+    {
+      "cycle": "wmux-review-2",
+      "input": "GA methodology, Streeling syllabus, GAS-001, CS-004; one review receipt",
+      "change_to_harness": "Pass five exact session-scoped allowedTools rules through bounded wmux helper: four Read paths and one receipt Write path.",
+      "declared_source_reads": 4,
+      "successful_source_reads": 4,
+      "receipt_marker_verified": true,
+      "provider_duration_ms": 28715,
+      "result": "One advisory review completed; exact temporary agent stopped and pane reaped."
+    },
+    {
+      "cycle": "audio-evaluation-1",
+      "input": "GAS-001 E2 baseline equals candidate",
+      "change_to_evaluation": "none",
+      "known_change_detected": false,
+      "result": "Equal hashes and equal FFT/Haar/RMS errors reject an improvement claim but do not test comparator sensitivity."
+    },
+    {
+      "cycle": "audio-evaluation-2",
+      "input": "Same GAS-001 baseline/reference, plus two known FFmpeg transformations",
+      "change_to_evaluation": "Add half-amplitude and narrow second-harmonic equalizer controls.",
+      "known_change_detected": true,
+      "result": "RMS and spectral summaries moved for the intended controls; perceptual validity remains unknown."
+    }
+  ],
+  "not_measured": [
+    "time to prepare each lane",
+    "course production time per reviewed and localized module",
+    "review queue waiting time",
+    "guitarist preference and recovery from errors",
+    "quality-adjusted throughput across multiple cycles"
+  ],
+  "next_reuse_test": "Have another operator reuse the exact-file wmux receipt pattern and the audio control pattern on two different tasks. Compare total preparation, review, retry, and maintenance time with a manual method; keep at least one case out of the design of each control.",
+  "rejection_rule": "Do not claim compounding or exponential progress until repeated cycles increase independently reviewed, learner-useful output per unit of time without higher defect or rejection rates."
+}

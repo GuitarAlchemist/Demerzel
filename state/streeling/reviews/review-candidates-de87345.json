@@ -1,0 +1,240 @@
+{
+  "source_commit": "de87345aed25b83a97da853fdee86caf43d26ebe",
+  "department_directories": 21,
+  "target_core_courses": 525,
+  "core_course_codes": 116,
+  "authored_english": 117,
+  "six_locale_and_five_answer_pair_candidates": 9,
+  "committed_review_briefs": 8,
+  "listed_candidates": 13,
+  "candidates": [
+    {
+      "department": "audio-engineering",
+      "module_id": "aud-001-eq-compression-order",
+      "course_code": "aud-001",
+      "locale_blobs": {
+        "en": "8473b22ca1464aef64a6d289bdd66d9495a6006c",
+        "es": "09fd8898a33fd3655a11ea969cc482359feb68ea",
+        "pt": "b1ae715c888758982d625833d1b3bfeffb2d4ac0",
+        "fr": "63dec3964db045aebf03c15b3e1f966d8920503c",
+        "it": "330578246dc5f0aa0977c42aabf103b401400b20",
+        "de": "4ed02fab5c36645b3610d2acfd6d17998eb4916a"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": "state/streeling/reviews/aud-001-review-brief.md",
+      "learner_task": "state/streeling/reviews/aud-001-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "audio-engineering",
+      "module_id": "aud-003-transient-preservation-gate",
+      "course_code": "aud-003",
+      "locale_blobs": {
+        "en": "43c64022065899770fcafc66872c3789df5aa1a1",
+        "es": "be1635b6d8f14cb0a24a58bd92fd805c9ec0b16d",
+        "pt": "bafe8e014fd5e7e02a309fc08c2565782e475d68",
+        "fr": "657e8c87dc0fe3352d02b517a9b6a1fcde55c8f2",
+        "it": "8ffce4ed57587d4a65e699046bff453c09389583",
+        "de": "8ca2ab001f4db56dee730b8635bce05c1d550442"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": "state/streeling/reviews/aud-003-review-brief.md",
+      "learner_task": "state/streeling/reviews/aud-003-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "data-visualization",
+      "module_id": "dv-001-observed-degraded-stale-quality",
+      "course_code": "dv-001",
+      "locale_blobs": {
+        "en": "37047b77f21f91afeec137378f5cd398d3cc1520",
+        "es": "d75e33c3fef9f2b0f882a96f7cdf818b0f67ddef",
+        "pt": "60bedcb591a421244b45abea6e6bd199b112339a",
+        "fr": "b293b732747650a0b701371a0ed5f7f40edc715d",
+        "it": "2d06e75496b66cc902f52f4910441282891e1114",
+        "de": "b71bf6a78b74232a06b96f8ee7e0f7d83b068d16"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": "state/streeling/reviews/dv-001-review-brief.md",
+      "learner_task": "state/streeling/reviews/dv-001-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "physics",
+      "module_id": "phy-003-sampling-aliasing-guitar-engine",
+      "course_code": "phy-003",
+      "locale_blobs": {
+        "en": "6e06cfdd2684496acda909ebc5cbb7049700e843",
+        "es": "37d2037c8bbf8b634504422dc9457652cb995518",
+        "pt": "7039b53151f3b35a16ec00719a146b3a2ff3f2f8",
+        "fr": "a7c7482201aeaae0fd54e83fbbd60fde5320efa2",
+        "it": "88d203cfa37dfcee068ac092ef6ca0b5f1ea2b0c",
+        "de": "8fe704550aed02311537086a2bd0740213285d29"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": "state/streeling/reviews/phy-003-review-brief.md",
+      "learner_task": "state/streeling/reviews/phy-003-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "futurology",
+      "module_id": "fut-003-agent-substitution-readiness-drill",
+      "course_code": "fut-003",
+      "locale_blobs": {
+        "en": "7ebfe049996ac0457aad4cd1f791db777d21a9dd"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": false,
+      "review_brief": "state/streeling/reviews/fut-003-review-brief.md",
+      "learner_task": "state/streeling/reviews/fut-003-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "philosophy",
+      "module_id": "phi-003-what-does-the-same-chord-mean",
+      "course_code": "phi-003",
+      "locale_blobs": {
+        "en": "ca833039f84470367688dd489a4be51ee14e6f9f"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": false,
+      "review_brief": "state/streeling/reviews/phi-003-review-brief.md",
+      "learner_task": "state/streeling/reviews/phi-003-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "psychohistory",
+      "module_id": "psy-003-review-throughput-and-compounding",
+      "course_code": "psy-003",
+      "locale_blobs": {
+        "en": "0b2a03ddb02fe62bee699e04ecfecc0195e1c839"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": false,
+      "review_brief": "state/streeling/reviews/psy-003-review-brief.md",
+      "learner_task": "state/streeling/reviews/psy-003-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "world-music-languages",
+      "module_id": "wml-003-term-preservation-and-cultural-review",
+      "course_code": "wml-003",
+      "locale_blobs": {
+        "en": "ca64ee59b1763014e1b9dcc2aec634862ffddfb8"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": false,
+      "review_brief": "state/streeling/reviews/wml-003-review-brief.md",
+      "learner_task": "state/streeling/reviews/wml-003-learner-task.md",
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "cognitive-science",
+      "module_id": "cog-003-calibrating-fretboard-confidence",
+      "course_code": "cog-003",
+      "locale_blobs": {
+        "en": "26432356b48ed737ef5c6722117fe83dab05a93d",
+        "es": "2d5a6fa952c84461d339113747d99c6dd304f686",
+        "pt": "1d55a48b4d58a2d091876b33b88f8f7c54e9bba3",
+        "fr": "9b913066bdc423dbf5cf85ea2ba5965f64b7102e",
+        "it": "962d9625be592e45c7fc7b50bf3d7285cd5da274",
+        "de": "2c34b18f954ef001164d4a7f000542a8b4a377b7"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": null,
+      "learner_task": null,
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "guitar-acoustics",
+      "module_id": "gas-003-decay-calibration-open-e",
+      "course_code": "gas-003",
+      "locale_blobs": {
+        "en": "ee5b6f9204a0c39cf65248b12761a0924703d4b2",
+        "es": "407ff6a2f986b282e9a610dac5f397018db8a328",
+        "pt": "e141f868b6fb38ccc9d632599ed9cf26ab8c4677",
+        "fr": "c026330435301076620d8cc825aa7bfa9f056d29",
+        "it": "8ff74f64ea0e2d90409875bc8c19694cc227381a",
+        "de": "978769917a4a82248112ad6e0d7fb71814be6047"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": null,
+      "learner_task": null,
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "information-theory",
+      "module_id": "inf-003-verdict-distribution-drift",
+      "course_code": "inf-003",
+      "locale_blobs": {
+        "en": "67a4861000a74c1889f3782018a7447f5bfc5b18",
+        "es": "efe1b0c2ede9bdad2810a6d16feb8c16a0fffd7b",
+        "pt": "ca9623bc15639bdae2655fe78551c2a7cbeef000",
+        "fr": "2e65b476632af280e5af85a512e5519d5dfd5000",
+        "it": "04976f17eca42220605a11bb7793652313f31ae8",
+        "de": "08315488958eae4e8b35194953342923b1301db6"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": null,
+      "learner_task": null,
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "network-science",
+      "module_id": "net-003-worker-lane-coverage-and-fragility",
+      "course_code": "net-003",
+      "locale_blobs": {
+        "en": "8b01f7efa6b19fe54b72f83c770294bc2fff4c9a",
+        "es": "fa6fa3df9e8f8af1b0bf815eaec6c54ea29e7364",
+        "pt": "73e1d92572763edfbb1e7d65b0cf4968af8fabad",
+        "fr": "35b383ba4b6f381c5f054e952d4eab260b477437",
+        "it": "ed6c94329b35c71344731b5c881fc90c34f6a804",
+        "de": "c5d910e3843a984a4485b3a3ae8d77b3bd13e619"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": null,
+      "learner_task": null,
+      "pipeline_review_flag": false
+    },
+    {
+      "department": "semiotics",
+      "module_id": "sem-003-status-signs-and-evidence",
+      "course_code": "sem-003",
+      "locale_blobs": {
+        "en": "40ed2d23a61ec34ba3d2ab2fff6765daed2f9b12",
+        "es": "034981fd4f4284e04e42f3d55ecb104e58c0ef0f",
+        "pt": "4a876240b846417d05c36a012dcca4d04579744a",
+        "fr": "3955b49d77101e234201b21dfb1a4e144f9fab64",
+        "it": "186af8a9eef0c7b0a20743cca14f6538a4e4eb5c",
+        "de": "0391ec537f71512e372903f20a7752491cb6577e"
+      },
+      "five_answer_pairs_signal": true,
+      "pinned_revision_link_signal": true,
+      "six_active_locale_sources": true,
+      "review_brief": null,
+      "learner_task": null,
+      "pipeline_review_flag": false
+    }
+  ],
+  "caveat": "This is source and triage evidence only. A five-answer signal, six locale files, a review brief, or a pipeline flag does not authenticate a human verdict, learner outcome, or public publication."
+}

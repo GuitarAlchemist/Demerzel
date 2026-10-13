@@ -1,0 +1,26 @@
+{
+  "cycle_id": "data-visualization-2026-10-11-007",
+  "department": "data-visualization",
+  "question": "How can small multiples compare OPTIC-K partition diagnostics without flattening partition roles, mixing raw and compact offsets, or implying transposition invariance?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "data_relationship: partitioned_diagnostic_measure",
+    "chart_type: aligned_small_multiples_with_common_baseline",
+    "design_pattern: preserve_partition_role_and_coordinate_system",
+    "design_principle: separate_observation_from_interpretation_and_current_status"
+  ],
+  "hypothesis": "Six aligned panels for the same classifier accuracy, with a shared baseline and explicit partition metadata, may make the fixed diagnostic easier to read without turning accuracy into a universal partition-quality ranking.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, Common/GA.Business.ML/Embeddings/EmbeddingSchema.cs declares Version OPTIC-K-v1.8 and TotalDimension 240. Its canonical registry gives the six similarity partitions STRUCTURE, MORPHOLOGY, CONTEXT, SYMBOLIC, MODAL, and ROOT; the compact similarity dimension is 124.",
+    "At the same commit, state/quality/embeddings/2026-06-25.json reports a balanced 12000-item, three-instrument, five-fold random-forest diagnostic with baseline_random=0.3333333333333333. Per-partition accuracy means are STRUCTURE=0.502, MORPHOLOGY=0.9031666666666667, CONTEXT=0.3333333333333333, SYMBOLIC=0.5374166666666668, MODAL=0.487, and ROOT=0.34983333333333333.",
+    "The fixed diagnostic records MORPHOLOGY and ROOT with by_design hypotheses and leak_confirmed=false. It records STRUCTURE and SYMBOLIC as likely_leak/true and MODAL as possible/true; these labels were preserved rather than inferred solely from the visual ranking.",
+    "The diagnostic's 124-dimensional compact coordinates place STRUCTURE at [0,24) and ROOT at [112,124); the canonical raw registry places them at inclusive slots 6-29 and 228-239. The schema explicitly warns that whole STRUCTURE is not transposition-invariant because it includes pitch-class chroma.",
+    "GA docs/quality/README.md generated 2026-07-23 marks five tracked embedding partition feeds stale since their last real observation on 2026-06-25; ROOT's June 25 date comes from the diagnostic snapshot, not a tracked ROOT feed. A bounded AI subject check found and corrected that attribution and a sentence-count mismatch in exercise 5. The layout and answers have not received a learner test or human subject review. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T18:13:29Z"
+}

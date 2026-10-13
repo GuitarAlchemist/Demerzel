@@ -1,0 +1,26 @@
+{
+  "cycle_id": "cognitive-science-2026-10-11-002",
+  "department": "cognitive-science",
+  "question": "Can GA's pinned SVG fretboard demo labels be used as a verified answer key for a predict-the-note exercise, and what evidence would be needed to evaluate learner feedback?",
+  "production_path": [
+    "investigation: observe hypothesize test conclude reflect",
+    "project_task: guitarist predicts a displayed fretboard marker's note before checking feedback",
+    "source_fixture: six labeled C-major demo positions at a pinned GA commit",
+    "method: compare every displayed label with pitch class from the component's string order, default tuning, and fret",
+    "evaluation_boundary: separate source mismatch, UI cue behavior, click payload, and unmeasured learner outcome"
+  ],
+  "hypothesis": "One displayed demo note label is inconsistent with the component's own string order and standard tuning, so this fixture should be audited before it becomes an answer key; the current component does not itself record a pre-feedback note prediction.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At GA commit dc2e74cbd992a298f67efb928b5b3754615e1924, ReactComponents/ga-react-components/src/components/GuitarFretboard.tsx:7-17 defines string 0 as high E and fret 0 as open; lines 75-85 set default high-to-low tuning E,B,G,D,A,E. The checked-out source files were clean when inspected.",
+    "At the same commit, ReactComponents/ga-react-components/src/pages/GuitarFretboardTest.tsx:5-13 defines six demo positions labeled E,C,G,E,C,C and line 29 passes them to GuitarFretboard without a tuning override. A small independent pitch-class calculation returned E,C,G,E,C,G; five of six labels match. The final position, string 5 fret 3, is low E plus three semitones = G, but is labeled C and marked emphasized.",
+    "At the same commit, GuitarFretboard.tsx:239-318 renders fret numbers, open-string tuning labels, and each optional position label through separate branches. Setting showStringLabels false alone does not hide a populated position label. The pinned demo does not implement an answer input, reveal toggle, or correctness display.",
+    "At the same commit, GuitarFretboard.tsx:154-157 constructs a click callback payload with string and fret only; the position's original label and a learner's predicted note are absent. Five course answers follow from the fixed source and an explicitly synthetic two-attempt trace. No browser execution, actual learner attempt, memory measurement, or deployment readback was performed.",
+    "The observation is a source-level answer-key inconsistency, not proof that a user encountered it or that any feedback design improves learning. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-11T21:56:35Z"
+}

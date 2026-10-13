@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-network-science-2026-10-11-002",
+  "department": "network-science",
+  "research_cycle_id": "network-science-2026-10-11-002",
+  "module_id": "net-002-capability-graphs-and-projections",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.65
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "30 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1914,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": ["en"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "NET-002 is an English draft with five answered exercises checked against a pinned static Demerzel registry and contract note. A bounded independent AI subject and answer-key check found no graph-count or source-claim issue. Human subject, learner, and fluent-language reviews are pending; no live tool route or BAML consumer was verified."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-11T18:54:54Z"
+}

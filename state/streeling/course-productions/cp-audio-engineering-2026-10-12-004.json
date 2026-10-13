@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "cp-audio-engineering-2026-10-12-004",
+  "department": "audio-engineering",
+  "research_cycle_id": "audio-engineering-2026-10-12-004",
+  "module_id": "aud-001-eq-compression-order",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.8
+    },
+    "outline": {
+      "completed": true,
+      "sections": 3,
+      "estimated_duration": "35 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1940,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": ["en", "fr", "es", "pt", "it", "de"]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "The guitar-focused English rewrite and five AI-drafted localizations are source drafts. All six contain five answered exercises, an exact synthetic counterexample, and a proposed, unexecuted A/B harness. Independent AI subject and cross-language semantic preflights found no remaining actionable findings after three wording corrections. Human subject, learner, fluent-language, and publication review remain pending. No verified GA/IX compressor or processed guitar A/B result is claimed."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-12T03:12:39Z"
+}

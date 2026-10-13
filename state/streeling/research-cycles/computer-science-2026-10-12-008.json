@@ -1,0 +1,25 @@
+{
+  "cycle_id": "computer-science-2026-10-12-008",
+  "department": "computer-science",
+  "question": "How can Streeling compose exact-source human review verdicts without letting a stale receipt or generated badge become publication authority?",
+  "production_path": [
+    "investigation: inspect pinned AUD-001 review brief, draft Demerzel receipt contract, and Learn sync implementation",
+    "contract_model: separate subject, translation, learner, and publication claims",
+    "composition: match Git blobs and preserve the human verdict rather than reducing it to a Boolean",
+    "adversarial: vary English and French blobs independently and test malformed receipts",
+    "test: source cross_validation and five fixed reasoning exercises"
+  ],
+  "hypothesis": "A source-blob-dependent review display can prevent stale approvals from appearing current for its tested cases, but cannot authenticate the human reviewer or authorize publication.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "Demerzel commit 2e1766e524e4e7900b380823006a8192cf6aa493 contains the AUD-001 review brief with one English and five translation blobs, distinct subject, language, and learner gates, and no recorded human verdict.",
+    "Demerzel draft contract commit 5d7c1d1bd9972fe9d6d2e7a90ab3cdddabb8ed44 defines the subject, language, and learner kinds, exact source blob, language dependency on the English blob, verdict enum, and required evidence fields. This is a draft PR requiring human schema review.",
+    "Learn draft commit 02fc08c8f73e017412d1a623415ac4ab08645eb0 implements Git-tree blob matching, verifies a matching receipt's reviewed commit against its claimed source blobs, and preserves the verdict. Its sync fixture tests stale English and translation sources, wrong locale, changes requested, malformed receipt, and contradictory reviewed commit without overwriting previous output. Seven focused tests passed at 02fc08c; the full Astro build passed at its preceding commit 1e7931e. There is no deployment receipt.",
+    "The E1/E2/F1/F2 table and five answered exercises are synthetic reasoning fixtures. No actual AUD-001 human receipt, learner attempt, CS-008 translation, or public CS-008 readback was produced. Research duration was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T06:55:49Z"
+}
