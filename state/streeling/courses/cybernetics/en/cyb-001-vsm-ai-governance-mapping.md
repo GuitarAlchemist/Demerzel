@@ -1,3 +1,13 @@
+---
+module_id: cyb-001-vsm-ai-governance-mapping
+department: cybernetics
+course: "Cybernetic governance foundations"
+prerequisites: []
+produced_by: seldon-plan
+research_cycle: cybernetics-2026-03-22-001
+version: "1.0.0"
+---
+
 # CYB-001: Viable System Model Mapping to AI Governance
 
 **Department:** Cybernetics
