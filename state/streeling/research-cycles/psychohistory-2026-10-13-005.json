@@ -17,7 +17,7 @@
     "Reading effectiveness_from against effectiveness_to inside a row gives 1,540 pairs because it includes 11 baseline rows that have no earlier row; outside those rows the two readings give the same 1,529 pairs with 0 mismatches, and a planted mismatch is detected.",
     "The one change lies on the 78.5-day step from a baseline row to the first feeder run and coincides with a demoted event dated 2026-07-18 in the artifact's evolution record; between feeder runs 0 of 1,518 pairs changed (0 of 1,433 for runs about a day apart), so a skill score against persistence is undefined there.",
     "Scored on the same 1,529 pairs, four imaginary forecasters (synthetic, defined by assumed error counts) reach accuracies from 99.80% to 100% with skills of -2, -1, 0 and 1, and the hindsight forecast \"always T\" reaches 50.69%; the analysis reran byte-identically and its 26 self-checks passed.",
-    "No forecasting model was trained or run, the edit history of the evolution records was not read, and no human subject review, learner trial, translation or publication exists for this course; research duration was not instrumented and duration_seconds=0 records that limitation."
+    "No forecasting model was trained or run, the edit history of the evolution records was not read, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
   ],
   "conclusion": "confirm",
   "belief_value": "P",

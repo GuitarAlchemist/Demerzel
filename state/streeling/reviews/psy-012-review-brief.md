@@ -56,6 +56,6 @@ A proposed pilot pass is at least 8 of 10 with a non-zero score on criterion 5; 
 
 ## Verdict and publication boundary
 
-No verdict exists. When a review happens, record the reviewer's identifier or pseudonym, the UTC date, the course blob, the kind (`subject` or `learner`), the evidence, the findings, and `approved`, `changes_requested` or `not_assessed`. There is no translation of PSY-012 to approve.
+No verdict exists. When a review happens, record the reviewer's identifier or pseudonym, the UTC date, the course blob, the kind (`subject` or `learner`), the evidence, the findings, and `approved`, `changes_requested` or `not_assessed`. When this brief was written (2026-10-13), there was no translation of PSY-012.
 
 Keep the review and publish flags false until actual verdicts and learner evidence are recorded. This packet, the fixture's passing self-checks and the byte-identical reruns are not a review and not a publication.
