@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will decide what counts as one forecast in a log, score the forecast "nothing changes", express any other forecast as a skill score against it, and say when that score cannot be computed. **Project question:** if a model predicts tomorrow's effectiveness label for each governance artifact, what accuracy does "nothing changes" already reach on the recorded quality trend?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) treats a fast change in the balance of truth-value labels as a sign of a coming regime shift. Any model that forecasts such labels must first be compared with the cheapest forecast available; this module builds that comparison for categorical labels. PSY-016 scores probability forecasts on the same pairs, PSY-006 turns them into a transition matrix, and PSY-018 backtests numeric series.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) treats a fast change in the balance of truth-value labels as a sign of a coming regime shift. Any model that forecasts such labels must first be compared with the cheapest forecast available; this module builds that comparison for categorical labels. PSY-016 scores probability forecasts on the same pairs, [PSY-006](psy-006-transition-matrix-from-counts.md) turns them into a transition matrix, and PSY-018 backtests numeric series.
 
 ## 1. Decide what one forecast is
 

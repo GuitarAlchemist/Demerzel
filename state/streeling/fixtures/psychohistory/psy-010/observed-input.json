@@ -1,0 +1,1807 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-010-growth-curves-short-series",
+  "kind": "observed",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "history_path": "state/streeling/courses",
+    "objects_read": "commits and trees only; no command reads the content of a file",
+    "commands": [
+      "git rev-parse --is-shallow-repository",
+      "git cat-file -t 4b03838800dcd4894f1e026461979bff1d985ca8",
+      "git rev-list --count 4b03838800dcd4894f1e026461979bff1d985ca8",
+      "git log --topo-order --reverse --no-renames --name-status -z --format='%x01%H %ct %at %P' 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/courses",
+      "git rev-list --count --full-history 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/courses",
+      "git rev-list --first-parent 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/courses",
+      "git rev-parse 4b03838800dcd4894f1e026461979bff1d985ca8:state/streeling/courses",
+      "git ls-tree -r -z --name-only <commit> -- state/streeling/courses   (twice: at the first listed commit and at the pinned commit)",
+      "git ls-tree -z --name-only 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/departments/"
+    ],
+    "commit_check": "the pin resolves to a commit of a non-shallow clone; the number of commits reachable from it, the number that touch the folder, the SHA-256 of their ids and the folder's tree id at the pin equal the constants embedded in extract.py",
+    "replay_check": "the file list rebuilt by replaying the added and deleted paths of the listed commits equals the output of git ls-tree at the first listed commit and at the pinned commit",
+    "commits_reachable_from_pin": 1599,
+    "commits_touching_path": 73,
+    "commits_touching_path_full_history": 73,
+    "commits_touching_path_on_first_parent_chain": 73,
+    "commit_list_sha256": "85f15934a53a7561afc81c28ead2122846f62e436983bb74e4a1cdb346877f98",
+    "tree_of_history_path_at_pin": "fc6abc23bd76b00ae37366ac6d9f70186573dd5d"
+  },
+  "definitions": {
+    "commit_list": "ancestors of the pinned commit (itself included) whose tree under history_path differs from their parent's, as listed by git log with its default history simplification",
+    "date": "committer date (%ct, seconds since the Unix epoch), written here in UTC; the author date (%at) is recorded next to it and used only to measure how far the two differ",
+    "order": "ancestry: every listed commit has one parent and is an ancestor of the next one (all lie on the first-parent chain of the pin), so commits that share a committer second keep the order in which they were built",
+    "module": "a path state/streeling/courses/<department>/en/<name>.md whose file name is not README.md (case-insensitive); written as <department>/<name>",
+    "by_class": {
+      "module": "counted",
+      "en_readme": "excluded: <department>/en/README.md, a placeholder page and not a course",
+      "translation": "excluded: <department>/<two-letter language other than en>/<name>.md",
+      "readme": "excluded: README.md of the folder or of a department",
+      "flat_layout": "excluded: any other file directly under state/streeling/courses, the layout used before the <department>/<language>/ folders existed (listed under history_notes)"
+    },
+    "path_changes": "paths under history_path that the commit added, deleted or modified, compared with its parent and with rename detection off, so a renamed file is one deleted and one added path",
+    "added_removed": "module names present at this commit and not at the previous listed commit, and the reverse",
+    "department_records": "files state/streeling/departments/<name>.department.json at the pinned commit, read from its tree; the <name>.weights.json files beside them are not records"
+  },
+  "counts": {
+    "commits": 73,
+    "first_commit_utc": "2026-03-21T19:39:16Z",
+    "last_commit_utc": "2026-10-13T22:01:18Z",
+    "pairs_of_consecutive_commits_sharing_a_committer_second": 2,
+    "commits_that_change_the_module_count": 52,
+    "module_additions": 73,
+    "module_removals": 5,
+    "modules_at_pin": 68,
+    "files_at_pin": 255,
+    "files_at_pin_by_class": {
+      "module": 68,
+      "en_readme": 2,
+      "translation": 181,
+      "readme": 4,
+      "flat_layout": 0
+    },
+    "largest_gap_between_author_and_committer_date_seconds": 112676,
+    "commits_whose_author_and_committer_dates_differ_by_more_than_an_hour": 1,
+    "commits_whose_author_and_committer_dates_fall_on_different_utc_days": 1
+  },
+  "history_notes": {
+    "flat_layout_paths": [
+      "state/streeling/courses/gaa-001-your-first-chord.es.md",
+      "state/streeling/courses/gaa-001-your-first-chord.fr.md",
+      "state/streeling/courses/gaa-001-your-first-chord.md",
+      "state/streeling/courses/gaa-001-your-first-chord.module.json",
+      "state/streeling/courses/gaa-001-your-first-chord.pt.md",
+      "state/streeling/courses/psy-001-intro-fractal-compounding.es.md",
+      "state/streeling/courses/psy-001-intro-fractal-compounding.fr.md",
+      "state/streeling/courses/psy-001-intro-fractal-compounding.md",
+      "state/streeling/courses/psy-001-intro-fractal-compounding.module.json",
+      "state/streeling/courses/psy-001-intro-fractal-compounding.pt.md"
+    ],
+    "last_commit_with_a_flat_layout_path": "fd31193222167a924dcd822cc0313b37c8a906db",
+    "note": "the flat layout held the English text of the first two modules under names without a language folder; the count of modules starts at the commit that moved them into <department>/en/"
+  },
+  "pin_state": {
+    "department_folders": [
+      "audio-engineering",
+      "cognitive-science",
+      "computer-science",
+      "cybernetics",
+      "data-visualization",
+      "futurology",
+      "guitar-acoustics",
+      "guitar-alchemist-academy",
+      "guitar-studies",
+      "information-theory",
+      "mathematics",
+      "music",
+      "musicology",
+      "network-science",
+      "philosophy",
+      "physics",
+      "product-management",
+      "psychohistory",
+      "semiotics",
+      "visual-computing",
+      "world-music-languages"
+    ],
+    "department_folders_count": 21,
+    "modules_by_department": {
+      "audio-engineering": 1,
+      "cognitive-science": 1,
+      "computer-science": 2,
+      "cybernetics": 3,
+      "futurology": 1,
+      "guitar-alchemist-academy": 3,
+      "guitar-studies": 2,
+      "information-theory": 1,
+      "mathematics": 25,
+      "music": 19,
+      "musicology": 2,
+      "network-science": 1,
+      "philosophy": 1,
+      "physics": 1,
+      "product-management": 1,
+      "psychohistory": 2,
+      "semiotics": 1,
+      "world-music-languages": 1
+    },
+    "departments_with_a_module": 18,
+    "department_records": 23,
+    "department_records_without_a_course_folder": [
+      "metaqa",
+      "systems-engineering"
+    ],
+    "course_folders_without_a_department_record": [],
+    "excluded_en_readme_paths": [
+      "state/streeling/courses/guitar-acoustics/en/README.md",
+      "state/streeling/courses/visual-computing/en/README.md"
+    ]
+  },
+  "commits": [
+    {
+      "commit": "a559ef6f97593488c04b4ed011931875bb7e5b4f",
+      "committer_time_utc": "2026-03-21T19:39:16Z",
+      "author_time_utc": "2026-03-21T19:38:51Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 1,
+      "by_class": {
+        "module": 0,
+        "en_readme": 0,
+        "translation": 0,
+        "readme": 0,
+        "flat_layout": 1
+      },
+      "modules": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "ab892d5baaf5cfdb3357072865c6e291d8c30847",
+      "committer_time_utc": "2026-03-21T19:39:16Z",
+      "author_time_utc": "2026-03-21T19:39:15Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 2,
+      "by_class": {
+        "module": 0,
+        "en_readme": 0,
+        "translation": 0,
+        "readme": 0,
+        "flat_layout": 2
+      },
+      "modules": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "f545cf34d4061b967b949aed68aefba02c5691d3",
+      "committer_time_utc": "2026-03-21T19:49:12Z",
+      "author_time_utc": "2026-03-21T19:49:11Z",
+      "path_changes": {
+        "added": 2,
+        "deleted": 2,
+        "modified": 0
+      },
+      "files": 2,
+      "by_class": {
+        "module": 0,
+        "en_readme": 0,
+        "translation": 0,
+        "readme": 0,
+        "flat_layout": 2
+      },
+      "modules": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "d3d4aba74ed907d3d054179c752335bd2880ef3c",
+      "committer_time_utc": "2026-03-21T19:54:31Z",
+      "author_time_utc": "2026-03-21T19:54:30Z",
+      "path_changes": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 1
+      },
+      "files": 2,
+      "by_class": {
+        "module": 0,
+        "en_readme": 0,
+        "translation": 0,
+        "readme": 0,
+        "flat_layout": 2
+      },
+      "modules": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "67b4dbf1313fd5f744a5709ebacaf6841882a78c",
+      "committer_time_utc": "2026-03-21T19:56:36Z",
+      "author_time_utc": "2026-03-21T19:56:35Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 5,
+      "by_class": {
+        "module": 0,
+        "en_readme": 0,
+        "translation": 0,
+        "readme": 0,
+        "flat_layout": 5
+      },
+      "modules": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "fd31193222167a924dcd822cc0313b37c8a906db",
+      "committer_time_utc": "2026-03-21T19:59:23Z",
+      "author_time_utc": "2026-03-21T19:59:22Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 8,
+      "by_class": {
+        "module": 0,
+        "en_readme": 0,
+        "translation": 0,
+        "readme": 0,
+        "flat_layout": 8
+      },
+      "modules": 0,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "359a303fafcc828edfd9f41417080634e6aca6db",
+      "committer_time_utc": "2026-03-21T20:00:34Z",
+      "author_time_utc": "2026-03-21T20:00:33Z",
+      "path_changes": {
+        "added": 8,
+        "deleted": 8,
+        "modified": 0
+      },
+      "files": 8,
+      "by_class": {
+        "module": 2,
+        "en_readme": 0,
+        "translation": 6,
+        "readme": 0,
+        "flat_layout": 0
+      },
+      "modules": 2,
+      "added": [
+        "guitar-alchemist-academy/gaa-001-your-first-chord",
+        "psychohistory/psy-001-intro-fractal-compounding"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "d96c4fc6329d80504967b60ad428e9463526b13c",
+      "committer_time_utc": "2026-03-21T22:09:54Z",
+      "author_time_utc": "2026-03-21T22:09:41Z",
+      "path_changes": {
+        "added": 4,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 12,
+      "by_class": {
+        "module": 2,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 0,
+        "flat_layout": 0
+      },
+      "modules": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "b49bedf0e5b61b458c7d0a7d6319a4a28130def3",
+      "committer_time_utc": "2026-03-21T22:22:18Z",
+      "author_time_utc": "2026-03-21T22:22:16Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 13,
+      "by_class": {
+        "module": 2,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 1,
+        "flat_layout": 0
+      },
+      "modules": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "c9fe7923cf6f68c1abb4da21fe066a4980cc3acd",
+      "committer_time_utc": "2026-03-21T22:29:55Z",
+      "author_time_utc": "2026-03-21T22:29:42Z",
+      "path_changes": {
+        "added": 6,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 19,
+      "by_class": {
+        "module": 8,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 1,
+        "flat_layout": 0
+      },
+      "modules": 8,
+      "added": [
+        "cognitive-science/cog-001-your-brain-lies-to-you",
+        "futurology/fut-001-thinking-about-tomorrow",
+        "musicology/mcl-001-how-music-evolves",
+        "philosophy/phi-001-how-to-argue-well",
+        "product-management/pm-001-shipping-vs-talking",
+        "world-music-languages/wml-001-guitar-around-the-world"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "e5a8a1cdf803a6a139c097e1e443baa1b872cbdd",
+      "committer_time_utc": "2026-03-21T22:29:55Z",
+      "author_time_utc": "2026-03-21T22:29:54Z",
+      "path_changes": {
+        "added": 5,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 24,
+      "by_class": {
+        "module": 13,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 1,
+        "flat_layout": 0
+      },
+      "modules": 13,
+      "added": [
+        "computer-science/cs-001-thinking-algorithmically",
+        "guitar-studies/gtr-001-the-fretboard-map",
+        "mathematics/mat-001-proof-strategies",
+        "music/mus-001-what-is-a-chord",
+        "physics/phy-001-science-of-guitar-sound"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "93c2c2c0719c78abf051badda6c6b659d0ab3164",
+      "committer_time_utc": "2026-03-22T03:12:05Z",
+      "author_time_utc": "2026-03-22T03:11:36Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 25,
+      "by_class": {
+        "module": 14,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 1,
+        "flat_layout": 0
+      },
+      "modules": 14,
+      "added": [
+        "guitar-studies/gtr-002-caged-geometry"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "d85ce49d1332c58067fdb2f01d656ec4c696446c",
+      "committer_time_utc": "2026-03-22T04:15:39Z",
+      "author_time_utc": "2026-03-22T04:15:38Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 26,
+      "by_class": {
+        "module": 14,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 2,
+        "flat_layout": 0
+      },
+      "modules": 14,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "8deb4880996adba01b681fb8005e95bacd851b5a",
+      "committer_time_utc": "2026-03-22T04:18:14Z",
+      "author_time_utc": "2026-03-22T04:18:13Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 27,
+      "by_class": {
+        "module": 15,
+        "en_readme": 0,
+        "translation": 10,
+        "readme": 2,
+        "flat_layout": 0
+      },
+      "modules": 15,
+      "added": [
+        "audio-engineering/aud-001-eq-compression-order"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "489e544fa11b8efad7944c554534ba04fe72fbc7",
+      "committer_time_utc": "2026-03-22T05:05:13Z",
+      "author_time_utc": "2026-03-22T05:05:12Z",
+      "path_changes": {
+        "added": 65,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 92,
+      "by_class": {
+        "module": 15,
+        "en_readme": 0,
+        "translation": 75,
+        "readme": 2,
+        "flat_layout": 0
+      },
+      "modules": 15,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "52e41feb64ff1aa04c04135194400f72b5b31742",
+      "committer_time_utc": "2026-03-22T05:46:53Z",
+      "author_time_utc": "2026-03-22T05:46:52Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 93,
+      "by_class": {
+        "module": 15,
+        "en_readme": 0,
+        "translation": 75,
+        "readme": 3,
+        "flat_layout": 0
+      },
+      "modules": 15,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "4133d29e7b3380955c83941fa4ffe34470926c5f",
+      "committer_time_utc": "2026-03-22T17:34:45Z",
+      "author_time_utc": "2026-03-22T17:10:19Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 94,
+      "by_class": {
+        "module": 16,
+        "en_readme": 0,
+        "translation": 75,
+        "readme": 3,
+        "flat_layout": 0
+      },
+      "modules": 16,
+      "added": [
+        "computer-science/cs-001-governing-agentic-loops"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "6b2ca7cb5b033402654040caa31d107aa656859e",
+      "committer_time_utc": "2026-03-22T21:27:07Z",
+      "author_time_utc": "2026-03-22T21:27:07Z",
+      "path_changes": {
+        "added": 2,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 96,
+      "by_class": {
+        "module": 18,
+        "en_readme": 0,
+        "translation": 75,
+        "readme": 3,
+        "flat_layout": 0
+      },
+      "modules": 18,
+      "added": [
+        "cybernetics/CYB-001-vsm-ai-governance-mapping",
+        "cybernetics/cyb-001-vsm-governance-mapping"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "91abf646f1c68cd6890c8075ef4abd127b920648",
+      "committer_time_utc": "2026-03-22T21:28:57Z",
+      "author_time_utc": "2026-03-22T21:28:57Z",
+      "path_changes": {
+        "added": 0,
+        "deleted": 1,
+        "modified": 1
+      },
+      "files": 95,
+      "by_class": {
+        "module": 17,
+        "en_readme": 0,
+        "translation": 75,
+        "readme": 3,
+        "flat_layout": 0
+      },
+      "modules": 17,
+      "added": [],
+      "removed": [
+        "cybernetics/cyb-001-vsm-governance-mapping"
+      ]
+    },
+    {
+      "commit": "28f61e7c5739e5208c236f0394b5554fc7622bd9",
+      "committer_time_utc": "2026-03-23T03:14:42Z",
+      "author_time_utc": "2026-03-23T03:14:42Z",
+      "path_changes": {
+        "added": 2,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 97,
+      "by_class": {
+        "module": 17,
+        "en_readme": 1,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 17,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "b4ba3ead707563e3c67fda3867306c0216c98cee",
+      "committer_time_utc": "2026-03-23T04:00:09Z",
+      "author_time_utc": "2026-03-23T04:00:09Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 98,
+      "by_class": {
+        "module": 18,
+        "en_readme": 1,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 18,
+      "added": [
+        "cybernetics/CYB-002-active-dampening-cross-repo-oscillation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "74cf7c50f1aef6b3e37994b4d5133c3e758accab",
+      "committer_time_utc": "2026-03-23T05:04:10Z",
+      "author_time_utc": "2026-03-23T05:04:10Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 99,
+      "by_class": {
+        "module": 19,
+        "en_readme": 1,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 19,
+      "added": [
+        "cybernetics/CYB-003-measuring-variety-ratio-quantitatively"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "bcf0d3740eec023597c2df1717008b944fefee85",
+      "committer_time_utc": "2026-03-23T05:24:26Z",
+      "author_time_utc": "2026-03-23T05:24:26Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 100,
+      "by_class": {
+        "module": 19,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 19,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "30097ece5a53fe3450f895ed3a1f750591e76f09",
+      "committer_time_utc": "2026-03-24T00:32:02Z",
+      "author_time_utc": "2026-03-24T00:32:02Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 101,
+      "by_class": {
+        "module": 20,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 20,
+      "added": [
+        "psychohistory/psy-002-governance-phase-transitions"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "15bc2f08701988fea607cfe3e8e1f623ccb836e2",
+      "committer_time_utc": "2026-03-24T02:56:38Z",
+      "author_time_utc": "2026-03-24T02:56:38Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 102,
+      "by_class": {
+        "module": 21,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 21,
+      "added": [
+        "information-theory/inf-001-entropy-of-governance"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "204e470119366f2a66ed5cb5ddec95fd20162811",
+      "committer_time_utc": "2026-03-24T02:56:52Z",
+      "author_time_utc": "2026-03-24T02:56:52Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 103,
+      "by_class": {
+        "module": 22,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 22,
+      "added": [
+        "network-science/net-001-scale-free-tool-networks"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "efcb99f56c601b2d5055e5fefeaaf4d9dca69b89",
+      "committer_time_utc": "2026-03-24T02:57:02Z",
+      "author_time_utc": "2026-03-24T02:57:02Z",
+      "path_changes": {
+        "added": 1,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 104,
+      "by_class": {
+        "module": 23,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 23,
+      "added": [
+        "semiotics/sem-001-signs-in-governance"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "0776e57e1bfbeea1d4f18c0fb21fa836267f157c",
+      "committer_time_utc": "2026-04-05T23:54:10Z",
+      "author_time_utc": "2026-04-04T16:36:14Z",
+      "path_changes": {
+        "added": 8,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 112,
+      "by_class": {
+        "module": 31,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 31,
+      "added": [
+        "guitar-alchemist-academy/gaa-002-training-your-ear",
+        "guitar-alchemist-academy/gaa-003-improvisation-foundations",
+        "music/mus-002-beyond-tonality",
+        "music/mus-003-functional-harmony",
+        "music/mus-004-rhythm-and-groove",
+        "music/mus-005-jazz-harmony",
+        "music/mus-006-the-scale-universe",
+        "musicology/mcl-002-musical-form"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "c72fb746116346ce1991a4f108cd12f5e012e3fb",
+      "committer_time_utc": "2026-09-17T23:36:42Z",
+      "author_time_utc": "2026-09-17T23:36:42Z",
+      "path_changes": {
+        "added": 4,
+        "deleted": 4,
+        "modified": 1
+      },
+      "files": 112,
+      "by_class": {
+        "module": 31,
+        "en_readme": 2,
+        "translation": 75,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 31,
+      "added": [
+        "computer-science/cs-002-governing-agentic-loops",
+        "cybernetics/cyb-001-vsm-ai-governance-mapping",
+        "cybernetics/cyb-002-active-dampening-cross-repo-oscillation",
+        "cybernetics/cyb-003-measuring-variety-ratio-quantitatively"
+      ],
+      "removed": [
+        "computer-science/cs-001-governing-agentic-loops",
+        "cybernetics/CYB-001-vsm-ai-governance-mapping",
+        "cybernetics/CYB-002-active-dampening-cross-repo-oscillation",
+        "cybernetics/CYB-003-measuring-variety-ratio-quantitatively"
+      ]
+    },
+    {
+      "commit": "89a1bdb2801d32424dd17287ba67185572610277",
+      "committer_time_utc": "2026-09-27T18:07:50Z",
+      "author_time_utc": "2026-09-27T18:07:50Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 115,
+      "by_class": {
+        "module": 32,
+        "en_readme": 2,
+        "translation": 77,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 32,
+      "added": [
+        "mathematics/mat-003-floating-point-conditioning"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "a3a07df103c1f13a4dec45514fe775bfd4f76e77",
+      "committer_time_utc": "2026-09-28T02:13:42Z",
+      "author_time_utc": "2026-09-28T02:13:42Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 118,
+      "by_class": {
+        "module": 33,
+        "en_readme": 2,
+        "translation": 79,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 33,
+      "added": [
+        "mathematics/mat-002-counterexamples-and-exhaustive-checks"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "d451c909f69d9774901bdd99195ead8444098320",
+      "committer_time_utc": "2026-09-28T02:15:02Z",
+      "author_time_utc": "2026-09-28T02:15:02Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 121,
+      "by_class": {
+        "module": 34,
+        "en_readme": 2,
+        "translation": 81,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 34,
+      "added": [
+        "mathematics/mat-004-vectors-matrices-norms"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "8bd026f9e48065c482faeae5cacf8e4808fff4cc",
+      "committer_time_utc": "2026-09-28T03:02:12Z",
+      "author_time_utc": "2026-09-28T03:02:12Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 124,
+      "by_class": {
+        "module": 35,
+        "en_readme": 2,
+        "translation": 83,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 35,
+      "added": [
+        "mathematics/mat-005-symmetric-eigenproblems"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "0b13b9d56cc4b657cde6f3ce958c162610065c2f",
+      "committer_time_utc": "2026-09-28T03:24:49Z",
+      "author_time_utc": "2026-09-28T03:24:49Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 127,
+      "by_class": {
+        "module": 36,
+        "en_readme": 2,
+        "translation": 85,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 36,
+      "added": [
+        "mathematics/mat-006-svd-low-rank-approximation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "8c14336ecd9601615e08c20dca696cd0e021563e",
+      "committer_time_utc": "2026-09-28T03:45:00Z",
+      "author_time_utc": "2026-09-28T03:45:00Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 130,
+      "by_class": {
+        "module": 37,
+        "en_readme": 2,
+        "translation": 87,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 37,
+      "added": [
+        "mathematics/mat-007-least-squares-regularisation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "fec53790b6623dfd4cd14b6228f9ecb7fb8de312",
+      "committer_time_utc": "2026-10-02T20:04:43Z",
+      "author_time_utc": "2026-10-02T20:04:43Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 133,
+      "by_class": {
+        "module": 38,
+        "en_readme": 2,
+        "translation": 89,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 38,
+      "added": [
+        "music/mus-007-pitch-spelling-enharmonic-identity"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "46209f812953a32b2863e8dacf8cb1d1db29ef87",
+      "committer_time_utc": "2026-10-02T20:04:52Z",
+      "author_time_utc": "2026-10-02T20:04:52Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 136,
+      "by_class": {
+        "module": 39,
+        "en_readme": 2,
+        "translation": 91,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 39,
+      "added": [
+        "music/mus-018-key-finding-roman-numerals-cadences"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "6aef19b3a7c0ceac400f89f5585f4c033d61c99c",
+      "committer_time_utc": "2026-10-02T20:05:03Z",
+      "author_time_utc": "2026-10-02T20:05:03Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 139,
+      "by_class": {
+        "module": 40,
+        "en_readme": 2,
+        "translation": 93,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 40,
+      "added": [
+        "music/mus-020-set-classes-interval-vectors-prime-forms"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "98625c317fd3440440bf406bd5302b79271db642",
+      "committer_time_utc": "2026-10-02T20:05:16Z",
+      "author_time_utc": "2026-10-02T20:05:16Z",
+      "path_changes": {
+        "added": 26,
+        "deleted": 0,
+        "modified": 13
+      },
+      "files": 165,
+      "by_class": {
+        "module": 40,
+        "en_readme": 2,
+        "translation": 119,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 40,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "220e9b2639827de709d07de8d4cefbc79882e871",
+      "committer_time_utc": "2026-10-02T20:05:27Z",
+      "author_time_utc": "2026-10-02T20:05:27Z",
+      "path_changes": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 12
+      },
+      "files": 165,
+      "by_class": {
+        "module": 40,
+        "en_readme": 2,
+        "translation": 119,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 40,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "ba35d78eb5f2627bc580ed64a4f959daf241f279",
+      "committer_time_utc": "2026-10-02T20:06:10Z",
+      "author_time_utc": "2026-10-02T20:06:10Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 168,
+      "by_class": {
+        "module": 41,
+        "en_readme": 2,
+        "translation": 121,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 41,
+      "added": [
+        "mathematics/mat-008-probability-conditional-reasoning"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "78ef556c8ec09a8e630e2a4ea81966afa1d5d91c",
+      "committer_time_utc": "2026-10-02T20:06:24Z",
+      "author_time_utc": "2026-10-02T20:06:24Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 171,
+      "by_class": {
+        "module": 42,
+        "en_readme": 2,
+        "translation": 123,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 42,
+      "added": [
+        "mathematics/mat-009-estimation-uncertainty-sampling"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "2d116d68d2818d50f620629331ca8116782dba97",
+      "committer_time_utc": "2026-10-02T20:06:37Z",
+      "author_time_utc": "2026-10-02T20:06:37Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 174,
+      "by_class": {
+        "module": 43,
+        "en_readme": 2,
+        "translation": 125,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 43,
+      "added": [
+        "mathematics/mat-010-information-entropy-divergences"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "002dd7e13123add550500bf03027f6aa8893199d",
+      "committer_time_utc": "2026-10-02T20:06:47Z",
+      "author_time_utc": "2026-10-02T20:06:47Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 177,
+      "by_class": {
+        "module": 44,
+        "en_readme": 2,
+        "translation": 127,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 44,
+      "added": [
+        "mathematics/mat-011-gradients-reverse-mode-autodiff"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "7914fb45a1a89fdf550da37c340ef7358f3bfae1",
+      "committer_time_utc": "2026-10-02T20:06:54Z",
+      "author_time_utc": "2026-10-02T20:06:54Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 180,
+      "by_class": {
+        "module": 45,
+        "en_readme": 2,
+        "translation": 129,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 45,
+      "added": [
+        "mathematics/mat-012-iterative-optimisation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "fc856db72c117a29ac498cfcd9271e9ee61821c7",
+      "committer_time_utc": "2026-10-02T20:07:04Z",
+      "author_time_utc": "2026-10-02T20:07:04Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 183,
+      "by_class": {
+        "module": 46,
+        "en_readme": 2,
+        "translation": 131,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 46,
+      "added": [
+        "mathematics/mat-013-distances-kernels-psd"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "ce3e5fc469c085cfb68786fff7d1a15de69cd934",
+      "committer_time_utc": "2026-10-02T20:07:12Z",
+      "author_time_utc": "2026-10-02T20:07:12Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 186,
+      "by_class": {
+        "module": 47,
+        "en_readme": 2,
+        "translation": 133,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 47,
+      "added": [
+        "mathematics/mat-014-pca-variance-preservation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "f47b782fc5fa1d4834f609f222c2af362d2de7d6",
+      "committer_time_utc": "2026-10-02T20:07:22Z",
+      "author_time_utc": "2026-10-02T20:07:22Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 189,
+      "by_class": {
+        "module": 48,
+        "en_readme": 2,
+        "translation": 135,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 48,
+      "added": [
+        "mathematics/mat-015-classical-mds-distance-preservation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "d504a004820b37556e4f27444f27546a36f7639a",
+      "committer_time_utc": "2026-10-02T20:07:30Z",
+      "author_time_utc": "2026-10-02T20:07:30Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 192,
+      "by_class": {
+        "module": 49,
+        "en_readme": 2,
+        "translation": 137,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 49,
+      "added": [
+        "mathematics/mat-017-nonnegative-matrix-factorisation"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "a3357a57f7da7cd22b99f92a4aa69f2ecb3638f6",
+      "committer_time_utc": "2026-10-02T20:07:36Z",
+      "author_time_utc": "2026-10-02T20:07:36Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 195,
+      "by_class": {
+        "module": 50,
+        "en_readme": 2,
+        "translation": 139,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 50,
+      "added": [
+        "mathematics/mat-018-clustering-density-validity"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "6c97aad120015dc9d88e0a30a10c69bcc4043773",
+      "committer_time_utc": "2026-10-02T20:07:42Z",
+      "author_time_utc": "2026-10-02T20:07:42Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 198,
+      "by_class": {
+        "module": 51,
+        "en_readme": 2,
+        "translation": 141,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 51,
+      "added": [
+        "mathematics/mat-019-graphs-centrality-spectral"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "32089565e3c3ee660f462fc95f745473c3473f14",
+      "committer_time_utc": "2026-10-02T20:07:49Z",
+      "author_time_utc": "2026-10-02T20:07:49Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 201,
+      "by_class": {
+        "module": 52,
+        "en_readme": 2,
+        "translation": 143,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 52,
+      "added": [
+        "mathematics/mat-021-fourier-analysis-signals"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "6c2f9b928d76d62ada922ced4de9543dffe24c6b",
+      "committer_time_utc": "2026-10-02T20:07:56Z",
+      "author_time_utc": "2026-10-02T20:07:56Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 204,
+      "by_class": {
+        "module": 53,
+        "en_readme": 2,
+        "translation": 145,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 53,
+      "added": [
+        "mathematics/mat-022-symmetry-groups-invariants"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "871e8b8472657765fd4e6d53caabb1fde1bd3f65",
+      "committer_time_utc": "2026-10-02T20:08:02Z",
+      "author_time_utc": "2026-10-02T20:08:02Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 207,
+      "by_class": {
+        "module": 54,
+        "en_readme": 2,
+        "translation": 147,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 54,
+      "added": [
+        "mathematics/mat-023-petri-nets-reachability"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "79f49babd30e75a690b580bf660fc4204d628dd7",
+      "committer_time_utc": "2026-10-02T20:08:11Z",
+      "author_time_utc": "2026-10-02T20:08:11Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 210,
+      "by_class": {
+        "module": 55,
+        "en_readme": 2,
+        "translation": 149,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 55,
+      "added": [
+        "mathematics/mat-024-dynamical-systems-stability-feedback"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "d9752aa9a620f6741eababf7258054218be415f5",
+      "committer_time_utc": "2026-10-02T20:28:06Z",
+      "author_time_utc": "2026-10-02T20:28:06Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 213,
+      "by_class": {
+        "module": 56,
+        "en_readme": 2,
+        "translation": 151,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 56,
+      "added": [
+        "music/mus-008-intervals-inversion-compound"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "b5a2c3074c68ee7eadd4166d00660719f374820b",
+      "committer_time_utc": "2026-10-02T20:28:35Z",
+      "author_time_utc": "2026-10-02T20:28:35Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 216,
+      "by_class": {
+        "module": 57,
+        "en_readme": 2,
+        "translation": 153,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 57,
+      "added": [
+        "mathematics/mat-016-kernel-pca-misleading-projections"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "f163bcca7698f7528305cdbef8a64e0de288bc91",
+      "committer_time_utc": "2026-10-02T20:28:40Z",
+      "author_time_utc": "2026-10-02T20:28:40Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 219,
+      "by_class": {
+        "module": 58,
+        "en_readme": 2,
+        "translation": 155,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 58,
+      "added": [
+        "mathematics/mat-020-markov-chains-hmm"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "236b6878a78ed3514e9647d682947b28e8f35a03",
+      "committer_time_utc": "2026-10-02T20:28:46Z",
+      "author_time_utc": "2026-10-02T20:28:46Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 222,
+      "by_class": {
+        "module": 59,
+        "en_readme": 2,
+        "translation": 157,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 59,
+      "added": [
+        "mathematics/mat-025-allocation-games-bandits-penalties"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "fbfb2eeaaaf1cb603fb598f34407d4a4127f9e2e",
+      "committer_time_utc": "2026-10-02T21:14:50Z",
+      "author_time_utc": "2026-10-02T21:14:50Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 225,
+      "by_class": {
+        "module": 60,
+        "en_readme": 2,
+        "translation": 159,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 60,
+      "added": [
+        "music/mus-009-tuning-fretboard-geometry"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "e203e5a25e10b85b8d22ece9a700e12447f4a236",
+      "committer_time_utc": "2026-10-02T21:14:59Z",
+      "author_time_utc": "2026-10-02T21:14:59Z",
+      "path_changes": {
+        "added": 4,
+        "deleted": 0,
+        "modified": 8
+      },
+      "files": 229,
+      "by_class": {
+        "module": 60,
+        "en_readme": 2,
+        "translation": 163,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 60,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "d459d8e5f0210cbad00f49c49196fc61160aba76",
+      "committer_time_utc": "2026-10-02T22:00:11Z",
+      "author_time_utc": "2026-10-02T22:00:11Z",
+      "path_changes": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 6
+      },
+      "files": 229,
+      "by_class": {
+        "module": 60,
+        "en_readme": 2,
+        "translation": 163,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 60,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "450fc670a71d1cfb190a53bfedd52ba81215fa5c",
+      "committer_time_utc": "2026-10-03T16:54:16Z",
+      "author_time_utc": "2026-10-03T16:54:16Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 232,
+      "by_class": {
+        "module": 61,
+        "en_readme": 2,
+        "translation": 165,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 61,
+      "added": [
+        "music/mus-012-chord-formulas-essential-tones-doubling"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "928fbb26539e451fd34a0e8baf0714cf919a1562",
+      "committer_time_utc": "2026-10-03T17:54:24Z",
+      "author_time_utc": "2026-10-03T17:54:24Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 235,
+      "by_class": {
+        "module": 62,
+        "en_readme": 2,
+        "translation": 167,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 62,
+      "added": [
+        "music/mus-013-root-bass-pitch-class-set"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "d8c8da550af12f339dbf9464cc1144084eb689b9",
+      "committer_time_utc": "2026-10-03T20:20:05Z",
+      "author_time_utc": "2026-10-03T20:20:05Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 238,
+      "by_class": {
+        "module": 63,
+        "en_readme": 2,
+        "translation": 169,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 63,
+      "added": [
+        "music/mus-010-scales-pattern-set-interval-vector"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "499fc64abe83a5bf7d59efdd949bb23b72925ae2",
+      "committer_time_utc": "2026-10-04T03:37:24Z",
+      "author_time_utc": "2026-10-04T03:37:24Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 241,
+      "by_class": {
+        "module": 64,
+        "en_readme": 2,
+        "translation": 171,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 64,
+      "added": [
+        "music/mus-011-modes-modal-families"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "518158b0568981b4ebe290d69f197995bd41ded0",
+      "committer_time_utc": "2026-10-04T15:18:37Z",
+      "author_time_utc": "2026-10-04T15:18:37Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 244,
+      "by_class": {
+        "module": 65,
+        "en_readme": 2,
+        "translation": 173,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 65,
+      "added": [
+        "music/mus-014-inversions-bass-line"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "0f7a5fd110acfc4835776d38ab1a115533467d34",
+      "committer_time_utc": "2026-10-04T23:22:13Z",
+      "author_time_utc": "2026-10-04T23:22:13Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 247,
+      "by_class": {
+        "module": 66,
+        "en_readme": 2,
+        "translation": 175,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 66,
+      "added": [
+        "music/mus-019-transposition-capo-cross-instrument"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "f85dbcaa6dad2d9b5dba7e212c8970343c7347f3",
+      "committer_time_utc": "2026-10-07T22:01:50Z",
+      "author_time_utc": "2026-10-07T22:01:50Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 250,
+      "by_class": {
+        "module": 67,
+        "en_readme": 2,
+        "translation": 177,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 67,
+      "added": [
+        "music/mus-021-pitch-class-dft-magnitudes-phases-homometry"
+      ],
+      "removed": []
+    },
+    {
+      "commit": "03b16f105db9bcc5bc68239102655429fecd2d22",
+      "committer_time_utc": "2026-10-13T20:49:00Z",
+      "author_time_utc": "2026-10-13T20:49:00Z",
+      "path_changes": {
+        "added": 2,
+        "deleted": 0,
+        "modified": 1
+      },
+      "files": 252,
+      "by_class": {
+        "module": 67,
+        "en_readme": 2,
+        "translation": 179,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 67,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "469184cecbaa6613caf94ef70e7d6bd585057ba1",
+      "committer_time_utc": "2026-10-13T21:55:58Z",
+      "author_time_utc": "2026-10-13T21:55:58Z",
+      "path_changes": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 1
+      },
+      "files": 252,
+      "by_class": {
+        "module": 67,
+        "en_readme": 2,
+        "translation": 179,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 67,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "21ccf133ece8b534cb37eee1e5ae151e1f659e13",
+      "committer_time_utc": "2026-10-13T21:56:19Z",
+      "author_time_utc": "2026-10-13T21:56:19Z",
+      "path_changes": {
+        "added": 0,
+        "deleted": 0,
+        "modified": 6
+      },
+      "files": 252,
+      "by_class": {
+        "module": 67,
+        "en_readme": 2,
+        "translation": 179,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 67,
+      "added": [],
+      "removed": []
+    },
+    {
+      "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+      "committer_time_utc": "2026-10-13T22:01:18Z",
+      "author_time_utc": "2026-10-13T22:01:18Z",
+      "path_changes": {
+        "added": 3,
+        "deleted": 0,
+        "modified": 0
+      },
+      "files": 255,
+      "by_class": {
+        "module": 68,
+        "en_readme": 2,
+        "translation": 181,
+        "readme": 4,
+        "flat_layout": 0
+      },
+      "modules": 68,
+      "added": [
+        "music/mus-022-grothendieck-deltas-icv-distance"
+      ],
+      "removed": []
+    }
+  ]
+}

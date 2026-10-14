@@ -1,0 +1,139 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-015-belief-contagion-small-population",
+  "kind": "assumed inputs; nothing in this file is measured in the Demerzel repository",
+  "rounding": {
+    "share_decimals": 4,
+    "mean_decimals": 2,
+    "agents_decimals": 2,
+    "time_decimals": 2,
+    "standard_error_decimals": 2
+  },
+  "model": {
+    "name": "SIR epidemic model with homogeneous mixing, applied to a belief by analogy",
+    "analogy_note": "S, I and R are epidemiological terms. No file in the repository records a holder passing a belief on to another agent, the way an infected person passes an infection on; the vocabulary is an analogy and every rate below is an assumption.",
+    "states": {
+      "S": "susceptible: an agent that has not adopted the belief and could",
+      "I": "'infected': an agent that holds the belief and passes it on",
+      "R": "recovered: an agent that no longer passes it on (and, in this model, never adopts it again)"
+    },
+    "rates": {
+      "adoption": "beta * S * I / N per unit of time: each holder makes beta contacts per unit of time, and a contact reaches a susceptible agent with probability S / N",
+      "stops_transmitting": "gamma * I per unit of time: each holder passes the belief on for 1 / gamma units of time on average"
+    },
+    "reproduction_number": "R0 = beta / gamma: in a large population, the mean number of agents one holder would convert if every other agent were susceptible (among N agents that mean is R0 * (N - 1) / N)",
+    "time_unit": "one mean holding period, 1 / gamma (so gamma = 1 and beta = R0)",
+    "jump_chain": "With S susceptible agents and at least one holder, the next event is an adoption with probability R0 * S / (R0 * S + N) and otherwise a holder stops transmitting. The final size (how many agents ever held the belief) depends only on this sequence of events, so no waiting time is drawn."
+  },
+  "initial_holders": 1,
+  "populations": [
+    {
+      "label": "fourteen_agents",
+      "agents": 14,
+      "note": "The number of personas named in the department's key principle; taken as given, not counted here."
+    },
+    {
+      "label": "hundred_times_larger",
+      "agents": 1400,
+      "note": "Assumed comparison size: 100 times 14."
+    }
+  ],
+  "reproduction_numbers": [
+    {"label": "below_threshold", "numerator": 4, "denominator": 5},
+    {"label": "just_above_threshold", "numerator": 6, "denominator": 5},
+    {"label": "well_above_threshold", "numerator": 3, "denominator": 1}
+  ],
+  "simulation": {
+    "algorithm": "Embedded jump chain of the continuous-time Markov SIR model. Each step draws one integer below a*S + b*N with random.Random(seed).randrange, where R0 = a/b; the step is an adoption when the integer is below a*S. No floating-point number enters a run.",
+    "runs_per_case": 10000,
+    "first_runs_listed": 20,
+    "seeds": {
+      "fourteen_agents": {
+        "below_threshold": 15001,
+        "just_above_threshold": 15002,
+        "well_above_threshold": 15003
+      },
+      "hundred_times_larger": {
+        "below_threshold": 15004,
+        "just_above_threshold": 15005,
+        "well_above_threshold": 15006
+      }
+    }
+  },
+  "deterministic_curve": {
+    "method": "classical fourth-order Runge-Kutta on ds/dt = -R0*s*i, di/dt = R0*s*i - i, dr/dt = i (shares of the population, time in mean holding periods)",
+    "steps_per_time_unit": 100,
+    "stop_when_holders_share_below": 1e-09,
+    "max_time_units": 1000
+  },
+  "final_size_equation": {
+    "equation": "1 - z = s0 * exp(-R0 * z), with z the share that ever holds the belief and s0 the initial susceptible share",
+    "bisection_steps": 100
+  },
+  "reading": {
+    "note": "Analysis choices, not observations. Sizes are counted in agents; a share of the population is turned into a size by rounding down.",
+    "early_fade_out_cut_share": {"numerator": 1, "denominator": 10},
+    "other_cut_shares": [
+      {"numerator": 1, "denominator": 5},
+      {"numerator": 1, "denominator": 4}
+    ],
+    "near_the_curve_band_share": {"numerator": 1, "denominator": 10},
+    "population_share_bins_upper": [
+      {"numerator": 1, "denominator": 10},
+      {"numerator": 1, "denominator": 4},
+      {"numerator": 1, "denominator": 2},
+      {"numerator": 3, "denominator": 4},
+      {"numerator": 9, "denominator": 10},
+      {"numerator": 1, "denominator": 1}
+    ],
+    "percentiles": [5, 50, 95],
+    "hump_rule": {
+      "description": "A final size is a valley when its exact probability is below valley_factor times the largest probability on each side of it. A distribution with a valley has two humps; the valley size reported is the least likely valley.",
+      "valley_factor": {"numerator": 9, "denominator": 10}
+    }
+  },
+  "agreement_test": {
+    "description": "Each simulated count is compared with runs * exact probability. A cell with at least min_expected expected runs on both sides must lie within max_standard_errors binomial standard errors; a rarer cell must lie within rare_cell_tolerance runs. The simulated mean must lie within max_standard_errors standard errors of the exact mean.",
+    "max_standard_errors": 4.5,
+    "min_expected": 5,
+    "rare_cell_tolerance": 10
+  },
+  "several_initial_holders": {
+    "note": "Exact calculation on the same jump chain (no simulation): how the probability of an early fade-out falls when several agents hold the belief at the start.",
+    "population": "hundred_times_larger",
+    "reproduction_number": "well_above_threshold",
+    "initial_holders": [1, 2, 3, 5]
+  },
+  "branching_process": {
+    "offspring": "While nearly everybody is susceptible, each holder converts a random number of others, independently. In this model the holding time is exponential, so that number is geometric with mean R0 and the process dies out with probability min(1, 1/R0). With a fixed holding time of the same mean the number would be Poisson with mean R0 and the process would die out with the smallest root q of q = exp(R0 * (q - 1)). The second value is stored as a contrast only: no run uses a fixed holding time."
+  },
+  "hand_computed_case": {
+    "note": "Three agents, R0 = 1, one initial holder, worked by hand in the README.",
+    "agents": 3,
+    "reproduction_number": {"numerator": 1, "denominator": 1},
+    "initial_holders": 1,
+    "expected_probability_by_final_size": {"1": "3/5", "2": "9/40", "3": "7/40"}
+  },
+  "transmission_record": {
+    "note": "What one would have to record, per agent and per proposition, before the model could be tested on the project. The two columns name the closest key in each record type the repository defines; null means the record type has no such key, and in_part says what a key covers when it covers only part of the need.",
+    "needs": [
+      {"need": "who", "meaning": "the agent that holds the belief", "knowledge_state": "learner", "belief_snapshot": "agent"},
+      {"need": "what", "meaning": "the proposition held", "knowledge_state": "concept", "belief_snapshot": "beliefs"},
+      {"need": "from_whom", "meaning": "the agent it was received from", "knowledge_state": "taught_by", "belief_snapshot": null},
+      {"need": "adopted_at", "meaning": "when the agent started to hold it", "knowledge_state": "created_at", "belief_snapshot": "snapshot_at"},
+      {"need": "stopped_at", "meaning": "when the agent stopped passing it on", "knowledge_state": null, "belief_snapshot": null},
+      {"need": "who_else_could_have", "meaning": "the agents exposed to it that did not adopt it (the susceptible count)", "knowledge_state": "assessment", "belief_snapshot": null,
+       "in_part": {"knowledge_state": "one learner at a time: the belief before and after being taught and an outcome (learned, in_progress or escalated), not the number of agents exposed"}}
+    ]
+  },
+  "holder_rule": "The holder of a belief file is the text of its evaluated_by value before the first '/'; what follows the slash names a procedure of that holder.",
+  "scaffold_rule": "A belief file is an empty scaffold when it has no evidence item, truth value U and confidence 0; every other belief file has content.",
+  "transfer_task": {
+    "note": "Hypothetical support team for the learner task. Not Streeling data and not a forecast.",
+    "people": 4,
+    "initial_holders": 1,
+    "passing_on_rate_per_day": {"numerator": 1, "denominator": 2},
+    "stops_repeating_rate_per_day": {"numerator": 1, "denominator": 4},
+    "initial_holders_alternative": 3
+  }
+}

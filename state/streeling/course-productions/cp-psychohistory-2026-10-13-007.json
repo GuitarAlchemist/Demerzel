@@ -1,0 +1,38 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-007",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-007",
+  "module_id": "psy-007-power-law-or-not",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2296,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the 18 citation counts of the latest quality-trend run at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (16 positive, 2 of the 18 hand-typed) and on a deterministic analysis whose 46 self-checks pass. Over all positive counts the power law is the worst of three fitted families (log-likelihood ratio -13.23 against the exponential), and on the 12-value tail it cannot be separated from an exponential. The synthetic samples that calibrate these statements use assumed parameters, and the hand-typed counts in use until 2026-09-13 would have given no decisive likelihood comparison, a goodness-of-fit p-value of 0.0805 and, by the share rule of the specification PSY-001 cites first, a power law that the counts at the pin no longer show, so the result depends on the counting instrument. Human subject review, learner trial, translation and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-14T01:44:23Z"
+}
