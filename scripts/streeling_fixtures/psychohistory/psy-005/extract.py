@@ -61,6 +61,15 @@ def parse_timestamp(value: str) -> datetime:
     return datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
 
 
+def label(name: str) -> str:
+    """Returns an artifact name as a data label: the name with a space on each side of every slash.
+
+    scripts/evolution_metrics.py counts every tracked file that contains an artifact's path as a citation of
+    that artifact. The snapshot is a data file about the artifacts, not a citation of them: it holds only labels.
+    """
+    return " / ".join(name.split("/")).rstrip()
+
+
 def read_rows(root: Path) -> tuple[list[dict], list[dict]]:
     trend = root / TREND_DIR
     if not trend.is_dir():
@@ -106,8 +115,11 @@ def read_rows(root: Path) -> tuple[list[dict], list[dict]]:
             if (timestamp, artifact) in seen:
                 raise ExtractError(f"{where}: second row for {artifact!r} at {timestamp}")
             seen.add((timestamp, artifact))
+            # "artifact" is what the snapshot shows; "source_name" stays in memory, to keep the artifacts in
+            # the order of their names in the repository and to find their evolution records.
             rows.append({
-                "file": rel, "line": number, "timestamp": timestamp, "artifact": artifact,
+                "file": rel, "line": number, "timestamp": timestamp, "artifact": label(artifact),
+                "source_name": artifact,
                 "from": row["effectiveness_from"], "to": row["effectiveness_to"],
                 "baseline": row.get("baseline", False),
             })
@@ -157,31 +169,21 @@ def missing_reason(row: dict, previous: dict | None) -> list[str]:
     return reasons
 
 
-def build(root: Path, allow_drift: bool) -> dict:
-    rows, files = read_rows(root)
-    runs = sorted({row["timestamp"] for row in rows})
-    run_index = {timestamp: index for index, timestamp in enumerate(runs)}
-    by_artifact: dict[str, list[dict]] = {}
-    for row in rows:
-        by_artifact.setdefault(row["artifact"], []).append(row)
+def label_presence(row: dict) -> str:
+    """Returns the row's class in rows_by_label_presence: which of its two labels are present."""
+    return ("both_labels" if row["from"] and row["to"] else "from_missing_only" if row["to"]
+            else "to_missing_only" if row["from"] else "both_missing")
 
+
+def count_in_row(by_artifact: dict[str, list[dict]]) -> tuple[dict, dict, dict]:
+    """Returns the rows by label presence, the in-row pair counts, and each artifact's own in-row pair counts."""
     classes = {"both_labels": 0, "from_missing_only": 0, "to_missing_only": 0, "both_missing": 0}
     in_row = {"pairs": 0, "changed": 0, "unchanged": 0, "seed_rows_among_pairs": 0}
-    consecutive = {"row_pairs": 0, "usable_pairs": 0, "changed": 0, "unchanged": 0,
-                   "pairs_without_a_label": 0, "from_differs_from_previous_to": 0}
-    artifacts, changes, missing, evolution_files = [], [], [], []
+    per_artifact = {}
     for name in sorted(by_artifact):
-        series = by_artifact[name]
-        cells = {key: [NO_ROW] * len(runs) for key in ("from", "to", "seed")}
-        tally = {"in_row_pairs": 0, "in_row_changed": 0, "consecutive_pairs": 0, "consecutive_changed": 0}
-        previous = None
-        for row in series:
-            index = run_index[row["timestamp"]]
-            cells["from"][index] = row["from"] or NO_LABEL
-            cells["to"][index] = row["to"] or NO_LABEL
-            cells["seed"][index] = "s" if row["baseline"] else NO_LABEL
-            key = ("both_labels" if row["from"] and row["to"] else "from_missing_only" if row["to"]
-                   else "to_missing_only" if row["from"] else "both_missing")
+        tally = {"in_row_pairs": 0, "in_row_changed": 0}
+        for row in by_artifact[name]:
+            key = label_presence(row)
             classes[key] += 1
             if key == "both_labels":
                 in_row["pairs"] += 1
@@ -190,9 +192,44 @@ def build(root: Path, allow_drift: bool) -> dict:
                 changed = row["from"] != row["to"]
                 in_row["changed" if changed else "unchanged"] += 1
                 tally["in_row_changed"] += changed
-            else:
+        per_artifact[name] = tally
+    return classes, in_row, per_artifact
+
+
+def rows_missing_a_label(by_artifact: dict[str, list[dict]]) -> list[dict]:
+    """Returns every row that lacks a label, by artifact then in run order, with the reason for each missing label."""
+    missing = []
+    for name in sorted(by_artifact):
+        previous = None
+        for row in by_artifact[name]:
+            if label_presence(row) != "both_labels":
                 missing.append({k: row[k] for k in ("file", "line", "timestamp", "artifact", "from", "to")}
                                | {"reasons": missing_reason(row, previous)})
+            previous = row
+    return missing
+
+
+def label_change(root: Path, name: str, previous: dict, row: dict) -> dict:
+    """Returns one label change between two consecutive rows of an artifact, with its evolution record."""
+    gap = parse_timestamp(row["timestamp"]) - parse_timestamp(previous["timestamp"])
+    return {
+        "artifact": row["artifact"], "from": previous["to"], "to": row["to"],
+        "earlier_row": {k: previous[k] for k in ("file", "line", "timestamp", "baseline")},
+        "later_row": {k: row[k] for k in ("file", "line", "timestamp", "baseline")},
+        "gap_days": round(gap.total_seconds() / 86400, 3),
+        "evolution_record": evolution_record(root, name),
+    }
+
+
+def count_consecutive(root: Path, by_artifact: dict[str, list[dict]]) -> tuple[dict, list[dict], dict]:
+    """Returns the consecutive-pair counts, the label changes, and each artifact's own consecutive-pair counts."""
+    consecutive = {"row_pairs": 0, "usable_pairs": 0, "changed": 0, "unchanged": 0,
+                   "pairs_without_a_label": 0, "from_differs_from_previous_to": 0}
+    changes, per_artifact = [], {}
+    for name in sorted(by_artifact):
+        tally = {"consecutive_pairs": 0, "consecutive_changed": 0}
+        previous = None
+        for row in by_artifact[name]:
             if previous is not None:
                 consecutive["row_pairs"] += 1
                 consecutive["from_differs_from_previous_to"] += row["from"] != previous["to"]
@@ -203,58 +240,101 @@ def build(root: Path, allow_drift: bool) -> dict:
                     consecutive["changed" if changed else "unchanged"] += 1
                     tally["consecutive_changed"] += changed
                     if changed:
-                        gap = parse_timestamp(row["timestamp"]) - parse_timestamp(previous["timestamp"])
-                        changes.append({
-                            "artifact": name, "from": previous["to"], "to": row["to"],
-                            "earlier_row": {k: previous[k] for k in ("file", "line", "timestamp", "baseline")},
-                            "later_row": {k: row[k] for k in ("file", "line", "timestamp", "baseline")},
-                            "gap_days": round(gap.total_seconds() / 86400, 3),
-                            "evolution_record": evolution_record(root, name),
-                        })
+                        changes.append(label_change(root, name, previous, row))
                 else:
                     consecutive["pairs_without_a_label"] += 1
             previous = row
+        per_artifact[name] = tally
+    return consecutive, changes, per_artifact
+
+
+def label_strings(series: list[dict], run_index: dict[str, int]) -> dict:
+    """Returns one artifact's three strings, one character per run: both effectiveness labels and the baseline flag."""
+    cells = {key: [NO_ROW] * len(run_index) for key in ("from", "to", "seed")}
+    for row in series:
+        index = run_index[row["timestamp"]]
+        cells["from"][index] = row["from"] or NO_LABEL
+        cells["to"][index] = row["to"] or NO_LABEL
+        cells["seed"][index] = "s" if row["baseline"] else NO_LABEL
+    return {"effectiveness_from": "".join(cells["from"]), "effectiveness_to": "".join(cells["to"]),
+            "baseline_flag": "".join(cells["seed"])}
+
+
+def source_drift(entries: list[dict]) -> list[str]:
+    """Returns one message per file read that is not its pinned blob, and per pinned file that was not read."""
+    drift = []
+    for entry in entries:
+        if PINNED_BLOBS.get(entry["path"]) != entry["git_blob"]:
+            drift.append(f"{entry['path']} is blob {entry['git_blob']}, pinned {PINNED_BLOBS.get(entry['path'])}")
+    drift += [f"{path} is pinned but was not read" for path in sorted(set(PINNED_BLOBS) - {e["path"] for e in entries})]
+    return drift
+
+
+def source_section(files: list[dict], evolution_files: list[dict], drift: list[str]) -> dict:
+    """Returns the 'source' section: the files read, and the pinned commit unless one of them drifted from it."""
+    return {
+        "repository": "GuitarAlchemist/Demerzel",
+        "commit": None if drift else PINNED_COMMIT,
+        "commit_check": ("FAILED: " + "; ".join(drift)) if drift else
+                        "every file below has the Git blob id recorded for this commit (CRLF normalised to LF)",
+        "files": files,
+        "evolution_records": evolution_files,
+    }
+
+
+def encoding_section() -> dict:
+    """Returns the 'encoding' section: how to read the runs list and the per-artifact strings."""
+    return {
+        "runs": "one entry per distinct timestamp, in time order; every row of a run carries that timestamp",
+        "artifact strings": "one character per run, aligned with the runs list",
+        NO_ROW: "the artifact has no row in that run",
+        NO_LABEL: "the row exists and the field is null (for baseline_flag: the flag is absent)",
+        "s": "baseline_flag only: the row carries baseline: true",
+        "labels": LABEL_NAMES,
+    }
+
+
+def run_entries(rows: list[dict], runs: list[str], run_index: dict[str, int]) -> list[dict]:
+    """Returns one entry per run in time order: its index, its timestamp and its number of rows."""
+    run_rows = [0] * len(runs)
+    for row in rows:
+        run_rows[run_index[row["timestamp"]]] += 1
+    return [{"index": index, "timestamp": timestamp, "rows": run_rows[index]} for index, timestamp in enumerate(runs)]
+
+
+def build(root: Path, allow_drift: bool) -> dict:
+    """Returns the snapshot written to observed-input.json, or raises ExtractError on a source that is not the pinned one."""
+    rows, files = read_rows(root)
+    runs = sorted({row["timestamp"] for row in rows})
+    run_index = {timestamp: index for index, timestamp in enumerate(runs)}
+    by_artifact: dict[str, list[dict]] = {}
+    for row in rows:
+        by_artifact.setdefault(row["source_name"], []).append(row)
+
+    classes, in_row, in_row_tallies = count_in_row(by_artifact)
+    missing = rows_missing_a_label(by_artifact)
+    consecutive, changes, pair_tallies = count_consecutive(root, by_artifact)
+    artifacts, evolution_files = [], []
+    for name in sorted(by_artifact):
+        series = by_artifact[name]
         artifacts.append({
-            "name": name, "rows": len(series), "first_run_index": run_index[series[0]["timestamp"]],
-            "effectiveness_from": "".join(cells["from"]), "effectiveness_to": "".join(cells["to"]),
-            "baseline_flag": "".join(cells["seed"]), **tally,
+            "name": label(name), "rows": len(series), "first_run_index": run_index[series[0]["timestamp"]],
+            **label_strings(series, run_index), **in_row_tallies[name], **pair_tallies[name],
         })
     for change in changes:
         record = change["evolution_record"]
         evolution_files.append({"path": record["path"], "git_blob": record["git_blob"]})
 
-    drift = []
-    for entry in files + evolution_files:
-        if PINNED_BLOBS.get(entry["path"]) != entry["git_blob"]:
-            drift.append(f"{entry['path']} is blob {entry['git_blob']}, pinned {PINNED_BLOBS.get(entry['path'])}")
-    drift += [f"{path} is pinned but was not read" for path in sorted(set(PINNED_BLOBS) - {e["path"] for e in files + evolution_files})]
+    drift = source_drift(files + evolution_files)
     if drift and not allow_drift:
         raise ExtractError("source files are not those of commit " + PINNED_COMMIT + ":\n  " + "\n  ".join(drift)
                            + "\n(--allow-drift snapshots them anyway; the lesson's numbers then no longer apply)")
-
-    run_rows = [0] * len(runs)
-    for row in rows:
-        run_rows[run_index[row["timestamp"]]] += 1
     return {
         "schema_version": "0.1.0",
         "module_id": "psy-005-persistence-baseline",
         "kind": "observed",
-        "source": {
-            "repository": "GuitarAlchemist/Demerzel",
-            "commit": None if drift else PINNED_COMMIT,
-            "commit_check": ("FAILED: " + "; ".join(drift)) if drift else
-                            "every file below has the Git blob id recorded for this commit (CRLF normalised to LF)",
-            "files": files,
-            "evolution_records": evolution_files,
-        },
-        "encoding": {
-            "runs": "one entry per distinct timestamp, in time order; every row of a run carries that timestamp",
-            "artifact strings": "one character per run, aligned with the runs list",
-            NO_ROW: "the artifact has no row in that run",
-            NO_LABEL: "the row exists and the field is null (for baseline_flag: the flag is absent)",
-            "s": "baseline_flag only: the row carries baseline: true",
-            "labels": LABEL_NAMES,
-        },
+        "source": source_section(files, evolution_files, drift),
+        "encoding": encoding_section(),
         "counts": {
             "rows": len(rows),
             "files": len(files),
@@ -268,7 +348,7 @@ def build(root: Path, allow_drift: bool) -> dict:
         },
         "label_changes": changes,
         "rows_with_a_missing_label": missing,
-        "runs": [{"index": index, "timestamp": timestamp, "rows": run_rows[index]} for index, timestamp in enumerate(runs)],
+        "runs": run_entries(rows, runs, run_index),
         "artifacts": artifacts,
     }
 

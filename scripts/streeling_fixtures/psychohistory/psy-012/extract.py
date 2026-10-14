@@ -58,6 +58,15 @@ def git_blob_id(content: bytes) -> str:
     return hashlib.sha1(b"blob %d\x00" % len(normalised) + normalised).hexdigest()
 
 
+def label(name: str) -> str:
+    """Returns an artifact name as a data label: the name with a space on each side of every slash.
+
+    scripts/evolution_metrics.py counts every tracked file that contains an artifact's path as a citation of
+    that artifact. The extract is a data file about the artifacts, not a citation of them: it holds only labels.
+    """
+    return " / ".join(name.split("/")).rstrip()
+
+
 def read_rows(repo: Path) -> tuple[list[dict], list[dict]]:
     folder = repo / SOURCE_FOLDER
     if not folder.is_dir():
@@ -144,6 +153,7 @@ def build(files: list[dict], rows: list[dict]) -> dict:
         by_artifact.setdefault(row["artifact"], []).append(row)
     timestamps = sorted({row["timestamp"] for row in rows})
     artifacts = []
+    # Sorted by the name in the repository; only the label of each name is written.
     for name in sorted(by_artifact):
         records = sorted(by_artifact[name], key=lambda row: row["timestamp"])
         measured = [row for row in records if "citation_count" in row]
@@ -156,7 +166,7 @@ def build(files: list[dict], rows: list[dict]) -> dict:
                 raise ExtractError(f"segment lengths do not add up for {name!r} {field}")
             series[field] = runs
         artifacts.append({
-            "artifact": name,
+            "artifact": label(name),
             "rows": len(records),
             "rows_with_numeric_fields": len(measured),
             "first_measured_timestamp": measured[0]["timestamp"],

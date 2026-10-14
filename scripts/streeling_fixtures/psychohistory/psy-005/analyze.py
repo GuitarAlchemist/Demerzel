@@ -224,26 +224,25 @@ def transfer_task(task: dict) -> dict:
     }
 
 
-def analyze(snapshot: dict, scenarios: dict) -> dict:
-    if scenarios["rounding"] != {f"{key}_decimals": value for key, value in DECIMALS.items()}:
-        raise ValueError("scenarios.json rounding does not match analyze.py")
-    bounds = scenarios["horizon_bounds_days"]
-    counts = snapshot["counts"]
-    table = load_rows(snapshot)
-    pairs, row_pairs, mismatches = consecutive_pairs(table)
-    inside = in_row_pairs(table)
-    classes = count_rows(table)
-    rows = sum(map(len, table.values()))
-    all_pairs = persistence(pairs)
-    n, changes = all_pairs["pairs"], all_pairs["changed"]
+def outside_seed_rows(inside: list[dict]) -> set[tuple]:
+    """Returns the in-row pairs that are not seed rows, each as (artifact, later run, earlier label, later label)."""
+    return {(pair["artifact"], pair["later_run"], pair["earlier_label"], pair["later_label"])
+            for pair in inside if not pair["seed_row"]}
 
-    hand_computed_case()
+
+def check_recount(snapshot: dict, table: dict, classes: dict, inside: list[dict],
+                  pairs: list[dict], row_pairs: int, mismatches: int) -> None:
+    """Returns nothing: aborts unless the recount equals extract.py's counts and its accounting identities hold."""
+    counts = snapshot["counts"]
+    rows = sum(map(len, table.values()))
+    usable = tally(pairs)
+    n, changes = usable["pairs"], usable["changed"]
     check("recount of rows, runs, dates and artifacts equals extract.py's counts",
           (rows, len(snapshot["runs"]), len({run["timestamp"][:10] for run in snapshot["runs"]}), len(table))
           == (counts["rows"], counts["runs"], counts["run_dates_utc"], counts["artifacts"]))
     check("recount of label presence classes equals extract.py's counts", classes == counts["rows_by_label_presence"])
     check("recount of consecutive pairs equals extract.py's counts",
-          (row_pairs, n, changes, all_pairs["unchanged"], mismatches)
+          (row_pairs, n, changes, usable["unchanged"], mismatches)
           == tuple(counts["consecutive_pairs"][key] for key in ("row_pairs", "usable_pairs", "changed", "unchanged",
                                                                 "from_differs_from_previous_to")))
     check("recount of in-row pairs equals extract.py's counts",
@@ -252,14 +251,16 @@ def analyze(snapshot: dict, scenarios: dict) -> dict:
     check("row pairs = rows - artifacts", row_pairs == rows - len(table))
     check("usable pairs = row pairs - pairs without a label",
           n == row_pairs - counts["consecutive_pairs"]["pairs_without_a_label"])
-    check("changed + unchanged = usable pairs", changes + all_pairs["unchanged"] == n)
-    not_seed = {(pair["artifact"], pair["later_run"], pair["earlier_label"], pair["later_label"])
-                for pair in inside if not pair["seed_row"]}
+    check("changed + unchanged = usable pairs", changes + usable["unchanged"] == n)
+    not_seed = outside_seed_rows(inside)
     check("in-row pairs outside seed rows are exactly the consecutive pairs",
           not_seed == {(pair["artifact"], pair["later_run"], pair["earlier_label"], pair["later_label"]) for pair in pairs}
           and len(not_seed) == n == len(inside) - sum(pair["seed_row"] for pair in inside))
     check("every pair joins two neighbouring runs", all(pair["later_run"] == pair["earlier_run"] + 1 for pair in pairs))
 
+
+def per_artifact_counts(snapshot: dict, table: dict, pairs: list[dict], n: int, changes: int) -> list[dict]:
+    """Returns one entry per artifact: its rows, first row, labels seen and persistence on its own pairs."""
     per_artifact = []
     for name, artifact_rows in table.items():
         own = persistence([pair for pair in pairs if pair["artifact"] == name])
@@ -269,7 +270,11 @@ def analyze(snapshot: dict, scenarios: dict) -> dict:
                             | {key: own[key] for key in ("pairs", "changed", "unchanged", "persistence_accuracy")})
     check("per-artifact pairs and changes sum to the totals",
           (sum(a["pairs"] for a in per_artifact), sum(a["changed"] for a in per_artifact)) == (n, changes))
+    return per_artifact
 
+
+def per_run_counts(snapshot: dict, pairs: list[dict], n: int, changes: int) -> list[dict]:
+    """Returns one entry per run after the first: its rows, the days since the previous run and its pairs."""
     per_run = []
     for index in range(1, len(snapshot["runs"])):
         own = tally([pair for pair in pairs if pair["later_run"] == index])
@@ -277,8 +282,20 @@ def analyze(snapshot: dict, scenarios: dict) -> dict:
                         "days_since_previous_run": round(gap_days(snapshot, index - 1, index), DECIMALS["day"])} | own)
     check("per-run pairs and changes sum to the totals",
           (sum(r["pairs"] for r in per_run), sum(r["changed"] for r in per_run)) == (n, changes))
-    quiet_runs = sum(run["changed"] == 0 for run in per_run)
+    return per_run
 
+
+def run_level_persistence(per_run: list[dict]) -> dict:
+    """Returns persistence scored once per target run, as the forecast 'no label changes in this run'."""
+    quiet_runs = sum(run["changed"] == 0 for run in per_run)
+    return {"definition": "one forecast per target run: 'no label changes in this run'",
+            "target_runs": len(per_run), "runs_without_a_change": quiet_runs,
+            "runs_with_a_change": len(per_run) - quiet_runs,
+            "accuracy": ratio(quiet_runs, len(per_run))}
+
+
+def persistence_by_horizon(snapshot: dict, pairs: list[dict], bounds: dict, n: int, changes: int) -> tuple[dict, dict]:
+    """Returns persistence in each horizon group, and persistence over every pair between two feeder runs."""
     names = ("from_a_seed_row", "feeder_runs_under_half_a_day_apart", "feeder_runs_about_a_day_apart",
              "feeder_runs_further_apart")
     grouped = {name: [] for name in names}
@@ -295,13 +312,22 @@ def analyze(snapshot: dict, scenarios: dict) -> dict:
           (sum(g["pairs"] for g in by_horizon.values()), sum(g["changed"] for g in by_horizon.values())) == (n, changes))
     check("pairs from a seed row + pairs between feeder runs = usable pairs",
           by_horizon["from_a_seed_row"]["pairs"] + between["pairs"] == n)
+    return by_horizon, between
 
-    targets = {label: sum(pair["later_label"] == label for pair in pairs) for label in snapshot["encoding"]["labels"]}
+
+def constant_label_forecasts(labels: dict, pairs: list[dict], n: int, changes: int) -> dict:
+    """Returns the 'constant_label_forecasts' section: each label forecast every time, scored against persistence."""
+    targets = {label: sum(pair["later_label"] == label for pair in pairs) for label in labels}
     check("target-label shares sum to 1", sum(Fraction(count, n) for count in targets.values()) == 1)
     constant = {label: {"correct": count, "errors": n - count, "accuracy": ratio(count, n),
                         "skill_vs_persistence": skill(n - count, changes)} for label, count in targets.items()}
     best_constant = max(targets, key=lambda label: (targets[label], label))
+    return {"kind": "computed; the best constant label is chosen with hindsight",
+            "target_labels": targets, "best_constant_label": best_constant, "forecasts": constant}
 
+
+def skill_scores(scenarios: dict, n: int, changes: int, changes_between_feeder_runs: int) -> dict:
+    """Returns the 'skill' section: the synthetic candidates scored against persistence on the observed pairs."""
     models = scenarios["synthetic_candidates"]["models"]
     for name, model in models.items():
         check(f"synthetic candidate {name} accounts for every observed change",
@@ -315,83 +341,122 @@ def analyze(snapshot: dict, scenarios: dict) -> dict:
             name: cost * model["changes_missed"] + model["false_alarms"] for name, model in candidates.items()}
     alarm = candidates["cautious_alarm"]
     break_even = Fraction(alarm["false_alarms"], changes - alarm["changes_missed"])
+    return {
+        "kind": "synthetic candidates scored on the observed pairs",
+        "formula": "skill = (A - A_ref) / (1 - A_ref) = 1 - E / E_ref, with A accuracy and E errors on the same pairs",
+        "reference": "persistence", "reference_errors": changes,
+        "skill_by_error_count": {str(errors): skill(errors, changes)["value"] for errors in range(5)},
+        "skill_between_feeder_runs": skill(0, changes_between_feeder_runs),
+        "candidates": candidates,
+        "weighted_cost": weighted,
+        "cautious_alarm_break_even_cost_ratio": {"exact": str(break_even), "value": round(float(break_even), DECIMALS["ratio"])},
+    }
 
-    cells = scenarios["cited_example"]["table"]
+
+def finley_example(cited: dict) -> dict:
+    """Returns the cited Finley table of 1884, scored for accuracy and for skill against never forecasting a tornado."""
+    cells = cited["table"]
     hits, false_alarms = cells["forecast_tornado_observed_tornado"], cells["forecast_tornado_observed_none"]
     missed, quiet = cells["forecast_none_observed_tornado"], cells["forecast_none_observed_none"]
     total = hits + false_alarms + missed + quiet
-    finley = {"source": scenarios["cited_example"]["source"], "url": scenarios["cited_example"]["url"],
-              "forecasts": total, "tornadoes": hits + missed,
-              "accuracy": ratio(hits + quiet, total), "accuracy_of_never_forecasting_a_tornado": ratio(false_alarms + quiet, total),
-              "skill_vs_never_forecasting_a_tornado": skill(false_alarms + missed, hits + missed),
-              "share_of_tornadoes_called": ratio(hits, hits + missed),
-              "share_of_alarms_that_were_false": ratio(false_alarms, hits + false_alarms)}
+    return {"kind": "cited historical data, used as an analogy", "source": cited["source"], "url": cited["url"],
+            "forecasts": total, "tornadoes": hits + missed,
+            "accuracy": ratio(hits + quiet, total), "accuracy_of_never_forecasting_a_tornado": ratio(false_alarms + quiet, total),
+            "skill_vs_never_forecasting_a_tornado": skill(false_alarms + missed, hits + missed),
+            "share_of_tornadoes_called": ratio(hits, hits + missed),
+            "share_of_alarms_that_were_false": ratio(false_alarms, hits + false_alarms)}
 
-    latest = snapshot["runs"][-1]["rows"]
-    extrapolation = {"assumption": scenarios["extrapolation"]["assumption"], "pairs_per_observed_change": ratio(n, changes)["exact"],
+
+def extrapolate(plan: dict, n: int, changes: int, latest: int) -> dict:
+    """Returns the 'extrapolation' section: the pairs and runs needed to expect each target number of changes."""
+    extrapolation = {"kind": "computed under a stated assumption, not a forecast",
+                     "assumption": plan["assumption"], "pairs_per_observed_change": ratio(n, changes)["exact"],
                      "artifacts_in_the_latest_run": latest, "targets": []}
-    for target in scenarios["extrapolation"]["target_changes"]:
+    for target in plan["target_changes"]:
         needed = Fraction(target * n, changes)
         extrapolation["targets"].append({"expected_changes": target, "pairs_needed": math.ceil(needed),
                                          "runs_needed_before_rounding_up": round(float(needed / latest), DECIMALS["ratio"]),
                                          "runs_needed": math.ceil(needed / latest)})
+    return extrapolation
 
+
+def observed_counts(snapshot: dict, table: dict, classes: dict) -> dict:
+    """Returns the 'observed' section: the rows, runs, artifacts and labels the snapshot holds."""
+    counts = snapshot["counts"]
+    seed_runs = sum(any(row[3] for rows in table.values() for row in rows if row[0] == index)
+                    for index in range(len(snapshot["runs"])))
+    return {
+        "kind": "observed: counted from observed-input.json",
+        "rows": sum(map(len, table.values())), "runs": len(snapshot["runs"]),
+        "seed_runs": seed_runs, "feeder_runs": len(snapshot["runs"]) - seed_runs,
+        "run_dates_utc": counts["run_dates_utc"], "first_run": snapshot["runs"][0]["timestamp"],
+        "last_run": snapshot["runs"][-1]["timestamp"], "artifacts": len(table),
+        "rows_per_run": {str(size): sum(run["rows"] == size for run in snapshot["runs"])
+                         for size in sorted({run["rows"] for run in snapshot["runs"]})},
+        "rows_flagged_baseline": counts["rows_flagged_baseline"],
+        "rows_by_label_presence": classes,
+        "rows_with_a_missing_label": snapshot["rows_with_a_missing_label"],
+        "label_changes": snapshot["label_changes"],
+    }
+
+
+def forecast_unit(inside: list[dict], row_pairs: int, n: int, mismatches: int) -> dict:
+    """Returns the 'forecast_unit' section: the consecutive-pair counts and the in-row cross-check."""
+    return {
+        "kind": "computed",
+        "definition": "One forecast = one artifact at two consecutive rows of its history, both with an "
+                      "effectiveness_to label: the earlier label is the forecast, the later label is the outcome.",
+        "row_pairs": row_pairs, "pairs_without_a_label": row_pairs - n, "usable_pairs": n,
+        "cross_check_in_row": {
+            "definition": "effectiveness_from against effectiveness_to inside one row, both present",
+            "pairs": len(inside), "changed": tally(inside)["changed"],
+            "seed_rows_with_no_earlier_row": sum(pair["seed_row"] for pair in inside),
+            "pairs_outside_seed_rows": len(outside_seed_rows(inside)),
+            "rows_whose_from_differs_from_the_previous_to": mismatches,
+            "persistence_accuracy": ratio(tally(inside)["unchanged"], len(inside)),
+        },
+    }
+
+
+def analyze(snapshot: dict, scenarios: dict) -> dict:
+    """Returns the content of results.json: recount the snapshot, run the self-checks, build each section."""
+    if scenarios["rounding"] != {f"{key}_decimals": value for key, value in DECIMALS.items()}:
+        raise ValueError("scenarios.json rounding does not match analyze.py")
+    bounds = scenarios["horizon_bounds_days"]
+    table = load_rows(snapshot)
+    pairs, row_pairs, mismatches = consecutive_pairs(table)
+    inside = in_row_pairs(table)
+    classes = count_rows(table)
+    all_pairs = persistence(pairs)
+    n, changes = all_pairs["pairs"], all_pairs["changed"]
+
+    # The order of these calls is the order of the self-checks in results.json.
+    hand_computed_case()
+    check_recount(snapshot, table, classes, inside, pairs, row_pairs, mismatches)
+    per_artifact = per_artifact_counts(snapshot, table, pairs, n, changes)
+    per_run = per_run_counts(snapshot, pairs, n, changes)
+    by_horizon, between = persistence_by_horizon(snapshot, pairs, bounds, n, changes)
+    constant_labels = constant_label_forecasts(snapshot["encoding"]["labels"], pairs, n, changes)
+    skills = skill_scores(scenarios, n, changes, between["changed"])
+    finley = finley_example(scenarios["cited_example"])
+    latest = snapshot["runs"][-1]["rows"]
+    extrapolation = extrapolate(scenarios["extrapolation"], n, changes, latest)
     controls = negative_controls(snapshot, bounds, {"pairs": n, "changed": changes, "mismatches": mismatches,
                                                     "between_feeder_runs_changed": between["changed"]})
     transfer = transfer_task(scenarios["transfer_task"])
-    seed_runs = sum(any(row[3] for rows in table.values() for row in rows if row[0] == index)
-                    for index in range(len(snapshot["runs"])))
     return {
         "module_id": snapshot["module_id"],
         "rounding": "ratios to 6 decimals, percentages to 2 decimals, days to 3 decimals; 'exact' is the unrounded fraction",
         "source": {"repository": snapshot["source"]["repository"], "commit": snapshot["source"]["commit"],
                    "files": [entry["path"] for entry in snapshot["source"]["files"] + snapshot["source"]["evolution_records"]]},
-        "observed": {
-            "kind": "observed: counted from observed-input.json",
-            "rows": rows, "runs": len(snapshot["runs"]), "seed_runs": seed_runs, "feeder_runs": len(snapshot["runs"]) - seed_runs,
-            "run_dates_utc": counts["run_dates_utc"], "first_run": snapshot["runs"][0]["timestamp"],
-            "last_run": snapshot["runs"][-1]["timestamp"], "artifacts": len(table),
-            "rows_per_run": {str(size): sum(run["rows"] == size for run in snapshot["runs"])
-                             for size in sorted({run["rows"] for run in snapshot["runs"]})},
-            "rows_flagged_baseline": counts["rows_flagged_baseline"],
-            "rows_by_label_presence": classes,
-            "rows_with_a_missing_label": snapshot["rows_with_a_missing_label"],
-            "label_changes": snapshot["label_changes"],
-        },
-        "forecast_unit": {
-            "kind": "computed",
-            "definition": "One forecast = one artifact at two consecutive rows of its history, both with an "
-                          "effectiveness_to label: the earlier label is the forecast, the later label is the outcome.",
-            "row_pairs": row_pairs, "pairs_without_a_label": row_pairs - n, "usable_pairs": n,
-            "cross_check_in_row": {
-                "definition": "effectiveness_from against effectiveness_to inside one row, both present",
-                "pairs": len(inside), "changed": tally(inside)["changed"],
-                "seed_rows_with_no_earlier_row": sum(pair["seed_row"] for pair in inside),
-                "pairs_outside_seed_rows": len(not_seed),
-                "rows_whose_from_differs_from_the_previous_to": mismatches,
-                "persistence_accuracy": ratio(tally(inside)["unchanged"], len(inside)),
-            },
-        },
+        "observed": observed_counts(snapshot, table, classes),
+        "forecast_unit": forecast_unit(inside, row_pairs, n, mismatches),
         "persistence": {"kind": "computed", "all_usable_pairs": all_pairs, "between_feeder_runs": between,
-                        "by_horizon": by_horizon,
-                        "run_level": {"definition": "one forecast per target run: 'no label changes in this run'",
-                                      "target_runs": len(per_run), "runs_without_a_change": quiet_runs,
-                                      "runs_with_a_change": len(per_run) - quiet_runs,
-                                      "accuracy": ratio(quiet_runs, len(per_run))}},
-        "constant_label_forecasts": {"kind": "computed; the best constant label is chosen with hindsight",
-                                     "target_labels": targets, "best_constant_label": best_constant, "forecasts": constant},
-        "skill": {
-            "kind": "synthetic candidates scored on the observed pairs",
-            "formula": "skill = (A - A_ref) / (1 - A_ref) = 1 - E / E_ref, with A accuracy and E errors on the same pairs",
-            "reference": "persistence", "reference_errors": changes,
-            "skill_by_error_count": {str(errors): skill(errors, changes)["value"] for errors in range(5)},
-            "skill_between_feeder_runs": skill(0, between["changed"]),
-            "candidates": candidates,
-            "weighted_cost": weighted,
-            "cautious_alarm_break_even_cost_ratio": {"exact": str(break_even), "value": round(float(break_even), DECIMALS["ratio"])},
-        },
-        "cited_example_finley_1884": {"kind": "cited historical data, used as an analogy"} | finley,
-        "extrapolation": {"kind": "computed under a stated assumption, not a forecast"} | extrapolation,
+                        "by_horizon": by_horizon, "run_level": run_level_persistence(per_run)},
+        "constant_label_forecasts": constant_labels,
+        "skill": skills,
+        "cited_example_finley_1884": finley,
+        "extrapolation": extrapolation,
         "per_artifact": per_artifact,
         "per_run": per_run,
         "negative_controls": controls,

@@ -373,13 +373,8 @@ def predictive_value(base_rate: float, detection: float, false_alarm: float) -> 
 
 # --------------------------------------------------------------------------- sections
 
-def self_checks(scenarios: dict) -> dict:
-    hand = scenarios["hand_cases"]
-    checks = scenarios["estimator_checks"]
-    out: dict = {}
-
-    # Kendall's tau: a hand case, two limits, a tie case, and the fast method against the definition.
-    values = hand["kendall"]["values"]
+def kendall_hand_case(values: list[float], z: float) -> dict:
+    """Returns the hand case of Kendall's tau with its pair counts, checked with the two limits and a tie case."""
     concordant, discordant, ties = kendall_counts_naive(values)
     pairs = len(values) * (len(values) - 1) // 2
     assert concordant + discordant + ties == pairs
@@ -389,31 +384,38 @@ def self_checks(scenarios: dict) -> dict:
     assert kendall_tau([1.0, 2.0, 3.0, 4.0]) == 1.0 and kendall_tau([4.0, 3.0, 2.0, 1.0]) == -1.0
     tie_case = [1.0, 2.0, 2.0, 3.0]
     assert abs(kendall_tau(tie_case) - 5.0 / math.sqrt(6.0 * 5.0)) < 1e-12
-    rng = random.Random(checks["kendall_cross_check"]["seed"])
-    worst = 0.0
-    for _ in range(checks["kendall_cross_check"]["repeats"]):
-        sample = [float(rng.randrange(40)) for _ in range(checks["kendall_cross_check"]["length"])]
-        worst = max(worst, abs(kendall_tau(sample) - kendall_tau_naive(sample)))
-    assert worst < 1e-12, "fast Kendall tau disagrees with the pairwise definition"
-    out["kendall_hand_case"] = {
+    return {
         "values": values, "pairs": pairs, "concordant": concordant, "discordant": discordant,
         "ties": ties, "tau": tau,
-        "naive_test_threshold_for_6_values": scenarios["alarm_rules"]["naive_test"]["z_one_sided"] * naive_tau_sd(6),
+        "naive_test_threshold_for_6_values": z * naive_tau_sd(6),
     }
-    out["kendall_fast_against_pairwise_max_difference"] = worst
 
-    # One window by hand: values 1, 2, 4, 3 -> residuals -0.3, -0.1, 1.1, -0.7.
-    variance, autocorrelation = rolling_indicators(hand["window"]["values"], 4)
-    assert abs(variance[0] - 0.9) < 1e-12 and abs(autocorrelation[0] - (-0.85 / 1.8)) < 1e-12
-    assert abs(variance[0] - hand["window"]["expected_variance"]) < 1e-9
-    assert abs(autocorrelation[0] - hand["window"]["expected_autocorrelation"]) < 5e-5
-    out["window_hand_case"] = {"values": hand["window"]["values"], "residuals": [-0.3, -0.1, 1.1, -0.7],
-                               "variance": variance[0], "autocorrelation": autocorrelation[0]}
 
-    # Running sums against a direct computation, with and without the straight line removed,
-    # on a series that carries a large drift so the detrending has something to remove.
-    cross = checks["rolling_cross_check"]
+def kendall_fast_against_pairwise(cross: dict) -> float:
+    """Returns the largest gap between the fast Kendall tau and the pairwise definition on seeded sequences with ties."""
     rng = random.Random(cross["seed"])
+    worst = 0.0
+    for _ in range(cross["repeats"]):
+        sample = [float(rng.randrange(40)) for _ in range(cross["length"])]
+        worst = max(worst, abs(kendall_tau(sample) - kendall_tau_naive(sample)))
+    assert worst < 1e-12, "fast Kendall tau disagrees with the pairwise definition"
+    return worst
+
+
+def window_hand_case(case: dict) -> dict:
+    """Returns one window worked by hand, checked: values 1, 2, 4, 3 -> residuals -0.3, -0.1, 1.1, -0.7."""
+    variance, autocorrelation = rolling_indicators(case["values"], 4)
+    assert abs(variance[0] - 0.9) < 1e-12 and abs(autocorrelation[0] - (-0.85 / 1.8)) < 1e-12
+    assert abs(variance[0] - case["expected_variance"]) < 1e-9
+    assert abs(autocorrelation[0] - case["expected_autocorrelation"]) < 5e-5
+    return {"values": case["values"], "residuals": [-0.3, -0.1, 1.1, -0.7],
+            "variance": variance[0], "autocorrelation": autocorrelation[0]}
+
+
+def rolling_against_direct(cross: dict) -> dict:
+    """Returns the largest gap between the running sums and a direct computation, with and without detrending."""
+    rng = random.Random(cross["seed"])
+    # The series carries a large drift, so the detrending has something to remove.
     series = [0.4 * index + value for index, value in enumerate(simulate_ar1(rng, cross["length"], 0.8, 1.0))]
     worst = 0.0
     compared = 0
@@ -426,9 +428,11 @@ def self_checks(scenarios: dict) -> dict:
                             abs(autocorrelations[start] - direct[1]))
                 compared += 1
     assert compared > 0 and worst < 1e-8, "running sums disagree with the direct computation"
-    out["rolling_against_direct"] = {"windows_compared": compared, "max_difference": worst}
+    return {"windows_compared": compared, "max_difference": worst}
 
-    # Detrending removes a straight line exactly: adding one must not change the indicators.
+
+def straight_line_drift(cross: dict) -> dict:
+    """Returns what an added straight line changes: nothing with detrending, an inflated variance without it."""
     plain = simulate_ar1(random.Random(cross["seed"]), cross["length"], 0.8, 1.0)
     base = rolling_indicators(plain, 25)
     shifted = rolling_indicators([value + 3.0 * index - 7.0 for index, value in enumerate(plain)], 25)
@@ -438,26 +442,45 @@ def self_checks(scenarios: dict) -> dict:
     raw = rolling_indicators([value + 3.0 * index - 7.0 for index, value in enumerate(plain)], 25, detrend=False)
     inflation = min(a / b for a, b in zip(raw[0], base[0]))
     assert inflation > 10.0, "negative control: without detrending the same drift must inflate the variance"
-    out["straight_line_drift"] = {"max_change_with_detrending": drift_effect,
-                                  "smallest_variance_inflation_without_detrending": inflation}
+    return {"max_change_with_detrending": drift_effect,
+            "smallest_variance_inflation_without_detrending": inflation}
 
-    # The alarm statistic on two invented series with a known answer.
+
+def alarm_controls(fixed_threshold: float) -> dict:
+    """Returns the verdict of the alarm statistic on two invented series: a monotone rise fires, a fall does not."""
     rising = [float(index * index) for index in range(30)]
     falling = rising[::-1]
-    assert min(kendall_tau(rising), kendall_tau(rising)) >= scenarios["alarm_rules"]["fixed_threshold"]
+    assert min(kendall_tau(rising), kendall_tau(rising)) >= fixed_threshold
     assert min(kendall_tau(falling), kendall_tau(falling)) < 0.0
-    out["alarm_controls"] = {"monotone_rise_fires": True, "monotone_fall_fires": False}
+    return {"monotone_rise_fires": True, "monotone_fall_fires": False}
 
-    # Count of constant windows on an invented series.
-    case = hand["constant_windows"]
+
+def constant_window_hand_case(case: dict) -> dict:
+    """Returns the count of constant windows on an invented series, checked against the count made by hand."""
     windows, constant = constant_window_count(case["values"], case["window"])
     assert (windows, constant) == (case["expected_windows"], case["expected_constant_windows"])
-    out["constant_window_hand_case"] = {"values": case["values"], "window": case["window"],
-                                        "windows": windows, "constant_windows": constant}
+    return {"values": case["values"], "window": case["window"],
+            "windows": windows, "constant_windows": constant}
 
-    z = scenarios["alarm_rules"]["naive_test"]["z_one_sided"]
+
+def self_checks(scenarios: dict) -> dict:
+    """Returns the 'self_checks' section: each entry comes from a function that asserts a known answer first."""
+    hand = scenarios["hand_cases"]
+    checks = scenarios["estimator_checks"]
+    rules = scenarios["alarm_rules"]
+    z = rules["naive_test"]["z_one_sided"]
+    out = {
+        "kendall_hand_case": kendall_hand_case(hand["kendall"]["values"], z),
+        "kendall_fast_against_pairwise_max_difference": kendall_fast_against_pairwise(checks["kendall_cross_check"]),
+        "window_hand_case": window_hand_case(hand["window"]),
+        "rolling_against_direct": rolling_against_direct(checks["rolling_cross_check"]),
+        "straight_line_drift": straight_line_drift(checks["rolling_cross_check"]),
+        "alarm_controls": alarm_controls(rules["fixed_threshold"]),
+        "constant_window_hand_case": constant_window_hand_case(hand["constant_windows"]),
+    }
+    # The z of the naive test must be the one-sided normal quantile of its nominal false-alarm rate.
     upper_tail = 0.5 * math.erfc(z / math.sqrt(2.0))
-    assert abs(upper_tail - scenarios["alarm_rules"]["naive_test"]["nominal_false_alarm_rate"]) < 1e-9
+    assert abs(upper_tail - rules["naive_test"]["nominal_false_alarm_rate"]) < 1e-9
     return out
 
 
@@ -542,88 +565,107 @@ def theory_section(scenarios: dict) -> dict:
     return out
 
 
-def simulation_section(scenarios: dict) -> dict:
-    experiment = scenarios["experiment"]
-    rules = scenarios["alarm_rules"]
-    fixed = rules["fixed_threshold"]
-    z = rules["naive_test"]["z_one_sided"]
+def simulate_batches(experiment: dict, length: int, windows: list[int]) -> tuple[dict, dict]:
+    """Returns one series length's batches by system name (fold, linear twin, controls), and its calibration batch."""
     seeds = experiment["seeds"]
+    batches = {
+        "approach_fold": run_batch("fold", length, windows, experiment, seeds["approach_fold"][str(length)],
+                                   undetrended=True),
+        "linear_twin": run_batch("twin", length, windows, experiment, seeds["linear_twin"][str(length)]),
+    }
+    for coefficient in experiment["control_coefficients"]:
+        name = f"control_{coefficient}"
+        batches[name] = run_batch("ar1", length, windows, experiment, seeds[name][str(length)],
+                                  coefficient=coefficient)
+    calibration = run_batch("ar1", length, windows, experiment, seeds["calibration"][str(length)],
+                            coefficient=experiment["calibration"]["coefficient"])
+    return batches, calibration
+
+
+def rule_summary(systems: dict, thresholds: dict, reference: str, base_rates: list[float]) -> dict:
+    """Returns, per alarm rule, its threshold, detection rate, false-alarm rates and share of alarms that are true."""
+    detection = systems["approach_fold"]["alarm_rate"]
+    summary = {}
+    for rule in ("naive", "fixed", "calibrated"):
+        false_alarms = {name: systems[name]["alarm_rate"][rule]
+                        for name in systems if name.startswith("control_")}
+        summary[rule] = {
+            "threshold_on_min_tau": thresholds[rule],
+            "detection_rate": detection[rule],
+            "false_alarm_rate": false_alarms,
+            "linear_twin_alarm_rate": systems["linear_twin"]["alarm_rate"][rule],
+            "share_of_alarms_that_are_true": [
+                predictive_value(rate, detection[rule], false_alarms[reference])
+                for rate in base_rates
+            ],
+        }
+    return summary
+
+
+def configuration(scenarios: dict, length: int, window: int, batches: dict, calibration: dict) -> dict:
+    """Returns one series length with one window: its thresholds, its calibration, the rule summary and every system."""
+    experiment = scenarios["experiment"]
+    fixed = scenarios["alarm_rules"]["fixed_threshold"]
+    z = scenarios["alarm_rules"]["naive_test"]["z_one_sided"]
     reference = f"control_{experiment['reference_control_coefficient']}"
     runs = experiment["runs_per_batch"]
-    configurations: dict = {}
-    for length in experiment["series_lengths"]:
-        windows = [round(length * fraction) for fraction in experiment["window_fractions"]]
-        batches = {
-            "approach_fold": run_batch("fold", length, windows, experiment, seeds["approach_fold"][str(length)],
-                                       undetrended=True),
-            "linear_twin": run_batch("twin", length, windows, experiment, seeds["linear_twin"][str(length)]),
-        }
-        for coefficient in experiment["control_coefficients"]:
-            name = f"control_{coefficient}"
-            batches[name] = run_batch("ar1", length, windows, experiment, seeds[name][str(length)],
-                                      coefficient=coefficient)
-        calibration = run_batch("ar1", length, windows, experiment, seeds["calibration"][str(length)],
-                                coefficient=experiment["calibration"]["coefficient"])
-        for window in windows:
-            rolling_values = length - window + 1
-            store = calibration["per_window"][window]
-            joint = [min(a, b) for a, b in zip(store["tau_variance"], store["tau_autocorrelation"])]
-            threshold, allowed = calibrated_threshold(joint, experiment["calibration"]["false_alarm_target"])
-            thresholds = {"naive": z * naive_tau_sd(rolling_values), "fixed": fixed, "calibrated": threshold}
-            systems = {name: summarise_system(batch, window, thresholds, fixed) for name, batch in batches.items()}
-            calibration_alarms = sum(1 for value in joint if value >= threshold)
-            assert 0 < calibration_alarms <= allowed, "the calibrated threshold must respect its target"
-            # Known answer for the whole chain: on independent runs of the calibration model the
-            # calibrated rule must fire at about the target rate (three standard errors of a difference).
-            target = experiment["calibration"]["false_alarm_target"]
-            same_model = f"control_{experiment['calibration']['coefficient']}"
-            realised = systems[same_model]["alarm_rate"]["calibrated"]
-            tolerance = 3.0 * math.sqrt(2.0 * target * (1.0 - target) / runs)
-            assert abs(realised - target) < tolerance, "calibrated rule misses its target on independent runs"
-            detection = systems["approach_fold"]["alarm_rate"]
-            summary = {}
-            for rule in ("naive", "fixed", "calibrated"):
-                false_alarms = {name: systems[name]["alarm_rate"][rule]
-                                for name in systems if name.startswith("control_")}
-                summary[rule] = {
-                    "threshold_on_min_tau": thresholds[rule],
-                    "detection_rate": detection[rule],
-                    "false_alarm_rate": false_alarms,
-                    "linear_twin_alarm_rate": systems["linear_twin"]["alarm_rate"][rule],
-                    "share_of_alarms_that_are_true": [
-                        predictive_value(rate, detection[rule], false_alarms[reference])
-                        for rate in scenarios["base_rates"]
-                    ],
-                }
-            configurations[config_key(length, window)] = {
-                "series_length": length,
-                "window": window,
-                "rolling_values_per_run": rolling_values,
-                "thresholds": thresholds,
-                "runs_with_both_taus_positive": {name: systems[name]["both_taus_positive"] for name in systems},
-                "calibration": {
-                    "coefficient": experiment["calibration"]["coefficient"],
-                    "runs": calibration["runs"],
-                    "alarms_allowed": allowed,
-                    "alarms_at_threshold": calibration_alarms,
-                    "tau_min": describe(joint),
-                    "false_alarm_rate_on_independent_runs_of_the_same_model": realised,
-                    "tolerance_of_that_check": tolerance,
-                },
-                "summary": summary,
-                "systems": systems,
-            }
-    largest_gap = 0.0
+    rolling_values = length - window + 1
+    store = calibration["per_window"][window]
+    joint = [min(a, b) for a, b in zip(store["tau_variance"], store["tau_autocorrelation"])]
+    threshold, allowed = calibrated_threshold(joint, experiment["calibration"]["false_alarm_target"])
+    thresholds = {"naive": z * naive_tau_sd(rolling_values), "fixed": fixed, "calibrated": threshold}
+    systems = {name: summarise_system(batch, window, thresholds, fixed) for name, batch in batches.items()}
+    calibration_alarms = sum(1 for value in joint if value >= threshold)
+    assert 0 < calibration_alarms <= allowed, "the calibrated threshold must respect its target"
+    # Known answer for the whole chain: on independent runs of the calibration model the
+    # calibrated rule must fire at about the target rate (three standard errors of a difference).
+    target = experiment["calibration"]["false_alarm_target"]
+    same_model = f"control_{experiment['calibration']['coefficient']}"
+    realised = systems[same_model]["alarm_rate"]["calibrated"]
+    tolerance = 3.0 * math.sqrt(2.0 * target * (1.0 - target) / runs)
+    assert abs(realised - target) < tolerance, "calibrated rule misses its target on independent runs"
+    summary = rule_summary(systems, thresholds, reference, scenarios["base_rates"])
+    return {
+        "series_length": length,
+        "window": window,
+        "rolling_values_per_run": rolling_values,
+        "thresholds": thresholds,
+        "runs_with_both_taus_positive": {name: systems[name]["both_taus_positive"] for name in systems},
+        "calibration": {
+            "coefficient": experiment["calibration"]["coefficient"],
+            "runs": calibration["runs"],
+            "alarms_allowed": allowed,
+            "alarms_at_threshold": calibration_alarms,
+            "tau_min": describe(joint),
+            "false_alarm_rate_on_independent_runs_of_the_same_model": realised,
+            "tolerance_of_that_check": tolerance,
+        },
+        "summary": summary,
+        "systems": systems,
+    }
+
+
+def check_alarm_counts_fall(configurations: dict) -> None:
+    """Returns nothing: asserts that in every system a lower threshold fires at least as often as a higher one."""
     for config in configurations.values():
         for system in config["systems"].values():
-            # A lower threshold can only fire at least as often.
             ordered = sorted(config["thresholds"].items(), key=lambda item: item[1])
             counts = [system["alarms"][name] for name, _ in ordered]
             assert counts == sorted(counts, reverse=True), "alarm counts must fall as the threshold rises"
+
+
+def largest_fold_twin_gap(configurations: dict) -> float:
+    """Returns the largest gap, over rules and configurations, between the fold's and the linear twin's alarm rates."""
+    largest_gap = 0.0
+    for config in configurations.values():
         for rule in config["summary"].values():
             largest_gap = max(largest_gap, abs(rule["detection_rate"] - rule["linear_twin_alarm_rate"]))
-    # Mean reading of the first window of each stationary control, against the AR(1) value:
-    # the long-run check passes, yet a short window reads low.
+    return largest_gap
+
+
+def first_window_bias(experiment: dict, configurations: dict) -> dict:
+    """Returns the mean reading of the first window of each stationary control, against the AR(1) value."""
+    # The long-run check passes, yet a short window reads low.
     noise = experiment["noise_sd"]
     window_bias = {}
     for coefficient in experiment["control_coefficients"]:
@@ -641,16 +683,31 @@ def simulation_section(scenarios: dict) -> dict:
             "variance_theory": noise * noise / (1.0 - coefficient * coefficient),
             "first_window_means": rows,
         }
+    return window_bias
+
+
+def simulation_section(scenarios: dict) -> dict:
+    """Returns the 'simulation' section: every series length with every window, then what holds across them."""
+    experiment = scenarios["experiment"]
+    fixed = scenarios["alarm_rules"]["fixed_threshold"]
+    runs = experiment["runs_per_batch"]
+    configurations: dict = {}
+    for length in experiment["series_lengths"]:
+        windows = [round(length * fraction) for fraction in experiment["window_fractions"]]
+        batches, calibration = simulate_batches(experiment, length, windows)
+        for window in windows:
+            configurations[config_key(length, window)] = configuration(scenarios, length, window, batches, calibration)
+    check_alarm_counts_fall(configurations)
     return {
         "kind": "synthetic",
         "runs_per_batch": runs,
         "standard_error_of_a_rate_at_most": 0.5 / math.sqrt(runs),
-        "reference_control_for_predictive_value": reference,
+        "reference_control_for_predictive_value": f"control_{experiment['reference_control_coefficient']}",
         "fold_against_linear_twin": {
-            "largest_alarm_rate_difference": largest_gap,
+            "largest_alarm_rate_difference": largest_fold_twin_gap(configurations),
             "standard_error_of_a_difference_at_most": math.sqrt(2.0) * 0.5 / math.sqrt(runs),
         },
-        "window_bias": window_bias,
+        "window_bias": first_window_bias(experiment, configurations),
         "rules": {
             "naive": "each tau exceeds z * sd(tau) computed as if the rolling values were independent",
             "fixed": f"min tau >= {fixed}",

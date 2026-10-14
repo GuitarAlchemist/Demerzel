@@ -170,7 +170,7 @@
       }
     },
     {
-      "artifact": "constitutions/asimov.constitution.md",
+      "artifact": "constitutions / asimov.constitution.md",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -290,7 +290,7 @@
       }
     },
     {
-      "artifact": "constitutions/default.constitution.md",
+      "artifact": "constitutions / default.constitution.md",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -410,7 +410,7 @@
       }
     },
     {
-      "artifact": "contracts/galactic-protocol.md",
+      "artifact": "contracts / galactic-protocol.md",
       "rows": 82,
       "rows_with_numeric_fields": 82,
       "first_measured_timestamp": "2026-07-29T00:19:14Z",
@@ -529,7 +529,7 @@
       }
     },
     {
-      "artifact": "crates/memristive-markov (ix)",
+      "artifact": "crates / memristive-markov (ix)",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -645,7 +645,7 @@
       }
     },
     {
-      "artifact": "docs/governance/harness-engineering-direction.md",
+      "artifact": "docs / governance / harness-engineering-direction.md",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -765,7 +765,7 @@
       }
     },
     {
-      "artifact": "docs/governance/the-sentinel-spec.md",
+      "artifact": "docs / governance / the-sentinel-spec.md",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -885,7 +885,7 @@
       }
     },
     {
-      "artifact": "logic/governance-evolution.schema.json",
+      "artifact": "logic / governance-evolution.schema.json",
       "rows": 81,
       "rows_with_numeric_fields": 81,
       "first_measured_timestamp": "2026-07-29T13:52:24Z",
@@ -999,7 +999,7 @@
       }
     },
     {
-      "artifact": "logic/kaizen-pdca-state.schema.json",
+      "artifact": "logic / kaizen-pdca-state.schema.json",
       "rows": 81,
       "rows_with_numeric_fields": 81,
       "first_measured_timestamp": "2026-07-29T13:52:24Z",
@@ -1113,7 +1113,7 @@
       }
     },
     {
-      "artifact": "logic/tetravalent-state.schema.json",
+      "artifact": "logic / tetravalent-state.schema.json",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -1233,7 +1233,7 @@
       }
     },
     {
-      "artifact": "meta/compounding-cycle",
+      "artifact": "meta / compounding-cycle",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -1473,7 +1473,7 @@
       }
     },
     {
-      "artifact": "policies/alignment-policy.yaml",
+      "artifact": "policies / alignment-policy.yaml",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -1597,7 +1597,7 @@
       }
     },
     {
-      "artifact": "policies/autonomous-loop-policy.yaml",
+      "artifact": "policies / autonomous-loop-policy.yaml",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -1721,7 +1721,7 @@
       }
     },
     {
-      "artifact": "prime-radiant/visual-governance",
+      "artifact": "prime-radiant / visual-governance",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",
@@ -1837,7 +1837,7 @@
       }
     },
     {
-      "artifact": "schemas/loop-state.schema.json",
+      "artifact": "schemas / loop-state.schema.json",
       "rows": 81,
       "rows_with_numeric_fields": 81,
       "first_measured_timestamp": "2026-07-29T13:52:24Z",
@@ -1951,7 +1951,7 @@
       }
     },
     {
-      "artifact": "scripts/afk_backends/",
+      "artifact": "scripts / afk_backends /",
       "rows": 81,
       "rows_with_numeric_fields": 81,
       "first_measured_timestamp": "2026-07-29T13:52:24Z",
@@ -2065,7 +2065,7 @@
       }
     },
     {
-      "artifact": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+      "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
       "rows": 88,
       "rows_with_numeric_fields": 87,
       "first_measured_timestamp": "2026-07-18T12:00:00Z",

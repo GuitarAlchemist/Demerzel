@@ -52,7 +52,7 @@
         "file": "state/quality-trend/2026-07.jsonl",
         "line": 79,
         "timestamp": "2026-07-29T00:19:14Z",
-        "artifact": "contracts/galactic-protocol.md",
+        "artifact": "contracts / galactic-protocol.md",
         "from": null,
         "to": null,
         "reasons": [
@@ -64,7 +64,7 @@
         "file": "state/quality-trend/2026-07.jsonl",
         "line": 93,
         "timestamp": "2026-07-29T13:52:24Z",
-        "artifact": "contracts/galactic-protocol.md",
+        "artifact": "contracts / galactic-protocol.md",
         "from": null,
         "to": "T",
         "reasons": [
@@ -75,7 +75,7 @@
         "file": "state/quality-trend/2026-07.jsonl",
         "line": 94,
         "timestamp": "2026-07-29T13:52:24Z",
-        "artifact": "logic/governance-evolution.schema.json",
+        "artifact": "logic / governance-evolution.schema.json",
         "from": null,
         "to": "P",
         "reasons": [
@@ -86,7 +86,7 @@
         "file": "state/quality-trend/2026-07.jsonl",
         "line": 95,
         "timestamp": "2026-07-29T13:52:24Z",
-        "artifact": "logic/kaizen-pdca-state.schema.json",
+        "artifact": "logic / kaizen-pdca-state.schema.json",
         "from": null,
         "to": "P",
         "reasons": [
@@ -108,7 +108,7 @@
         "file": "state/quality-trend/2026-07.jsonl",
         "line": 96,
         "timestamp": "2026-07-29T13:52:24Z",
-        "artifact": "schemas/loop-state.schema.json",
+        "artifact": "schemas / loop-state.schema.json",
         "from": null,
         "to": "P",
         "reasons": [
@@ -119,7 +119,7 @@
         "file": "state/quality-trend/2026-07.jsonl",
         "line": 97,
         "timestamp": "2026-07-29T13:52:24Z",
-        "artifact": "scripts/afk_backends/",
+        "artifact": "scripts / afk_backends /",
         "from": null,
         "to": "P",
         "reasons": [
@@ -129,7 +129,7 @@
     ],
     "label_changes": [
       {
-        "artifact": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+        "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
         "from": "U",
         "to": "F",
         "earlier_row": {
@@ -628,7 +628,7 @@
       }
     },
     {
-      "artifact": "constitutions/asimov.constitution.md",
+      "artifact": "constitutions / asimov.constitution.md",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -644,7 +644,7 @@
       }
     },
     {
-      "artifact": "constitutions/default.constitution.md",
+      "artifact": "constitutions / default.constitution.md",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -660,7 +660,7 @@
       }
     },
     {
-      "artifact": "contracts/galactic-protocol.md",
+      "artifact": "contracts / galactic-protocol.md",
       "rows": 82,
       "first_row": "2026-07-29T00:19:14Z",
       "labels_seen": [
@@ -676,7 +676,7 @@
       }
     },
     {
-      "artifact": "crates/memristive-markov (ix)",
+      "artifact": "crates / memristive-markov (ix)",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -692,7 +692,7 @@
       }
     },
     {
-      "artifact": "docs/governance/harness-engineering-direction.md",
+      "artifact": "docs / governance / harness-engineering-direction.md",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -708,7 +708,7 @@
       }
     },
     {
-      "artifact": "docs/governance/the-sentinel-spec.md",
+      "artifact": "docs / governance / the-sentinel-spec.md",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -724,7 +724,7 @@
       }
     },
     {
-      "artifact": "logic/governance-evolution.schema.json",
+      "artifact": "logic / governance-evolution.schema.json",
       "rows": 81,
       "first_row": "2026-07-29T13:52:24Z",
       "labels_seen": [
@@ -740,7 +740,7 @@
       }
     },
     {
-      "artifact": "logic/kaizen-pdca-state.schema.json",
+      "artifact": "logic / kaizen-pdca-state.schema.json",
       "rows": 81,
       "first_row": "2026-07-29T13:52:24Z",
       "labels_seen": [
@@ -756,7 +756,7 @@
       }
     },
     {
-      "artifact": "logic/tetravalent-state.schema.json",
+      "artifact": "logic / tetravalent-state.schema.json",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -772,7 +772,7 @@
       }
     },
     {
-      "artifact": "meta/compounding-cycle",
+      "artifact": "meta / compounding-cycle",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -804,7 +804,7 @@
       }
     },
     {
-      "artifact": "policies/alignment-policy.yaml",
+      "artifact": "policies / alignment-policy.yaml",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -820,7 +820,7 @@
       }
     },
     {
-      "artifact": "policies/autonomous-loop-policy.yaml",
+      "artifact": "policies / autonomous-loop-policy.yaml",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -836,7 +836,7 @@
       }
     },
     {
-      "artifact": "prime-radiant/visual-governance",
+      "artifact": "prime-radiant / visual-governance",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -852,7 +852,7 @@
       }
     },
     {
-      "artifact": "schemas/loop-state.schema.json",
+      "artifact": "schemas / loop-state.schema.json",
       "rows": 81,
       "first_row": "2026-07-29T13:52:24Z",
       "labels_seen": [
@@ -868,7 +868,7 @@
       }
     },
     {
-      "artifact": "scripts/afk_backends/",
+      "artifact": "scripts / afk_backends /",
       "rows": 81,
       "first_row": "2026-07-29T13:52:24Z",
       "labels_seen": [
@@ -884,7 +884,7 @@
       }
     },
     {
-      "artifact": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+      "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
       "rows": 88,
       "first_row": "2026-05-01T00:00:00Z",
       "labels_seen": [
@@ -1601,7 +1601,7 @@
   ],
   "negative_controls": {
     "planted_in": {
-      "artifact": "constitutions/asimov.constitution.md",
+      "artifact": "constitutions / asimov.constitution.md",
       "run_index": 44,
       "run": "2026-09-02T15:45:08Z",
       "observed_label": "T"

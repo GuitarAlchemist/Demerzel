@@ -15,6 +15,10 @@ Python 3, standard library only. No random number is drawn, so there is no seed.
 | `analyze.py` | script | Reads only `observed-input.json` and `scenarios.json`, recounts everything from the strings, runs the self-checks and writes `results.json`. |
 | `results.json` | computed | Every number used by the lesson, the review brief and the transfer task. |
 
+Artifact names are written with a space on each side of every slash (`policies / alignment-policy.yaml`):
+`scripts/evolution_metrics.py` counts every tracked file that contains an artifact's path as a citation of that
+artifact, and a data file about the artifacts is not one.
+
 ## Regenerate
 
 From the repository root:

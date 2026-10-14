@@ -4,14 +4,14 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md`, Git blob `5f1c7da3ce56400cd83a4bb172f027533d1daa2a` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md`, Git blob `525b7db8273d7914aa29a9e0815c7c3e7829fd9c` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-005/`, programs in `scripts/streeling_fixtures/psychohistory/psy-005/`:
-  - `scripts/streeling_fixtures/psychohistory/psy-005/extract.py`: Git blob `d445fb1f34c3103463bdb1ba4468e48d6dcefdc6`
-  - `observed-input.json`: Git blob `36ac390c0e3b5b08b10fc4938ebc7990324e871a`
+  - `scripts/streeling_fixtures/psychohistory/psy-005/extract.py`: Git blob `dc4ebd9a37c8c4649d505998f25e986f7ef90b66`
+  - `observed-input.json`: Git blob `341afcb002e7ba0b3a902c914ddf0f59fadc9114`
   - `scenarios.json`: Git blob `5e2bbf06b5ca249d1e8494d55b926c22cc9043a0`
-  - `scripts/streeling_fixtures/psychohistory/psy-005/analyze.py`: Git blob `8aa024e3d3afd020e68b9fc61321a291d579241a`
-  - `results.json`: Git blob `059ffcd8cf00ab46f568d7c58a818ba5d63543ad`
-  - `README.md`: Git blob `6f06eb5808fb48294d1e7c7231c8ed5e9a0a0f9d`
+  - `scripts/streeling_fixtures/psychohistory/psy-005/analyze.py`: Git blob `3a17cbc8ae16dffa6457c5b3e5334c4b54753fa9`
+  - `results.json`: Git blob `edb03bcb9c225f78ac9ce4ff93cfcdd80fc99112`
+  - `README.md`: Git blob `dd47bd473f7c68a3b7027da357693338be82dae9`
 - Observed source: `state/quality-trend/2026-05.jsonl`, `2026-07.jsonl`, `2026-08.jsonl`, `2026-09.jsonl`, `2026-10.jsonl` and `state/evolution/2026-03-20-autonomous-driver.evolution.json` at Demerzel commit `4b03838800dcd4894f1e026461979bff1d985ca8`. Their Git blob ids are recorded in `observed-input.json` under `source` and checked by `extract.py`. These files are project records, not a human verdict on the course.
 - Production record: `state/streeling/course-productions/cp-psychohistory-2026-10-13-005.json`; review and publication flags are false.
 
@@ -23,7 +23,7 @@ A later course edit changes its blob. Review that diff explicitly before extendi
 2. Check the unit of a forecast. Recompute `1,548 − 18 = 1,530` row pairs and `1,530 − 1 = 1,529` usable pairs, and the cross-check `1,540 − 11 = 1,529`. Read line 104 of `scripts/quality_trend.py` at the pin and confirm that `effectiveness_from` is the previous row's `effectiveness_to`. Challenge the choice of consecutive rows over in-row pairs: does the lesson justify it, and would scoring per run (86 of 87, 98.85%) change its conclusion?
 3. Recompute the persistence table: 1,528/1,529 = 0.999346; 10/11 for the pairs that start at a seed row (78.5 days); 72, 1,433 and 13 pairs between feeder runs, with no change. The 0.5-day and 1.5-day bounds are an analysis choice stored in `scenarios.json`: confirm that no other choice moves the changed pair, which starts at a seed row. Recompute "always T" as 775/1,529 = 0.506867 and note that T was chosen with hindsight.
 4. Recompute the skills of the four imaginary forecasters (0, −1, 1, −2) and the tie at a cost ratio of 3 for `cautious_alarm`. Read the lesson for any sentence that presents these forecasters as existing models or as a measurement of the project. Challenge the sentence "a reported accuracy near 99.9% carries no information about whether it can anticipate a change": is it narrow enough, given that persistence itself is informative about the next label?
-5. Check the sources. Finley's table (28, 72, 23, 2,680; 2,803 forecasts) against the cited JWGFVR page and Murphy (1996); the four method references as cited; and the claim about `contracts/galactic-protocol.md`, which rests on one file read at commit `d9ddbaf9203a12b14c31b580070599efb8498031` outside the fixture.
+5. Check the sources. Finley's table (28, 72, 23, 2,680; 2,803 forecasts) against the cited JWGFVR page and Murphy (1996); the four method references as cited; and the claim about `contracts / galactic-protocol.md`, which rests on one file read at commit `d9ddbaf9203a12b14c31b580070599efb8498031` outside the fixture.
 6. Weigh the objection the lesson raises against itself. Is a `demoted` event dated 2026-07-18 enough to call the single change a recorded retirement and not a drift? Should the headline be 99.93% (all pairs) or 100% (pairs between feeder runs)? Is "this sample cannot distinguish a stable system from an unrevised record" supported, given that the edit history of the evolution records was not read?
 7. Attempt the five exercises before reading their answer blocks. Record ambiguity, missing inputs or arithmetic errors with section references.
 

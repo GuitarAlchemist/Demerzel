@@ -16,6 +16,10 @@ older Python versions were not run.
 | `observed-input.json` | observed | Source commit, source paths with their Git blob ids, row/run/day/artifact counts, and for each of the 18 artifacts its `citation_count`, `violation_count` and `compliance_rate` series as run-length segments, with the timestamps of its measured runs. |
 | `results.json` | computed | Output of `analyze.py`. Floats are rounded to 4 decimals (`float_decimals`). The sections `self_checks`, `theory`, `simulation`, `tipping_positive_control` and `transfer_task` are synthetic; `observed_quality_trend` is computed from the observed extract. |
 
+Artifact names are written with a space on each side of every slash (`policies / alignment-policy.yaml`):
+`scripts/evolution_metrics.py` counts every tracked file that contains an artifact's path as a citation of that
+artifact, and a data file about the artifacts is not one.
+
 ## Regenerate
 
 From the repository root:

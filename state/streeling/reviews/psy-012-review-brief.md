@@ -4,14 +4,14 @@ Status: **open**. This is a human-review and learner-trial packet. It is not an 
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`, Git blob `fd62b8aaaf0a6ebd8481e5aa31845089eb2da641` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`, Git blob `43402bf33c9b53db538fb20094bd18a2589513ce` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-012/`, programs in `scripts/streeling_fixtures/psychohistory/psy-012/`:
-  - `scripts/streeling_fixtures/psychohistory/psy-012/analyze.py` (analysis script): Git blob `87f4ad48ddc806a78a4bd51b85e5f66e1756fd71`
-  - `scripts/streeling_fixtures/psychohistory/psy-012/extract.py` (observed-data extract): Git blob `b260dcd7cba95e42abc58e5a2afa19c3dbe00be9`
+  - `scripts/streeling_fixtures/psychohistory/psy-012/analyze.py` (analysis script): Git blob `9f59f16de25fb96610330ebcb77239e62a670d54`
+  - `scripts/streeling_fixtures/psychohistory/psy-012/extract.py` (observed-data extract): Git blob `22f774c7cda1b179e5c46a3f6ce48c58a2acf164`
   - `scenarios.json` (synthetic assumptions, seeds, transfer inputs): Git blob `cca0b0da59c0b3fb6e5592c458507d495be11907`
-  - `observed-input.json` (observed extract): Git blob `6339008c3091dd841a74b8d1230fc58985578fad`
-  - `results.json` (saved results): Git blob `42ba60bbca6ae332840157d524f5c13b810da7a9`
-  - `README.md`: Git blob `c70e800ddbc6f0b2d173a9820ddcea01fd5dc7b6`
+  - `observed-input.json` (observed extract): Git blob `368e3bb40d75c7050ba2f3445983310109fd7512`
+  - `results.json` (saved results): Git blob `c4f02e9cd8c39adf7ff36dd591897a048dfae8d6`
+  - `README.md`: Git blob `23295c76122240e62b25de89472c2cc8fa8949fa`
 - Observed source: `state/quality-trend/*.jsonl` at Demerzel commit `4b03838800dcd4894f1e026461979bff1d985ca8`; the five blob ids are recorded in `observed-input.json` → `source_files`.
 - Production record: `state/streeling/course-productions/cp-psychohistory-2026-10-13-012.json`; its review and publication flags are false.
 

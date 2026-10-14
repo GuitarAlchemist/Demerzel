@@ -85,7 +85,7 @@
   },
   "label_changes": [
     {
-      "artifact": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+      "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
       "from": "U",
       "to": "F",
       "earlier_row": {
@@ -140,7 +140,7 @@
       "file": "state/quality-trend/2026-07.jsonl",
       "line": 79,
       "timestamp": "2026-07-29T00:19:14Z",
-      "artifact": "contracts/galactic-protocol.md",
+      "artifact": "contracts / galactic-protocol.md",
       "from": null,
       "to": null,
       "reasons": [
@@ -152,7 +152,7 @@
       "file": "state/quality-trend/2026-07.jsonl",
       "line": 93,
       "timestamp": "2026-07-29T13:52:24Z",
-      "artifact": "contracts/galactic-protocol.md",
+      "artifact": "contracts / galactic-protocol.md",
       "from": null,
       "to": "T",
       "reasons": [
@@ -163,7 +163,7 @@
       "file": "state/quality-trend/2026-07.jsonl",
       "line": 94,
       "timestamp": "2026-07-29T13:52:24Z",
-      "artifact": "logic/governance-evolution.schema.json",
+      "artifact": "logic / governance-evolution.schema.json",
       "from": null,
       "to": "P",
       "reasons": [
@@ -174,7 +174,7 @@
       "file": "state/quality-trend/2026-07.jsonl",
       "line": 95,
       "timestamp": "2026-07-29T13:52:24Z",
-      "artifact": "logic/kaizen-pdca-state.schema.json",
+      "artifact": "logic / kaizen-pdca-state.schema.json",
       "from": null,
       "to": "P",
       "reasons": [
@@ -196,7 +196,7 @@
       "file": "state/quality-trend/2026-07.jsonl",
       "line": 96,
       "timestamp": "2026-07-29T13:52:24Z",
-      "artifact": "schemas/loop-state.schema.json",
+      "artifact": "schemas / loop-state.schema.json",
       "from": null,
       "to": "P",
       "reasons": [
@@ -207,7 +207,7 @@
       "file": "state/quality-trend/2026-07.jsonl",
       "line": 97,
       "timestamp": "2026-07-29T13:52:24Z",
-      "artifact": "scripts/afk_backends/",
+      "artifact": "scripts / afk_backends /",
       "from": null,
       "to": "P",
       "reasons": [
@@ -671,7 +671,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "constitutions/asimov.constitution.md",
+      "name": "constitutions / asimov.constitution.md",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -683,7 +683,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "constitutions/default.constitution.md",
+      "name": "constitutions / default.constitution.md",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -695,7 +695,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "contracts/galactic-protocol.md",
+      "name": "contracts / galactic-protocol.md",
       "rows": 82,
       "first_run_index": 6,
       "effectiveness_from": "......--TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -707,7 +707,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "crates/memristive-markov (ix)",
+      "name": "crates / memristive-markov (ix)",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
@@ -719,7 +719,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "docs/governance/harness-engineering-direction.md",
+      "name": "docs / governance / harness-engineering-direction.md",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -731,7 +731,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "docs/governance/the-sentinel-spec.md",
+      "name": "docs / governance / the-sentinel-spec.md",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
@@ -743,7 +743,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "logic/governance-evolution.schema.json",
+      "name": "logic / governance-evolution.schema.json",
       "rows": 81,
       "first_run_index": 7,
       "effectiveness_from": ".......-PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -755,7 +755,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "logic/kaizen-pdca-state.schema.json",
+      "name": "logic / kaizen-pdca-state.schema.json",
       "rows": 81,
       "first_run_index": 7,
       "effectiveness_from": ".......-PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -767,7 +767,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "logic/tetravalent-state.schema.json",
+      "name": "logic / tetravalent-state.schema.json",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -779,7 +779,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "meta/compounding-cycle",
+      "name": "meta / compounding-cycle",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
@@ -803,7 +803,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "policies/alignment-policy.yaml",
+      "name": "policies / alignment-policy.yaml",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -815,7 +815,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "policies/autonomous-loop-policy.yaml",
+      "name": "policies / autonomous-loop-policy.yaml",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -827,7 +827,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "prime-radiant/visual-governance",
+      "name": "prime-radiant / visual-governance",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
@@ -839,7 +839,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "schemas/loop-state.schema.json",
+      "name": "schemas / loop-state.schema.json",
       "rows": 81,
       "first_run_index": 7,
       "effectiveness_from": ".......-PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -851,7 +851,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "scripts/afk_backends/",
+      "name": "scripts / afk_backends /",
       "rows": 81,
       "first_run_index": 7,
       "effectiveness_from": ".......-PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -863,7 +863,7 @@
       "consecutive_changed": 0
     },
     {
-      "name": "skills/demerzel-drive + policies/autonomous-loop-policy v1.1.0",
+      "name": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
       "rows": 88,
       "first_run_index": 0,
       "effectiveness_from": "UUFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
