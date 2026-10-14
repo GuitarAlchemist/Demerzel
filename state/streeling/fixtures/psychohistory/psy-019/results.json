@@ -1,0 +1,2413 @@
+{
+  "module_id": "psy-019-combining-correlated-forecasters",
+  "kind": "synthetic, except observed_setup: every other number comes from the error model and the assumptions in scenarios.json; nothing measures a correlation between the project's agents",
+  "rounding": "closed forms are exact fractions rounded half to even to 6 decimals (percentages to 2); simulated values, standard errors and square roots to 4 decimals (6 in last_forecaster, whose differences are small); distances in standard errors to 2 decimals, computed before rounding",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "commit_check": "every file below has the Git blob id recorded for this commit (CRLF normalised to LF)",
+    "path_note": "The policy's path is a data label here: it is written with a space on each side of the slash, so that this file is not counted as a citation of a governance artifact.",
+    "files": [
+      {
+        "path": "policies / multi-model-orchestration-policy.yaml",
+        "git_blob": "226185cf13f84ac0101449f7b2677e989d975d57"
+      },
+      {
+        "path": ".claude/workflows/demerzel-tribunal-panel.js",
+        "git_blob": "1220c569a31660ccdece9aac6d6585b467ec6978"
+      },
+      {
+        "path": ".github/workflows/tribunal-panel.yml",
+        "git_blob": "028c00516d88a84978b2213a0b2755159b74812c"
+      },
+      {
+        "path": "scripts/council_emit.py",
+        "git_blob": "4db8e22fb3998735eb850cdd1578a88aa6ebba46"
+      },
+      {
+        "path": "state/council/council-2026-06-24-001.json",
+        "git_blob": "ae91b323f3a9fc3ce694d2f2810dfb1d7b4da236"
+      },
+      {
+        "path": "state/council/council-2026-06-24-002.json",
+        "git_blob": "d0343151fcb968d6758b22caac3488e1c25b9f99"
+      },
+      {
+        "path": "state/council/council-2026-06-24-003.json",
+        "git_blob": "cbf44c50a750f49b3b1bcf5f6d7e9c1f8c1d0426"
+      },
+      {
+        "path": "state/council/council-2026-06-24-004.json",
+        "git_blob": "988bbf9e5b9533f6f0309dd412b0375734c1d76a"
+      },
+      {
+        "path": "state/council/council-2026-06-24-005.json",
+        "git_blob": "11a0b34648dd5418bc53a00bb4fac0d492614afd"
+      }
+    ]
+  },
+  "observed_setup": {
+    "note": "Observed at the pinned commit: three places where the project puts one question to several judges, and the scores the council has recorded. No persona's answer and no outcome is in the files read; nothing below measures a correlation.",
+    "policy": {
+      "path": "policies / multi-model-orchestration-policy.yaml",
+      "version": "1.1.0",
+      "confidence_calibration": {
+        "single_model": {
+          "line": 199,
+          "value": "max 0.8",
+          "comment": "single model opinion capped at 0.8"
+        },
+        "two_model_agreement": {
+          "line": 200,
+          "value": "0.9",
+          "comment": "two models agree = high confidence"
+        },
+        "two_model_disagreement": {
+          "line": 201,
+          "value": "0.5",
+          "comment": "disagreement = escalate"
+        },
+        "grounded_in_sources": {
+          "line": 202,
+          "value": "+0.1",
+          "comment": "NotebookLM citation bonus"
+        },
+        "human_validated": {
+          "line": 203,
+          "value": "1.0",
+          "comment": "human override = certainty"
+        }
+      },
+      "cross_validation_rule": {
+        "line": 187,
+        "name": "cross-validation",
+        "description": "Critical decisions require agreement from at least 2 models",
+        "models": [
+          "claude",
+          "chatgpt"
+        ],
+        "threshold": "both must agree or escalate to human",
+        "provider_of_each_model": {
+          "claude": "anthropic",
+          "chatgpt": "openai"
+        }
+      }
+    },
+    "tribunal_panel": {
+      "personas": 5,
+      "sent_to_every_persona": [
+        "body",
+        "diff_excerpt",
+        "files",
+        "title"
+      ],
+      "limits_on_what_every_persona_is_sent": {
+        "characters_of_the_body": 2000,
+        "changed_files": 50,
+        "characters_of_the_diff": 15000
+      },
+      "different_for_each_persona": [
+        "concern",
+        "persona"
+      ],
+      "model_argument_of_the_run": "claude-sonnet-5",
+      "verdicts_a_persona_may_return": {
+        "line": 74,
+        "values": [
+          "block",
+          "merge_with_followups",
+          "pass"
+        ]
+      },
+      "score_a_persona_may_return": {
+        "line": 76,
+        "type": "number",
+        "description": "0..1 confidence in this PR for my concern (1 = clean)",
+        "required": false
+      },
+      "lines_that_read_a_persona_score": [
+        {
+          "line": 193,
+          "text": "score: Number.isFinite(r.score) ? r.score : null,"
+        }
+      ],
+      "consensus_rule": "strictest-wins"
+    },
+    "council": {
+      "reviewers": 2,
+      "statements": [
+        {
+          "line": 12,
+          "phrase": "deliberately heterogeneous",
+          "text": "The two reviewers are deliberately heterogeneous so the council aggregates an"
+        },
+        {
+          "line": 26,
+          "phrase": "A cross-model reviewer",
+          "text": "reviewer_b — A cross-model reviewer (Claude / Gemini / Codex, whichever API"
+        },
+        {
+          "line": 29,
+          "phrase": "genuinely different model from reviewer_a's static analyzer",
+          "text": "This is a genuinely different model from reviewer_a's static analyzer, so a"
+        },
+        {
+          "line": 30,
+          "phrase": "lifts the single-model confidence cap honestly",
+          "text": "two-review verdict lifts the single-model confidence cap honestly."
+        },
+        {
+          "line": 32,
+          "phrase": "Chairman synthesis is strictest-wins",
+          "text": "Chairman synthesis is strictest-wins (matching the tribunal panel's consensus"
+        },
+        {
+          "line": 34,
+          "phrase": "is the MIN of the reviewers'",
+          "text": "constitutionally aligned; `post_council_confidence` is the MIN of the reviewers'"
+        }
+      ],
+      "confidence_line": {
+        "line": 159,
+        "text": "confidence = round(min(scores), 4)"
+      }
+    },
+    "council_records": {
+      "folder": "state/council",
+      "verdicts": 5,
+      "scores": 9,
+      "scores_by_reviewer": {
+        "reviewer_a": [
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          0.75
+        ],
+        "reviewer_b": [
+          0.3,
+          0.3,
+          0.3,
+          0.85
+        ]
+      },
+      "keys_naming_an_outcome": []
+    },
+    "counts": {
+      "confidence_calibration_entries": 5,
+      "cross_validation_models": 2,
+      "cross_validation_providers": 2,
+      "tribunal_panel_personas": 5,
+      "pull_request_fields_in_every_persona_prompt": 4,
+      "member_fields_in_the_persona_prompt": 2,
+      "lines_that_read_a_persona_score": 1,
+      "council_reviewers": 2,
+      "verdicts_a_persona_may_return": 3,
+      "council_records": 5,
+      "council_scores": 9
+    }
+  },
+  "error_model": {
+    "forecast": "forecast_i = outcome + error_i",
+    "error": "error_i = bias + sigma * (sqrt(rho) * C + sqrt(1 - rho) * I_i)",
+    "parts": {
+      "bias": "the same number for every forecaster on every occasion",
+      "C": "the common part: one draw per occasion, shared by every forecaster",
+      "I_i": "the individual part: one draw per occasion and per forecaster"
+    },
+    "draw": "(random.Random(seed).random() - 0.5) * sqrt(12): uniform between -sqrt(3) and sqrt(3), mean 0, variance 1; C and every I_i are drawn independently",
+    "consequences": "each error has mean bias and variance sigma^2; two errors have correlation rho",
+    "sigma": "1",
+    "note": "A textbook model chosen because every quantity in the lesson has a closed form for it. It is not a model of the project's agents, whose errors nobody has measured. Here 'outcome' stands for the best forecast possible: these errors leave out the part of the outcome nobody could foresee, which yes_no_outcome puts back."
+  },
+  "closed_form": {
+    "formula": "mse of the average of k forecasters = bias^2 + sigma^2 * (rho + (1 - rho) / k); worth = k / (1 + (k - 1) * rho); floor = bias^2 + rho * sigma^2; worth ceiling = 1 / rho",
+    "unit": "sigma^2 = 1 and bias = 0: every mse is a multiple of one forecaster's mean squared error",
+    "share_of_the_removable_part_removed": "1 - 1/k at every rho below 1: (1 - mse) / (1 - rho)",
+    "by_rho": {
+      "0": {
+        "floor": 0.0,
+        "floor_rmse": 0.0,
+        "worth_ceiling": null,
+        "rows": [
+          {
+            "k": 1,
+            "mse": 1.0,
+            "rmse": 1.0,
+            "worth": 1.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 0.0
+          },
+          {
+            "k": 2,
+            "mse": 0.5,
+            "rmse": 0.7071,
+            "worth": 2.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 50.0,
+            "drop_from_one_more": 0.5,
+            "drop_from_one_more_percent": 50.0
+          },
+          {
+            "k": 3,
+            "mse": 0.333333,
+            "rmse": 0.5774,
+            "worth": 3.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 66.67,
+            "drop_from_one_more": 0.166667,
+            "drop_from_one_more_percent": 33.33
+          },
+          {
+            "k": 4,
+            "mse": 0.25,
+            "rmse": 0.5,
+            "worth": 4.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 75.0,
+            "drop_from_one_more": 0.083333,
+            "drop_from_one_more_percent": 25.0
+          },
+          {
+            "k": 5,
+            "mse": 0.2,
+            "rmse": 0.4472,
+            "worth": 5.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 80.0,
+            "drop_from_one_more": 0.05,
+            "drop_from_one_more_percent": 20.0
+          },
+          {
+            "k": 6,
+            "mse": 0.166667,
+            "rmse": 0.4082,
+            "worth": 6.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 83.33,
+            "drop_from_one_more": 0.033333,
+            "drop_from_one_more_percent": 16.67
+          },
+          {
+            "k": 7,
+            "mse": 0.142857,
+            "rmse": 0.378,
+            "worth": 7.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 85.71,
+            "drop_from_one_more": 0.02381,
+            "drop_from_one_more_percent": 14.29
+          },
+          {
+            "k": 8,
+            "mse": 0.125,
+            "rmse": 0.3536,
+            "worth": 8.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 87.5,
+            "drop_from_one_more": 0.017857,
+            "drop_from_one_more_percent": 12.5
+          },
+          {
+            "k": 9,
+            "mse": 0.111111,
+            "rmse": 0.3333,
+            "worth": 9.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 88.89,
+            "drop_from_one_more": 0.013889,
+            "drop_from_one_more_percent": 11.11
+          },
+          {
+            "k": 10,
+            "mse": 0.1,
+            "rmse": 0.3162,
+            "worth": 10.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 90.0,
+            "drop_from_one_more": 0.011111,
+            "drop_from_one_more_percent": 10.0
+          },
+          {
+            "k": 11,
+            "mse": 0.090909,
+            "rmse": 0.3015,
+            "worth": 11.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 90.91,
+            "drop_from_one_more": 0.009091,
+            "drop_from_one_more_percent": 9.09
+          },
+          {
+            "k": 12,
+            "mse": 0.083333,
+            "rmse": 0.2887,
+            "worth": 12.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 91.67,
+            "drop_from_one_more": 0.007576,
+            "drop_from_one_more_percent": 8.33
+          },
+          {
+            "k": 13,
+            "mse": 0.076923,
+            "rmse": 0.2774,
+            "worth": 13.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 92.31,
+            "drop_from_one_more": 0.00641,
+            "drop_from_one_more_percent": 7.69
+          },
+          {
+            "k": 14,
+            "mse": 0.071429,
+            "rmse": 0.2673,
+            "worth": 14.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 92.86,
+            "drop_from_one_more": 0.005495,
+            "drop_from_one_more_percent": 7.14
+          }
+        ]
+      },
+      "0.3": {
+        "floor": 0.3,
+        "floor_rmse": 0.5477,
+        "worth_ceiling": 3.333333,
+        "rows": [
+          {
+            "k": 1,
+            "mse": 1.0,
+            "rmse": 1.0,
+            "worth": 1.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 0.0
+          },
+          {
+            "k": 2,
+            "mse": 0.65,
+            "rmse": 0.8062,
+            "worth": 1.538462,
+            "share_of_one_forecaster_s_mse_removed_percent": 35.0,
+            "drop_from_one_more": 0.35,
+            "drop_from_one_more_percent": 35.0
+          },
+          {
+            "k": 3,
+            "mse": 0.533333,
+            "rmse": 0.7303,
+            "worth": 1.875,
+            "share_of_one_forecaster_s_mse_removed_percent": 46.67,
+            "drop_from_one_more": 0.116667,
+            "drop_from_one_more_percent": 17.95
+          },
+          {
+            "k": 4,
+            "mse": 0.475,
+            "rmse": 0.6892,
+            "worth": 2.105263,
+            "share_of_one_forecaster_s_mse_removed_percent": 52.5,
+            "drop_from_one_more": 0.058333,
+            "drop_from_one_more_percent": 10.94
+          },
+          {
+            "k": 5,
+            "mse": 0.44,
+            "rmse": 0.6633,
+            "worth": 2.272727,
+            "share_of_one_forecaster_s_mse_removed_percent": 56.0,
+            "drop_from_one_more": 0.035,
+            "drop_from_one_more_percent": 7.37
+          },
+          {
+            "k": 6,
+            "mse": 0.416667,
+            "rmse": 0.6455,
+            "worth": 2.4,
+            "share_of_one_forecaster_s_mse_removed_percent": 58.33,
+            "drop_from_one_more": 0.023333,
+            "drop_from_one_more_percent": 5.3
+          },
+          {
+            "k": 7,
+            "mse": 0.4,
+            "rmse": 0.6325,
+            "worth": 2.5,
+            "share_of_one_forecaster_s_mse_removed_percent": 60.0,
+            "drop_from_one_more": 0.016667,
+            "drop_from_one_more_percent": 4.0
+          },
+          {
+            "k": 8,
+            "mse": 0.3875,
+            "rmse": 0.6225,
+            "worth": 2.580645,
+            "share_of_one_forecaster_s_mse_removed_percent": 61.25,
+            "drop_from_one_more": 0.0125,
+            "drop_from_one_more_percent": 3.12
+          },
+          {
+            "k": 9,
+            "mse": 0.377778,
+            "rmse": 0.6146,
+            "worth": 2.647059,
+            "share_of_one_forecaster_s_mse_removed_percent": 62.22,
+            "drop_from_one_more": 0.009722,
+            "drop_from_one_more_percent": 2.51
+          },
+          {
+            "k": 10,
+            "mse": 0.37,
+            "rmse": 0.6083,
+            "worth": 2.702703,
+            "share_of_one_forecaster_s_mse_removed_percent": 63.0,
+            "drop_from_one_more": 0.007778,
+            "drop_from_one_more_percent": 2.06
+          },
+          {
+            "k": 11,
+            "mse": 0.363636,
+            "rmse": 0.603,
+            "worth": 2.75,
+            "share_of_one_forecaster_s_mse_removed_percent": 63.64,
+            "drop_from_one_more": 0.006364,
+            "drop_from_one_more_percent": 1.72
+          },
+          {
+            "k": 12,
+            "mse": 0.358333,
+            "rmse": 0.5986,
+            "worth": 2.790698,
+            "share_of_one_forecaster_s_mse_removed_percent": 64.17,
+            "drop_from_one_more": 0.005303,
+            "drop_from_one_more_percent": 1.46
+          },
+          {
+            "k": 13,
+            "mse": 0.353846,
+            "rmse": 0.5948,
+            "worth": 2.826087,
+            "share_of_one_forecaster_s_mse_removed_percent": 64.62,
+            "drop_from_one_more": 0.004487,
+            "drop_from_one_more_percent": 1.25
+          },
+          {
+            "k": 14,
+            "mse": 0.35,
+            "rmse": 0.5916,
+            "worth": 2.857143,
+            "share_of_one_forecaster_s_mse_removed_percent": 65.0,
+            "drop_from_one_more": 0.003846,
+            "drop_from_one_more_percent": 1.09
+          }
+        ]
+      },
+      "0.6": {
+        "floor": 0.6,
+        "floor_rmse": 0.7746,
+        "worth_ceiling": 1.666667,
+        "rows": [
+          {
+            "k": 1,
+            "mse": 1.0,
+            "rmse": 1.0,
+            "worth": 1.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 0.0
+          },
+          {
+            "k": 2,
+            "mse": 0.8,
+            "rmse": 0.8944,
+            "worth": 1.25,
+            "share_of_one_forecaster_s_mse_removed_percent": 20.0,
+            "drop_from_one_more": 0.2,
+            "drop_from_one_more_percent": 20.0
+          },
+          {
+            "k": 3,
+            "mse": 0.733333,
+            "rmse": 0.8563,
+            "worth": 1.363636,
+            "share_of_one_forecaster_s_mse_removed_percent": 26.67,
+            "drop_from_one_more": 0.066667,
+            "drop_from_one_more_percent": 8.33
+          },
+          {
+            "k": 4,
+            "mse": 0.7,
+            "rmse": 0.8367,
+            "worth": 1.428571,
+            "share_of_one_forecaster_s_mse_removed_percent": 30.0,
+            "drop_from_one_more": 0.033333,
+            "drop_from_one_more_percent": 4.55
+          },
+          {
+            "k": 5,
+            "mse": 0.68,
+            "rmse": 0.8246,
+            "worth": 1.470588,
+            "share_of_one_forecaster_s_mse_removed_percent": 32.0,
+            "drop_from_one_more": 0.02,
+            "drop_from_one_more_percent": 2.86
+          },
+          {
+            "k": 6,
+            "mse": 0.666667,
+            "rmse": 0.8165,
+            "worth": 1.5,
+            "share_of_one_forecaster_s_mse_removed_percent": 33.33,
+            "drop_from_one_more": 0.013333,
+            "drop_from_one_more_percent": 1.96
+          },
+          {
+            "k": 7,
+            "mse": 0.657143,
+            "rmse": 0.8106,
+            "worth": 1.521739,
+            "share_of_one_forecaster_s_mse_removed_percent": 34.29,
+            "drop_from_one_more": 0.009524,
+            "drop_from_one_more_percent": 1.43
+          },
+          {
+            "k": 8,
+            "mse": 0.65,
+            "rmse": 0.8062,
+            "worth": 1.538462,
+            "share_of_one_forecaster_s_mse_removed_percent": 35.0,
+            "drop_from_one_more": 0.007143,
+            "drop_from_one_more_percent": 1.09
+          },
+          {
+            "k": 9,
+            "mse": 0.644444,
+            "rmse": 0.8028,
+            "worth": 1.551724,
+            "share_of_one_forecaster_s_mse_removed_percent": 35.56,
+            "drop_from_one_more": 0.005556,
+            "drop_from_one_more_percent": 0.85
+          },
+          {
+            "k": 10,
+            "mse": 0.64,
+            "rmse": 0.8,
+            "worth": 1.5625,
+            "share_of_one_forecaster_s_mse_removed_percent": 36.0,
+            "drop_from_one_more": 0.004444,
+            "drop_from_one_more_percent": 0.69
+          },
+          {
+            "k": 11,
+            "mse": 0.636364,
+            "rmse": 0.7977,
+            "worth": 1.571429,
+            "share_of_one_forecaster_s_mse_removed_percent": 36.36,
+            "drop_from_one_more": 0.003636,
+            "drop_from_one_more_percent": 0.57
+          },
+          {
+            "k": 12,
+            "mse": 0.633333,
+            "rmse": 0.7958,
+            "worth": 1.578947,
+            "share_of_one_forecaster_s_mse_removed_percent": 36.67,
+            "drop_from_one_more": 0.00303,
+            "drop_from_one_more_percent": 0.48
+          },
+          {
+            "k": 13,
+            "mse": 0.630769,
+            "rmse": 0.7942,
+            "worth": 1.585366,
+            "share_of_one_forecaster_s_mse_removed_percent": 36.92,
+            "drop_from_one_more": 0.002564,
+            "drop_from_one_more_percent": 0.4
+          },
+          {
+            "k": 14,
+            "mse": 0.628571,
+            "rmse": 0.7928,
+            "worth": 1.590909,
+            "share_of_one_forecaster_s_mse_removed_percent": 37.14,
+            "drop_from_one_more": 0.002198,
+            "drop_from_one_more_percent": 0.35
+          }
+        ]
+      },
+      "0.9": {
+        "floor": 0.9,
+        "floor_rmse": 0.9487,
+        "worth_ceiling": 1.111111,
+        "rows": [
+          {
+            "k": 1,
+            "mse": 1.0,
+            "rmse": 1.0,
+            "worth": 1.0,
+            "share_of_one_forecaster_s_mse_removed_percent": 0.0
+          },
+          {
+            "k": 2,
+            "mse": 0.95,
+            "rmse": 0.9747,
+            "worth": 1.052632,
+            "share_of_one_forecaster_s_mse_removed_percent": 5.0,
+            "drop_from_one_more": 0.05,
+            "drop_from_one_more_percent": 5.0
+          },
+          {
+            "k": 3,
+            "mse": 0.933333,
+            "rmse": 0.9661,
+            "worth": 1.071429,
+            "share_of_one_forecaster_s_mse_removed_percent": 6.67,
+            "drop_from_one_more": 0.016667,
+            "drop_from_one_more_percent": 1.75
+          },
+          {
+            "k": 4,
+            "mse": 0.925,
+            "rmse": 0.9618,
+            "worth": 1.081081,
+            "share_of_one_forecaster_s_mse_removed_percent": 7.5,
+            "drop_from_one_more": 0.008333,
+            "drop_from_one_more_percent": 0.89
+          },
+          {
+            "k": 5,
+            "mse": 0.92,
+            "rmse": 0.9592,
+            "worth": 1.086957,
+            "share_of_one_forecaster_s_mse_removed_percent": 8.0,
+            "drop_from_one_more": 0.005,
+            "drop_from_one_more_percent": 0.54
+          },
+          {
+            "k": 6,
+            "mse": 0.916667,
+            "rmse": 0.9574,
+            "worth": 1.090909,
+            "share_of_one_forecaster_s_mse_removed_percent": 8.33,
+            "drop_from_one_more": 0.003333,
+            "drop_from_one_more_percent": 0.36
+          },
+          {
+            "k": 7,
+            "mse": 0.914286,
+            "rmse": 0.9562,
+            "worth": 1.09375,
+            "share_of_one_forecaster_s_mse_removed_percent": 8.57,
+            "drop_from_one_more": 0.002381,
+            "drop_from_one_more_percent": 0.26
+          },
+          {
+            "k": 8,
+            "mse": 0.9125,
+            "rmse": 0.9552,
+            "worth": 1.09589,
+            "share_of_one_forecaster_s_mse_removed_percent": 8.75,
+            "drop_from_one_more": 0.001786,
+            "drop_from_one_more_percent": 0.2
+          },
+          {
+            "k": 9,
+            "mse": 0.911111,
+            "rmse": 0.9545,
+            "worth": 1.097561,
+            "share_of_one_forecaster_s_mse_removed_percent": 8.89,
+            "drop_from_one_more": 0.001389,
+            "drop_from_one_more_percent": 0.15
+          },
+          {
+            "k": 10,
+            "mse": 0.91,
+            "rmse": 0.9539,
+            "worth": 1.098901,
+            "share_of_one_forecaster_s_mse_removed_percent": 9.0,
+            "drop_from_one_more": 0.001111,
+            "drop_from_one_more_percent": 0.12
+          },
+          {
+            "k": 11,
+            "mse": 0.909091,
+            "rmse": 0.9535,
+            "worth": 1.1,
+            "share_of_one_forecaster_s_mse_removed_percent": 9.09,
+            "drop_from_one_more": 0.000909,
+            "drop_from_one_more_percent": 0.1
+          },
+          {
+            "k": 12,
+            "mse": 0.908333,
+            "rmse": 0.9531,
+            "worth": 1.100917,
+            "share_of_one_forecaster_s_mse_removed_percent": 9.17,
+            "drop_from_one_more": 0.000758,
+            "drop_from_one_more_percent": 0.08
+          },
+          {
+            "k": 13,
+            "mse": 0.907692,
+            "rmse": 0.9527,
+            "worth": 1.101695,
+            "share_of_one_forecaster_s_mse_removed_percent": 9.23,
+            "drop_from_one_more": 0.000641,
+            "drop_from_one_more_percent": 0.07
+          },
+          {
+            "k": 14,
+            "mse": 0.907143,
+            "rmse": 0.9524,
+            "worth": 1.102362,
+            "share_of_one_forecaster_s_mse_removed_percent": 9.29,
+            "drop_from_one_more": 0.000549,
+            "drop_from_one_more_percent": 0.06
+          }
+        ]
+      }
+    }
+  },
+  "exact_enumeration": {
+    "note": "C and every I_i are +1 or -1 with probability 1/2 each (mean 0, variance 1). Every sign pattern is listed and weighted exactly, in fractions.",
+    "why_it_settles_the_closed_form": "(sqrt(rho) C + sqrt(1 - rho) mean(I))^2 = rho C^2 + 2 sqrt(rho (1 - rho)) C mean(I) + (1 - rho) mean(I)^2; with the three means below its mean is rho + (1 - rho) / k for every rho",
+    "hand_case": {
+      "k": 2,
+      "rho": 0.36,
+      "sqrt_rho": 0.6,
+      "sqrt_one_minus_rho": 0.8,
+      "patterns": [
+        {
+          "common": 1,
+          "individual": [
+            1,
+            1
+          ],
+          "error_of_the_average": 1.4,
+          "squared": 1.96
+        },
+        {
+          "common": 1,
+          "individual": [
+            1,
+            -1
+          ],
+          "error_of_the_average": 0.6,
+          "squared": 0.36
+        },
+        {
+          "common": 1,
+          "individual": [
+            -1,
+            1
+          ],
+          "error_of_the_average": 0.6,
+          "squared": 0.36
+        },
+        {
+          "common": 1,
+          "individual": [
+            -1,
+            -1
+          ],
+          "error_of_the_average": -0.2,
+          "squared": 0.04
+        },
+        {
+          "common": -1,
+          "individual": [
+            1,
+            1
+          ],
+          "error_of_the_average": 0.2,
+          "squared": 0.04
+        },
+        {
+          "common": -1,
+          "individual": [
+            1,
+            -1
+          ],
+          "error_of_the_average": -0.6,
+          "squared": 0.36
+        },
+        {
+          "common": -1,
+          "individual": [
+            -1,
+            1
+          ],
+          "error_of_the_average": -0.6,
+          "squared": 0.36
+        },
+        {
+          "common": -1,
+          "individual": [
+            -1,
+            -1
+          ],
+          "error_of_the_average": -1.4,
+          "squared": 1.96
+        }
+      ],
+      "mse": 0.68,
+      "closed_form": 0.68
+    },
+    "moments_by_k": [
+      {
+        "k": 1,
+        "sign_patterns": 4,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 1.0
+      },
+      {
+        "k": 2,
+        "sign_patterns": 8,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.5
+      },
+      {
+        "k": 3,
+        "sign_patterns": 16,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.333333
+      },
+      {
+        "k": 4,
+        "sign_patterns": 32,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.25
+      },
+      {
+        "k": 5,
+        "sign_patterns": 64,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.2
+      },
+      {
+        "k": 6,
+        "sign_patterns": 128,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.166667
+      },
+      {
+        "k": 7,
+        "sign_patterns": 256,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.142857
+      },
+      {
+        "k": 8,
+        "sign_patterns": 512,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.125
+      },
+      {
+        "k": 9,
+        "sign_patterns": 1024,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.111111
+      },
+      {
+        "k": 10,
+        "sign_patterns": 2048,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.1
+      },
+      {
+        "k": 11,
+        "sign_patterns": 4096,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.090909
+      },
+      {
+        "k": 12,
+        "sign_patterns": 8192,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.083333
+      },
+      {
+        "k": 13,
+        "sign_patterns": 16384,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.076923
+      },
+      {
+        "k": 14,
+        "sign_patterns": 32768,
+        "mean_of_c_squared": 1.0,
+        "mean_of_c_times_mean_i": 0.0,
+        "mean_of_mean_i_squared": 0.071429
+      }
+    ]
+  },
+  "simulation": {
+    "seed": 20261019,
+    "occasions": 200000,
+    "draw_order": "per occasion: C, then I_1 to I_14; the same draws serve every rho and every k (the average of the first k forecasters)",
+    "standard_error": "of the simulated mean squared error: sqrt(sample variance of the squared errors / occasions)",
+    "cells": 56,
+    "standard_errors_limit": 4,
+    "cells_within_the_limit": 56,
+    "largest_distance_in_standard_errors": 1.02,
+    "independent_formula_control": {
+      "note": "The same test applied to a formula known to be wrong when rho > 0: sigma^2 / k.",
+      "cells": 39,
+      "cells_rejected": 39,
+      "smallest_distance_in_standard_errors": 82.26
+    },
+    "by_rho": {
+      "0": [
+        {
+          "k": 1,
+          "closed_form": 1.0,
+          "simulated": 1.0007,
+          "standard_error": 0.002,
+          "standard_errors_from_the_closed_form": 0.34
+        },
+        {
+          "k": 2,
+          "closed_form": 0.5,
+          "simulated": 0.5008,
+          "standard_error": 0.0013,
+          "standard_errors_from_the_closed_form": 0.62
+        },
+        {
+          "k": 3,
+          "closed_form": 0.333333,
+          "simulated": 0.3342,
+          "standard_error": 0.0009,
+          "standard_errors_from_the_closed_form": 0.9
+        },
+        {
+          "k": 4,
+          "closed_form": 0.25,
+          "simulated": 0.2501,
+          "standard_error": 0.0007,
+          "standard_errors_from_the_closed_form": 0.15
+        },
+        {
+          "k": 5,
+          "closed_form": 0.2,
+          "simulated": 0.2002,
+          "standard_error": 0.0006,
+          "standard_errors_from_the_closed_form": 0.41
+        },
+        {
+          "k": 6,
+          "closed_form": 0.166667,
+          "simulated": 0.1665,
+          "standard_error": 0.0005,
+          "standard_errors_from_the_closed_form": -0.38
+        },
+        {
+          "k": 7,
+          "closed_form": 0.142857,
+          "simulated": 0.1426,
+          "standard_error": 0.0004,
+          "standard_errors_from_the_closed_form": -0.61
+        },
+        {
+          "k": 8,
+          "closed_form": 0.125,
+          "simulated": 0.1249,
+          "standard_error": 0.0004,
+          "standard_errors_from_the_closed_form": -0.35
+        },
+        {
+          "k": 9,
+          "closed_form": 0.111111,
+          "simulated": 0.1111,
+          "standard_error": 0.0003,
+          "standard_errors_from_the_closed_form": 0.07
+        },
+        {
+          "k": 10,
+          "closed_form": 0.1,
+          "simulated": 0.1001,
+          "standard_error": 0.0003,
+          "standard_errors_from_the_closed_form": 0.26
+        },
+        {
+          "k": 11,
+          "closed_form": 0.090909,
+          "simulated": 0.0909,
+          "standard_error": 0.0003,
+          "standard_errors_from_the_closed_form": -0.21
+        },
+        {
+          "k": 12,
+          "closed_form": 0.083333,
+          "simulated": 0.0833,
+          "standard_error": 0.0003,
+          "standard_errors_from_the_closed_form": 0.02
+        },
+        {
+          "k": 13,
+          "closed_form": 0.076923,
+          "simulated": 0.0771,
+          "standard_error": 0.0002,
+          "standard_errors_from_the_closed_form": 0.59
+        },
+        {
+          "k": 14,
+          "closed_form": 0.071429,
+          "simulated": 0.0716,
+          "standard_error": 0.0002,
+          "standard_errors_from_the_closed_form": 0.87
+        }
+      ],
+      "0.3": [
+        {
+          "k": 1,
+          "closed_form": 1.0,
+          "simulated": 0.9987,
+          "standard_error": 0.0025,
+          "standard_errors_from_the_closed_form": -0.51
+        },
+        {
+          "k": 2,
+          "closed_form": 0.65,
+          "simulated": 0.6498,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.12,
+          "standard_errors_from_the_independent_formula": 82.26
+        },
+        {
+          "k": 3,
+          "closed_form": 0.533333,
+          "simulated": 0.5326,
+          "standard_error": 0.0015,
+          "standard_errors_from_the_closed_form": -0.49,
+          "standard_errors_from_the_independent_formula": 134.64
+        },
+        {
+          "k": 4,
+          "closed_form": 0.475,
+          "simulated": 0.4739,
+          "standard_error": 0.0013,
+          "standard_errors_from_the_closed_form": -0.82,
+          "standard_errors_from_the_independent_formula": 173.51
+        },
+        {
+          "k": 5,
+          "closed_form": 0.44,
+          "simulated": 0.4398,
+          "standard_error": 0.0012,
+          "standard_errors_from_the_closed_form": -0.18,
+          "standard_errors_from_the_independent_formula": 204.65
+        },
+        {
+          "k": 6,
+          "closed_form": 0.416667,
+          "simulated": 0.4165,
+          "standard_error": 0.0011,
+          "standard_errors_from_the_closed_form": -0.13,
+          "standard_errors_from_the_independent_formula": 229.67
+        },
+        {
+          "k": 7,
+          "closed_form": 0.4,
+          "simulated": 0.3999,
+          "standard_error": 0.001,
+          "standard_errors_from_the_closed_form": -0.1,
+          "standard_errors_from_the_independent_formula": 250.48
+        },
+        {
+          "k": 8,
+          "closed_form": 0.3875,
+          "simulated": 0.3877,
+          "standard_error": 0.001,
+          "standard_errors_from_the_closed_form": 0.16,
+          "standard_errors_from_the_independent_formula": 268.15
+        },
+        {
+          "k": 9,
+          "closed_form": 0.377778,
+          "simulated": 0.3782,
+          "standard_error": 0.0009,
+          "standard_errors_from_the_closed_form": 0.49,
+          "standard_errors_from_the_independent_formula": 283.54
+        },
+        {
+          "k": 10,
+          "closed_form": 0.37,
+          "simulated": 0.3701,
+          "standard_error": 0.0009,
+          "standard_errors_from_the_closed_form": 0.13,
+          "standard_errors_from_the_independent_formula": 296.45
+        },
+        {
+          "k": 11,
+          "closed_form": 0.363636,
+          "simulated": 0.3636,
+          "standard_error": 0.0009,
+          "standard_errors_from_the_closed_form": -0.05,
+          "standard_errors_from_the_independent_formula": 308.05
+        },
+        {
+          "k": 12,
+          "closed_form": 0.358333,
+          "simulated": 0.3586,
+          "standard_error": 0.0009,
+          "standard_errors_from_the_closed_form": 0.3,
+          "standard_errors_from_the_independent_formula": 318.43
+        },
+        {
+          "k": 13,
+          "closed_form": 0.353846,
+          "simulated": 0.3541,
+          "standard_error": 0.0008,
+          "standard_errors_from_the_closed_form": 0.34,
+          "standard_errors_from_the_independent_formula": 327.61
+        },
+        {
+          "k": 14,
+          "closed_form": 0.35,
+          "simulated": 0.3504,
+          "standard_error": 0.0008,
+          "standard_errors_from_the_closed_form": 0.45,
+          "standard_errors_from_the_independent_formula": 335.9
+        }
+      ],
+      "0.6": [
+        {
+          "k": 1,
+          "closed_form": 1.0,
+          "simulated": 0.9979,
+          "standard_error": 0.0026,
+          "standard_errors_from_the_closed_form": -0.81
+        },
+        {
+          "k": 2,
+          "closed_form": 0.8,
+          "simulated": 0.799,
+          "standard_error": 0.002,
+          "standard_errors_from_the_closed_form": -0.49,
+          "standard_errors_from_the_independent_formula": 147.37
+        },
+        {
+          "k": 3,
+          "closed_form": 0.733333,
+          "simulated": 0.7318,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.87,
+          "standard_errors_from_the_independent_formula": 223.52
+        },
+        {
+          "k": 4,
+          "closed_form": 0.7,
+          "simulated": 0.6983,
+          "standard_error": 0.0016,
+          "standard_errors_from_the_closed_form": -1.0,
+          "standard_errors_from_the_independent_formula": 271.82
+        },
+        {
+          "k": 5,
+          "closed_form": 0.68,
+          "simulated": 0.6792,
+          "standard_error": 0.0016,
+          "standard_errors_from_the_closed_form": -0.5,
+          "standard_errors_from_the_independent_formula": 305.79
+        },
+        {
+          "k": 6,
+          "closed_form": 0.666667,
+          "simulated": 0.6661,
+          "standard_error": 0.0015,
+          "standard_errors_from_the_closed_form": -0.37,
+          "standard_errors_from_the_independent_formula": 330.63
+        },
+        {
+          "k": 7,
+          "closed_form": 0.657143,
+          "simulated": 0.6566,
+          "standard_error": 0.0015,
+          "standard_errors_from_the_closed_form": -0.34,
+          "standard_errors_from_the_independent_formula": 349.87
+        },
+        {
+          "k": 8,
+          "closed_form": 0.65,
+          "simulated": 0.6497,
+          "standard_error": 0.0014,
+          "standard_errors_from_the_closed_form": -0.18,
+          "standard_errors_from_the_independent_formula": 365.03
+        },
+        {
+          "k": 9,
+          "closed_form": 0.644444,
+          "simulated": 0.6444,
+          "standard_error": 0.0014,
+          "standard_errors_from_the_closed_form": 0.0,
+          "standard_errors_from_the_independent_formula": 377.39
+        },
+        {
+          "k": 10,
+          "closed_form": 0.64,
+          "simulated": 0.6396,
+          "standard_error": 0.0014,
+          "standard_errors_from_the_closed_form": -0.27,
+          "standard_errors_from_the_independent_formula": 387.52
+        },
+        {
+          "k": 11,
+          "closed_form": 0.636364,
+          "simulated": 0.6359,
+          "standard_error": 0.0014,
+          "standard_errors_from_the_closed_form": -0.37,
+          "standard_errors_from_the_independent_formula": 396.12
+        },
+        {
+          "k": 12,
+          "closed_form": 0.633333,
+          "simulated": 0.6331,
+          "standard_error": 0.0014,
+          "standard_errors_from_the_closed_form": -0.15,
+          "standard_errors_from_the_independent_formula": 403.43
+        },
+        {
+          "k": 13,
+          "closed_form": 0.630769,
+          "simulated": 0.6305,
+          "standard_error": 0.0014,
+          "standard_errors_from_the_closed_form": -0.16,
+          "standard_errors_from_the_independent_formula": 409.84
+        },
+        {
+          "k": 14,
+          "closed_form": 0.628571,
+          "simulated": 0.6284,
+          "standard_error": 0.0013,
+          "standard_errors_from_the_closed_form": -0.11,
+          "standard_errors_from_the_independent_formula": 415.47
+        }
+      ],
+      "0.9": [
+        {
+          "k": 1,
+          "closed_form": 1.0,
+          "simulated": 0.9977,
+          "standard_error": 0.0023,
+          "standard_errors_from_the_closed_form": -1.02
+        },
+        {
+          "k": 2,
+          "closed_form": 0.95,
+          "simulated": 0.9484,
+          "standard_error": 0.002,
+          "standard_errors_from_the_closed_form": -0.81,
+          "standard_errors_from_the_independent_formula": 219.93
+        },
+        {
+          "k": 3,
+          "closed_form": 0.933333,
+          "simulated": 0.9314,
+          "standard_error": 0.002,
+          "standard_errors_from_the_closed_form": -1.01,
+          "standard_errors_from_the_independent_formula": 304.91
+        },
+        {
+          "k": 4,
+          "closed_form": 0.925,
+          "simulated": 0.9231,
+          "standard_error": 0.0019,
+          "standard_errors_from_the_closed_form": -1.01,
+          "standard_errors_from_the_independent_formula": 350.21
+        },
+        {
+          "k": 5,
+          "closed_form": 0.92,
+          "simulated": 0.9186,
+          "standard_error": 0.0019,
+          "standard_errors_from_the_closed_form": -0.75,
+          "standard_errors_from_the_independent_formula": 378.6
+        },
+        {
+          "k": 6,
+          "closed_form": 0.916667,
+          "simulated": 0.9154,
+          "standard_error": 0.0019,
+          "standard_errors_from_the_closed_form": -0.65,
+          "standard_errors_from_the_independent_formula": 397.77
+        },
+        {
+          "k": 7,
+          "closed_form": 0.914286,
+          "simulated": 0.9131,
+          "standard_error": 0.0019,
+          "standard_errors_from_the_closed_form": -0.63,
+          "standard_errors_from_the_independent_formula": 411.82
+        },
+        {
+          "k": 8,
+          "closed_form": 0.9125,
+          "simulated": 0.9114,
+          "standard_error": 0.0019,
+          "standard_errors_from_the_closed_form": -0.56,
+          "standard_errors_from_the_independent_formula": 422.39
+        },
+        {
+          "k": 9,
+          "closed_form": 0.911111,
+          "simulated": 0.9102,
+          "standard_error": 0.0019,
+          "standard_errors_from_the_closed_form": -0.49,
+          "standard_errors_from_the_independent_formula": 430.63
+        },
+        {
+          "k": 10,
+          "closed_form": 0.91,
+          "simulated": 0.9088,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.62,
+          "standard_errors_from_the_independent_formula": 437.29
+        },
+        {
+          "k": 11,
+          "closed_form": 0.909091,
+          "simulated": 0.9079,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.66,
+          "standard_errors_from_the_independent_formula": 442.73
+        },
+        {
+          "k": 12,
+          "closed_form": 0.908333,
+          "simulated": 0.9073,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.56,
+          "standard_errors_from_the_independent_formula": 447.26
+        },
+        {
+          "k": 13,
+          "closed_form": 0.907692,
+          "simulated": 0.9066,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.58,
+          "standard_errors_from_the_independent_formula": 451.2
+        },
+        {
+          "k": 14,
+          "closed_form": 0.907143,
+          "simulated": 0.9061,
+          "standard_error": 0.0018,
+          "standard_errors_from_the_closed_form": -0.56,
+          "standard_errors_from_the_independent_formula": 454.6
+        }
+      ]
+    }
+  },
+  "last_forecaster": {
+    "note": "The squared error of the average of the first k - 1 forecasters minus that of the first k, on each occasion; its mean estimates the drop far more sharply than the difference of two cells of the table, because both use the same draws.",
+    "from_k": 13,
+    "to_k": 14,
+    "formula": "drop = sigma^2 (1 - rho) / (k (k - 1))",
+    "independent_drop": 0.005495,
+    "by_rho": {
+      "0": {
+        "closed_form": 0.005495,
+        "simulated": 0.005442,
+        "standard_error": 8.9e-05,
+        "standard_errors_from_the_closed_form": -0.6,
+        "within_the_limit": true,
+        "standard_errors_from_zero": 61.35,
+        "closed_form_percent_of_the_mse_before": 7.14,
+        "simulated_percent_of_the_simulated_mse_before": 7.06
+      },
+      "0.3": {
+        "closed_form": 0.003846,
+        "simulated": 0.003758,
+        "standard_error": 0.000164,
+        "standard_errors_from_the_closed_form": -0.54,
+        "within_the_limit": true,
+        "standard_errors_from_zero": 22.86,
+        "closed_form_percent_of_the_mse_before": 1.09,
+        "simulated_percent_of_the_simulated_mse_before": 1.06,
+        "standard_errors_from_the_independent_drop": -10.56
+      },
+      "0.6": {
+        "closed_form": 0.002198,
+        "simulated": 0.002122,
+        "standard_error": 0.000166,
+        "standard_errors_from_the_closed_form": -0.46,
+        "within_the_limit": true,
+        "standard_errors_from_zero": 12.75,
+        "closed_form_percent_of_the_mse_before": 0.35,
+        "simulated_percent_of_the_simulated_mse_before": 0.34,
+        "standard_errors_from_the_independent_drop": -20.26
+      },
+      "0.9": {
+        "closed_form": 0.000549,
+        "simulated": 0.000511,
+        "standard_error": 0.0001,
+        "standard_errors_from_the_closed_form": -0.39,
+        "within_the_limit": true,
+        "standard_errors_from_zero": 5.11,
+        "closed_form_percent_of_the_mse_before": 0.06,
+        "simulated_percent_of_the_simulated_mse_before": 0.06,
+        "standard_errors_from_the_independent_drop": -49.86
+      }
+    }
+  },
+  "direct_check": {
+    "occasions": 1000,
+    "totals_compared": 64,
+    "largest_gap_between_the_two_paths_is_below": 1e-09,
+    "identity": {
+      "statement": "(error of the average)^2 = mean of the squared errors of the k forecasters - mean of the squared distances of their forecasts from the average",
+      "cases_checked": 8000,
+      "violations_above_1e-12": 0
+    },
+    "stale_average_control": {
+      "cases": 8000,
+      "detected": 8000
+    }
+  },
+  "spread": {
+    "definition": "spread = mean over the k forecasters of (forecast - average of the k forecasts)^2; it needs no outcome. expected spread = sigma^2 (1 - rho) (k - 1) / k: the common part cancels.",
+    "recovery": "rho recovered = 1 - (k / (k - 1)) * spread / mean squared error of one forecaster, which needs the outcomes; here from all the simulated occasions",
+    "simulated_spread_is": "the simulated mean squared error of one forecaster minus that of the average",
+    "rows": [
+      {
+        "rho": 0.0,
+        "k": 5,
+        "expected_spread": 0.8,
+        "simulated_spread": 0.801,
+        "typical_distance_between_a_forecast_and_the_average": 0.8944,
+        "mse_of_the_average": 0.2,
+        "typical_error_of_the_average": 0.4472,
+        "simulated_mse_of_one_forecaster": 1.0012,
+        "rho_recovered_from_scored_forecasts": 0.0
+      },
+      {
+        "rho": 0.0,
+        "k": 14,
+        "expected_spread": 0.928571,
+        "simulated_spread": 0.9287,
+        "typical_distance_between_a_forecast_and_the_average": 0.9636,
+        "mse_of_the_average": 0.071429,
+        "typical_error_of_the_average": 0.2673,
+        "simulated_mse_of_one_forecaster": 1.0003,
+        "rho_recovered_from_scored_forecasts": 0.0002
+      },
+      {
+        "rho": 0.3,
+        "k": 5,
+        "expected_spread": 0.56,
+        "simulated_spread": 0.5607,
+        "typical_distance_between_a_forecast_and_the_average": 0.7483,
+        "mse_of_the_average": 0.44,
+        "typical_error_of_the_average": 0.6633,
+        "simulated_mse_of_one_forecaster": 1.0005,
+        "rho_recovered_from_scored_forecasts": 0.2995
+      },
+      {
+        "rho": 0.3,
+        "k": 14,
+        "expected_spread": 0.65,
+        "simulated_spread": 0.6501,
+        "typical_distance_between_a_forecast_and_the_average": 0.8062,
+        "mse_of_the_average": 0.35,
+        "typical_error_of_the_average": 0.5916,
+        "simulated_mse_of_one_forecaster": 1.0005,
+        "rho_recovered_from_scored_forecasts": 0.3002
+      },
+      {
+        "rho": 0.6,
+        "k": 5,
+        "expected_spread": 0.32,
+        "simulated_spread": 0.3204,
+        "typical_distance_between_a_forecast_and_the_average": 0.5657,
+        "mse_of_the_average": 0.68,
+        "typical_error_of_the_average": 0.8246,
+        "simulated_mse_of_one_forecaster": 0.9996,
+        "rho_recovered_from_scored_forecasts": 0.5994
+      },
+      {
+        "rho": 0.6,
+        "k": 14,
+        "expected_spread": 0.371429,
+        "simulated_spread": 0.3715,
+        "typical_distance_between_a_forecast_and_the_average": 0.6094,
+        "mse_of_the_average": 0.628571,
+        "typical_error_of_the_average": 0.7928,
+        "simulated_mse_of_one_forecaster": 0.9999,
+        "rho_recovered_from_scored_forecasts": 0.5999
+      },
+      {
+        "rho": 0.9,
+        "k": 5,
+        "expected_spread": 0.08,
+        "simulated_spread": 0.0801,
+        "typical_distance_between_a_forecast_and_the_average": 0.2828,
+        "mse_of_the_average": 0.92,
+        "typical_error_of_the_average": 0.9592,
+        "simulated_mse_of_one_forecaster": 0.9987,
+        "rho_recovered_from_scored_forecasts": 0.8997
+      },
+      {
+        "rho": 0.9,
+        "k": 14,
+        "expected_spread": 0.092857,
+        "simulated_spread": 0.0929,
+        "typical_distance_between_a_forecast_and_the_average": 0.3047,
+        "mse_of_the_average": 0.907143,
+        "typical_error_of_the_average": 0.9524,
+        "simulated_mse_of_one_forecaster": 0.999,
+        "rho_recovered_from_scored_forecasts": 0.8999
+      }
+    ]
+  },
+  "shared_bias": {
+    "seed": 20261020,
+    "occasions": 100000,
+    "rho": 0.3,
+    "bias": 0.5,
+    "formula": "mse = bias^2 + sigma^2 (rho + (1 - rho) / k)",
+    "floor": 0.55,
+    "floor_once_the_bias_is_subtracted": 0.3,
+    "rows": [
+      {
+        "k": 1,
+        "closed_form": 1.25,
+        "bias_squared": 0.25,
+        "variance_of_the_average": 1.0,
+        "bias_share_of_the_mse_percent": 20.0,
+        "simulated": 1.2565,
+        "standard_error": 0.0048,
+        "standard_errors_from_the_closed_form": 1.35,
+        "within_the_limit": true,
+        "simulated_mean_error_of_the_average": 0.5032
+      },
+      {
+        "k": 5,
+        "closed_form": 0.69,
+        "bias_squared": 0.25,
+        "variance_of_the_average": 0.44,
+        "bias_share_of_the_mse_percent": 36.23,
+        "simulated": 0.6936,
+        "standard_error": 0.0027,
+        "standard_errors_from_the_closed_form": 1.35,
+        "within_the_limit": true,
+        "simulated_mean_error_of_the_average": 0.5015
+      },
+      {
+        "k": 14,
+        "closed_form": 0.6,
+        "bias_squared": 0.25,
+        "variance_of_the_average": 0.35,
+        "bias_share_of_the_mse_percent": 41.67,
+        "simulated": 0.6002,
+        "standard_error": 0.0022,
+        "standard_errors_from_the_closed_form": 0.08,
+        "within_the_limit": true,
+        "simulated_mean_error_of_the_average": 0.5006
+      }
+    ]
+  },
+  "newcomer": {
+    "note": "Thirteen forecasters on one model reading one context, then a fourteenth of four kinds. The split of the shared variance between context and model is invented.",
+    "error": "error_i = sqrt(context_share) * X_context(i) + sqrt(model_share) * Y_model(i) + sqrt(1 - context_share - model_share) * I_i, with sigma = 1 and no bias",
+    "panel_size": 13,
+    "context_share": 0.3,
+    "model_share": 0.3,
+    "panel_correlation": 0.6,
+    "formulas": "equal weights: every forecast weighs 1 / (n + 1). best weights (Bates and Granger): with v the mse of the panel's average and c the newcomer's correlation with a panel member, weight of the newcomer = (v - c) / (v + 1 - 2 c) and mse = (v - c^2) / (v + 1 - 2 c); each panel member weighs (1 - weight) / n. drop_percent is the fall of the mse from the panel alone; worth = 1 / mse.",
+    "kinds": {
+      "same_model_same_context": {
+        "shares_context": true,
+        "shares_model": true,
+        "correlation_with_a_panel_member": 0.6,
+        "mse_of_the_panel_alone": 0.630769,
+        "equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.628571,
+          "drop_percent": 0.35,
+          "worth": 1.590909
+        },
+        "best_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.628571,
+          "drop_percent": 0.35,
+          "worth": 1.590909
+        }
+      },
+      "other_model_same_context": {
+        "shares_context": true,
+        "shares_model": false,
+        "correlation_with_a_panel_member": 0.3,
+        "mse_of_the_panel_alone": 0.630769,
+        "equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.588776,
+          "drop_percent": 6.66,
+          "worth": 1.69844
+        },
+        "best_weights": {
+          "weight_of_the_newcomer": 0.320896,
+          "mse": 0.524627,
+          "drop_percent": 16.83,
+          "worth": 1.906117
+        }
+      },
+      "same_model_own_context": {
+        "shares_context": false,
+        "shares_model": true,
+        "correlation_with_a_panel_member": 0.3,
+        "mse_of_the_panel_alone": 0.630769,
+        "equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.588776,
+          "drop_percent": 6.66,
+          "worth": 1.69844
+        },
+        "best_weights": {
+          "weight_of_the_newcomer": 0.320896,
+          "mse": 0.524627,
+          "drop_percent": 16.83,
+          "worth": 1.906117
+        }
+      },
+      "other_model_own_context": {
+        "shares_context": false,
+        "shares_model": false,
+        "correlation_with_a_panel_member": 0.0,
+        "mse_of_the_panel_alone": 0.630769,
+        "equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.54898,
+          "drop_percent": 12.97,
+          "worth": 1.821561
+        },
+        "best_weights": {
+          "weight_of_the_newcomer": 0.386792,
+          "mse": 0.386792,
+          "drop_percent": 38.68,
+          "worth": 2.585366
+        }
+      }
+    },
+    "one_independent_newcomer_by_rho": {
+      "0": {
+        "thirteen_alone": 0.076923,
+        "fourteen_of_the_same_source": 0.071429,
+        "thirteen_plus_one_independent_equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.071429,
+          "drop_percent": 7.14,
+          "worth": 14.0
+        },
+        "thirteen_plus_one_independent_best_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.071429,
+          "drop_percent": 7.14,
+          "worth": 14.0
+        }
+      },
+      "0.3": {
+        "thirteen_alone": 0.353846,
+        "fourteen_of_the_same_source": 0.35,
+        "thirteen_plus_one_independent_equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.310204,
+          "drop_percent": 12.33,
+          "worth": 3.223684
+        },
+        "thirteen_plus_one_independent_best_weights": {
+          "weight_of_the_newcomer": 0.261364,
+          "mse": 0.261364,
+          "drop_percent": 26.14,
+          "worth": 3.826087
+        }
+      },
+      "0.6": {
+        "thirteen_alone": 0.630769,
+        "fourteen_of_the_same_source": 0.628571,
+        "thirteen_plus_one_independent_equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.54898,
+          "drop_percent": 12.97,
+          "worth": 1.821561
+        },
+        "thirteen_plus_one_independent_best_weights": {
+          "weight_of_the_newcomer": 0.386792,
+          "mse": 0.386792,
+          "drop_percent": 38.68,
+          "worth": 2.585366
+        }
+      },
+      "0.9": {
+        "thirteen_alone": 0.907692,
+        "fourteen_of_the_same_source": 0.907143,
+        "thirteen_plus_one_independent_equal_weights": {
+          "weight_of_the_newcomer": 0.071429,
+          "mse": 0.787755,
+          "drop_percent": 13.21,
+          "worth": 1.26943
+        },
+        "thirteen_plus_one_independent_best_weights": {
+          "weight_of_the_newcomer": 0.475806,
+          "mse": 0.475806,
+          "drop_percent": 47.58,
+          "worth": 2.101695
+        }
+      }
+    }
+  },
+  "newcomer_simulation": {
+    "seed": 20261021,
+    "occasions": 100000,
+    "draw_order": "per occasion: X for the panel's context, X for another context, Y for the panel's model, Y for another model, then I_1 to I_14",
+    "panel_alone": {
+      "closed_form": 0.630769,
+      "simulated": 0.6296,
+      "standard_error": 0.0024,
+      "standard_errors_from_the_closed_form": -0.49
+    },
+    "cells": 8,
+    "standard_errors_limit": 4,
+    "cells_within_the_limit": 8,
+    "kinds": {
+      "same_model_same_context": {
+        "equal_weights": {
+          "closed_form": 0.628571,
+          "simulated": 0.6271,
+          "standard_error": 0.0024,
+          "standard_errors_from_the_closed_form": -0.62
+        },
+        "best_weights": {
+          "closed_form": 0.628571,
+          "simulated": 0.6271,
+          "standard_error": 0.0024,
+          "standard_errors_from_the_closed_form": -0.62
+        }
+      },
+      "other_model_same_context": {
+        "equal_weights": {
+          "closed_form": 0.588776,
+          "simulated": 0.5873,
+          "standard_error": 0.0022,
+          "standard_errors_from_the_closed_form": -0.64
+        },
+        "best_weights": {
+          "closed_form": 0.524627,
+          "simulated": 0.5226,
+          "standard_error": 0.002,
+          "standard_errors_from_the_closed_form": -0.98
+        }
+      },
+      "same_model_own_context": {
+        "equal_weights": {
+          "closed_form": 0.588776,
+          "simulated": 0.5875,
+          "standard_error": 0.0022,
+          "standard_errors_from_the_closed_form": -0.59
+        },
+        "best_weights": {
+          "closed_form": 0.524627,
+          "simulated": 0.5229,
+          "standard_error": 0.002,
+          "standard_errors_from_the_closed_form": -0.86
+        }
+      },
+      "other_model_own_context": {
+        "equal_weights": {
+          "closed_form": 0.54898,
+          "simulated": 0.5477,
+          "standard_error": 0.0021,
+          "standard_errors_from_the_closed_form": -0.61
+        },
+        "best_weights": {
+          "closed_form": 0.386792,
+          "simulated": 0.3857,
+          "standard_error": 0.0016,
+          "standard_errors_from_the_closed_form": -0.69
+        }
+      }
+    }
+  },
+  "agreement_of_two": {
+    "reading": "A reading that the policy does not state: its confidence settings are taken as probabilities of being right on a yes/no question. Two judges are each right with probability p; rho is the correlation between 'judge 1 is right' and 'judge 2 is right'. On a yes/no question two wrong answers coincide.",
+    "accuracy_of_each_judge": 0.8,
+    "policy_value_for_agreement": 0.9,
+    "policy_value_for_disagreement": 0.5,
+    "formula": "right given agreement = (p^2 + rho p q) / (p^2 + q^2 + 2 rho p q), with q = 1 - p",
+    "rows": [
+      {
+        "rho": 0.0,
+        "both_right": 0.64,
+        "both_wrong": 0.04,
+        "one_right_one_wrong": 0.32,
+        "they_agree": 0.68,
+        "right_given_agreement": 0.941176,
+        "gain_over_one_judge": 0.141176
+      },
+      {
+        "rho": 0.3,
+        "both_right": 0.688,
+        "both_wrong": 0.088,
+        "one_right_one_wrong": 0.224,
+        "they_agree": 0.776,
+        "right_given_agreement": 0.886598,
+        "gain_over_one_judge": 0.086598
+      },
+      {
+        "rho": 0.6,
+        "both_right": 0.736,
+        "both_wrong": 0.136,
+        "one_right_one_wrong": 0.128,
+        "they_agree": 0.872,
+        "right_given_agreement": 0.844037,
+        "gain_over_one_judge": 0.044037
+      },
+      {
+        "rho": 0.9,
+        "both_right": 0.784,
+        "both_wrong": 0.184,
+        "one_right_one_wrong": 0.032,
+        "they_agree": 0.968,
+        "right_given_agreement": 0.809917,
+        "gain_over_one_judge": 0.009917
+      },
+      {
+        "rho": 1.0,
+        "both_right": 0.8,
+        "both_wrong": 0.2,
+        "one_right_one_wrong": 0.0,
+        "they_agree": 1.0,
+        "right_given_agreement": 0.8,
+        "gain_over_one_judge": 0.0
+      }
+    ],
+    "correlation_at_which_agreement_is_worth_the_policy_value": {
+      "formula": "rho = (p^2 - v (p^2 + q^2)) / (p q (2 v - 1)), with v the policy's value for agreement",
+      "exact": "7/32",
+      "value": 0.21875,
+      "between_0_and_1": true,
+      "they_agree": 0.75
+    },
+    "right_given_disagreement": {
+      "value": 0.5,
+      "equals_the_policy_value": true,
+      "depends_on_rho": false
+    },
+    "lowest_accuracy_for_which_independent_judges_reach_the_policy_value": 0.75
+  },
+  "scored_log": {
+    "note": "What a log of scored forecasts could tell about rho if the errors left out the part of the outcome nobody could foresee (yes_no_outcome puts it back). One log = a number of occasions, each with the errors of every agent. Estimate: 1 - (k / (k - 1)) * mean spread / mean squared error of one agent.",
+    "agents": 5,
+    "seed": 20261023,
+    "logs": 1000,
+    "percentile_rule": "nearest rank: the value at position ceil(q / 100 * logs) of the sorted estimates",
+    "draw_order": "per log and per occasion: C, then one I per agent; a log of 20 occasions is the first 20 of the 100",
+    "rows": [
+      {
+        "true_rho": 0.0,
+        "occasions_per_log": 20,
+        "logs": 1000,
+        "percentile_5": -0.1089,
+        "percentile_50": -0.0081,
+        "percentile_95": 0.1226
+      },
+      {
+        "true_rho": 0.0,
+        "occasions_per_log": 100,
+        "logs": 1000,
+        "percentile_5": -0.0515,
+        "percentile_50": -0.0025,
+        "percentile_95": 0.0505
+      },
+      {
+        "true_rho": 0.3,
+        "occasions_per_log": 20,
+        "logs": 1000,
+        "percentile_5": 0.1496,
+        "percentile_50": 0.2874,
+        "percentile_95": 0.4459
+      },
+      {
+        "true_rho": 0.3,
+        "occasions_per_log": 100,
+        "logs": 1000,
+        "percentile_5": 0.2313,
+        "percentile_50": 0.2989,
+        "percentile_95": 0.3634
+      },
+      {
+        "true_rho": 0.6,
+        "occasions_per_log": 20,
+        "logs": 1000,
+        "percentile_5": 0.4722,
+        "percentile_50": 0.5943,
+        "percentile_95": 0.702
+      },
+      {
+        "true_rho": 0.6,
+        "occasions_per_log": 100,
+        "logs": 1000,
+        "percentile_5": 0.5434,
+        "percentile_50": 0.6005,
+        "percentile_95": 0.6472
+      }
+    ]
+  },
+  "yes_no_outcome": {
+    "note": "Logs scored against a yes/no outcome, which puts back the part of the outcome nobody could foresee. On each pull request the true probability p is uniform between the two bounds and the outcome is 1 with probability p. A persona forecasts p + s * (sqrt(rho) * C + sqrt(1 - rho) * I_i); the outsider forecasts p + s * I_o and shares nothing with the panel but the outcome. Every part is +1 or -1 with probability 1/2 (mean 0, variance 1), so every forecast stays between 0 and 1 and the closed forms need no clipping. Error = forecast - outcome.",
+    "personas": 5,
+    "outsiders": 1,
+    "seed": 20261024,
+    "logs": 1000,
+    "draw_order": "per log and per pull request: p, the outcome draw, C, I_1 to I_k, I_o; the same draws serve both rhos; a log of 20 pull requests is the first 20 of the 500",
+    "estimate_from_the_spread": "1 - (k / (k - 1)) * mean spread / mean variance of one persona's errors (each persona's mean error subtracted)",
+    "estimate_against_the_outsider": "(mean covariance of two personas' errors - mean covariance of a persona's and the outsider's errors) / (mean variance of a persona's errors - mean covariance of a persona's and the outsider's errors); sample covariances with n - 1",
+    "closed_form": {
+      "variance_of_the_unforeseeable_part": 0.236667,
+      "forecaster_variance": 0.0441,
+      "mse_of_one_forecaster": 0.280767,
+      "share_of_one_forecaster_s_mse_that_no_forecaster_removes_percent": 84.29,
+      "by_rho": {
+        "0": {
+          "correlation_of_two_personas_scored_errors": 0.84293,
+          "estimate_from_the_spread_tends_to": 0.84293,
+          "estimate_against_the_outsider_tends_to": 0.0,
+          "mse_of_the_panel_average": 0.245487
+        },
+        "0.6": {
+          "correlation_of_two_personas_scored_errors": 0.937172,
+          "estimate_from_the_spread_tends_to": 0.937172,
+          "estimate_against_the_outsider_tends_to": 0.6,
+          "mse_of_the_panel_average": 0.266655
+        }
+      }
+    },
+    "pooled_over_every_pull_request": {
+      "0": {
+        "estimate_from_the_spread": 0.843,
+        "estimate_against_the_outsider": -0.0045
+      },
+      "0.6": {
+        "estimate_from_the_spread": 0.9372,
+        "estimate_against_the_outsider": 0.5986
+      }
+    },
+    "rows": [
+      {
+        "true_rho": 0.0,
+        "pull_requests": 20,
+        "logs": 1000,
+        "estimate_from_the_spread": {
+          "percentile_5": 0.7913,
+          "percentile_50": 0.8362,
+          "percentile_95": 0.8705
+        },
+        "estimate_against_the_outsider": {
+          "percentile_5": -2.979,
+          "percentile_50": 0.0895,
+          "percentile_95": 0.6189
+        }
+      },
+      {
+        "true_rho": 0.0,
+        "pull_requests": 100,
+        "logs": 1000,
+        "estimate_from_the_spread": {
+          "percentile_5": 0.8261,
+          "percentile_50": 0.842,
+          "percentile_95": 0.8576
+        },
+        "estimate_against_the_outsider": {
+          "percentile_5": -0.7625,
+          "percentile_50": 0.0014,
+          "percentile_95": 0.3252
+        }
+      },
+      {
+        "true_rho": 0.0,
+        "pull_requests": 500,
+        "logs": 1000,
+        "estimate_from_the_spread": {
+          "percentile_5": 0.8352,
+          "percentile_50": 0.8425,
+          "percentile_95": 0.8496
+        },
+        "estimate_against_the_outsider": {
+          "percentile_5": -0.2199,
+          "percentile_50": -0.0088,
+          "percentile_95": 0.1536
+        }
+      },
+      {
+        "true_rho": 0.6,
+        "pull_requests": 20,
+        "logs": 1000,
+        "estimate_from_the_spread": {
+          "percentile_5": 0.9077,
+          "percentile_50": 0.9351,
+          "percentile_95": 0.9511
+        },
+        "estimate_against_the_outsider": {
+          "percentile_5": -1.1345,
+          "percentile_50": 0.6484,
+          "percentile_95": 1.895
+        }
+      },
+      {
+        "true_rho": 0.6,
+        "pull_requests": 100,
+        "logs": 1000,
+        "estimate_from_the_spread": {
+          "percentile_5": 0.9281,
+          "percentile_50": 0.9369,
+          "percentile_95": 0.9445
+        },
+        "estimate_against_the_outsider": {
+          "percentile_5": 0.2005,
+          "percentile_50": 0.6054,
+          "percentile_95": 0.7417
+        }
+      },
+      {
+        "true_rho": 0.6,
+        "pull_requests": 500,
+        "logs": 1000,
+        "estimate_from_the_spread": {
+          "percentile_5": 0.9332,
+          "percentile_50": 0.937,
+          "percentile_95": 0.9407
+        },
+        "estimate_against_the_outsider": {
+          "percentile_5": 0.4851,
+          "percentile_50": 0.6003,
+          "percentile_95": 0.6739
+        }
+      }
+    ]
+  },
+  "hypothesis_test": {
+    "thresholds": {
+      "standard_errors_limit": 4,
+      "rho_for_the_claims": "0.6",
+      "fourteenth_same_source_gain_below_percent": 1,
+      "independent_newcomer_equal_weight_gain_above_percent": 10
+    },
+    "largest_distance_in_standard_errors": 1.02,
+    "fourteenth_same_source_drop_percent": 0.35,
+    "fourteenth_same_source_drop_percent_simulated": 0.34,
+    "independent_newcomer_equal_weight_drop_percent": 12.97,
+    "parts": {
+      "simulation_within_the_limit_in_every_cell": true,
+      "independent_formula_rejected_in_every_cell_with_rho_above_0": true,
+      "fourteenth_same_source_drop_below_threshold": true,
+      "simulated_drop_from_the_fourteenth_within_the_limit_at_every_rho": true,
+      "independent_newcomer_drop_above_threshold": true,
+      "newcomer_simulation_within_the_limit_in_every_cell": true,
+      "shared_bias_adds_bias_squared_at_every_k": true
+    },
+    "every_part_holds": true
+  },
+  "worked_examples": {
+    "exercise_1": {
+      "same_model_same_context": 0.6,
+      "other_model_same_context": 0.3,
+      "same_model_own_context": 0.3,
+      "other_model_own_context": 0.0,
+      "context_share": 0.3,
+      "model_share": 0.3
+    },
+    "exercise_2": {
+      "k": 5,
+      "rho": 0.3,
+      "mse": 0.44,
+      "rmse": 0.6633,
+      "mse_if_independent": 0.2,
+      "rmse_if_independent": 0.4472,
+      "share_of_one_forecaster_s_mse_removed_percent": 56.0,
+      "share_removed_if_independent_percent": 80.0,
+      "floor": 0.3,
+      "most_that_averaging_can_remove_percent": 70.0,
+      "share_of_the_removable_part_removed_percent": 80.0
+    },
+    "exercise_3": {
+      "panel": 5,
+      "rho": 0.6,
+      "mse_of_the_panel": 0.68,
+      "grow_to": 14,
+      "mse_grown": 0.628571,
+      "floor_of_the_same_source": 0.6,
+      "one_independent_newcomer_equal_weights": {
+        "weight_of_the_newcomer": 0.166667,
+        "mse": 0.5,
+        "drop_percent": 26.47,
+        "worth": 2.0
+      },
+      "one_independent_newcomer_best_weights": {
+        "weight_of_the_newcomer": 0.404762,
+        "mse": 0.404762,
+        "drop_percent": 40.48,
+        "worth": 2.470588
+      }
+    },
+    "exercise_4": {
+      "rho": 0.3,
+      "bias": 0.5,
+      "bias_squared": 0.25,
+      "mse_of_one": 1.25,
+      "k": 14,
+      "mse": 0.6,
+      "bias_share_of_the_mse_percent": 41.67,
+      "floor": 0.55,
+      "doubled_k": 28,
+      "mse_doubled": 0.575,
+      "drop_from_doubling_percent": 4.17,
+      "mse_once_the_bias_is_subtracted": 0.35,
+      "drop_from_subtracting_the_bias_percent": 41.67
+    },
+    "exercise_5": {
+      "accuracy_of_each_judge": 0.8,
+      "cases": [
+        {
+          "rho": 0.0,
+          "they_agree": 0.68,
+          "right_given_agreement": 0.941176
+        },
+        {
+          "rho": 0.6,
+          "they_agree": 0.872,
+          "right_given_agreement": 0.844037
+        }
+      ]
+    }
+  },
+  "transfer_task": {
+    "note": "Hypothetical estimating team for the learner task. Not Streeling data and not a forecast.",
+    "unit": "week",
+    "q1_one_and_the_average": {
+      "bias_squared": 9.0,
+      "variance_of_one": 36.0,
+      "mse_of_one": 45.0,
+      "rmse_of_one": 6.7082,
+      "forecasters": 8,
+      "variance_of_the_average": 12.375,
+      "mse_of_the_average": 21.375,
+      "rmse_of_the_average": 4.6233
+    },
+    "q2_floor_and_worth": {
+      "variance_floor": 9.0,
+      "mse_floor": 18.0,
+      "worth": 2.909091,
+      "worth_ceiling": 4.0,
+      "targets": [
+        {
+          "independent_forecasters": 3,
+          "reachable": true,
+          "smallest_team": 9
+        },
+        {
+          "independent_forecasters": 4,
+          "reachable": false,
+          "smallest_team": null
+        }
+      ]
+    },
+    "q3_a_ninth_forecaster": {
+      "note": "variances only: the bias is left aside in this question",
+      "variance_of_the_eight": 12.375,
+      "same_source_ninth_variance": 12.0,
+      "same_source_ninth_drop_percent": 3.03,
+      "independent_ninth_equal_weights_variance": 10.222222,
+      "independent_ninth_equal_weights_drop_percent": 17.4,
+      "independent_ninth_best_weight": 0.255814,
+      "independent_ninth_best_weights_variance": 9.209302,
+      "independent_ninth_best_weights_drop_percent": 25.58
+    },
+    "q4_bias": {
+      "bias_share_of_the_average_s_mse_percent": 42.11,
+      "grow_to": 80,
+      "mse_grown": 18.3375,
+      "drop_from_growing_percent": 14.21,
+      "mse_once_the_bias_is_subtracted": 12.375,
+      "drop_from_subtracting_the_bias_percent": 42.11
+    },
+    "q5_what_agreement_shows": {
+      "note": "the spread holds neither the common part nor the bias; an estimate of rho that divides by the mean squared error of one forecaster counts a shared bias as shared error",
+      "expected_spread": 23.625,
+      "typical_distance_between_an_estimate_and_the_average": 4.8606,
+      "rho_estimated_with_the_bias_left_in": 0.4,
+      "rho_estimated_once_the_bias_is_subtracted": 0.25
+    }
+  },
+  "checks": [
+    {
+      "check": "arithmetic: the literal for sqrt(12) is the correctly rounded square root",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "arithmetic: the first draw of seed 1 has the expected bits",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "observed: the counts made here from the rows equal those made by extract.py",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "observed: the three confidence settings used are numbers between 0 and 1",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "closed form: worth times the mean squared error of the average equals sigma^2",
+      "times_evaluated": 56,
+      "passed": true
+    },
+    {
+      "check": "closed form: one more forecaster lowers the mean squared error by (1 - rho) / (k (k - 1))",
+      "times_evaluated": 52,
+      "passed": true
+    },
+    {
+      "check": "closed form: one forecaster has a mean squared error of sigma^2 at every rho",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "closed form: the mean squared error stays above the floor rho sigma^2",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "known answer: rho = 0 gives the independent result sigma^2 / k",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: 0.6 and 0.8 are the exact square roots of rho and 1 - rho",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: two forecasters with rho = 0.36 and sign errors have a mean squared error of 0.68",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "exact enumeration: over all sign patterns E[C^2] = 1, E[C * mean(I)] = 0 and E[mean(I)^2] = 1/k",
+      "times_evaluated": 14,
+      "passed": true
+    },
+    {
+      "check": "direct check: the fast path equals errors built and averaged one by one on the first occasions",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "accounting identity: squared error of the average = mean squared error of the forecasters - their spread",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: the identity fails when the average of one forecaster too few is used",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "spread: the closed forms obey the identity sigma^2 = mse of the average + expected spread",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "shared bias: the closed form with a bias exceeds the one without by bias^2 at every k",
+      "times_evaluated": 3,
+      "passed": true
+    },
+    {
+      "check": "weights: the two-estimator formula equals the exact solution of the full system of weights",
+      "times_evaluated": 10,
+      "passed": true
+    },
+    {
+      "check": "weights: the best weights sum to 1 and do at least as well as equal weights",
+      "times_evaluated": 10,
+      "passed": true
+    },
+    {
+      "check": "known answer: a newcomer of the panel's own kind gives the closed form for one more forecaster, and equal weights are then the best weights",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "known answer: independent sources add their worth",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "probabilities: the three cases of two judges sum to 1",
+      "times_evaluated": 15,
+      "passed": true
+    },
+    {
+      "check": "probabilities: each judge is right with probability p and the correlation is rho",
+      "times_evaluated": 15,
+      "passed": true
+    },
+    {
+      "check": "probabilities: no case of two judges has a negative probability",
+      "times_evaluated": 15,
+      "passed": true
+    },
+    {
+      "check": "agreement: its worth falls as the correlation rises, from p^2 / (p^2 + q^2) down to p",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "agreement: at the implied correlation, agreement is worth exactly the policy's value",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "agreement: when two equally accurate judges disagree, each is right with probability 1/2",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "scored logs: a longer log gives a narrower range of estimates",
+      "times_evaluated": 3,
+      "passed": true
+    },
+    {
+      "check": "yes/no outcome: E[p (1 - p)] from the moments of p equals the integral of p (1 - p)",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "yes/no outcome: the outsider estimate has a non-zero denominator",
+      "times_evaluated": 6002,
+      "passed": true
+    },
+    {
+      "check": "yes/no outcome: every forecast lies between 0 and 1, so no forecast was clipped",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "yes/no outcome: a longer log gives a narrower range of the outsider estimate",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "worked example: one outsider among six equal weights gives (n (1 + (n - 1) rho) + 1) / (n + 1)^2",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the smallest team that is worth the target is found",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: once the bias is subtracted, the spread and one forecaster's variance give rho back",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}

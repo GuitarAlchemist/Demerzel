@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will rank the days of an event log, measure how unequally they share the events (top-k shares, Lorenz curve, Gini coefficient), compare a mean with a median, and test a capacity plan sized on the mean against one sized on a quantile. **Project question:** how much of the trigger activity sits in the few busiest days, and what does that do to an average-based capacity plan?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads a doubled signal rate, a count divided by a time window, as a sign of a coming transition. A rate is a mean, and this module measures how much of a mean a few days can carry. [PSY-008](psy-008-bursts-are-not-rates.md) sets the same daily counts against a Poisson benchmark; [PSY-007](psy-007-power-law-or-not.md) and PSY-022 fit distributions.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads a doubled signal rate, a count divided by a time window, as a sign of a coming transition. A rate is a mean, and this module measures how much of a mean a few days can carry. [PSY-008](psy-008-bursts-are-not-rates.md) sets the same daily counts against a Poisson benchmark; [PSY-007](psy-007-power-law-or-not.md) and [PSY-022](psy-022-competing-explanations.md) fit distributions.
 
 ## 1. Rank the days and add from the top
 
@@ -36,7 +36,7 @@ The ten busiest days hold 109, 72, 60, 45, 26, 24, 20, 20, 20 and 19 events, out
 
 ## 2. The Lorenz curve and the Gini coefficient
 
-The *Lorenz curve* shows every k at once: sort the days from quietest to busiest and plot the cumulative share of days against the cumulative share of events. Equal days would give the diagonal. **Computed:** the quietest half of the days (60 of 119) holds 41 events, 6.90%; the quietest 90% (108 days) holds 27.10%.
+The *Lorenz curve* shows every k at once: sort the days from quietest to busiest and plot the cumulative share of events against the cumulative share of days. Equal days would give the diagonal. **Computed:** the quietest half of the days (60 of 119) holds 41 events, 6.90%; the quietest 90% (108 days) holds 27.10%.
 
 The *Gini coefficient* G condenses the curve into one number, twice the area between the diagonal and the curve. With the n daily counts sorted in increasing order and T their total:
 

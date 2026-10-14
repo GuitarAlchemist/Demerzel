@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-007-power-law-or-not.md`, Git blob `9603d1243d7df71fd062979c8206205a96077a2f` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-007-power-law-or-not.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-007-power-law-or-not.md`, Git blob `df0155bde77b0eac674beb13eb65609bacfa0b79` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-007-power-law-or-not.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-007/`, programs in `scripts/streeling_fixtures/psychohistory/psy-007/`:
   - `scripts/streeling_fixtures/psychohistory/psy-007/extract.py`: Git blob `6699fb9fc217d2d80fca202c29ee8f7993960cca`
   - `observed-input.json`: Git blob `8c7422bb2658c1371ddcfc0e712df3633f638f3c`

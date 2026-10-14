@@ -110,9 +110,9 @@ Two simpler families live on the same integers: a discrete *exponential* (each e
 
 Over all positive counts the power law is the worst of the three, decisively: R = −13.23 against the exponential (p < 0.0001) and −11.04 against the lognormal (p = 0.012). Exponential and lognormal are not separated (R = 2.19, p = 0.1779). A goodness-of-fit test agrees: the recorded KS distance, 0.395, exceeds that of all 2,000 synthetic samples from the fitted power law.
 
-On the tail above 13 nothing is decided: R = −1.71 against the exponential (unrounded; p = 0.2557), and the power law is not ruled out either (501 of 2,000 synthetic tails lie at least as far from their fit, p = 0.2505, above the paper's 0.1). Yet at the cuts 15 and 17 the exponential wins decisively (p = 0.0832 and 0.0364).
+On the tail of 13 or more nothing is decided: R = −1.71 against the exponential (unrounded; p = 0.2557), and the power law is not ruled out either (501 of 2,000 synthetic tails lie at least as far from their fit, p = 0.2505, above the paper's 0.1). Yet at the cuts 15 and 17 the exponential wins decisively (p = 0.0832 and 0.0364).
 
-**Synthetic: what can so few values distinguish?** Among samples of 16 values, the generating family has the highest likelihood in 3,785 of 6,000, 63.1%. The recorded counts put the exponential on top; that happens in 2 of 2,000 samples from the power law. On the tail, with a power law (alpha 2.21) and an exponential (mean 33) above 13 as generators:
+**Synthetic: what can so few values distinguish?** Among samples of 16 values, the generating family has the highest likelihood in 3,785 of 6,000, 63.1%. The recorded counts put the exponential on top; that happens in 2 of 2,000 samples from the power law. On the tail, with a power law (alpha 2.21) and an exponential (mean 33) from 13 up as generators:
 
 | Tail values | Power law: right sign / and decisive | Exponential: right sign / and decisive |
 |---|---|---|

@@ -1,0 +1,38 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-020",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-020",
+  "module_id": "psy-020-goodhart-and-reflexivity",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2348,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a recount of the citation metric at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (16 of 16 recorded counts reproduced, 359 counts from 200 files), on synthetic what-if additions to those counts and on two assumed models (an effort split between real value and proxy inflation, and a forecast that moves its own target), computed by a deterministic analysis whose 25 self-checks pass. The draft concludes that the count records mentions and can be moved by adding files, that the project's own detection rule, which calls a high concentration of citations healthy, could be turned at the pin by 31 synthetic files of mentions, and that this sample cannot distinguish an honest count from an inflated one; nobody has been observed inflating it. Human subject review, learner trial, translation and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-14T05:14:32Z"
+}

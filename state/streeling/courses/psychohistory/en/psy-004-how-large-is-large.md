@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will put an exact interval on a share observed among a few yes/no agents, say how its width shrinks as the group grows, and replace the head count by an effective sample size when the agents share a cause. **Project question:** the department says the aggregate behaviour of 14 personas across 4 repos follows mathematical laws. How wide is the uncertainty on an aggregate of 14, and what does shared context do to it?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) states the aggregate follows statistical laws, and reads correlation between repos as a coupling signal. PSY-019 applies the same arithmetic to forecast errors; PSY-024 asks who acted in the recorded events.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) states the aggregate follows statistical laws, and reads correlation between repos as a coupling signal. [PSY-019](psy-019-combining-correlated-forecasters.md) applies the same arithmetic to forecast errors; [PSY-024](psy-024-the-single-actor.md) asks who acted in the recorded events.
 
 ## 1. What the record states and what the repository holds
 

@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will turn an event log into counts per calendar day, compare them with what a constant rate would produce, measure the gap with the index of dispersion, and replace a misleading mean with figures a plan can use. **Project question:** the archived trigger log holds 594 events over 119 calendar days, 100 of them active. Is an average of "about five events a day" a usable description for planning?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads a doubling of the rate of conscience signals over three cycles as a sign that a transition is near (its fifth signal). A rate is a mean; this module asks what a mean says about a log whose events come in bursts. [PSY-009](psy-009-concentration-and-heavy-tails.md) measures the same log's concentration, PSY-022 compares count models on it, and PSY-024 asks who sent the events.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads a doubling of the rate of conscience signals over three cycles as a sign that a transition is near (its fifth signal). A rate is a mean; this module asks what a mean says about a log whose events come in bursts. [PSY-009](psy-009-concentration-and-heavy-tails.md) measures the same log's concentration, [PSY-022](psy-022-competing-explanations.md) compares count models on it, and [PSY-024](psy-024-the-single-actor.md) asks who sent the events.
 
 ## 1. Count per calendar day, empty days included
 

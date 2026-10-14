@@ -1,0 +1,29 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-018",
+  "department": "psychohistory",
+  "question": "How do we test a forecast of an artifact's citation count without letting the future leak into the test?",
+  "production_path": [
+    "investigation: read scripts/quality_trend.py, the header of scripts/evolution_metrics.py and the five quality-trend JSONL files at the pinned commit; found that delta_citations is written as 0 on rebaseline rows, that one run re-measured 16 artifacts and that one later run holds every other change of count",
+    "hypothesis: written down with exploratory counts and a hand calculation before the analysis script existed, and kept as written",
+    "extract: snapshot counts, deltas and flags into observed-input.json as run-aligned strings, refusing any source file whose Git blob differs from the pin; artifact names stored as labels with spaced slashes",
+    "model: define a series as one artifact under one instrument, restarted at each rebaseline row, and a forecast as one run ahead from at least two earlier rows; count changes from the values, not from delta_citations",
+    "test: rolling-origin persistence, mean-so-far and drift forecasts scored by MAE, relative MAE and scaled error; three leaks measured on a split in time, on every possible cut and under the rolling origin, the random split by exact enumeration with a seeded cross-check",
+    "adversarial: three negative controls on a tampered snapshot, a hand-worked case, a closed form for a series with one step, a count of independent events, and the objection that the rebaseline flag is itself written in the target row (whole-record contrast)",
+    "investigation: outside the fixture, listed by name and status the 31 commits between the runs of 2026-10-02 and 2026-10-03 at the pin, and searched the files they added, as they stand at the pin, for the citation paths of the four artifacts whose count changed",
+    "test: byte-identical rerun of extract and analysis, 35 self-checks, every number of the lesson asserted against the saved results, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "Under a fixed instrument the per-artifact citation series are so flat that a rolling-origin comparison of persistence, mean and drift can rank the methods on only a handful of series, and the scaled error against the naive forecast is undefined on most series; by contrast each of the three leaks (a statistic computed on the whole series, the same-row delta_citations, a random split) makes the reported error clearly smaller than the honest one.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the quality trend holds 1,548 rows in 88 runs for 18 artifacts, 1,537 of them with a citation count; the count differs in 20 of 1,519 pairs of consecutive rows, 16 on the rows flagged rebaseline (2026-09-13) and 4 in the single run of 2026-10-03T15:31:16Z, each by +2. The 20 rows with a non-zero delta_citations are another set, which shares only 4 rows with those 20.",
+    "With a series restarted at each rebaseline row there are 34 series and 1,469 one-run-ahead forecasts; 4 series vary and 30 never do. Under the rolling origin the total absolute error is 8 for persistence, 11.17798 for drift and 72.15693 for the mean so far (relative MAE 1.397247 and 9.019616); a scaled error exists for 40 of the 1,469 forecasts, for none in the 30 flat series, and for none of the four forecasts on which persistence errs.",
+    "On a varying series of 32 rows tested on its last 8, a level fitted on the earlier 24 rows has MAE 1.75, a level computed on all 32 rows 1.3125 (-25%), and the exact average over the 10,518,300 random splits is 0.931452 (-46.77%); a forecast that adds the target row's delta_citations makes no error in 1,469 forecasts (-100%). Against the hypothesis, the whole-series level raises the error at 8 of the 30 possible cuts and by 52.45% under the rolling origin (0.916667 against 0.601308), and the random split raises it at 7 cuts.",
+    "The four changes share one run and one step, at most one independent event (1 of 85 target runs holds every error of persistence); read outside the fixture, commit 98625c317fd3440440bf406bd5302b79271db642, alone among the 31 commits between the runs of 2026-10-02 and 2026-10-03, added 26 translated lesson files, six of which spell the four artifacts' citation paths, two per artifact. Without the restart at rebaseline rows, whose flag is written in the target row, the total absolute error of persistence is 314 in place of 8, 306 of it (97.45%) on the 16 rebaseline rows.",
+    "The analysis reran byte-identically and its 35 self-checks passed, three negative controls among them. No model beyond the three benchmark methods was fitted, earlier versions of the files that commit modified were not read, no human has reviewed the subject matter and no learner has tried the lesson; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "refute",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T04:46:48Z"
+}

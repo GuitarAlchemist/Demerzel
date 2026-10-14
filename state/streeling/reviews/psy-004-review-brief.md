@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-004-how-large-is-large.md`, Git blob `37c0584a3dd8471cfb1ab4b94cb25d804b7a60eb` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-004-how-large-is-large.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-004-how-large-is-large.md`, Git blob `bbdf34e02b0364b5cae4396b2a0f67ca72395e6e` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-004-how-large-is-large.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-004/`, programs in `scripts/streeling_fixtures/psychohistory/psy-004/`:
   - `scripts/streeling_fixtures/psychohistory/psy-004/extract.py`: Git blob `a0fb0dee97baec72e7693bc969e5817a62199e5e`
   - `observed-input.json`: Git blob `ef4102446ff9fdb1ff8278a1f30eacb40fba8c5f`
