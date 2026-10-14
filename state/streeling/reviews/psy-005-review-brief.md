@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md`, Git blob `525b7db8273d7914aa29a9e0815c7c3e7829fd9c` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md`, Git blob `3e847c550dba55812a34109508397ecf612fc04d` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-005/`, programs in `scripts/streeling_fixtures/psychohistory/psy-005/`:
   - `scripts/streeling_fixtures/psychohistory/psy-005/extract.py`: Git blob `dc4ebd9a37c8c4649d505998f25e986f7ef90b66`
   - `observed-input.json`: Git blob `341afcb002e7ba0b3a902c914ddf0f59fadc9114`

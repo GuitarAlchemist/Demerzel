@@ -1,0 +1,38 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-010",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-010",
+  "module_id": "psy-010-growth-curves-short-series",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.75
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2298,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the Git history of state/streeling/courses at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (73 commits, 68 English modules at the pin, commits and trees only) and on a deterministic analysis whose 39 self-checks pass. The target of 525 is the curriculum plan's figure, not an observation. The draft concludes that least-squares fits of a line, an exponential and a logistic curve cannot be told apart on this history and that no date for 525 is supported; its burst scenarios and negative controls are synthetic. Human subject review, learner trial, translation and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-14T00:51:32Z"
+}

@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet. It is not an 
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`, Git blob `43402bf33c9b53db538fb20094bd18a2589513ce` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`, Git blob `727b4711a8f4a268119c0fe8de0f3b5482bce26e` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-012/`, programs in `scripts/streeling_fixtures/psychohistory/psy-012/`:
   - `scripts/streeling_fixtures/psychohistory/psy-012/analyze.py` (analysis script): Git blob `9f59f16de25fb96610330ebcb77239e62a670d54`
   - `scripts/streeling_fixtures/psychohistory/psy-012/extract.py` (observed-data extract): Git blob `22f774c7cda1b179e5c46a3f6ce48c58a2acf164`

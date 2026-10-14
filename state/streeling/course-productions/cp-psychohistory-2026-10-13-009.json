@@ -1,0 +1,38 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-009",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-009",
+  "module_id": "psy-009-concentration-and-heavy-tails",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2297,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the 594 archived trigger files at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (119 calendar days; the four busiest days hold 48.15% of the events; Gini coefficient 0.7789) and on a deterministic analysis whose 41 self-checks pass. The 2,000 control logs and the capacity plans are synthetic: the repository states that the consumer of these triggers was never scheduled, so no waiting time or backlog was measured. The draft raises two objections against itself (the design's deduplication rule would merge the files into 132 triggers; the top-four share rests on two episodes), states that every capacity plan is sized in hindsight (the 95th percentile read on 2026-05-31 was 8, not 24) and notes that 12 trigger files were deleted in Git history without being archived. Human subject review, learner trial, translation and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-14T00:27:51Z"
+}
