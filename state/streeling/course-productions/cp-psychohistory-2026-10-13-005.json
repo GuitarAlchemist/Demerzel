@@ -1,0 +1,38 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-005",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-005",
+  "module_id": "psy-005-persistence-baseline",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.75
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2328,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the quality-trend effectiveness labels at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (1,529 consecutive label pairs, 1 changed) and on a deterministic analysis whose 26 self-checks pass. The four forecasters it scores are imaginary and no forecasting model was run. The single observed change lies on the step from a baseline row to the first feeder run, so the draft concludes that this sample cannot show forecasting skill. Human subject review, learner trial, translation and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-13T22:43:22Z"
+}
