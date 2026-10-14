@@ -6,8 +6,8 @@ the repository, and writes results.json. Everything is an exact count or a
 ratio of counts; no random number is drawn.
 
 Run from the repository root:
-    python -I state/streeling/fixtures/psychohistory/psy-005/analyze.py
-    python -I state/streeling/fixtures/psychohistory/psy-005/analyze.py --check
+    python -I scripts/streeling_fixtures/psychohistory/psy-005/analyze.py
+    python -I scripts/streeling_fixtures/psychohistory/psy-005/analyze.py --check
 """
 
 from __future__ import annotations
@@ -21,7 +21,12 @@ from datetime import datetime, timezone
 from fractions import Fraction
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
+# This program lives under scripts/ (CONTRIBUTING.md: no executable code outside scripts/); its data stays
+# under state/streeling/fixtures/. FIXTURE_FILE is the path the program would have next to that data.
+FIXTURE_FILE = (Path(__file__).resolve().parents[4]
+                / "state/streeling/fixtures/psychohistory/psy-005" / Path(__file__).name)
+
+HERE = FIXTURE_FILE.parent
 NO_ROW, NO_LABEL, SEED = ".", "-", "s"
 DECIMALS = {"ratio": 6, "percent": 2, "day": 3}
 CHECKS: dict[str, int] = {}  # self-check -> times evaluated

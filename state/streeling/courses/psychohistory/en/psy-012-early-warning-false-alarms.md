@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will compute two rolling indicators, variance and lag-1 autocorrelation, summarise each trend with one rank statistic, and measure an alarm rule on both sides: how often it fires when a system approaches a tipping point, and how often when nothing approaches. **Project question:** PSY-002 proposes signals for a coming regime shift; how often do rising variance and rising autocorrelation appear in a system that is not approaching any transition?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md), which builds on [PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md), lists six signals and asks for three or more to converge. This module takes the literature's two best-studied early-warning indicators and measures, for these two, what PSY-002 does not give for its six: a false-alarm rate. Sections 1 to 3 are **synthetic**: assumed inputs in [scenarios.json](../../../fixtures/psychohistory/psy-012/scenarios.json), computed by [analyze.py](../../../fixtures/psychohistory/psy-012/analyze.py), saved in [results.json](../../../fixtures/psychohistory/psy-012/results.json). Section 4 alone uses **observed** project data. Instrument changes belong to PSY-011, chaos to PSY-014.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md), which builds on [PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md), lists six signals and asks for three or more to converge. This module takes the literature's two best-studied early-warning indicators and measures, for these two, what PSY-002 does not give for its six: a false-alarm rate. Sections 1 to 3 are **synthetic**: assumed inputs in [scenarios.json](../../../fixtures/psychohistory/psy-012/scenarios.json), computed by [analyze.py](../../../../../scripts/streeling_fixtures/psychohistory/psy-012/analyze.py), saved in [results.json](../../../fixtures/psychohistory/psy-012/results.json). Section 4 alone uses **observed** project data. Instrument changes belong to PSY-011, chaos to PSY-014.
 
 ## 1. Why a system slows down before it tips
 
@@ -58,10 +58,11 @@ variance        = sum(e[u]^2) / (W - 2)
 autocorrelation = sum(e[u] * e[u+1]) / sum(e[u]^2)
 ```
 
-A series of n points gives m = n − W + 1 rolling values of each indicator. *Kendall's tau*, a rank correlation with time, says in one number whether they rise: among all pairs of positions, C pairs are concordant (the later value is larger) and D discordant (it is smaller).
+A series of n points gives m = n − W + 1 rolling values of each indicator. *Kendall's tau*, a rank correlation with time, says in one number whether they rise: among the P = m(m − 1)/2 pairs of positions, C are concordant (the later value is larger), D discordant (it is smaller) and t tied (equal). The program computes the tie-corrected form, tau-b.
 
 ```text
-tau = (C - D) / (m * (m - 1) / 2)       +1 always rising, -1 always falling
+tau = (C - D) / sqrt(P * (P - t))       +1 always rising, -1 always falling
+    = (C - D) / P                       when no two values are equal (t = 0)
 M   = min(tau of variance, tau of autocorrelation)       alarm when M >= T
 ```
 
@@ -113,7 +114,7 @@ A colleague runs the textbook test on a 400-point record with W = 200, finds bot
 
 ## 4. What the recorded quality trend can and cannot show
 
-**Observed.** The repository's pinned [quality trend](https://github.com/GuitarAlchemist/Demerzel/tree/4b03838800dcd4894f1e026461979bff1d985ca8/state/quality-trend) holds 1,548 rows: 18 governance artifacts measured in 88 runs on 83 days. [extract.py](../../../fixtures/psychohistory/psy-012/extract.py) checks each source file against its Git blob and writes [observed-input.json](../../../fixtures/psychohistory/psy-012/observed-input.json). Each artifact has 81 to 87 measured runs of three numbers. **Computed** from that extract:
+**Observed.** The repository's pinned [quality trend](https://github.com/GuitarAlchemist/Demerzel/tree/4b03838800dcd4894f1e026461979bff1d985ca8/state/quality-trend) holds 1,548 rows: 18 governance artifacts measured in 88 runs on 83 days. [extract.py](../../../../../scripts/streeling_fixtures/psychohistory/psy-012/extract.py) checks each source file against its Git blob and writes [observed-input.json](../../../fixtures/psychohistory/psy-012/observed-input.json). Each artifact has 81 to 87 measured runs of three numbers. **Computed** from that extract:
 
 - `compliance_rate` and `violation_count`: all 18 series hold one value; 0 changes in 1,519 pairs of consecutive rows of one artifact ([PSY-005](psy-005-persistence-baseline.md) counts 1,518: one such pair starts at an unlabelled row).
 - `citation_count`: 2 series are constant; the other 16 change, 20 times in 1,519 pairs, and all 20 changes fall on two runs (16 series on 2026-09-13, 4 on 2026-10-03).

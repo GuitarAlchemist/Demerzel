@@ -1,5 +1,7 @@
 # PSY-005 fixture: the persistence baseline on effectiveness labels
 
+The two programs, `extract.py` and `analyze.py`, live in `scripts/streeling_fixtures/psychohistory/psy-005/` because this repository keeps executable code under `scripts/`; the data files they read and write are in this folder.
+
 Fixture for the lesson `state/streeling/courses/psychohistory/en/psy-005-persistence-baseline.md`.
 Python 3, standard library only. No random number is drawn, so there is no seed.
 
@@ -18,9 +20,9 @@ Python 3, standard library only. No random number is drawn, so there is no seed.
 From the repository root:
 
 ```text
-python -I state/streeling/fixtures/psychohistory/psy-005/extract.py
-python -I state/streeling/fixtures/psychohistory/psy-005/analyze.py
-python -I state/streeling/fixtures/psychohistory/psy-005/analyze.py --check
+python -I scripts/streeling_fixtures/psychohistory/psy-005/extract.py
+python -I scripts/streeling_fixtures/psychohistory/psy-005/analyze.py
+python -I scripts/streeling_fixtures/psychohistory/psy-005/analyze.py --check
 ```
 
 Each command finishes in about a second. `analyze.py` writes the same bytes on every run (LF line endings, `indent=2`,

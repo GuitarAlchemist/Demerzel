@@ -23,8 +23,13 @@ import random
 from bisect import bisect_left, bisect_right
 from pathlib import Path
 
+# This program lives under scripts/ (CONTRIBUTING.md: no executable code outside scripts/); its data stays
+# under state/streeling/fixtures/. FIXTURE_FILE is the path the program would have next to that data.
+FIXTURE_FILE = (Path(__file__).resolve().parents[4]
+                / "state/streeling/fixtures/psychohistory/psy-012" / Path(__file__).name)
 
-HERE = Path(__file__).resolve().parent
+
+HERE = FIXTURE_FILE.parent
 DEFAULT_INPUT = HERE / "scenarios.json"
 DEFAULT_OBSERVED = HERE / "observed-input.json"
 DEFAULT_OUTPUT = HERE / "results.json"

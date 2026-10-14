@@ -1,5 +1,7 @@
 # PSY-012 fixture: early-warning indicators and their false alarms
 
+The two programs, `extract.py` and `analyze.py`, live in `scripts/streeling_fixtures/psychohistory/psy-012/` because this repository keeps executable code under `scripts/`; the data files they read and write are in this folder.
+
 Fixture for the lesson `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`.
 Python 3, standard library only. Verified with CPython 3.14.2 on Windows and CPython 3.14.4 on Linux (WSL);
 older Python versions were not run.
@@ -19,14 +21,14 @@ older Python versions were not run.
 From the repository root:
 
 ```sh
-python -I state/streeling/fixtures/psychohistory/psy-012/extract.py
-python -I state/streeling/fixtures/psychohistory/psy-012/analyze.py
+python -I scripts/streeling_fixtures/psychohistory/psy-012/extract.py
+python -I scripts/streeling_fixtures/psychohistory/psy-012/analyze.py
 ```
 
 The first command rewrites `observed-input.json`, the second `results.json`. To compare a second run byte for byte:
 
 ```sh
-python -I state/streeling/fixtures/psychohistory/psy-012/analyze.py --output /tmp/psy-012-second.json
+python -I scripts/streeling_fixtures/psychohistory/psy-012/analyze.py --output /tmp/psy-012-second.json
 cmp state/streeling/fixtures/psychohistory/psy-012/results.json /tmp/psy-012-second.json
 ```
 

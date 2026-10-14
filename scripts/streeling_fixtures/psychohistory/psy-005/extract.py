@@ -10,7 +10,7 @@ Fails with a non-zero exit and a message when a source file is missing, has an
 unexpected shape, or is not the file of the pinned commit.
 
 Run from the repository root:
-    python -I state/streeling/fixtures/psychohistory/psy-005/extract.py
+    python -I scripts/streeling_fixtures/psychohistory/psy-005/extract.py
 """
 
 from __future__ import annotations
@@ -22,6 +22,11 @@ import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+# This program lives under scripts/ (CONTRIBUTING.md: no executable code outside scripts/); its data stays
+# under state/streeling/fixtures/. FIXTURE_FILE is the path the program would have next to that data.
+FIXTURE_FILE = (Path(__file__).resolve().parents[4]
+                / "state/streeling/fixtures/psychohistory/psy-005" / Path(__file__).name)
 
 PINNED_COMMIT = "4b03838800dcd4894f1e026461979bff1d985ca8"
 # Git blob ids at PINNED_COMMIT (git ls-tree). A blob id is
@@ -269,7 +274,7 @@ def build(root: Path, allow_drift: bool) -> dict:
 
 
 def main() -> int:
-    here = Path(__file__).resolve()
+    here = FIXTURE_FILE
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--repo-root", type=Path, default=here.parents[5])
     parser.add_argument("--output", type=Path, default=here.with_name("observed-input.json"))

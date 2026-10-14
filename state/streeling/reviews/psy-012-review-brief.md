@@ -4,14 +4,14 @@ Status: **open**. This is a human-review and learner-trial packet. It is not an 
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`, Git blob `666e589be842b8b770c78629992e571871778f2a` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md` names the commit that added the file).
-- Fixture folder `state/streeling/fixtures/psychohistory/psy-012/`:
-  - `analyze.py` (analysis script): Git blob `c7054c362c6d2947f8a73d841639ab7fcf4b3d12`
-  - `extract.py` (observed-data extract): Git blob `cd62d2f689b8326adf76454cbe8e6a7d1f144e60`
+- English course: `state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md`, Git blob `fd62b8aaaf0a6ebd8481e5aa31845089eb2da641` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-012-early-warning-false-alarms.md` names the commit that added the file).
+- Fixture data in `state/streeling/fixtures/psychohistory/psy-012/`, programs in `scripts/streeling_fixtures/psychohistory/psy-012/`:
+  - `scripts/streeling_fixtures/psychohistory/psy-012/analyze.py` (analysis script): Git blob `87f4ad48ddc806a78a4bd51b85e5f66e1756fd71`
+  - `scripts/streeling_fixtures/psychohistory/psy-012/extract.py` (observed-data extract): Git blob `b260dcd7cba95e42abc58e5a2afa19c3dbe00be9`
   - `scenarios.json` (synthetic assumptions, seeds, transfer inputs): Git blob `cca0b0da59c0b3fb6e5592c458507d495be11907`
   - `observed-input.json` (observed extract): Git blob `6339008c3091dd841a74b8d1230fc58985578fad`
   - `results.json` (saved results): Git blob `42ba60bbca6ae332840157d524f5c13b810da7a9`
-  - `README.md`: Git blob `0fb47dede06a9acc6bc134989ca1df20b09192cc`
+  - `README.md`: Git blob `c70e800ddbc6f0b2d173a9820ddcea01fd5dc7b6`
 - Observed source: `state/quality-trend/*.jsonl` at Demerzel commit `4b03838800dcd4894f1e026461979bff1d985ca8`; the five blob ids are recorded in `observed-input.json` → `source_files`.
 - Production record: `state/streeling/course-productions/cp-psychohistory-2026-10-13-012.json`; its review and publication flags are false.
 
@@ -19,7 +19,7 @@ A later edit of the course or of a fixture file changes its blob. Review that di
 
 ## Subject and method review
 
-1. Regenerate. From the repository root at the frozen commit run `python -I state/streeling/fixtures/psychohistory/psy-012/extract.py --output <tmp>/observed.json` and `python -I state/streeling/fixtures/psychohistory/psy-012/analyze.py --output <tmp>/results.json`, then compare each with the committed file byte for byte. Compare the five `git_blob` values with `git ls-tree 4b03838800dcd4894f1e026461979bff1d985ca8 state/quality-trend/`.
+1. Regenerate. From the repository root at the frozen commit run `python -I scripts/streeling_fixtures/psychohistory/psy-012/extract.py --output <tmp>/observed.json` and `python -I scripts/streeling_fixtures/psychohistory/psy-012/analyze.py --output <tmp>/results.json`, then compare each with the committed file byte for byte. Compare the five `git_blob` values with `git ls-tree 4b03838800dcd4894f1e026461979bff1d985ca8 state/quality-trend/`.
 2. Theory. Recompute phi = 1 − 2hq with h = 0.005: 0.5 at q = 50 and 0.9 at q = 10; variance 1 / (1 − phi²): 1.3333 and 5.2632, ratio 3.9474. Check the linearisation of `x² − q²` around `x = −q` yourself. Check the long-run estimates at phi = 0.9 (variance 5.2742, autocorrelation 0.9002) and the fold held at q = 25 (0.7513 against 0.75). Is "8.72 standard deviations from the unstable threshold" enough for the linear reading to hold, and does the lesson say that a closer approach was not simulated?
 3. Estimator. By hand: the window 1, 2, 4, 3 has residuals −0.3, −0.1, 1.1, −0.7, variance 0.9 and lag-1 autocorrelation −0.4722; the six values 0.8, 0.5, 1.1, 1.4, 1.2, 1.9 give 13 concordant and 2 discordant pairs, tau 0.7333. Challenge the within-window straight-line detrending and the divisor W − 2. The lesson reports that a 25-point window reads 0.555 for a true 0.9: is the consequence for short windows stated strongly enough?
 4. Rates. Recompute at least two table rows from the alarm counts in `results.json` → `simulation.configurations.<row>.systems.<system>.alarms`. For `n100_w50`: 297 of 1,000 approaching runs under the fixed rule; controls 87, 113 and 107 of 1,000. Check that the textbook threshold is 1.645 × sqrt(2(2m + 5) / (9m(m − 1))) with m = n − W + 1 (0.1588 for m = 51), and that the calibrated threshold comes from runs with their own seeds (`calibration` in `scenarios.json`), not from the control runs it is then judged on.
