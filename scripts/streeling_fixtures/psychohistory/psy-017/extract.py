@@ -7,6 +7,11 @@ the nudge rule (the feedback policy, the pipeline specification and the script
 that applies a recommendation), and writes observed-input.json next to this
 script. The analysis script reads only that snapshot.
 
+The files are read from the tree of the pinned commit in Git's object store,
+so a later checkout, whose belief files the feedback loop rewrites, gives the
+same snapshot; the repository root must be a clone that holds that commit.
+--allow-drift reads the working tree instead.
+
 Fails with a non-zero exit and a message when a source file is missing, has an
 unexpected shape, or is not the file of the pinned commit, and when a belief
 folder holds a *.belief.json file that the pinned commit does not have.
@@ -20,7 +25,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -142,23 +149,77 @@ def git_blob_id(data: bytes) -> str:
     return hashlib.sha1(b"blob %d\x00" % len(data) + data).hexdigest()
 
 
-def read_source(root: Path, rel: str, files: list[dict], role: str) -> bytes:
-    path = root / rel
-    if not path.is_file():
-        raise ExtractError(f"missing file: {rel}")
-    data = path.read_bytes()
+def git(root: Path, *args: str) -> bytes:
+    """Runs one read-only git command in the repository and returns its standard output."""
+    env = dict(os.environ, GIT_NO_LAZY_FETCH="1")  # a partial clone must not download a missing blob silently
+    try:
+        done = subprocess.run(["git", *args], cwd=root, capture_output=True, env=env, check=False)
+    except OSError as exc:
+        raise ExtractError(f"git is needed to read the files of the pinned commit: {exc}") from exc
+    if done.returncode != 0:
+        raise ExtractError(f"git {' '.join(args)} failed in {root}: {done.stderr.decode('utf-8', 'replace').strip()}")
+    return done.stdout
+
+
+class PinnedTree:
+    """The files of PINNED_COMMIT, read from Git's object store whatever the working tree holds."""
+
+    def __init__(self, root: Path) -> None:
+        self.root = root
+        try:
+            kind = git(root, "cat-file", "-t", PINNED_COMMIT).decode("ascii").strip()
+        except ExtractError as exc:
+            raise ExtractError(f"{root} does not hold commit {PINNED_COMMIT}; --repo-root must name a clone that has "
+                               f"it (fetch it, or read the working tree with --allow-drift). {exc}") from exc
+        if kind != "commit":
+            raise ExtractError(f"{PINNED_COMMIT} is a {kind}, not a commit")
+
+    def beliefs_in(self, folder: str) -> list[str]:
+        """The *.belief.json files directly in the folder at the pinned commit, sorted by name."""
+        listing = git(self.root, "ls-tree", "-z", PINNED_COMMIT, "--", folder + "/")
+        if not listing:
+            raise ExtractError(f"missing directory: {folder}")
+        names = []
+        for record in filter(None, listing.split(b"\0")):
+            meta, path = record.split(b"\t", 1)
+            if meta.split()[1] == b"blob" and path.endswith(b".belief.json"):
+                names.append(path.decode("utf-8"))
+        return sorted(names, key=lambda rel: rel.rsplit("/", 1)[1])
+
+    def read(self, rel: str) -> bytes:
+        try:
+            return git(self.root, "cat-file", "blob", f"{PINNED_COMMIT}:{rel}")
+        except ExtractError as exc:
+            raise ExtractError(f"missing file: {rel} ({exc})") from exc
+
+
+class WorkTree:
+    """The files of the checkout as they are on disk (--allow-drift)."""
+
+    def __init__(self, root: Path) -> None:
+        self.root = root
+
+    def beliefs_in(self, folder: str) -> list[str]:
+        if not (self.root / folder).is_dir():
+            raise ExtractError(f"missing directory: {folder}")
+        return [f"{folder}/{path.name}" for path in sorted((self.root / folder).glob("*.belief.json"))]
+
+    def read(self, rel: str) -> bytes:
+        path = self.root / rel
+        if not path.is_file():
+            raise ExtractError(f"missing file: {rel}")
+        return path.read_bytes()
+
+
+def read_source(source: PinnedTree | WorkTree, rel: str, files: list[dict], role: str) -> bytes:
+    data = source.read(rel)
     files.append({"path": rel, "git_blob": git_blob_id(data), "role": role})
     return data
 
 
-def belief_paths(root: Path) -> dict[str, list[str]]:
+def belief_paths(source: PinnedTree | WorkTree) -> dict[str, list[str]]:
     """The *.belief.json files of the two folders, as the producer of the record lists them (sorted by name)."""
-    found = {}
-    for folder in (BELIEFS, ARCHIVED):
-        if not (root / folder).is_dir():
-            raise ExtractError(f"missing directory: {folder}")
-        found[folder] = [f"{folder}/{path.name}" for path in sorted((root / folder).glob("*.belief.json"))]
-    return found
+    return {folder: source.beliefs_in(folder) for folder in (BELIEFS, ARCHIVED)}
 
 
 def read_belief(rel: str, data: bytes, group: str) -> dict:
@@ -240,10 +301,10 @@ def block(rel: str, lines: list[str], header: str, next_prefix: re.Pattern) -> t
     return start, stop
 
 
-def rule_files(root: Path, files: list[dict]) -> dict:
-    policy = read_source(root, POLICY, files, "policy that defines the rate and caps the adjustment").decode("utf-8").splitlines()
-    pipeline = read_source(root, PIPELINE, files, "pipeline specification with the trigger and the formula").decode("utf-8").splitlines()
-    applier = read_source(root, APPLIER, files, "script that writes the calibration belief").decode("utf-8").splitlines()
+def rule_files(source: PinnedTree | WorkTree, files: list[dict]) -> dict:
+    policy = read_source(source, POLICY, files, "policy that defines the rate and caps the adjustment").decode("utf-8").splitlines()
+    pipeline = read_source(source, PIPELINE, files, "pipeline specification with the trigger and the formula").decode("utf-8").splitlines()
+    applier = read_source(source, APPLIER, files, "script that writes the calibration belief").decode("utf-8").splitlines()
     first, stop = block(POLICY, policy, POLICY_BLOCK, re.compile(r"^  \S"))
     oversight = {"human_oversight": (r"^\s*- Human oversight of the feedback loop is required at least (?P<value>\w+)$",
                                      ("value",))}
@@ -279,9 +340,9 @@ def yaml_beliefs(rel: str, text: str) -> list[dict]:
     return items
 
 
-def unread_files(root: Path, files: list[dict]) -> dict:
-    yaml_text = read_source(root, YAML_BELIEFS, files, "YAML list of beliefs, not read by the producer").decode("utf-8")
-    ledger = read_source(root, LEDGER, files, "ledger of the archived folder, not a belief file").decode("utf-8")
+def unread_files(source: PinnedTree | WorkTree, files: list[dict]) -> dict:
+    yaml_text = read_source(source, YAML_BELIEFS, files, "YAML list of beliefs, not read by the producer").decode("utf-8")
+    ledger = read_source(source, LEDGER, files, "ledger of the archived folder, not a belief file").decode("utf-8")
     return {
         "note": "Files of the two belief folders that the producer's *.belief.json glob does not read.",
         "yaml_beliefs": {"path": label(YAML_BELIEFS), "items": yaml_beliefs(YAML_BELIEFS, yaml_text)},
@@ -304,22 +365,23 @@ def drift_report(files: list[dict], on_disk: dict[str, list[str]]) -> list[str]:
 
 def build(root: Path, allow_drift: bool) -> dict:
     files: list[dict] = []
-    on_disk = belief_paths(root)
+    source = WorkTree(root) if allow_drift else PinnedTree(root)
+    on_disk = belief_paths(source)
     beliefs, focus = [], None
     for folder, group in ((BELIEFS, "current"), (ARCHIVED, "archived")):
         for rel in on_disk[folder]:
-            data = read_source(root, rel, files, f"{group} belief file")
+            data = read_source(source, rel, files, f"{group} belief file")
             beliefs.append(read_belief(rel, data, group))
             if rel == FOCUS:
                 focus = focus_record(rel, data)
     if focus is None:
         raise ExtractError(f"missing file: {FOCUS}")
-    rules = rule_files(root, files)
-    unread = unread_files(root, files)
+    rules = rule_files(source, files)
+    unread = unread_files(source, files)
     drift = drift_report(files, on_disk)
     if drift and not allow_drift:
-        raise ExtractError("source files are not those of commit " + PINNED_COMMIT + ":\n  " + "\n  ".join(drift)
-                           + "\n(--allow-drift snapshots them anyway; the lesson's numbers then no longer apply)")
+        raise ExtractError("the files of commit " + PINNED_COMMIT + " are not the ones recorded in this script:\n  "
+                           + "\n  ".join(drift))
     return {
         "schema_version": "0.1.0",
         "module_id": "psy-017-calibration-with-six-observations",
@@ -347,7 +409,8 @@ def main() -> int:
     parser.add_argument("--repo-root", type=Path, default=here.parents[5])
     parser.add_argument("--output", type=Path, default=here.with_name("observed-input.json"))
     parser.add_argument("--allow-drift", action="store_true",
-                        help="snapshot source files that differ from the pinned commit")
+                        help="read the working tree instead of the pinned commit, and snapshot files that differ "
+                             "from it (analyze.py refuses that snapshot)")
     args = parser.parse_args()
     try:
         snapshot = build(args.repo_root, args.allow_drift)

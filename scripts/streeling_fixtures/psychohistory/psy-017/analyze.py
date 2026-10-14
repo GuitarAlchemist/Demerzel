@@ -31,6 +31,8 @@ FIXTURE_FILE = (Path(__file__).resolve().parents[4]
                 / "state/streeling/fixtures/psychohistory/psy-017" / Path(__file__).name)
 
 HERE = FIXTURE_FILE.parent
+# The commit whose files extract.py snapshots; a snapshot of any other state is refused.
+PINNED_COMMIT = "4b03838800dcd4894f1e026461979bff1d985ca8"
 DECIMALS = {"probability": 6, "bound": 4, "nudge": 4, "ratio": 4, "day": 1}
 ZERO, ONE = Fraction(0), Fraction(1)
 CHECKS: dict[str, int] = {}  # self-check -> times evaluated
@@ -796,6 +798,10 @@ def transfer_task(task: dict, interval_cfg: dict) -> dict:
 def analyze(snapshot: dict, scenarios: dict) -> dict:
     if scenarios["rounding"] != {f"{key}_decimals": value for key, value in DECIMALS.items()}:
         raise ValueError("scenarios.json rounding does not match analyze.py")
+    if snapshot["source"]["commit"] != PINNED_COMMIT:
+        raise ValueError(f"observed-input.json is not the snapshot of commit {PINNED_COMMIT} (its source commit is "
+                         f"{json.dumps(snapshot['source']['commit'])}; --allow-drift records null): the lesson's numbers "
+                         "do not apply")
     cited, focus = scenarios["cited_producer"], snapshot["calibration_belief"]
     record = record_section(snapshot)
     recount, high = recount_section(snapshot, cited)

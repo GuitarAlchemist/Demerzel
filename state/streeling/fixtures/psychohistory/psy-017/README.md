@@ -30,13 +30,15 @@ line endings, `indent=2`, insertion-ordered keys; probabilities rounded to 6 dec
 ratios to 4, days and years to 1). `--check` recomputes the results and compares them with the saved file, ignoring
 only CRLF against LF.
 
-`extract.py` stops with exit code 1 when a source file is missing, when a belief file lacks a key or holds an
-unexpected truth value or confidence, when the claim or one of the quoted rule lines no longer has the expected
-wording, when a file is not the blob of the pinned commit, or when one of the two belief folders holds a
-`*.belief.json` file that the pinned commit does not have. The applying script rewrites the calibration belief each time
-it applies a threshold recommendation, so a later checkout is likely to differ. `--allow-drift` snapshots newer files anyway and records
-`"commit": null`; the lesson's numbers then no longer apply, and `analyze.py` stops at the first self-check that the
-new files break.
+`extract.py` reads the 26 files from the tree of the pinned commit in Git's object store (it needs `git`), so any
+clone that holds that commit gives the same snapshot, whatever its working tree holds: the applying script rewrites
+the calibration belief each time it applies a threshold recommendation, so a later working tree is likely to differ.
+It stops with exit code 1 when the clone does not hold the commit, when a source file is missing, when a belief file
+lacks a key or holds an unexpected truth value or confidence, when the claim or one of the quoted rule lines no longer
+has the expected wording, when a file is not the blob recorded for the pinned commit, or when one of the two belief
+folders holds a `*.belief.json` file that the pinned commit does not have. `--allow-drift` reads the working tree
+instead, snapshots newer files anyway and records `"commit": null`; the lesson's numbers then no longer apply, and
+`analyze.py` refuses any snapshot whose commit is not the pinned one.
 
 ## Paths in the data files
 
