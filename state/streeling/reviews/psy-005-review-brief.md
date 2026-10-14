@@ -43,6 +43,6 @@ Score five criteria 0–2: (1) the count of forecasts, including the two pairs l
 
 ## Verdict and publication boundary
 
-No verdict exists. When one is given, record reviewer identifier or pseudonym, UTC date, course blob, kind (`subject` or `learner`), evidence, findings, and `approved`, `changes_requested`, or `not_assessed`. There is no translation of PSY-005 to approve, and no learner has attempted the task.
+No verdict exists. When one is given, record reviewer identifier or pseudonym, UTC date, course blob, kind (`subject` or `learner`), evidence, findings, and `approved`, `changes_requested`, or `not_assessed`. When this brief was written (2026-10-13), there was no translation of PSY-005 and no learner had attempted the task.
 
 Keep the review and publish flags false until actual verdicts and learner evidence are recorded. After accepted source integration, the page still has to be generated, deployed and read back anonymously with its source SHA before anyone calls PSY-005 published.
