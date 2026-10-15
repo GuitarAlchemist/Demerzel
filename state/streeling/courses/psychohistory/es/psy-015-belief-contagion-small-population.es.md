@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo calculará un número de reproducción y su umbral, hallará el tamaño final que predice una curva epidémica determinista, simulará el mismo modelo suceso a suceso y leerá la distribución de la que procede una sola simulación. **Pregunta de proyecto:** el departamento incluye entre sus áreas la «belief state epidemiology» (epidemiología de los estados de creencia). Si una creencia se propaga entre 14 agentes, ¿cuánto se aparta una sola simulación de la curva epidémica determinista?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) interpreta un desplazamiento de las etiquetas de creencia como señal de un cambio de régimen; este módulo se pregunta qué puede pronosticar un modelo de propagación. [PSY-004](psy-004-how-large-is-large.es.md) estudia 14 agentes cuyas respuestas comparten una causa, y [PSY-017](../en/psy-017-calibration-with-six-observations.md), la creencia sobre la calibración que aparece en la sección 1.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) interpreta un desplazamiento de las etiquetas de creencia como señal de un cambio de régimen; este módulo se pregunta qué puede pronosticar un modelo de propagación. [PSY-004](psy-004-how-large-is-large.es.md) estudia 14 agentes cuyas respuestas comparten una causa, y [PSY-017](psy-017-calibration-with-six-observations.es.md), la creencia sobre la calibración que aparece en la sección 1.
 
 ## 1. El modelo, y lo que significa aquí «infectado»
 

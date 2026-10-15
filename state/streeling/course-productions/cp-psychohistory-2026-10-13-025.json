@@ -21,9 +21,11 @@
       "exercises": 5
     },
     "translation": {
-      "completed": false,
+      "completed": true,
       "languages": [
-        "en"
+        "en",
+        "fr",
+        "es"
       ]
     },
     "review": {

@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo pondrá un intervalo exacto a una proporción observada entre unos pocos agentes que responden sí o no, dirá cómo se reduce su amplitud a medida que crece el grupo y sustituirá el número de agentes por un tamaño muestral efectivo cuando los agentes comparten una causa. **Pregunta de proyecto:** el departamento afirma que el comportamiento agregado de 14 *personas* (los perfiles de agente que define el proyecto) repartidas en 4 repositorios sigue leyes matemáticas. ¿Qué amplitud tiene la incertidumbre sobre un agregado de 14, y qué efecto tiene sobre ella un contexto compartido?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) afirma que el agregado sigue leyes estadísticas e interpreta la correlación entre repositorios como una señal de acoplamiento. [PSY-019](../en/psy-019-combining-correlated-forecasters.md) aplica la misma aritmética a los errores de pronóstico; [PSY-024](../en/psy-024-the-single-actor.md) se pregunta quién actuó en los sucesos registrados.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) afirma que el agregado sigue leyes estadísticas e interpreta la correlación entre repositorios como una señal de acoplamiento. [PSY-019](psy-019-combining-correlated-forecasters.es.md) aplica la misma aritmética a los errores de pronóstico; [PSY-024](psy-024-the-single-actor.es.md) se pregunta quién actuó en los sucesos registrados.
 
 ## 1. Lo que afirma el registro y lo que contiene el repositorio
 
