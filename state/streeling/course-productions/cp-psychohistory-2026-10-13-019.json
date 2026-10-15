@@ -1,0 +1,38 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-019",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-019",
+  "module_id": "psy-019-combining-correlated-forecasters",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.75
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2350,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of four setup files and the council's five records at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (5 confidence settings of the multi-model orchestration policy, a tribunal panel of 5 personas given one pull-request excerpt, and a council that keeps the lower of two reviewers' scores; none of these rules averages) and on a synthetic error model whose closed forms are checked by exact enumeration and by seeded simulations (56 of 56 cells within 4 standard errors; 35 self-checks pass). Every correlation in the draft is assumed: no agent was run and no persona's answer or outcome was read (the council's nine recorded scores come without outcomes), so the draft concludes that the correlation between the project's agents is unmeasured and that it cannot say how much averaging them is worth; errors scored against outcomes share the part nobody could foresee, so the recommended check compares the panel with an outsider over about 500 pull requests. The reading of the policy's settings as probabilities is the module's own. Human subject review, learner trial, translation and publication remain pending."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-14T05:15:26Z"
+}

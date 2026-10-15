@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-014-prediction-horizons.md`, Git blob `0eb0353dc4aa1eb96fef8931ce0e65b7f580a79c` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-014-prediction-horizons.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-014-prediction-horizons.md`, Git blob `2211f9175971d51f1564287e7986a74e6a8ea0d0` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-014-prediction-horizons.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-014/`, programs in `scripts/streeling_fixtures/psychohistory/psy-014/`:
   - `scenarios.json`: Git blob `402544dfbfd8c4af361700bbed0f915a918397cb`
   - `scripts/streeling_fixtures/psychohistory/psy-014/analyze.py`: Git blob `41b581b3b0336e92be44d1a38dfe4956a3b5feae`

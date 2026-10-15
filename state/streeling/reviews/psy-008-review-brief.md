@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-008-bursts-are-not-rates.md`, Git blob `2f05aacfcab887a66a7d7b95463243e5587fc27b` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-008-bursts-are-not-rates.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-008-bursts-are-not-rates.md`, Git blob `6a6218751ff7c74c9014bb648076cc0fe4a8fc4f` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-008-bursts-are-not-rates.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-008/`, programs in `scripts/streeling_fixtures/psychohistory/psy-008/`:
   - `scripts/streeling_fixtures/psychohistory/psy-008/extract.py`: Git blob `19d584432e4576770a78eb3599da671204e7c828`
   - `observed-input.json`: Git blob `2ef570f4e0f1b6140faf61f2d9be4e2adb1394de`

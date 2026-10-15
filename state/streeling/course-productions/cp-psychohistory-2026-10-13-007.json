@@ -17,13 +17,15 @@
     },
     "content": {
       "completed": true,
-      "word_count": 2296,
+      "word_count": 2299,
       "exercises": 5
     },
     "translation": {
-      "completed": false,
+      "completed": true,
       "languages": [
-        "en"
+        "en",
+        "fr",
+        "es"
       ]
     },
     "review": {

@@ -1,0 +1,190 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-021-conservation-claims",
+  "kind": "assumed inputs, hand-written cases and the author's classifications; nothing in this file is measured in the Demerzel repository",
+  "random_seed": null,
+  "random_seed_note": "The analysis draws no random numbers: every result is a count or a ratio of counts.",
+  "rounding": {
+    "percent_decimals": 2
+  },
+  "folders": {
+    "note": "The three places a trigger file can be, in the order of the tables. 'top' is state/triggers itself, where the producer writes and where a file waits.",
+    "order": ["top", "processing", "archived"],
+    "labels": {"top": "pending", "processing": "in processing", "archived": "archived"},
+    "designed_exit": "processing"
+  },
+  "lifecycle_key_hints": {
+    "note": "Analysis choice: a key of an event file is counted as a possible record of what happened to the event after it was written when its name contains one of these fragments.",
+    "fragments": ["archiv", "process", "consum", "handled", "outcome", "result", "status", "completed", "closed"]
+  },
+  "momentum_key_hints": {
+    "note": "Analysis choice: a field of the tracking file is counted as a possible record of learning momentum when its name contains one of these fragments.",
+    "fragments": ["p_l", "momentum", "belief"]
+  },
+  "claim_kinds": {
+    "note": "The four labels this module gives to a statement that is called a conservation statement. Assigning a label to a statement is the author's judgement; the criterion is written next to each.",
+    "by_construction": "true whatever the records say, by arithmetic or by how its sides are derived (often both sides are computed from the same records), so the statement tells nothing about the system",
+    "auditable": "the records could have made the statement false, often because its two sides were written separately",
+    "not_recorded": "one of the quantities was never written down, so the statement can be neither confirmed nor refuted from the records",
+    "analogy": "the statement borrows the vocabulary of a law without the conditions under which the law holds"
+  },
+  "noether_requirements": {
+    "note": "What Noether's first theorem needs before it yields a conserved quantity, and the author's reading of whether PSY-001's use meets each condition. The reading is a judgement about a text, not a measurement.",
+    "conditions": [
+      {
+        "condition": "an action: one function of the system's whole history whose stationary points are the system's actual motions",
+        "met_in_psy_001": false,
+        "reason": "no action and no equations of motion are written for governance cycles"
+      },
+      {
+        "condition": "a continuous symmetry: a family of transformations indexed by a real number that leaves the action unchanged",
+        "met_in_psy_001": false,
+        "reason": "the symmetry named is the sameness of one operation at a short list of named levels, which is a discrete correspondence"
+      },
+      {
+        "condition": "the conserved quantity is derived from the action and the symmetry, not chosen",
+        "met_in_psy_001": false,
+        "reason": "p_L is defined by a formula, and the text allows it to stay constant or grow, which a conserved quantity cannot do"
+      }
+    ]
+  },
+  "synthetic_ledgers": {
+    "note": "Hand-written cases with eight imaginary events, e1 to e8, in the encoding of observed-input.json. Commits 1 to 8 create the events, commit 9 exists only where a deletion is recorded, commit 10 moves events to the archive. The cases model a system in which the listing is counted separately from the log (shelves and a scan log), which is what makes an unrecorded loss or copy possible; in Git the listing is the last snapshot of the log. In four of the five cases a departure or an error is planted; expected_by_hand is what the audit must return and was written before the analysis ran.",
+    "cases": {
+      "clean": {
+        "description": "Nothing leaves: six events archived, two pending, and the listing agrees.",
+        "history": [
+          "e1 +top@1 -top@10 +archived@10",
+          "e2 +top@2 -top@10 +archived@10",
+          "e3 +top@3 -top@10 +archived@10",
+          "e4 +top@4 -top@10 +archived@10",
+          "e5 +top@5 -top@10 +archived@10",
+          "e6 +top@6 -top@10 +archived@10",
+          "e7 +top@7",
+          "e8 +top@8"
+        ],
+        "disk": {"top": ["e7", "e8"], "processing": [], "archived": ["e1", "e2", "e3", "e4", "e5", "e6"]},
+        "expected_by_hand": {
+          "created": 8, "files_on_disk": 8, "removals_recorded": 0, "closed_system_difference": 0,
+          "open_system_difference": 0, "folders_out_of_balance": [], "names_in_two_folders": [],
+          "expected_but_missing": [], "on_disk_but_unexpected": []
+        }
+      },
+      "recorded_removal": {
+        "description": "Commit 9 deletes e2 from the pending folder. The deletion is in the history.",
+        "history": [
+          "e1 +top@1 -top@10 +archived@10",
+          "e2 +top@2 -top@9",
+          "e3 +top@3 -top@10 +archived@10",
+          "e4 +top@4 -top@10 +archived@10",
+          "e5 +top@5 -top@10 +archived@10",
+          "e6 +top@6 -top@10 +archived@10",
+          "e7 +top@7",
+          "e8 +top@8"
+        ],
+        "disk": {"top": ["e7", "e8"], "processing": [], "archived": ["e1", "e3", "e4", "e5", "e6"]},
+        "expected_by_hand": {
+          "created": 8, "files_on_disk": 7, "removals_recorded": 1, "closed_system_difference": 1,
+          "open_system_difference": 0, "folders_out_of_balance": [], "names_in_two_folders": [],
+          "expected_but_missing": [], "on_disk_but_unexpected": []
+        }
+      },
+      "silent_loss": {
+        "description": "The history is that of the clean case, but e2 is not in the archive listing and no record says why.",
+        "history": [
+          "e1 +top@1 -top@10 +archived@10",
+          "e2 +top@2 -top@10 +archived@10",
+          "e3 +top@3 -top@10 +archived@10",
+          "e4 +top@4 -top@10 +archived@10",
+          "e5 +top@5 -top@10 +archived@10",
+          "e6 +top@6 -top@10 +archived@10",
+          "e7 +top@7",
+          "e8 +top@8"
+        ],
+        "disk": {"top": ["e7", "e8"], "processing": [], "archived": ["e1", "e3", "e4", "e5", "e6"]},
+        "expected_by_hand": {
+          "created": 8, "files_on_disk": 7, "removals_recorded": 0, "closed_system_difference": 1,
+          "open_system_difference": 1, "folders_out_of_balance": ["archived"], "names_in_two_folders": [],
+          "expected_but_missing": ["archived/e2"], "on_disk_but_unexpected": []
+        }
+      },
+      "duplicate": {
+        "description": "The history is that of the clean case, but e7 was copied into the archive listing while it is still pending.",
+        "history": [
+          "e1 +top@1 -top@10 +archived@10",
+          "e2 +top@2 -top@10 +archived@10",
+          "e3 +top@3 -top@10 +archived@10",
+          "e4 +top@4 -top@10 +archived@10",
+          "e5 +top@5 -top@10 +archived@10",
+          "e6 +top@6 -top@10 +archived@10",
+          "e7 +top@7",
+          "e8 +top@8"
+        ],
+        "disk": {"top": ["e7", "e8"], "processing": [], "archived": ["e1", "e2", "e3", "e4", "e5", "e6", "e7"]},
+        "expected_by_hand": {
+          "created": 8, "files_on_disk": 9, "removals_recorded": 0, "closed_system_difference": -1,
+          "open_system_difference": -1, "folders_out_of_balance": ["archived"], "names_in_two_folders": ["e7"],
+          "expected_but_missing": [], "on_disk_but_unexpected": ["archived/e7"]
+        }
+      },
+      "offsetting_errors": {
+        "description": "Both errors at once: e2 is missing from the archive listing and e7 was copied into it.",
+        "history": [
+          "e1 +top@1 -top@10 +archived@10",
+          "e2 +top@2 -top@10 +archived@10",
+          "e3 +top@3 -top@10 +archived@10",
+          "e4 +top@4 -top@10 +archived@10",
+          "e5 +top@5 -top@10 +archived@10",
+          "e6 +top@6 -top@10 +archived@10",
+          "e7 +top@7",
+          "e8 +top@8"
+        ],
+        "disk": {"top": ["e7", "e8"], "processing": [], "archived": ["e1", "e3", "e4", "e5", "e6", "e7"]},
+        "expected_by_hand": {
+          "created": 8, "files_on_disk": 8, "removals_recorded": 0, "closed_system_difference": 0,
+          "open_system_difference": 0, "folders_out_of_balance": [], "names_in_two_folders": ["e7"],
+          "expected_but_missing": ["archived/e2"], "on_disk_but_unexpected": ["archived/e7"]
+        }
+      }
+    }
+  },
+  "testable_version": {
+    "note": "Synthetic. Six imaginary cycles with the counts PSY-001's formula needs and one extra record the repository does not keep: whether the compound phase ran at all five levels in that cycle, written down without looking at p_L. p_L is computed per cycle (cycles_elapsed = 1). No such series exists in the repository.",
+    "tolerance": 0,
+    "cycles": [
+      {"cycle": 1, "beliefs_gained": 6, "beliefs_lost": 1, "compound_ran_at_all_levels": true},
+      {"cycle": 2, "beliefs_gained": 7, "beliefs_lost": 2, "compound_ran_at_all_levels": true},
+      {"cycle": 3, "beliefs_gained": 5, "beliefs_lost": 2, "compound_ran_at_all_levels": true},
+      {"cycle": 4, "beliefs_gained": 4, "beliefs_lost": 3, "compound_ran_at_all_levels": false},
+      {"cycle": 5, "beliefs_gained": 6, "beliefs_lost": 1, "compound_ran_at_all_levels": true},
+      {"cycle": 6, "beliefs_gained": 6, "beliefs_lost": 1, "compound_ran_at_all_levels": true}
+    ],
+    "versions": {
+      "conservation": "p_L has the same value in every cycle",
+      "conditional": "between two cycles in which the compound phase ran at all levels, p_L does not fall",
+      "reading_rule": "a fall of p_L is what 'symmetry broken' means, so every step receives one of the three labels stable, growing, declining"
+    }
+  },
+  "transfer_task": {
+    "note": "A hypothetical parcel depot, written for the learner task. It is not Streeling data. Ten parcels, p01 to p10; a scan log in the encoding of observed-input.json (scans 1 to 10 register a parcel at intake, scan 11 moves a batch to sorting, scan 12 returns one parcel to its sender, scan 13 moves a batch to the shelf) and this morning's count of what is physically in each place.",
+    "folders": ["intake", "sorting", "shelf"],
+    "history": [
+      "p01 +intake@1 -intake@11 +sorting@11 -sorting@13 +shelf@13",
+      "p02 +intake@2 -intake@11 +sorting@11 -sorting@13 +shelf@13",
+      "p03 +intake@3 -intake@11 +sorting@11 -sorting@13 +shelf@13",
+      "p04 +intake@4 -intake@11 +sorting@11 -sorting@13 +shelf@13",
+      "p05 +intake@5 -intake@11 +sorting@11 -sorting@13 +shelf@13",
+      "p06 +intake@6 -intake@11 +sorting@11 -sorting@13 +shelf@13",
+      "p07 +intake@7 -intake@11 +sorting@11",
+      "p08 +intake@8",
+      "p09 +intake@9 -intake@12",
+      "p10 +intake@10 -intake@11 +sorting@11 -sorting@13 +shelf@13"
+    ],
+    "disk": {
+      "intake": ["p08"],
+      "sorting": ["p03", "p07"],
+      "shelf": ["p01", "p02", "p03", "p04", "p05", "p06"]
+    },
+    "statement_to_label": "Throughput at this depot has momentum, and momentum is conserved."
+  }
+}

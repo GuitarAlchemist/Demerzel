@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-006-transition-matrix-from-counts.md`, Git blob `3f9da7306db4a701034fa5e5a30a2e9649c75e8c` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-006-transition-matrix-from-counts.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-006-transition-matrix-from-counts.md`, Git blob `687a708639bda44705868750388b0201473912ca` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-006-transition-matrix-from-counts.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-006/`, programs in `scripts/streeling_fixtures/psychohistory/psy-006/`:
   - `scripts/streeling_fixtures/psychohistory/psy-006/extract.py`: Git blob `da46004b4c0182d4e788167b31973ce03b332d18`
   - `observed-input.json`: Git blob `2ed3dc0f899fd8f7ced045c51916dda1739784e9`

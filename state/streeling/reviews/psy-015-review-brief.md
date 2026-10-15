@@ -4,7 +4,7 @@ Status: **open**. This is a human-review and learner-trial packet, not an approv
 
 ## Frozen target and inputs
 
-- English course: `state/streeling/courses/psychohistory/en/psy-015-belief-contagion-small-population.md`, Git blob `a55367ce456e637a26397a06b96ee984d0f89f09` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-015-belief-contagion-small-population.md` names the commit that added the file).
+- English course: `state/streeling/courses/psychohistory/en/psy-015-belief-contagion-small-population.md`, Git blob `ee3207ca7ba6d20e8c59bb1d624397e8c86489af` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-015-belief-contagion-small-population.md` names the commit that added the file).
 - Fixture data in `state/streeling/fixtures/psychohistory/psy-015/`, programs in `scripts/streeling_fixtures/psychohistory/psy-015/`:
   - `scripts/streeling_fixtures/psychohistory/psy-015/extract.py`: Git blob `86ec0a3fb8e9c97e27ebef505f5d679815d9d74f`
   - `observed-input.json`: Git blob `993e25b2d606858993bf1853fc38893a5d6ab943`

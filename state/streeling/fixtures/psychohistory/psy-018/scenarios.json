@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-018-backtesting-without-leakage",
+  "kind": "analysis choices, assumptions and learner-task inputs; nothing in this file is measured in the Demerzel repository",
+  "rounding": {
+    "ratio_decimals": 6,
+    "percent_decimals": 2,
+    "day_decimals": 3
+  },
+  "series_rule": {
+    "note": "Analysis choice. A series is one artifact under one instrument: it starts at the artifact's first row that carries a citation_count and restarts at each row flagged rebaseline: true. Seed rows (baseline: true) carry no count and belong to no series."
+  },
+  "rolling_origin": {
+    "note": "Analysis choice. Every row of a series that has at least min_training_rows rows before it is a target in turn; the forecast uses only the rows before it. Two rows is the least the drift forecast needs, and the same origins are used for the three methods.",
+    "min_training_rows": 2,
+    "horizon_runs": 1
+  },
+  "run_gap_bounds_days": {
+    "note": "Analysis choice, not an observation: the gap between an origin run and its target run counts as 'about a day' when it lies inside these bounds.",
+    "about_a_day_from": 0.5,
+    "about_a_day_to": 1.5
+  },
+  "leakage": {
+    "time_split": {
+      "note": "Analysis choice. The test rows are the last quarter of each series (rounded down, at least one row); the training rows are all the rows before them. cut_sweep in results.json repeats the comparison for every other cut.",
+      "test_share": [1, 4]
+    },
+    "random_split_cross_check": {
+      "note": "Seeded draws that check the exact average over all random splits through a second code path. A split takes the test rows with the smallest random.Random(seed).random() keys.",
+      "seed": 18018,
+      "draws": 20000,
+      "tolerance": 0.01
+    }
+  },
+  "extrapolation": {
+    "assumption": "Runs in which at least one count changes keep occurring at the frequency observed between rebaselined runs. One observed change run does not support this assumption; it only sets a scale.",
+    "target_change_runs": [10, 30]
+  },
+  "transfer_task": {
+    "note": "Hypothetical weekly counts of pages that link to three documents of a wiki. Not Streeling data and not a forecast.",
+    "min_training_rows": 2,
+    "series": {
+      "handbook": [10, 10, 10, 10, 10, 13, 13, 13],
+      "glossary": [7, 7, 7, 7, 7, 7, 7, 7],
+      "style-guide": [4, 4, 4, 4, 4, 7, 7, 7]
+    },
+    "worked_series": "handbook",
+    "scaled_error_target_week": 7,
+    "time_split_test_rows": 2,
+    "random_split_test_weeks": [3, 7]
+  }
+}

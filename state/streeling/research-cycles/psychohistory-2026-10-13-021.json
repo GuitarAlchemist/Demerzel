@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-021",
+  "department": "psychohistory",
+  "question": "PSY-001 borrows Noether's theorem for \"learning momentum\". Which conservation statements about this project can actually be checked?",
+  "production_path": [
+    "investigation: read the trigger folders, the producer workflow, the driver's skill file, PSY-001, the compounding-metrics policy and the file it names for tracking learning momentum at the pinned commit; listed the add and delete records of state/triggers/ in the Git history (commits and trees only) and replayed them in a throwaway script, which reproduced the coordinator's count of 12 deleted trigger files before the fixture was written",
+    "extract: snapshot one row per event file at the pin and one row per file name in the history into observed-input.json, refusing a folder whose Git tree id, a quoted file whose blob id, or a history whose commit counts differ from the pin",
+    "model: one audit function compares a listing with a history of additions and deletions (closed identity, open identity with a removed term, per-folder balance, name-by-name match); each statement receives one of four labels: by construction, auditable, not recorded, analogy",
+    "test: the audit on the observed log, on five hand-written ledgers whose answers were fixed in advance, and on a hypothetical parcel depot for the learner task; three versions of the momentum claim scored on an imaginary series by the outcomes each one forbids",
+    "adversarial: four negative controls planted in a copy of the snapshot; the finding that the balances between files and history hold by construction of Git, which moved three statements from auditable to by construction; the objection that a created file is a committed file, not a fired event",
+    "test: byte-identical rerun of the analysis and of the extraction under Windows and Linux, 21 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "At the pin, the identity \"files created = archived + pending + in processing\" cannot be closed from the files alone, because no file counts production; with the creation records of the Git history as its left side it fails by exactly the 12 files of the coordinator's recount, the gap is fully explained by deletion records (no silent loss), and the per-folder stock-and-flow identities and the uniqueness checks hold; no trigger carries an archival time or a processing record, and no value of PSY-001's learning momentum is recorded at the pin.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the trigger folders hold 603 event files (9 pending, 0 in processing, 594 archived); none of their keys records an archival time, a processing step or an outcome, and no file counts the triggers ever produced, so the closed identity has no left side there. The checks that can fail on the files alone hold: 603 distinct names, 602 distinct run ids, and 594 orphaned triggers stated by two documents against 594 archived files.",
+    "On the pin's first-parent chain (1,528 commits, 623 touching the folder) the add and delete records name 615 created trigger files, so the closed identity fails by 12 (615 against 603, 1.95% of the files created): 2 deleted for a colon in the name, 5 deleted from processing/ after the driver's second cycle, 5 deleted from the pending folder by a documentation commit. The number 12 was known from the coordinator's recount before the fixture was written; the fixture counts it from the records instead of taking it as an input.",
+    "The parts of the hypothesis about deletion records and per-folder balances hold by construction (615 = 603 + 12, every folder balances, 603 of 603 names where the history leaves them): Git derives additions and deletions from consecutive snapshots and the files are the last snapshot, so they are not evidence about the trigger system. The conclusion confirm rests on the parts that could have failed: no left side at the pin, the gap of 12, the uniqueness checks, no archival or processing key, and no value of p_L in the tracking file.",
+    "Five hand-written ledgers of eight imaginary events (synthetic) and four negative controls on the observed snapshot each gave the result fixed in advance, for example removals on record 12 to 11 when one deletion record is erased. Each of the 613 producer commits created exactly one file of the type its subject names, but one workflow step writes subject and file name from one variable, so this is not an independent count; 610 trigger files, 609 of them written by the producer, were never deleted from processing/, against 594 orphans stated.",
+    "The file the compounding-metrics policy names for tracking learning momentum holds 4 entries with a composite score, a date and a trend, and 0 values of p_L; no other file was searched for one, the content of the 12 deleted files and the earlier versions of the producer workflow (the pinned one is a later edit) were not read, and the workflow's run list on GitHub was not consulted, so 615 counts committed trigger files, not fired events. When this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T05:05:00Z"
+}
