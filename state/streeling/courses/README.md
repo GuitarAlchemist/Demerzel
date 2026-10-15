@@ -61,12 +61,12 @@ These departments have grammars and research areas defined but no courses produc
 courses/{dept}/{lang}/{code}.md   # Published course in 6 languages
 ```
 
-See: [`seldon-research-cycle`](../../.claude/skills/seldon-research-cycle/SKILL.md) and [`seldon-course-pipeline`](../../.claude/skills/seldon-course-pipeline/SKILL.md)
+See: [`seldon-research-cycle`](../../../.claude/skills/seldon-research-cycle/SKILL.md) and [`seldon-course-pipeline`](../../../.claude/skills/seldon-course-pipeline/SKILL.md)
 
 ## Quality Standards
 
 - Courses require research cycle with `belief_confidence >= 0.5`
 - Auto-publish at `>= 0.7` confidence; human review for `0.5-0.7`
 - Each course must have practice exercises
-- Translations follow [multilingual policy](../../policies/multilingual-policy.yaml) with cultural adaptation
+- Translations follow [multilingual policy](../../../policies/multilingual-policy.yaml) with cultural adaptation
 - All courses reference their source research cycle for traceability

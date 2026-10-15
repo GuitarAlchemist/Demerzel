@@ -170,5 +170,5 @@ The discipline of psychohistory accepts this. We don't aim for perfect predictio
 - Noether's theorem applies to scale-invariant governance processes
 - JPP's Economicon ERGOL/LOLLI distinction maps to governance value measurement
 - Fractal dimension between 1.2-1.6 correlates with sustainable governance growth
-- Sources: [Fractal Compounding Spec](../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (Noether's theorem), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (Gödel's incompleteness)
+- Sources: [Fractal Compounding Spec](../../../../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (Noether's theorem), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (Gödel's incompleteness)
 - Belief state: T(0.70) F(0.05) U(0.20) C(0.05)
