@@ -30,11 +30,11 @@
     },
     "review": {
       "completed": false,
-      "feedback": "English draft resting on a synthetic fixture only: the logistic map at four settings, 1,000 seeded pairs of runs per setting, a deterministic analysis whose 41 self-checks pass and whose output is byte-identical on the four Python builds tried. The hypothesis and its thresholds were written before the first run and all held. A recomputation on 1,024-bit integers separates what belongs to the map (the horizons) from what belongs to double-precision arithmetic (states beyond about 53 steps at r = 4, zeros in the gap table). No project data was analysed, no Lyapunov exponent has been estimated for any project quantity, and the reading for roadmaps is labelled as an analogy. Human subject review, learner trial, translation and publication remain pending."
+      "feedback": "English draft resting on a synthetic fixture only: the logistic map at four settings, 1,000 seeded pairs of runs per setting, a deterministic analysis whose 41 self-checks pass and whose output is byte-identical on the four Python builds tried. The hypothesis and its thresholds were written before the first run and all held. A recomputation on 1,024-bit integers separates what belongs to the map (the horizons) from what belongs to double-precision arithmetic (states beyond about 53 steps at r = 4, zeros in the gap table). No project data was analysed, no Lyapunov exponent has been estimated for any project quantity, and the reading for roadmaps is labelled as an analogy. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-14T03:04:00Z"
+  "timestamp": "2026-10-15T14:46:09Z"
 }

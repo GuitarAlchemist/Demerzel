@@ -30,11 +30,11 @@
     },
     "review": {
       "completed": false,
-      "feedback": "English draft resting on a snapshot of the Psychohistory department record, the 17 persona files, the 5 council verdicts and the two files of the tribunal panel at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, and on a synthetic fixture (exact binomial intervals, a shared-cause model with its exact distribution and two seeded simulations, a second generating model) whose 64 self-checks pass and whose results rerun byte-identically. No decision of any persona was read, this study did not run the panel (whose workflow file says it never produced a verdict) and no correlation between personas was estimated, so the draft concludes that the size of the effect on the real personas is unknown and names the panel's verdicts as the log that would measure it. Human subject review, learner trial, translation and publication remain pending."
+      "feedback": "English draft resting on a snapshot of the Psychohistory department record, the 17 persona files, the 5 council verdicts and the two files of the tribunal panel at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, and on a synthetic fixture (exact binomial intervals, a shared-cause model with its exact distribution and two seeded simulations, a second generating model) whose 64 self-checks pass and whose results rerun byte-identically. No decision of any persona was read, this study did not run the panel (whose workflow file says it never produced a verdict) and no correlation between personas was estimated, so the draft concludes that the size of the effect on the real personas is unknown and names the panel's verdicts as the log that would measure it. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-14T01:43:25Z"
+  "timestamp": "2026-10-15T14:46:09Z"
 }

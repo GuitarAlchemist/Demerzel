@@ -30,11 +30,11 @@
     },
     "review": {
       "completed": false,
-      "feedback": "English draft resting on a snapshot, at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, of the sender and repo of the trigger events (594 archived and 8 outside the archive, one sender label) and of the 1,599 commits that lead to the pin (2 author strings), with every identity replaced by a label, and on a deterministic analysis whose 37 self-checks pass. The senders of the twelve deleted trigger files are unknown and only bounded; the ensembles of section 2 and the simulation are synthetic. The draft concludes that the records resolve accounts and author strings, not persons or agents, and that its own hypothesis about the commit record failed as written (effective number 1.9886 against a threshold of 1.5). An independent agent review (2026-10-14) found no blocking issue; its requested fixes were applied. Human subject review, learner trial, translation and publication remain pending."
+      "feedback": "English draft resting on a snapshot, at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, of the sender and repo of the trigger events (594 archived and 8 outside the archive, one sender label) and of the 1,599 commits that lead to the pin (2 author strings), with every identity replaced by a label, and on a deterministic analysis whose 37 self-checks pass. The senders of the twelve deleted trigger files are unknown and only bounded; the ensembles of section 2 and the simulation are synthetic. The draft concludes that the records resolve accounts and author strings, not persons or agents, and that its own hypothesis about the commit record failed as written (effective number 1.9886 against a threshold of 1.5). An independent agent review (2026-10-14) found no blocking issue; its requested fixes were applied. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-14T03:10:17Z"
+  "timestamp": "2026-10-15T14:46:09Z"
 }
