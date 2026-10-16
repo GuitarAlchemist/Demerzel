@@ -18,7 +18,7 @@ version: "0.1.0"
 
 Vous placerez un intervalle exact sur un score de onze essais, vous testerez un saut entre deux scores, vous tiendrez compte de la multiplicité des tests portant sur les quatre mêmes nombres, et vous direz ce que mesure un jeu de test réutilisé. **Question de projet :** l'historique de résilience affiche 0,00 ; 0,64 ; 0,73 ; 0,82 sur quatre cycles ; lesquels de ces sauts se distinguent du hasard, et que mesure un jeu d'injections répété ?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lit ce score comme un indicateur de régime et sa variation comme une vitesse. Ce module demande quelle variation onze essais peuvent montrer. [PSY-004](psy-004-how-large-is-large.fr.md) construit l'intervalle exact utilisé ici, [PSY-011](psy-011-measurement-change-or-system-change.fr.md) traite des changements d'instrument, et [PSY-023](../en/psy-023-monitoring-a-plan.md) conçoit des règles d'alerte.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lit ce score comme un indicateur de régime et sa variation comme une vitesse. Ce module demande quelle variation onze essais peuvent montrer. [PSY-004](psy-004-how-large-is-large.fr.md) construit l'intervalle exact utilisé ici, [PSY-011](psy-011-measurement-change-or-system-change.fr.md) traite des changements d'instrument, et [PSY-023](psy-023-monitoring-a-plan.fr.md) conçoit des règles d'alerte.
 
 ## 1. Lire les enregistrements avant de calculer
 

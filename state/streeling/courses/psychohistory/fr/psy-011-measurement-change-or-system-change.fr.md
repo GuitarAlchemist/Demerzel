@@ -142,4 +142,4 @@ Un tableau de bord présente « citations multipliées par environ 3,9 depuis ju
 
 **Prochaine vérification.** Recalculer le décompte `git-grep-v1` au commit de chaque exécution antérieure. Un seul instrument sous les 87 exécutions du feeder montrerait si quelque chose a bougé avant septembre ; si c'est le cas, la conclusion passe de « presque rien n'a bougé » à « le mouvement n'a pas été mesuré ».
 
-**Empreinte propre.** Ce module écrit les noms d'artefacts sous forme d'étiquettes aux barres obliques espacées, si bien qu'aucun de ses fichiers ne contient le chemin de citation d'un artefact : lancée sur eux avec chaque chemin, la recherche littérale de la section 1 (`git grep -lF`) ne trouve rien. [PSY-020](../en/psy-020-goodhart-and-reflexivity.md) reprend la question générale.
+**Empreinte propre.** Ce module écrit les noms d'artefacts sous forme d'étiquettes aux barres obliques espacées, si bien qu'aucun de ses fichiers ne contient le chemin de citation d'un artefact : lancée sur eux avec chaque chemin, la recherche littérale de la section 1 (`git grep -lF`) ne trouve rien. [PSY-020](psy-020-goodhart-and-reflexivity.fr.md) reprend la question générale.

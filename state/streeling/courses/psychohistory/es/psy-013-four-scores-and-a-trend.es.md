@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo dará un intervalo exacto para una puntuación obtenida en once ensayos, pondrá a prueba un salto entre dos puntuaciones, tendrá en cuenta que se hacen varias pruebas sobre los mismos cuatro números y dirá qué mide un conjunto de prueba reutilizado. **Pregunta de proyecto:** el historial de resiliencia muestra 0.00, 0.64, 0.73, 0.82 a lo largo de cuatro ciclos; ¿cuáles de estos saltos se distinguen del azar, y qué mide un conjunto de inyecciones repetido?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lee esta puntuación como un indicador de régimen y su variación como una velocidad. Este módulo se pregunta cuánto cambio pueden mostrar once ensayos. [PSY-004](psy-004-how-large-is-large.es.md) construye el intervalo exacto que se usa aquí, [PSY-011](psy-011-measurement-change-or-system-change.es.md) trata los cambios de instrumento y [PSY-023](../en/psy-023-monitoring-a-plan.md) diseña reglas de alarma.
+[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lee esta puntuación como un indicador de régimen y su variación como una velocidad. Este módulo se pregunta cuánto cambio pueden mostrar once ensayos. [PSY-004](psy-004-how-large-is-large.es.md) construye el intervalo exacto que se usa aquí, [PSY-011](psy-011-measurement-change-or-system-change.es.md) trata los cambios de instrumento y [PSY-023](psy-023-monitoring-a-plan.es.md) diseña reglas de alarma.
 
 ## 1. Leer el registro antes de calcular
 

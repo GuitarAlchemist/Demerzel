@@ -30,11 +30,11 @@
     },
     "review": {
       "completed": false,
-      "feedback": "English draft resting on a snapshot of the quality-trend effectiveness labels at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (1,529 consecutive label pairs, 1 changed), of the stored uniform 4-state matrix and of a seed table, and on a deterministic analysis whose 47 self-checks pass. The estimated matrix is the identity except for one pair, so the draft reports upper bounds, which assume independent pairs; that assumption, the Markov assumption and the edit history of the assessments were not tested. The comparison with the seed table holds only under an assumed step length, the sticky matrix and the transfer task are synthetic, and no governance state is recorded, so nothing about the 4-state matrix was tested. Human subject review, learner trial, translation and publication remain pending."
+      "feedback": "English draft resting on a snapshot of the quality-trend effectiveness labels at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (1,529 consecutive label pairs, 1 changed), of the stored uniform 4-state matrix and of a seed table, and on a deterministic analysis whose 47 self-checks pass. The estimated matrix is the identity except for one pair, so the draft reports upper bounds, which assume independent pairs; that assumption, the Markov assumption and the edit history of the assessments were not tested. The comparison with the seed table holds only under an assumed step length, the sticky matrix and the transfer task are synthetic, and no governance state is recorded, so nothing about the 4-state matrix was tested. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-14T01:03:00Z"
+  "timestamp": "2026-10-15T14:46:09Z"
 }

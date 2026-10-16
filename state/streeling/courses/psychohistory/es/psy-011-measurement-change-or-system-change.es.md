@@ -142,4 +142,4 @@ Un panel presenta «citas multiplicadas por unos 3.9 desde julio (de 106 a 414)�
 
 **Próxima comprobación.** Recalcular el recuento `git-grep-v1` en el commit de cada ejecución anterior. Un único instrumento bajo las 87 ejecuciones del feeder mostraría si algo se movió antes de septiembre; si fue así, la conclusión pasa de «casi nada se movió» a «el movimiento no se midió».
 
-**Huella propia.** Este módulo escribe los nombres de los artefactos como etiquetas con barras espaciadas, de modo que ninguno de sus archivos contiene la ruta de citación de ningún artefacto: ejecutada sobre ellos con cada ruta, la búsqueda literal de la sección 1 (`git grep -lF`) no encuentra nada. [PSY-020](../en/psy-020-goodhart-and-reflexivity.md) retoma la cuestión general.
+**Huella propia.** Este módulo escribe los nombres de los artefactos como etiquetas con barras espaciadas, de modo que ninguno de sus archivos contiene la ruta de citación de ningún artefacto: ejecutada sobre ellos con cada ruta, la búsqueda literal de la sección 1 (`git grep -lF`) no encuentra nada. [PSY-020](psy-020-goodhart-and-reflexivity.es.md) retoma la cuestión general.
