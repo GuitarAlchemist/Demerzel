@@ -7,7 +7,7 @@ prerequisites: []
 estimated_duration: "40 minutes"
 produced_by: claude-ix-research
 research_cycle: null
-version: "0.1.0"
+version: "0.1.1"
 ---
 
 # Flujos con presupuesto: contrapresión, una compuerta que aprende y una verificación de Petri
@@ -103,7 +103,7 @@ El brazo Jev tiene un precio base de 0.02. A mitad del flujo, Jev ha gastado el 
 4. `jev`: la respuesta grabada de Jev, tras una pausa que hace las veces de la latencia de una llamada real, cobrada al coste medio por llamada del estudio. Jev es el clasificador alojado zero-shot `jev-1.13.0` de TypeSafe. **No se envía nada a Jev**: las respuestas se reproducen a partir de los recibos del estudio;
 5. `judge`: compara la respuesta con la etiqueta y señala acierto o error en el bus.
 
-El ejemplo también puede añadir una vía de Claude Haiku en directo, con el plan de la persona, limitada en llamadas. Por defecto no se usa ninguna, y ningún resultado de abajo la incluye (véase la sección 8).
+El ejemplo también puede añadir una vía de Claude Haiku en directo, con el plan de la persona, limitada en llamadas. Por defecto no se usa ninguna, y ninguna de las ejecuciones de las tablas de abajo la tiene; la sección 8 da cuenta de la única ejecución que la tuvo.
 
 **El presupuesto.** Las 221 llamadas a Jev grabadas en el estudio costaron 0.026733 USD según la tarifa publicada, calculado a partir de los tokens de entrada declarados, no facturado ([`full/jev-eval.json`](https://github.com/GuitarAlchemist/ix/blob/7c37c8c0a2530b9f7e339aba21bcb7f01c3b62da/state/router-spike/jev/full/jev-eval.json)): 0.000120962 USD por llamada. El ejemplo concede a Jev el 40 % del flujo: 0.4 × 663 × 0.000120962 = **0.0320792472 USD, el precio de 265.2 llamadas**.
 
@@ -111,41 +111,44 @@ El ejemplo también puede añadir una vía de Claude Haiku en directo, con el pl
 
 **Esperar o no.** Con `--wait`, la compuerta espera su primera elección cuando esa vía está llena. Sin esa opción, una vía llena se salta en favor de la elección siguiente, como una mezcla de expertos descarta lo que desborda la capacidad de un experto.
 
-**Observado.** Cada ejecución escribe `results.jsonl`, una línea por elemento. Esta consulta cuenta, para cada ejecución, los aciertos y las llamadas a Jev realizadas:
+**Observado.** Cada ejecución escribe `results.jsonl`, una línea por elemento. Esta consulta cuenta, para cada ejecución, los aciertos, las llamadas a Jev realizadas y los elementos enviados a la vía de Jev que el registro rechazó:
 
 ```sql
 SELECT regexp_extract(filename, 'route-[a-z]+(-wait)?-seed[0-9]+') AS run,
        count(*) AS n,
        sum(correct::INT) AS right_n,
-       count(*) FILTER (WHERE arm = 'jev' AND fallback IS NULL) AS jev_calls
+       count(*) FILTER (WHERE arm = 'jev' AND fallback IS NULL) AS jev_calls,
+       count(*) FILTER (WHERE arm = 'jev' AND fallback IS NOT NULL) AS refused
 FROM read_json('route-*/results.jsonl', filename = true, union_by_name = true)
 GROUP BY ALL ORDER BY run;
 ```
 
 ```text
-┌───────────────────────────┬───────┬─────────┬───────────┐
-│            run            │   n   │ right_n │ jev_calls │
-│          varchar          │ int64 │ int128  │   int64   │
-├───────────────────────────┼───────┼─────────┼───────────┤
-│ route-jev-seed7           │   663 │     483 │        84 │
-│ route-jev-wait-seed1      │   663 │     523 │       265 │
-│ route-jev-wait-seed2      │   663 │     527 │       265 │
-│ route-jev-wait-seed3      │   663 │     522 │       265 │
-│ route-jev-wait-seed4      │   663 │     525 │       265 │
-│ route-jev-wait-seed5      │   663 │     526 │       265 │
-│ route-jev-wait-seed7      │   663 │     524 │       265 │
-│ route-learned-seed7       │   663 │     471 │        84 │
-│ route-learned-wait-seed1  │   663 │     555 │       265 │
-│ route-learned-wait-seed11 │   663 │     557 │       265 │
-│ route-learned-wait-seed2  │   663 │     554 │       265 │
-│ route-learned-wait-seed3  │   663 │     550 │       265 │
-│ route-learned-wait-seed4  │   663 │     551 │       265 │
-│ route-learned-wait-seed5  │   663 │     550 │       265 │
-│ route-learned-wait-seed7  │   663 │     546 │       265 │
-│ route-local-seed7         │   663 │     456 │         0 │
-└───────────────────────────┴───────┴─────────┴───────────┘
-  16 rows                                       4 columns
+┌───────────────────────────┬───────┬─────────┬───────────┬─────────┐
+│            run            │   n   │ right_n │ jev_calls │ refused │
+│          varchar          │ int64 │ int128  │   int64   │  int64  │
+├───────────────────────────┼───────┼─────────┼───────────┼─────────┤
+│ route-jev-seed7           │   663 │     483 │        84 │       0 │
+│ route-jev-wait-seed1      │   663 │     523 │       265 │       4 │
+│ route-jev-wait-seed2      │   663 │     527 │       265 │       4 │
+│ route-jev-wait-seed3      │   663 │     522 │       265 │       1 │
+│ route-jev-wait-seed4      │   663 │     525 │       265 │       0 │
+│ route-jev-wait-seed5      │   663 │     526 │       265 │       4 │
+│ route-jev-wait-seed7      │   663 │     524 │       265 │       4 │
+│ route-learned-seed7       │   663 │     471 │        84 │       0 │
+│ route-learned-wait-seed1  │   663 │     555 │       265 │       0 │
+│ route-learned-wait-seed11 │   663 │     557 │       265 │       0 │
+│ route-learned-wait-seed2  │   663 │     554 │       265 │       0 │
+│ route-learned-wait-seed3  │   663 │     550 │       265 │       0 │
+│ route-learned-wait-seed4  │   663 │     551 │       265 │       0 │
+│ route-learned-wait-seed5  │   663 │     550 │       265 │       0 │
+│ route-learned-wait-seed7  │   663 │     546 │       265 │       4 │
+│ route-local-seed7         │   663 │     456 │         0 │       0 │
+└───────────────────────────┴───────┴─────────┴───────────┴─────────┘
+  16 rows                                                 5 columns
 ```
+
+Cada ejecución con espera pagó 265 llamadas, lo máximo que compra el presupuesto. «Jev hasta agotarlo» envió 269 elementos a la vía de Jev en las semillas 1, 2, 5 y 7, 266 en la semilla 3 y 265 en la semilla 4: el registro rechazó las llamadas que no podía pagar, y esos elementos se quedaron con la respuesta local. La compuerta aprendida, cuyo precio se vuelve infinito cuando el presupuesto ya no puede pagar, envió 265 en las semillas 1 a 5 y 11, y 269 en la semilla 7.
 
 Las ejecuciones con cinco semillas reprodujeron a Jev con una pausa de 40 ms (`--jev-ms 40`); las de la semilla 7 usaron los 400 ms por defecto. Todas daban 4 trabajadores a Jev.
 
@@ -161,7 +164,7 @@ Las ejecuciones con cinco semillas reprodujeron a Jev con una pausa de 40 ms (`-
 
 El enrutador local solo obtiene 456 de 663, que son los 152 de 221 grabados por el estudio, tres veces: sus respuestas están grabadas y cada pasada las repite.
 
-**Calculado.** Esperando a su vía elegida, con el mismo gasto (265 llamadas a Jev, 0.03206 USD), la compuerta aprendida supera a «Jev hasta agotarlo» en cada semilla, por 32, 27, 28, 26 y 24 preguntas: **4.1 puntos** de media (27.4 de 663). En la semilla 7, con una vía de 400 ms, gana por 22.
+**Calculado.** Esperando a su vía elegida, con el mismo gasto (265 llamadas a Jev, 0.03206 USD), la compuerta aprendida supera a «Jev hasta agotarlo» en cada semilla, por 32, 27, 28, 26 y 24 preguntas: **4.1 puntos** de media (27.4 de 663), de 3.6 a 4.8 puntos según la semilla. En la semilla 7, con una vía de 400 ms, gana por 22 (3.3 puntos).
 
 **De dónde sale la ganancia.** Los mismos archivos, agrupados por contexto sobre las semillas 1 a 5 (`to_jev`: parte de los elementos enviados a Jev; `acc_local` y `acc_jev`: exactitud en los elementos que respondió cada brazo):
 
@@ -200,7 +203,7 @@ GROUP BY ALL ORDER BY ctx, policy;
 
 «Jev hasta agotarlo» envía a Jev el primer 40 % del flujo, sea cual sea el contexto. La compuerta aprende que en el contexto 0, donde el enrutador local declinó y el experto por palabras clave propone un skill, el enrutador local acierta en cerca de un tercio de los elementos y Jev en el 97 %: le envía el 88 %. Lo paga en el contexto 5, donde el enrutador local está seguro y el experto por palabras clave coincide, enviando allí solo el 9 %. Pierde un poco en los contextos 4 y 5 y gana mucho más en el contexto 0.
 
-**Una nota sobre los recibos.** El mensaje del commit `14dccd0` da la compuerta aprendida en 0.832 (0.828 a 0.837). Los archivos dan 0.833 (0.830 a 0.837), porque la carpeta de la semilla 3 se reescribió unos cinco minutos después del commit con una versión posterior del ejemplo, y esa nueva ejecución acertó una pregunta más (550 en lugar de 549, el único total que se redondea a 0.828). La diferencia de 4.1 puntos es la misma en ambos casos. La sección 8 explica por qué dos ejecuciones con la misma semilla pueden diferir.
+**Una nota sobre los recibos.** El mensaje del commit `14dccd0` da la compuerta aprendida en 0.832 (0.828 a 0.837) y un presupuesto de 269 llamadas a Jev. Los archivos dan 0.833 (0.830 a 0.837), porque la carpeta de la semilla 3 se reescribió unos cinco minutos después del commit con una nueva ejecución que acertó una pregunta más (550 en lugar de 549, el único total que se redondea a 0.828). Y 269 es lo que «Jev hasta agotarlo» envió a la vía, no lo que pagó el presupuesto. El commit siguiente [`e44f9fe`](https://github.com/GuitarAlchemist/ix/commit/e44f9fef1cf96958ccc06df616c4adfd2e4a80e4) recoge las dos correcciones. La diferencia media de 4.1 puntos es la misma en ambos casos. La sección 8 explica por qué dos ejecuciones con la misma semilla pueden diferir.
 
 ## 6. La capacidad, un tercer recurso
 
@@ -246,7 +249,7 @@ Tienes que conservar los reintentos. Da dos maneras de mantener el bucle sin int
 
 **Una semilla fija el orden del flujo, no la ejecución.** La semilla fija el orden en que DuckDB envía los elementos. La compuerta aprende de señales que llegan mientras otros trabajadores corren, así que dos ejecuciones con la misma semilla pueden elegir distinto: la nueva ejecución de la semilla 3, en la sección 5, se movió una pregunta.
 
-**Un recibo puede sobrescribirse.** La sesión que construyó el crate informó de una ejecución con una vía de Claude Haiku en directo (12 llamadas con el plan de la persona) en 0.840, semilla 11. La carpeta de la semilla 11 contiene hoy una ejecución sin esa vía, con 557 de 663 (0.840), y no existe ninguna carpeta de trabajo de Claude. El nombre de la carpeta codificaba la política, el modo de espera y la semilla, pero no el límite de Claude, así que una ejecución escribió encima de la otra, y ya no se puede saber de cuál viene el 0.840. Sin recibo, este módulo no da ninguna cifra para la vía de Claude. Cada opción que cambia el grafo tiene su sitio en el nombre de la carpeta donde escribe una ejecución.
+**Un recibo puede sobrescribirse.** Una ejecución añadió una vía de Claude Haiku en directo, limitada a 12 llamadas con el plan de la persona: `--policy learned --wait --jev-ms 400 --claude 12 --seed 11`, a las 21:35 UTC. Siete minutos después, una ejecución hecha para una captura de pantalla (`--jev-ms 40`, semilla 11, sin vía de Claude) escribió su `results.jsonl` y su `events.jsonl` en la misma carpeta, cuyo nombre llevaba la política, el modo de espera y la semilla, pero ni el límite de Claude ni la latencia de Jev. De la ejecución con Claude quedan una carpeta `claude-work` vacía (el nodo no guarda archivos) y la salida que imprimió, que su autor guardó en una transcripción de sesión, no en un repositorio: 663 elementos en 44.4 s, exactitud 0.840, Jev 0.03206 USD de 0.03208, 12 llamadas a Claude de 12. Según la lectura que su autor hace de esa salida, la vía de Claude tomó 14 elementos, 12 llamadas y 2 que su presupuesto rechazó y que se quedaron con la respuesta local, y 13 de los 14 fueron aciertos. La ejecución que la sustituyó obtuvo 557 de 663, también 0.840, con un Jev más rápido y sin Claude. Una sola ejecución no puede mostrar que la vía de Claude ayude, y esta obtuvo lo mismo que la misma semilla sin ella. El commit siguiente [`e44f9fe`](https://github.com/GuitarAlchemist/ix/commit/e44f9fef1cf96958ccc06df616c4adfd2e4a80e4) nombra la carpeta según cada opción que cambia un resultado: las épocas, la parte de Jev, su latencia y sus trabajadores, y las llamadas a Claude.
 
 ## 9. Lo que esto muestra y lo que no
 
@@ -254,7 +257,7 @@ Tienes que conservar los reintentos. Da dos maneras de mantener el bucle sin int
 
 - la contrapresión de un nodo lento hasta el proceso de DuckDB, y la cancelación en sentido contrario, con pruebas que pasan;
 - con el mismo gasto, si la compuerta espera su elección, un bandido por contexto con un precio sombra ajustado al ritmo supera a «Jev hasta agotarlo» en cada una de las cinco semillas, por 4.1 puntos de media;
-- sin esperar, lo que limita es la capacidad de un experto, no su presupuesto;
+- sin esperar, lo que limita es la capacidad de un experto, no su presupuesto, y en la única semilla probada la regla fija superó a la compuerta;
 - los enlaces que esperan, si son acíclicos, no pueden quedar en interbloqueo, y un bucle de reintento de enlaces que esperan sí puede.
 
 **No mostrado:**
@@ -263,7 +266,7 @@ Tienes que conservar los reintentos. Da dos maneras de mantener el bucle sin int
 - la generalidad: un solo corpus de 221 preguntas escritas por un modelo, vistas tres veces, así que la compuerta se puntúa sobre las preguntas de las que aprende. Una pasada reservada es la próxima comprobación. Con títulos de preguntas escritos por personas (la etapa 4 del estudio), el mismo enrutador local envió a un skill 32 de las 86 que debía declinar;
 - la significación: cinco semillas de un solo diseño, emparejadas por semilla, sin prueba estadística;
 - el rendimiento en una compilación release: estas ejecuciones son compilaciones debug;
-- la vía de Claude (sección 8).
+- que una vía de Claude ayude: una ejecución en directo con 12 llamadas a Haiku obtuvo lo mismo que la misma semilla sin ella (sección 8).
 
 ## Ideas clave
 
@@ -275,13 +278,13 @@ Tienes que conservar los reintentos. Da dos maneras de mantener el bucle sin int
 
 ## Procedencia
 
-- **Código:** GuitarAlchemist/ix, rama `exp/loop-nodes`, commit `14dccd0ef1fb0f4395d38f5beed9ad42fa458eab` (2026-10-16), crate `crates/ix-stream`. Desde entonces la rama recibió nodos SQL (commit `944f42c`), que este módulo no cubre.
+- **Código:** GuitarAlchemist/ix, rama `exp/loop-nodes`, commit `14dccd0ef1fb0f4395d38f5beed9ad42fa458eab` (2026-10-16), crate `crates/ix-stream`. Desde entonces la rama recibió nodos SQL (commit `944f42c`), que este módulo no cubre, y el commit `e44f9fe`, que nombra las carpetas de enrutamiento según cada opción y corrige las cifras del mensaje de `14dccd0`.
 - **Datos:** el estudio del enrutador Jev en el commit `7c37c8c0a2530b9f7e339aba21bcb7f01c3b62da`, en `state/router-spike/`: el corpus `jev/corpora/full-sol.json`, las respuestas locales `jev/full/local-c2-merge.json`, las respuestas y el consumo de Jev `jev/full/jev-eval.json`, y `RESULTS.md`.
-- **Resultados:** las 16 carpetas `route-*` que `examples/route.rs` escribió el 2026-10-16 en la máquina del autor, leídas para este módulo el mismo día. No están publicadas. Dos de ellas, local y «Jev hasta agotarlo» sin espera en la semilla 7, son anteriores al commit en un cuarto de hora aproximadamente: a su primer evento le faltan los campos `wait` y `jev_workers` que escribe el ejemplo del commit.
+- **Resultados:** las 16 carpetas `route-*` que `examples/route.rs` escribió el 2026-10-16 en la máquina del autor, leídas para este módulo el mismo día. No están publicadas. Dos de ellas, local y «Jev hasta agotarlo» sin espera en la semilla 7, son anteriores al commit en un cuarto de hora aproximadamente: a su primer evento le faltan los campos `wait` y `jev_workers` que escribe el ejemplo del commit. La ejecución con Claude de la sección 8 solo se conoce por la salida que imprimió, guardada en la transcripción de sesión de su autor.
 - **Pruebas:** `cargo test -p ix-stream --test stream -- --include-ignored` en el commit fijado: 18 pasadas.
 - **Ciclo de investigación:** ninguno. Este módulo se escribió a partir de una rebanada trazadora hecha en una sesión de Claude Code, no con `/seldon research-cycle`, y no existe ningún registro suyo en `state/streeling/research-cycles/`. Necesita una revisión humana antes de contar como publicado.
 
-Se pueden repetir ejecuciones como estas con la CLI de DuckDB y Zig en el path (o `IX_DUCKDB` e `IX_ZIG`). El ejemplo del commit nombra sus carpetas de salida como la tabla de arriba:
+Se pueden repetir ejecuciones como estas con la CLI de DuckDB y Zig en el path (o `IX_DUCKDB` e `IX_ZIG`). El ejemplo del commit nombra sus carpetas de salida como la tabla de arriba; desde `e44f9fe`, los nombres llevan también las épocas, la parte de Jev, su latencia y sus trabajadores, y las llamadas a Claude:
 
 ```text
 cargo run -p ix-stream --example route -- --policy learned --wait --seed 1 --jev-ms 40

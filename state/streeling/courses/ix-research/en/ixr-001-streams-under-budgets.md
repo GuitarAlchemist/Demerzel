@@ -7,7 +7,7 @@ prerequisites: []
 estimated_duration: "40 minutes"
 produced_by: claude-ix-research
 research_cycle: null
-version: "0.1.0"
+version: "0.1.1"
 ---
 
 # Streams Under Budgets: Back-Pressure, a Learned Gate and a Petri Check
@@ -103,7 +103,7 @@ The Jev arm has base price 0.02. Halfway through the stream, Jev has spent 60% o
 4. `jev`: Jev's recorded answer, after a sleep that stands for a live call's latency, charged the study's average cost per call. Jev is TypeSafe's hosted zero-shot classifier `jev-1.13.0`. **Nothing is sent to Jev**: the answers are replayed from the receipts of the study;
 5. `judge`: compares the answer with the label and signals right or wrong on the bus.
 
-The example can also add a live Claude Haiku lane on the person's plan, capped in calls. None is used by default, and no result below includes one (see section 8).
+The example can also add a live Claude Haiku lane on the person's plan, capped in calls. None is used by default, and none of the runs in the tables below has one; section 8 reports the one run that had it.
 
 **The budget.** The study's 221 recorded Jev calls cost $0.026733 at the rate card, computed from reported input tokens, not an invoice ([`full/jev-eval.json`](https://github.com/GuitarAlchemist/ix/blob/7c37c8c0a2530b9f7e339aba21bcb7f01c3b62da/state/router-spike/jev/full/jev-eval.json)): $0.000120962 per call. The example gives Jev 40% of the stream: 0.4 × 663 × $0.000120962 = **$0.0320792472, the price of 265.2 calls**.
 
@@ -111,41 +111,44 @@ The example can also add a live Claude Haiku lane on the person's plan, capped i
 
 **Waiting or not.** With `--wait`, the gate waits for its first choice when that lane is full. Without it, a full lane is passed over for the next choice, as a mixture of experts drops what overflows an expert's capacity.
 
-**Observed.** Each run writes `results.jsonl`, one line per item. This query counts each run's right answers and the Jev calls that were made:
+**Observed.** Each run writes `results.jsonl`, one line per item. This query counts each run's right answers, the Jev calls that were made, and the items sent to Jev's lane that the ledger refused:
 
 ```sql
 SELECT regexp_extract(filename, 'route-[a-z]+(-wait)?-seed[0-9]+') AS run,
        count(*) AS n,
        sum(correct::INT) AS right_n,
-       count(*) FILTER (WHERE arm = 'jev' AND fallback IS NULL) AS jev_calls
+       count(*) FILTER (WHERE arm = 'jev' AND fallback IS NULL) AS jev_calls,
+       count(*) FILTER (WHERE arm = 'jev' AND fallback IS NOT NULL) AS refused
 FROM read_json('route-*/results.jsonl', filename = true, union_by_name = true)
 GROUP BY ALL ORDER BY run;
 ```
 
 ```text
-┌───────────────────────────┬───────┬─────────┬───────────┐
-│            run            │   n   │ right_n │ jev_calls │
-│          varchar          │ int64 │ int128  │   int64   │
-├───────────────────────────┼───────┼─────────┼───────────┤
-│ route-jev-seed7           │   663 │     483 │        84 │
-│ route-jev-wait-seed1      │   663 │     523 │       265 │
-│ route-jev-wait-seed2      │   663 │     527 │       265 │
-│ route-jev-wait-seed3      │   663 │     522 │       265 │
-│ route-jev-wait-seed4      │   663 │     525 │       265 │
-│ route-jev-wait-seed5      │   663 │     526 │       265 │
-│ route-jev-wait-seed7      │   663 │     524 │       265 │
-│ route-learned-seed7       │   663 │     471 │        84 │
-│ route-learned-wait-seed1  │   663 │     555 │       265 │
-│ route-learned-wait-seed11 │   663 │     557 │       265 │
-│ route-learned-wait-seed2  │   663 │     554 │       265 │
-│ route-learned-wait-seed3  │   663 │     550 │       265 │
-│ route-learned-wait-seed4  │   663 │     551 │       265 │
-│ route-learned-wait-seed5  │   663 │     550 │       265 │
-│ route-learned-wait-seed7  │   663 │     546 │       265 │
-│ route-local-seed7         │   663 │     456 │         0 │
-└───────────────────────────┴───────┴─────────┴───────────┘
-  16 rows                                       4 columns
+┌───────────────────────────┬───────┬─────────┬───────────┬─────────┐
+│            run            │   n   │ right_n │ jev_calls │ refused │
+│          varchar          │ int64 │ int128  │   int64   │  int64  │
+├───────────────────────────┼───────┼─────────┼───────────┼─────────┤
+│ route-jev-seed7           │   663 │     483 │        84 │       0 │
+│ route-jev-wait-seed1      │   663 │     523 │       265 │       4 │
+│ route-jev-wait-seed2      │   663 │     527 │       265 │       4 │
+│ route-jev-wait-seed3      │   663 │     522 │       265 │       1 │
+│ route-jev-wait-seed4      │   663 │     525 │       265 │       0 │
+│ route-jev-wait-seed5      │   663 │     526 │       265 │       4 │
+│ route-jev-wait-seed7      │   663 │     524 │       265 │       4 │
+│ route-learned-seed7       │   663 │     471 │        84 │       0 │
+│ route-learned-wait-seed1  │   663 │     555 │       265 │       0 │
+│ route-learned-wait-seed11 │   663 │     557 │       265 │       0 │
+│ route-learned-wait-seed2  │   663 │     554 │       265 │       0 │
+│ route-learned-wait-seed3  │   663 │     550 │       265 │       0 │
+│ route-learned-wait-seed4  │   663 │     551 │       265 │       0 │
+│ route-learned-wait-seed5  │   663 │     550 │       265 │       0 │
+│ route-learned-wait-seed7  │   663 │     546 │       265 │       4 │
+│ route-local-seed7         │   663 │     456 │         0 │       0 │
+└───────────────────────────┴───────┴─────────┴───────────┴─────────┘
+  16 rows                                                 5 columns
 ```
+
+Every waiting run paid for 265 calls, the most the budget buys. "Jev until spent" sent 269 items to Jev's lane on seeds 1, 2, 5 and 7, 266 on seed 3 and 265 on seed 4: the ledger refused the calls it could not pay, and those items kept the local answer. The learned gate, whose price turns infinite when the budget cannot pay, sent 265 on seeds 1 to 5 and 11, and 269 on seed 7.
 
 The five-seed runs replayed Jev with a 40 ms sleep (`--jev-ms 40`); the seed-7 runs used the default 400 ms. Every run gave Jev 4 workers.
 
@@ -161,7 +164,7 @@ The five-seed runs replayed Jev with a 40 ms sleep (`--jev-ms 40`); the seed-7 r
 
 The local router alone gets 456 of 663, which is the study's recorded 152 of 221, three times: its answers are recorded, so every pass repeats them.
 
-**Computed.** Waiting on its chosen lane, at the same spend (265 Jev calls, $0.03206), the learned gate beats "Jev until spent" on every seed, by 32, 27, 28, 26 and 24 questions: **4.1 points** on average (27.4 of 663). On seed 7, with a 400 ms lane, it wins by 22.
+**Computed.** Waiting on its chosen lane, at the same spend (265 Jev calls, $0.03206), the learned gate beats "Jev until spent" on every seed, by 32, 27, 28, 26 and 24 questions: **4.1 points** on average (27.4 of 663), from 3.6 to 4.8 points per seed. On seed 7, with a 400 ms lane, it wins by 22 (3.3 points).
 
 **Where the gain comes from.** The same files, grouped by context over seeds 1 to 5 (`to_jev`: share of the items sent to Jev; `acc_local` and `acc_jev`: accuracy on the items each arm answered):
 
@@ -200,7 +203,7 @@ GROUP BY ALL ORDER BY ctx, policy;
 
 "Jev until spent" sends the first 40% of the stream to Jev, whatever the context. The gate learns that in context 0, where the local router declined and the keyword expert proposes a skill, local is right on about a third of the items and Jev on 97%: it sends 88% of them to Jev. It pays for that in context 5, where the local router is confident and the keyword expert agrees, by sending only 9% there. It loses a little in contexts 4 and 5 and gains much more in context 0.
 
-**A note on the receipts.** The commit message of `14dccd0` reports the learned gate at 0.832 (0.828–0.837). The files give 0.833 (0.830–0.837), because the seed-3 folder was rewritten about five minutes after the commit by a later version of the example, and that rerun got one more question right (550 instead of 549, the only count that rounds to 0.828). The gap of 4.1 points is the same either way. Section 8 says why a rerun with the same seed can differ.
+**A note on the receipts.** The commit message of `14dccd0` reports the learned gate at 0.832 (0.828–0.837) and a budget of 269 Jev calls. The files give 0.833 (0.830–0.837), because the seed-3 folder was rewritten about five minutes after the commit by a rerun that got one more question right (550 instead of 549, the only count that rounds to 0.828). And 269 is what "Jev until spent" sent to the lane, not what the budget paid. The follow-up commit [`e44f9fe`](https://github.com/GuitarAlchemist/ix/commit/e44f9fef1cf96958ccc06df616c4adfd2e4a80e4) records both corrections. The mean gap of 4.1 points is the same either way. Section 8 says why a rerun with the same seed can differ.
 
 ## 6. Capacity, a third resource
 
@@ -246,7 +249,7 @@ You must keep the retries. Give two ways to keep the loop deadlock-free, and wha
 
 **A seed fixes the order of the stream, not the run.** The seed sets the order in which DuckDB sends the items. The gate learns from signals that arrive while other workers run, so two runs with the same seed can make different choices: the seed-3 rerun of section 5 moved by one question.
 
-**A receipt can be overwritten.** The session that built the crate reported one run with a live Claude Haiku lane (12 calls on the person's plan) at 0.840, seed 11. The folder for seed 11 now holds a run without that lane, at 557 of 663 (0.840), and no Claude work folder exists. The folder's name encoded the policy, the waiting mode and the seed, not the Claude cap, so one run wrote over the other, and which of them the 0.840 came from can no longer be told. With no receipt left, this module gives no number for the Claude lane. Every flag that changes the graph belongs in the name of the folder a run writes to.
+**A receipt can be overwritten.** One run added a live Claude Haiku lane, capped at 12 calls on the person's plan: `--policy learned --wait --jev-ms 400 --claude 12 --seed 11`, at 21:35 UTC. Seven minutes later, a run made for a screenshot (`--jev-ms 40`, seed 11, no Claude lane) wrote its `results.jsonl` and `events.jsonl` into the same folder, whose name held the policy, the waiting mode and the seed, not the Claude cap or the Jev latency. What is left of the Claude run is an empty `claude-work` folder (the node keeps no files) and the output it printed, which its author kept in a session transcript, not in a repository: 663 items in 44.4 s, accuracy 0.840, Jev $0.03206 of $0.03208, 12 Claude calls of 12. By its author's reading of that output, the Claude lane took 14 items, 12 calls and 2 that its budget refused and that kept the local answer, and 13 of the 14 were right. The run that replaced it scored 557 of 663, also 0.840, with a faster Jev and no Claude. One run cannot show that the Claude lane helps, and this one scored the same as the same seed without it. The follow-up commit [`e44f9fe`](https://github.com/GuitarAlchemist/ix/commit/e44f9fef1cf96958ccc06df616c4adfd2e4a80e4) names the folder after every flag that changes a result: the epochs, Jev's share, latency and workers, and the Claude calls.
 
 ## 9. What this does and does not show
 
@@ -254,7 +257,7 @@ You must keep the retries. Give two ways to keep the loop deadlock-free, and wha
 
 - back-pressure from a slow node to the DuckDB process, and cancellation the other way, by tests that pass;
 - at equal spend, with the gate waiting on its choice, a per-context bandit with a paced shadow price beats "Jev until spent" on each of five seeds, by 4.1 points on average;
-- without waiting, an expert's capacity, not its budget, binds;
+- without waiting, an expert's capacity, not its budget, binds, and on the one seed tried the fixed rule beat the gate;
 - acyclic waiting links cannot deadlock, and a retry loop of waiting links can.
 
 **Not shown:**
@@ -263,7 +266,7 @@ You must keep the retries. Give two ways to keep the loop deadlock-free, and wha
 - generality: one corpus of 221 model-written questions, seen three times, so the gate is scored on the questions it learns from. A held-out pass is the next check. On question titles written by people (the study's Stage 4), the same local router sent 32 of the 86 it should have declined to a skill;
 - significance: five seeds of one design, paired by seed, with no test;
 - throughput in a release build: these runs are debug builds;
-- the Claude lane (section 8).
+- that a Claude lane helps: one live run with 12 Haiku calls scored the same as the same seed without it (section 8).
 
 ## Key takeaways
 
@@ -275,13 +278,13 @@ You must keep the retries. Give two ways to keep the loop deadlock-free, and wha
 
 ## Provenance
 
-- **Code:** GuitarAlchemist/ix, branch `exp/loop-nodes`, commit `14dccd0ef1fb0f4395d38f5beed9ad42fa458eab` (2026-10-16), crate `crates/ix-stream`. The branch has since gained SQL nodes (commit `944f42c`), which this module does not cover.
+- **Code:** GuitarAlchemist/ix, branch `exp/loop-nodes`, commit `14dccd0ef1fb0f4395d38f5beed9ad42fa458eab` (2026-10-16), crate `crates/ix-stream`. The branch has since gained SQL nodes (commit `944f42c`), which this module does not cover, and commit `e44f9fe`, which names the route folders after every flag and corrects the numbers in `14dccd0`'s message.
 - **Data:** the Jev router study at commit `7c37c8c0a2530b9f7e339aba21bcb7f01c3b62da`, in `state/router-spike/`: the corpus `jev/corpora/full-sol.json`, the local answers `jev/full/local-c2-merge.json`, Jev's answers and usage `jev/full/jev-eval.json`, and `RESULTS.md`.
-- **Results:** the 16 folders `route-*` that `examples/route.rs` wrote on 2026-10-16 on the author's machine, read for this module the same day. They are not published. Two of them, local and "Jev until spent" without waiting on seed 7, predate the commit by about a quarter of an hour: their first event lacks the `wait` and `jev_workers` fields that the committed example writes.
+- **Results:** the 16 folders `route-*` that `examples/route.rs` wrote on 2026-10-16 on the author's machine, read for this module the same day. They are not published. Two of them, local and "Jev until spent" without waiting on seed 7, predate the commit by about a quarter of an hour: their first event lacks the `wait` and `jev_workers` fields that the committed example writes. The Claude run of section 8 is known only from the output it printed, kept in its author's session transcript.
 - **Tests:** `cargo test -p ix-stream --test stream -- --include-ignored` at the pinned commit: 18 passed.
 - **Research cycle:** none. This module was written from a tracer slice run in a Claude Code session, not through `/seldon research-cycle`, and no record under `state/streeling/research-cycles/` exists for it. It needs a human review before it counts as published.
 
-Runs like these can be made again with the DuckDB CLI and Zig on the path (or `IX_DUCKDB` and `IX_ZIG`). The commit's example names its output folders as the table above does:
+Runs like these can be made again with the DuckDB CLI and Zig on the path (or `IX_DUCKDB` and `IX_ZIG`). The commit's example names its output folders as the table above does; since `e44f9fe`, the names also carry the epochs, Jev's share, latency and workers, and the Claude calls:
 
 ```text
 cargo run -p ix-stream --example route -- --policy learned --wait --seed 1 --jev-ms 40
