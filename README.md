@@ -54,7 +54,7 @@ Demerzel/
 ├── contracts/             # Galactic Protocol + voicing-handle URI + MCP routing
 ├── pipelines/             # 23 IxQL pipelines (qa-architect-cycle, governance-shake-test, …)
 ├── state/
-│   ├── streeling/         # Streeling University — 23 departments, 21 course tracks
+│   ├── streeling/         # Streeling University — 24 departments, 22 course tracks
 │   └── governance/        # Beliefs, conscience, driver, halt audit
 ├── scripts/               # demerzel_halt.py, qa_tribunal_emit.py, validate_governance.py
 ├── tests/behavioral/      # 114 behavioral test suites
@@ -79,8 +79,8 @@ Demerzel/
 | Schemas | 49 + 11 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
-| Streeling departments | 23 | `state/streeling/departments/*.department.json` |
-| Course tracks | 21 | `state/streeling/courses/*/` |
+| Streeling departments | 24 | `state/streeling/departments/*.department.json` |
+| Course tracks | 22 | `state/streeling/courses/*/` |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
 | GitHub workflows | 29 | `.github/workflows/*.yml` |
 
