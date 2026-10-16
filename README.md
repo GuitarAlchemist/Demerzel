@@ -167,7 +167,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full guide and [`CODE_OF_COND
 
 ## Streeling University
 
-Demerzel hosts [Streeling University](state/streeling/) — a 23-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, semiotics, visual computing, network science, information theory, product management, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states; 21 course tracks (multilingual: en/de/es/fr/it/…) are governed by the [Streeling policy](policies/streeling-policy.yaml) and evolved daily via [`streeling-daily.yml`](./.github/workflows/streeling-daily.yml).
+Demerzel hosts [Streeling University](state/streeling/) — a 24-department knowledge framework named after the university on Trantor in Asimov's Foundation series. Departments span mathematics, physics, computer science, cybernetics, audio engineering, data visualization, philosophy, cognitive science, futurology, psychohistory, music, musicology, guitar studies, semiotics, visual computing, network science, information theory, product management, IX research, Guitar Alchemist Academy, and world music. Each department maintains weighted knowledge states; 22 course tracks (multilingual: en/de/es/fr/it/…) are governed by the [Streeling policy](policies/streeling-policy.yaml) and evolved daily via [`streeling-daily.yml`](./.github/workflows/streeling-daily.yml).
 
 ## IxQL — ML pipeline language
 
