@@ -85,7 +85,7 @@ Un bras doté d'un budget a un prix fictif qui suit son rythme ([`price`](https:
 price(arm) = max(0, base_price + 4 * (spent / cap - share of the stream seen))
 ```
 
-(`spent / cap` est la part du budget dépensée, `share of the stream seen` la part du flux déjà vue.) Le prix devient infini quand le budget ne peut plus payer un appel, et 4 est le gain par défaut. Dépenser plus vite que le rythme fait monter le prix, ce qui réserve le bras aux contextes où il rapporte le plus ; prendre du retard le fait baisser. Le prix ne fait qu'orienter. L'arrêt ferme, c'est le [`Ledger`](https://github.com/GuitarAlchemist/ix/blob/14dccd0ef1fb0f4395d38f5beed9ad42fa458eab/crates/ix-stream/src/gate.rs#L58), le registre : une voie y dépense, et le registre refuse un appel qu'il ne peut pas payer.
+(« spent / cap » est la part du budget dépensée, « share of the stream seen » la part du flux déjà vue.) Le prix devient infini quand le budget ne peut plus payer un appel, et 4 est le gain par défaut. Dépenser plus vite que le rythme fait monter le prix, ce qui réserve le bras aux contextes où il rapporte le plus ; prendre du retard le fait baisser. Le prix ne fait qu'orienter. L'arrêt ferme, c'est le [`Ledger`](https://github.com/GuitarAlchemist/ix/blob/14dccd0ef1fb0f4395d38f5beed9ad42fa458eab/crates/ix-stream/src/gate.rs#L58), le registre : une voie y dépense, et le registre refuse un appel qu'il ne peut pas payer.
 
 ### Exercice pratique 2
 

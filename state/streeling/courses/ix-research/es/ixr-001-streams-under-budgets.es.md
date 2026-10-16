@@ -85,7 +85,7 @@ Un brazo con presupuesto tiene un precio sombra que sigue su ritmo ([`price`](ht
 price(arm) = max(0, base_price + 4 * (spent / cap - share of the stream seen))
 ```
 
-(`spent / cap` es la parte del presupuesto gastada y `share of the stream seen` la parte del flujo ya vista.) El precio es infinito cuando el presupuesto no puede pagar una llamada más, y 4 es la ganancia por defecto. Gastar por delante del ritmo sube el precio, lo que reserva el brazo para los contextos donde más gana; quedarse atrás lo baja. El precio solo orienta. El tope firme es el [`Ledger`](https://github.com/GuitarAlchemist/ix/blob/14dccd0ef1fb0f4395d38f5beed9ad42fa458eab/crates/ix-stream/src/gate.rs#L58), el libro mayor: una vía gasta de él, y el libro rechaza una llamada que no puede pagar.
+(«spent / cap» es la parte del presupuesto gastada y «share of the stream seen» la parte del flujo ya vista.) El precio es infinito cuando el presupuesto no puede pagar una llamada más, y 4 es la ganancia por defecto. Gastar por delante del ritmo sube el precio, lo que reserva el brazo para los contextos donde más gana; quedarse atrás lo baja. El precio solo orienta. El tope firme es el [`Ledger`](https://github.com/GuitarAlchemist/ix/blob/14dccd0ef1fb0f4395d38f5beed9ad42fa458eab/crates/ix-stream/src/gate.rs#L58), el libro mayor: una vía gasta de él, y el libro rechaza una llamada que no puede pagar.
 
 ### Ejercicio práctico 2
 
