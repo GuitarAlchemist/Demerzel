@@ -33,6 +33,14 @@ courses/
 
 **Curriculum path:** Foundations → Statistical Mechanics → Power Laws → Phase Transitions → Crisis Prediction
 
+### IX Research
+
+| Code | Title | Level | Duration | Languages |
+|------|-------|-------|----------|-----------|
+| [IXR-001](ix-research/en/ixr-001-streams-under-budgets.md) | Streams Under Budgets: Back-Pressure, a Learned Gate and a Petri Check | Intermediate | 40 min | en, fr, es |
+
+**Research index:** the five IX studies with their pinned receipts are listed in [ix-research/README.md](ix-research/README.md). IXR-001 has no research-cycle record and awaits human review.
+
 ## Departments Without Courses (Yet)
 
 These departments have grammars and research areas defined but no courses produced. Run `/seldon research-cycle {dept}` followed by `/seldon course-pipeline {dept}` to generate.
