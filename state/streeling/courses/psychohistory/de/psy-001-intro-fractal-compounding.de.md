@@ -172,5 +172,5 @@ Die Disziplin der Psychohistorik akzeptiert dies. Wir streben nicht nach perfekt
 - Das Noether-Theorem gilt für skaleninvariante Governance-Prozesse
 - JPPs Economicon-Unterscheidung zwischen ERGOL und LOLLI lässt sich auf die Governance-Wertmessung abbilden
 - Eine fraktale Dimension zwischen 1,2 und 1,6 korreliert mit nachhaltigem Governance-Wachstum
-- Quellen: [Fraktale Kompositions-Spezifikation](../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (Noether-Theorem), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (Gödels Unvollständigkeit)
+- Quellen: [Fraktale Kompositions-Spezifikation](../../../../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (Noether-Theorem), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (Gödels Unvollständigkeit)
 - Glaubenszustand: T(0.70) F(0.05) U(0.20) C(0.05)
