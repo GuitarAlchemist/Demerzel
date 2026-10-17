@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "streeling-review-receipt.schema.json",
+  "title": "Streeling exact-source review receipt (draft v0.1)",
+  "description": "One bounded human verdict for one locale file at one Git blob. A valid JSON shape is not proof of reviewer identity or learner outcome.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "module_id", "locale", "kind", "source_blob", "reviewed_commit", "reviewer", "reviewed_at", "verdict", "evidence"],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "module_id": { "type": "string", "pattern": "^[a-z0-9]+-[0-9]{3}(-[a-z0-9-]+)?$" },
+    "locale": { "enum": ["en", "fr", "es", "pt", "it", "de"] },
+    "kind": { "enum": ["subject", "language", "learner"] },
+    "source_blob": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "source_english_blob": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "Required for a language review so a later English source edit makes the translation verdict stale." },
+    "reviewed_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "reviewed_at": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" },
+    "verdict": { "enum": ["approved", "changes_requested", "not_assessed"] },
+    "evidence": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "language" } }, "required": ["kind"] },
+      "then": { "required": ["source_english_blob"], "properties": { "locale": { "not": { "const": "en" } } } },
+      "else": { "not": { "required": ["source_english_blob"] } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "subject" } }, "required": ["kind"] },
+      "then": { "properties": { "locale": { "const": "en" } } }
+    }
+  ]
+}
