@@ -17,7 +17,7 @@ scenarios in `results.json` are the same numbers as in #1207's `pipeline-results
 |---|---|---|
 | `scenarios.json` | assumed | The two scenarios (12 new review-ready items a week, the weekly review and publication capacities, empty starting queues), the source counts the lesson quotes, the limits of the simulation, the hand-computed figures and the negative control. |
 | `analyze.py` | script | Reads only `scenarios.json`, runs both scenarios week by week, runs the self-checks and writes `results.json`. |
-| `results.json` | computed | Every week of both scenarios, the negative control and the list of self-checks. |
+| `results.json` | computed | Every week of both scenarios, the negative control and the list of self-checks, with the observed counts and the snapshot commit copied from `scenarios.json`. |
 
 ## Regenerate
 
@@ -49,7 +49,8 @@ x86-64 and on CPython 3.14.5 under Linux x86-64 (WSL). Not run on macOS or on an
   target, 113 core codes, nine six-locale and five-answer candidates, four committed review briefs, zero approved
   production-review flags). They come from the review-candidate snapshot and the progress reporter of Demerzel commit
   `3d175ab88b06f6fd06cfa8475b3f7e9be6323a6b`, on the branch of #1207, not from `master`; the snapshot itself was
-  computed at commit `793e92bd5a8a97552ed3fee68a3956929c7d0c54`. `analyze.py` copies them, it does not recompute them.
+  computed at commit `793e92bd5a8a97552ed3fee68a3956929c7d0c54`. `analyze.py` copies them from `scenarios.json` into
+  `results.json`, with the snapshot commit; it does not recompute them.
 - **Synthetic:** every arrival and capacity, and so everything under `scenarios` in `results.json`. The arrival rate
   of 12 review-ready items a week is not the nine observed triage candidates: a candidate is not review-ready.
 

@@ -134,6 +134,7 @@ def analyze(source: dict) -> dict:
     control = negative_control(source["negative_control"], scenarios, results)
     return {
         "observed_snapshot_commit": source["observed_snapshot_commit"],
+        "observed_source_counts": source["observed_source_counts"],  # copied, not recomputed
         "simulation_limits": source["simulation_limits"],
         "scenarios": results,
         "negative_control": control,
