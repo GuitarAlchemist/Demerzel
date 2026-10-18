@@ -1,0 +1,25 @@
+{
+  "cycle_id": "psychohistory-2026-10-12-003",
+  "department": "psychohistory",
+  "question": "Can a recursive Streeling improvement claim be tested against distinct drafting, human review, publication, and public-readback stages rather than draft counts alone?",
+  "production_path": [
+    "investigation: inspect pinned review-candidate snapshot and progress reporter without treating triage as approval",
+    "model: separate review and publication queues with bounded weekly capacities",
+    "simulation: compare flat and growing accepted-review capacity under fixed publication capacity",
+    "adversarial: check queue conservation and identify the moved bottleneck",
+    "test: deterministic fixture rerun and five answered, falsifiable reasoning exercises"
+  ],
+  "hypothesis": "Improving an upstream stage will not increase verified public-course throughput when a downstream gate remains fixed; recursive improvement must measure the complete path and quality guardrails.",
+  "test_method": "simulation",
+  "evidence": [
+    "Demerzel source snapshot 3d175ab88b06f6fd06cfa8475b3f7e9be6323a6b records 21 course directories, 113 core course codes, 114 English drafts, nine six-locale/five-answer triage candidates, four committed review briefs, and zero approved production-review flags. These source signals are not authenticated human review or publication.",
+    "At fixture commit 4d322fbc8d6d12a111616558c9a503a1193c80ab, synthetic flat capacities yield 16 accepted, 16 published, and 32 waiting review after four weeks. Growing accepted-review capacity under fixed publication capacity yields 48 accepted, 16 published, and 32 waiting publication. The simulation assumes every review approves and all approved items can be published.",
+    "The simulator rerun produced byte-identical JSON, and both scenarios satisfy new-ready = accepted + waiting-review and accepted = published + waiting-publication. These are arithmetic checks, not a measured operational intervention.",
+    "PSY-003 has five answered exercises that distinguish source counts, hypothetical queue arithmetic, quality guardrails, and a falsifier. No human subject review, learner task result, translation, or public readback exists for this course; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-12T20:56:19Z"
+}

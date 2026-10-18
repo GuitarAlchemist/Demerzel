@@ -1,0 +1,147 @@
+{
+  "observed_snapshot_commit": "3d175ab88b06f6fd06cfa8475b3f7e9be6323a6b",
+  "simulation_limits": "The weekly arrivals, accepted review capacities, and publication capacities below are synthetic upper-bound assumptions, not measured throughput or a forecast. Every review completion is assumed approved and publishable for the arithmetic exercise.",
+  "scenarios": {
+    "flat": {
+      "weeks": [
+        {
+          "week": 1,
+          "new_review_ready": 12,
+          "accepted": 4,
+          "published": 4,
+          "waiting_review": 8,
+          "waiting_publication": 0,
+          "accepted_total": 4,
+          "published_total": 4
+        },
+        {
+          "week": 2,
+          "new_review_ready": 12,
+          "accepted": 4,
+          "published": 4,
+          "waiting_review": 16,
+          "waiting_publication": 0,
+          "accepted_total": 8,
+          "published_total": 8
+        },
+        {
+          "week": 3,
+          "new_review_ready": 12,
+          "accepted": 4,
+          "published": 4,
+          "waiting_review": 24,
+          "waiting_publication": 0,
+          "accepted_total": 12,
+          "published_total": 12
+        },
+        {
+          "week": 4,
+          "new_review_ready": 12,
+          "accepted": 4,
+          "published": 4,
+          "waiting_review": 32,
+          "waiting_publication": 0,
+          "accepted_total": 16,
+          "published_total": 16
+        }
+      ],
+      "final": {
+        "week": 4,
+        "new_review_ready": 12,
+        "accepted": 4,
+        "published": 4,
+        "waiting_review": 32,
+        "waiting_publication": 0,
+        "accepted_total": 16,
+        "published_total": 16
+      }
+    },
+    "growing_review_fixed_publication": {
+      "weeks": [
+        {
+          "week": 1,
+          "new_review_ready": 12,
+          "accepted": 4,
+          "published": 4,
+          "waiting_review": 8,
+          "waiting_publication": 0,
+          "accepted_total": 4,
+          "published_total": 4
+        },
+        {
+          "week": 2,
+          "new_review_ready": 12,
+          "accepted": 8,
+          "published": 4,
+          "waiting_review": 12,
+          "waiting_publication": 4,
+          "accepted_total": 12,
+          "published_total": 8
+        },
+        {
+          "week": 3,
+          "new_review_ready": 12,
+          "accepted": 16,
+          "published": 4,
+          "waiting_review": 8,
+          "waiting_publication": 16,
+          "accepted_total": 28,
+          "published_total": 12
+        },
+        {
+          "week": 4,
+          "new_review_ready": 12,
+          "accepted": 20,
+          "published": 4,
+          "waiting_review": 0,
+          "waiting_publication": 32,
+          "accepted_total": 48,
+          "published_total": 16
+        }
+      ],
+      "final": {
+        "week": 4,
+        "new_review_ready": 12,
+        "accepted": 20,
+        "published": 4,
+        "waiting_review": 0,
+        "waiting_publication": 32,
+        "accepted_total": 48,
+        "published_total": 16
+      }
+    }
+  },
+  "negative_control": {
+    "scenario": "growing_review_fixed_publication",
+    "week": 2,
+    "items_lost": 1,
+    "identities_hold": false
+  },
+  "checks": [
+    {
+      "check": "both conservation identities hold every week",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "no stage takes more than its capacity",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "a stage under capacity leaves its queue empty",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "the hand-computed figures are found",
+      "times_evaluated": 9,
+      "passed": true
+    },
+    {
+      "check": "negative control: items lost between the queues break an identity",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}
