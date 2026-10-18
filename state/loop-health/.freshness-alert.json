@@ -2,7 +2,7 @@
   "alert": "ecosystem-freshness",
   "problems": [
     {
-      "kind": "failed_run",
+      "kind": "adapter_error",
       "workflow": "cross-model-review.yml"
     },
     {
