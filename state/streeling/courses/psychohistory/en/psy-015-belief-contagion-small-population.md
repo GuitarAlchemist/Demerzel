@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will compute a reproduction number and its threshold, find the final size that a deterministic epidemic curve predicts, simulate the same model one event at a time, and read the distribution from which a single run is drawn. **Project question:** the department lists "belief state epidemiology". If a belief spreads among 14 agents, how much does one run differ from the deterministic epidemic curve?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads a shift in belief labels as a sign of regime change; this module asks what a model of spreading can forecast. [PSY-004](psy-004-how-large-is-large.md) studies 14 agents whose answers share a cause, and [PSY-017](psy-017-calibration-with-six-observations.md) the calibration belief met in section 1.
+[PSY-002](psy-002-governance-phase-transitions.md) reads a shift in belief labels as a sign of regime change; this module asks what a model of spreading can forecast. [PSY-004](psy-004-how-large-is-large.md) studies 14 agents whose answers share a cause, and [PSY-017](psy-017-calibration-with-six-observations.md) the calibration belief met in section 1.
 
 ## 1. The model, and what "infected" means here
 

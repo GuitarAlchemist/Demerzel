@@ -18,7 +18,7 @@ version: "0.1.0"
 
 Vous calculerez un nombre de reproduction et son seuil, vous trouverez la taille finale que prédit une courbe épidémique déterministe, vous simulerez le même modèle un événement à la fois, et vous lirez la loi dont une simulation isolée est tirée. **Question de projet :** le département compte parmi ses domaines la « belief state epidemiology » (épidémiologie des états de croyance). Si une croyance se propage parmi 14 agents, dans quelle mesure une simulation s'écarte-t-elle de la courbe épidémique déterministe ?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lit un déplacement des étiquettes de croyance comme le signe d'un changement de régime ; ce module demande ce qu'un modèle de propagation peut prévoir. [PSY-004](psy-004-how-large-is-large.fr.md) étudie 14 agents dont les réponses ont une cause commune, et [PSY-017](psy-017-calibration-with-six-observations.fr.md) la croyance sur la calibration rencontrée à la section 1.
+[PSY-002](psy-002-governance-phase-transitions.fr.md) lit un déplacement des étiquettes de croyance comme le signe d'un changement de régime ; ce module demande ce qu'un modèle de propagation peut prévoir. [PSY-004](psy-004-how-large-is-large.fr.md) étudie 14 agents dont les réponses ont une cause commune, et [PSY-017](psy-017-calibration-with-six-observations.fr.md) la croyance sur la calibration rencontrée à la section 1.
 
 ## 1. Le modèle, et ce que signifie ici « infecté »
 

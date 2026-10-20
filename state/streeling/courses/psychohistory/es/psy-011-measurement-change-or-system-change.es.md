@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo leerá cómo se produce un número antes de leer su serie, localizará un cambio de instrumento en un registro, clasificará cada salto como «empieza la medición», «cambia el instrumento» o «mismo instrumento» y mostrará qué hace una regla de alarma cuando se mezclan los tres. **Pregunta de proyecto:** la tendencia de calidad tiene filas marcadas con `rebaseline` y un campo `citation_source` que solo aparece a partir de cierto momento; ¿qué saltos de la serie se deben a que cambia el instrumento, y no el sistema?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) interpreta un cambio rápido en un indicador de gobernanza como señal de que se avecina un cambio de régimen. Esa lectura supone que el indicador se produjo de la misma manera antes y después; este módulo pone a prueba ese supuesto en la columna de citas del registro que presentó [PSY-005](psy-005-persistence-baseline.es.md). [PSY-012](psy-012-early-warning-false-alarms.es.md) trata los indicadores de alerta temprana.
+[PSY-002](psy-002-governance-phase-transitions.es.md) interpreta un cambio rápido en un indicador de gobernanza como señal de que se avecina un cambio de régimen. Esa lectura supone que el indicador se produjo de la misma manera antes y después; este módulo pone a prueba ese supuesto en la columna de citas del registro que presentó [PSY-005](psy-005-persistence-baseline.es.md). [PSY-012](psy-012-early-warning-false-alarms.es.md) trata los indicadores de alerta temprana.
 
 ## 1. Leer el instrumento antes que la serie
 

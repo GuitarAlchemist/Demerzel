@@ -18,7 +18,7 @@ version: "0.1.0"
 
 Vous compterez les acteurs que nomme un relevé, vous mesurerez la concentration de leur activité, vous bornerez cette mesure quand une partie du relevé est perdue, et vous direz ce que le résultat établit sur la question de savoir qui a agi. **Question de projet :** les lois portant sur un agrégat supposent de nombreux acteurs indépendants. Qui a réellement produit les événements enregistrés ?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lit le comportement agrégé de l'écosystème comme obéissant à des lois statistiques ; [PSY-004](psy-004-how-large-is-large.fr.md) montre à combien peu d'agents indépendants équivalent quatorze agents corrélés. Ce module pose une question préalable : combien d'acteurs les relevés contiennent-ils ? [PSY-009](psy-009-concentration-and-heavy-tails.fr.md) mesure la concentration du même journal entre les jours ; celui-ci, entre les acteurs.
+[PSY-002](psy-002-governance-phase-transitions.fr.md) lit le comportement agrégé de l'écosystème comme obéissant à des lois statistiques ; [PSY-004](psy-004-how-large-is-large.fr.md) montre à combien peu d'agents indépendants équivalent quatorze agents corrélés. Ce module pose une question préalable : combien d'acteurs les relevés contiennent-ils ? [PSY-009](psy-009-concentration-and-heavy-tails.fr.md) mesure la concentration du même journal entre les jours ; celui-ci, entre les acteurs.
 
 ## 1. Un seul expéditeur, et ce que veut dire « sender »
 

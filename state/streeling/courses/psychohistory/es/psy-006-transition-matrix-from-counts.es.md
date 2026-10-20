@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo convertirá un registro de etiquetas en una matriz de recuentos, estimará a partir de ella probabilidades de transición, acotará una transición que nunca se observó y dirá qué añaden a los datos el suavizado y una matriz uniforme. **Pregunta de proyecto:** el repositorio guarda una matriz de transición de gobernanza uniforme, de 4 estados y sin ninguna observación; ¿qué aspecto tiene una matriz estimada a partir de las transiciones de etiquetas de las que sí disponemos, y qué es lo que no puede decir?
 
-[PSY-005](psy-005-persistence-baseline.es.md) puntuó el pronóstico «nada cambia» sobre estas etiquetas; este módulo acota la probabilidad de cambio que aquel dejó abierta. Las distribuciones estacionarias y los tiempos de primera llegada (*hitting times*) proceden de [MAT-020](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/mathematics/en/mat-020-markov-chains-hmm.md).
+[PSY-005](psy-005-persistence-baseline.es.md) puntuó el pronóstico «nada cambia» sobre estas etiquetas; este módulo acota la probabilidad de cambio que aquel dejó abierta. Las distribuciones estacionarias y los tiempos de primera llegada (*hitting times*) proceden de [MAT-020](../../mathematics/es/mat-020-markov-chains-hmm.es.md).
 
 ## 1. Contar las transiciones y después dividir
 

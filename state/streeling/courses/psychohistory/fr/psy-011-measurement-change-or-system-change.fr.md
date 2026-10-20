@@ -18,7 +18,7 @@ version: "0.1.0"
 
 Vous lirez comment un nombre est produit avant de lire sa série, vous repérerez un changement d'instrument dans un journal, vous rangerez chaque saut dans l'une des classes « début de mesure », « changement d'instrument » ou « même instrument », et vous montrerez ce que fait une règle d'alerte quand les trois sont mélangées. **Question de projet :** la tendance de qualité contient des lignes marquées `rebaseline` et un champ `citation_source` qui apparaît en cours de route ; quels sauts de la série traduisent un changement de l'instrument plutôt que du système ?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) voit dans un changement rapide d'un indicateur de gouvernance le signe d'un changement de régime à venir. Cette lecture suppose que l'indicateur a été produit de la même façon avant et après ; ce module met cette hypothèse à l'épreuve sur la colonne des citations du journal que [PSY-005](psy-005-persistence-baseline.fr.md) a présenté. [PSY-012](psy-012-early-warning-false-alarms.fr.md) traite des indicateurs d'alerte précoce.
+[PSY-002](psy-002-governance-phase-transitions.fr.md) voit dans un changement rapide d'un indicateur de gouvernance le signe d'un changement de régime à venir. Cette lecture suppose que l'indicateur a été produit de la même façon avant et après ; ce module met cette hypothèse à l'épreuve sur la colonne des citations du journal que [PSY-005](psy-005-persistence-baseline.fr.md) a présenté. [PSY-012](psy-012-early-warning-false-alarms.fr.md) traite des indicateurs d'alerte précoce.
 
 ## 1. Lire l'instrument avant la série
 

@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will put an exact interval on a score of eleven trials, test a step between two scores, account for several tests on the same four numbers, and say what a reused test set measures. **Project question:** the resilience history shows 0.00, 0.64, 0.73, 0.82 over four cycles; which of these steps is distinguishable from chance, and what does a repeated injection set measure?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads this score as a regime indicator and its change as a velocity. This module asks how much change eleven trials can show. [PSY-004](psy-004-how-large-is-large.md) builds the exact interval used here, [PSY-011](psy-011-measurement-change-or-system-change.md) treats changes of instrument, and [PSY-023](psy-023-monitoring-a-plan.md) designs alarm rules.
+[PSY-002](psy-002-governance-phase-transitions.md) reads this score as a regime indicator and its change as a velocity. This module asks how much change eleven trials can show. [PSY-004](psy-004-how-large-is-large.md) builds the exact interval used here, [PSY-011](psy-011-measurement-change-or-system-change.md) treats changes of instrument, and [PSY-023](psy-023-monitoring-a-plan.md) designs alarm rules.
 
 ## 1. Read the record before computing
 
