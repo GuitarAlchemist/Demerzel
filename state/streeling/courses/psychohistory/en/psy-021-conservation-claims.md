@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will sort statements that get called "conservation" into four kinds, audit a stock-and-flow identity on a real event log, and name the record a claim needs before it can fail. **Project question:** PSY-001 borrows Noether's theorem for "learning momentum". Which conservation statements about this project can actually be checked?
 
-[PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md) announces a conservation law for governance. This module asks what such a law requires, then audits the nearest thing the repository offers: the bookkeeping of its trigger log. [PSY-008](psy-008-bursts-are-not-rates.md) and [PSY-009](psy-009-concentration-and-heavy-tails.md) read that log as arrivals, [PSY-024](psy-024-the-single-actor.md) asks who sent them, and PSY-003 applies similar identities to review queues.
+[PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md) announces a conservation law for governance. This module asks what such a law requires, then audits the nearest thing the repository offers: the bookkeeping of its trigger log. [PSY-008](psy-008-bursts-are-not-rates.md) and [PSY-009](psy-009-concentration-and-heavy-tails.md) read that log as arrivals, [PSY-024](psy-024-the-single-actor.md) asks who sent them, and [PSY-003](psy-003-review-throughput-and-compounding.md) applies similar identities to review queues.
 
 ## 1. Four things called conservation
 
