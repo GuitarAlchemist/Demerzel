@@ -552,7 +552,7 @@ Choisissez une pièce en 4/4 que vous connaissez bien. Jouez un seul accord en n
 
 - La pulsation, le rythme et la mesure comme couches indépendantes constituent la distinction standard de la recherche en cognition musicale (London, *Hearing in Time*, 2004)
 - Les systèmes de comptage (« 1 e and a » pour les doubles croches, « 1 trip let » ou « 1 & a » pour les triolets) sont des standards pédagogiques de l'enseignement musical anglophone ; ce cours les dit en français, avec « et » pour « & » : « 1 e et a », et « 1 et a » pour les triolets
-- Les ratios de swing documentés empiriquement par Friberg & Sundstrom (2002) montrent que les batteurs de jazz professionnels utilisent typiquement des ratios de 1.7:1 à 2.5:1 (63:37 à 71:29)
+- Friberg et Sundström (2002) ont mesuré le ratio de swing que les batteurs jouent à la cymbale ride dans trois enregistrements de jazz connus et un disque d'accompagnement (play-along) : il baisse quand le tempo monte, jusqu'à 3,5:1 aux tempos lents et 1:1 aux tempos rapides ; le « triple feel » à 2:1 n'apparaissait qu'à un certain tempo, et la note courte restait vers 100 ms aux tempos moyens à rapides ([*Music Perception* 19(3), 333–349](https://doi.org/10.1525/mp.2002.19.3.333))
 - Le motif de Travis picking doit son nom à Merle Travis ; il s'est diffusé dans la country et le folk grâce à l'adaptation de Chet Atkins
 - La pédagogie de la polyrythmie s'appuie sur des moyens mnémotechniques verbaux (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - La modulation métrique a été théorisée systématiquement par Elliott Carter dans ses quatuors à cordes à partir des années 1950

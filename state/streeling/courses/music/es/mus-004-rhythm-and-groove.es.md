@@ -552,7 +552,7 @@ Elige una pieza en 4/4 que conozcas bien. Toca un solo acorde en negras a 100 BP
 
 - El pulso, el ritmo y la métrica como capas independientes son la distinción estándar en la investigación sobre cognición musical (London, *Hearing in Time*, 2004)
 - Los sistemas de conteo ("1 e and a" para semicorcheas, "1 trip let" o "1 & a" para tresillos) son estándares pedagógicos en la enseñanza musical anglófona; este curso los dice en español, con "y" en lugar de "&": "1 e y a", y "1 y a" para los tresillos
-- Las proporciones de swing documentadas empíricamente por Friberg & Sundstrom (2002) muestran que los bateristas de jazz profesionales usan normalmente proporciones de 1.7:1 a 2.5:1 (63:37 a 71:29)
+- Friberg y Sundström (2002) midieron la proporción de swing que los bateristas tocan en el platillo ride en tres grabaciones de jazz conocidas y un disco de acompañamiento (play-along): baja a medida que sube el tempo, hasta 3,5:1 en tempos lentos y 1:1 en tempos rápidos; el "triple feel" de 2:1 solo apareció en un tempo determinado, y la nota corta se mantuvo en torno a 100 ms en tempos medios y rápidos ([*Music Perception* 19(3), 333–349](https://doi.org/10.1525/mp.2002.19.3.333))
 - El patrón de Travis picking debe su nombre a Merle Travis; se difundió por el country y el folk gracias a la adaptación de Chet Atkins
 - La pedagogía de la polirritmia se apoya en recursos mnemotécnicos verbales (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - La modulación métrica fue teorizada sistemáticamente por Elliott Carter en sus cuartetos de cuerda a partir de la década de 1950

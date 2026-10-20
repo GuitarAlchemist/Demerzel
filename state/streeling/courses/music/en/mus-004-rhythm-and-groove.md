@@ -552,7 +552,7 @@ Choose a piece in 4/4 you know well. Play a single chord in quarter notes at 100
 
 - Pulse, rhythm, and meter as independent layers is the standard distinction in music cognition research (London, *Hearing in Time*, 2004)
 - Counting systems ("1 e and a" for 16ths, "1 trip let" for triplets) are pedagogical standards in Western music education
-- Swing ratios documented empirically by Friberg & Sundstrom (2002) show professional jazz drummers typically use 1.7:1 to 2.5:1 (63:37 to 71:29) ratios
+- Friberg & Sundström (2002) measured the swing ratio drummers play on the ride cymbal in three well-known jazz recordings and a play-along record: it falls as the tempo rises, as high as 3.5:1 at slow tempi and down to 1:1 at fast tempi; the 2:1 "triple feel" appeared only at a certain tempo, and the short note stayed near 100 ms at medium to fast tempi ([*Music Perception* 19(3), 333–349](https://doi.org/10.1525/mp.2002.19.3.333))
 - Travis picking pattern named for Merle Travis; spread through country and folk via Chet Atkins adaptation
 - Polyrhythm pedagogy relies on language mnemonics (Magadini, *Polyrhythms: The Musician's Guide*, 1993)
 - Metric modulation theorized systematically by Elliott Carter in his string quartets from the 1950s onward
