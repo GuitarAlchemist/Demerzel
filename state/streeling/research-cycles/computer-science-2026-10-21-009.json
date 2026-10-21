@@ -1,0 +1,24 @@
+{
+  "cycle_id": "computer-science-2026-10-21-009",
+  "department": "computer-science",
+  "question": "Why can a locally accepted IX origami state fail the parallel rigid-panel reading, and what evidence must survive composition into a future scene or agent handoff?",
+  "production_path": [
+    "investigation: inspect pinned thickness.rs, tests/thickness.rs and ADR0007 at IX d7c22fdd6a62becb66b9d7246ea85850e7c55854",
+    "model: flat-joint equivalence classes followed by lower-to-upper panel constraints",
+    "test: replay 11 unchanged thickness integration tests and independently trace small graph examples",
+    "transfer: preserve base verdict, refusal scope, cycle witness and exactness in a proposed scene or agent report"
+  ],
+  "hypothesis": "Joining flat-connected faces before ordering exposes contradictions that an unmerged face DAG can miss, while a cyclic or incomplete panel reading cannot provide a complete rigid face placement.",
+  "test_method": "empirical",
+  "evidence": [
+    "At pinned IX d7c22fdd6a62becb66b9d7246ea85850e7c55854, thickness.rs blob 43351fe867a83a10ab38113cb86db8633a0112f1 merges flat-joint panels, maps overlapping pairs to arcs, and reports cycles or longest-path levels. For unstated overlapping panel order it reports a lower bound and no face_levels.",
+    "The root coordinator ran cargo test -p ix-origami --test thickness on 2026-10-21 at that HEAD: 11 passed, 0 failed. Test source blob 3342419488ca7039d8a76e00366f26d5416234b9 covers the weave, pierced joint, missing order, zero thickness and crane 28-ply/36-level distinction.",
+    "The weave passes base analyse but has a global panel cycle. At t=0 refusal is false, while rigid levels, height and face_levels remain absent. Positive t makes refusal true. The course follows the implementation and test rather than interpreting an absent cyclic height as zero.",
+    "The JSON graph cards are hand-derived teaching traces, not captured FOLD analyzer or scene output. Two abstract DAG examples rehearse arithmetic without supplying geometry. No consumer code, exporter, Godot import, human reviewer, learner attempt, translation or public readback was produced by this research slice. Duration was not instrumented; duration_seconds is zero."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "T",
+  "belief_confidence": 0.9,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-21T20:48:00Z"
+}
