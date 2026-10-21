@@ -1,0 +1,28 @@
+{
+  "cycle_id": "physics-2026-10-21-005",
+  "department": "physics",
+  "question": "How should IX full sheet thickness and parallel-panel stack heights be converted from crease-pattern coordinates to assumed physical millimetres and proposed Blender/Godot scene lengths without factors of 150 or 1000 or claims of physical feasibility?",
+  "production_path": [
+    "investigation: inspect ix-origami lib.rs, thickness.rs, and tests/thickness.rs at IX d7c22fdd6a62becb66b9d7246ea85850e7c55854 with git show",
+    "dimensional_model: declare a=W/C mm per coordinate unit, t=h/a, and scene conversion u/1000 per mm",
+    "worked_example: distinguish reference crane 28-ply height from exact 36-level parallel-panel height",
+    "arithmetic_fixture: six derived scenarios and two deliberate unit mistakes, with no executable or product changes",
+    "verification: existing focused coordinator thickness test replay, manual arithmetic paths, and targeted course preflight; human learning remains unmeasured"
+  ],
+  "hypothesis": "Explicit rulers and independent coordinate-to-physical-to-scene paths can make factor-of-150 and factor-of-1000 mistakes visible while preserving the limited interpretation of IX's flat-state and parallel-panel checker. Educational benefit remains a hypothesis pending an unassisted learner transfer.",
+  "test_method": "cross_validation",
+  "evidence": [
+    "At pinned IX commit d7c22fdd6a62becb66b9d7246ea85850e7c55854, crates/ix-origami/src/thickness.rs defines full thickness in crease-pattern units, ply_height=ply*t, and rigid height=levels*t. Missing panel orders yield a lower bound and absent face_levels; a positive-thickness cycle refuses only the parallel-panel interpretation. Source inspected with git show, not inferred from dirty checkout files.",
+    "At the same commit, tests/thickness.rs describes 0.4 mm paperboard on a 150 mm unit-square sheet, using t=0.4/150. The crane test asserts ply=28, exact rigid levels=36, zero undetermined pairs, and 59 face-level entries; it provides a 36-face chain. The scaling test compares 0.25 and 0.5, asserts doubled heights and unchanged face levels. These assertions are not physical material measurements.",
+    "The coordinating agent reports cargo test -p ix-origami --test thickness at unchanged IX HEAD d7c22fdd6a62becb66b9d7246ea85850e7c55854: 11 passed, 0 failed, reported at 2026-10-21T20:47:52Z. This existing focused target is not the entire suite or an engine integration test. The course author did not run another build or modify IX.",
+    "lib.rs says coordinate rescaling by powers of two serves absolute tolerances, not physical units, and local stated-flat-state checks do not prove global flat-foldability or compute layer order. stack uses caller-provided t in multiplications and cannot infer sheet width. face_levels represents one order-respecting stack, not a canonical geometric witness.",
+    "The local fixture state/streeling/fixtures/physics/phy-005/scenarios.json contains derived arithmetic, not runtime outputs: a=W/C, t=h/a, height_mm=height_cp*a, height_scene=height_mm*u/1000. The reference gives ply=11.2 mm and rigid=14.4 mm; with proposed u=1 these become 0.0112 and 0.0144 scene units. Independent paths recover identical physical and scene values. Wrong t=0.4 cp implies 60 mm stock, a factor 150; wrong 14.4 scene metres instead of 0.0144 gives factor 1000.",
+    "Targeted artifact verification passed: python scripts/streeling_course_preflight.py cp-physics-2026-10-21-005 validated record schemas, source metadata, three declared locales, 1713 English whitespace words, five answered English exercises, and status consistency. A nonpersisted arithmetic/link cross-check independently recomputed 60 derived numeric values across six cases, counted five exercise headings per locale, and resolved 17 relative Markdown links. It did not assess subject quality, translation fluency, or learning.",
+    "No new runtime behavior, exporter, mesh, dynamic fold simulation, physical feasibility proof, measured material, live Blender/Godot/DLSS integration, human subject verdict, native-language review, learner trial, or publication readback was produced. EN/FR/ES remain drafts; PT/IT/DE are absent. Research wall time was not instrumented; duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.72,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-21T20:55:10Z"
+}

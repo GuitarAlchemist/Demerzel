@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-physics-2026-10-21-005",
+  "department": "physics",
+  "research_cycle_id": "physics-2026-10-21-005",
+  "module_id": "phy-005-sheet-thickness-and-scene-units",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.72
+    },
+    "outline": {
+      "completed": true,
+      "sections": 5,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1713,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "EN lesson and faithful FR/ES drafts have five answered exercises each, six derived arithmetic cases, a learner transfer task, and an unbound exact-source review brief. Coordinator reports 11 existing focused IX thickness tests passed at pinned unchanged HEAD; no runtime behavior changed. Human subject approval, learner evidence, fluent-language approval, and publication readback are absent. PT/IT/DE are missing; translation remains incomplete."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-21T20:55:10Z"
+}

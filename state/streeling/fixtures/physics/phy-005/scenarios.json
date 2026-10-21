@@ -1,0 +1,108 @@
+{
+  "module_id": "phy-005-sheet-thickness-and-scene-units",
+  "fixture_kind": "derived_arithmetic_cases_not_runtime_outputs",
+  "source": {
+    "repository": "GuitarAlchemist/ix",
+    "commit": "d7c22fdd6a62becb66b9d7246ea85850e7c55854",
+    "paths": ["crates/ix-origami/src/lib.rs", "crates/ix-origami/src/thickness.rs", "crates/ix-origami/tests/thickness.rs"],
+    "inspected_assertions": {
+      "crane_ply": 28,
+      "crane_rigid_levels": 36,
+      "crane_levels_exact": true,
+      "crane_undetermined_pairs": 0,
+      "crane_face_level_entries": 59,
+      "reference_t_expression": "0.4 / 150.0",
+      "scale_control": "t=0.25 to t=0.5 doubles both heights and leaves face_levels unchanged"
+    },
+    "coordinator_replay": {
+      "command": "cargo test -p ix-origami --test thickness",
+      "head": "d7c22fdd6a62becb66b9d7246ea85850e7c55854",
+      "result": {"passed": 11, "failed": 0},
+      "reported_at": "2026-10-21T20:47:52Z",
+      "scope": "Focused existing test target run by coordinating agent; not the full suite or engine integration. New scenarios below were not run through IX."
+    }
+  },
+  "equations": {
+    "a_mm_per_cp": "sheet_width_mm / sheet_width_cp",
+    "t_cp": "thickness_mm / a_mm_per_cp",
+    "ply_height_cp": "ply * t_cp",
+    "rigid_height_cp": "levels * t_cp",
+    "length_mm": "length_cp * a_mm_per_cp",
+    "length_scene": "length_mm * scene_units_per_metre / 1000",
+    "lower_surface_offset_mm": "face_level * thickness_mm (illustrative placement convention only)"
+  },
+  "assumptions": [
+    "Physical dimensions and scene units are teaching assumptions external to IX, not measured material or live engine settings.",
+    "All six arithmetic cases reuse the same assumed exact acyclic order with ply=28 and levels=36; only the reference count is asserted for the pinned crane fixture.",
+    "Coordinate representation changes are dimensional derivations; no new folds or engine artifacts are generated.",
+    "Normalizing by powers of two in lib.rs handles numerical tolerances and supplies no physical unit declaration.",
+    "face_levels is one stack respecting the stated pairs, not a canonical witness or exported mesh."
+  ],
+  "comparison_tolerance": {"absolute": 1e-9, "purpose": "rounding allowance for manual decimal comparisons only"},
+  "cases": [
+    {
+      "id": "reference_150mm",
+      "sheet_width_cp": 1,
+      "sheet_width_mm": 150,
+      "thickness_mm": 0.4,
+      "scene_units_per_metre": 1,
+      "expected_derived": {"a_mm_per_cp": 150, "t_cp": 0.002666666666666667, "ply_height_cp": 0.07466666666666667, "rigid_height_cp": 0.096, "ply_height_mm": 11.2, "rigid_height_mm": 14.4, "sheet_width_scene": 0.15, "thickness_scene": 0.0004, "ply_height_scene": 0.0112, "rigid_height_scene": 0.0144},
+      "cross_check": "36 * (0.4 / 150) * 150 = 36 * 0.4 = 14.4 mm"
+    },
+    {
+      "id": "double_stock_same_sheet",
+      "sheet_width_cp": 1,
+      "sheet_width_mm": 150,
+      "thickness_mm": 0.8,
+      "scene_units_per_metre": 1,
+      "expected_derived": {"a_mm_per_cp": 150, "t_cp": 0.005333333333333334, "ply_height_cp": 0.14933333333333335, "rigid_height_cp": 0.192, "ply_height_mm": 22.4, "rigid_height_mm": 28.8, "sheet_width_scene": 0.15, "thickness_scene": 0.0008, "ply_height_scene": 0.0224, "rigid_height_scene": 0.0288},
+      "cross_check": "both heights double; the assumed order and its level assignments do not change"
+    },
+    {
+      "id": "double_width_same_stock",
+      "sheet_width_cp": 1,
+      "sheet_width_mm": 300,
+      "thickness_mm": 0.4,
+      "scene_units_per_metre": 1,
+      "expected_derived": {"a_mm_per_cp": 300, "t_cp": 0.0013333333333333335, "ply_height_cp": 0.037333333333333336, "rigid_height_cp": 0.048, "ply_height_mm": 11.2, "rigid_height_mm": 14.4, "sheet_width_scene": 0.3, "thickness_scene": 0.0004, "ply_height_scene": 0.0112, "rigid_height_scene": 0.0144},
+      "cross_check": "coordinate heights halve while physical stack heights remain unchanged"
+    },
+    {
+      "id": "double_all_physical_lengths",
+      "sheet_width_cp": 1,
+      "sheet_width_mm": 300,
+      "thickness_mm": 0.8,
+      "scene_units_per_metre": 1,
+      "expected_derived": {"a_mm_per_cp": 300, "t_cp": 0.002666666666666667, "ply_height_cp": 0.07466666666666667, "rigid_height_cp": 0.096, "ply_height_mm": 22.4, "rigid_height_mm": 28.8, "sheet_width_scene": 0.3, "thickness_scene": 0.0008, "ply_height_scene": 0.0224, "rigid_height_scene": 0.0288},
+      "cross_check": "coordinate ratios remain reference values while physical lengths double"
+    },
+    {
+      "id": "two_coordinate_units_same_physical_sheet",
+      "sheet_width_cp": 2,
+      "sheet_width_mm": 150,
+      "thickness_mm": 0.4,
+      "scene_units_per_metre": 1,
+      "expected_derived": {"a_mm_per_cp": 75, "t_cp": 0.005333333333333334, "ply_height_cp": 0.14933333333333335, "rigid_height_cp": 0.192, "ply_height_mm": 11.2, "rigid_height_mm": 14.4, "sheet_width_scene": 0.15, "thickness_scene": 0.0004, "ply_height_scene": 0.0112, "rigid_height_scene": 0.0144},
+      "cross_check": "0.192 cp * 75 mm/cp = 14.4 mm; this is a re-encoding derivation, not an IX normalization claim"
+    },
+    {
+      "id": "preview_100_scene_units_per_metre",
+      "sheet_width_cp": 1,
+      "sheet_width_mm": 150,
+      "thickness_mm": 0.4,
+      "scene_units_per_metre": 100,
+      "expected_derived": {"a_mm_per_cp": 150, "t_cp": 0.002666666666666667, "ply_height_cp": 0.07466666666666667, "rigid_height_cp": 0.096, "ply_height_mm": 11.2, "rigid_height_mm": 14.4, "sheet_width_scene": 15, "thickness_scene": 0.04, "ply_height_scene": 1.12, "rigid_height_scene": 1.44},
+      "cross_check": "only scene representation changes; all scene lengths are 100 times reference values"
+    }
+  ],
+  "deliberate_error_cases": [
+    {"id": "mm_number_used_as_cp", "reference_case": "reference_150mm", "wrong_t_cp": 0.4, "derived_wrong_thickness_mm": 60, "error_factor": 150, "repair": "t_cp=0.4/150; state 150 mm per coordinate unit"},
+    {"id": "mm_numbers_used_as_scene_metres", "reference_case": "reference_150mm", "wrong_thickness_scene": 0.4, "wrong_rigid_height_scene": 14.4, "error_factor": 1000, "repair": "divide each mm length by 1000 for the proposed one-scene-unit-per-metre mapping"}
+  ],
+  "limits": [
+    "Acyclic exact rigid height is conditional on the parallel-panel model and complete stated overlapping order.",
+    "With missing order, levels_exact=false and the reported height is a lower bound; face_levels is absent.",
+    "At positive t a cycle refuses the parallel-panel interpretation; its absent rigid height is not zero.",
+    "No dynamic foldability, measured material behavior, exporter, Blender/Godot/DLSS import, human learner result, fluent translation approval, or publication is established."
+  ]
+}
