@@ -1,0 +1,1335 @@
+{
+  "module_id": "psy-008-bursts-are-not-rates",
+  "rounding": "ratios, probabilities, means, variances and indices to 6 decimals; percentages and expected numbers of days to 2 decimals; 'exact' is the unrounded fraction; very small probabilities are given as mantissa (2 decimals) and power of ten",
+  "variance_convention": "sample variance, divisor n - 1, everywhere",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "trigger_folder": {
+      "path": "state/triggers/archived",
+      "files": 594,
+      "git_tree": "2da37c16496d39c0c9137897c8be2b0c6d6b7978",
+      "manifest_sha256": "3e33b3e795b977277c52c99d59c48f15ae60f95d28f5524c641d3ec066f10393"
+    },
+    "files": [
+      "state/patterns/anti-pattern-003-push-triggered-spam.pattern.json",
+      ".github/workflows/demerzel-driver-triggers.yml",
+      ".github/workflows/streeling-daily.yml"
+    ]
+  },
+  "observed": {
+    "kind": "observed: counted from observed-input.json",
+    "events": 594,
+    "first_event": "2026-03-20T13:04:07Z",
+    "last_event": "2026-07-16T15:43:18Z",
+    "first_day": "2026-03-20",
+    "first_weekday": "Friday",
+    "last_day": "2026-07-16",
+    "calendar_days": 119,
+    "active_days": 100,
+    "days_without_event": 19,
+    "distinct_run_ids": 594,
+    "distinct_senders": 1,
+    "distinct_repos": 1,
+    "producer_workflow": {
+      "retired_on": "2026-07-18",
+      "orphaned_triggers_stated_in_comment": 594,
+      "trigger_types_it_can_write": [
+        "push",
+        "issue_${{ github.event.action }}",
+        "ci_failure",
+        "discussion_created"
+      ],
+      "file_name_template": "state/triggers/${TIMESTAMP}-<type>.trigger.json, one file per workflow run"
+    },
+    "types_the_producer_can_write_but_the_archive_never_holds": [
+      "ci_failure"
+    ]
+  },
+  "daily_counts": {
+    "kind": "computed",
+    "series": "7 60 109 0 0 0 0 18 4 5 7 2 1 1 2 0 1 2 1 1 1 1 7 1 1 1 1 1 3 0 0 1 1 1 1 1 0 0 1 1 1 1 2 5 0 1 4 1 1 2 0 0 1 1 1 1 1 8 2 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1 2 0 0 1 1 1 1 1 0 3 1 1 1 1 1 1 24 2 8 8 19 1 45 72 20 20 20 26 3 1 1 2 2 1 1 1 0 0 2 1 2 2",
+    "series_note": "events per UTC calendar day, 2026-03-20 first, days without event included",
+    "histogram": {
+      "0": 19,
+      "1": 63,
+      "2": 13,
+      "3": 3,
+      "4": 2,
+      "5": 2,
+      "7": 3,
+      "8": 3,
+      "18": 1,
+      "19": 1,
+      "20": 3,
+      "24": 1,
+      "26": 1,
+      "45": 1,
+      "60": 1,
+      "72": 1,
+      "109": 1
+    },
+    "mean_per_calendar_day": {
+      "exact": "594/119",
+      "value": 4.991597
+    },
+    "mean_per_active_day": {
+      "exact": "297/50",
+      "value": 5.94
+    },
+    "sum_of_squared_counts": 26390,
+    "sample_variance": {
+      "exact": "1393787/7021",
+      "value": 198.516878
+    },
+    "standard_deviation": 14.089602,
+    "index_of_dispersion": {
+      "exact": "1393787/35046",
+      "value": 39.770216
+    },
+    "days_without_event": {
+      "exact": "19/119",
+      "value": 0.159664,
+      "percent": 15.97
+    },
+    "mode": {
+      "events": "1",
+      "days": {
+        "exact": "63/119",
+        "value": 0.529412,
+        "percent": 52.94
+      }
+    },
+    "days_above_the_mean": 19,
+    "claim": {
+      "statement": "about five events a day",
+      "value": 5,
+      "band": [
+        4,
+        6
+      ],
+      "days_with_exactly_the_value": {
+        "exact": "2/119",
+        "value": 0.016807,
+        "percent": 1.68
+      },
+      "days_inside_the_band": {
+        "exact": "4/119",
+        "value": 0.033613,
+        "percent": 3.36
+      }
+    },
+    "bands": [
+      {
+        "events_per_day": "0",
+        "days": 19,
+        "share_of_days": {
+          "exact": "19/119",
+          "value": 0.159664,
+          "percent": 15.97
+        },
+        "events": 0,
+        "poisson_expected_days": 0.81
+      },
+      {
+        "events_per_day": "1 to 2",
+        "days": 76,
+        "share_of_days": {
+          "exact": "76/119",
+          "value": 0.638655,
+          "percent": 63.87
+        },
+        "events": 89,
+        "poisson_expected_days": 14.11
+      },
+      {
+        "events_per_day": "3 to 11",
+        "days": 13,
+        "share_of_days": {
+          "exact": "13/119",
+          "value": 0.109244,
+          "percent": 10.92
+        },
+        "events": 72,
+        "poisson_expected_days": 103.44
+      },
+      {
+        "events_per_day": "12 or more",
+        "days": 11,
+        "share_of_days": {
+          "exact": "11/119",
+          "value": 0.092437,
+          "percent": 9.24
+        },
+        "events": 433,
+        "poisson_expected_days": 0.64
+      }
+    ]
+  },
+  "poisson_benchmark": {
+    "kind": "a benchmark distribution with the observed mean, not data and not a fitted model",
+    "mean": {
+      "exact": "594/119",
+      "value": 4.991597
+    },
+    "variance": {
+      "exact": "594/119",
+      "value": 4.991597
+    },
+    "quantile_level_percent": 99,
+    "quantile": 11,
+    "cumulative_probability_one_below_the_quantile": 0.986456,
+    "cumulative_probability_at_the_quantile": 0.994616,
+    "burst_day_from": 12,
+    "days": {
+      "no_event": {
+        "probability": {
+          "value": 0.006795,
+          "percent": 0.68
+        },
+        "expected_days": 0.81,
+        "observed_days": 19
+      },
+      "exactly_one_event": {
+        "probability": {
+          "value": 0.033917,
+          "percent": 3.39
+        },
+        "expected_days": 4.04,
+        "observed_days": 63
+      },
+      "exactly_the_claimed_value": {
+        "probability": {
+          "value": 0.175466,
+          "percent": 17.55
+        },
+        "expected_days": 20.88,
+        "observed_days": 2
+      },
+      "inside_the_claimed_band": {
+        "probability": {
+          "value": 0.497204,
+          "percent": 49.72
+        },
+        "expected_days": 59.17,
+        "observed_days": 4
+      },
+      "above_the_poisson_quantile": {
+        "probability": {
+          "value": 0.005384,
+          "percent": 0.54
+        },
+        "expected_days": 0.64,
+        "observed_days": 11
+      }
+    },
+    "dispersion": {
+      "standard_deviation_of_the_index_under_poisson": 0.130189,
+      "observed_index_minus_one_in_those_units": 297.8
+    },
+    "series_terms": 300,
+    "arithmetic": "exact integers; no exp, log or pow"
+  },
+  "composition": {
+    "kind": "computed from the event types",
+    "by_type": {
+      "discussion_created": {
+        "events": 252,
+        "share": {
+          "exact": "252/594",
+          "value": 0.424242,
+          "percent": 42.42
+        },
+        "days_with_at_least_one": 88,
+        "busiest_day": 39,
+        "index_of_dispersion": {
+          "exact": "2393/177",
+          "value": 13.519774
+        }
+      },
+      "push": {
+        "events": 207,
+        "share": {
+          "exact": "207/594",
+          "value": 0.348485,
+          "percent": 34.85
+        },
+        "days_with_at_least_one": 31,
+        "busiest_day": 41,
+        "index_of_dispersion": {
+          "exact": "210685/12213",
+          "value": 17.25088
+        }
+      },
+      "issue_opened": {
+        "events": 135,
+        "share": {
+          "exact": "135/594",
+          "value": 0.227273,
+          "percent": 22.73
+        },
+        "days_with_at_least_one": 13,
+        "busiest_day": 38,
+        "index_of_dispersion": {
+          "exact": "186226/7965",
+          "value": 23.38054
+        }
+      }
+    },
+    "busiest_days": [
+      {
+        "day": "2026-03-22",
+        "weekday": "Sunday",
+        "events": 109,
+        "by_type": {
+          "discussion_created": 39,
+          "push": 32,
+          "issue_opened": 38
+        },
+        "push_share": {
+          "exact": "32/109",
+          "value": 0.293578,
+          "percent": 29.36
+        },
+        "poisson_probability_of_a_day_at_least_this_busy": {
+          "mantissa": 6.32,
+          "power_of_ten": -103,
+          "text": "6.32e-103"
+        },
+        "union_bound_over_all_calendar_days": {
+          "mantissa": 7.52,
+          "power_of_ten": -101,
+          "text": "7.52e-101"
+        }
+      },
+      {
+        "day": "2026-06-28",
+        "weekday": "Sunday",
+        "events": 72,
+        "by_type": {
+          "discussion_created": 34,
+          "push": 4,
+          "issue_opened": 34
+        },
+        "push_share": {
+          "exact": "4/72",
+          "value": 0.055556,
+          "percent": 5.56
+        },
+        "poisson_probability_of_a_day_at_least_this_busy": {
+          "mantissa": 2.23,
+          "power_of_ten": -56,
+          "text": "2.23e-56"
+        },
+        "union_bound_over_all_calendar_days": {
+          "mantissa": 2.66,
+          "power_of_ten": -54,
+          "text": "2.66e-54"
+        }
+      },
+      {
+        "day": "2026-03-21",
+        "weekday": "Saturday",
+        "events": 60,
+        "by_type": {
+          "discussion_created": 13,
+          "push": 41,
+          "issue_opened": 6
+        },
+        "push_share": {
+          "exact": "41/60",
+          "value": 0.683333,
+          "percent": 68.33
+        },
+        "poisson_probability_of_a_day_at_least_this_busy": {
+          "mantissa": 6.97,
+          "power_of_ten": -43,
+          "text": "6.97e-43"
+        },
+        "union_bound_over_all_calendar_days": {
+          "mantissa": 8.3,
+          "power_of_ten": -41,
+          "text": "8.30e-41"
+        }
+      },
+      {
+        "day": "2026-06-27",
+        "weekday": "Saturday",
+        "events": 45,
+        "by_type": {
+          "discussion_created": 24,
+          "push": 0,
+          "issue_opened": 21
+        },
+        "push_share": {
+          "exact": "0/45",
+          "value": 0.0,
+          "percent": 0.0
+        },
+        "poisson_probability_of_a_day_at_least_this_busy": {
+          "mantissa": 1.68,
+          "power_of_ten": -27,
+          "text": "1.68e-27"
+        },
+        "union_bound_over_all_calendar_days": {
+          "mantissa": 2.0,
+          "power_of_ten": -25,
+          "text": "2.00e-25"
+        }
+      }
+    ],
+    "push_share": {
+      "on_the_busiest_days": {
+        "exact": "77/286",
+        "value": 0.269231,
+        "percent": 26.92
+      },
+      "on_all_other_days": {
+        "exact": "130/308",
+        "value": 0.422078,
+        "percent": 42.21
+      },
+      "in_the_whole_log": {
+        "exact": "207/594",
+        "value": 0.348485,
+        "percent": 34.85
+      }
+    },
+    "anti_pattern": {
+      "record": {
+        "pattern_id": "anti-pattern-003-push-triggered-spam",
+        "detection": "Workflow runs > 3 in a single day for the same workflow",
+        "occurrence_count": 2,
+        "first_seen": "2026-03-21",
+        "last_seen": "2026-03-22",
+        "status": "confirmed",
+        "resolution": "Ideation workflow updated with daily dedup check 2026-03-22. Other workflows may need same fix."
+      },
+      "threshold_runs_per_day": 3,
+      "note": "Each archived file is one run of the producer workflow, so a day's event count is that workflow's run count. Push events are the cause the record names; they are not the duplicate runs it describes.",
+      "events_on_first_seen_and_last_seen": [
+        60,
+        109
+      ],
+      "push_events_on_first_seen_and_last_seen": [
+        41,
+        32
+      ],
+      "days_with_more_producer_runs_than_the_threshold": 21,
+      "of_which_after_last_seen": 18,
+      "days_with_more_push_events_than_the_threshold": 17,
+      "of_which_after_last_seen_push": 15,
+      "push_events_after_last_seen": 133
+    },
+    "calendar": {
+      "single_event_days": {
+        "days": 63,
+        "by_type": {
+          "discussion_created": 58,
+          "push": 5
+        },
+        "single_discussion_created": {
+          "days": 58,
+          "on_monday_to_friday": 56,
+          "earliest_time_utc": "13:51",
+          "latest_time_utc": "16:09",
+          "between_13_00_and_16_59_utc": 58
+        }
+      },
+      "scheduled_workflow": {
+        "cron_utc": [
+          "17 13 * * 5",
+          "17 13 * * 1-4"
+        ],
+        "time_of_day_utc": "13:17",
+        "weekdays": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ]
+      },
+      "monday_to_friday": {
+        "days": 85,
+        "events": 243,
+        "share_of_events": {
+          "exact": "243/594",
+          "value": 0.409091,
+          "percent": 40.91
+        },
+        "mean": {
+          "exact": "243/85",
+          "value": 2.858824
+        },
+        "days_without_event": 4,
+        "days_with_a_discussion_created": 81,
+        "maximum": 26
+      },
+      "saturday_and_sunday": {
+        "days": 34,
+        "events": 351,
+        "share_of_events": {
+          "exact": "351/594",
+          "value": 0.590909,
+          "percent": 59.09
+        },
+        "mean": {
+          "exact": "351/34",
+          "value": 10.323529
+        },
+        "days_without_event": 15,
+        "days_with_a_discussion_created": 7,
+        "maximum": 109
+      },
+      "days_without_event": {
+        "days": 19,
+        "on_saturday_or_sunday": 15,
+        "on_monday_to_friday": [
+          "2026-03-23 Monday",
+          "2026-03-24 Tuesday",
+          "2026-03-25 Wednesday",
+          "2026-03-26 Thursday"
+        ]
+      }
+    }
+  },
+  "windows": {
+    "kind": "computed; blocks of consecutive days counted from the first day",
+    "tolerance_percent": 20,
+    "growth_factor": 2,
+    "index_band_standard_deviations": 2,
+    "by_length": [
+      {
+        "window_days": 1,
+        "n": 119,
+        "total": 594,
+        "sum_of_squares": 26390,
+        "mean": {
+          "exact": "594/119",
+          "value": 4.991597
+        },
+        "sample_variance": {
+          "exact": "1393787/7021",
+          "value": 198.516878
+        },
+        "standard_deviation": 14.089602,
+        "index_of_dispersion": {
+          "exact": "1393787/35046",
+          "value": 39.770216
+        },
+        "zeros": 19,
+        "median": 1,
+        "minimum": 0,
+        "maximum": 109,
+        "standard_deviation_of_the_index_under_poisson": 0.130189,
+        "observed_index_minus_one_in_those_units": 297.8,
+        "index_band_for_a_constant_rate": [
+          0.739622,
+          1.260378
+        ],
+        "tolerance_band": [
+          3.99,
+          5.99
+        ],
+        "windows_within_tolerance_of_the_mean": {
+          "exact": "4/119",
+          "value": 0.033613,
+          "percent": 3.36
+        },
+        "steps_between_neighbouring_windows": 118,
+        "steps_where_the_total_at_least_doubles": 28
+      },
+      {
+        "window_days": 7,
+        "totals": [
+          176,
+          38,
+          8,
+          13,
+          7,
+          5,
+          14,
+          6,
+          15,
+          6,
+          6,
+          6,
+          8,
+          63,
+          204,
+          11,
+          8
+        ],
+        "n": 17,
+        "total": 594,
+        "sum_of_squares": 79126,
+        "mean": {
+          "exact": "594/17",
+          "value": 34.941176
+        },
+        "sample_variance": {
+          "exact": "496153/136",
+          "value": 3648.183824
+        },
+        "standard_deviation": 60.400197,
+        "index_of_dispersion": {
+          "exact": "496153/4752",
+          "value": 104.409301
+        },
+        "zeros": 0,
+        "median": 8,
+        "minimum": 5,
+        "maximum": 204,
+        "standard_deviation_of_the_index_under_poisson": 0.353553,
+        "observed_index_minus_one_in_those_units": 292.49,
+        "index_band_for_a_constant_rate": [
+          0.292893,
+          1.707107
+        ],
+        "tolerance_band": [
+          27.95,
+          41.93
+        ],
+        "windows_within_tolerance_of_the_mean": {
+          "exact": "1/17",
+          "value": 0.058824,
+          "percent": 5.88
+        },
+        "steps_between_neighbouring_windows": 16,
+        "steps_where_the_total_at_least_doubles": 4
+      },
+      {
+        "window_days": 17,
+        "totals": [
+          217,
+          24,
+          22,
+          23,
+          15,
+          208,
+          85
+        ],
+        "n": 7,
+        "total": 594,
+        "sum_of_squares": 99392,
+        "mean": {
+          "exact": "594/7",
+          "value": 84.857143
+        },
+        "sample_variance": {
+          "exact": "171454/21",
+          "value": 8164.47619
+        },
+        "standard_deviation": 90.357491,
+        "index_of_dispersion": {
+          "exact": "85727/891",
+          "value": 96.214366
+        },
+        "zeros": 0,
+        "median": 24,
+        "minimum": 15,
+        "maximum": 217,
+        "standard_deviation_of_the_index_under_poisson": 0.57735,
+        "observed_index_minus_one_in_those_units": 164.92,
+        "index_band_for_a_constant_rate": [
+          -0.154701,
+          2.154701
+        ],
+        "tolerance_band": [
+          67.89,
+          101.83
+        ],
+        "windows_within_tolerance_of_the_mean": {
+          "exact": "1/7",
+          "value": 0.142857,
+          "percent": 14.29
+        },
+        "steps_between_neighbouring_windows": 6,
+        "steps_where_the_total_at_least_doubles": 1
+      }
+    ]
+  },
+  "day_boundary": {
+    "kind": "computed; the same events with the day boundary moved",
+    "by_offset": [
+      {
+        "offset_hours": 0,
+        "first_day": "2026-03-20",
+        "calendar_days": 119,
+        "days_without_event": 19,
+        "median": 1,
+        "busiest_day": 109,
+        "index_of_dispersion": 39.770216,
+        "days_inside_the_claimed_band": "4/119"
+      },
+      {
+        "offset_hours": 6,
+        "first_day": "2026-03-20",
+        "calendar_days": 119,
+        "days_without_event": 20,
+        "median": 1,
+        "busiest_day": 152,
+        "index_of_dispersion": 64.09245,
+        "days_inside_the_claimed_band": "8/119"
+      },
+      {
+        "offset_hours": 12,
+        "first_day": "2026-03-21",
+        "calendar_days": 119,
+        "days_without_event": 20,
+        "median": 1,
+        "busiest_day": 113,
+        "index_of_dispersion": 47.583348,
+        "days_inside_the_claimed_band": "5/119"
+      },
+      {
+        "offset_hours": 18,
+        "first_day": "2026-03-21",
+        "calendar_days": 119,
+        "days_without_event": 19,
+        "median": 1,
+        "busiest_day": 113,
+        "index_of_dispersion": 47.990812,
+        "days_inside_the_claimed_band": "7/119"
+      }
+    ]
+  },
+  "uncertainty_of_the_mean": {
+    "kind": "computed; each line is one standard error of the mean per calendar day",
+    "mean": {
+      "exact": "594/119",
+      "value": 4.991597
+    },
+    "if_days_were_poisson": 0.204808,
+    "from_the_sample_variance_of_days": 1.291592,
+    "from_the_sample_variance_of_7_day_blocks": 2.092743,
+    "ratio_days_to_poisson": 6.306363,
+    "ratio_blocks_to_poisson": 10.218087,
+    "note": "The second line treats days as independent, which the growth of the index with the window length contradicts; the third uses 17 blocks, two of which hold the bursts. Neither is a precise interval."
+  },
+  "planning": {
+    "kind": "computed from the daily counts",
+    "share_of_days_without_event": {
+      "exact": "19/119",
+      "value": 0.159664,
+      "percent": 15.97
+    },
+    "share_of_days_with_exactly_one_event": {
+      "exact": "63/119",
+      "value": 0.529412,
+      "percent": 52.94
+    },
+    "share_of_days_with_at_most_the_typical_maximum": {
+      "exact": "95/119",
+      "value": 0.798319,
+      "percent": 79.83
+    },
+    "typical_day_max_events": 2,
+    "quantiles_nearest_rank": {
+      "50": 1,
+      "75": 2,
+      "90": 8,
+      "95": 24,
+      "99": 72
+    },
+    "maximum": 109,
+    "burst_days": {
+      "definition": "a day with at least 12 events, above the 99% quantile of the Poisson benchmark",
+      "days": {
+        "exact": "11/119",
+        "value": 0.092437,
+        "percent": 9.24
+      },
+      "events": 433,
+      "smallest_and_largest_count": [
+        18,
+        109
+      ]
+    },
+    "episodes": {
+      "rule": "burst days at most 7 days apart belong to one episode",
+      "count": 2,
+      "list": [
+        {
+          "first_burst_day": "2026-03-21",
+          "last_burst_day": "2026-03-27",
+          "burst_days": 3,
+          "events_on_burst_days": 187
+        },
+        {
+          "first_burst_day": "2026-06-21",
+          "last_burst_day": "2026-07-02",
+          "burst_days": 8,
+          "events_on_burst_days": 246
+        }
+      ],
+      "largest_gap_inside_an_episode_days": 5,
+      "smallest_gap_between_episodes_days": 86
+    }
+  },
+  "lesson_exercises": {
+    "kind": "intermediate values of the lesson's worked answers",
+    "exercise_1": {
+      "mean_per_calendar_day": {
+        "exact": "594/119",
+        "value": 4.991597
+      },
+      "mean_per_active_day": {
+        "exact": "297/50",
+        "value": 5.94
+      },
+      "active_over_calendar_mean": {
+        "exact": "119/100",
+        "value": 1.19
+      },
+      "horizon_days": 30,
+      "events_expected_from_the_calendar_mean": {
+        "exact": "17820/119",
+        "value": 149.747899
+      },
+      "events_expected_from_the_active_mean": {
+        "exact": "891/5",
+        "value": 178.2
+      }
+    },
+    "exercise_2": {
+      "sum_of_counts": 594,
+      "sum_of_squared_counts": 26390,
+      "square_of_the_sum_over_n": {
+        "exact": "352836/119",
+        "value": 2965.008403
+      },
+      "sum_of_squared_deviations": {
+        "exact": "2787574/119",
+        "value": 23424.991597
+      },
+      "sample_variance": {
+        "exact": "1393787/7021",
+        "value": 198.516878
+      },
+      "index_of_dispersion": {
+        "exact": "1393787/35046",
+        "value": 39.770216
+      },
+      "standard_deviation_of_the_index_under_poisson": 0.130189,
+      "observed_index_minus_one_in_those_units": 297.8
+    },
+    "exercise_3": {
+      "probability_of_no_event": 0.006795,
+      "expected_days_without_event": 0.81,
+      "observed_over_expected_days_without_event": 23.5,
+      "expected_days_with_exactly_one_event": 4.04,
+      "observed_over_expected_days_with_exactly_one_event": 15.61
+    },
+    "exercise_5": {
+      "weekly_totals_sorted": [
+        5,
+        6,
+        6,
+        6,
+        6,
+        7,
+        8,
+        8,
+        8,
+        11,
+        13,
+        14,
+        15,
+        38,
+        63,
+        176,
+        204
+      ],
+      "mean_week": {
+        "exact": "594/17",
+        "value": 34.941176
+      },
+      "median_week": 8,
+      "tolerance_band": [
+        27.95,
+        41.93
+      ],
+      "weeks_inside_the_band": "1/17",
+      "index_daily": {
+        "exact": "1393787/35046",
+        "value": 39.770216
+      },
+      "index_weekly": {
+        "exact": "496153/4752",
+        "value": 104.409301
+      },
+      "standard_deviation_of_the_weekly_index_under_poisson": 0.353553,
+      "index_band_for_a_constant_rate": [
+        0.292893,
+        1.707107
+      ]
+    }
+  },
+  "negative_controls": {
+    "kind": "synthetic logs, not project data",
+    "seed": 20261013,
+    "evenly_spread": {
+      "how": "the observed events spread as evenly as possible over the observed days",
+      "n": 119,
+      "total": 594,
+      "mean": {
+        "exact": "594/119",
+        "value": 4.991597
+      },
+      "sample_variance": {
+        "exact": "1/119",
+        "value": 0.008403
+      },
+      "index_of_dispersion": {
+        "exact": "1/594",
+        "value": 0.001684
+      },
+      "zeros": 0,
+      "median": 5,
+      "maximum": 5,
+      "days_inside_the_claimed_band": 119,
+      "burst_days": 0
+    },
+    "constant_rate": {
+      "how": "each observed event placed on a day drawn uniformly with random.Random(seed).random()",
+      "accepted_index_band": [
+        0.479244,
+        1.520756
+      ],
+      "n": 119,
+      "total": 594,
+      "mean": {
+        "exact": "594/119",
+        "value": 4.991597
+      },
+      "sample_variance": {
+        "exact": "43256/7021",
+        "value": 6.160946
+      },
+      "index_of_dispersion": {
+        "exact": "21628/17523",
+        "value": 1.234264
+      },
+      "zeros": 2,
+      "median": 5,
+      "maximum": 13,
+      "days_inside_the_claimed_band": 57,
+      "burst_days": 1
+    },
+    "planted_burst": {
+      "how": "the evenly spread log with 100 events added to one day",
+      "n": 119,
+      "total": 694,
+      "mean": {
+        "exact": "694/119",
+        "value": 5.831933
+      },
+      "sample_variance": {
+        "exact": "590159/7021",
+        "value": 84.05626
+      },
+      "index_of_dispersion": {
+        "exact": "590159/40946",
+        "value": 14.413105
+      },
+      "zeros": 0,
+      "median": 5,
+      "maximum": 105,
+      "days_inside_the_claimed_band": 118,
+      "burst_days": 1
+    }
+  },
+  "transfer_task": {
+    "note": "Hypothetical log of incoming webhooks for the learner task. Not Streeling data and not a forecast.",
+    "q1_counting": {
+      "days": 28,
+      "events": 84,
+      "days_with_an_event": 21,
+      "days_without_event": {
+        "exact": "7/28",
+        "value": 0.25,
+        "percent": 25.0
+      },
+      "mean_per_calendar_day": {
+        "exact": "3",
+        "value": 3.0
+      },
+      "mean_per_active_day": {
+        "exact": "4",
+        "value": 4.0
+      },
+      "histogram": {
+        "0": 7,
+        "1": 11,
+        "2": 5,
+        "3": 2,
+        "16": 1,
+        "17": 1,
+        "24": 1
+      },
+      "claim": {
+        "statement": "about three webhooks a day",
+        "value": 3,
+        "band": [
+          2,
+          4
+        ],
+        "days_with_exactly_the_value": {
+          "exact": "2/28",
+          "value": 0.071429,
+          "percent": 7.14
+        },
+        "days_inside_the_band": {
+          "exact": "7/28",
+          "value": 0.25,
+          "percent": 25.0
+        }
+      }
+    },
+    "q2_dispersion": {
+      "sum_of_squares": 1170,
+      "sum_of_squared_deviations": {
+        "exact": "918",
+        "value": 918.0
+      },
+      "sample_variance": {
+        "exact": "34",
+        "value": 34.0
+      },
+      "index_of_dispersion": {
+        "exact": "34/3",
+        "value": 11.333333
+      },
+      "standard_deviation_of_the_index_under_poisson": 0.272166,
+      "observed_index_minus_one_in_those_units": 37.97
+    },
+    "q3_poisson_benchmark": {
+      "mean": {
+        "exact": "3",
+        "value": 3.0
+      },
+      "variance": {
+        "exact": "3",
+        "value": 3.0
+      },
+      "quantile_level_percent": 99,
+      "quantile": 8,
+      "cumulative_probability_one_below_the_quantile": 0.988095,
+      "cumulative_probability_at_the_quantile": 0.996197,
+      "burst_day_from": 9,
+      "days": {
+        "no_event": {
+          "probability": {
+            "value": 0.049787,
+            "percent": 4.98
+          },
+          "expected_days": 1.39,
+          "observed_days": 7
+        },
+        "exactly_one_event": {
+          "probability": {
+            "value": 0.149361,
+            "percent": 14.94
+          },
+          "expected_days": 4.18,
+          "observed_days": 11
+        },
+        "exactly_the_claimed_value": {
+          "probability": {
+            "value": 0.224042,
+            "percent": 22.4
+          },
+          "expected_days": 6.27,
+          "observed_days": 2
+        },
+        "inside_the_claimed_band": {
+          "probability": {
+            "value": 0.616115,
+            "percent": 61.61
+          },
+          "expected_days": 17.25,
+          "observed_days": 7
+        },
+        "above_the_poisson_quantile": {
+          "probability": {
+            "value": 0.003803,
+            "percent": 0.38
+          },
+          "expected_days": 0.11,
+          "observed_days": 3
+        }
+      },
+      "busiest_day": 24,
+      "probability_of_a_day_at_least_that_busy": {
+        "mantissa": 2.57,
+        "power_of_ten": -14,
+        "text": "2.57e-14"
+      }
+    },
+    "q4_weeks": {
+      "window_days": 7,
+      "totals": [
+        6,
+        8,
+        61,
+        9
+      ],
+      "mean": {
+        "exact": "21",
+        "value": 21.0
+      },
+      "sample_variance": {
+        "exact": "2138/3",
+        "value": 712.666667
+      },
+      "index_of_dispersion": {
+        "exact": "2138/63",
+        "value": 33.936508
+      },
+      "median": 8,
+      "tolerance_band": [
+        16.8,
+        25.2
+      ],
+      "windows_within_tolerance_of_the_mean": {
+        "exact": "0/4",
+        "value": 0.0,
+        "percent": 0.0
+      }
+    },
+    "q5_reference": {
+      "note": "No single answer. One usable falsifier of 'about three a day': over the next log of the same length, the index of dispersion of the daily counts falls outside the band below.",
+      "index_band_standard_deviations": 2,
+      "index_band_for_a_constant_rate": [
+        0.455669,
+        1.544331
+      ],
+      "figures_to_report_in_place_of_the_mean": {
+        "days_without_event": {
+          "exact": "7/28",
+          "value": 0.25,
+          "percent": 25.0
+        },
+        "median": 1,
+        "quantile_90_nearest_rank": 16,
+        "maximum": 24,
+        "burst_days": 3,
+        "events_on_burst_days": 57,
+        "longest_run_of_neighbouring_burst_days": 3
+      }
+    }
+  },
+  "deleted_triggers": {
+    "kind": "sensitivity to an input of scenarios.json: trigger files deleted without being archived, reported by PSY-009 from the repository history and not read by this fixture",
+    "deleted_files": 12,
+    "by_day": {
+      "2026-03-20": {
+        "archived_events": 7,
+        "deleted_files": 7,
+        "events_with_them": 14
+      },
+      "2026-06-30": {
+        "archived_events": 20,
+        "deleted_files": 5,
+        "events_with_them": 25
+      }
+    },
+    "deleted_files_on_the_busiest_days": 0,
+    "busiest_days_unchanged": true,
+    "events_with_them": 606,
+    "mean_per_calendar_day": {
+      "exact": "606/119",
+      "value": 5.092437
+    },
+    "sample_variance": {
+      "exact": "1408721/7021",
+      "value": 200.643925
+    },
+    "index_of_dispersion": {
+      "exact": "1408721/35754",
+      "value": 39.400375
+    },
+    "burst_day_from": 12,
+    "burst_days": 12,
+    "episodes": 2
+  },
+  "checks": [
+    {
+      "check": "hand-computed case: counts 0 1 1 2 6 give mean 2, sample variance 11/2, index 11/4, median 1, 80% quantile 2",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: longest run of true flags in 0 1 1 0 1 is 2, steps that at least double in 1 2 3 7 0 5 are 3",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: the summed Poisson series has mean and variance equal to its parameter (within 1e-100)",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: the Poisson terms left out of the series weigh less than 1e-200",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: Poisson mean 2 gives P(0) = 0.135335, P(X <= 2) = 0.676676, P(X >= 6) = 0.016564, 99% quantile 6",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: the exact P(0) agrees with math.exp(-2) to 12 decimals",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: scientific notation gives 1/8000 = 1.25e-4",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "recount of events, days and types equals extract.py's counts",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "active days + days without event = calendar days",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "per-type daily counts add up to the daily counts",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "each archived file is one run of the producer workflow: run ids and timestamps are all distinct",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "every archived type is one the producer workflow can write",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the producer workflow's comment states the archived number of events",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "histogram days add up to the calendar days and its events to the total",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "observed log: the summed Poisson series has mean and variance equal to its parameter (within 1e-100)",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "observed log: the Poisson terms left out of the series weigh less than 1e-200",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "Poisson quantile: the cumulative probability first reaches the level at the reported count",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "the bands partition the days and the events",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the busiest days are in decreasing order and no other day is busier",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the pattern record's detection sentence still holds the threshold used here",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "weekday and weekend days partition the days and the events; single-event day types add up",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "window totals add up to the events",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "a one-day window reproduces the daily index of dispersion",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "day boundary: offset 0 reproduces the daily series",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "standard error ratio squared equals the index of dispersion",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "episodes hold every burst day once",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "control: an evenly spread log with the observed mean has an index of dispersion below 0.01, no empty day and no burst day",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "control: a seeded constant-rate log of the observed size has an index of dispersion within the band around 1",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "control: one planted burst lifts the index of the even log above the constant-rate log's and is counted as one burst day",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the summed Poisson series has mean and variance equal to its parameter (within 1e-100)",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the Poisson terms left out of the series weigh less than 1e-200",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: hand-computed mean 3, mean per active day 4, sample variance 34, index 34/3, weekly totals 6 8 61 9",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "deleted triggers: the log with them holds the archived events plus the deleted files on the same calendar days",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "log with the deleted triggers: the summed Poisson series has mean and variance equal to its parameter (within 1e-100)",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "log with the deleted triggers: the Poisson terms left out of the series weigh less than 1e-200",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}

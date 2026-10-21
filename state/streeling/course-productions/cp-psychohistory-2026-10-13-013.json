@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-013",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-013",
+  "module_id": "psy-013-four-scores-and-a-trend",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.65
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2297,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of state/resilience/ and of the reports and the policy that define its score at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (four cycles scoring the same 11 injections 0, 7, 8 and 9 caught) and on a deterministic exact analysis whose 63 self-checks pass. No detector was run and the held-out sets it discusses are synthetic. The record supports 7, 6 or 5 for the second cycle and a same-day report scores the baseline 5/11, so the draft concludes that only the first step is distinguishable from chance on the recorded counts and that the record cannot separate a jump in detection from a change in what was counted as caught. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-15T14:46:09Z"
+}

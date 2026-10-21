@@ -1,0 +1,1899 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-020-goodhart-and-reflexivity",
+  "observed_input": {
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "manifest_sha256": "156ff20220ab2e92bab0ce7361a47326f10431f6a281446234199e57bd97d2a8"
+  },
+  "label_convention": "artifact names, citation paths and file paths taken from the snapshot keep a space on each side of every slash, so that this file is not counted by the rule it studies",
+  "rounding": "shares, means and correlations to 4 decimals, percentages to 2; exact fractions are rounded half up",
+  "observed_rule": {
+    "producer": "scripts/evolution_metrics.py",
+    "definition": "citation_count  tracked files that mention any of the artifact's citation paths (`git grep -lF`), excluding the artifact's own files, archived/, state/evolution/, state/quality-trend/ and the generated governance-manifest.json.",
+    "definition_lines": [
+      12,
+      15
+    ],
+    "search_lines": [
+      80,
+      82
+    ],
+    "exclusion_line": 43,
+    "exclusion_pathspecs": [
+      ":!state/evolution",
+      ":!state/quality-trend",
+      ":!**/archived/**",
+      ":!governance-manifest.json"
+    ],
+    "feeder_line_that_copies_the_count": 76,
+    "tracked_files": 2062,
+    "files_excluded": 637,
+    "files_searched": 1425,
+    "evolution_records": 18,
+    "measurable_artifacts": 16,
+    "unmeasurable_artifacts": [
+      {
+        "artifact": "crates / memristive-markov (ix)",
+        "recorded_citation_count": 0,
+        "citation_source": null,
+        "reason": "citation_paths is empty (the producer's mark for an artifact outside this repository)"
+      },
+      {
+        "artifact": "prime-radiant / visual-governance",
+        "recorded_citation_count": 55,
+        "citation_source": null,
+        "reason": "citation_paths is empty (the producer's mark for an artifact outside this repository)"
+      }
+    ],
+    "citation_paths_listed": 20,
+    "distinct_citation_paths": 19,
+    "paths_shared_by_two_artifacts": [
+      {
+        "path": "policies / autonomous-loop-policy.yaml",
+        "artifacts": [
+          "E",
+          "H"
+        ]
+      }
+    ]
+  },
+  "observed_counts": {
+    "artifacts": [
+      {
+        "key": "A",
+        "artifact": "policies / alignment-policy.yaml",
+        "citation_paths": [
+          "policies / alignment-policy.yaml"
+        ],
+        "recorded_citation_count": 44,
+        "recount": 44
+      },
+      {
+        "key": "B",
+        "artifact": "constitutions / asimov.constitution.md",
+        "citation_paths": [
+          "constitutions / asimov.constitution.md"
+        ],
+        "recorded_citation_count": 65,
+        "recount": 65
+      },
+      {
+        "key": "C",
+        "artifact": "constitutions / default.constitution.md",
+        "citation_paths": [
+          "constitutions / default.constitution.md"
+        ],
+        "recorded_citation_count": 47,
+        "recount": 47
+      },
+      {
+        "key": "D",
+        "artifact": "meta / compounding-cycle",
+        "citation_paths": [
+          ".claude / skills / demerzel-compound /",
+          "policies / compounding-metrics-policy.yaml"
+        ],
+        "recorded_citation_count": 5,
+        "recount": 5
+      },
+      {
+        "key": "E",
+        "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "citation_paths": [
+          ".claude / skills / demerzel-drive /",
+          "policies / autonomous-loop-policy.yaml"
+        ],
+        "recorded_citation_count": 29,
+        "recount": 29
+      },
+      {
+        "key": "F",
+        "artifact": "logic / tetravalent-state.schema.json",
+        "citation_paths": [
+          "logic / tetravalent-state.schema.json"
+        ],
+        "recorded_citation_count": 23,
+        "recount": 23
+      },
+      {
+        "key": "G",
+        "artifact": "docs / governance / harness-engineering-direction.md",
+        "citation_paths": [
+          "docs / governance / harness-engineering.md"
+        ],
+        "recorded_citation_count": 1,
+        "recount": 1
+      },
+      {
+        "key": "H",
+        "artifact": "policies / autonomous-loop-policy.yaml",
+        "citation_paths": [
+          "policies / autonomous-loop-policy.yaml"
+        ],
+        "recorded_citation_count": 29,
+        "recount": 29
+      },
+      {
+        "key": "I",
+        "artifact": "docs / governance / the-sentinel-spec.md",
+        "citation_paths": [
+          "docs / governance / the-sentinel.md"
+        ],
+        "recorded_citation_count": 0,
+        "recount": 0
+      },
+      {
+        "key": "J",
+        "artifact": "ml-feedback-loop",
+        "citation_paths": [
+          "scripts / run_ml_feedback_cycle.py",
+          "scripts / apply_ml_feedback.py",
+          "pipelines / ml-feedback-loop.ixql"
+        ],
+        "recorded_citation_count": 6,
+        "recount": 6
+      },
+      {
+        "key": "K",
+        "artifact": "afk-graduated-self-merge",
+        "citation_paths": [
+          "scripts / run_afk_cycle.py"
+        ],
+        "recorded_citation_count": 14,
+        "recount": 14
+      },
+      {
+        "key": "L",
+        "artifact": "contracts / galactic-protocol.md",
+        "citation_paths": [
+          "contracts / galactic-protocol.md"
+        ],
+        "recorded_citation_count": 45,
+        "recount": 45
+      },
+      {
+        "key": "M",
+        "artifact": "logic / governance-evolution.schema.json",
+        "citation_paths": [
+          "logic / governance-evolution.schema.json"
+        ],
+        "recorded_citation_count": 17,
+        "recount": 17
+      },
+      {
+        "key": "N",
+        "artifact": "logic / kaizen-pdca-state.schema.json",
+        "citation_paths": [
+          "logic / kaizen-pdca-state.schema.json"
+        ],
+        "recorded_citation_count": 13,
+        "recount": 13
+      },
+      {
+        "key": "O",
+        "artifact": "schemas / loop-state.schema.json",
+        "citation_paths": [
+          "schemas / loop-state.schema.json"
+        ],
+        "recorded_citation_count": 15,
+        "recount": 15
+      },
+      {
+        "key": "P",
+        "artifact": "scripts / afk_backends /",
+        "citation_paths": [
+          "scripts / afk_backends /"
+        ],
+        "recorded_citation_count": 6,
+        "recount": 6
+      }
+    ],
+    "recounts_equal_to_the_recorded_count": 16,
+    "of_measurable_artifacts": 16,
+    "sum_of_counts": 359,
+    "counted_files": 200,
+    "counts_per_counted_file": 1.795,
+    "files_containing_a_path": 202,
+    "files_containing_only_their_own_artifacts_path": 2,
+    "ranking": [
+      {
+        "rank": 1,
+        "key": "B",
+        "name": "constitutions / asimov.constitution.md",
+        "count": 65
+      },
+      {
+        "rank": 2,
+        "key": "C",
+        "name": "constitutions / default.constitution.md",
+        "count": 47
+      },
+      {
+        "rank": 3,
+        "key": "L",
+        "name": "contracts / galactic-protocol.md",
+        "count": 45
+      },
+      {
+        "rank": 4,
+        "key": "A",
+        "name": "policies / alignment-policy.yaml",
+        "count": 44
+      },
+      {
+        "rank": 5,
+        "key": "E",
+        "name": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "count": 29
+      },
+      {
+        "rank": 5,
+        "key": "H",
+        "name": "policies / autonomous-loop-policy.yaml",
+        "count": 29
+      },
+      {
+        "rank": 7,
+        "key": "F",
+        "name": "logic / tetravalent-state.schema.json",
+        "count": 23
+      },
+      {
+        "rank": 8,
+        "key": "M",
+        "name": "logic / governance-evolution.schema.json",
+        "count": 17
+      },
+      {
+        "rank": 9,
+        "key": "O",
+        "name": "schemas / loop-state.schema.json",
+        "count": 15
+      },
+      {
+        "rank": 10,
+        "key": "K",
+        "name": "afk-graduated-self-merge",
+        "count": 14
+      },
+      {
+        "rank": 11,
+        "key": "N",
+        "name": "logic / kaizen-pdca-state.schema.json",
+        "count": 13
+      },
+      {
+        "rank": 12,
+        "key": "J",
+        "name": "ml-feedback-loop",
+        "count": 6
+      },
+      {
+        "rank": 12,
+        "key": "P",
+        "name": "scripts / afk_backends /",
+        "count": 6
+      },
+      {
+        "rank": 14,
+        "key": "D",
+        "name": "meta / compounding-cycle",
+        "count": 5
+      },
+      {
+        "rank": 15,
+        "key": "G",
+        "name": "docs / governance / harness-engineering-direction.md",
+        "count": 1
+      },
+      {
+        "rank": 16,
+        "key": "I",
+        "name": "docs / governance / the-sentinel-spec.md",
+        "count": 0
+      }
+    ],
+    "pairs_of_artifacts": 120,
+    "tied_pairs": 2
+  },
+  "observed_mentions": {
+    "counted_files": 200,
+    "counted_files_by_number_of_artifacts": {
+      "1": 108,
+      "2": 52,
+      "3": 26,
+      "4": 5,
+      "5": 6,
+      "6": 2,
+      "7": 1
+    },
+    "counted_files_naming_two_or_more_artifacts": 92,
+    "share_naming_two_or_more_artifacts": 0.46,
+    "files_by_number_of_distinct_paths": {
+      "1": 117,
+      "2": 50,
+      "3": 24,
+      "4": 5,
+      "5": 4,
+      "6": 2
+    },
+    "most_paths_in_one_file": 6,
+    "file_with_the_most_paths": "docs / agents / demerzel-onboarding-for-ai-agents.md",
+    "counted_files_by_extension": {
+      ".md": 123,
+      ".json": 34,
+      ".yaml": 15,
+      ".py": 9,
+      ".ixql": 6,
+      ".yml": 5,
+      ".sh": 3,
+      ".ebnf": 2,
+      ".snippet": 2,
+      "(no extension)": 1
+    },
+    "markdown_share_of_counted_files": 0.615,
+    "counted_files_by_top_folder": {
+      "docs": 47,
+      "examples": 28,
+      ".claude": 24,
+      "state": 21,
+      "policies": 14,
+      ".github": 13,
+      "tests": 11,
+      "templates": 10,
+      "scripts": 9,
+      "contracts": 7,
+      "(repository root)": 5,
+      "pipelines": 4,
+      "logic": 3,
+      "grammars": 2,
+      "config": 1,
+      "schemas": 1
+    },
+    "course_files": {
+      "files": 9,
+      "lessons": 3,
+      "files_by_language_folder": {
+        "en": 3,
+        "es": 3,
+        "fr": 3
+      },
+      "counts_from_course_files": 12,
+      "counts_from_english_lessons": 4,
+      "counts_from_translations": 8,
+      "translations_as_percent_of_all_counts": 2.23,
+      "artifacts_counted_in_a_course_file": [
+        "A",
+        "E",
+        "H",
+        "L"
+      ]
+    }
+  },
+  "observed_trend_rows": {
+    "rows_in_the_log": 1548,
+    "runs": 88,
+    "artifacts": 18,
+    "rows_with_a_non_zero_delta_citations": 20,
+    "of_which_the_artifact_had_no_earlier_count": 16,
+    "of_which_the_artifact_had_an_earlier_count": 4,
+    "by_run": [
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "rows": 12,
+        "deltas": [
+          1,
+          3,
+          4,
+          5,
+          8,
+          11,
+          12,
+          55
+        ]
+      },
+      {
+        "run": "2026-07-29T00:19:14Z",
+        "rows": 1,
+        "deltas": [
+          2
+        ]
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "rows": 3,
+        "deltas": [
+          2,
+          3
+        ]
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "rows": 4,
+        "deltas": [
+          2
+        ]
+      }
+    ],
+    "list": [
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "policies / alignment-policy.yaml",
+        "delta_citations": 3,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "constitutions / asimov.constitution.md",
+        "delta_citations": 5,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "constitutions / default.constitution.md",
+        "delta_citations": 11,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "meta / compounding-cycle",
+        "delta_citations": 4,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "delta_citations": 1,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "prime-radiant / visual-governance",
+        "delta_citations": 55,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "logic / tetravalent-state.schema.json",
+        "delta_citations": 4,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "docs / governance / harness-engineering-direction.md",
+        "delta_citations": 8,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "policies / autonomous-loop-policy.yaml",
+        "delta_citations": 12,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "docs / governance / the-sentinel-spec.md",
+        "delta_citations": 1,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "ml-feedback-loop",
+        "delta_citations": 1,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "afk-graduated-self-merge",
+        "delta_citations": 1,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-29T00:19:14Z",
+        "artifact": "contracts / galactic-protocol.md",
+        "delta_citations": 2,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "artifact": "logic / governance-evolution.schema.json",
+        "delta_citations": 2,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "artifact": "logic / kaizen-pdca-state.schema.json",
+        "delta_citations": 3,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "artifact": "schemas / loop-state.schema.json",
+        "delta_citations": 3,
+        "earlier_count": null
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "policies / alignment-policy.yaml",
+        "delta_citations": 2,
+        "earlier_count": 42
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "delta_citations": 2,
+        "earlier_count": 27
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "policies / autonomous-loop-policy.yaml",
+        "delta_citations": 2,
+        "earlier_count": 27
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "contracts / galactic-protocol.md",
+        "delta_citations": 2,
+        "earlier_count": 43
+      }
+    ],
+    "cause": "none is attributed here: a count says that the number of files moved, not why",
+    "latest_run": {
+      "timestamp": "2026-10-13T18:43:54Z",
+      "rows": 18,
+      "sum_of_citation_counts": 414,
+      "equal_to_the_evolution_records": true
+    }
+  },
+  "observed_decision_rules": {
+    "policy": "policies/anti-lolli-inflation-policy.yaml",
+    "quoted_lines": {
+      "citations": {
+        "lines": [
+          43,
+          43
+        ],
+        "text": [
+          "citations: \"Times an artifact is referenced in decisions, manifests, research, or other artifacts\""
+        ]
+      },
+      "ergol": {
+        "lines": [
+          48,
+          48
+        ],
+        "text": [
+          "ERGOL_n = citations_n + pdca_completions_n + u_to_t_transitions_n + knowledge_transfers_n"
+        ]
+      },
+      "lolli": {
+        "lines": [
+          62,
+          62
+        ],
+        "text": [
+          "formula: \"LOLLI_n = count(artifacts created in cycle N)\""
+        ]
+      },
+      "ratio": {
+        "lines": [
+          69,
+          69
+        ],
+        "text": [
+          "formula: \"ratio_n = LOLLI_n / max(ERGOL_n, 1)\""
+        ]
+      },
+      "freeze_trigger": {
+        "lines": [
+          97,
+          97
+        ],
+        "text": [
+          "trigger: \"lolli_ergol_ratio > 3.0 for 3 consecutive cycles\""
+        ]
+      },
+      "zero_rule": {
+        "lines": [
+          139,
+          140
+        ],
+        "text": [
+          "zero_citation_window: 14   # days",
+          "rule: \"Any artifact with 0 citations after 14 days of creation is flagged for deprecation review\""
+        ]
+      },
+      "citation_source": {
+        "lines": [
+          305,
+          305
+        ],
+        "text": [
+          "- \"state/evolution/*.evolution.json — citation_count delta\""
+        ]
+      },
+      "zero_scan": {
+        "lines": [
+          317,
+          317
+        ],
+        "text": [
+          "action: \"Scan all artifacts created > 14 days ago; flag any with citation_count = 0\""
+        ]
+      }
+    },
+    "ratio_bands": {
+      "healthy_below": 1.5,
+      "watch_from": 1.5,
+      "watch_to": 2.5,
+      "warning_from": 2.5,
+      "warning_to": 3.0,
+      "freeze_from": 3.0,
+      "freeze_after_consecutive_cycles": 3
+    },
+    "zero_citation_window_days": 14,
+    "history_file": "state/driver/lolli-ergol-history.json",
+    "history_cycles_recorded": 1,
+    "history_cycles": [
+      {
+        "cycle": "001",
+        "timestamp": "2026-03-23T22:00:00Z",
+        "method": "demerzel-lolli-remediate dogfood",
+        "lolli_count": 419,
+        "ergol_count": 311,
+        "ratio": 1.35,
+        "ratio_status": "healthy",
+        "artifacts_deleted": 12,
+        "deleted_artifacts_listed": 12
+      }
+    ],
+    "measurable_artifacts_with_a_count_of_zero": [
+      {
+        "key": "I",
+        "artifact": "docs / governance / the-sentinel-spec.md",
+        "created_at": "2026-04-30T00:00:00Z",
+        "days_from_creation_to_the_latest_run": 166,
+        "deprecation_candidate_in_its_record": false
+      }
+    ],
+    "correction_note": {
+      "record": "state/evolution/2026-04-30-the-sentinel.evolution.json",
+      "artifact": "docs / governance / the-sentinel-spec.md",
+      "event_type": "cross_repo_validation",
+      "event_timestamp": "2026-09-13T00:00:00Z",
+      "quote": "Correction, 2026-09-13. The first measured citation count (scripts/evolution_metrics.py, #1077) is 0, which reads as 'nothing uses this spec'. That is true only inside Demerzel: the metric cannot see sibling repositories.",
+      "quote_is": "the first sentences of the event's context; the rest of the context is not copied"
+    }
+  },
+  "toy_rule": {
+    "kind": "synthetic: an invented tree, counted with the producer's rule",
+    "citation_paths": [
+      "toy/rule.yaml"
+    ],
+    "files": [
+      {
+        "key": "a",
+        "path": "docs/index.md",
+        "what": "a list of rule files",
+        "verdict": "counted"
+      },
+      {
+        "key": "b",
+        "path": "scripts/check.py",
+        "what": "a program that loads the rule, building its path from two parts",
+        "verdict": "not counted: no citation path appears as a literal string"
+      },
+      {
+        "key": "c",
+        "path": "toy/rule.yaml",
+        "what": "the rule file itself, with its own path in a comment",
+        "verdict": "not counted: the file is the artifact's own"
+      },
+      {
+        "key": "d",
+        "path": "state/evolution/toy.json",
+        "what": "a record in a folder the producer excludes",
+        "verdict": "not counted: the file is in an excluded folder"
+      },
+      {
+        "key": "e",
+        "path": "notes/archived/2025.md",
+        "what": "an old note under a folder named archived",
+        "verdict": "not counted: the file is in an excluded folder"
+      },
+      {
+        "key": "f",
+        "path": "data/labels.json",
+        "what": "a data file that writes the name with spaced slashes",
+        "verdict": "not counted: no citation path appears as a literal string"
+      },
+      {
+        "key": "g",
+        "path": "courses/en/lesson.md",
+        "what": "a lesson that names the rule",
+        "verdict": "counted"
+      },
+      {
+        "key": "h",
+        "path": "courses/fr/lesson.fr.md",
+        "what": "the French translation of that lesson",
+        "verdict": "counted"
+      }
+    ],
+    "count": 3,
+    "counted_files": [
+      "a",
+      "g",
+      "h"
+    ],
+    "the_only_file_that_uses_the_rule": "b",
+    "is_that_file_counted": false
+  },
+  "what_if": {
+    "kind": "synthetic additions to observed counts: none of these files exists",
+    "files_listing_every_path": {
+      "1": {
+        "files_added": 1,
+        "distinct_paths_in_each_file": 19,
+        "counts_raised": 16,
+        "raise_per_count": 1,
+        "sum_before": 359,
+        "sum_after": 375,
+        "sum_change_percent": 4.46,
+        "mean_count_before": 22.4375,
+        "mean_count_after": 23.4375,
+        "order_relations_changed": 0,
+        "largest_count": {
+          "key": "B",
+          "before": 65,
+          "after": 66,
+          "change_percent": 1.54
+        },
+        "smallest_non_zero_count": {
+          "key": "G",
+          "before": 1,
+          "after": 2,
+          "change_percent": 100.0
+        },
+        "counts_of_zero_before": 1,
+        "counts_of_zero_after": 0,
+        "counts_after": {
+          "A": 45,
+          "B": 66,
+          "C": 48,
+          "D": 6,
+          "E": 30,
+          "F": 24,
+          "G": 2,
+          "H": 30,
+          "I": 1,
+          "J": 7,
+          "K": 15,
+          "L": 46,
+          "M": 18,
+          "N": 14,
+          "O": 16,
+          "P": 7
+        }
+      },
+      "5": {
+        "files_added": 5,
+        "distinct_paths_in_each_file": 19,
+        "counts_raised": 16,
+        "raise_per_count": 5,
+        "sum_before": 359,
+        "sum_after": 439,
+        "sum_change_percent": 22.28,
+        "mean_count_before": 22.4375,
+        "mean_count_after": 27.4375,
+        "order_relations_changed": 0,
+        "largest_count": {
+          "key": "B",
+          "before": 65,
+          "after": 70,
+          "change_percent": 7.69
+        },
+        "smallest_non_zero_count": {
+          "key": "G",
+          "before": 1,
+          "after": 6,
+          "change_percent": 500.0
+        },
+        "counts_of_zero_before": 1,
+        "counts_of_zero_after": 0,
+        "counts_after": {
+          "A": 49,
+          "B": 70,
+          "C": 52,
+          "D": 10,
+          "E": 34,
+          "F": 28,
+          "G": 6,
+          "H": 34,
+          "I": 5,
+          "J": 11,
+          "K": 19,
+          "L": 50,
+          "M": 22,
+          "N": 18,
+          "O": 20,
+          "P": 11
+        }
+      }
+    },
+    "one_file_naming_one_path": {
+      "distinct_paths": 19,
+      "paths_that_raise_one_count": 18,
+      "paths_that_raise_two_counts": 1,
+      "paths_that_change_an_order_relation": 11,
+      "by_path": [
+        {
+          "path_key": "a",
+          "path": "policies / alignment-policy.yaml",
+          "counts_raised": [
+            "A"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "A behind L -> tied with"
+          ]
+        },
+        {
+          "path_key": "b",
+          "path": "constitutions / asimov.constitution.md",
+          "counts_raised": [
+            "B"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "c",
+          "path": "constitutions / default.constitution.md",
+          "counts_raised": [
+            "C"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "d",
+          "path": ".claude / skills / demerzel-compound /",
+          "counts_raised": [
+            "D"
+          ],
+          "order_relations_changed": 2,
+          "changes": [
+            "D behind J -> tied with",
+            "D behind P -> tied with"
+          ]
+        },
+        {
+          "path_key": "e",
+          "path": "policies / compounding-metrics-policy.yaml",
+          "counts_raised": [
+            "D"
+          ],
+          "order_relations_changed": 2,
+          "changes": [
+            "D behind J -> tied with",
+            "D behind P -> tied with"
+          ]
+        },
+        {
+          "path_key": "f",
+          "path": ".claude / skills / demerzel-drive /",
+          "counts_raised": [
+            "E"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "E tied with H -> ahead of"
+          ]
+        },
+        {
+          "path_key": "g",
+          "path": "policies / autonomous-loop-policy.yaml",
+          "counts_raised": [
+            "E",
+            "H"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "h",
+          "path": "logic / tetravalent-state.schema.json",
+          "counts_raised": [
+            "F"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "i",
+          "path": "docs / governance / harness-engineering.md",
+          "counts_raised": [
+            "G"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "j",
+          "path": "docs / governance / the-sentinel.md",
+          "counts_raised": [
+            "I"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "G ahead of I -> tied with"
+          ]
+        },
+        {
+          "path_key": "k",
+          "path": "scripts / run_ml_feedback_cycle.py",
+          "counts_raised": [
+            "J"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "J tied with P -> ahead of"
+          ]
+        },
+        {
+          "path_key": "l",
+          "path": "scripts / apply_ml_feedback.py",
+          "counts_raised": [
+            "J"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "J tied with P -> ahead of"
+          ]
+        },
+        {
+          "path_key": "m",
+          "path": "pipelines / ml-feedback-loop.ixql",
+          "counts_raised": [
+            "J"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "J tied with P -> ahead of"
+          ]
+        },
+        {
+          "path_key": "n",
+          "path": "scripts / run_afk_cycle.py",
+          "counts_raised": [
+            "K"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "K behind O -> tied with"
+          ]
+        },
+        {
+          "path_key": "o",
+          "path": "contracts / galactic-protocol.md",
+          "counts_raised": [
+            "L"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "p",
+          "path": "logic / governance-evolution.schema.json",
+          "counts_raised": [
+            "M"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "q",
+          "path": "logic / kaizen-pdca-state.schema.json",
+          "counts_raised": [
+            "N"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "K ahead of N -> tied with"
+          ]
+        },
+        {
+          "path_key": "r",
+          "path": "schemas / loop-state.schema.json",
+          "counts_raised": [
+            "O"
+          ],
+          "order_relations_changed": 0,
+          "changes": []
+        },
+        {
+          "path_key": "s",
+          "path": "scripts / afk_backends /",
+          "counts_raised": [
+            "P"
+          ],
+          "order_relations_changed": 1,
+          "changes": [
+            "J tied with P -> behind"
+          ]
+        }
+      ]
+    },
+    "one_path_in_several_files": {
+      "path": "policies / alignment-policy.yaml",
+      "files_added": 3,
+      "why": "a lesson that names one path, and its two translations",
+      "counts_raised": [
+        "A"
+      ],
+      "before": [
+        44
+      ],
+      "after": [
+        47
+      ],
+      "sum_after": 362,
+      "order_relations_changed": 2,
+      "changes": [
+        "A behind C -> tied with",
+        "A behind L -> ahead of"
+      ]
+    },
+    "single_path_files_needed": {
+      "by_artifact": [
+        {
+          "key": "B",
+          "count": 65,
+          "next_count_above": null,
+          "files_to_pass_it": null
+        },
+        {
+          "key": "C",
+          "count": 47,
+          "next_count_above": 65,
+          "files_to_pass_it": 19
+        },
+        {
+          "key": "L",
+          "count": 45,
+          "next_count_above": 47,
+          "files_to_pass_it": 3
+        },
+        {
+          "key": "A",
+          "count": 44,
+          "next_count_above": 45,
+          "files_to_pass_it": 2
+        },
+        {
+          "key": "E",
+          "count": 29,
+          "next_count_above": 44,
+          "files_to_pass_it": 16
+        },
+        {
+          "key": "H",
+          "count": 29,
+          "next_count_above": 44,
+          "files_to_pass_it": 16
+        },
+        {
+          "key": "F",
+          "count": 23,
+          "next_count_above": 29,
+          "files_to_pass_it": 7
+        },
+        {
+          "key": "M",
+          "count": 17,
+          "next_count_above": 23,
+          "files_to_pass_it": 7
+        },
+        {
+          "key": "O",
+          "count": 15,
+          "next_count_above": 17,
+          "files_to_pass_it": 3
+        },
+        {
+          "key": "K",
+          "count": 14,
+          "next_count_above": 15,
+          "files_to_pass_it": 2
+        },
+        {
+          "key": "N",
+          "count": 13,
+          "next_count_above": 14,
+          "files_to_pass_it": 2
+        },
+        {
+          "key": "J",
+          "count": 6,
+          "next_count_above": 13,
+          "files_to_pass_it": 8
+        },
+        {
+          "key": "P",
+          "count": 6,
+          "next_count_above": 13,
+          "files_to_pass_it": 8
+        },
+        {
+          "key": "D",
+          "count": 5,
+          "next_count_above": 6,
+          "files_to_pass_it": 2
+        },
+        {
+          "key": "G",
+          "count": 1,
+          "next_count_above": 5,
+          "files_to_pass_it": 5
+        },
+        {
+          "key": "I",
+          "count": 0,
+          "next_count_above": 1,
+          "files_to_pass_it": 2
+        }
+      ],
+      "fewest_files_that_reverse_a_strict_order": 2,
+      "artifacts_for_which_that_many_files_suffice": [
+        "A",
+        "K",
+        "N",
+        "D",
+        "I"
+      ],
+      "files_for_the_lowest_count_to_pass_the_highest": 66
+    },
+    "policy_reading": "The policy's ratio is LOLLI_n / max(ERGOL_n, 1). Here citations_n is read literally from the policy's own source line, as the summed change of citation_count over the cycle; the three other components of ERGOL are set to 0; LOLLI_n is the number of files created, a catalogue file included. This reading is an assumption of the fixture, not a record of how the project applies the policy.",
+    "policy_cycles": [
+      {
+        "key": "ten_new_artifacts",
+        "files_created": 10,
+        "summed_change_of_citation_count": 0,
+        "ratio": 10.0,
+        "ratio_as_a_fraction": "10/1",
+        "band": "above the freeze ratio"
+      },
+      {
+        "key": "ten_new_artifacts_and_one_catalogue",
+        "files_created": 11,
+        "summed_change_of_citation_count": 16,
+        "ratio": 0.6875,
+        "ratio_as_a_fraction": "11/16",
+        "band": "healthy"
+      },
+      {
+        "key": "one_catalogue_alone",
+        "files_created": 1,
+        "summed_change_of_citation_count": 16,
+        "ratio": 0.0625,
+        "ratio_as_a_fraction": "1/16",
+        "band": "healthy"
+      }
+    ]
+  },
+  "power_law_rule": {
+    "kind": "observed rule, shares computed from the recorded counts, synthetic added files",
+    "rule": {
+      "rule_file": "logic/fractal-compounding.md",
+      "policy_file": "policies / compounding-metrics-policy.yaml",
+      "top_percent": 20,
+      "share_above_percent": 60,
+      "policy_target_share": [
+        0.6,
+        0.85
+      ],
+      "policy_alert_above_share": 0.9,
+      "population": "the citation_count of every evolution record (detection_source of the policy)"
+    },
+    "quoted_lines": {
+      "power_law_detection_rule": [
+        56,
+        56
+      ],
+      "power_law_data": [
+        60,
+        60
+      ],
+      "power_law_integration": [
+        138,
+        138
+      ],
+      "metrics_policy_rule": [
+        118,
+        118
+      ],
+      "metrics_policy_source": [
+        120,
+        120
+      ],
+      "metrics_policy_share": [
+        219,
+        222
+      ]
+    },
+    "artifacts": 18,
+    "sum_of_counts": 414,
+    "top_percent_of_artifacts": "18/5",
+    "reading_note": "The rule's population is its stated source: the citation_count of every evolution record, the two unmeasurable artifacts included (no added file can move their recorded counts). 20% of the artifacts is not a whole number of artifacts, so both readings are computed: floor (the most artifacts that are at most 20%) and ceil (the fewest that are at least 20%). The added files are synthetic: each names the citation paths of the measurable artifacts among the leaders, once each; a catalogue names every citation path once.",
+    "readings": {
+      "floor": {
+        "top_artifacts": 3,
+        "leaders": [
+          "constitutions / asimov.constitution.md",
+          "prime-radiant / visual-governance",
+          "constitutions / default.constitution.md"
+        ],
+        "their_counts": [
+          65,
+          55,
+          47
+        ],
+        "sum_of_their_counts": 167,
+        "share": 0.4034,
+        "share_percent": 40.34,
+        "above_the_rule": false,
+        "measurable_leaders": 2,
+        "paths_named_by_each_added_file": 2,
+        "files_naming_those_paths_to_pass_the_rule": 102,
+        "share_after_those_files": 0.6003,
+        "share_with_one_file_fewer": 0.599,
+        "share_after_one_catalogue_of_every_path": 0.393
+      },
+      "ceil": {
+        "top_artifacts": 4,
+        "leaders": [
+          "constitutions / asimov.constitution.md",
+          "prime-radiant / visual-governance",
+          "constitutions / default.constitution.md",
+          "contracts / galactic-protocol.md"
+        ],
+        "their_counts": [
+          65,
+          55,
+          47,
+          45
+        ],
+        "sum_of_their_counts": 212,
+        "share": 0.5121,
+        "share_percent": 51.21,
+        "above_the_rule": false,
+        "measurable_leaders": 3,
+        "paths_named_by_each_added_file": 3,
+        "files_naming_those_paths_to_pass_the_rule": 31,
+        "share_after_those_files": 0.6016,
+        "share_with_one_file_fewer": 0.5992,
+        "share_after_one_catalogue_of_every_path": 0.5
+      }
+    }
+  },
+  "effort_model": {
+    "kind": "synthetic: assumed agents, nothing measured in the repository",
+    "rule": "reward = (1 - w) x value + w x proxy; an agent inflates when w x inflation yield > work yield",
+    "kinds_of_agent": 100,
+    "proxy_errors": [
+      -1,
+      0,
+      1
+    ],
+    "high_proxy_from": 10,
+    "exact": [
+      {
+        "reward_weight_on_the_proxy": "0",
+        "cases": 300,
+        "cases_that_inflate": 0,
+        "share_of_effort_on_inflation": 0.0,
+        "mean_proxy": 5.5,
+        "mean_value": 5.5,
+        "correlation_of_proxy_and_value": 0.9619,
+        "cases_with_a_high_proxy": 30,
+        "of_which_value_is_zero": 0,
+        "lowest_value_among_them": 9
+      },
+      {
+        "reward_weight_on_the_proxy": "1/2",
+        "cases": 300,
+        "cases_that_inflate": 60,
+        "share_of_effort_on_inflation": 0.2,
+        "mean_proxy": 6.6,
+        "mean_value": 5.1,
+        "correlation_of_proxy_and_value": 0.4374,
+        "cases_with_a_high_proxy": 42,
+        "of_which_value_is_zero": 12,
+        "lowest_value_among_them": 0
+      },
+      {
+        "reward_weight_on_the_proxy": "1",
+        "cases": 300,
+        "cases_that_inflate": 135,
+        "share_of_effort_on_inflation": 0.45,
+        "mean_proxy": 7.15,
+        "mean_value": 3.85,
+        "correlation_of_proxy_and_value": 0.2785,
+        "cases_with_a_high_proxy": 55,
+        "of_which_value_is_zero": 26,
+        "lowest_value_among_them": 0
+      }
+    ],
+    "from_the_first_weight_to_the_last": {
+      "weights": [
+        "0",
+        "1"
+      ],
+      "mean_proxy_change": 1.65,
+      "mean_proxy_change_percent": 30.0,
+      "mean_value_change": -1.65,
+      "mean_value_change_percent": -30.0
+    },
+    "sample": {
+      "seed": 20201013,
+      "agents": 400,
+      "by_weight": [
+        {
+          "reward_weight_on_the_proxy": "0",
+          "cases": 400,
+          "cases_that_inflate": 0,
+          "share_of_effort_on_inflation": 0.0,
+          "mean_proxy": 5.6075,
+          "mean_value": 5.6225,
+          "correlation_of_proxy_and_value": 0.965,
+          "cases_with_a_high_proxy": 54,
+          "of_which_value_is_zero": 0,
+          "lowest_value_among_them": 9
+        },
+        {
+          "reward_weight_on_the_proxy": "1/2",
+          "cases": 400,
+          "cases_that_inflate": 76,
+          "share_of_effort_on_inflation": 0.19,
+          "mean_proxy": 6.6475,
+          "mean_value": 5.255,
+          "correlation_of_proxy_and_value": 0.5026,
+          "cases_with_a_high_proxy": 67,
+          "of_which_value_is_zero": 13,
+          "lowest_value_among_them": 0
+        },
+        {
+          "reward_weight_on_the_proxy": "1",
+          "cases": 400,
+          "cases_that_inflate": 156,
+          "share_of_effort_on_inflation": 0.39,
+          "mean_proxy": 7.0625,
+          "mean_value": 4.2925,
+          "correlation_of_proxy_and_value": 0.3735,
+          "cases_with_a_high_proxy": 79,
+          "of_which_value_is_zero": 27,
+          "lowest_value_among_them": 0
+        }
+      ]
+    },
+    "worked_agent": [
+      {
+        "proxy_without_error": 3,
+        "value": 3,
+        "inflates": false,
+        "reward_weight_on_the_proxy": "0",
+        "work_yield": 3,
+        "inflation_yield": 8
+      },
+      {
+        "proxy_without_error": 8,
+        "value": 0,
+        "inflates": true,
+        "reward_weight_on_the_proxy": "1/2",
+        "work_yield": 3,
+        "inflation_yield": 8
+      },
+      {
+        "proxy_without_error": 8,
+        "value": 0,
+        "inflates": true,
+        "reward_weight_on_the_proxy": "1",
+        "work_yield": 3,
+        "inflation_yield": 8
+      }
+    ]
+  },
+  "reflexive_forecast": {
+    "kind": "synthetic: assumed reactions to a published forecast, starting from one observed count",
+    "formula": "outcome = baseline + self_mentions + reaction x (forecast - baseline)",
+    "baseline": {
+      "artifact": "policies / alignment-policy.yaml",
+      "key": "A",
+      "count": 44
+    },
+    "cases": [
+      {
+        "key": "published_elsewhere",
+        "self_mentions": 0,
+        "reaction": "0",
+        "outcome_of_forecasting_the_baseline": 44.0,
+        "its_error": 0.0,
+        "self_consistent_forecast": 44.0,
+        "self_consistent_forecast_as_a_fraction": "44",
+        "forecast_revised_to_the_last_outcome": [
+          {
+            "round": 1,
+            "forecast": 44.0,
+            "outcome": 44.0,
+            "error": 0.0
+          },
+          {
+            "round": 2,
+            "forecast": 44.0,
+            "outcome": 44.0,
+            "error": 0.0
+          },
+          {
+            "round": 3,
+            "forecast": 44.0,
+            "outcome": 44.0,
+            "error": 0.0
+          },
+          {
+            "round": 4,
+            "forecast": 44.0,
+            "outcome": 44.0,
+            "error": 0.0
+          }
+        ]
+      },
+      {
+        "key": "published_in_the_repository",
+        "self_mentions": 1,
+        "reaction": "0",
+        "outcome_of_forecasting_the_baseline": 45.0,
+        "its_error": 1.0,
+        "self_consistent_forecast": 45.0,
+        "self_consistent_forecast_as_a_fraction": "45",
+        "forecast_revised_to_the_last_outcome": [
+          {
+            "round": 1,
+            "forecast": 44.0,
+            "outcome": 45.0,
+            "error": 1.0
+          },
+          {
+            "round": 2,
+            "forecast": 45.0,
+            "outcome": 45.0,
+            "error": 0.0
+          },
+          {
+            "round": 3,
+            "forecast": 45.0,
+            "outcome": 45.0,
+            "error": 0.0
+          },
+          {
+            "round": 4,
+            "forecast": 45.0,
+            "outcome": 45.0,
+            "error": 0.0
+          }
+        ]
+      },
+      {
+        "key": "published_and_followed",
+        "self_mentions": 1,
+        "reaction": "1/2",
+        "outcome_of_forecasting_the_baseline": 45.0,
+        "its_error": 1.0,
+        "self_consistent_forecast": 46.0,
+        "self_consistent_forecast_as_a_fraction": "46",
+        "forecast_revised_to_the_last_outcome": [
+          {
+            "round": 1,
+            "forecast": 44.0,
+            "outcome": 45.0,
+            "error": 1.0
+          },
+          {
+            "round": 2,
+            "forecast": 45.0,
+            "outcome": 45.5,
+            "error": 0.5
+          },
+          {
+            "round": 3,
+            "forecast": 45.5,
+            "outcome": 45.75,
+            "error": 0.25
+          },
+          {
+            "round": 4,
+            "forecast": 45.75,
+            "outcome": 45.875,
+            "error": 0.125
+          }
+        ]
+      },
+      {
+        "key": "published_and_resisted",
+        "self_mentions": 1,
+        "reaction": "-1/2",
+        "outcome_of_forecasting_the_baseline": 45.0,
+        "its_error": 1.0,
+        "self_consistent_forecast": 44.6667,
+        "self_consistent_forecast_as_a_fraction": "134/3",
+        "forecast_revised_to_the_last_outcome": [
+          {
+            "round": 1,
+            "forecast": 44.0,
+            "outcome": 45.0,
+            "error": 1.0
+          },
+          {
+            "round": 2,
+            "forecast": 45.0,
+            "outcome": 44.5,
+            "error": -0.5
+          },
+          {
+            "round": 3,
+            "forecast": 44.5,
+            "outcome": 44.75,
+            "error": 0.25
+          },
+          {
+            "round": 4,
+            "forecast": 44.75,
+            "outcome": 44.625,
+            "error": -0.125
+          }
+        ]
+      },
+      {
+        "key": "published_and_matched",
+        "self_mentions": 1,
+        "reaction": "1",
+        "outcome_of_forecasting_the_baseline": 45.0,
+        "its_error": 1.0,
+        "self_consistent_forecast": null,
+        "self_consistent_forecast_as_a_fraction": null,
+        "forecast_revised_to_the_last_outcome": [
+          {
+            "round": 1,
+            "forecast": 44.0,
+            "outcome": 45.0,
+            "error": 1.0
+          },
+          {
+            "round": 2,
+            "forecast": 45.0,
+            "outcome": 46.0,
+            "error": 1.0
+          },
+          {
+            "round": 3,
+            "forecast": 46.0,
+            "outcome": 47.0,
+            "error": 1.0
+          },
+          {
+            "round": 4,
+            "forecast": 47.0,
+            "outcome": 48.0,
+            "error": 1.0
+          }
+        ]
+      }
+    ]
+  },
+  "hypothesis_parts": {
+    "correlation_threshold": 0.5,
+    "parts": {
+      "one_file_listing_every_path_raises_each_count_by_1_and_changes_no_order": true,
+      "a_single_path_file_changes_an_order_relation_for_some_paths": true,
+      "rewarding_the_proxy_raises_it_lowers_value_and_brings_their_correlation_below_the_threshold": true
+    },
+    "all_parts_hold": true
+  },
+  "negative_controls": {
+    "one_file_removed_from_the_table": {
+      "artifact": "policies / alignment-policy.yaml",
+      "recount_before": 44,
+      "recount_after": 43,
+      "noticed": true
+    },
+    "two_counts_swapped": {
+      "artifacts": [
+        "constitutions / asimov.constitution.md",
+        "docs / governance / the-sentinel-spec.md"
+      ],
+      "order_relations_changed": 29
+    },
+    "no_file_added": {
+      "order_relations_changed": 0
+    },
+    "toy_tree_with_one_mention_spaced": {
+      "file": "a",
+      "count_before": 3,
+      "count_after": 2
+    },
+    "planted_by_extract_on_the_pinned_tree": {
+      "file_listing_every_path_in_an_excluded_folder": 0,
+      "file_listing_every_path_under_an_archived_folder": 0,
+      "file_listing_every_spaced_label": 0,
+      "pinned_files_containing_a_spaced_label": 0
+    }
+  },
+  "transfer_task": {
+    "kind": "synthetic: a hypothetical wiki defined in scenarios.json, not Streeling data",
+    "question_1": {
+      "handbook": "east",
+      "pages": [
+        {
+          "key": "p1",
+          "path": "teams/ops/runbook.md",
+          "verdict": "not counted: no citation path appears as a literal string"
+        },
+        {
+          "key": "p2",
+          "path": "index/all-handbooks.md",
+          "verdict": "counted"
+        },
+        {
+          "key": "p3",
+          "path": "trash/old-index.md",
+          "verdict": "not counted: the file is in an excluded folder"
+        },
+        {
+          "key": "p4",
+          "path": "handbooks/east",
+          "verdict": "not counted: the file is the artifact's own"
+        }
+      ],
+      "pages_counted": [
+        "p2"
+      ],
+      "the_only_page_that_uses_the_handbook": "p1"
+    },
+    "question_2": {
+      "sum_before": 57,
+      "sum_after_one_index_page": 62,
+      "sum_change_percent": 8.77,
+      "counts_after_one_index_page": {
+        "north": 31,
+        "east": 13,
+        "south": 12,
+        "west": 5,
+        "centre": 1
+      },
+      "largest_count_change_percent": 3.33,
+      "smallest_non_zero_count_change_percent": 25.0,
+      "order_relations_changed_by_the_index_page": 0,
+      "pairs_of_handbooks": 10,
+      "counts_after_pages_linking_one_handbook": {
+        "north": 30,
+        "east": 12,
+        "south": 13,
+        "west": 4,
+        "centre": 0
+      },
+      "order_relations_changed_by_those_pages": [
+        "east ahead of south -> behind"
+      ],
+      "handbooks_with_0_links_before": [
+        "centre"
+      ],
+      "handbooks_with_0_links_after_one_index_page": [],
+      "ratio_without_the_index_page": 8.0,
+      "ratio_with_the_index_page": 1.8,
+      "frozen_without_the_index_page": true,
+      "frozen_with_the_index_page": false
+    },
+    "question_3": {
+      "kinds_of_agent": 16,
+      "high_proxy_from": 4,
+      "by_weight": [
+        {
+          "reward_weight_on_the_proxy": "1/2",
+          "cases": 16,
+          "cases_that_inflate": 2,
+          "share_of_effort_on_inflation": 0.125,
+          "mean_proxy": 2.8125,
+          "mean_value": 2.375,
+          "correlation_of_proxy_and_value": 0.5209,
+          "cases_with_a_high_proxy": 5,
+          "of_which_value_is_zero": 1,
+          "lowest_value_among_them": 0
+        },
+        {
+          "reward_weight_on_the_proxy": "1",
+          "cases": 16,
+          "cases_that_inflate": 6,
+          "share_of_effort_on_inflation": 0.375,
+          "mean_proxy": 3.125,
+          "mean_value": 1.875,
+          "correlation_of_proxy_and_value": 0.2548,
+          "cases_with_a_high_proxy": 7,
+          "of_which_value_is_zero": 3,
+          "lowest_value_among_them": 0
+        }
+      ]
+    },
+    "question_4": {
+      "baseline": 12,
+      "key": "east_forecast",
+      "self_mentions": 1,
+      "reaction": "1/4",
+      "outcome_of_forecasting_the_baseline": 13.0,
+      "its_error": 1.0,
+      "self_consistent_forecast": 13.3333,
+      "self_consistent_forecast_as_a_fraction": "40/3",
+      "forecast_revised_to_the_last_outcome": [
+        {
+          "round": 1,
+          "forecast": 12.0,
+          "outcome": 13.0,
+          "error": 1.0
+        },
+        {
+          "round": 2,
+          "forecast": 13.0,
+          "outcome": 13.25,
+          "error": 0.25
+        }
+      ]
+    },
+    "question_5": "no single answer: see the review brief"
+  },
+  "checks": [
+    {
+      "check": "each listed citation path belongs to one distinct path",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "tracked files = files excluded + files searched",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "recount from the file table = recount made by extract.py",
+      "times_evaluated": 16,
+      "passed": true
+    },
+    {
+      "check": "pairs counted by artifact = pairs counted by file",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "files by number of artifacts sum to the counted files and to the counts",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "extensions and top folders each cover every counted file",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "a course file is courses/<department>/<language>/<lesson>.md",
+      "times_evaluated": 9,
+      "passed": true
+    },
+    {
+      "check": "every counted translation has its English lesson counted for the same artifacts",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "a row without an earlier count records its whole count as the change",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "a row with an earlier count records the difference",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the recorded ratio is LOLLI / ERGOL to two decimals",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "toy tree, counted by hand: files a, g and h",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "a file listing every path raises the sum by one per measurable artifact",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "adding the same number to every count changes no order relation",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "the one-file case equals the planted file counted by extract.py on the pinned tree",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "single-path files raise as many counts in all as there are listed citation paths",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the rule's population sums to the latest run of the quality trend",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the fewest files that flip the verdict equal the closed form",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "sum of proxies = sum of values + sum of inflation + sum of errors",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "a correlation lies between -1 and 1",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "no reward on the proxy: nobody inflates",
+      "times_evaluated": 3,
+      "passed": true
+    },
+    {
+      "check": "all reward on the proxy: the enumeration equals the closed forms for yields 1..n",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "round t of a revised forecast misses by self_mentions x reaction^(t-1)",
+      "times_evaluated": 22,
+      "passed": true
+    },
+    {
+      "check": "the self-consistent forecast is its own outcome",
+      "times_evaluated": 5,
+      "passed": true
+    },
+    {
+      "check": "the planted changes are noticed",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}

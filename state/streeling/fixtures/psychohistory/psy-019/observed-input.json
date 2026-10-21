@@ -1,0 +1,334 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-019-combining-correlated-forecasters",
+  "kind": "observed: a description of a setup. No persona's answer and no outcome is in the files read, and the council's records hold a few reviewer scores without outcomes, so nothing here measures a correlation between agents.",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "commit_check": "every file below has the Git blob id recorded for this commit (CRLF normalised to LF)",
+    "path_note": "The policy's path is a data label here: it is written with a space on each side of the slash, so that this file is not counted as a citation of a governance artifact.",
+    "files": [
+      {
+        "path": "policies / multi-model-orchestration-policy.yaml",
+        "git_blob": "226185cf13f84ac0101449f7b2677e989d975d57"
+      },
+      {
+        "path": ".claude/workflows/demerzel-tribunal-panel.js",
+        "git_blob": "1220c569a31660ccdece9aac6d6585b467ec6978"
+      },
+      {
+        "path": ".github/workflows/tribunal-panel.yml",
+        "git_blob": "028c00516d88a84978b2213a0b2755159b74812c"
+      },
+      {
+        "path": "scripts/council_emit.py",
+        "git_blob": "4db8e22fb3998735eb850cdd1578a88aa6ebba46"
+      },
+      {
+        "path": "state/council/council-2026-06-24-001.json",
+        "git_blob": "ae91b323f3a9fc3ce694d2f2810dfb1d7b4da236"
+      },
+      {
+        "path": "state/council/council-2026-06-24-002.json",
+        "git_blob": "d0343151fcb968d6758b22caac3488e1c25b9f99"
+      },
+      {
+        "path": "state/council/council-2026-06-24-003.json",
+        "git_blob": "cbf44c50a750f49b3b1bcf5f6d7e9c1f8c1d0426"
+      },
+      {
+        "path": "state/council/council-2026-06-24-004.json",
+        "git_blob": "988bbf9e5b9533f6f0309dd412b0375734c1d76a"
+      },
+      {
+        "path": "state/council/council-2026-06-24-005.json",
+        "git_blob": "11a0b34648dd5418bc53a00bb4fac0d492614afd"
+      }
+    ]
+  },
+  "orchestration_policy": {
+    "path": "policies / multi-model-orchestration-policy.yaml",
+    "name": "multi-model-orchestration-policy",
+    "version": "1.1.0",
+    "what_is_read": "the name and version lines, every line of the confidence_calibration block, and the orchestration rule named cross-validation with the provider that the model registry gives for each model it names; nothing else",
+    "confidence_calibration": [
+      {
+        "line": 199,
+        "key": "single_model",
+        "value": "max 0.8",
+        "qualifier": "max",
+        "number": "0.8",
+        "comment": "single model opinion capped at 0.8"
+      },
+      {
+        "line": 200,
+        "key": "two_model_agreement",
+        "value": "0.9",
+        "qualifier": null,
+        "number": "0.9",
+        "comment": "two models agree = high confidence"
+      },
+      {
+        "line": 201,
+        "key": "two_model_disagreement",
+        "value": "0.5",
+        "qualifier": null,
+        "number": "0.5",
+        "comment": "disagreement = escalate"
+      },
+      {
+        "line": 202,
+        "key": "grounded_in_sources",
+        "value": "+0.1",
+        "qualifier": null,
+        "number": "+0.1",
+        "comment": "NotebookLM citation bonus"
+      },
+      {
+        "line": 203,
+        "key": "human_validated",
+        "value": "1.0",
+        "qualifier": null,
+        "number": "1.0",
+        "comment": "human override = certainty"
+      }
+    ],
+    "cross_validation_rule": {
+      "line": 187,
+      "name": "cross-validation",
+      "description": "Critical decisions require agreement from at least 2 models",
+      "models": [
+        "claude",
+        "chatgpt"
+      ],
+      "threshold": "both must agree or escalate to human",
+      "provider_of_each_model": {
+        "claude": "anthropic",
+        "chatgpt": "openai"
+      }
+    }
+  },
+  "tribunal_panel": {
+    "script": ".claude/workflows/demerzel-tribunal-panel.js",
+    "workflow": ".github/workflows/tribunal-panel.yml",
+    "what_is_read": "from the script: the PANEL list, the names interpolated into the prompt sent to each persona with the three limits on their length, the verdict and score fields of the persona schema and every line that contains '.score'; from the workflow: the --model argument of the run. Neither file was executed, and neither holds an answer of a persona.",
+    "members": [
+      {
+        "persona": "skeptical-auditor",
+        "role": "security"
+      },
+      {
+        "persona": "reflective-architect",
+        "role": "architecture"
+      },
+      {
+        "persona": "rational-administrator",
+        "role": "contract_audit"
+      },
+      {
+        "persona": "validator-reflector",
+        "role": "regression_replay"
+      },
+      {
+        "persona": "system-integrator",
+        "role": "semantic_judge"
+      }
+    ],
+    "pull_request_fields_in_every_persona_prompt": [
+      "body",
+      "diff_excerpt",
+      "files",
+      "title"
+    ],
+    "member_fields_in_the_persona_prompt": [
+      "concern",
+      "persona"
+    ],
+    "limits_on_what_every_persona_is_sent": {
+      "characters_of_the_body": 2000,
+      "changed_files": 50,
+      "characters_of_the_diff": 15000
+    },
+    "verdicts_a_persona_may_return": {
+      "line": 74,
+      "values": [
+        "block",
+        "merge_with_followups",
+        "pass"
+      ]
+    },
+    "score_a_persona_may_return": {
+      "line": 76,
+      "type": "number",
+      "description": "0..1 confidence in this PR for my concern (1 = clean)",
+      "required": false
+    },
+    "lines_that_read_a_persona_score": [
+      {
+        "line": 193,
+        "text": "score: Number.isFinite(r.score) ? r.score : null,"
+      }
+    ],
+    "consensus_rule_named_in_both_files": "strictest-wins",
+    "model_argument_of_the_run": "claude-sonnet-5"
+  },
+  "council": {
+    "script": "scripts/council_emit.py",
+    "what_is_read": "the docstring lines that introduce the reviewers, six phrases of the docstring (each must be on exactly one line, which is kept whole), and the line that computes the council's confidence. The script was not executed and holds no review.",
+    "reviewers": [
+      {
+        "line": 16,
+        "name": "reviewer_a"
+      },
+      {
+        "line": 26,
+        "name": "reviewer_b"
+      }
+    ],
+    "statements": [
+      {
+        "line": 12,
+        "phrase": "deliberately heterogeneous",
+        "text": "The two reviewers are deliberately heterogeneous so the council aggregates an"
+      },
+      {
+        "line": 26,
+        "phrase": "A cross-model reviewer",
+        "text": "reviewer_b — A cross-model reviewer (Claude / Gemini / Codex, whichever API"
+      },
+      {
+        "line": 29,
+        "phrase": "genuinely different model from reviewer_a's static analyzer",
+        "text": "This is a genuinely different model from reviewer_a's static analyzer, so a"
+      },
+      {
+        "line": 30,
+        "phrase": "lifts the single-model confidence cap honestly",
+        "text": "two-review verdict lifts the single-model confidence cap honestly."
+      },
+      {
+        "line": 32,
+        "phrase": "Chairman synthesis is strictest-wins",
+        "text": "Chairman synthesis is strictest-wins (matching the tribunal panel's consensus"
+      },
+      {
+        "line": 34,
+        "phrase": "is the MIN of the reviewers'",
+        "text": "constitutionally aligned; `post_council_confidence` is the MIN of the reviewers'"
+      }
+    ],
+    "confidence_line": {
+      "line": 159,
+      "text": "confidence = round(min(scores), 4)"
+    }
+  },
+  "council_records": {
+    "folder": "state/council",
+    "what_is_read": "every council-*.json record: its id, each reviewer's correctness_score, the verdict and the council's confidence, and the names of all keys, top level and per review",
+    "records": [
+      {
+        "id": "council-2026-06-24-001",
+        "scores": [
+          {
+            "reviewer": "reviewer_a",
+            "correctness_score": 0.75
+          }
+        ],
+        "verdict": "APPROVE",
+        "post_council_confidence": 0.75
+      },
+      {
+        "id": "council-2026-06-24-002",
+        "scores": [
+          {
+            "reviewer": "reviewer_a",
+            "correctness_score": 0.75
+          },
+          {
+            "reviewer": "reviewer_b",
+            "correctness_score": 0.3
+          }
+        ],
+        "verdict": "REJECT",
+        "post_council_confidence": 0.3
+      },
+      {
+        "id": "council-2026-06-24-003",
+        "scores": [
+          {
+            "reviewer": "reviewer_a",
+            "correctness_score": 0.75
+          },
+          {
+            "reviewer": "reviewer_b",
+            "correctness_score": 0.3
+          }
+        ],
+        "verdict": "REJECT",
+        "post_council_confidence": 0.3
+      },
+      {
+        "id": "council-2026-06-24-004",
+        "scores": [
+          {
+            "reviewer": "reviewer_a",
+            "correctness_score": 0.75
+          },
+          {
+            "reviewer": "reviewer_b",
+            "correctness_score": 0.3
+          }
+        ],
+        "verdict": "REJECT",
+        "post_council_confidence": 0.3
+      },
+      {
+        "id": "council-2026-06-24-005",
+        "scores": [
+          {
+            "reviewer": "reviewer_a",
+            "correctness_score": 0.75
+          },
+          {
+            "reviewer": "reviewer_b",
+            "correctness_score": 0.85
+          }
+        ],
+        "verdict": "APPROVE",
+        "post_council_confidence": 0.75
+      }
+    ],
+    "top_level_keys": [
+      "chairman_synthesis",
+      "change_summary",
+      "post_council_confidence",
+      "reviews",
+      "task_id",
+      "timestamp",
+      "trigger_condition",
+      "verdict",
+      "verdict_id"
+    ],
+    "review_keys": [
+      "constitutional_alignment",
+      "correctness_score",
+      "rationale",
+      "reviewer",
+      "risk_assessment"
+    ],
+    "keys_naming_an_outcome": []
+  },
+  "counts": {
+    "confidence_calibration_entries": 5,
+    "cross_validation_models": 2,
+    "cross_validation_providers": 2,
+    "tribunal_panel_personas": 5,
+    "pull_request_fields_in_every_persona_prompt": 4,
+    "member_fields_in_the_persona_prompt": 2,
+    "lines_that_read_a_persona_score": 1,
+    "council_reviewers": 2,
+    "verdicts_a_persona_may_return": 3,
+    "council_records": 5,
+    "council_scores": 9
+  }
+}

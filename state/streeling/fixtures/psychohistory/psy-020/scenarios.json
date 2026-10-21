@@ -1,0 +1,132 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-020-goodhart-and-reflexivity",
+  "kind": "assumed inputs; nothing in this file is measured in the Demerzel repository",
+  "label_convention": "An artifact name or citation path taken from the repository is written with a space on each side of every slash, as in observed-input.json. The paths of the toy tree and of the transfer task are invented.",
+  "rounding": {
+    "share_decimals": 4,
+    "percent_decimals": 2,
+    "mean_decimals": 4,
+    "correlation_decimals": 4
+  },
+  "toy_rule": {
+    "note": "A made-up tree for practising the counting rule. The artifact, its path and every file are invented; the rule applied to them is the producer's, with its four exclusion pathspecs.",
+    "artifact": "the toy rule",
+    "citation_paths": ["toy/rule.yaml"],
+    "files": [
+      {"key": "a", "path": "docs/index.md", "what": "a list of rule files",
+       "content": "Rules in force: toy/rule.yaml, toy/other.yaml"},
+      {"key": "b", "path": "scripts/check.py", "what": "a program that loads the rule, building its path from two parts",
+       "content": "rule = load(os.path.join(\"toy\", \"rule.yaml\"))"},
+      {"key": "c", "path": "toy/rule.yaml", "what": "the rule file itself, with its own path in a comment",
+       "content": "# toy/rule.yaml\nmax_items: 3"},
+      {"key": "d", "path": "state/evolution/toy.json", "what": "a record in a folder the producer excludes",
+       "content": "{\"artifact\": \"toy/rule.yaml\"}"},
+      {"key": "e", "path": "notes/archived/2025.md", "what": "an old note under a folder named archived",
+       "content": "We replaced toy/rule.yaml in May."},
+      {"key": "f", "path": "data/labels.json", "what": "a data file that writes the name with spaced slashes",
+       "content": "{\"label\": \"toy / rule.yaml\"}"},
+      {"key": "g", "path": "courses/en/lesson.md", "what": "a lesson that names the rule",
+       "content": "The rule lives in toy/rule.yaml."},
+      {"key": "h", "path": "courses/fr/lesson.fr.md", "what": "the French translation of that lesson",
+       "content": "La règle se trouve dans toy/rule.yaml."}
+    ],
+    "the_only_file_that_uses_the_rule": "b",
+    "negative_control": {"file": "a", "replace": "toy/rule.yaml", "with": "toy / rule.yaml"}
+  },
+  "what_if": {
+    "note": "Synthetic additions to the observed counts: each case adds tracked files outside the excluded folders, and none of these files exists. A file that 'lists every path' contains each distinct citation path once.",
+    "files_listing_every_path": [1, 5],
+    "one_path_in_several_files": {
+      "path": "policies / alignment-policy.yaml",
+      "files": 3,
+      "why": "a lesson that names one path, and its two translations"
+    },
+    "policy_reading": "The policy's ratio is LOLLI_n / max(ERGOL_n, 1). Here citations_n is read literally from the policy's own source line, as the summed change of citation_count over the cycle; the three other components of ERGOL are set to 0; LOLLI_n is the number of files created, a catalogue file included. This reading is an assumption of the fixture, not a record of how the project applies the policy.",
+    "policy_cycles": [
+      {"key": "ten_new_artifacts", "new_artifacts": 10, "catalogue_files_listing_every_path": 0},
+      {"key": "ten_new_artifacts_and_one_catalogue", "new_artifacts": 10, "catalogue_files_listing_every_path": 1},
+      {"key": "one_catalogue_alone", "new_artifacts": 0, "catalogue_files_listing_every_path": 1}
+    ]
+  },
+  "power_law_rule": {
+    "note": "The rule's population is its stated source: the citation_count of every evolution record, the two unmeasurable artifacts included (no added file can move their recorded counts). 20% of the artifacts is not a whole number of artifacts, so both readings are computed: floor (the most artifacts that are at most 20%) and ceil (the fewest that are at least 20%). The added files are synthetic: each names the citation paths of the measurable artifacts among the leaders, once each; a catalogue names every citation path once.",
+    "readings": ["floor", "ceil"],
+    "files_cap": 1000
+  },
+  "effort_model": {
+    "note": "Synthetic agents. Each has one unit of effort and puts it where its own reward is highest. Work yields a_i points of real value, which show one for one in the proxy. Inflation yields g_i proxy points and no value. The proxy also carries a measurement error. An agent's reward is (1 - w) x value + w x proxy, so it inflates when w x g_i > a_i. Every combination of the levels below is one equally likely kind of agent.",
+    "work_yields": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "inflation_yields": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "proxy_errors": [-1, 0, 1],
+    "reward_weights_on_the_proxy": [[0, 1], [1, 2], [1, 1]],
+    "high_proxy_from": 10,
+    "worked_agent": {"work_yield": 3, "inflation_yield": 8},
+    "sample": {
+      "seed": 20201013,
+      "agents": 400,
+      "draw": "for each agent, three calls of random.Random(seed).random(): the work yield, the inflation yield, the proxy error; each value u picks the level at index floor(u x number of levels)"
+    }
+  },
+  "reflexive_forecast": {
+    "note": "Synthetic. A forecast of an artifact's citation count is published. If it is published in a tracked file that names the path literally, the forecast is itself a mention (self_mentions = 1). Readers may also react: for each point the forecast lies above the count that would have occurred without it, they add 'reaction' mentions (negative: they hold back). outcome = baseline + self_mentions + reaction x (forecast - baseline). The reaction values are assumptions; no such reaction was observed.",
+    "baseline_artifact": "policies / alignment-policy.yaml",
+    "rounds": 4,
+    "cases": [
+      {"key": "published_elsewhere", "self_mentions": 0, "reaction": [0, 1]},
+      {"key": "published_in_the_repository", "self_mentions": 1, "reaction": [0, 1]},
+      {"key": "published_and_followed", "self_mentions": 1, "reaction": [1, 2]},
+      {"key": "published_and_resisted", "self_mentions": 1, "reaction": [-1, 2]},
+      {"key": "published_and_matched", "self_mentions": 1, "reaction": [1, 1]}
+    ]
+  },
+  "hypothesis": {
+    "note": "Thresholds of the hypothesis recorded in the research cycle before the what-if cases and the two models were run.",
+    "correlation_below_when_the_reward_is_all_proxy": 0.5
+  },
+  "negative_controls": {
+    "note": "Changes planted in a copy of the observed input, to show that the checks react.",
+    "drop_one_file_of_artifact": "policies / alignment-policy.yaml",
+    "swap_counts_of": ["constitutions / asimov.constitution.md", "docs / governance / the-sentinel-spec.md"]
+  },
+  "transfer_task": {
+    "note": "A hypothetical team wiki. It is not Streeling data and not a forecast. Counting rule of the wiki: a handbook's link count is the number of wiki pages that contain the handbook's address as a literal string, outside the folder trash; the handbook's own page is not counted.",
+    "exclusion_pathspecs": [":!trash"],
+    "handbooks": [
+      {"key": "north", "address": "handbooks/north", "links": 30},
+      {"key": "east", "address": "handbooks/east", "links": 12},
+      {"key": "south", "address": "handbooks/south", "links": 11},
+      {"key": "west", "address": "handbooks/west", "links": 4},
+      {"key": "centre", "address": "handbooks/centre", "links": 0}
+    ],
+    "pages": [
+      {"key": "p1", "path": "teams/ops/runbook.md", "what": "a runbook whose steps follow the east handbook; it calls it 'the east handbook' and gives no address",
+       "content": "Follow the east handbook, section 3, before each release."},
+      {"key": "p2", "path": "index/all-handbooks.md", "what": "an index page that lists the five addresses",
+       "content": "handbooks/north handbooks/east handbooks/south handbooks/west handbooks/centre"},
+      {"key": "p3", "path": "trash/old-index.md", "what": "an older index page, moved to the trash folder",
+       "content": "handbooks/north handbooks/east"},
+      {"key": "p4", "path": "handbooks/east", "what": "the east handbook's own page, which repeats its address in the footer",
+       "content": "Permanent address: handbooks/east"}
+    ],
+    "question_about_handbook": "east",
+    "the_only_page_that_uses_the_handbook": "p1",
+    "index_pages_listing_every_address": 1,
+    "pages_linking_one_handbook": {"handbook": "south", "pages": 2},
+    "review_rule": "every handbook with 0 links is put up for removal",
+    "ratio_rule": {
+      "formula": "new pages in the month / max(new links in the month, 1)",
+      "freeze_above": 3,
+      "new_pages": 8,
+      "new_links_without_the_index_page": 0
+    },
+    "effort_model": {
+      "work_yields": [1, 2, 3, 4],
+      "inflation_yields": [1, 2, 3, 4],
+      "proxy_errors": [0],
+      "reward_weights_on_the_proxy": [[1, 2], [1, 1]],
+      "high_proxy_from": 4
+    },
+    "forecast": {"handbook": "east", "self_mentions": 1, "reaction": [1, 4], "rounds": 2}
+  }
+}

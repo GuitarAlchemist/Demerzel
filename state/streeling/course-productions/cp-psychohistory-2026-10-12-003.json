@@ -17,20 +17,24 @@
     },
     "content": {
       "completed": true,
-      "word_count": 1802,
+      "word_count": 1827,
       "exercises": 5
     },
     "translation": {
-      "completed": false,
-      "languages": ["en"]
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
     },
     "review": {
       "completed": false,
-      "feedback": "English draft grounded in a pinned Streeling source inventory and a deterministic synthetic queue model. The simulation is not a throughput forecast. Human subject review, learner test, translation, and public readback remain pending."
+      "feedback": "English draft grounded in a pinned Streeling source inventory and a deterministic synthetic queue model. The simulation is not a throughput forecast. Human subject review, learner test and public readback remain pending; the French and Spanish translations have had no native-speaker review."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-12T20:56:19Z"
+  "timestamp": "2026-10-18T06:58:51Z"
 }

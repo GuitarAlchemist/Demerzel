@@ -30,14 +30,17 @@
 
 ## Test 3: Requisite Variety Assessment
 
-**Given:** A governance scenario where a single policy must handle 50 distinct failure modes across 3 repos
+**Given:** In one governance cycle, a single policy meets 50 distinct failure modes across 3 repos and gives 5 distinct responses. The cycle's record shows that every failure mode received a response and that no response brought two failure modes to the same outcome. Four outcomes on the essential variables are acceptable.
 **When:** The system-integrator applies Ashby's Law of Requisite Variety
 **Then:**
-- States that variety(regulator) must be >= variety(disturbance) — 50 failure modes require >= 50 regulatory states
-- Identifies the variety gap as a governance risk
+- Checks the record for both applicability conditions before applying the law: every disturbance answered, and no response bringing two disturbances to the same outcome (`applicability` in the grammar)
+- Applies `outcome_bound`: variety(outcomes) >= log2(50) - log2(5) = log2(10), about 3.32 bits, so the cycle produced at least 10 distinct outcomes
+- Concludes that, with 4 acceptable outcomes (2 bits), at least 6 failure modes reached an unacceptable outcome
+- Applies `regulation_condition`: keeping every outcome acceptable needs variety(regulator) >= log2(50) - log2(4), about 3.64 bits, that is at least 13 distinct responses
+- Does NOT conclude that 50 failure modes require 50 regulatory states: the requirement falls as more outcomes are acceptable, and it holds only under the two conditions
 - Recommends variety_amplifier strategies: intelligence (smarter policy), delegation (per-repo policies), automation (auto-remediation)
 - Recommends variety_attenuator strategies: policy (reduce failure surface), filter (route noise), abstraction (generalize cases)
-- Produces U (Unknown) belief if variety ratio cannot be quantified from available data
+- Produces U (Unknown) belief, and records the bound as not applicable, if the cycle's record does not show both conditions
 
 ## Test 4: Homeostatic Bound Checking
 

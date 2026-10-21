@@ -1,0 +1,30 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-011",
+  "department": "psychohistory",
+  "question": "The quality trend has rows flagged rebaseline and a citation_source field that appears part-way through. Which jumps in the series are the instrument changing rather than the system?",
+  "production_path": [
+    "takeover: inherited extract.py, observed-input.json and scenarios.json from an interrupted author session; reran the extract byte-identically and recounted the raw JSONL rows with an independent throwaway script before keeping them",
+    "investigation: read scripts/quality_trend.py and scripts/evolution_metrics.py at the pinned commit; the feeder declares a rebaseline when the previous row's citation_source differs, then writes delta_citations 0 and keeps citation_count as read",
+    "hypothesis: fixed from the syllabus row and the coordinator's note (citation_count changes 20 times on two runs, 16 of them on 2026-09-13) before the analysis script existed",
+    "extract: snapshot counts, deltas, citation_source, rebaseline flags, evolution-record fields and the quoted code lines into observed-input.json, refusing any source file whose Git blob differs from the pin",
+    "model: classify every row against the artifact's previous row as first count, instrument change or same instrument, and re-implement lines 90-99 of the feeder to check that the rule reproduces every recorded delta and flag",
+    "test: split the growth of the summed count by class, and apply a 2-standard-deviation step rule to the raw sum, the summed delta_citations and the same-instrument steps",
+    "adversarial: four planted defects as negative controls, and the objection that a label cannot reveal an instrument change that keeps its label; Git history read outside the fixture for the four remaining steps",
+    "test: byte-identical rerun of the analysis, 60 self-checks, five answered exercises and an answer-free transfer task",
+    "revision: artifact names and citation paths rewritten as spaced-slash labels in every file of the module, so that none of them counts as a citation under the producer's rule; the gaps between runs and a per-day version of the step rule added to the fixture with four more self-checks (64 in all); functions over 80 lines split, the earlier output unchanged apart from the labels"
+  ],
+  "hypothesis": "In the recorded quality trend, most jumps of citation_count coincide with the change of instrument (the run where citation_source first appears) and not with a change in the repository; once those rows are set aside, too few jumps remain to support a regime-shift reading of the series.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the quality trend holds 1,548 rows in 88 runs for 18 artifacts; the citation_source key first appears in the run of 2026-09-13T17:52:14Z, where 16 rows carry git-grep-v1 and rebaseline true and the count summed over artifacts goes from 116 to 406 while delta_citations sums to 0.",
+    "citation_count differs from the artifact's previous row in 20 rows: 16 at that change of source (steps from -7 to +60, 14 up and 2 down) and 4 between rows of the same source, all in the run of 2026-10-03T15:31:16Z and each +2. That is 4 of 1,503 same-instrument pairs (0.27%), and 8 of the 308 by which the sum grew since the first feeder run (2.60%).",
+    "Against the module note's expectation, none of the 20 rows with a non-zero delta_citations lies at the instrument change: 16 are first counts, where the feeder subtracts 0 (they sum to 116), and 4 are the same-instrument steps. The re-implemented rule of lines 90-99 of scripts/quality_trend.py reproduces delta_citations in 1,537 rows and 576 rebaseline flags with 0 mismatches, and four planted defects are detected.",
+    "A 2-standard-deviation rule on the step of the summed count (an analysis choice, not a project alarm) flags the two runs of 2026-07-29 where artifacts joined and the instrument change, and not the +8 of 2026-10-03: there the smallest flagged step is 71 on the raw sum against 3 on the summed delta_citations. The analysis reran byte-identically and its 64 self-checks passed.",
+    "The git-grep count was not recomputed for the runs before 2026-09-13, and the reading of the four remaining steps (French and Spanish translations added by commit 98625c3) comes from Git history read outside the fixture. When this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T00:16:28Z"
+}

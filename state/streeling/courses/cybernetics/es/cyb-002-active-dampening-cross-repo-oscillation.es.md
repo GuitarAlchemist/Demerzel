@@ -1,3 +1,13 @@
+---
+module_id: cyb-002-active-dampening-cross-repo-oscillation
+department: cybernetics
+course: "Fundamentos de la gobernanza cibernética"
+prerequisites: [cyb-001-vsm-ai-governance-mapping]
+produced_by: seldon-plan
+research_cycle: cybernetics-2026-03-23-002
+version: "1.0.0"
+---
+
 # CYB-002: Mecanismos de amortiguación activa para controlar la oscilación entre repositorios
 
 **Departamento:** Cibernética

@@ -1,0 +1,895 @@
+{
+  "schema_version": "0.2.0",
+  "module_id": "psy-015-belief-contagion-small-population",
+  "kind": "observed",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "commit_check": "every file below has the Git blob id recorded for this commit (CRLF normalised to LF), the two belief folders hold no *.belief.json file outside this list, and the two listed folders have the pinned file count and manifest digest",
+    "slash_note": "The path of a governed file and the belief propositions are written with a space on each side of every slash: the repository counts as a citation every tracked file that holds the path of a governed file as a literal string, and a data file must not move that count.",
+    "files": [
+      {
+        "path": "state/streeling/departments/psychohistory.department.json",
+        "git_blob": "67f81dd22dd5c17a6eb41174dd5944475ce2dd6b",
+        "role": "department record"
+      },
+      {
+        "path": "schemas/contracts/belief-snapshot.schema.json",
+        "git_blob": "d0f2375fcccdb3fa166571aac518ecb41d15fb0c",
+        "role": "schema of the belief_snapshot record type"
+      },
+      {
+        "path": "logic/knowledge-state.schema.json",
+        "git_blob": "25af00539cc73f31e5b118d3ac3509ccb41005ae",
+        "role": "schema of the knowledge_state record type"
+      },
+      {
+        "path": "examples/sample-data/belief-snapshot-tars.json",
+        "git_blob": "9398211ee99395206037b9fed0d02167571cd863",
+        "role": "sample file of the belief_snapshot record type"
+      },
+      {
+        "path": "examples/sample-data/knowledge-state-in-progress.json",
+        "git_blob": "737a945af379ce68e363546bc7461b61bbf89307",
+        "role": "sample file of the knowledge_state record type"
+      },
+      {
+        "path": "examples/sample-data/knowledge-state-learned.json",
+        "git_blob": "77cb2df4505585fc820edc7fce1fada9502b7e05",
+        "role": "sample file of the knowledge_state record type"
+      },
+      {
+        "path": "state/snapshots/2026-07-25-audit-level1.snapshot.json",
+        "git_blob": "bea908790bff871d4b76c23448c53dddd57e7e60",
+        "role": "audit note on knowledge-state instances"
+      },
+      {
+        "path": "state/beliefs/2026-03-17-behavioral-test-coverage.belief.json",
+        "git_blob": "e3a939adbc63a60032746f1433712ed3d9b55b16",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/2026-03-17-demerzel-framework-integrity.belief.json",
+        "git_blob": "daeaceacec87cfde36ddc1358f25c3da03e15608",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/2026-03-18-consumer-repo-integration-status.belief.json",
+        "git_blob": "b1cadad26b81e529a8bd8a26c3f5f7a90fcd975f",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/2026-07-25-cross-reference-integrity.belief.json",
+        "git_blob": "3c32763a77b41c1c45809abef7571046190b03f9",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/2026-07-25-schema-conformance.belief.json",
+        "git_blob": "dc1af29f79532ba4fb6713017e4b292786b8382a",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/2026-07-29-afk-backend-adapter.belief.json",
+        "git_blob": "e64466803ae06524f058f3d392c7bcad0e379e60",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/confidence-calibration.belief.json",
+        "git_blob": "d49c70d92766bb8ddafc4a77421e663080f77fd0",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/remediation-effectiveness.belief.json",
+        "git_blob": "d0347afd888f94026f9971053bb8054ef053a155",
+        "role": "current belief file"
+      },
+      {
+        "path": "state/beliefs/archived/2026-03-17-consumer-repo-integration-status.belief.json",
+        "git_blob": "765a1370f8fadc4dba08857224edb6b1469daab7",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/2026-03-17-ga-governance-integration.belief.json",
+        "git_blob": "d0f496d814572325a7ba07ff171a83292e74c583",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/2026-03-17-ix-governance-integration.belief.json",
+        "git_blob": "bf556f12baabcad64daaf5389cae4700905c114b",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/2026-03-17-tars-governance-integration.belief.json",
+        "git_blob": "83b47c5b58b4363efc6db02fbc55bb49e2b2e197",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/slot-blue-health.belief.json",
+        "git_blob": "e1e646c10676d1d26cfe22e092bc6502734d32c2",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/slot-green-health.belief.json",
+        "git_blob": "2c38b22117b1e6b666ba53ac916b26b77a080e7e",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-displacement-terrain.belief.json",
+        "git_blob": "d844a5ca8684e870ec8ff68e447537a0eaa88869",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-earth-clouds.belief.json",
+        "git_blob": "baa0b191aa716a3e8515b6c15dba8036bd6b724c",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-earth-snow.belief.json",
+        "git_blob": "d15603a89190687e320921a1b4459dfdaab6321f",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-earth-terminator.belief.json",
+        "git_blob": "787b9f6a54fe901ca474aadef0a2f4a6c6f89831",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-milky-way-parallax.belief.json",
+        "git_blob": "2c45a8a983af964a23beca4e5ffe0a277d8d9342",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-planet-proportions.belief.json",
+        "git_blob": "b702ae2b804251b5f212f522bacfe0bf5e735335",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/archived/visual-sun-flare.belief.json",
+        "git_blob": "bb8d104a1f985a971b649e0b02048cd2f09e8d47",
+        "role": "archived belief file"
+      },
+      {
+        "path": "state/beliefs/3d-visualization-aesthetics.yaml",
+        "git_blob": "c239e1041ae51f3e3cb2244f16c9977652f5d214",
+        "role": "YAML file in the current belief folder"
+      },
+      {
+        "path": "schemas/contracts/ml-feedback-recommendation.schema.json",
+        "git_blob": "51b5dbe317d173e5c8e99f867ecdad4e3459e9d8",
+        "role": "schema of a recommendation message"
+      },
+      {
+        "path": "schemas/contracts/integrity-fields.schema.json",
+        "git_blob": "7ce9baeced930deeac2397e0e01c1b7bc983b8d0",
+        "role": "integrity fields required in every message"
+      },
+      {
+        "path": "scripts / apply_ml_feedback.py",
+        "git_blob": "a161edf2ce11ae822562f05e4f4b3f8d8d2e0f81",
+        "role": "script that writes belief files from a message"
+      }
+    ],
+    "scanned_folder": {
+      "folder": "state",
+      "excluded": "state/streeling",
+      "pattern": "*.json",
+      "files": 722,
+      "manifest_sha256": "15a968afe2bc206e4d1af7e5b167d13413215be090da9980a607d3fca820ac04",
+      "manifest_recipe": "git ls-tree -r 4b03838800dcd4894f1e026461979bff1d985ca8 -- state | awk '{print $3\" \"$4}' | grep '\\.json$' | grep -v ' state/streeling/' | sha256sum"
+    },
+    "contract_schemas_folder": {
+      "folder": "schemas/contracts",
+      "files": 11,
+      "manifest_sha256": "022a88b77e7193451759883c3c17eb092bc32893372a6a74b3f0ab67757953f6",
+      "manifest_recipe": "git ls-tree -r 4b03838800dcd4894f1e026461979bff1d985ca8 -- schemas/contracts | awk '{print $3\" \"$4}' | sha256sum"
+    }
+  },
+  "counts": {
+    "files_read_one_by_one": 32,
+    "belief_files": {
+      "current": 8,
+      "archived": 13
+    },
+    "other_files_in_the_belief_folders": {
+      "state/beliefs": [
+        "3d-visualization-aesthetics.yaml"
+      ],
+      "state/beliefs/archived": [
+        "SUPERSEDED.md"
+      ]
+    },
+    "distinct_propositions": 21,
+    "contract_schemas": 11,
+    "belief_files_whose_evidence_names_a_contract_message": {
+      "current": 2,
+      "archived": 0
+    },
+    "belief_files_by_contract_message_named": {
+      "ml-feedback-recommendation": 2
+    },
+    "json_files_tested_for_a_record_shape": 722
+  },
+  "department_record": {
+    "path": "state/streeling/departments/psychohistory.department.json",
+    "department": "psychohistory",
+    "head_persona": "seldon",
+    "research_areas": 10,
+    "research_areas_that_mention_belief": [
+      {
+        "position": 7,
+        "of": 10,
+        "text": "Belief state epidemiology — how beliefs spread across agents and repos"
+      }
+    ],
+    "curriculum_entries": 10,
+    "curriculum_entries_that_mention_belief": [
+      {
+        "position": 7,
+        "of": 10,
+        "text": "Crisis Detection: early warning signals from belief state distributions"
+      }
+    ],
+    "key_principle": "Psychohistory cannot predict individual actions — it predicts the statistical behavior of large governance systems. One agent's decision is unpredictable, but the aggregate behavior of 14 personas across 4 repos follows mathematical laws.",
+    "personas_in_key_principle": 14,
+    "repos_in_key_principle": 4,
+    "consumer_repos": [
+      "demerzel",
+      "ix",
+      "tars",
+      "ga"
+    ]
+  },
+  "belief_files": [
+    {
+      "path": "state/beliefs/2026-03-17-behavioral-test-coverage.belief.json",
+      "group": "current",
+      "proposition": "All Demerzel personas have corresponding behavioral tests as required by persona-requirements rule",
+      "truth_value": "T",
+      "confidence": 0.8,
+      "evaluated_by": "demerzel/substrate-audit-reeval",
+      "last_updated": "2026-09-12T00:00:00Z",
+      "supporting_items": 2,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "automated-remediation",
+        "substrate-audit re-evaluation 2026-09-12"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/2026-03-17-demerzel-framework-integrity.belief.json",
+      "group": "current",
+      "proposition": "The Demerzel governance framework is structurally complete with all constitutional, policy, and schema artifacts intact",
+      "truth_value": "P",
+      "confidence": 0.82,
+      "evaluated_by": "demerzel/substrate-audit-reeval",
+      "last_updated": "2026-09-12T00:00:00Z",
+      "supporting_items": 3,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "2026-03-23-belief-refresh",
+        "reconnaissance-tier1-self-check",
+        "substrate-audit re-evaluation 2026-09-12"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/2026-03-18-consumer-repo-integration-status.belief.json",
+      "group": "current",
+      "proposition": "Consumer repo integration is complete — all 3 repos have current submodules, state directories, governance CLAUDE.md sections, and persona definitions",
+      "truth_value": "P",
+      "confidence": 0.85,
+      "evaluated_by": "demerzel/pdca-decisions-2026-09-13",
+      "last_updated": "2026-09-13T00:00:00Z",
+      "supporting_items": 5,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "2026-03-18-session-work",
+        "consumer-repo re-verification 2026-09-12",
+        "consumer-repo re-verification 2026-09-13"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/2026-07-25-cross-reference-integrity.belief.json",
+      "group": "current",
+      "proposition": "Demerzel cross-references between governance artifacts resolve correctly (behavioral tests, estimator pairings, policy references, and schema $refs)",
+      "truth_value": "P",
+      "confidence": 0.8,
+      "evaluated_by": "demerzel/staleness-reclassification",
+      "last_updated": "2026-09-12T00:00:00Z",
+      "supporting_items": 6,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "/demerzel audit level 2 (2026-07-25) — audit-2-1-behavioral-test-coverage",
+        "/demerzel audit level 2 (2026-07-25) — audit-2-2-estimator-pairing-resolution",
+        "/demerzel audit level 2 (2026-07-25) — audit-2-3-policy-references-resolution",
+        "/demerzel audit level 2 (2026-07-25) — audit-2-4-schema-ref-resolution (post-fix)",
+        "staleness reclassification 2026-09-12",
+        "substrate-audit re-evaluation 2026-09-12"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/2026-07-25-schema-conformance.belief.json",
+      "group": "current",
+      "proposition": "All Demerzel state instances conform to their declared JSON schemas — specifically PDCA states (logic / kaizen-pdca-state.schema.json) and autonomous-loop states (schemas / loop-state.schema.json)",
+      "truth_value": "T",
+      "confidence": 0.95,
+      "evaluated_by": "demerzel/substrate-audit-reeval",
+      "last_updated": "2026-09-12T00:00:00Z",
+      "supporting_items": 4,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "/demerzel audit level 1 (2026-07-25)",
+        "/demerzel audit level 2 + schema fix (2026-07-25)",
+        "substrate-audit re-evaluation 2026-09-12"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/2026-07-29-afk-backend-adapter.belief.json",
+      "group": "current",
+      "proposition": "The Demerzel AFK implement governor uses a backend-adapter abstraction so that desktop, container, and cloud AI tools can be plugged in without changing the governor.",
+      "truth_value": "T",
+      "confidence": 0.82,
+      "evaluated_by": "demerzel/substrate-audit-reeval",
+      "last_updated": "2026-09-12T00:00:00Z",
+      "supporting_items": 9,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "feat/afk-backend-adapter-contract-872 (#886)",
+        "feat/afk-backend-registry-875 (#893)",
+        "feat/cloud-worker-backend-879 (#899)",
+        "feat/extract-afk-backends-873 (#888)",
+        "feat/junie-backend (PR #911)",
+        "feat/second-desktop-adapter-882 (#902)",
+        "feat/tool-agnostic-afk-docs-884 (#906)",
+        "fix/local-backend-spend-attribution-877 (#895)",
+        "substrate-audit re-evaluation 2026-09-12"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/confidence-calibration.belief.json",
+      "group": "current",
+      "proposition": "Demerzel's confidence-assignment threshold is calibrated against the observed overconfidence-then-revision rate in her belief states.",
+      "truth_value": "P",
+      "confidence": 0.92,
+      "evaluated_by": "demerzel",
+      "last_updated": "2026-10-13T13:00:05Z",
+      "supporting_items": 1,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "ml-feedback-recommendation a662f4a3-9c5f-4517-92eb-8f58721fc081"
+      ],
+      "items_whose_source_names_a_contract_message": 1,
+      "contract_messages_named": [
+        "ml-feedback-recommendation"
+      ],
+      "source_recommendation": [
+        "a662f4a3-9c5f-4517-92eb-8f58721fc081"
+      ]
+    },
+    {
+      "path": "state/beliefs/remediation-effectiveness.belief.json",
+      "group": "current",
+      "proposition": "Remediation-strategy effectiveness is tracked from PDCA outcomes; fragile strategies stay human-gated.",
+      "truth_value": "P",
+      "confidence": 0.9,
+      "evaluated_by": "demerzel",
+      "last_updated": "2026-10-13T13:00:05Z",
+      "supporting_items": 1,
+      "contradicting_items": 0,
+      "evidence_sources": [
+        "ml-feedback-recommendation 78cf708e-d072-4b3d-9985-6b350d5a43fa"
+      ],
+      "items_whose_source_names_a_contract_message": 1,
+      "contract_messages_named": [
+        "ml-feedback-recommendation"
+      ],
+      "source_recommendation": [
+        "78cf708e-d072-4b3d-9985-6b350d5a43fa"
+      ]
+    },
+    {
+      "path": "state/beliefs/archived/2026-03-17-consumer-repo-integration-status.belief.json",
+      "group": "archived",
+      "proposition": "Consumer repo integration directives have been distributed and acknowledged by ix, tars, and ga",
+      "truth_value": "F",
+      "confidence": 0.9,
+      "evaluated_by": "demerzel",
+      "last_updated": "2026-03-17T20:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 1,
+      "evidence_sources": [
+        "reconnaissance-tier2-environment-scan"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/2026-03-17-ga-governance-integration.belief.json",
+      "group": "archived",
+      "proposition": "The ga repo has adopted Demerzel governance integration",
+      "truth_value": "F",
+      "confidence": 0.85,
+      "evaluated_by": "demerzel",
+      "last_updated": "2026-03-17T22:00:00Z",
+      "supporting_items": 1,
+      "contradicting_items": 1,
+      "evidence_sources": [
+        "recon-tier2-ga"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/2026-03-17-ix-governance-integration.belief.json",
+      "group": "archived",
+      "proposition": "The ix repo has adopted Demerzel governance integration with state / beliefs directory",
+      "truth_value": "U",
+      "confidence": 0.5,
+      "evaluated_by": "demerzel",
+      "last_updated": "2026-03-17T22:00:00Z",
+      "supporting_items": 1,
+      "contradicting_items": 1,
+      "evidence_sources": [
+        "recon-tier2-ix"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/2026-03-17-tars-governance-integration.belief.json",
+      "group": "archived",
+      "proposition": "The tars repo has adopted Demerzel governance integration",
+      "truth_value": "U",
+      "confidence": 0.5,
+      "evaluated_by": "demerzel",
+      "last_updated": "2026-03-17T22:00:00Z",
+      "supporting_items": 1,
+      "contradicting_items": 1,
+      "evidence_sources": [
+        "recon-tier2-tars"
+      ],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/slot-blue-health.belief.json",
+      "group": "archived",
+      "proposition": "Blue build slot is safe to run",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "ga-build-system",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/slot-green-health.belief.json",
+      "group": "archived",
+      "proposition": "Green build slot is safe to run",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "ga-build-system",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-displacement-terrain.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of displacement-terrain rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-earth-clouds.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of earth-clouds rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-earth-snow.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of earth-snow rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-earth-terminator.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of earth-terminator rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-milky-way-parallax.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of milky-way-parallax rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-planet-proportions.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of planet-proportions rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    },
+    {
+      "path": "state/beliefs/archived/visual-sun-flare.belief.json",
+      "group": "archived",
+      "proposition": "Visual quality of sun-flare rendering is acceptable",
+      "truth_value": "U",
+      "confidence": 0.0,
+      "evaluated_by": "visual-critic-loop",
+      "last_updated": "2026-03-27T00:00:00Z",
+      "supporting_items": 0,
+      "contradicting_items": 0,
+      "evidence_sources": [],
+      "items_whose_source_names_a_contract_message": 0,
+      "contract_messages_named": [],
+      "source_recommendation": []
+    }
+  ],
+  "key_names_used_in_the_belief_files": [
+    "abandon",
+    "advisory_escalation_changes",
+    "applied_delta",
+    "attempts",
+    "calibration",
+    "cap",
+    "change",
+    "claim",
+    "confidence",
+    "contradicting",
+    "corrected_at",
+    "evaluated_by",
+    "evidence",
+    "id",
+    "last_updated",
+    "n",
+    "previous_value",
+    "prior_nudge",
+    "prior_strategy_success_rates",
+    "proactive",
+    "proposition",
+    "rationale",
+    "refresh_note",
+    "reliability",
+    "requires_human_approval",
+    "resolution",
+    "resolution_verified_by",
+    "resolved_at",
+    "resolved_contradictions",
+    "risk_classes_modified",
+    "source",
+    "source_recommendation",
+    "standardize",
+    "strategy",
+    "strategy_success_rates",
+    "success_rate",
+    "successes",
+    "supporting",
+    "threshold_nudge",
+    "timestamp",
+    "truth_value"
+  ],
+  "yaml_belief_file": {
+    "path": "state/beliefs/3d-visualization-aesthetics.yaml",
+    "read_as": "text: lines counted by pattern ('- id:', '- source:', 'claim:', 'evaluated_by:')",
+    "header_comments": [
+      "3D Visualization Aesthetics — Tetravalent Beliefs",
+      "Discovered via multi-model pipeline (Claude Opus 4.6 + GPT-4o + web research)",
+      "Domain: holographic graph visualization for governance data (~100 nodes)",
+      "Date: 2026-03-24"
+    ],
+    "belief_entries": 19,
+    "evidence_items": 49,
+    "distinct_sources": 39,
+    "sources_named_more_than_once": {
+      "GPT-4o": 9,
+      "User feedback (2026-03-24)": 3
+    },
+    "evidence_items_whose_source_names": {
+      "GPT-4o": 10
+    },
+    "lines_with_evaluated_by": 0
+  },
+  "contract_schema_names": [
+    "belief-snapshot",
+    "claude-compaction-event",
+    "compliance-report",
+    "directive",
+    "external-sync-envelope",
+    "integrity-fields",
+    "knowledge-package",
+    "learning-outcome",
+    "ml-feedback-recommendation",
+    "qa-verdict",
+    "session-claim"
+  ],
+  "feedback_path": {
+    "message_schema": {
+      "path": "schemas/contracts/ml-feedback-recommendation.schema.json",
+      "title": "ML Feedback Recommendation",
+      "description": "A recommendation from an ix ML pipeline to Demerzel for governance improvement",
+      "pipelines": [
+        "confidence_calibrator",
+        "staleness_predictor",
+        "violation_pattern_detector",
+        "remediation_optimizer",
+        "governance_anomaly_detector"
+      ],
+      "integrity_fields_required": [
+        "message_id",
+        "origin_repo",
+        "origin_agent",
+        "timestamp",
+        "content_hash",
+        "hash_algorithm"
+      ],
+      "keys_that_name_the_sender": [
+        "origin_repo",
+        "origin_agent"
+      ]
+    },
+    "applying_script": {
+      "path": "scripts / apply_ml_feedback.py",
+      "first_paragraph_of_its_docstring": "Demerzel apply_ml_feedback — the *governor* half of the ML-governance feedback loop. The companion producer (ix/scripts/confidence_calibrator.py) emits ml-feedback-recommendation documents into state/oversight/ml-recommendations/; this script is Demerzel applying them within her constitutional guardrails.",
+      "belief_files_it_writes": [
+        "confidence-calibration.belief.json",
+        "remediation-effectiveness.belief.json"
+      ],
+      "statements": [
+        {
+          "meaning": "the evidence source is the message id",
+          "statement": "\"source\": f\"ml-feedback-recommendation {doc['message_id']}\",",
+          "occurrences": 2
+        },
+        {
+          "meaning": "the evidence claim is the message's rationale",
+          "statement": "\"claim\": doc[\"recommendation\"][\"rationale\"],",
+          "occurrences": 2
+        },
+        {
+          "meaning": "the belief's confidence is the message's confidence",
+          "statement": "\"confidence\": doc[\"confidence\"],",
+          "occurrences": 2
+        },
+        {
+          "meaning": "the evaluator written is demerzel",
+          "statement": "\"evaluated_by\": \"demerzel\",",
+          "occurrences": 2
+        }
+      ]
+    },
+    "inbox": {
+      "folder": "state/oversight/ml-recommendations",
+      "exists": true
+    }
+  },
+  "record_types": {
+    "belief_snapshot": {
+      "schema_path": "schemas/contracts/belief-snapshot.schema.json",
+      "title": "Belief Snapshot",
+      "description": "Export of an agent's current belief states for persistence and reconnaissance sync",
+      "required_keys": [
+        "id",
+        "repo",
+        "agent",
+        "beliefs",
+        "snapshot_at"
+      ],
+      "properties": [
+        "id",
+        "repo",
+        "agent",
+        "beliefs",
+        "snapshot_at",
+        "channel"
+      ],
+      "samples": [
+        {
+          "path": "examples/sample-data/belief-snapshot-tars.json",
+          "id": "bs-tars-2026-03-15",
+          "shape_test": [
+            "belief_snapshot"
+          ],
+          "sender_keys": [],
+          "repo": "tars",
+          "agent": "reflective-architect",
+          "snapshot_at": "2026-03-15T10:00:00Z",
+          "beliefs": 3
+        }
+      ]
+    },
+    "knowledge_state": {
+      "schema_path": "logic/knowledge-state.schema.json",
+      "title": "Knowledge State",
+      "description": "Tracks a knowledge transfer event with tetravalent logic integration for assessing comprehension",
+      "required_keys": [
+        "id",
+        "concept",
+        "layer",
+        "source",
+        "learner",
+        "delivery_mode",
+        "assessment",
+        "taught_by"
+      ],
+      "properties": [
+        "id",
+        "concept",
+        "layer",
+        "domain_context",
+        "source",
+        "learner",
+        "delivery_mode",
+        "assessment",
+        "taught_by",
+        "created_at",
+        "last_updated"
+      ],
+      "samples": [
+        {
+          "path": "examples/sample-data/knowledge-state-in-progress.json",
+          "id": "ks-governance-hierarchy-tars-agent",
+          "shape_test": [
+            "knowledge_state"
+          ],
+          "sender_keys": [
+            "learner",
+            "taught_by"
+          ],
+          "concept": "Constitutional hierarchy and precedence rules",
+          "taught_by": "seldon",
+          "learner": "reflective-architect",
+          "created_at": "2026-03-14T14:00:00Z",
+          "truth_value_before": "U",
+          "truth_value_after": "U",
+          "outcome": "in_progress"
+        },
+        {
+          "path": "examples/sample-data/knowledge-state-learned.json",
+          "id": "ks-governance-hierarchy-tars-learned",
+          "shape_test": [
+            "knowledge_state"
+          ],
+          "sender_keys": [
+            "learner",
+            "taught_by"
+          ],
+          "concept": "Constitutional hierarchy and precedence rules",
+          "taught_by": "seldon",
+          "learner": "reflective-architect",
+          "created_at": "2026-03-14T14:00:00Z",
+          "truth_value_before": "U",
+          "truth_value_after": "T",
+          "outcome": "learned"
+        }
+      ],
+      "taught_by_default": "seldon"
+    }
+  },
+  "record_shape_scan": {
+    "shape_test": "a JSON object (or an element of a top-level list) that holds every key the record type's schema lists under 'required'",
+    "files_with_the_shape": {
+      "belief_snapshot": [],
+      "knowledge_state": []
+    },
+    "state_knowledge_folder_exists": false
+  },
+  "sender_scan": {
+    "keys": [
+      "origin_repo",
+      "origin_agent",
+      "taught_by",
+      "learner",
+      "source_recommendation"
+    ],
+    "files_with_a_sender_key": {
+      "origin_repo": [],
+      "origin_agent": [],
+      "taught_by": [],
+      "learner": [],
+      "source_recommendation": [
+        "state/beliefs/confidence-calibration.belief.json",
+        "state/beliefs/remediation-effectiveness.belief.json"
+      ]
+    },
+    "files_that_hold_a_cited_message_id": {
+      "78cf708e-d072-4b3d-9985-6b350d5a43fa": [
+        "state/beliefs/remediation-effectiveness.belief.json"
+      ],
+      "a662f4a3-9c5f-4517-92eb-8f58721fc081": [
+        "state/beliefs/confidence-calibration.belief.json"
+      ]
+    },
+    "json_files_in_the_recommendation_inbox": []
+  },
+  "audit_note": {
+    "path": "state/snapshots/2026-07-25-audit-level1.snapshot.json",
+    "date": "2026-07-25",
+    "auditor": "demerzel",
+    "check": "audit-1-4-knowledge-state-schema",
+    "scanned": 0,
+    "note": "No state/knowledge/*.knowledge.json instances present (vacuously conformant)."
+  }
+}

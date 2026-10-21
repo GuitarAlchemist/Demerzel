@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-006",
+  "department": "psychohistory",
+  "question": "The repository stores a uniform 4-state governance transition matrix with no observations; what does a matrix estimated from the label transitions we do have look like, and what can it not say?",
+  "production_path": [
+    "investigation: took over an interrupted draft (extract.py, observed-input.json, scenarios.json) and read the five quality-trend JSONL files, the state/markov folder, docs/specs/governance-markov-simulation.md and state/driver/transition-weights.json at the pinned commit",
+    "extract: snapshot labels, timestamps and baseline flags, the stored 4-state matrix, the specification's lines and the seed table into observed-input.json, refusing any source file whose Git blob differs from the pin",
+    "model: define one transition as two consecutive labelled rows of one artifact; build the count matrix, the maximum-likelihood rows, exact one-sided 95% upper bounds located by integer comparison, add-one and add-0.5 smoothing, and read the stored matrix as a Markov chain in exact fractions",
+    "test: confront the smoothed rows and the seed table with the bounds, split the pairs by step length, and compare the stored uniform matrix with a synthetic sticky matrix that has the same stationary distribution",
+    "adversarial: planted label D as a negative control, drifted and tampered inputs, an independent recount by a second script, and the objection that the pairs of one run are not independent trials",
+    "test: byte-identical rerun of the analysis, 47 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "Estimated from the 1,529 label pairs, the transition matrix is the identity except for one cell, with at least one of the six labels having no row at all, so its informative content is an upper bound on leaving each label (below 5% per pair for every label that occurs); and the stored uniform matrix, read as a model, puts the chance of a Freeze within three cycles above one half.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the quality trend holds 1,548 rows in 88 runs for 18 artifacts, hence 1,529 usable consecutive label pairs; 6 of the 36 cells of the count matrix are non-zero (T>T 775, P>P 406, U>U 174, U>F 1, F>F 86, C>C 87) and no pair starts at or reaches label D. The maximum-likelihood estimate is 1 on the diagonal for T, P, F and C, 174/175 and 1/175 in row U, and undefined for row D.",
+    "The single change lies on one of the 11 pairs that start at a seed row, 78.5 days long; on the 1,518 pairs between feeder runs the estimate is the identity on five labels. With one pair as one independent trial, the exact one-sided 95% upper bounds on leaving a label are 0.386% (T), 0.735% (P), 2.682% (U), 3.385% (C) and 3.423% (F); if the labels of a run change together, the 86 steps between feeder runs bound any change at 3.423% per pair instead of 0.197%, and if each artifact's label is one assessment, 0 of the 9 artifacts that held T left it, a bound of 28.313% over the whole record.",
+    "Not anticipated by the hypothesis: add-one smoothing over the six labels gives leaving T a probability of 5/781 = 0.64%, above the 0.386% bound, and exceeds the bound for every row without an exit of 5 to 2,000 pairs, while a pseudo-count of 0.5 never does in that range. Under the assumption that one step of the belief_hexavalent seed table in state/driver/transition-weights.json is one pair, that table expects 492.4 changes among the 1,518 pairs where none occurred, and it forbids the one observed change, U to F, in one step (probability 0.0825 in two).",
+    "At the same commit state/markov/transition-matrix.json holds 0.25 in every cell and state/markov/predictions.json an empty list, and no governance state is recorded, although the classifier's inputs were recorded a few times (four resilience scores, one LOLLI/ERGOL ratio); read as a chain from Healthy, the stored matrix gives a Freeze a probability of 0.25 at the next cycle and 0.578125 within 3 cycles, with an expected wait of 4 cycles, and 11 cycles without a Freeze would reject 0.25 at the 5% level. A synthetic matrix that keeps each state with probability 0.97 has the same stationary distribution and gives 0.095618 within 10 cycles against 0.943686.",
+    "The analysis reran byte-identically and its 47 self-checks passed, including the planted-label negative controls. The independence of the pairs, the Markov assumption and the edit history of state/evolution/ were not tested, the label counts say nothing about the 4-state matrix, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T01:03:00Z"
+}

@@ -1,0 +1,24 @@
+{
+  "cycle_id": "cybernetics-2026-10-21-003",
+  "department": "cybernetics",
+  "question": "What do Demerzel's configured and observed course-production labels show about variety, and what additional observations are required before claiming regulatory capacity?",
+  "production_path": [
+    "investigation: inspect the pinned Demerzel course-production schema and eight records at revision 66083fc684b57a12ef307c19c3819d91c551295f",
+    "hypothesis: label inventories and a selected status sample can be counted, but neither establishes effective responses to specified disturbances",
+    "test: replay the pinned schema and records with scripts/streeling_verify_cyb003_snapshot.py",
+    "conclusion: teach the bounded counts and a proposed matched disturbance-response-outcome experiment while withholding capacity and healthy-ratio claims"
+  ],
+  "hypothesis": "A finite status alphabet and an eight-record status distribution support bounded variety and entropy calculations, but cannot establish that Demerzel keeps essential outcomes within bounds under disturbances.",
+  "test_method": "empirical",
+  "evidence": [
+    "The replay script reads Git revision 66083fc684b57a12ef307c19c3819d91c551295f rather than the current working tree. On 2026-10-21 it returned five configured status labels, three configured verdict labels, eight records, seven in_progress and one review_pending status, zero recorded review verdicts, and 0.543564 bits of empirical status entropy.",
+    "The corrected EN course has five answered exercises: configured versus observed label variety, sample entropy, invalid Cartesian-product inference, a failed-source review receipt, and a falsifier for an added-policy benefit claim. Its FR and ES drafts preserve these exercises and the conditional Ashby outcome bound.",
+    "No matched disturbance-response-outcome log, subject specialist approval, learner attempt, fluent-language review, or public Learn readback was obtained. The three proposed failure cases are an experiment design, not observed Demerzel regulation. Duration was not instrumented, so duration_seconds is zero.",
+    "The historical CYB-003 text named cybernetics-2026-03-23-003 without a matching cycle record; the temporarily referenced cybernetics-2026-03-23-002 record belongs to CYB-002. This cycle records the bounded correction rather than retroactively claiming the historical research happened."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-21T12:45:12Z"
+}

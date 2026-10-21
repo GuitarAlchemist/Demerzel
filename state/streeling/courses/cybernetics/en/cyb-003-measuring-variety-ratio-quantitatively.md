@@ -6,7 +6,7 @@ level: intermediate
 prerequisites: [cyb-001-vsm-ai-governance-mapping, cyb-002-active-dampening-cross-repo-oscillation]
 estimated_duration: "35 minutes"
 produced_by: codex-project-pilot
-research_cycle: cybernetics-2026-03-23-002
+research_cycle: cybernetics-2026-10-21-003
 version: "0.2.0"
 ---
 
@@ -79,6 +79,8 @@ Before running the test, record the input fixture, expected distinction, permitt
 | Answer inconsistent | Recomputed result differs | Revise answer, then replay exercise | New answer matches the fixed fixture |
 
 The table is an experiment design. It cannot establish a `response/disturbance` ratio until there are matched runs with outcomes. Even then, a ratio of entropy values alone would ignore which response works for which disturbance. Report the confusion matrix and task success alongside any information measure.
+
+**A conditional Ashby bound.** The revised project grammar expresses a bound on *outcomes*, not on counts of policy files. In a cycle where every disturbance receives a response and no one response brings two different disturbances to the same outcome, the largest response group contains at least `N_D/N_R` disturbances with distinct outcomes. Thus `N_O >= N_D/N_R`, or `V_O >= V_D - V_R` for positive counts. If one response brings several disturbances to the same acceptable outcome, that derivation does not apply: four disturbances can share one response and one outcome. Neither case proves that the observed outcomes are acceptable. Record each disturbance, response, and essential outcome before applying the bound; the schema-label fixture above has none of those observations.
 
 ### Practice exercise 4
 

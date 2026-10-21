@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-013",
+  "department": "psychohistory",
+  "question": "The resilience history shows 0.00, 0.64, 0.73, 0.82 over four cycles: which of these steps is distinguishable from chance, and what does a repeated injection set measure?",
+  "production_path": [
+    "investigation: listed state/resilience/ at the pinned commit and read its four files, then the two reports, the metric policy, the glossary line and the three injection files they name; found that the three red-team files are a separate series of 14 scenarios and that a report dated the same day as the first cycle scores the same injections 5/11 and 9/11 where the history records 0",
+    "extract: took over an interrupted fixture and rewrote extract.py to snapshot the twelve pinned files into observed-input.json, refusing any file whose Git blob differs from the pin and any new file in the folder",
+    "model: treat a cycle as 11 trials with one detection rate (exact Clopper-Pearson intervals), compare cycles by Fisher's exact test, two-sided, in a declared family of four comparisons with a Bonferroni threshold, and by the exact sign test because the same injections are rescored",
+    "test: exact enumeration of the family-wise false-positive rate over the recorded totals, homogeneity and trend tests on the three later cycles, the policy's trend rule under one fixed rate, and three readings of the second cycle's count",
+    "adversarial: the baseline rescored from the same-day report, levels in place of injections as units, a planted regression, a renamed injection and a lowered score as negative controls, tampered and missing inputs",
+    "test: byte-identical rerun of the extraction and of the analysis, 63 self-checks, five answered exercises and an answer-free transfer task on the red-team series"
+  ],
+  "hypothesis": "On the recorded counts, only the first step of the resilience history (0 to 7 of 11) lies outside what chance produces with eleven trials; the three later scores (7, 8 and 9 of 11) cannot be distinguished from one another, and because the same injections are rescored after fixes, the later scores measure repair of known cases, not resilience to new ones.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, state/resilience/history.json holds four records (chaos-001 to chaos-004, stamped within 20 hours on 2026-03-22 and 2026-03-23) that score the same 11 injections 0, 7, 8 and 9 caught; the exact 95% intervals are 0 to 0.285, 0.308 to 0.891, 0.390 to 0.940 and 0.482 to 0.977, and the last one touches all four bands of the metric policy.",
+    "Fisher's exact test, two-sided, gives p = 0.0039 for cycle 1 to 2, 1 for cycle 2 to 3, 1 for cycle 3 to 4 and 0.0002 for cycle 1 to 4, against a Bonferroni threshold of 0.0125 for the four tests; the three later cycles are compatible with one common rate (exact homogeneity p = 0.88, one-sided trend p = 0.24), and three independent cycles at a rate of 8/11 rise strictly in 8.5% of cases.",
+    "The first step depends on the reading: the exact sign test on the 7 injections that changed gives a two-sided p of 1/64 = 0.0156, below 0.0167 (three tests) and above 0.0125 (four); the status labels of the second cycle give 6 caught and its level scores 5 where 7 is recorded (p = 0.0124 and 0.035); and a report dated the same day as the first cycle scores the same injections 5/11, against which the second cycle gives p = 0.67.",
+    "The injection names are identical in the four records, each later record lists what was built before it was scored (three parser detections, two policy fixes, two schema fixes including a regression test for injection 10) and no injection goes from caught to missed; a synthetic held-out set of 11 would differ from 9/11 only at 3 caught or fewer (p = 0.030).",
+    "The extraction and the analysis reran byte-identically and the 63 self-checks passed, but no detector was run, no held-out set exists, the four comparisons were chosen after the scores were known, and the hypothesis is the coordinator's expectation in the module notes because this author took over a fixture that had already been run. When this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.65,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T00:24:00Z"
+}

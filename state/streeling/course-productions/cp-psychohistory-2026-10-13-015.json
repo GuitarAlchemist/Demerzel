@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-015",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-015",
+  "module_id": "psy-015-belief-contagion-small-population",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.75
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2298,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a synthetic fixture: an SIR model applied to a belief by analogy, with assumed reproduction numbers (4/5, 6/5, 3), one initial holder, 14 and 1,400 agents, 10,000 seeded runs per case checked against the exact jump-chain distribution (42 self-checks pass). Its observed part is a snapshot at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 showing that the repository records no holder passing a belief on to another agent: of 21 belief files, the 12 with content have one evaluator and 9 are empty scaffolds; two cite a recommendation message that its schema describes as coming from ix's ML pipeline (the two messages are not in the repository), which makes them adoptions from a document; none of 722 JSON files under state/ has the shape of a belief snapshot or a knowledge state, or a key naming a teacher, a learner or a message's sender (origin_repo, origin_agent). No rate can be estimated, so the model is untested on the project. The research cycle refutes the first half of the expectation written in the module notes: two humps appear only at R0 = 3, and there the deterministic curve does describe the upper hump. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-15T14:46:09Z"
+}
