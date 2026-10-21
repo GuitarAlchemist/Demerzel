@@ -52,6 +52,8 @@ The weave has `ply = 2` and a cyclic panel order. What are `ply_height` and `rig
 
 When the panel graph has a topological order, the implementation starts every level at zero. For each directed edge from a lower panel `u` to an upper panel `v`, it updates `level[v] = max(level[v], level[u] + 1)`. Processing in topological order ensures each predecessor's level is available. The highest zero-based level plus one is the chain length in panels. Multiplying by full thickness `t` gives the stack height for a fully determined ordering.
 
+The reported `face_levels` is one witness produced by this recurrence. Other valid stacks can exist; the per-face values are not a canonical labeling of every admissible stack.
+
 The synthetic DAG in the fixture has arcs `P → R`, `Q → R`, and `R → S`. P and Q may share level zero because the example gives no relation requiring separation between them; R must be above both, then S above R. These are abstract graph data, not an exported FOLD geometry or a claim about spatial overlap. Their purpose is to rehearse the recurrence before reading the larger crane test.
 
 ### Exercise 3: compute the chain

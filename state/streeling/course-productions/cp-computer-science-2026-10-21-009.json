@@ -7,9 +7,9 @@
   "phases": {
     "research": {"completed": true, "belief_value": "T", "belief_confidence": 0.9},
     "outline": {"completed": true, "sections": 5, "estimated_duration": "40 minutes"},
-    "content": {"completed": true, "word_count": 1661, "exercises": 5},
-    "translation": {"completed": false, "languages": ["en"]},
-    "review": {"completed": false, "feedback": "Pinned IX source inspected and 11 thickness integration tests replayed. Five answered exercises and hand-derived graph cards are ready. Human subject review and learner attempt, translations, scene import and exact-source public readback remain pending."},
+    "content": {"completed": true, "word_count": 1688, "exercises": 5},
+    "translation": {"completed": false, "languages": ["en", "fr", "es"]},
+    "review": {"completed": false, "feedback": "Pinned IX source inspected and 11 thickness integration tests replayed. EN/FR/ES drafts carry five answered exercises and hand-derived graph cards. Human subject and fluent-language review, learner attempt, PT/IT/DE, scene import and exact-source public readback remain pending."},
     "publish": {"completed": false}
   },
   "timestamp": "2026-10-21T20:48:00Z"
