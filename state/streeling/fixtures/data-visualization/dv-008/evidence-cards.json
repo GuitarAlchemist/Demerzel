@@ -1,0 +1,60 @@
+{
+  "scope": "synthetic classroom cards; no row represents an observed Streeling course",
+  "source_revision": "8a37e1d9a728a15ed384cbb912e3c8c518083d12",
+  "cards": [
+    {
+      "id": "A",
+      "authored_source": true,
+      "human_review_approved": true,
+      "anonymous_http_status": 200,
+      "index_source_matches": true,
+      "module_source_matches": true,
+      "heading_matches": true
+    },
+    {
+      "id": "B",
+      "authored_source": true,
+      "human_review_approved": true,
+      "anonymous_http_status": 404,
+      "index_source_matches": false,
+      "module_source_matches": false,
+      "heading_matches": false
+    },
+    {
+      "id": "C",
+      "authored_source": true,
+      "human_review_approved": false,
+      "anonymous_http_status": 200,
+      "index_source_matches": false,
+      "module_source_matches": false,
+      "heading_matches": true
+    },
+    {
+      "id": "D",
+      "authored_source": true,
+      "human_review_approved": false,
+      "anonymous_http_status": 404,
+      "index_source_matches": false,
+      "module_source_matches": false,
+      "heading_matches": false
+    },
+    {
+      "id": "E",
+      "authored_source": true,
+      "human_review_approved": false,
+      "anonymous_http_status": 200,
+      "index_source_matches": false,
+      "module_source_matches": true,
+      "heading_matches": true
+    },
+    {
+      "id": "F",
+      "authored_source": true,
+      "human_review_approved": false,
+      "anonymous_http_status": 200,
+      "index_source_matches": true,
+      "module_source_matches": true,
+      "heading_matches": true
+    }
+  ]
+}

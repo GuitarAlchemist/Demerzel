@@ -1,0 +1,25 @@
+{
+  "cycle_id": "data-visualization-2026-10-21-008",
+  "department": "data-visualization",
+  "question": "How should Streeling show authored core courses, source-bound human approvals, and anonymous exact-source public readback without treating an unmeasured publication state as zero or conflating the three gates?",
+  "production_path": [
+    "investigation: inspect Demerzel progress and public-readback scripts at pinned revision 8a37e1d9a728a15ed384cbb912e3c8c518083d12",
+    "data_relationship: three distinct evidence dimensions joined by course and source revision",
+    "chart_type: aligned course-status matrix with observed, absent, stale, and not-measured labels",
+    "design_pattern: preserve scope and revision rather than imply a monotonic funnel",
+    "test: deterministic six-card synthetic matrix with two cross-stage exceptions"
+  ],
+  "hypothesis": "An aligned evidence matrix with explicit unknown cells better preserves Streeling's three independent delivery claims than a single completion bar or assumed source-to-review-to-public funnel.",
+  "test_method": "simulation",
+  "evidence": [
+    "At Demerzel commit 8a37e1d9a728a15ed384cbb912e3c8c518083d12, scripts/streeling_course_progress.py (blob d467443a57c298abdb54d2a0b188eec849150713) reports 120 distinct numbered core codes among 21 course-bearing directories, 121 authored English files including optional CYB-026, and zero production records marked review approved. The report does not inspect the public Learn site or establish human-review provenance.",
+    "At the same commit, scripts/streeling_public_readback.py (blob f72650b7b35ba079606fb2987cde4aa1d2bff00b) fetches selected index and module pages anonymously and checks HTTP 200, exact source links, and module heading. It does not read every page unless explicitly given every module, and it does not validate a human review receipt or course content beyond title/provenance.",
+    "The local six-card JSON fixture is explicitly synthetic. scripts/streeling_fixtures/data-visualization/dv-008/evaluate_cards.py returns authored=6, review_approved=2, exact_public_readback=2, all_three_gates=1. Card B is approved but HTTP 404, and card F passes exact public checks but lacks review approval; the later states are not guaranteed subsets of the earlier ones.",
+    "No exhaustive live public sweep, human subject reviewer, actual learner response, localization review, or deployment was performed. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.68,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-21T12:40:39Z"
+}
