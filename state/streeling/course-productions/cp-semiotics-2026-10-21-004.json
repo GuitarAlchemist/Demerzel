@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-semiotics-2026-10-21-004",
+  "department": "semiotics",
+  "research_cycle_id": "semiotics-2026-10-21-004",
+  "module_id": "sem-004-face-identity-under-reindexing",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.72
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 1626,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": false,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English source and faithful French/Spanish drafts with five answered exercises each; explicit synthetic permutation fixture and unbound review brief prepared. Human subject review, learner attempt, fluent-language review, Portuguese/Italian/German drafts, scene trial and publication remain open."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-21T20:53:42Z"
+}

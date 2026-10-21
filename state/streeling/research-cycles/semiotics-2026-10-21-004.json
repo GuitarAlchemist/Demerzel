@@ -1,0 +1,26 @@
+{
+  "cycle_id": "semiotics-2026-10-21-004",
+  "department": "semiotics",
+  "question": "How should future IX origami scene selections and cross-agent reports preserve material-face reference through renumbering without confusing array indices, provenance, level witnesses, or orientation-relative signs?",
+  "production_path": [
+    "investigation: inspect pinned IX controls, thickness implementation and crane control assertions",
+    "sign_relation: distinguish revision-local array addresses from material correspondence and supplied provenance labels",
+    "representation: explicit synthetic non-self-inverse permutation and inverse table",
+    "test: independently derive forward transport, inverse compositions, stale selection and remapped order triple",
+    "transfer: prepare an answer-free learner task and a falsifiable proposed Godot selection trial"
+  ],
+  "hypothesis": "A declared old-to-new map and its inverse let agents preserve a stipulated face correspondence and avoid raw-array or stale-index mistakes; this remains distinct from proving a universal persistent-ID system or invariant levels under turnover.",
+  "test_method": "thought_experiment",
+  "evidence": [
+    "At IX commit d7c22fdd6a62becb66b9d7246ea85850e7c55854, crates/ix-origami/src/controls.rs (blob 29e73655fdbcb14e08c06520c9773950ce0b6407) documents Permutation as old-to-new and places out[perm[old]]=item; renumber remaps face references, preserves relative signs, cyclically rotates boundaries and shuffles relation entries.",
+    "Pinned tests/thickness.rs (blob 3342419488ca7039d8a76e00366f26d5416234b9), controls_leave_the_stack_unchanged, compares new[perm.faces[f]] with old[f] for crane seeds 1 through 5, checks complete Stack equality for the tested rigid in-plane motion, and checks only aggregate ply/levels/heights under turnover.",
+    "Pinned src/thickness.rs (blob 43351fe867a83a10ab38113cb86db8633a0112f1) describes face_levels as one respecting stack witness and returns None with cycles or inexact order; levels do not establish unique material identity.",
+    "The explicitly synthetic fixture uses p=[2,0,3,1] and q=[1,3,0,2], input levels [0,2,1,3] and output levels [2,3,0,1]. It stipulates material labels for arithmetic, not computed IX geometry or persistent IDs. Both compositions yield identity and input selection 1/B moves to output 0/B; stale output 1 is D.",
+    "The coordinator independently reported 11 passing thickness-target tests at the pinned unchanged IX HEAD on 2026-10-21; this artifact worker did not repeat Cargo. No scene integration, learner attempt, human subject review, fluent-language review or publication was performed. Research duration was not instrumented; duration_seconds=0 records that limit."
+  ],
+  "conclusion": "discover_question",
+  "belief_value": "P",
+  "belief_confidence": 0.72,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-21T20:53:42Z"
+}
