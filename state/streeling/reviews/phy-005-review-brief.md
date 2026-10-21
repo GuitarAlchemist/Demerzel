@@ -1,10 +1,26 @@
 # PHY-005 exact-source review brief
 
-Status: **unbound draft review request**. Subject approval, fluent-language approval, learner evidence, and publication readback do not exist for this package. This brief does not issue a review receipt.
+Status: **open review request**. Subject approval, fluent-language approval, learner evidence, and publication readback do not exist for this package. This brief does not issue a review receipt.
 
-## Source binding required before a verdict
 
-The coordinator must bind an integrated Demerzel source commit and the Git blob for each locale before requesting a source-bound review. The current draft does not invent those identifiers. Record the full commit, exact path, locale blob, reviewer identifier/pseudonym, UTC time, review kind, findings, and verdict. A subsequent content edit requires explicit review of the changed blob.
+## Frozen source target
+
+Demerzel source commit `6531ae9a0eb76f9402790f2b1b600c21330dfb66`. These are review targets, not approval receipts.
+
+| Artifact path | Git blob |
+|---|---|
+| `state/streeling/courses/physics/en/phy-005-sheet-thickness-and-scene-units.md` | `24704663e5178e05c404c69207c8459de2282f4e` |
+| `state/streeling/courses/physics/fr/phy-005-sheet-thickness-and-scene-units.fr.md` | `c4e31e22b9f60aceb325b7a066a8152edbe2248c` |
+| `state/streeling/courses/physics/es/phy-005-sheet-thickness-and-scene-units.es.md` | `dd187dee0a0506312bc2f447eb801e7c46d273cf` |
+| `state/streeling/fixtures/physics/phy-005/scenarios.json` | `5b27b9674aef8e09461f250cc624cf6c7c703f3d` |
+| `state/streeling/fixtures/physics/phy-005/README.md` | `c2a0a97248483e3961499cd7ea5141befd6ec6cb` |
+| `state/streeling/course-productions/cp-physics-2026-10-21-005.json` | `bea3e53acc859478999819a435821f196d6284e7` |
+| `state/streeling/research-cycles/physics-2026-10-21-005.json` | `e279e0a41b78d3383301157e1a3ae702830c54b3` |
+| `state/streeling/reviews/phy-005-learner-task.md` | `b2911d3f0b5e8ba74f1ca8d35aa28a2212fe45e9` |
+
+## Review identity
+
+The frozen source table binds the integrated Demerzel commit and locale blobs. Record the full commit, exact path, locale blob, reviewer identifier/pseudonym, UTC time, review kind, findings, and verdict. A subsequent content edit requires explicit review of the changed blob.
 
 Intended source files:
 

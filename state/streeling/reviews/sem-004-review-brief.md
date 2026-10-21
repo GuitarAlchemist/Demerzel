@@ -1,6 +1,22 @@
 # SEM-004 source-bound review brief
 
-Status: **open and unbound**. This is a review request, not a verdict. The coordinator must bind the final Demerzel commit and exact blobs for the EN/FR/ES sources, fixture, production/research records and learner handout before review starts. No source approval is claimed by this document. Record reviewer identity or pseudonym and UTC date; later content changes require a diff review.
+Status: **open**. This is a review request, not a verdict. The frozen source table binds the EN/FR/ES sources, fixture, production/research records and learner handout. No source approval is claimed. Record reviewer identity or pseudonym and UTC date; later content changes require a diff review.
+
+
+## Frozen source target
+
+Demerzel source commit `6531ae9a0eb76f9402790f2b1b600c21330dfb66`. These are review targets, not approval receipts.
+
+| Artifact path | Git blob |
+|---|---|
+| `state/streeling/courses/semiotics/en/sem-004-face-identity-under-reindexing.md` | `f7229fcc56d94a1b38bd972808bfe22caca9fe4f` |
+| `state/streeling/courses/semiotics/fr/sem-004-face-identity-under-reindexing.fr.md` | `792249d85cdbbb85b03b56ae0a0d1020627863cb` |
+| `state/streeling/courses/semiotics/es/sem-004-face-identity-under-reindexing.es.md` | `db7417bd91f9eed21decf0478d9d914ec4ebc08f` |
+| `state/streeling/fixtures/semiotics/sem-004/scenarios.json` | `5962841857324ddda50845487da1586e2b187cad` |
+| `state/streeling/fixtures/semiotics/sem-004/README.md` | `d53f945d9722dbc587dabd77bdef8d5481f09235` |
+| `state/streeling/course-productions/cp-semiotics-2026-10-21-004.json` | `8053584474b6091c150ae65af779ccb54b892f58` |
+| `state/streeling/research-cycles/semiotics-2026-10-21-004.json` | `94984ae7eaf8c070198fb54614ab8c25c507468b` |
+| `state/streeling/reviews/sem-004-learner-task.md` | `6ee1f8bdfb4234cd236fd1d14bc729190ae32b55` |
 
 ## Evidence to challenge
 

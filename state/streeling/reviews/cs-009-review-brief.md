@@ -1,6 +1,22 @@
 # CS-009 source-bound subject review
 
-Status: open; no human verdict or learner attempt. The new course and fixture are not yet bound to a Demerzel commit here; the coordinator must record exact course, JSON and README blobs before review.
+Status: open; no human verdict or learner attempt. The frozen source table binds the course, fixture, records and learner task. Record reviewer, date and findings against those exact blobs.
+
+
+## Frozen source target
+
+Demerzel source commit `6531ae9a0eb76f9402790f2b1b600c21330dfb66`. These are review targets, not approval receipts.
+
+| Artifact path | Git blob |
+|---|---|
+| `state/streeling/courses/computer-science/en/cs-009-composing-origami-panel-constraints.md` | `ce0c8f77db223f1a4a00966d536c585a956974b1` |
+| `state/streeling/courses/computer-science/fr/cs-009-composing-origami-panel-constraints.fr.md` | `3ddb0c4bda020b37bdbd7c1250db28c23ea477ab` |
+| `state/streeling/courses/computer-science/es/cs-009-composing-origami-panel-constraints.es.md` | `9d7e4a01778df2954ddb55d709f09140862b6002` |
+| `state/streeling/fixtures/computer-science/cs-009/scenarios.json` | `1ec24ea50a199b85c1d48ea37880ae9191f4ed85` |
+| `state/streeling/fixtures/computer-science/cs-009/README.md` | `f42417fe4e733efd8fbab2431dd6573b9d3f00bf` |
+| `state/streeling/course-productions/cp-computer-science-2026-10-21-009.json` | `6e61185dd86cd9d6aa558d324d220b6c4540886a` |
+| `state/streeling/research-cycles/computer-science-2026-10-21-009.json` | `fe5d53c2f6e54d564c7327a871c79738ffe9b88d` |
+| `state/streeling/reviews/cs-009-learner-task.md` | `0db478482245debafa21addaebdfb8d34eaa3962` |
 
 ## Pinned implementation
 
