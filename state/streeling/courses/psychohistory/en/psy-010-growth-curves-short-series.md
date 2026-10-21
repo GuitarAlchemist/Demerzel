@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will turn a commit history into a daily series, fit three growth curves to it by least squares, read from each the date of a target, and test whether the data can tell them apart. **Project question:** English course modules were added in bursts. What do exponential, logistic and linear fits to the cumulative count each predict for reaching 525, and can the history tell them apart?
 
-[PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md) pictures healthy growth as compound interest. If the library compounded, its count would be exponential; here that is one candidate among three. [PSY-022](psy-022-competing-explanations.md) compares models with likelihood criteria, [PSY-018](psy-018-backtesting-without-leakage.md) tests forecasts on held-out data, and [PSY-023](psy-023-monitoring-a-plan.md) monitors a plan once a schedule exists.
+[PSY-001](psy-001-intro-fractal-compounding.md) pictures healthy growth as compound interest. If the library compounded, its count would be exponential; here that is one candidate among three. [PSY-022](psy-022-competing-explanations.md) compares models with likelihood criteria, [PSY-018](psy-018-backtesting-without-leakage.md) tests forecasts on held-out data, and [PSY-023](psy-023-monitoring-a-plan.md) monitors a plan once a schedule exists.
 
 ## 1. Turn the history into a series
 

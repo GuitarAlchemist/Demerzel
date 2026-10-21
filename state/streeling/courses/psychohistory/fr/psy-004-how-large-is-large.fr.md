@@ -18,7 +18,7 @@ version: "0.1.0"
 
 Vous placerez un intervalle exact sur une proportion observée parmi quelques agents qui répondent par oui ou par non, vous direz comment sa largeur diminue quand le groupe grandit, et vous remplacerez le nombre d'agents par une taille d'échantillon effective quand les agents partagent une cause. **Question de projet :** le département affirme que le comportement agrégé de 14 personas sur 4 dépôts suit des lois mathématiques. Quelle est l'ampleur de l'incertitude sur un agrégat de 14, et qu'y change un contexte partagé ?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) affirme que l'agrégat suit des lois statistiques, et lit la corrélation entre dépôts comme un signal de couplage. [PSY-019](psy-019-combining-correlated-forecasters.fr.md) applique la même arithmétique aux erreurs de prévision ; [PSY-024](psy-024-the-single-actor.fr.md) demande qui a agi dans les événements enregistrés.
+[PSY-002](psy-002-governance-phase-transitions.fr.md) affirme que l'agrégat suit des lois statistiques, et lit la corrélation entre dépôts comme un signal de couplage. [PSY-019](psy-019-combining-correlated-forecasters.fr.md) applique la même arithmétique aux erreurs de prévision ; [PSY-024](psy-024-the-single-actor.fr.md) demande qui a agi dans les événements enregistrés.
 
 ## 1. Ce que dit la fiche et ce que contient le dépôt
 

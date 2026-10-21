@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will trace a calibration record to the files behind its counts, put an exact interval on a proportion of six, compute how often a calibrated forecaster shows the same count, find the sample size that separates two rates, and follow a correction rule fed six observations at a time. **Project question:** a belief file records that 2 of 6 high-confidence beliefs were later revised and nudges a threshold by −0.1. What can six observations say about calibration?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) lists belief skew among six signals of an approaching regime shift; this module asks how much one small count about beliefs can carry. [PSY-004](psy-004-how-large-is-large.md) builds the exact interval reused here, [PSY-016](psy-016-brier-score.md) scores probability forecasts with the Brier score, and [PSY-025](psy-025-capstone-preregistered-forecast.md) uses both.
+[PSY-002](psy-002-governance-phase-transitions.md) lists belief skew among six signals of an approaching regime shift; this module asks how much one small count about beliefs can carry. [PSY-004](psy-004-how-large-is-large.md) builds the exact interval reused here, [PSY-016](psy-016-brier-score.md) scores probability forecasts with the Brier score, and [PSY-025](psy-025-capstone-preregistered-forecast.md) uses both.
 
 ## 1. Read the record, then recount it
 

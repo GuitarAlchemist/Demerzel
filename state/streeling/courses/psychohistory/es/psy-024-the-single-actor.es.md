@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo contará los actores que nombra un registro, medirá lo concentrada que está su actividad, acotará esa medida cuando se ha perdido parte del registro y dirá qué establece el resultado sobre quién actuó. **Pregunta de proyecto:** las leyes del agregado suponen muchos actores independientes. ¿Quién generó realmente los eventos registrados?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) interpreta el comportamiento agregado del ecosistema como sujeto a leyes estadísticas; [PSY-004](psy-004-how-large-is-large.es.md) muestra a cuán pocos agentes independientes equivalen catorce agentes correlacionados. Este módulo plantea una pregunta previa: ¿cuántos actores contienen los registros? [PSY-009](psy-009-concentration-and-heavy-tails.es.md) mide la concentración del mismo registro por días; este, por actores.
+[PSY-002](psy-002-governance-phase-transitions.es.md) interpreta el comportamiento agregado del ecosistema como sujeto a leyes estadísticas; [PSY-004](psy-004-how-large-is-large.es.md) muestra a cuán pocos agentes independientes equivalen catorce agentes correlacionados. Este módulo plantea una pregunta previa: ¿cuántos actores contienen los registros? [PSY-009](psy-009-concentration-and-heavy-tails.es.md) mide la concentración del mismo registro por días; este, por actores.
 
 ## 1. Un solo remitente, y lo que significa «sender»
 

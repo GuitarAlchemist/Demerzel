@@ -18,7 +18,7 @@ version: "0.1.0"
 
 Vous transformerez un journal d'étiquettes en une matrice de comptages, vous en estimerez des probabilités de transition, vous bornerez une transition qui n'a jamais été observée, et vous direz ce que le lissage et une matrice uniforme ajoutent aux données. **Question de projet :** le dépôt stocke une matrice de transition de gouvernance uniforme à 4 états, sans aucune observation ; à quoi ressemble une matrice estimée à partir des transitions d'étiquettes dont nous disposons, et que ne peut-elle pas dire ?
 
-[PSY-005](psy-005-persistence-baseline.fr.md) a évalué la prévision « rien ne change » sur ces étiquettes ; le présent module borne la probabilité de changement que cette évaluation laissait ouverte. Les lois stationnaires et les temps d'atteinte viennent de [MAT-020](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/mathematics/en/mat-020-markov-chains-hmm.md).
+[PSY-005](psy-005-persistence-baseline.fr.md) a évalué la prévision « rien ne change » sur ces étiquettes ; le présent module borne la probabilité de changement que cette évaluation laissait ouverte. Les lois stationnaires et les temps d'atteinte viennent de [MAT-020](../../mathematics/fr/mat-020-markov-chains-hmm.fr.md).
 
 ## 1. Compter les transitions, puis diviser
 

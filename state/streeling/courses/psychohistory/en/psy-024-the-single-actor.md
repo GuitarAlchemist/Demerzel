@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will count the actors that a record names, measure how concentrated their activity is, bound that measure when part of the record is lost, and say what the result establishes about who acted. **Project question:** aggregate laws assume many independent actors. Who actually generated the recorded events?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads the ecosystem's aggregate behaviour as following statistical laws; [PSY-004](psy-004-how-large-is-large.md) shows how few independent agents fourteen correlated ones are worth. This module asks an earlier question: how many actors do the records contain? [PSY-009](psy-009-concentration-and-heavy-tails.md) measures the same log's concentration over days; this one, over actors.
+[PSY-002](psy-002-governance-phase-transitions.md) reads the ecosystem's aggregate behaviour as following statistical laws; [PSY-004](psy-004-how-large-is-large.md) shows how few independent agents fourteen correlated ones are worth. This module asks an earlier question: how many actors do the records contain? [PSY-009](psy-009-concentration-and-heavy-tails.md) measures the same log's concentration over days; this one, over actors.
 
 ## 1. One sender, and what "sender" means
 

@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo ordenará los días de un registro de eventos, medirá lo desigual que es el reparto de los eventos entre ellos (proporciones de los k primeros, curva de Lorenz, coeficiente de Gini), comparará una media con una mediana y pondrá a prueba un plan de capacidad dimensionado con la media frente a otro dimensionado con un cuantil. **Pregunta de proyecto:** ¿qué parte de la actividad de los disparadores se concentra en los pocos días más cargados, y qué efecto tiene eso sobre un plan de capacidad basado en la media?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) interpreta la duplicación de una tasa de señales, un recuento dividido por una ventana de tiempo, como indicio de una transición próxima. Una tasa es una media, y este módulo mide qué parte de una media pueden sostener unos pocos días. [PSY-008](psy-008-bursts-are-not-rates.es.md) compara los mismos recuentos diarios con una referencia de Poisson; [PSY-007](psy-007-power-law-or-not.es.md) y [PSY-022](psy-022-competing-explanations.es.md) ajustan distribuciones.
+[PSY-002](psy-002-governance-phase-transitions.es.md) interpreta la duplicación de una tasa de señales, un recuento dividido por una ventana de tiempo, como indicio de una transición próxima. Una tasa es una media, y este módulo mide qué parte de una media pueden sostener unos pocos días. [PSY-008](psy-008-bursts-are-not-rates.es.md) compara los mismos recuentos diarios con una referencia de Poisson; [PSY-007](psy-007-power-law-or-not.es.md) y [PSY-022](psy-022-competing-explanations.es.md) ajustan distribuciones.
 
 ## 1. Ordenar los días y sumar desde arriba
 

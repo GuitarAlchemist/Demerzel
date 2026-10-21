@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will read how a number is produced before reading its series, find a change of instrument in a log, sort every jump into "measurement starts", "instrument changes" or "same instrument", and show what an alarm rule does when the three are mixed. **Project question:** the quality trend has rows flagged `rebaseline` and a `citation_source` field that appears part-way through; which jumps in the series are the instrument changing rather than the system?
 
-[PSY-002](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md) reads a fast change in a governance indicator as a sign of an approaching regime shift. That reading assumes the indicator was produced the same way before and after; this module tests the assumption on the citation column of the log that [PSY-005](psy-005-persistence-baseline.md) introduced. [PSY-012](psy-012-early-warning-false-alarms.md) covers early-warning indicators.
+[PSY-002](psy-002-governance-phase-transitions.md) reads a fast change in a governance indicator as a sign of an approaching regime shift. That reading assumes the indicator was produced the same way before and after; this module tests the assumption on the citation column of the log that [PSY-005](psy-005-persistence-baseline.md) introduced. [PSY-012](psy-012-early-warning-false-alarms.md) covers early-warning indicators.
 
 ## 1. Read the instrument before the series
 

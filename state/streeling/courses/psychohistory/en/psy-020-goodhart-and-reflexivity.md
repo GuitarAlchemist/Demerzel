@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will read a counting rule and say what it cannot see, compute what one added file does to the counts, state when rewarding a proxy degrades it, and correct a forecast that moves its target. **Project question:** the quality trend counts citations with `git grep`; what happens to such a proxy once agents know it is watched?
 
-A *proxy* is measured in place of a *target* that cannot be. [PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md) contrasts LOLLI, "artifact count without regard to quality", with ERGOL, "real productive capacity", and lists "Citations per artifact" as the ERGOL to optimise. [PSY-011](psy-011-measurement-change-or-system-change.md) asks whether the instrument changed; here it is fixed, and the question is what the measured can do to it. Nobody in the project has been observed inflating this count: the subject is a mechanism and when it bites.
+A *proxy* is measured in place of a *target* that cannot be. [PSY-001](psy-001-intro-fractal-compounding.md) contrasts LOLLI, "artifact count without regard to quality", with ERGOL, "real productive capacity", and lists "Citations per artifact" as the ERGOL to optimise. [PSY-011](psy-011-measurement-change-or-system-change.md) asks whether the instrument changed; here it is fixed, and the question is what the measured can do to it. Nobody in the project has been observed inflating this count: the subject is a mechanism and when it bites.
 
 ## 1. What the count can see
 

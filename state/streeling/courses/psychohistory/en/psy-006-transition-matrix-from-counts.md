@@ -18,7 +18,7 @@ version: "0.1.0"
 
 You will turn a log of labels into a matrix of counts, estimate transition probabilities from it, bound a transition that was never observed, and say what smoothing and a uniform matrix add to the data. **Project question:** the repository stores a uniform 4-state governance transition matrix with no observations; what does a matrix estimated from the label transitions we do have look like, and what can it not say?
 
-[PSY-005](psy-005-persistence-baseline.md) scored the forecast "nothing changes" on these labels; this module bounds the chance of change it left open. Stationary distributions and hitting times come from [MAT-020](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/mathematics/en/mat-020-markov-chains-hmm.md).
+[PSY-005](psy-005-persistence-baseline.md) scored the forecast "nothing changes" on these labels; this module bounds the chance of change it left open. Stationary distributions and hitting times come from [MAT-020](../../mathematics/en/mat-020-markov-chains-hmm.md).
 
 ## 1. Count the transitions, then divide
 

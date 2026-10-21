@@ -18,7 +18,7 @@ version: "0.1.0"
 
 En este módulo convertirá un historial de commits en una serie diaria, le ajustará tres curvas de crecimiento por mínimos cuadrados, leerá en cada una la fecha en que se alcanza un objetivo y comprobará si los datos permiten distinguirlas. **Pregunta de proyecto:** los módulos de curso en inglés se añadieron en ráfagas. ¿Qué predicen los ajustes exponencial, logístico y lineal del recuento acumulado sobre la fecha en que se llegará a 525, y permite el historial distinguirlos?
 
-[PSY-001](https://github.com/GuitarAlchemist/Demerzel/blob/4b03838800dcd4894f1e026461979bff1d985ca8/state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md) representa el crecimiento sano como un interés compuesto. Si la biblioteca creciera de forma compuesta, su recuento sería exponencial; aquí es solo una de las tres curvas candidatas. [PSY-022](psy-022-competing-explanations.es.md) compara modelos con criterios de verosimilitud, [PSY-018](psy-018-backtesting-without-leakage.es.md) pone a prueba pronósticos sobre datos reservados y [PSY-023](psy-023-monitoring-a-plan.es.md) vigila un plan una vez que existe un calendario.
+[PSY-001](psy-001-intro-fractal-compounding.es.md) representa el crecimiento sano como un interés compuesto. Si la biblioteca creciera de forma compuesta, su recuento sería exponencial; aquí es solo una de las tres curvas candidatas. [PSY-022](psy-022-competing-explanations.es.md) compara modelos con criterios de verosimilitud, [PSY-018](psy-018-backtesting-without-leakage.es.md) pone a prueba pronósticos sobre datos reservados y [PSY-023](psy-023-monitoring-a-plan.es.md) vigila un plan una vez que existe un calendario.
 
 ## 1. Convertir el historial en una serie
 
