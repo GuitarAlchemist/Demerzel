@@ -1,6 +1,6 @@
 # DV-008 source-bound review brief
 
-Status: **open**. This is a request for a human subject review and an independent learner attempt, not a verdict. The fixture layout and course links changed after CI found a missing `analyze.py`; the former source binding is superseded. Record the new Demerzel source commit and exact course, scenarios, and analyzer blobs before review, plus the UTC review date and reviewer identity or pseudonym. Any later content edit needs a new diff review.
+Status: **open**. This is a request for a human subject review and an independent learner attempt, not a verdict. Review Demerzel source commit `3a2699a8e3105836a93a404928d80674c5c9aaa9`: course blob `9a9b0c80e049a955f9d908b2dc3c43bef1e511af`, scenarios blob `93c560dcc19f02737403ac977215a1e1996c453c`, analyzer blob `d9cdc37d8b8b7849f332f73b24ea6316aa99d4c7`, and saved results blob `5f6eab5d9f5960b863b7a689cf32821a33855ad7`. Record the UTC review date and reviewer identity or pseudonym. Any later content edit needs a new diff review.
 
 ## Pinned evidence to challenge
 
