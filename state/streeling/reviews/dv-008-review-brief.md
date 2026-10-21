@@ -1,6 +1,6 @@
 # DV-008 source-bound review brief
 
-Status: **open**. This is a request for a human subject review and an independent learner attempt, not a verdict. The new DV-008 course has not yet been committed, so its source commit and Git blob are **unbound** here. Before reviewing, record the exact Demerzel course blob, fixture JSON blob, evaluator blob, UTC date, and reviewer identity or pseudonym. Any later content edit needs a new diff review.
+Status: **open**. This is a request for a human subject review and an independent learner attempt, not a verdict. Review Demerzel commit `2641071b23b85cbef2e74bf69c8ec52de25f173d`: course blob `d307a8324de9313ad6d79d6eab541f232914dddc`, fixture JSON blob `93c560dcc19f02737403ac977215a1e1996c453c`, and evaluator blob `c898c183d057f1e52286870578be1795dc1e6aec`. Record the UTC review date and reviewer identity or pseudonym. Any later content edit needs a new diff review.
 
 ## Pinned evidence to challenge
 
