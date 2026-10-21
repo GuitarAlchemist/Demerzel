@@ -1,0 +1,54 @@
+{
+  "scope": "synthetic classroom cards; no row represents an observed Streeling course",
+  "source_revision": "8a37e1d9a728a15ed384cbb912e3c8c518083d12",
+  "counts": {
+    "authored": 6,
+    "review_approved": 2,
+    "exact_public_readback": 2,
+    "all_three_gates": 1
+  },
+  "rows": [
+    {
+      "id": "A",
+      "authored_source": true,
+      "human_review_approved": true,
+      "exact_public_readback": true,
+      "all_three_gates": true
+    },
+    {
+      "id": "B",
+      "authored_source": true,
+      "human_review_approved": true,
+      "exact_public_readback": false,
+      "all_three_gates": false
+    },
+    {
+      "id": "C",
+      "authored_source": true,
+      "human_review_approved": false,
+      "exact_public_readback": false,
+      "all_three_gates": false
+    },
+    {
+      "id": "D",
+      "authored_source": true,
+      "human_review_approved": false,
+      "exact_public_readback": false,
+      "all_three_gates": false
+    },
+    {
+      "id": "E",
+      "authored_source": true,
+      "human_review_approved": false,
+      "exact_public_readback": false,
+      "all_three_gates": false
+    },
+    {
+      "id": "F",
+      "authored_source": true,
+      "human_review_approved": false,
+      "exact_public_readback": true,
+      "all_three_gates": false
+    }
+  ]
+}

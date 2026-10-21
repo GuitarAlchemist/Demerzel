@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
 
-FIXTURE = Path(__file__).resolve().parents[4] / "state/streeling/fixtures/data-visualization/dv-008/evidence-cards.json"
+DATA = Path(__file__).resolve().parents[4] / "state/streeling/fixtures/data-visualization/dv-008"
+FIXTURE = DATA / "scenarios.json"
+RESULTS = DATA / "results.json"
 FLAGS = ("authored_source", "human_review_approved", "index_source_matches", "module_source_matches", "heading_matches")
 
 
@@ -52,4 +55,13 @@ def evaluate(path: Path = FIXTURE) -> dict:
 
 
 if __name__ == "__main__":
-    print(json.dumps(evaluate(), indent=2))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="compare fresh output with saved results")
+    args = parser.parse_args()
+    fresh = evaluate()
+    if args.check:
+        if fresh != json.loads(RESULTS.read_text(encoding="utf-8")):
+            parser.exit(1, "DV-008 synthetic results differ from saved results\n")
+        print("PASS DV-008 synthetic results match saved results")
+    else:
+        print(json.dumps(fresh, indent=2))

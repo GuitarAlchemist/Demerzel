@@ -41,10 +41,10 @@ At the pinned revision, should the chart headline read â€œ121 of 525 complete,â€
 
 Use one row per course code and three aligned columns. **Source** means an English file with a distinct core code; **review** means an applicable human verdict on that exact course version; **public** means a successful anonymous readback against the same source SHA. A production-record boolean is a useful inventory signal, but the reviewer, verdict, and content blob must also be inspected before claiming a valid human review. An HTTP 200 alone says only that some page responded.
 
-The local [synthetic cards](../../../fixtures/data-visualization/dv-008/evidence-cards.json) and [evaluator](../../../../../scripts/streeling_fixtures/data-visualization/dv-008/evaluate_cards.py) let you rehearse this layout. Run from the Demerzel repository root:
+The local [synthetic cards](../../../fixtures/data-visualization/dv-008/scenarios.json) and [evaluator](../../../../../scripts/streeling_fixtures/data-visualization/dv-008/analyze.py) let you rehearse this layout. Run from the Demerzel repository root:
 
 ```text
-python scripts/streeling_fixtures/data-visualization/dv-008/evaluate_cards.py
+python -I -B scripts/streeling_fixtures/data-visualization/dv-008/analyze.py --check
 ```
 
 The six cards are invented classroom states, **not observed Streeling modules**. All have authored source. Cards A and B have review approval. A and F have an exact public readback. Only A satisfies all three gates. F deliberately has exact public provenance but no approved review; B has approval but a public 404. C has a public 200 with a matching heading but stale index and module source links. E has a matching module source and heading while the index still cites another revision. These exceptions show why the columns must remain visible. A funnel alone would suggest every later stage is a subset of every earlier one; that is not guaranteed by the evidence.
@@ -120,7 +120,7 @@ Suppose a newly written DV-008 draft passes local preflight and Learn can render
 ## Project evidence and limits
 
 - Pinned Demerzel [`streeling_course_progress.py`](https://github.com/GuitarAlchemist/Demerzel/blob/8a37e1d9a728a15ed384cbb912e3c8c518083d12/scripts/streeling_course_progress.py) and [`streeling_public_readback.py`](https://github.com/GuitarAlchemist/Demerzel/blob/8a37e1d9a728a15ed384cbb912e3c8c518083d12/scripts/streeling_public_readback.py) define the two measured scopes. The progress count was reproduced at that revision; a complete public sweep was not.
-- The [six-card fixture](../../../fixtures/data-visualization/dv-008/evidence-cards.json) is synthetic. Its 6/2/2/1 results do not estimate real publication rates.
+- The [six-card fixture](../../../fixtures/data-visualization/dv-008/scenarios.json) is synthetic. Its 6/2/2/1 results do not estimate real publication rates.
 - The course is an English draft only. No human subject verdict, learner attempt, localization review, Learn deployment, or anonymous DV-008 readback is claimed.
 
 *Research: `data-visualization-2026-10-21-008`. Review and publication pending.*
