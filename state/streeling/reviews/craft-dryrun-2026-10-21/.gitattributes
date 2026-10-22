@@ -1,0 +1,2 @@
+# Preserve captured AI response bytes for the manifest hashes.
+*-response.md -text
