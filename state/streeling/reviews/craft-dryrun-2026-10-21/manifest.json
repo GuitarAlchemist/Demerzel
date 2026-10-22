@@ -1,0 +1,36 @@
+{
+  "created_utc": "2026-10-21T23:52:42.819476+00:00",
+  "source_commit": "edc8c86f9b4b380d9310d396ebffee8d39fd528c",
+  "redaction": "Remove each complete single-line Answer blockquote; retain all other text. No answer keys or fixtures provided.",
+  "courses": {
+    "phy-005": {
+      "lesson_source": "state/streeling/courses/physics/en/phy-005-sheet-thickness-and-scene-units.md",
+      "lesson_git_blob": "24704663e5178e05c404c69207c8459de2282f4e",
+      "redacted_sha256": "067035636f722f5986ca0cb9d257d81f75be3f4cd58cede5845ff1deecef0ab1",
+      "answer_blocks_removed": 5,
+      "task_git_blob": "b2911d3f0b5e8ba74f1ca8d35aa28a2212fe45e9",
+      "raw_response_sha256": "1dc21c37073be02988fca31cfc29807edb62be5a89a4281a065b28a746c52e4d",
+      "agent_task": "/root/phy005_blind_dryrun"
+    },
+    "sem-004": {
+      "lesson_source": "state/streeling/courses/semiotics/en/sem-004-face-identity-under-reindexing.md",
+      "lesson_git_blob": "f7229fcc56d94a1b38bd972808bfe22caca9fe4f",
+      "redacted_sha256": "94e238108f8518a0f9e13ce1297b74ab25836825364c560b06d5c8f91096488a",
+      "answer_blocks_removed": 5,
+      "task_git_blob": "6ee1f8bdfb4234cd236fd1d14bc729190ae32b55",
+      "raw_response_sha256": "9d5d89b3ec45aa4fed7586858b8cf840625dbcd4f75ab2795acce291aebb4939",
+      "agent_task": "/root/sem004_blind_dryrun"
+    },
+    "cs-009": {
+      "lesson_source": "state/streeling/courses/computer-science/en/cs-009-composing-origami-panel-constraints.md",
+      "lesson_git_blob": "ce0c8f77db223f1a4a00966d536c585a956974b1",
+      "redacted_sha256": "8ba69000d402100127c6b40bfc13ada7592e0f1a7792ad6964840ca5ca4b6123",
+      "answer_blocks_removed": 5,
+      "task_git_blob": "0db478482245debafa21addaebdfb8d34eaa3962",
+      "raw_response_sha256": "154aa116b4dac25e4460f15403bf2af068f5c8e9d00124b9ffc21c00c7e4d8d7",
+      "agent_task": "/root/cs009_blind_dryrun"
+    }
+  },
+  "assessment_boundary": "Answer-block-redacted lesson exposed; AI general prior competence; no pretest, causal gain, human review, cross-model approval, or engine trial.",
+  "raw_responses_archived_utc": "2026-10-21T23:57:09.466885+00:00"
+}

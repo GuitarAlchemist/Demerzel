@@ -1,0 +1,113 @@
+{
+  "verified_utc": "2026-10-21T23:56:46.305436+00:00",
+  "kind": "isolated source-copy and generation rehearsal",
+  "source": {
+    "repo": "GuitarAlchemist/Demerzel",
+    "path": "state/streeling",
+    "commit": "d89f9e91242c92205d900bf2baea0f55e3de0751",
+    "commit_date": "2026-10-21T17:06:56-04:00"
+  },
+  "generator_head": "1c8aefd9d273f6e09957067990b4780de9dd63f1",
+  "files_copied": 394,
+  "non_course_links_pinned": 573,
+  "lock": {
+    "source": "streeling",
+    "copied_from": {
+      "repo": "GuitarAlchemist/Demerzel",
+      "path": "state/streeling",
+      "commit": "d89f9e91242c92205d900bf2baea0f55e3de0751",
+      "commit_date": "2026-10-21T17:06:56-04:00"
+    },
+    "departments": 21,
+    "modules": {
+      "en": 148,
+      "fr": 108,
+      "es": 108
+    }
+  },
+  "new_pages": [
+    {
+      "code": "phy-005",
+      "locale": "en",
+      "relative_links_checked": 1
+    },
+    {
+      "code": "phy-005",
+      "locale": "fr",
+      "relative_links_checked": 1
+    },
+    {
+      "code": "phy-005",
+      "locale": "es",
+      "relative_links_checked": 1
+    },
+    {
+      "code": "sem-004",
+      "locale": "en",
+      "relative_links_checked": 2
+    },
+    {
+      "code": "sem-004",
+      "locale": "fr",
+      "relative_links_checked": 2
+    },
+    {
+      "code": "sem-004",
+      "locale": "es",
+      "relative_links_checked": 2
+    },
+    {
+      "code": "cs-009",
+      "locale": "en",
+      "relative_links_checked": 4
+    },
+    {
+      "code": "cs-009",
+      "locale": "fr",
+      "relative_links_checked": 4
+    },
+    {
+      "code": "cs-009",
+      "locale": "es",
+      "relative_links_checked": 4
+    }
+  ],
+  "english_fallbacks": [
+    {
+      "course": "cs-009",
+      "locale": "fr",
+      "href": "../../computer-science/cs-006-ixql-pipeline-composition/",
+      "basis": "English source page and explicit English-only label; not rendered here"
+    },
+    {
+      "course": "cs-009",
+      "locale": "fr",
+      "href": "../../visual-computing/vc-007-weave-seams-as-scene-contracts/",
+      "basis": "English source page and explicit English-only label; not rendered here"
+    },
+    {
+      "course": "cs-009",
+      "locale": "es",
+      "href": "../../computer-science/cs-006-ixql-pipeline-composition/",
+      "basis": "English source page and explicit English-only label; not rendered here"
+    },
+    {
+      "course": "cs-009",
+      "locale": "es",
+      "href": "../../visual-computing/vc-007-weave-seams-as-scene-contracts/",
+      "basis": "English source page and explicit English-only label; not rendered here"
+    }
+  ],
+  "existing_tests": "16 passed, 0 failed: scripts/tests/sync-streeling.test.mjs and streeling-copy-source.test.mjs",
+  "discarded_hypotheses": [
+    "Initial checker used filesystem parent rather than page URL directory.",
+    "Subsequent checker required a locale-specific Markdown file, contradicting documented and tested Starlight English fallback. No generator defect established."
+  ],
+  "limits": [
+    "No Astro render or runtime route verification.",
+    "No deployment/public readback.",
+    "View source/editUrl target unmerged Learn main paths.",
+    "Non-course links pin a local-only Demerzel commit; public reachability not established.",
+    "Prototype omits fixtures, review and production/research records."
+  ]
+}
