@@ -1,0 +1,271 @@
+{
+  "source_commit": "cb0a738790db4ce6904a4972c414bc9aada44d3b",
+  "generated_utc": "2026-10-22T00:28:21.368914+00:00",
+  "status": "Candidate transfer inventory, not an applied Learn migration or publication.",
+  "files": [
+    {
+      "source_path": "state/streeling/course-productions/cp-computer-science-2026-10-21-009.json",
+      "git_blob": "e9e85729419756cd76bbbebee1def8883cab1939",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/course-productions/cp-physics-2026-10-21-005.json",
+      "git_blob": "94527e8f564a90d5a4fb4b048ab70c4336274bd3",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/course-productions/cp-semiotics-2026-10-21-004.json",
+      "git_blob": "b457b9adf16959f449108a6170c7b49768c9a951",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/courses/computer-science/de/cs-009-composing-origami-panel-constraints.de.md",
+      "git_blob": "f0b1da05568eb6266423243e60627447c95f9488",
+      "proposed_learn_path": "streeling/courses/computer-science/de/cs-009-composing-origami-panel-constraints.de.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/computer-science/en/cs-009-composing-origami-panel-constraints.md",
+      "git_blob": "ce0c8f77db223f1a4a00966d536c585a956974b1",
+      "proposed_learn_path": "streeling/courses/computer-science/en/cs-009-composing-origami-panel-constraints.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/computer-science/es/cs-009-composing-origami-panel-constraints.es.md",
+      "git_blob": "9d7e4a01778df2954ddb55d709f09140862b6002",
+      "proposed_learn_path": "streeling/courses/computer-science/es/cs-009-composing-origami-panel-constraints.es.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/computer-science/fr/cs-009-composing-origami-panel-constraints.fr.md",
+      "git_blob": "3ddb0c4bda020b37bdbd7c1250db28c23ea477ab",
+      "proposed_learn_path": "streeling/courses/computer-science/fr/cs-009-composing-origami-panel-constraints.fr.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/computer-science/it/cs-009-composing-origami-panel-constraints.it.md",
+      "git_blob": "1c524861de54025f5f6417e36118c08cdf891bed",
+      "proposed_learn_path": "streeling/courses/computer-science/it/cs-009-composing-origami-panel-constraints.it.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/computer-science/pt/cs-009-composing-origami-panel-constraints.pt.md",
+      "git_blob": "dc88e4a8f98cc1859156435f6fef2fec484f0f96",
+      "proposed_learn_path": "streeling/courses/computer-science/pt/cs-009-composing-origami-panel-constraints.pt.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/physics/de/phy-005-sheet-thickness-and-scene-units.de.md",
+      "git_blob": "21231193af793086fa2e7a1a443c33cf8657930e",
+      "proposed_learn_path": "streeling/courses/physics/de/phy-005-sheet-thickness-and-scene-units.de.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/physics/en/phy-005-sheet-thickness-and-scene-units.md",
+      "git_blob": "24704663e5178e05c404c69207c8459de2282f4e",
+      "proposed_learn_path": "streeling/courses/physics/en/phy-005-sheet-thickness-and-scene-units.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/physics/es/phy-005-sheet-thickness-and-scene-units.es.md",
+      "git_blob": "dd187dee0a0506312bc2f447eb801e7c46d273cf",
+      "proposed_learn_path": "streeling/courses/physics/es/phy-005-sheet-thickness-and-scene-units.es.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/physics/fr/phy-005-sheet-thickness-and-scene-units.fr.md",
+      "git_blob": "c4e31e22b9f60aceb325b7a066a8152edbe2248c",
+      "proposed_learn_path": "streeling/courses/physics/fr/phy-005-sheet-thickness-and-scene-units.fr.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/physics/it/phy-005-sheet-thickness-and-scene-units.it.md",
+      "git_blob": "ef5f94fe7aee252aa4a0bba939c7f7411f6db9e8",
+      "proposed_learn_path": "streeling/courses/physics/it/phy-005-sheet-thickness-and-scene-units.it.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/physics/pt/phy-005-sheet-thickness-and-scene-units.pt.md",
+      "git_blob": "fd91fb47b7c724f95cc0aedd69da03a9a89ac5aa",
+      "proposed_learn_path": "streeling/courses/physics/pt/phy-005-sheet-thickness-and-scene-units.pt.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/semiotics/de/sem-004-face-identity-under-reindexing.de.md",
+      "git_blob": "3cfed571e12615238c5a7ce910b972e66f1f6a95",
+      "proposed_learn_path": "streeling/courses/semiotics/de/sem-004-face-identity-under-reindexing.de.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/semiotics/en/sem-004-face-identity-under-reindexing.md",
+      "git_blob": "f7229fcc56d94a1b38bd972808bfe22caca9fe4f",
+      "proposed_learn_path": "streeling/courses/semiotics/en/sem-004-face-identity-under-reindexing.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/semiotics/es/sem-004-face-identity-under-reindexing.es.md",
+      "git_blob": "db7417bd91f9eed21decf0478d9d914ec4ebc08f",
+      "proposed_learn_path": "streeling/courses/semiotics/es/sem-004-face-identity-under-reindexing.es.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/semiotics/fr/sem-004-face-identity-under-reindexing.fr.md",
+      "git_blob": "792249d85cdbbb85b03b56ae0a0d1020627863cb",
+      "proposed_learn_path": "streeling/courses/semiotics/fr/sem-004-face-identity-under-reindexing.fr.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/semiotics/it/sem-004-face-identity-under-reindexing.it.md",
+      "git_blob": "7fa0fe0996f7a322a9a24d6ff25905a1edc98145",
+      "proposed_learn_path": "streeling/courses/semiotics/it/sem-004-face-identity-under-reindexing.it.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/courses/semiotics/pt/sem-004-face-identity-under-reindexing.pt.md",
+      "git_blob": "66adc82340179fa6c52fb079229c23e90cf27ff0",
+      "proposed_learn_path": "streeling/courses/semiotics/pt/sem-004-face-identity-under-reindexing.pt.md",
+      "integration_note": "Prototype source location; preserve all six language files even though the current copy script selects only three."
+    },
+    {
+      "source_path": "state/streeling/fixtures/computer-science/cs-009/README.md",
+      "git_blob": "f42417fe4e733efd8fbab2431dd6573b9d3f00bf",
+      "proposed_learn_path": "code/streeling/fixtures/computer-science/cs-009/README.md",
+      "integration_note": "Proposed fixture location; rewrite source links during the approved migration."
+    },
+    {
+      "source_path": "state/streeling/fixtures/computer-science/cs-009/scenarios.json",
+      "git_blob": "1ec24ea50a199b85c1d48ea37880ae9191f4ed85",
+      "proposed_learn_path": "code/streeling/fixtures/computer-science/cs-009/scenarios.json",
+      "integration_note": "Proposed fixture location; rewrite source links during the approved migration."
+    },
+    {
+      "source_path": "state/streeling/fixtures/physics/phy-005/README.md",
+      "git_blob": "c2a0a97248483e3961499cd7ea5141befd6ec6cb",
+      "proposed_learn_path": "code/streeling/fixtures/physics/phy-005/README.md",
+      "integration_note": "Proposed fixture location; rewrite source links during the approved migration."
+    },
+    {
+      "source_path": "state/streeling/fixtures/physics/phy-005/scenarios.json",
+      "git_blob": "5b27b9674aef8e09461f250cc624cf6c7c703f3d",
+      "proposed_learn_path": "code/streeling/fixtures/physics/phy-005/scenarios.json",
+      "integration_note": "Proposed fixture location; rewrite source links during the approved migration."
+    },
+    {
+      "source_path": "state/streeling/fixtures/semiotics/sem-004/README.md",
+      "git_blob": "d53f945d9722dbc587dabd77bdef8d5481f09235",
+      "proposed_learn_path": "code/streeling/fixtures/semiotics/sem-004/README.md",
+      "integration_note": "Proposed fixture location; rewrite source links during the approved migration."
+    },
+    {
+      "source_path": "state/streeling/fixtures/semiotics/sem-004/scenarios.json",
+      "git_blob": "5962841857324ddda50845487da1586e2b187cad",
+      "proposed_learn_path": "code/streeling/fixtures/semiotics/sem-004/scenarios.json",
+      "integration_note": "Proposed fixture location; rewrite source links during the approved migration."
+    },
+    {
+      "source_path": "state/streeling/research-cycles/computer-science-2026-10-21-009.json",
+      "git_blob": "fe5d53c2f6e54d564c7327a871c79738ffe9b88d",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/research-cycles/physics-2026-10-21-005.json",
+      "git_blob": "e279e0a41b78d3383301157e1a3ae702830c54b3",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/research-cycles/semiotics-2026-10-21-004.json",
+      "git_blob": "94984ae7eaf8c070198fb54614ab8c25c507468b",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/.gitattributes",
+      "git_blob": "12c8f2d01c4ca472e98f099831f3d591c80ef982",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/README.md",
+      "git_blob": "5ea064613f7d8ae8162a27a41de4dbb1fd7c5655",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/cs-009-learner-task-v2.md",
+      "git_blob": "2450a424fed636e6906af1a5bcf48c056f9ad600",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/cs-009-response.md",
+      "git_blob": "4a404b2d7ca4b3be5db90e3d82294e166fb72963",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/manifest.json",
+      "git_blob": "f537f5c3aeaad77274d3afcb57f33512950270c9",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/migration-rehearsal.json",
+      "git_blob": "699a61dfabff8b6bb87cc023164c3e1fd17be2a9",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/phy-005-response.md",
+      "git_blob": "83bea3466044ec7861e555879316f8bac320ec97",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/craft-dryrun-2026-10-21/sem-004-response.md",
+      "git_blob": "2d4800464d450b4c692ba6ef54d6bd8df06de673",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/cs-009-learner-task.md",
+      "git_blob": "0db478482245debafa21addaebdfb8d34eaa3962",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/cs-009-review-brief.md",
+      "git_blob": "49dde0c2a6074c2dec20bbc04b3075e866ad16d2",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/phy-005-learner-task.md",
+      "git_blob": "b2911d3f0b5e8ba74f1ca8d35aa28a2212fe45e9",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/phy-005-review-brief.md",
+      "git_blob": "fb95431a4f19aecf7d3e4e60601c22b18a27773c",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/sem-004-learner-task.md",
+      "git_blob": "6ee1f8bdfb4234cd236fd1d14bc729190ae32b55",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    },
+    {
+      "source_path": "state/streeling/reviews/sem-004-review-brief.md",
+      "git_blob": "34bd01bc82947a592b728f8e622fce8f29b721c3",
+      "proposed_learn_path": null,
+      "integration_note": "Review/research/production evidence placement remains outside PR197; retain exact source until its location is decided."
+    }
+  ]
+}

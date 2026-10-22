@@ -1,0 +1,26 @@
+{
+  "base_learn_source_commit": "1c8aefd9d273f6e09957067990b4780de9dd63f1",
+  "pilot_reference_commit": "8aa043b38d6f2ac0a19f330e9830ed8e4f5ec20f",
+  "root_modules": [
+    "phy-005-sheet-thickness-and-scene-units",
+    "sem-004-face-identity-under-reindexing",
+    "cs-009-composing-origami-panel-constraints"
+  ],
+  "missing_from_base_source_closure": {
+    "cs-009-composing-origami-panel-constraints": "courses/computer-science/en/cs-009-composing-origami-panel-constraints.md",
+    "vc-007-weave-seams-as-scene-contracts": "courses/visual-computing/en/vc-007-weave-seams-as-scene-contracts.md",
+    "vc-005-craft-details-through-blender-to-godot": "courses/visual-computing/en/vc-005-craft-details-through-blender-to-godot.md",
+    "vc-004-godot-observatory-capture-gate": "courses/visual-computing/en/vc-004-godot-observatory-capture-gate.md",
+    "vc-001-accessible-fretboard-paths": "courses/visual-computing/en/vc-001-accessible-fretboard-paths.md",
+    "vc-002-godot-react-bridge-evidence": "courses/visual-computing/en/vc-002-godot-react-bridge-evidence.md",
+    "cs-006-ixql-pipeline-composition": "courses/computer-science/en/cs-006-ixql-pipeline-composition.md",
+    "cs-005-agent-handoff-evidence-contract": "courses/computer-science/en/cs-005-agent-handoff-evidence-contract.md",
+    "sem-004-face-identity-under-reindexing": "courses/semiotics/en/sem-004-face-identity-under-reindexing.md",
+    "phy-005-sheet-thickness-and-scene-units": "courses/physics/en/phy-005-sheet-thickness-and-scene-units.md"
+  },
+  "non_module_prerequisite_labels": [
+    "basic-ratios",
+    "dimensional-analysis"
+  ],
+  "interpretation": "10 modules total: 3 roots and 7 supporting candidate modules. Not an instruction to overwrite final frozen source. Treat basic-ratios/dimensional-analysis as conceptual prerequisites, not missing course IDs."
+}

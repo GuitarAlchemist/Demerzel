@@ -1,0 +1,78 @@
+{
+  "utc": "2026-10-22T00:26:10.950746+00:00",
+  "source_snapshot": "d89f9e91242c92205d900bf2baea0f55e3de0751",
+  "learn_generator_base": "1c8aefd9d273f6e09957067990b4780de9dd63f1",
+  "node": "24.12.0",
+  "astro": "7.3.2",
+  "starlight": "0.42.0",
+  "dependency_mode": "Existing Learn node_modules junction, no npm ci; not a clean lockfile install proof.",
+  "build": "node node_modules/astro/bin/astro.mjs build (cwd: isolated Learn snapshot)",
+  "build_exit": 0,
+  "built_pages": 1711,
+  "build_log_sha256": "aafbd4b7bfdc2b264e69779cae925f2c1157f2cdee9ec123465a3ec2a3a300c1",
+  "html_pages": [
+    {
+      "locale": "en",
+      "module": "phy-005-sheet-thickness-and-scene-units",
+      "html_sha256": "8bdfbdef4bf60aa67f67c1e083de42e4a5efbce1036330c5db9a21b4f1f2c110",
+      "bytes": 378021
+    },
+    {
+      "locale": "en",
+      "module": "sem-004-face-identity-under-reindexing",
+      "html_sha256": "d8aa60f1a20d99623b5644f997f4952eca380e897afb800764d4b95e95eb4a5a",
+      "bytes": 372584
+    },
+    {
+      "locale": "en",
+      "module": "cs-009-composing-origami-panel-constraints",
+      "html_sha256": "6383f62bdd3b25df3e472fc9874b8b35f0d897095f4ea8c98d166268d0c5b811",
+      "bytes": 375169
+    },
+    {
+      "locale": "fr",
+      "module": "phy-005-sheet-thickness-and-scene-units",
+      "html_sha256": "13cffe66d47f3f234bb689629c9e373c218054c8fdaba196ac1912ad428b5482",
+      "bytes": 389111
+    },
+    {
+      "locale": "fr",
+      "module": "sem-004-face-identity-under-reindexing",
+      "html_sha256": "47a29d9fa5b24dfe7956f9129d477d755ec7f7c2a114185b613b483e759e3cb1",
+      "bytes": 383655
+    },
+    {
+      "locale": "fr",
+      "module": "cs-009-composing-origami-panel-constraints",
+      "html_sha256": "9f57bc9e0fe78a4caedbf8fd32d3060c0b09a2d52ca13b4163440a84214672fb",
+      "bytes": 388134
+    },
+    {
+      "locale": "es",
+      "module": "phy-005-sheet-thickness-and-scene-units",
+      "html_sha256": "bba3babff2bec9af2aef13d6c88ddfa36f70006ac38dae814cdb34c1b57166e2",
+      "bytes": 387499
+    },
+    {
+      "locale": "es",
+      "module": "sem-004-face-identity-under-reindexing",
+      "html_sha256": "c713ff1bacbf512b02389592b567ee98bb8f19dcc3842a513503e2ab582ad963",
+      "bytes": 382349
+    },
+    {
+      "locale": "es",
+      "module": "cs-009-composing-origami-panel-constraints",
+      "html_sha256": "67047a98a912391c9d416ed87c4c1f837769d073a2fe13b531386e4ae4f82b6a",
+      "bytes": 386728
+    }
+  ],
+  "article_internal_links": "9 pages,0 unresolved; checker self-test caught missing page and missing anchor",
+  "english_fallbacks": "All4 FR/ES fallback pages exist as rendered HTML.",
+  "discarded_run": "Initial --root invocation from ga failed resolving @oslojs/encoding in ga/.astro/.prerender; rerun from actual snapshot cwd succeeded.",
+  "limits": [
+    "No browser interaction or visual review.",
+    "No deployment or anonymous public readback.",
+    "New PT/IT/DE drafts are retained source; prototype generates only EN/FR/ES.",
+    "External GitHub source/fixture link reachability not verified."
+  ]
+}

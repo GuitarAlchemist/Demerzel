@@ -1,0 +1,81 @@
+[
+  {
+    "course": "phy-005-sheet-thickness-and-scene-units",
+    "locale": "pt",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "phy-005-sheet-thickness-and-scene-units",
+    "locale": "it",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "phy-005-sheet-thickness-and-scene-units",
+    "locale": "de",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {
+      "0.4": 1,
+      "0.0144": 1,
+      "100": 1
+    },
+    "numeric_note": "Only supplied values repeated to explain preserved code; manually checked in German PHY/CS."
+  },
+  {
+    "course": "sem-004-face-identity-under-reindexing",
+    "locale": "pt",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "sem-004-face-identity-under-reindexing",
+    "locale": "it",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "sem-004-face-identity-under-reindexing",
+    "locale": "de",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "cs-009-composing-origami-panel-constraints",
+    "locale": "pt",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "cs-009-composing-origami-panel-constraints",
+    "locale": "it",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {},
+    "numeric_note": "Exact token parity."
+  },
+  {
+    "course": "cs-009-composing-origami-panel-constraints",
+    "locale": "de",
+    "pairs": 5,
+    "metadata_urls_inline_code_local_links": "pass",
+    "extra_numeric_occurrences": {
+      "0": 1,
+      "2": 1
+    },
+    "numeric_note": "Only supplied values repeated to explain preserved code; manually checked in German PHY/CS."
+  }
+]
