@@ -25,16 +25,19 @@
       "languages": [
         "en",
         "fr",
-        "es"
+        "es",
+        "pt",
+        "it",
+        "de"
       ]
     },
     "review": {
       "completed": false,
-      "feedback": "English source and faithful French/Spanish drafts with five answered exercises each; explicit synthetic permutation fixture and unbound review brief prepared. Human subject review, learner attempt, fluent-language review, Portuguese/Italian/German drafts, scene trial and publication remain open."
+      "feedback": "EN/FR/ES/PT/IT/DE drafts have five answered exercises per locale. Original source-bound packet and bounded AI dry-runs apply to their exact revisions; neither is human approval. Subject, fluent-language and human learner reviews, revision-2 task retest, scene integration and public readback remain pending. Translation completion remains false pending language review."
     },
     "publish": {
       "completed": false
     }
   },
-  "timestamp": "2026-10-21T20:53:42Z"
+  "timestamp": "2026-10-22T00:25:01.719724Z"
 }
