@@ -79,8 +79,8 @@ Demerzel/
 | Schemas | 49 + 11 contracts | `schemas/*.json` + `schemas/contracts/` |
 | Behavioral tests | 115 | `tests/behavioral/*.md` |
 | Skills | 69 | `.claude/skills/*/` |
-| Streeling departments | 24 | `state/streeling/departments/*.department.json` |
-| Course tracks | 22 | `state/streeling/courses/*/` |
+| Streeling departments | 24 | `state/streeling/departments/*.weights.json` (department files: spareilleux/learn `streeling/departments/`) |
+| Course tracks | 22 | spareilleux/learn `streeling/courses/*/` (moved 2026-10-21) |
 | IxQL pipelines | 23 | `pipelines/*.ixql` |
 | GitHub workflows | 29 | `.github/workflows/*.yml` |
 

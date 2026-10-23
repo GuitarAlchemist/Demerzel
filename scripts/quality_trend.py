@@ -17,6 +17,12 @@ scripts/evolution_metrics.py, source "git-grep-v1"), the line carries
 rebaseline: true and delta_citations 0 — the jump is a change of measurement,
 not a change in citations.
 
+An entry can also carry metrics.citation_rebaseline, a tag that
+evolution_metrics.py leaves alone. The line then records the source as
+"<citation_source>+<tag>", so the first line after the tag appears is a
+rebaseline. Add a new tag when the measured files change without any
+citation changing: files that cited the artifact moved out of the repository.
+
 Constraints (from the skill): read-only w.r.t. evolution/ and beliefs/;
 append-only w.r.t. its own JSONL; makes no proposals; targets < 5s.
 """
@@ -89,6 +95,8 @@ def build_rows(evolution_dir: str, out_dir: str,
 
             prev = previous.get(artifact, {})
             source = metrics.get("citation_source")
+            if metrics.get("citation_rebaseline"):
+                source = f"{source}+{metrics['citation_rebaseline']}"
             rebaseline = bool(prev) and prev.get("citation_source") != source
             rows.append({
                 "timestamp": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
