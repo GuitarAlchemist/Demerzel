@@ -1,0 +1,26 @@
+{
+  "name": "all_unknown_no_escalation",
+  "description": "Two sources both abstain (Unknown) on the same claim. The distribution is all mass on U (dist[U]=1.0, every other variant 0.0), so the informative mass T+P+D+F+C is zero. Under v1.2 escalation requires informative > 0, so an all-Unknown distribution never escalates — nothing conflicts, so there is nothing to escalate. This is the companion to fixture 11: it pins the boundary where the informative denominator is empty. (Under v1.1 this was also false, since dist[C]=0 < 0.3; the two rules agree here, and must.)",
+  "input": {
+    "observations": [
+      {"source": "tars", "diagnosis_id": "d", "round": 0, "ordinal": 0, "claim_key": "ix_git_gc::valuable", "variant": "U", "weight": 1.0},
+      {"source": "ix",   "diagnosis_id": "d", "round": 0, "ordinal": 1, "claim_key": "ix_git_gc::valuable", "variant": "U", "weight": 1.0}
+    ],
+    "current_round": null,
+    "staleness_k": null
+  },
+  "expected": {
+    "observations_count": 2,
+    "contradictions_count": 0,
+    "contradictions": [],
+    "distribution": {
+      "T": 0.0,
+      "P": 0.0,
+      "U": 1.0,
+      "D": 0.0,
+      "F": 0.0,
+      "C": 0.0
+    },
+    "escalation_triggered": false
+  }
+}

@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import json
 import math
@@ -13,6 +13,8 @@ from pathlib import Path
 import sys
 import time
 from typing import Any
+
+import demerzel_kit
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +31,60 @@ def _load(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{path}: expected a JSON object")
     return value
+
+
+class PolicyInvalid(ValueError):
+    """The budget policy file itself is malformed or out of bounds.
+
+    Distinct from an ordinary budget block. "We are out of budget" and "the file
+    that decides the budget is broken" need opposite responses — the first is the
+    gate working, the second is the gate being unable to work — and collapsing
+    both into one reason code leaves an operator unable to tell them apart (#794).
+
+    Subclasses ValueError so main()'s existing exit-2 mapping is unchanged.
+    """
+
+
+def load_policy(path: Path | None = None) -> dict[str, Any]:
+    """Load the budget policy and validate it against its schema, fail-closed.
+
+    The policy decides how much real money a cycle may spend and arrives as an
+    ordinary PR diff, so an unrecognized or out-of-bounds key must be a load
+    error rather than a silent no-op. Every failure is raised as ValueError so
+    main() maps it to exit 2 (invalid) rather than exit 1 (governed block).
+    """
+    # An absent or unparseable policy file is the same class of failure as one
+    # that fails schema validation: the gate cannot establish what it may spend.
+    try:
+        policy = _load(POLICY_PATH if path is None else path)
+    except (OSError, json.JSONDecodeError, ValueError) as error:
+        raise PolicyInvalid(f"policy could not be loaded: {error}") from error
+    try:
+        import jsonschema  # noqa: PLC0415 — optional dependency, imported lazily
+    except ImportError as error:
+        # demerzel_kit.validate() degrades to a warning when jsonschema is
+        # absent. That is right for a reporting emitter and wrong for a spend
+        # gate, so this caller refuses instead.
+        raise PolicyInvalid(
+            "jsonschema is required to validate the AIW budget policy") from error
+    try:
+        demerzel_kit.validate(policy, "aiw-budget-policy")
+    except jsonschema.ValidationError as error:
+        # json_path locates the offending key. Without it the message alone
+        # ("True was expected") names neither field nor provider, which is not
+        # enough to find the key in a 7-provider file under time pressure.
+        raise PolicyInvalid(
+            f"policy is invalid at {error.json_path}: {error.message}") from error
+
+    # JSON Schema cannot express these cross-references within one document.
+    ids = [provider["id"] for provider in policy["providers"]]
+    duplicates = {name for name in ids if ids.count(name) > 1}
+    if duplicates:
+        raise PolicyInvalid(f"policy declares duplicate provider ids: {sorted(duplicates)}")
+    undeclared = [name for name in policy["selection_order"] if name not in ids]
+    if undeclared:
+        raise PolicyInvalid(f"selection_order names undeclared providers: {undeclared}")
+    return policy
 
 
 def _number(request: dict[str, Any], name: str) -> float:
@@ -113,10 +169,16 @@ def _validate_approval(approval: dict[str, Any] | None, request: dict[str, Any],
         "provider": request.get("provider"),
         "request_sha256": request_sha256,
     }
+    request_approval_id = request.get("approval_id")
+    if request_approval_id is not None:
+        if not isinstance(request_approval_id, str) or not request_approval_id:
+            raise ValueError("request approval_id must be a non-empty string")
+        expected["approval_id"] = request_approval_id
     for name, value in expected.items():
         if approval.get(name) != value:
             raise ValueError(f"approval {name} does not match the request")
-    _required_string(approval, "approval_id")
+    if request_approval_id is None:
+        _required_string(approval, "approval_id")
     _required_string(approval, "approver")
     _timestamp(approval, "approved_at")
     return True
@@ -159,9 +221,14 @@ def _lock(path: Path):
 def _read_cycle(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {"reserved_cost_usd": 0.0, "actual_cost_usd": 0.0,
-                "active_packets": 0, "reservations": {}}
+                "unverified_cost_usd": 0.0, "active_packets": 0, "reservations": {}}
     value = _load(path)
-    for name in ("reserved_cost_usd", "actual_cost_usd", "active_packets"):
+    # Ledgers written before the verified/unverified split carry no
+    # `unverified_cost_usd`. Default it rather than rejecting them, but validate
+    # it once present so a garbage value still fails closed.
+    value.setdefault("unverified_cost_usd", 0.0)
+    for name in ("reserved_cost_usd", "actual_cost_usd", "unverified_cost_usd",
+                 "active_packets"):
         _required_number(value, name)
     reservations = value.get("reservations", {})
     if not isinstance(reservations, dict):
@@ -203,9 +270,14 @@ def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path,
                     "reasons": [], "reservation_reused": True,
                     "request_sha256": request_sha256,
                     "budget": {"estimated_cost_usd": reservation["estimated_cost_usd"]}}
+        # Unverified spend counts against the cycle cap exactly like receipted
+        # spend. Abandoned money is money we cannot prove we did NOT spend, so
+        # omitting this term here would turn the verified/unverified split into a
+        # spend-cap bypass: every abandonment would silently restore headroom.
         result = evaluate(policy, {**request,
                                    "cycle_spend_usd": (cycle["reserved_cost_usd"]
-                                                        + cycle["actual_cost_usd"]),
+                                                        + cycle["actual_cost_usd"]
+                                                        + cycle["unverified_cost_usd"]),
                                    "cycle_active_packets": cycle["active_packets"]},
                           approval=approval)
         if result["decision"] == "allow":
@@ -223,6 +295,44 @@ def reserve(policy: dict[str, Any], request: dict[str, Any], cycle_path: Path,
             cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
                                              allow_nan=False) + "\n", encoding="utf-8")
         return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def note_release_failure(cycle_path: Path, job_id: str, error: str) -> bool:
+    """Record that a release was attempted and swallowed, leaving a reservation open.
+
+    The caller's ``except Exception`` around release is deliberate — a
+    reconciliation hiccup must never break the loop — but the consequence is that
+    reservations silently stop clearing while the cycle ledger keeps counting them
+    as committed spend, and ``max_parallel_packets`` fills with reservations that
+    will never clear. Fail-closed in the money direction, but a liveness failure:
+    the cycle wedges quietly rather than stopping loudly (#794).
+
+    Writing the swallow down makes that state detectable afterwards. Returns True
+    if the note was recorded. Never raises: a failure to record a failure must not
+    become a second failure.
+    """
+    try:
+        lock_path = _lock(cycle_path)
+    except ValueError:
+        return False
+    try:
+        cycle = _read_cycle(cycle_path)
+        notes = cycle.setdefault("release_failures", [])
+        if not isinstance(notes, list):
+            return False
+        notes.append({
+            "job_id": job_id,
+            "error": str(error)[:200],
+            "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "reservation_open": job_id in cycle.get("reservations", {}),
+        })
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return True
+    except Exception:  # noqa: BLE001 — recording is best-effort by construction
+        return False
     finally:
         lock_path.unlink(missing_ok=True)
 
@@ -276,6 +386,110 @@ def release(cycle_path: Path, job_id: str, actual_cost_usd: float,
                   "job_id": job_id, "actual_cost_usd": actual, "reasons": reasons}
         if receipt_id is not None:
             result["receipt_id"] = receipt_id
+        return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def _abandon_in_cycle(cycle: dict[str, Any], job_id: str,
+                      reason: str) -> dict[str, Any]:
+    """Mutate one validated cycle while its caller holds the ledger lock."""
+    reservation = cycle["reservations"].get(job_id)
+    if reservation is None:
+        raise ValueError(f"no reservation for job: {job_id}")
+    estimate = _required_number(reservation, "estimated_cost_usd")
+
+    cycle["reservations"].pop(job_id)
+    cycle["reserved_cost_usd"] -= estimate
+    cycle["active_packets"] -= 1
+    cycle["unverified_cost_usd"] = cycle.get("unverified_cost_usd", 0) + estimate
+    entry = {
+        "job_id": job_id,
+        "provider": reservation.get("provider"),
+        "request_sha256": reservation.get("request_sha256"),
+        "charged_estimate_usd": estimate,
+        "receipt_verified": False,
+        "reason": str(reason)[:200],
+    }
+    cycle.setdefault("unreconciled", []).append(entry)
+    return {"decision": "abandoned", "job_id": job_id,
+            "charged_estimate_usd": estimate,
+            "receipt_verified": False, "reason": entry["reason"]}
+
+
+def abandon(cycle_path: Path, job_id: str, reason: str) -> dict[str, Any]:
+    """Give up reconciling a reservation WITHOUT claiming its spend was verified.
+
+    A metered job cannot be released without a trusted provider receipt (see
+    ``release``), and the AFK governor has none to offer. Before this existed, a
+    metered episode left its reservation open forever: ``active_packets`` never
+    fell, and after ``cycle.max_parallel_packets`` such episodes the gate blocked
+    EVERY provider — including the free subscription lane that had nothing to do
+    with it (#896).
+
+    Fabricating a receipt would restore liveness by destroying the control the
+    receipt exists to provide: ``trusted_receipt_issuer`` is the only thing
+    separating "the provider states this cost $X" from "we state it did". A
+    self-issued receipt would satisfy ``_validate_receipt`` — it checks structure,
+    not authenticity — and reconcile metered spend at whatever the caller passed,
+    forever, self-certified.
+
+    So this frees the slot and charges the RESERVED ESTIMATE to
+    ``unverified_cost_usd``. Pessimistic on purpose: we cannot prove the money was
+    not spent, so the cycle cost cap keeps counting it (see ``reserve``) rather
+    than crediting the cycle back to zero. Unverified is not the same as free.
+
+    It is charged to a bucket of its own rather than to ``actual_cost_usd``
+    because the two numbers answer different questions. ``actual_cost_usd`` is
+    what a provider receipt attested; this is what we assumed in the absence of
+    one. Both bound the cycle identically, but an operator reading the ledger has
+    to be able to tell a measured total from an asserted one, and a headline that
+    silently mixes them cannot be audited. Per-job provenance is in
+    ``unreconciled`` regardless; this keeps the aggregate honest too.
+    """
+    if not job_id:
+        raise ValueError("job_id is required to abandon")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        result = _abandon_in_cycle(cycle, job_id, reason)
+        cycle_path.parent.mkdir(parents=True, exist_ok=True)
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
+        return result
+    finally:
+        lock_path.unlink(missing_ok=True)
+
+
+def abandon_open_provider(cycle_path: Path, provider: str,
+                          reason: str) -> dict[str, Any]:
+    """Idempotently abandon the sole open reservation for one provider.
+
+    Workflow cleanup cannot trust step outputs: cancellation may occur after the
+    reservation is written but before GitHub publishes those outputs. Recovering
+    the job id from the locked ledger closes that window. Zero matches is a
+    successful no-op so the finalizer can run unconditionally; multiple matches
+    are ambiguous and fail closed without mutating either reservation.
+    """
+    if not provider:
+        raise ValueError("provider is required to abandon an open reservation")
+    lock_path = _lock(cycle_path)
+    try:
+        cycle = _read_cycle(cycle_path)
+        matches = [
+            job_id for job_id, reservation in cycle["reservations"].items()
+            if reservation.get("provider") == provider
+        ]
+        if not matches:
+            return {"decision": "no_reservation", "provider": provider}
+        if len(matches) != 1:
+            raise ValueError(
+                f"multiple open reservations for provider {provider}: "
+                + ", ".join(sorted(matches)))
+        result = _abandon_in_cycle(cycle, matches[0], reason)
+        cycle_path.parent.mkdir(parents=True, exist_ok=True)
+        cycle_path.write_text(json.dumps(cycle, indent=2, sort_keys=True,
+                                         allow_nan=False) + "\n", encoding="utf-8")
         return result
     finally:
         lock_path.unlink(missing_ok=True)
@@ -378,8 +592,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cycle-ledger", type=Path, default=CYCLE_LEDGER_PATH)
     parser.add_argument("--approval", type=Path, default=APPROVAL_PATH)
     parser.add_argument("--receipt", type=Path, default=RECEIPT_PATH)
-    parser.add_argument("--release-job")
+    # A reservation has exactly two terminal states and they are mutually
+    # exclusive: released against a trusted receipt, or abandoned. Naming both
+    # in one invocation is ambiguous about which one was intended.
+    terminal = parser.add_mutually_exclusive_group()
+    terminal.add_argument("--release-job")
+    terminal.add_argument("--abandon-job")
+    terminal.add_argument("--abandon-open-provider")
     parser.add_argument("--actual-cost-usd", type=float)
+    parser.add_argument("--reason")
     args = parser.parse_args(argv)
     try:
         # Policy and ledgers are pinned to canonical repository paths; the
@@ -389,8 +610,26 @@ def main(argv: list[str] | None = None) -> int:
         _bind_canonical("--cycle-ledger", args.cycle_ledger, CYCLE_LEDGER_PATH)
         _bind_canonical("--approval", args.approval, APPROVAL_PATH)
         _bind_canonical("--receipt", args.receipt, RECEIPT_PATH)
-        policy = _load(POLICY_PATH)
-        if args.release_job:
+        policy = load_policy(POLICY_PATH)
+        if args.abandon_open_provider:
+            if not args.reason:
+                raise ValueError("--reason is required with --abandon-open-provider")
+            _provider(policy, args.abandon_open_provider)
+            result = abandon_open_provider(
+                CYCLE_LEDGER_PATH, args.abandon_open_provider, args.reason)
+        elif args.abandon_job:
+            # The only honest way out of a metered reservation whose receipt does
+            # not exist. `--release-job` demands a trusted receipt and a metered
+            # provider's receipt cannot be self-issued, so without this verb an
+            # approved metered run had NO terminal state reachable by an operator:
+            # the reservation stayed open, active_packets never fell, and after
+            # cycle.max_parallel_packets such runs the gate blocked every lane
+            # including the free subscription one (#896). Abandon charges the
+            # reserved estimate as UNVERIFIED spend rather than inventing a cost.
+            if not args.reason:
+                raise ValueError("--reason is required with --abandon-job")
+            result = abandon(CYCLE_LEDGER_PATH, args.abandon_job, args.reason)
+        elif args.release_job:
             if args.actual_cost_usd is None:
                 raise ValueError("--actual-cost-usd is required with --release-job")
             receipt = _load(RECEIPT_PATH) if RECEIPT_PATH.exists() else None
@@ -409,8 +648,13 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
         print(f"aiw budget gate: {error}", file=sys.stderr)
         return 2
+    # ABANDONED exits 0 because the operator's action succeeded and the ledger is
+    # consistent again -- but it prints as ABANDONED, never as RELEASED, and the
+    # cycle ledger records it under `unreconciled` with receipt_verified: false.
     print(f"{result['decision'].upper()}: {LEDGER_PATH}")
-    return 0 if result["decision"] in {"allow", "released"} else 1
+    return 0 if result["decision"] in {
+        "allow", "released", "abandoned", "no_reservation"
+    } else 1
 
 
 if __name__ == "__main__":

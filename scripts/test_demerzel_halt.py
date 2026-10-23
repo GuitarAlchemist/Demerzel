@@ -1,4 +1,5 @@
 import json
+import io
 import tempfile
 import unittest
 import unittest.mock as mock
@@ -78,6 +79,81 @@ class TestHaltSeam(unittest.TestCase):
             rc, target = self._halt_in(d, scope="not-a-scope")
             self.assertEqual(rc, 2)  # schema-validation failure
             self.assertFalse(target.exists(), "invalid marker must never reach disk")
+
+    def test_status_uses_fail_closed_shared_reader(self):
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d) / "HALT-ALL"
+            target.write_text('{"expires_at":"2020-01-01T00:00:00Z"}', encoding="utf-8")
+            stderr = io.StringIO()
+            with mock.patch.object(h, "marker_path", return_value=target), \
+                 mock.patch("sys.stderr", stderr):
+                rc = h.cmd_status(mock.Mock())
+        self.assertEqual(rc, 0)
+        self.assertIn("halt_all_invalid", stderr.getvalue())
+
+
+class TestIsActive(unittest.TestCase):
+    """The reader seam consumer scripts call instead of hand-rolling the
+    present/valid/expired decision (or skipping it, as monitor_baml_and_learning.py
+    did before this seam existed)."""
+
+    def test_no_marker_is_not_active(self):
+        with tempfile.TemporaryDirectory() as d:
+            active, reason = h.is_active(Path(d))
+            self.assertFalse(active)
+            self.assertEqual(reason, "")
+
+    def test_present_unexpired_marker_is_active_with_reason(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "HALT-ALL").write_text(
+                json.dumps({
+                    "schema_version": h.SCHEMA_VERSION,
+                    "halted_at": "2026-06-25T00:00:00Z",
+                    "halted_by": "demerzel-cli:test",
+                    "reason": "stop",
+                    "scope": h.DEFAULT_SCOPE,
+                    "expires_at": None,
+                    "exempt_agents": [],
+                }),
+                encoding="utf-8",
+            )
+            active, reason = h.is_active(Path(d))
+            self.assertTrue(active)
+            self.assertIn("stop", reason)
+
+    def test_expired_marker_is_not_active(self):
+        with tempfile.TemporaryDirectory() as d:
+            import datetime as dt
+            (Path(d) / "HALT-ALL").write_text(
+                json.dumps({
+                    "schema_version": h.SCHEMA_VERSION,
+                    "halted_at": "2026-06-25T00:00:00Z",
+                    "halted_by": "demerzel-cli:test",
+                    "reason": "stop",
+                    "scope": h.DEFAULT_SCOPE,
+                    "expires_at": "2020-01-01T00:00:00Z",
+                    "exempt_agents": [],
+                }),
+                encoding="utf-8",
+            )
+            active, reason = h.is_active(Path(d), now=dt.datetime(2026, 1, 1, tzinfo=dt.timezone.utc))
+            self.assertFalse(active)
+            self.assertEqual(reason, "")
+
+    def test_unreadable_marker_fails_closed_active_with_reason(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "HALT-ALL").write_text("not json", encoding="utf-8")
+            active, reason = h.is_active(Path(d))
+            self.assertTrue(active)
+            self.assertIn("halt_all_unreadable", reason)
+            self.assertIn("fail-safe", reason)
+
+    def test_defaults_to_marker_dir(self):
+        with tempfile.TemporaryDirectory() as d:
+            with mock.patch.object(h, "_default_marker_dir", return_value=Path(d)):
+                active, reason = h.is_active()
+                self.assertFalse(active)
+                self.assertEqual(reason, "")
 
 
 if __name__ == "__main__":

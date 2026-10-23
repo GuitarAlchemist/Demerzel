@@ -1,0 +1,28 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-016",
+  "department": "psychohistory",
+  "question": "How should a probability forecast about governance labels be scored, and what does the score reward?",
+  "production_path": [
+    "investigation: read PSY-005's forecast unit and the five quality-trend JSONL files at the pinned commit; chose the event \"the label differs at the artifact's next row\" on the pairs of consecutive labelled rows",
+    "hypothesize: wrote the hypothesis and its two thresholds (a spread of 0.0001, a share above one half) before the analysis was first run",
+    "extract: snapshot effectiveness_to, timestamps and baseline flags into observed-input.json, refusing any source file whose Git blob differs from the pin",
+    "model: five constant forecasters and one rule-based forecaster defined in scenarios.json by the probability they state; Brier score, Brier skill against the in-sample base rate, logarithmic score",
+    "test: scored the forecasters on all pairs, on the pairs that start at a seed row and on the pairs between feeder runs; leave-one-pair-out rankings; closed-form and seeded comparison of a proper rule with mean absolute error",
+    "adversarial: planted label flip as a negative control, an independent recount from the JSONL files with separate code, hindsight flags on the base-rate and rule-based forecasters, and the objection that the event may not be a forecastable one",
+    "test: byte-identical rerun of the extract and of the analysis, 30 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "On the 1,529 recorded pairs, the Brier score will barely separate forecasters that state a small probability of change: constant forecasts between 0 and 0.01 will score within 0.0001 of one another, the single changed pair will supply most of each of those scores, and no constant forecast will show positive Brier skill against the in-sample base rate; the logarithmic score will be infinite for a forecast of exactly 0. In the synthetic part, the expected Brier score will be lowest when the stated probability equals the true one and the expected absolute error will not.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the quality trend holds 1,548 rows for 18 artifacts and 1,529 pairs of consecutive labelled rows, of which 1 changed; 11 pairs start at a seed row (78.5 days, 1 change) and 1,518 join two feeder runs 0.001 to 6.453 days apart (0 changes).",
+    "Scored on the 1,529 pairs, the constant forecasts 0, 1/1,529 and 0.01 have Brier scores 0.000654022, 0.000653594 and 0.000740942, a spread of 0.000087, and the one changed pair supplies 100%, 99.93% and 86.51% of their squared error; 0.05 and 0.5 score 0.003089 and 0.25.",
+    "Brier skill against the in-sample base rate is 0 for 1/1,529 and negative for the other four constant forecasts (-0.000654, -0.133641, -3.725591, -381.500164); that part of the hypothesis is an identity and could not have failed. An imaginary rule chosen with hindsight (0.1 on pairs from a seed row, 0.001 elsewhere) reaches a skill of 0.087885; removing the changed pair reverses the order of the first three forecasters, while each of the 1,528 other removals leaves the ranking as it is.",
+    "The logarithmic score is infinite for the forecast 0 on all pairs and 0 on the 1,518 pairs between feeder runs; for 1/1,529 and 0.01 it is 0.005449 and 0.013056. In the synthetic part (assumed true probabilities 0.3 and 0.02, 20,000 seeded draws each) the expected and simulated Brier scores are lowest at the true probability and the expected absolute error is lowest at 0.",
+    "Every forecaster is imaginary and none was issued before the outcomes; the pairs are 18 artifacts read repeatedly, not independent trials, and no sampling uncertainty was computed. The analysis reran byte-identically with 30 self-checks; no human has reviewed the subject matter and no learner has tried the lesson; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T02:14:08Z"
+}

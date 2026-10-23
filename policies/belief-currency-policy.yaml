@@ -1,5 +1,5 @@
 name: belief-currency-policy
-version: "1.0.0"
+version: "1.2.0"
 effective_date: "2026-03-17"
 description: How Demerzel and Seldon keep their beliefs current — triggers, schedules, and decay rules
 
@@ -93,6 +93,46 @@ integrations:
   auto_remediation: "Stale beliefs are a staleness gap — auto-refresh via recon"
   ml_feedback: "Staleness predictor pipeline proactively identifies at-risk beliefs"
   alignment: "Confidence gating uses effective_confidence (after decay), not stored_confidence"
+
+# Enforcement (added 1.1.0, 2026-07-20). Until this version the rules
+# above were declaration only — a 2026-07-20 machine replay of
+# state/beliefs/ through hari's hexavalent substrate found a belief held
+# at T@0.8 for four months alongside its own contradicting evidence
+# (GuitarAlchemist/hari docs/research/2026-07-20-demerzel-belief-replay.md).
+# Policy without a mechanism is the measured failure mode
+# (hari docs/research/2026-07-20-compounding-strategy.md §2).
+enforcement:
+  ci_lint:
+    script: "scripts/belief_lint.py"
+    workflow: ".github/workflows/governance-validate.yml (beliefs job)"
+    fails_on:
+      - "unaddressed-contradiction — T/P verdict with contradicting evidence newer than last_updated"
+      - "assertion-without-evidence — non-U verdict with empty evidence"
+    warns_on:
+      - "dissent-held — T/P verdict with standing contradicting evidence (process-compliant; epistemically the substrate replay resolves this Contradictory)"
+      - "overconfident-with-dissent — confidence >= 0.85 alongside contradicting evidence"
+      - "expired — non-U verdict older than the 14-day expiry (promote via --strict-expiry once the March backlog is re-evaluated)"
+  # substrate_audit mechanized in 1.2.0 (2026-07-20). 1.1.0 declared the
+  # replay as the monthly epistemic check but attached no job — the same
+  # "policy without a mechanism" gap the lint had just closed for process
+  # compliance. This job replays state/beliefs/ on the policy's monthly
+  # cadence and fails only on the re-evaluation trigger the description names:
+  # an affirmative hand verdict (T/P) the substrate resolves Contradictory.
+  substrate_audit:
+    description: >
+      The monthly "audit belief accuracy" item above is implemented by
+      replaying state/beliefs/ through hari's substrate: hari
+      scripts/demerzel/beliefs_to_trace.py -> hari-core replay. The lint
+      checks process compliance (did the holder re-evaluate?); the replay
+      checks epistemic compliance (does the verdict follow from the
+      evidence?). Divergence between a hand-maintained verdict and the
+      substrate verdict is a re-evaluation trigger.
+    workflow: ".github/workflows/substrate-audit.yml (monthly cron + workflow_dispatch)"
+    script: "scripts/substrate_audit_check.py (comparison half; tested by scripts/test_substrate_audit_check.py)"
+    fails_on:
+      - "re-evaluation-trigger — hand-maintained T/P verdict the substrate resolves to Contradictory (false confidence held against irreconcilable evidence)"
+    warns_on:
+      - "divergence — any other hand/substrate disagreement (within-chain strength differences, negative/unknown verdicts vs Contradictory, v0 projection mapping artifacts)"
 
 # Observability
 metrics:

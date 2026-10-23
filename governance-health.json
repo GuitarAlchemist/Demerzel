@@ -7,8 +7,8 @@
     "computed_at": "2026-03-23T18:00:00Z"
   },
   "quality_trend": {
-    "latest_artifact": "afk-graduated-self-merge",
-    "source": "state/quality-trend/2026-07.jsonl",
-    "computed_at": "2026-07-21T13:22:15Z"
+    "latest_artifact": "scripts/afk_backends/",
+    "source": "state/quality-trend/2026-10.jsonl",
+    "computed_at": "2026-10-22T16:24:29Z"
   }
 }

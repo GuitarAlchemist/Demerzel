@@ -1,0 +1,27 @@
+{
+  "cycle_at": "2026-07-28T23:53:00Z",
+  "dry_run": false,
+  "halted": false,
+  "backend": "local",
+  "max_parallel": 1,
+  "queue_size": 1,
+  "decisions": [
+    {
+      "issue": 848,
+      "title": "quality_trend.py dies on one malformed evolution record \u00e2\u20ac\u201d feeder down since 2026-07-25",
+      "risk": "medium",
+      "mode": "boundary-only",
+      "eligible": true,
+      "action": "implement",
+      "pr": "https://github.com/GuitarAlchemist/Demerzel/pull/857",
+      "branch": "agent/issue-848"
+    }
+  ],
+  "tally": {
+    "implement": 1,
+    "skipped": 0,
+    "stalled": 0,
+    "blocked": 0,
+    "error": 0
+  }
+}

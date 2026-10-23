@@ -48,6 +48,38 @@ humanity) overrides everything. Constitutions are **append-only**.
 - **LOLLI / Resilience score (R)** — `R = injections_caught / injections_total`; the
   chaos-engineering metric for how well governance detects injected poison (dead
   bindings, orphaned branches, BS descriptions, unconsumed artifacts).
+- **BAML (Boundary AI Markup Language)** — the DSL (`baml_src/`) that declares prompts as
+  strongly-typed functions, enforcing LLM output schemas *in flight* rather than validating
+  them at rest ([ADR-0005](docs/adr/0005-adopt-baml-for-strongly-typed-prompts.md), which
+  supersedes the earlier **defer** recommendation in
+  [`docs/research/2026-07-28-baml-adoption-assessment.md`](docs/research/2026-07-28-baml-adoption-assessment.md);
+  adoption is tracked in #890). `baml_src/schema.baml` is **the contract**; Demerzel generates
+  exactly one client from it — Python/Pydantic at the repo root (`baml_client/`, so
+  `from baml_client import b` resolves), because this repo's own scripts import it. Consumers
+  generate their own from the same contract: a client library built here for a sibling to
+  compile would be that sibling's runtime living in the governance repo, which
+  `CONTRIBUTING.md`'s CL-817-12 adjudication sends to the sibling. If you do add a generator,
+  give it a distinct `output_dir` — BAML writes `<output_dir>/baml_client`, so two generators
+  sharing a directory silently clobber each other.
+  Because the client is derived-but-tracked, `baml_src/` and `baml_client/` can disagree;
+  `scripts/verify.ps1` regenerates and diffs to catch that, but **no workflow invokes it**
+  (#919), so treat a matching pair as unverified rather than guaranteed.
+- **validate_dsp_loop** — the self-correcting parameter gate (`scripts/validate_dsp_loop.py`):
+  binary-searches a DSP distortion parameter until a hexavalent swarm consensus clears the
+  bounds in [`logic/dsp-safety-bounds.yaml`](logic/dsp-safety-bounds.yaml). Two interchangeable
+  graders — deterministic threshold comparisons (default) and the typed BAML
+  `EvaluateSignalSwarm` function (`--use-baml`) — read the *same* bounds file, so the code
+  gate and the model gate cannot drift apart. The BAML grader's transport is **out of
+  band**: BAML renders the prompt and types the answer locally, and the completion comes
+  from `claude -p` on the subscription via `scripts/baml_claude_code.py`, which strips
+  `ANTHROPIC_API_KEY` from the child environment because Claude Code otherwise prefers it
+  over the claude.ai login. No BAML call bills a metered provider. Emits an audited record per run to
+  `state/dsp-validation/`. Only a cycle that passes in **this** run may report a value, so an
+  aborted or non-converging run exits non-zero rather than re-proposing a cached one.
+  `--use-cached-bounds` authorizes a *warm start* — narrowing the search space to a prior
+  value, which cycle 1 then re-validates — and nothing more. A validated parameter remains a
+  **proposal**; enacting it as a control input is a separate explicit human authorization,
+  per Article 9.
 
 ## Architecture seams (designed 2026-06-20 via `/improve-codebase-architecture`; built 2026-06-21, PR #357)
 

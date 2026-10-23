@@ -1,0 +1,1759 @@
+{
+  "module_id": "psy-017-calibration-with-six-observations",
+  "rounding": "probabilities to 6 decimals, interval bounds to 4, nudges and totals to 4, ratios to 4, days and years to 1; 'exact' is the unrounded fraction",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "files": [
+      "state / beliefs / 2026-03-17-behavioral-test-coverage.belief.json",
+      "state / beliefs / 2026-03-17-demerzel-framework-integrity.belief.json",
+      "state / beliefs / 2026-03-18-consumer-repo-integration-status.belief.json",
+      "state / beliefs / 2026-07-25-cross-reference-integrity.belief.json",
+      "state / beliefs / 2026-07-25-schema-conformance.belief.json",
+      "state / beliefs / 2026-07-29-afk-backend-adapter.belief.json",
+      "state / beliefs / confidence-calibration.belief.json",
+      "state / beliefs / remediation-effectiveness.belief.json",
+      "state / beliefs / archived / 2026-03-17-consumer-repo-integration-status.belief.json",
+      "state / beliefs / archived / 2026-03-17-ga-governance-integration.belief.json",
+      "state / beliefs / archived / 2026-03-17-ix-governance-integration.belief.json",
+      "state / beliefs / archived / 2026-03-17-tars-governance-integration.belief.json",
+      "state / beliefs / archived / slot-blue-health.belief.json",
+      "state / beliefs / archived / slot-green-health.belief.json",
+      "state / beliefs / archived / visual-displacement-terrain.belief.json",
+      "state / beliefs / archived / visual-earth-clouds.belief.json",
+      "state / beliefs / archived / visual-earth-snow.belief.json",
+      "state / beliefs / archived / visual-earth-terminator.belief.json",
+      "state / beliefs / archived / visual-milky-way-parallax.belief.json",
+      "state / beliefs / archived / visual-planet-proportions.belief.json",
+      "state / beliefs / archived / visual-sun-flare.belief.json",
+      "policies / ml-governance-feedback-policy.yaml",
+      "pipelines / ml-feedback-loop.ixql",
+      "scripts / apply_ml_feedback.py",
+      "state / beliefs / 3d-visualization-aesthetics.yaml",
+      "state / beliefs / archived / SUPERSEDED.md"
+    ],
+    "cited_outside_the_pin": {
+      "repository": "GuitarAlchemist/ix",
+      "commit": "6418fcc69012108af266544ec4cf5a931a8f78e8",
+      "path": "scripts/confidence_calibrator.py",
+      "git_blob": "e875b4ce0831060b14029e71016dfe0acbc0fef2",
+      "url": "https://github.com/GuitarAlchemist/ix/blob/6418fcc69012108af266544ec4cf5a931a8f78e8/scripts/confidence_calibrator.py"
+    }
+  },
+  "record": {
+    "kind": "observed: copied from observed-input.json",
+    "path": "state / beliefs / confidence-calibration.belief.json",
+    "proposition": "Demerzel's confidence-assignment threshold is calibrated against the observed overconfidence-then-revision rate in her belief states.",
+    "truth_value": "P",
+    "confidence": 0.92,
+    "last_updated": "2026-10-13T13:00:05Z",
+    "supporting_items": 1,
+    "contradicting_items": 0,
+    "claim": "2 of 6 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.3333). Revisions evidenced by archived prior versions: 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy.",
+    "claim_source": "ml-feedback-recommendation a662f4a3-9c5f-4517-92eb-8f58721fc081",
+    "claim_timestamp": "2026-10-13T13:00:05Z",
+    "claim_reliability": 0.92,
+    "claim_numbers": {
+      "revised": 2,
+      "high_confidence_beliefs": 6,
+      "high_confidence_line": 0.85,
+      "overconfidence_rate": 0.3333,
+      "archived_prior_versions": [
+        "2026-03-17-consumer-repo-integration-status.belief.json",
+        "2026-03-17-ga-governance-integration.belief.json"
+      ],
+      "cap_per_cycle": 0.1
+    },
+    "calibration": {
+      "threshold_nudge": -0.1,
+      "applied_delta": 0.0,
+      "prior_nudge": -0.1,
+      "cap": 0.1
+    },
+    "rule_files": {
+      "policy": "policies / ml-governance-feedback-policy.yaml",
+      "pipeline": "pipelines / ml-feedback-loop.ixql",
+      "applier": "scripts / apply_ml_feedback.py"
+    },
+    "rule_lines": {
+      "policy": {
+        "overconfidence_rate": {
+          "line": 57,
+          "text": "- overconfidence_rate: \"Proportion of high-confidence beliefs that were later revised\""
+        },
+        "underconfidence_rate": {
+          "line": 58,
+          "text": "- underconfidence_rate: \"Proportion of low-confidence beliefs that turned out correct\""
+        },
+        "action": {
+          "line": 61,
+          "text": "action: Demerzel reviews and may adjust confidence_thresholds in alignment-policy"
+        },
+        "frequency": {
+          "line": 62,
+          "text": "frequency: weekly"
+        },
+        "guardrail": {
+          "line": 63,
+          "text": "guardrail: Threshold adjustments cannot exceed +/- 0.1 per cycle"
+        },
+        "human_oversight": {
+          "line": 17,
+          "text": "- Human oversight of the feedback loop is required at least quarterly"
+        }
+      },
+      "pipeline": {
+        "overconfidence_trigger": {
+          "line": 41,
+          "text": "r → filter(r.overconfidence_rate > 0.15)"
+        },
+        "overconfidence_formula": {
+          "line": 44,
+          "text": "formula: \"max(-0.1, -1 * overconfidence_rate * 0.5)\""
+        },
+        "underconfidence_trigger": {
+          "line": 51,
+          "text": "r → filter(r.underconfidence_rate > 0.20)"
+        },
+        "underconfidence_formula": {
+          "line": 54,
+          "text": "formula: \"min(0.1, underconfidence_rate * 0.5)\""
+        }
+      },
+      "applier": {
+        "producer_named_in_the_header": {
+          "line": 4,
+          "text": "loop. The companion producer (ix/scripts/confidence_calibrator.py) emits"
+        },
+        "nudge_cap": {
+          "line": 51,
+          "text": "NUDGE_CAP = 0.10"
+        },
+        "auto_apply_confidence": {
+          "line": 55,
+          "text": "CONF_AUTO_APPLY = 0.85   # §4"
+        },
+        "clamp_of_one_nudge": {
+          "line": 118,
+          "text": "nudge = max(-NUDGE_CAP, min(NUDGE_CAP, raw))  # hard clamp (Article 9)"
+        },
+        "clamp_of_the_running_total": {
+          "line": 128,
+          "text": "new_total = max(-NUDGE_CAP, min(NUDGE_CAP, round(prior + nudge, 4)))"
+        },
+        "truth_value_written": {
+          "line": 133,
+          "text": "\"truth_value\": \"P\",  # Probable: evidence leans true, magnitude still small-N"
+        },
+        "confidence_written": {
+          "line": 134,
+          "text": "\"confidence\": doc[\"confidence\"],"
+        },
+        "source_written": {
+          "line": 137,
+          "text": "\"source\": f\"ml-feedback-recommendation {doc['message_id']}\","
+        },
+        "claim_written": {
+          "line": 138,
+          "text": "\"claim\": doc[\"recommendation\"][\"rationale\"],"
+        },
+        "reliability_written": {
+          "line": 140,
+          "text": "\"reliability\": doc[\"confidence\"],"
+        },
+        "applied_delta_written": {
+          "line": 148,
+          "text": "\"applied_delta\": round(new_total - prior, 4),"
+        },
+        "second_belief_file_written": {
+          "line": 256,
+          "text": "belief_path = root / \"state\" / \"beliefs\" / \"remediation-effectiveness.belief.json\""
+        },
+        "second_confidence_written": {
+          "line": 268,
+          "text": "\"confidence\": doc[\"confidence\"],"
+        },
+        "second_source_written": {
+          "line": 271,
+          "text": "\"source\": f\"ml-feedback-recommendation {doc['message_id']}\","
+        }
+      }
+    }
+  },
+  "recount": {
+    "kind": "computed from the belief files in observed-input.json; the counting rule is cited (scenarios.json, cited_producer)",
+    "counting_rule": {
+      "high_confidence": "every *.belief.json file of the two belief folders, current and archived, whose confidence is at least high_confidence_line",
+      "revised": "the high-confidence files that lie in the archived folder"
+    },
+    "belief_files_read": 21,
+    "current": 8,
+    "archived": 13,
+    "current_belief_files": [
+      {
+        "file": "2026-03-17-behavioral-test-coverage.belief.json",
+        "truth_value": "T",
+        "confidence": 0.8,
+        "at_or_above_the_line": false,
+        "last_updated": "2026-09-12T00:00:00Z"
+      },
+      {
+        "file": "2026-03-17-demerzel-framework-integrity.belief.json",
+        "truth_value": "P",
+        "confidence": 0.82,
+        "at_or_above_the_line": false,
+        "last_updated": "2026-09-12T00:00:00Z"
+      },
+      {
+        "file": "2026-03-18-consumer-repo-integration-status.belief.json",
+        "truth_value": "P",
+        "confidence": 0.85,
+        "at_or_above_the_line": true,
+        "last_updated": "2026-09-13T00:00:00Z"
+      },
+      {
+        "file": "2026-07-25-cross-reference-integrity.belief.json",
+        "truth_value": "P",
+        "confidence": 0.8,
+        "at_or_above_the_line": false,
+        "last_updated": "2026-09-12T00:00:00Z"
+      },
+      {
+        "file": "2026-07-25-schema-conformance.belief.json",
+        "truth_value": "T",
+        "confidence": 0.95,
+        "at_or_above_the_line": true,
+        "last_updated": "2026-09-12T00:00:00Z"
+      },
+      {
+        "file": "2026-07-29-afk-backend-adapter.belief.json",
+        "truth_value": "T",
+        "confidence": 0.82,
+        "at_or_above_the_line": false,
+        "last_updated": "2026-09-12T00:00:00Z"
+      },
+      {
+        "file": "confidence-calibration.belief.json",
+        "truth_value": "P",
+        "confidence": 0.92,
+        "at_or_above_the_line": true,
+        "last_updated": "2026-10-13T13:00:05Z"
+      },
+      {
+        "file": "remediation-effectiveness.belief.json",
+        "truth_value": "P",
+        "confidence": 0.9,
+        "at_or_above_the_line": true,
+        "last_updated": "2026-10-13T13:00:05Z"
+      }
+    ],
+    "high_confidence": [
+      {
+        "file": "2026-03-18-consumer-repo-integration-status.belief.json",
+        "group": "current",
+        "truth_value": "P",
+        "confidence": 0.85,
+        "last_updated": "2026-09-13T00:00:00Z",
+        "days_from_last_update_to_the_record": 30.5,
+        "written_by_the_feedback_loop": false,
+        "is_the_record_itself": false,
+        "previous_value": "F"
+      },
+      {
+        "file": "2026-07-25-schema-conformance.belief.json",
+        "group": "current",
+        "truth_value": "T",
+        "confidence": 0.95,
+        "last_updated": "2026-09-12T00:00:00Z",
+        "days_from_last_update_to_the_record": 31.5,
+        "written_by_the_feedback_loop": false,
+        "is_the_record_itself": false,
+        "previous_value": null
+      },
+      {
+        "file": "confidence-calibration.belief.json",
+        "group": "current",
+        "truth_value": "P",
+        "confidence": 0.92,
+        "last_updated": "2026-10-13T13:00:05Z",
+        "days_from_last_update_to_the_record": 0.0,
+        "written_by_the_feedback_loop": true,
+        "is_the_record_itself": true,
+        "previous_value": null
+      },
+      {
+        "file": "remediation-effectiveness.belief.json",
+        "group": "current",
+        "truth_value": "P",
+        "confidence": 0.9,
+        "last_updated": "2026-10-13T13:00:05Z",
+        "days_from_last_update_to_the_record": 0.0,
+        "written_by_the_feedback_loop": true,
+        "is_the_record_itself": false,
+        "previous_value": null
+      },
+      {
+        "file": "2026-03-17-consumer-repo-integration-status.belief.json",
+        "group": "archived",
+        "truth_value": "F",
+        "confidence": 0.9,
+        "last_updated": "2026-03-17T20:00:00Z",
+        "days_from_last_update_to_the_record": 209.7,
+        "written_by_the_feedback_loop": false,
+        "is_the_record_itself": false,
+        "previous_value": null
+      },
+      {
+        "file": "2026-03-17-ga-governance-integration.belief.json",
+        "group": "archived",
+        "truth_value": "F",
+        "confidence": 0.85,
+        "last_updated": "2026-03-17T22:00:00Z",
+        "days_from_last_update_to_the_record": 209.6,
+        "written_by_the_feedback_loop": false,
+        "is_the_record_itself": false,
+        "previous_value": null
+      }
+    ],
+    "high_confidence_count": 6,
+    "of_which_current": 4,
+    "of_which_archived": 2,
+    "rate": {
+      "exact": "2/6",
+      "value": 0.333333
+    },
+    "matches_the_claim": {
+      "revised": true,
+      "high_confidence_beliefs": true,
+      "archived_files": true,
+      "claim_text_rebuilt_from_the_recount_is_identical": true
+    },
+    "provenance": {
+      "producer_named_by_the_applying_script": "ix/scripts/confidence_calibrator.py",
+      "it_is_the_cited_script": true,
+      "copied_from_the_recommendation_at_lines": {
+        "confidence": 134,
+        "source": 137,
+        "claim": 138,
+        "reliability": 140
+      },
+      "fixed_in_the_applying_script_at_line": {
+        "truth_value": 133
+      },
+      "second_belief_file_the_script_writes": "remediation-effectiveness.belief.json"
+    },
+    "not_read_by_the_producer": {
+      "yaml_file": "3d-visualization-aesthetics.yaml",
+      "beliefs": 19,
+      "at_or_above_the_line": 9,
+      "high_confidence_on_disk_with_the_counted_files": 15,
+      "archive_ledger": {
+        "file": "SUPERSEDED.md",
+        "quotes": {
+          "retired_not_deleted": "Beliefs in this directory are retired, not deleted. The belief-currency lint",
+          "placeholders": "Nine placeholder belief scaffolds were archived here from `state/beliefs/`:"
+        }
+      }
+    },
+    "composition": {
+      "written_by_the_feedback_loop": [
+        "confidence-calibration.belief.json",
+        "remediation-effectiveness.belief.json"
+      ],
+      "the_record_counts_itself": true,
+      "rate_without_the_files_the_loop_writes": {
+        "exact": "2/4",
+        "value": 0.5
+      },
+      "archived_high_confidence_truth_values": [
+        "F",
+        "F"
+      ],
+      "current_high_confidence_with_a_previous_value": [
+        "2026-03-18-consumer-repo-integration-status.belief.json"
+      ],
+      "rate_if_a_recorded_previous_value_also_counts_as_revised": {
+        "exact": "3/6",
+        "value": 0.5
+      },
+      "refresh_notes": {
+        "2026-03-18-consumer-repo-integration-status.belief.json": "2026-03-23: PR #13 was closed because governance scaffolding was committed directly to ga main (commit 11abf7af). Contradiction resolved — all 3 repos now have governance on main branch. Confidence upgraded from 0.85 to 0.90. | 2026-09-12: expired 173d and re-verified against the sibling repos. ix and tars are current; ga is 791 commits behind because its auto-update workflow dies of SIGPIPE before opening a PR. The conjunction is false, so T -> F. The March confidence_override (0.90) is removed as superseded. | 2026-09-13: ga caught up via #658/#660; all three repos 0 behind. F -> P, not T: submodule currency is measured, but the 'persona definitions' conjunct was only re-checked for tars (governance/agents) and ga (governance/personas), not ix."
+      },
+      "mean_stated_confidence": 0.895,
+      "expected_errors_if_each_were_wrong_with_probability_one_minus_its_confidence": 0.63
+    }
+  },
+  "exact_interval": {
+    "kind": "computed",
+    "method": "Clopper-Pearson: the lower bound L solves P(X >= x | n, L) = (1 - level)/2 and the upper bound U solves P(X <= x | n, U) = (1 - level)/2, by bisection on exact binomial sums; width = upper - lower from the rounded bounds",
+    "level": 0.95,
+    "observed": {
+      "revised": 2,
+      "of": 6,
+      "lower": 0.0433,
+      "upper": 0.7772,
+      "width": 0.7339,
+      "share": 0.333333,
+      "upper_over_lower": 17.9
+    },
+    "rates_inside_the_interval": {
+      "3/20": true,
+      "1/10": true,
+      "1/20": true
+    },
+    "normal_approximation_for_comparison": {
+      "formula": "share +/- z * sqrt(share * (1 - share) / n)",
+      "z": 1.959964,
+      "lower": -0.0439,
+      "upper": 0.7105,
+      "lower_is_below_zero": true
+    },
+    "same_share_in_larger_samples": [
+      {
+        "revised": 4,
+        "of": 12,
+        "lower": 0.0992,
+        "upper": 0.6511,
+        "width": 0.5519,
+        "lower_bound_above_15_percent": false
+      },
+      {
+        "revised": 6,
+        "of": 18,
+        "lower": 0.1334,
+        "upper": 0.5901,
+        "width": 0.4567,
+        "lower_bound_above_15_percent": false
+      },
+      {
+        "revised": 8,
+        "of": 24,
+        "lower": 0.1563,
+        "upper": 0.5532,
+        "width": 0.3969,
+        "lower_bound_above_15_percent": true
+      },
+      {
+        "revised": 10,
+        "of": 30,
+        "lower": 0.1729,
+        "upper": 0.5281,
+        "width": 0.3552,
+        "lower_bound_above_15_percent": true
+      },
+      {
+        "revised": 20,
+        "of": 60,
+        "lower": 0.2169,
+        "upper": 0.4669,
+        "width": 0.25,
+        "lower_bound_above_15_percent": true
+      },
+      {
+        "revised": 40,
+        "of": 120,
+        "lower": 0.2499,
+        "upper": 0.4252,
+        "width": 0.1753,
+        "lower_bound_above_15_percent": true
+      }
+    ],
+    "smallest_listed_sample_whose_interval_excludes_15_percent": 24
+  },
+  "revisions_among_six": {
+    "kind": "computed: exact binomial probabilities for assumed true rates (scenarios.json, forecasters)",
+    "beliefs": 6,
+    "observed_revised": 2,
+    "forecasters": {
+      "rate_15_percent": {
+        "revision_rate": {
+          "exact": "3/20",
+          "value": 0.15
+        },
+        "description": "Revised 15% of the time: the most a forecaster calibrated at confidence 0.85 would be wrong.",
+        "probability_of_each_count": [
+          0.37715,
+          0.399335,
+          0.176177,
+          0.041453,
+          0.005486,
+          0.000387,
+          1.1e-05
+        ],
+        "none": 0.37715,
+        "exactly_the_observed_count": 0.176177,
+        "one_or_more": 0.62285,
+        "two_or_more": 0.223516,
+        "three_or_more": 0.047339,
+        "expected_revised": 0.9
+      },
+      "rate_10_percent": {
+        "revision_rate": {
+          "exact": "1/10",
+          "value": 0.1
+        },
+        "description": "Revised 10% of the time: calibrated at confidence 0.90.",
+        "probability_of_each_count": [
+          0.531441,
+          0.354294,
+          0.098415,
+          0.01458,
+          0.001215,
+          5.4e-05,
+          1e-06
+        ],
+        "none": 0.531441,
+        "exactly_the_observed_count": 0.098415,
+        "one_or_more": 0.468559,
+        "two_or_more": 0.114265,
+        "three_or_more": 0.01585,
+        "expected_revised": 0.6
+      },
+      "rate_5_percent": {
+        "revision_rate": {
+          "exact": "1/20",
+          "value": 0.05
+        },
+        "description": "Revised 5% of the time: calibrated at confidence 0.95.",
+        "probability_of_each_count": [
+          0.735092,
+          0.232134,
+          0.030544,
+          0.002143,
+          8.5e-05,
+          2e-06,
+          0.0
+        ],
+        "none": 0.735092,
+        "exactly_the_observed_count": 0.030544,
+        "one_or_more": 0.264908,
+        "two_or_more": 0.032774,
+        "three_or_more": 0.00223,
+        "expected_revised": 0.3
+      },
+      "rate_one_third": {
+        "revision_rate": {
+          "exact": "1/3",
+          "value": 0.333333
+        },
+        "description": "Revised one time in three: the recorded share, taken as the true rate. Overconfident under the lesson's reading.",
+        "probability_of_each_count": [
+          0.087791,
+          0.263374,
+          0.329218,
+          0.219479,
+          0.082305,
+          0.016461,
+          0.001372
+        ],
+        "none": 0.087791,
+        "exactly_the_observed_count": 0.329218,
+        "one_or_more": 0.912209,
+        "two_or_more": 0.648834,
+        "three_or_more": 0.319616,
+        "expected_revised": 2.0
+      }
+    },
+    "calibrated_at_each_stated_confidence": {
+      "note": "Each of the six files is wrong with probability 1 - its own stated confidence, independently; 'revised' is read as 'wrong'. An assumption about the forecaster, applied to the observed confidences.",
+      "probabilities_of_error": [
+        0.15,
+        0.05,
+        0.08,
+        0.1,
+        0.1,
+        0.15
+      ],
+      "expected_wrong": 0.63,
+      "none": 0.511487,
+      "exactly_one": 0.365586,
+      "two_or_more": 0.122927
+    },
+    "likelihood_ratio_of_one_third_against": {
+      "rate_15_percent": {
+        "exact": "1024000000/547981281",
+        "value": 1.8687
+      },
+      "rate_10_percent": {
+        "exact": "16000000/4782969",
+        "value": 3.3452
+      },
+      "rate_5_percent": {
+        "exact": "1024000000/95004009",
+        "value": 10.7785
+      }
+    },
+    "likelihood_ratio_definition": "P(exactly the observed count | rate 1/3) / P(exactly the observed count | other rate)",
+    "flat_prior": {
+      "prior": "uniform on the true rate between 0 and 1",
+      "probability_rate_above_15_percent_before_the_data": {
+        "exact": "17/20",
+        "value": 0.85
+      },
+      "probability_rate_above_15_percent_after_the_data": {
+        "exact": "237116119/256000000",
+        "value": 0.926235
+      },
+      "added_by_the_data": {
+        "exact": "19516119/256000000",
+        "value": 0.076235
+      },
+      "method": "posterior Beta(x + 1, n - x + 1); P(rate > r) = P(Binomial(n + 1, r) <= x), checked against the integral of r^x (1 - r)^(n - x)"
+    }
+  },
+  "telling_two_rates_apart": {
+    "kind": "computed: exact binomial error rates of a counting rule; the error rates wanted are choices (scenarios.json, test)",
+    "definition": "Rule 'call the forecaster overconfident when c or more of n high-confidence beliefs are revised'. False alarm = probability of that at the calibrated rate; detection = probability at the other rate.",
+    "calibrated_rate": {
+      "exact": "3/20",
+      "value": 0.15
+    },
+    "at_the_recorded_sample": {
+      "beliefs": 6,
+      "other_rate": {
+        "exact": "1/3",
+        "value": 0.333333
+      },
+      "by_critical_count": [
+        {
+          "count": 1,
+          "false_alarm": 0.62285,
+          "detection": 0.912209
+        },
+        {
+          "count": 2,
+          "false_alarm": 0.223516,
+          "detection": 0.648834
+        },
+        {
+          "count": 3,
+          "false_alarm": 0.047339,
+          "detection": 0.319616
+        },
+        {
+          "count": 4,
+          "false_alarm": 0.005885,
+          "detection": 0.100137
+        },
+        {
+          "count": 5,
+          "false_alarm": 0.000399,
+          "detection": 0.017833
+        },
+        {
+          "count": 6,
+          "false_alarm": 1.1e-05,
+          "detection": 0.001372
+        }
+      ],
+      "smallest_count_with_false_alarm_at_most_5_percent": 3,
+      "its_false_alarm": 0.047339,
+      "its_detection": 0.319616,
+      "its_miss_rate": 0.680384,
+      "observed_revised": 2,
+      "observed_count_reaches_it": false,
+      "count_from_which_the_pinned_rule_fires": 1
+    },
+    "observations_needed": [
+      {
+        "alternative_rate": {
+          "exact": "1/3",
+          "value": 0.333333
+        },
+        "design": "false_alarm_5_detection_80",
+        "false_alarm_at_most": 0.05,
+        "detection_at_least": 0.8,
+        "smallest_sample": 33,
+        "critical_count": 9,
+        "false_alarm": 0.049479,
+        "detection": 0.821185,
+        "times_the_recorded_sample": 5.5,
+        "larger_samples_that_fail_the_design": [
+          34,
+          35
+        ],
+        "every_sample_meets_the_design_from": 36,
+        "search_limit": 400
+      },
+      {
+        "alternative_rate": {
+          "exact": "1/3",
+          "value": 0.333333
+        },
+        "design": "false_alarm_5_detection_90",
+        "false_alarm_at_most": 0.05,
+        "detection_at_least": 0.9,
+        "smallest_sample": 47,
+        "critical_count": 12,
+        "false_alarm": 0.041277,
+        "detection": 0.903816,
+        "times_the_recorded_sample": 7.8333,
+        "larger_samples_that_fail_the_design": [
+          49,
+          50
+        ],
+        "every_sample_meets_the_design_from": 51,
+        "search_limit": 400
+      },
+      {
+        "alternative_rate": {
+          "exact": "1/3",
+          "value": 0.333333
+        },
+        "design": "false_alarm_10_detection_80",
+        "false_alarm_at_most": 0.1,
+        "detection_at_least": 0.8,
+        "smallest_sample": 26,
+        "critical_count": 7,
+        "false_alarm": 0.083327,
+        "detection": 0.81499,
+        "times_the_recorded_sample": 4.3333,
+        "larger_samples_that_fail_the_design": [
+          28
+        ],
+        "every_sample_meets_the_design_from": 29,
+        "search_limit": 400
+      },
+      {
+        "alternative_rate": {
+          "exact": "1/4",
+          "value": 0.25
+        },
+        "design": "false_alarm_5_detection_80",
+        "false_alarm_at_most": 0.05,
+        "detection_at_least": 0.8,
+        "smallest_sample": 101,
+        "critical_count": 22,
+        "false_alarm": 0.043334,
+        "detection": 0.804216,
+        "times_the_recorded_sample": 16.8333,
+        "larger_samples_that_fail_the_design": [
+          103,
+          104,
+          105,
+          109
+        ],
+        "every_sample_meets_the_design_from": 110,
+        "search_limit": 400
+      },
+      {
+        "alternative_rate": {
+          "exact": "1/4",
+          "value": 0.25
+        },
+        "design": "false_alarm_5_detection_90",
+        "false_alarm_at_most": 0.05,
+        "detection_at_least": 0.9,
+        "smallest_sample": 136,
+        "critical_count": 28,
+        "false_alarm": 0.048419,
+        "detection": 0.903162,
+        "times_the_recorded_sample": 22.6667,
+        "larger_samples_that_fail_the_design": [
+          137,
+          138,
+          139,
+          140,
+          143,
+          144,
+          148
+        ],
+        "every_sample_meets_the_design_from": 149,
+        "search_limit": 400
+      },
+      {
+        "alternative_rate": {
+          "exact": "1/4",
+          "value": 0.25
+        },
+        "design": "false_alarm_10_detection_80",
+        "false_alarm_at_most": 0.1,
+        "detection_at_least": 0.8,
+        "smallest_sample": 75,
+        "critical_count": 16,
+        "false_alarm": 0.088806,
+        "detection": 0.805408,
+        "times_the_recorded_sample": 12.5,
+        "larger_samples_that_fail_the_design": [
+          77,
+          78,
+          79,
+          82,
+          83
+        ],
+        "every_sample_meets_the_design_from": 84,
+        "search_limit": 400
+      }
+    ],
+    "at_the_recorded_pace": {
+      "assumption": "High-confidence belief files keep being recorded at the pace of the six counted at the pin: six between the earliest last_updated among them and the timestamp of the record. This only sets a scale. The six were not recorded at a steady pace, and two of them are written by the applying script from recommendations.",
+      "beliefs": 6,
+      "span_days": 209.7,
+      "days_per_belief": 35.0,
+      "design": "false_alarm_5_detection_80",
+      "sample_needed": 33,
+      "days_for_the_sample_needed": 1153.4,
+      "years_for_the_sample_needed": 3.2,
+      "counted_from": "2026-03-17T20:00:00Z",
+      "still_needed_after_the_record": 27,
+      "days_after_the_record_for_the_sample_needed": 943.7,
+      "years_after_the_record_for_the_sample_needed": 2.6
+    }
+  },
+  "nudge_rule": {
+    "kind": "observed rule (pinned files), applied by computation",
+    "trigger": "observed rate > 0.15",
+    "formula": "nudge = max(-0.1, -0.5 * rate)",
+    "running_total": "clamp(previous total + nudge, -0.1, +0.1)",
+    "recorded_cycle_recomputed": {
+      "rate": "2/6",
+      "gain_times_rate": -0.166667,
+      "nudge_after_the_cap": -0.1,
+      "prior_total": -0.1,
+      "sum_before_the_clamp": -0.2,
+      "total_after_the_clamp": -0.1,
+      "applied_delta": 0.0,
+      "equals_the_recorded_values": true
+    },
+    "at_the_recorded_sample": {
+      "beliefs": 6,
+      "by_count": [
+        {
+          "revised": 0,
+          "rate": 0.0,
+          "recommendation": false,
+          "nudge": 0.0
+        },
+        {
+          "revised": 1,
+          "rate": 0.166667,
+          "recommendation": true,
+          "nudge": -0.0833
+        },
+        {
+          "revised": 2,
+          "rate": 0.333333,
+          "recommendation": true,
+          "nudge": -0.1
+        },
+        {
+          "revised": 3,
+          "rate": 0.5,
+          "recommendation": true,
+          "nudge": -0.1
+        },
+        {
+          "revised": 4,
+          "rate": 0.666667,
+          "recommendation": true,
+          "nudge": -0.1
+        },
+        {
+          "revised": 5,
+          "rate": 0.833333,
+          "recommendation": true,
+          "nudge": -0.1
+        },
+        {
+          "revised": 6,
+          "rate": 1.0,
+          "recommendation": true,
+          "nudge": -0.1
+        }
+      ],
+      "smallest_count_with_a_recommendation": 1,
+      "smallest_sample_at_which_one_revision_gives_no_recommendation": 7
+    },
+    "probability_of_a_downward_nudge_in_one_cycle": {
+      "rate_15_percent": 0.62285,
+      "rate_10_percent": 0.468559,
+      "rate_5_percent": 0.264908,
+      "rate_one_third": 0.912209
+    },
+    "expected_nudge_in_one_cycle": {
+      "rate_15_percent": -0.055629,
+      "rate_10_percent": -0.040951,
+      "rate_5_percent": -0.022622,
+      "rate_one_third": -0.086831
+    },
+    "upward_branch": {
+      "trigger": "r → filter(r.underconfidence_rate > 0.20)",
+      "formula": "formula: \"min(0.1, underconfidence_rate * 0.5)\"",
+      "underconfidence_rate_in_the_record": null,
+      "note": "The pinned pipeline specification has an upward branch driven by an underconfidence rate; the calibration belief records no such rate, so this fixture models the downward branch only."
+    }
+  },
+  "nudge_over_cycles": {
+    "kind": "synthetic: exact probabilities and a seeded simulation under the assumption below; not a measurement of the project",
+    "assumption": "Each cycle sees a fresh, independent sample of sample_per_cycle high-confidence beliefs from a forecaster whose true revision rate is fixed. The recorded loop does not work that way (it re-reads the same belief files on every cycle): this is the rule's best case, not a model of the project.",
+    "sample_per_cycle": 6,
+    "report_after_cycles": [
+      1,
+      2,
+      4,
+      13,
+      52
+    ],
+    "report_note": "The policy schedules the calibrator weekly and human oversight at least quarterly: 13 cycles is one quarter of weekly cycles, 52 is one year.",
+    "rules": {
+      "total_clamped_as_in_the_applier": "Pinned rule: a recommendation is produced when the observed rate exceeds the trigger; its nudge is max(-cap, -gain * rate); the stored total is the previous total plus the nudge, clamped to [-cap, +cap].",
+      "per_cycle_cap_only": "The same nudge, capped per cycle as the policy's guardrail is worded, with no limit on the running total. Not what the pinned script does.",
+      "two_sided_comparison_rule": "Hypothetical, not in the repository: nudge = clamp(-gain * (observed rate - target), -cap, +cap), with the pinned gain and cap and the pinned trigger as target. It moves up when the observed rate is below the target and down when it is above. No limit on the running total.",
+      "two_sided_with_the_total_clamp": "The hypothetical two-sided rule with the stored total clamped to [-cap, +cap]."
+    },
+    "exact": {
+      "total_clamped_as_in_the_applier": {
+        "rate_15_percent": {
+          "probability_total_at_the_floor": [
+            0.223516,
+            0.55654,
+            0.894076,
+            0.999954,
+            1.0
+          ],
+          "probability_total_still_zero": [
+            0.37715,
+            0.142242,
+            0.020233,
+            3e-06,
+            0.0
+          ],
+          "probability_total_between_zero_and_the_floor": [
+            0.399335,
+            0.301218,
+            0.085692,
+            4.3e-05,
+            0.0
+          ],
+          "first_cycle_with_floor_probability_above_95_percent": 5
+        },
+        "rate_10_percent": {
+          "probability_total_at_the_floor": [
+            0.114265,
+            0.340998,
+            0.707523,
+            0.997393,
+            1.0
+          ],
+          "probability_total_still_zero": [
+            0.531441,
+            0.28243,
+            0.079766,
+            0.00027,
+            0.0
+          ],
+          "probability_total_between_zero_and_the_floor": [
+            0.354294,
+            0.376573,
+            0.212711,
+            0.002338,
+            0.0
+          ],
+          "first_cycle_with_floor_probability_above_95_percent": 8
+        },
+        "rate_5_percent": {
+          "probability_total_at_the_floor": [
+            0.032774,
+            0.11836,
+            0.339183,
+            0.906576,
+            0.999998
+          ],
+          "probability_total_still_zero": [
+            0.735092,
+            0.54036,
+            0.291989,
+            0.0183,
+            0.0
+          ],
+          "probability_total_between_zero_and_the_floor": [
+            0.232134,
+            0.34128,
+            0.368828,
+            0.075125,
+            2e-06
+          ],
+          "first_cycle_with_floor_probability_above_95_percent": 16
+        },
+        "rate_one_third": {
+          "probability_total_at_the_floor": [
+            0.648834,
+            0.946049,
+            0.999228,
+            1.0,
+            1.0
+          ],
+          "probability_total_still_zero": [
+            0.087791,
+            0.007707,
+            5.9e-05,
+            0.0,
+            0.0
+          ],
+          "probability_total_between_zero_and_the_floor": [
+            0.263374,
+            0.046244,
+            0.000713,
+            0.0,
+            0.0
+          ],
+          "first_cycle_with_floor_probability_above_95_percent": 3
+        },
+        "floor_probability_ratio": {
+          "numerator": "rate_one_third",
+          "denominator": "rate_15_percent",
+          "values": [
+            2.9029,
+            1.6999,
+            1.1176,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "per_cycle_cap_only": {
+        "rate_15_percent": {
+          "mean_nudge_per_cycle": -0.055629,
+          "mean_total": [
+            -0.0556,
+            -0.1113,
+            -0.2225,
+            -0.7232,
+            -2.8927
+          ]
+        },
+        "rate_10_percent": {
+          "mean_nudge_per_cycle": -0.040951,
+          "mean_total": [
+            -0.041,
+            -0.0819,
+            -0.1638,
+            -0.5324,
+            -2.1295
+          ]
+        },
+        "rate_5_percent": {
+          "mean_nudge_per_cycle": -0.022622,
+          "mean_total": [
+            -0.0226,
+            -0.0452,
+            -0.0905,
+            -0.2941,
+            -1.1763
+          ]
+        },
+        "rate_one_third": {
+          "mean_nudge_per_cycle": -0.086831,
+          "mean_total": [
+            -0.0868,
+            -0.1737,
+            -0.3473,
+            -1.1288,
+            -4.5152
+          ]
+        }
+      },
+      "two_sided_comparison_rule": {
+        "rate_15_percent": {
+          "mean_nudge_per_cycle": 0.004075,
+          "sd_of_one_nudge": 0.0639,
+          "mean_total": [
+            0.0041,
+            0.0081,
+            0.0163,
+            0.053,
+            0.2119
+          ],
+          "sd_of_the_total": [
+            0.0639,
+            0.0904,
+            0.1278,
+            0.2305,
+            0.461
+          ]
+        },
+        "rate_10_percent": {
+          "mean_nudge_per_cycle": 0.026299,
+          "sd_of_one_nudge": 0.0575,
+          "mean_total": [
+            0.0263,
+            0.0526,
+            0.1052,
+            0.3419,
+            1.3676
+          ],
+          "sd_of_the_total": [
+            0.0575,
+            0.0813,
+            0.115,
+            0.2074,
+            0.4147
+          ]
+        },
+        "rate_5_percent": {
+          "mean_nudge_per_cycle": 0.050175,
+          "sd_of_one_nudge": 0.0437,
+          "mean_total": [
+            0.0502,
+            0.1003,
+            0.2007,
+            0.6523,
+            2.6091
+          ],
+          "sd_of_the_total": [
+            0.0437,
+            0.0618,
+            0.0875,
+            0.1577,
+            0.3154
+          ]
+        },
+        "rate_one_third": {
+          "mean_nudge_per_cycle": -0.05775,
+          "sd_of_one_nudge": 0.056,
+          "mean_total": [
+            -0.0578,
+            -0.1155,
+            -0.231,
+            -0.7508,
+            -3.003
+          ],
+          "sd_of_the_total": [
+            0.056,
+            0.0792,
+            0.1121,
+            0.202,
+            0.404
+          ]
+        },
+        "nudge_by_count": [
+          0.075,
+          -0.0083,
+          -0.0917,
+          -0.1,
+          -0.1,
+          -0.1,
+          -0.1
+        ]
+      },
+      "two_sided_with_the_total_clamp": {
+        "rate_15_percent": {
+          "probability_at_the_lower_limit": [
+            0.047339,
+            0.228474,
+            0.198217,
+            0.174243,
+            0.171618
+          ],
+          "probability_at_the_upper_limit": [
+            0.0,
+            0.142242,
+            0.176532,
+            0.181031,
+            0.18156
+          ],
+          "probability_at_either_limit": [
+            0.047339,
+            0.370716,
+            0.374749,
+            0.355274,
+            0.353179
+          ]
+        },
+        "rate_10_percent": {
+          "probability_at_the_lower_limit": [
+            0.01585,
+            0.094023,
+            0.054561,
+            0.028539,
+            0.027516
+          ],
+          "probability_at_the_upper_limit": [
+            0.0,
+            0.28243,
+            0.379956,
+            0.416005,
+            0.417297
+          ],
+          "probability_at_either_limit": [
+            0.01585,
+            0.376453,
+            0.434517,
+            0.444544,
+            0.444813
+          ]
+        },
+        "rate_5_percent": {
+          "probability_at_the_lower_limit": [
+            0.00223,
+            0.01629,
+            0.003568,
+            0.000697,
+            0.000693
+          ],
+          "probability_at_the_upper_limit": [
+            0.0,
+            0.54036,
+            0.682001,
+            0.702294,
+            0.702323
+          ],
+          "probability_at_either_limit": [
+            0.00223,
+            0.55665,
+            0.685568,
+            0.702991,
+            0.703015
+          ]
+        },
+        "rate_one_third": {
+          "probability_at_the_lower_limit": [
+            0.319616,
+            0.762758,
+            0.83822,
+            0.866596,
+            0.866626
+          ],
+          "probability_at_the_upper_limit": [
+            0.0,
+            0.007707,
+            0.003076,
+            0.001299,
+            0.001297
+          ],
+          "probability_at_either_limit": [
+            0.319616,
+            0.770466,
+            0.841296,
+            0.867895,
+            0.867923
+          ]
+        }
+      }
+    },
+    "simulation": {
+      "runs": 20000,
+      "cycles": 52,
+      "seeds": {
+        "rate_15_percent": 17017,
+        "rate_one_third": 17018
+      },
+      "percentile_rule": "nearest rank: the value at position ceil(q * runs / 100) of the sorted totals",
+      "forecasters": {
+        "rate_15_percent": {
+          "share_of_cycles_with_a_downward_nudge": 0.622294,
+          "total_clamped_as_in_the_applier": {
+            "runs_with_the_total_at_the_floor": [
+              4433,
+              11142,
+              17848,
+              20000,
+              20000
+            ],
+            "share_of_runs_at_the_floor": [
+              0.22165,
+              0.5571,
+              0.8924,
+              1.0,
+              1.0
+            ]
+          },
+          "per_cycle_cap_only": {
+            "mean_total": [
+              -0.0553,
+              -0.1112,
+              -0.2224,
+              -0.7217,
+              -2.8901
+            ],
+            "percentiles_of_the_total": {
+              "5": [
+                -0.1,
+                -0.1833,
+                -0.3667,
+                -0.9833,
+                -3.4
+              ],
+              "50": [
+                -0.0833,
+                -0.1,
+                -0.25,
+                -0.7167,
+                -2.8833
+              ],
+              "95": [
+                0.0,
+                0.0,
+                -0.0833,
+                -0.45,
+                -2.3667
+              ]
+            }
+          },
+          "two_sided_comparison_rule": {
+            "mean_total": [
+              0.0045,
+              0.0085,
+              0.0166,
+              0.055,
+              0.2152
+            ],
+            "percentiles_of_the_total": {
+              "5": [
+                -0.0917,
+                -0.1083,
+                -0.2,
+                -0.3583,
+                -0.55
+              ],
+              "50": [
+                -0.0083,
+                -0.0167,
+                0.05,
+                0.0583,
+                0.2167
+              ],
+              "95": [
+                0.075,
+                0.15,
+                0.2167,
+                0.3917,
+                0.9667
+              ]
+            }
+          },
+          "two_sided_with_the_total_clamp": {
+            "share_of_runs_at_the_lower_limit": [
+              0.0475,
+              0.22645,
+              0.1981,
+              0.17025,
+              0.1681
+            ],
+            "share_of_runs_at_the_upper_limit": [
+              0.0,
+              0.14425,
+              0.1783,
+              0.1798,
+              0.18185
+            ]
+          }
+        },
+        "rate_one_third": {
+          "share_of_cycles_with_a_downward_nudge": 0.91195,
+          "total_clamped_as_in_the_applier": {
+            "runs_with_the_total_at_the_floor": [
+              12832,
+              18899,
+              19985,
+              20000,
+              20000
+            ],
+            "share_of_runs_at_the_floor": [
+              0.6416,
+              0.94495,
+              0.99925,
+              1.0,
+              1.0
+            ]
+          },
+          "per_cycle_cap_only": {
+            "mean_total": [
+              -0.0865,
+              -0.1734,
+              -0.3473,
+              -1.129,
+              -4.5139
+            ],
+            "percentiles_of_the_total": {
+              "5": [
+                -0.1,
+                -0.2,
+                -0.4,
+                -1.2667,
+                -4.8167
+              ],
+              "50": [
+                -0.1,
+                -0.1833,
+                -0.3667,
+                -1.15,
+                -4.5333
+              ],
+              "95": [
+                0.0,
+                -0.0833,
+                -0.2667,
+                -0.95,
+                -4.1667
+              ]
+            }
+          },
+          "two_sided_comparison_rule": {
+            "mean_total": [
+              -0.0569,
+              -0.1145,
+              -0.2306,
+              -0.7516,
+              -3.0005
+            ],
+            "percentiles_of_the_total": {
+              "5": [
+                -0.1,
+                -0.2,
+                -0.3917,
+                -1.0667,
+                -3.65
+              ],
+              "50": [
+                -0.0917,
+                -0.1083,
+                -0.2167,
+                -0.7417,
+                -3.0083
+              ],
+              "95": [
+                0.075,
+                0.0667,
+                -0.0333,
+                -0.3833,
+                -2.3083
+              ]
+            }
+          },
+          "two_sided_with_the_total_clamp": {
+            "share_of_runs_at_the_lower_limit": [
+              0.3154,
+              0.75995,
+              0.83975,
+              0.8638,
+              0.86765
+            ],
+            "share_of_runs_at_the_upper_limit": [
+              0.0,
+              0.0082,
+              0.0034,
+              0.00135,
+              0.00135
+            ]
+          }
+        }
+      }
+    },
+    "simulation_against_exact": {
+      "tolerance": {
+        "share": 0.015,
+        "mean_total": 0.02
+      },
+      "largest_difference_of_a_share": 0.007234,
+      "largest_difference_of_a_mean_total": 0.0033
+    }
+  },
+  "stated_confidence": {
+    "kind": "observed value, set against a cited formula (scenarios.json, cited_producer)",
+    "confidence": 0.92,
+    "reliability_of_its_one_supporting_item": 0.92,
+    "at_or_above_its_own_high_confidence_line": true,
+    "one_minus_the_stated_confidence": 0.08,
+    "cited_formula": {
+      "formula": "min(cap, base + per_belief_file * number of belief files read)",
+      "base": 0.7,
+      "per_belief_file": 0.02,
+      "cap": 0.92,
+      "belief_files_read": 21,
+      "value_before_the_cap": 1.12,
+      "value": 0.92,
+      "equals_the_stated_confidence": true,
+      "smallest_number_of_files_that_reaches_the_cap": 11,
+      "uses_the_two_counts_of_the_claim": false
+    },
+    "auto_apply": {
+      "line": 0.85,
+      "source_line": 55,
+      "smallest_number_of_files_that_reaches_it": 8
+    },
+    "interval_for_the_rate": {
+      "lower": 0.0433,
+      "upper": 0.7772
+    }
+  },
+  "hypothesis_test": {
+    "thresholds": {
+      "interval_contains_rate": "3/20",
+      "interval_width_more_than": "3/5",
+      "two_or_more_at_15_percent_more_than": "1/10",
+      "observations_needed_at_least": 25,
+      "observations_needed_design": "false_alarm_5_detection_80",
+      "observations_needed_alternative": "1/3",
+      "share_of_cycles_with_a_downward_nudge_at_15_percent_more_than": "1/2"
+    },
+    "values": {
+      "interval_width": 0.7339,
+      "two_or_more_at_15_percent": 0.223516,
+      "observations_needed": 33,
+      "downward_nudge_per_cycle_at_15_percent": 0.62285
+    },
+    "parts": {
+      "interval_contains_15_percent": true,
+      "interval_wider_than_threshold": true,
+      "two_or_more_at_15_percent_above_threshold": true,
+      "observations_needed_at_least_threshold": true,
+      "downward_nudge_in_more_than_half_of_the_cycles": true
+    },
+    "every_part_holds": true
+  },
+  "negative_controls": {
+    "line_no_file_reaches": {
+      "line": 0.96,
+      "high_confidence_files": 0
+    },
+    "line_every_file_reaches": {
+      "line": 0.0,
+      "high_confidence_files": 21,
+      "of_which_archived": 13
+    },
+    "planted_move": {
+      "note": "In a copy of the snapshot, one current high-confidence belief is treated as archived. The recount and the rebuilt claim must both change.",
+      "file": "2026-07-25-schema-conformance.belief.json",
+      "recount": "3/6",
+      "rebuilt_claim_equals_the_record": false,
+      "rebuilt_claim": "3 of 6 high-confidence beliefs (>= 0.85) were later revised (overconfidence_rate=0.5). Revisions evidenced by archived prior versions: 2026-07-25-schema-conformance.belief.json, 2026-03-17-consumer-repo-integration-status.belief.json, 2026-03-17-ga-governance-integration.belief.json. Nudge magnitude capped at +/-0.1/cycle per ml-governance-feedback-policy."
+    }
+  },
+  "transfer_task": {
+    "note": "Hypothetical incident-review log for the learner task. Not Streeling data and not a forecast.",
+    "q1_tail_and_interval": {
+      "probability_of_the_observed_count_or_more_at_the_calibrated_rate": 0.070191,
+      "probability_of_the_observed_count_or_more_at_the_more_cautious_rate": 0.011504,
+      "exact_interval": {
+        "overturned": 3,
+        "of": 10,
+        "lower": 0.0667,
+        "upper": 0.6525
+      },
+      "calibrated_rate_inside_the_interval": true,
+      "more_cautious_rate_inside_the_interval": false
+    },
+    "q2_likelihood_ratio": {
+      "probability_of_exactly_the_observed_count_at_the_alternative_rate": 0.266828,
+      "probability_of_exactly_the_observed_count_at_the_calibrated_rate": 0.057396,
+      "ratio": 4.6489
+    },
+    "q3_decision_rule": {
+      "false_alarm_at_most": 0.05,
+      "critical_count": 4,
+      "false_alarm_at_the_critical_count": 0.012795,
+      "false_alarm_one_count_lower": 0.070191,
+      "detection_at_the_alternative_rate": 0.350389,
+      "miss_rate_at_the_alternative_rate": 0.649611,
+      "observed_count_reaches_it": false
+    },
+    "q4_nudge_rule": {
+      "nudge_by_count": [
+        0.0,
+        0.0,
+        -0.04,
+        -0.05,
+        -0.05,
+        -0.05,
+        -0.05,
+        -0.05,
+        -0.05,
+        -0.05,
+        -0.05
+      ],
+      "smallest_count_with_a_nudge": 2,
+      "probability_of_a_nudge_in_one_cycle_at_the_calibrated_rate": 0.263901,
+      "probability_of_at_least_one_nudge": {
+        "4": 0.706408,
+        "13": 0.981372
+      },
+      "expected_nudge_in_one_cycle": -0.011258,
+      "expected_total_without_a_limit": {
+        "4": -0.045,
+        "13": -0.1464
+      }
+    },
+    "q5_reference_sample": {
+      "alternative_rate": {
+        "exact": "3/10",
+        "value": 0.3
+      },
+      "design": "false_alarm_5_detection_80",
+      "false_alarm_at_most": 0.05,
+      "detection_at_least": 0.8,
+      "smallest_sample": 25,
+      "critical_count": 6,
+      "false_alarm": 0.0334,
+      "detection": 0.806512,
+      "times_the_recorded_sample": 2.5,
+      "larger_samples_that_fail_the_design": [
+        28
+      ],
+      "every_sample_meets_the_design_from": 29,
+      "search_limit": 400
+    }
+  },
+  "checks": [
+    {
+      "check": "the record's claim and its calibration rationale are the same sentence",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the claim's rate is its two counts divided, rounded to 4 decimals",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the cited counting rule uses the line the claim states",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "recount: the pinned belief files reproduce the claim's counts, its file names and its sentence",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "recount: current + archived = belief files read",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "provenance: the producer named in the header of the pinned applying script is the cited script",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "provenance: the files whose only evidence is a recommendation are the two the applying script writes",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the cap is the same in the pipeline formula, the applier, the policy guardrail and the belief file",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "binomial probabilities of all counts sum to 1",
+      "times_evaluated": 2522,
+      "passed": true
+    },
+    {
+      "check": "exact interval: the bracket of the lower bound holds the tail probability",
+      "times_evaluated": 16,
+      "passed": true
+    },
+    {
+      "check": "exact interval: the bracket of the upper bound holds the tail probability",
+      "times_evaluated": 17,
+      "passed": true
+    },
+    {
+      "check": "known answer: the exact 95% interval for 1 of 1 starts at 0.025 and the one for 0 of 1 ends at 0.975",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "larger samples keep the observed share exactly",
+      "times_evaluated": 6,
+      "passed": true
+    },
+    {
+      "check": "exact interval: it narrows as the sample grows at a fixed share",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "probabilities: none + exactly one + two or more = 1",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: P(2 or more of 6 at 15%) = 1 - 0.85^6 - 6 * 0.15 * 0.85^5",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "unequal probabilities: the count distribution sums to 1 and reduces to the binomial when all are equal",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "flat prior: the binomial identity equals the integral of the likelihood",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "decision rule: at every critical count the higher rate triggers the rule more often",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "decision rule: the critical count is the smallest one within the false-alarm limit",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "sample size: the sample before the smallest one fails the design",
+      "times_evaluated": 7,
+      "passed": true
+    },
+    {
+      "check": "recorded cycle: the pinned formula and clamp reproduce threshold_nudge and applied_delta from prior_nudge",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "nudge chain: the probabilities of all totals sum to 1",
+      "times_evaluated": 416,
+      "passed": true
+    },
+    {
+      "check": "nudge chain: closed form for the clamped total (still 0: q0^k; one small nudge: k q1 q0^(k-1))",
+      "times_evaluated": 20,
+      "passed": true
+    },
+    {
+      "check": "known answer: simulated shares are within the stated tolerance of the exact probabilities",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "known answer: simulated mean totals are within the stated tolerance of the exact means",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "stated confidence: the cited formula gives the confidence the record states",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: a line no file reaches leaves zero high-confidence files",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: a line of 0 counts every belief file read",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: the planted file is a current belief",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: one belief treated as archived changes the recount and the rebuilt claim",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the observed count is below the critical count although its tail probability is near the limit",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}

@@ -6,7 +6,7 @@ Thank you for contributing to Demerzel — an AI governance framework. Before su
 
 ## What Demerzel Is (and Is Not)
 
-Demerzel contains **no runtime code**. It is a collection of governance artifacts:
+Demerzel contains **no consumer or product runtime**. It is primarily a collection of governance artifacts:
 
 - Personas (`personas/`) — YAML
 - Constitutions (`constitutions/`) — Markdown
@@ -18,7 +18,16 @@ Demerzel contains **no runtime code**. It is a collection of governance artifact
 - Skills (`.claude/skills/<name>/SKILL.md`) — Markdown
 - Examples, templates, docs — Markdown + JSON
 
-**Do not add executable code** (Python, TypeScript, Rust, etc.). If you need a script to support governance work, raise an issue first.
+**"Repository-local tooling" is not a blanket exemption.** Its boundary is the `scripts/`
+adjudication below (CL-817-12), not the sentence above: tooling must serve the governance
+of artifacts in *this* repo. Anything that becomes a dependency of a **consumer repo's**
+runtime belongs in that consumer, with Demerzel keeping only the contract — and that
+includes a client library generated here for a sibling to compile. Generating one is not
+the same as owning its runtime.
+
+**Do not add executable code** (Python, TypeScript, Rust, etc.) outside `scripts/`. If you need a script to support governance work, raise an issue first.
+
+**The `scripts/` exception (owner adjudication, 2026-07-23 — CL-817-12):** `scripts/` is the sanctioned home for governance *tooling*: emitters, linters, validators, CI gates, orchestrators, and local coordination transports (e.g. the Galactic live-session bridge). This codifies long-standing practice (~58 scripts referenced by CI and CLAUDE.md at adjudication time). The boundary is purpose, not language: a script must serve the governance of artifacts in this repo or the fleet sessions working on it — Demerzel still ships no product/runtime code, and nothing in `scripts/` may become a dependency of a consumer repo's runtime. Tooling that outgrows this (a long-running service, a product feature, a consumer-facing library) moves to a sibling repo, with Demerzel keeping only the contract and behavioral tests.
 
 ---
 
@@ -124,7 +133,7 @@ Before opening a PR, confirm:
 
 - [ ] Artifacts validated against their schemas
 - [ ] Behavioral tests added or updated (if persona changed)
-- [ ] No runtime code introduced
+- [ ] No consumer/product runtime introduced; repository-local tooling is issue-backed and tested
 - [ ] No secrets committed
 - [ ] Conventional commit messages used
 - [ ] Constitutional implications noted (which article does this touch?)

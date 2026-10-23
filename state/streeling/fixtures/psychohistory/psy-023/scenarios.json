@@ -1,0 +1,141 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-023-monitoring-a-plan",
+  "kind": "assumed inputs for a synthetic model; nothing in this file is measured in the Demerzel repository",
+  "rounding": {
+    "probability_decimals": 6,
+    "weeks_decimals": 2,
+    "courses_decimals": 4,
+    "score_decimals": 2,
+    "cost_decimals": 2
+  },
+  "plan": {
+    "note": "Scale of the example only. The project question's plan, 25 courses in each of 21 departments, is a figure from a draft curriculum specification that is not in the repository. The pinned repository does not state it: it holds 23 department records, 21 of them with a course folder, and its README counts 23 departments and 21 course tracks with no number of courses per track. The 25, the 21 and the weekly output are inputs of this lesson, not counts made in the repository, and no weekly output of the project was measured.",
+    "departments": 21,
+    "courses_per_department": 25,
+    "planned_weekly_output": 5
+  },
+  "weekly_output": {
+    "note": "Assumed. Each week a fixed number of drafts is in work and each draft is finished within the week with probability 1/2, independently of the other drafts and of every other week: one fair coin per draft. With 10 drafts the weekly output is a whole number from 0 to 10 with mean 5 and variance 5/2.",
+    "drafts_in_work": 10
+  },
+  "slowdown": {
+    "note": "Assumed. From first_slow_week on, fewer drafts are in work: 6 drafts give a mean output of 3 courses a week, 60% of the plan. The other weeks are used only to show how the delay depends on when the slowdown starts. The milder slowdown (8 drafts, 80% of the plan) is one the cumulative-sum rule was not tuned for.",
+    "drafts_in_work": 6,
+    "first_slow_week": 53,
+    "other_first_slow_weeks": [1, 27, 79],
+    "milder_drafts_in_work": 8
+  },
+  "rules": {
+    "note": "Every rule is evaluated once a week, at the end of the week, and the first alarm ends the run. Shortfall of a week = planned output minus actual output; cumulative shortfall = planned total minus actual total.",
+    "weekly_limit": {
+      "note": "Alarm at the end of a week whose output is at most the limit.",
+      "limits": [0, 1, 2]
+    },
+    "prediction_band": {
+      "note": "Alarm at the end of week t when the cumulative shortfall is more than z standard deviations of the on-plan cumulative output, z * sqrt(variance * t).",
+      "z_values": ["2", "5/2", "3"],
+      "single_look_weeks": [1, 4, 13, 26, 52, 105],
+      "normal_tail_beyond_two_standard_deviations": 0.02275,
+      "normal_tail_note": "The upper tail of a normal distribution beyond 2 standard deviations, a standard table value quoted to 5 decimals; the script only checks it against math.erfc."
+    },
+    "tolerance": {
+      "note": "Alarm at the end of the first week at which the cumulative shortfall is at least the tolerance, a fixed number of courses.",
+      "tabulated": [10, 15, 20, 25, 30, 35, 40],
+      "search_range": [1, 80]
+    },
+    "cumulative_sum": {
+      "note": "Page's scheme on the weekly scores (shortfall minus reference value): alarm when the sum of the scores is at least the decision interval above its lowest earlier value. The reference value 1 is half the weekly loss of the slowdown to detect, (5 - 3) / 2.",
+      "reference_value": 1,
+      "tabulated": [3, 4, 5, 6, 7, 8, 9, 10, 12],
+      "search_range": [1, 30]
+    }
+  },
+  "calibration": {
+    "note": "A rule is called calibrated at the smallest whole threshold whose exact on-plan probability of at least one alarm during the plan is at most this value.",
+    "false_alarm_probability_at_most": "1/20"
+  },
+  "horizons_tabulated": [13, 26, 52, 105, 210],
+  "delay": {
+    "note": "Delay = number of slow weeks seen when the alarm comes (1 if the alarm comes at the end of the first slow week), among runs that were still silent when the slowdown started. The exact recursion stops when the share of runs still silent is below stop_below.",
+    "stop_below": "1/1000000000000000000",
+    "quantile": "9/10"
+  },
+  "simulation": {
+    "note": "Seeds were fixed before the first run. Every draw is random.Random(seed).random(); a week with d drafts uses the top d bits of one draw as d fair coins.",
+    "on_plan": {"runs": 20000, "seed": 2026101301},
+    "slowdown": {"runs": 20000, "seed": 2026101302, "max_weeks": 5000},
+    "bursty": {"runs": 20000, "seed": 2026101303},
+    "interval_level": "19/20",
+    "agreement_within_standard_errors": 4.5,
+    "agreement_needs_expected_runs": 10
+  },
+  "hypothesis_thresholds": {
+    "note": "Written into the research cycle's hypothesis at 2026-10-14T02:37:54Z, before any file of this fixture existed.",
+    "weekly_limit": 1,
+    "weekly_limit_alarm_probability_more_than": "1/2",
+    "calibrated_tolerance_between": [30, 36],
+    "tolerance_mean_delay_between_weeks": [15, 20],
+    "cusum_delay_over_tolerance_delay_between": ["2/5", "3/5"],
+    "calibrated_decision_interval_expected": [7, 8]
+  },
+  "bursty_output": {
+    "note": "The strongest objection made concrete. Same mean of 5 courses a week, but delivered in batches: in one week out of four (chance 1/4, independently) a batch of 40 drafts is in work, each finished with probability 1/2; in the other weeks nothing is finished.",
+    "batch_drafts": 40,
+    "one_week_in": 4
+  },
+  "costs": {
+    "note": "Assumed, for the worked example on choosing a threshold. Expected cost of a rule = (1 - probability_of_a_slowdown) * P(false alarm during the plan) * false_alarm_cost + probability_of_a_slowdown * mean delay * slow_week_cost. A deliberately crude model: one slowdown at first_slow_week or none, one review per false alarm.",
+    "probability_of_a_slowdown": "1/2",
+    "slow_week_cost_courses": 2,
+    "false_alarm_cost_courses": [20, 100]
+  },
+  "worked_examples": {
+    "note": "Inputs of the lesson's exercises that are not already listed above. The record is invented: four weeks ahead of plan, then eight slow weeks.",
+    "band_week": 26,
+    "claim_week": 61,
+    "record": [7, 6, 6, 5, 3, 4, 2, 3, 4, 2, 3, 3],
+    "record_first_slow_week": 5,
+    "cost_exercise": {"false_alarm_cost_courses": 20, "decision_intervals": [6, 8]}
+  },
+  "hand_cases": {
+    "two_drafts": {
+      "note": "Worked by hand in the README: 2 drafts in work, 1 course a week planned, 3 weeks, 64 equally likely histories.",
+      "drafts_in_work": 2,
+      "planned_weekly_output": 1,
+      "weeks": 3,
+      "tolerance": 2,
+      "cusum_reference_value": 0,
+      "cusum_decision_interval": 2,
+      "expected_tolerance_alarm": "8/64",
+      "expected_cusum_alarm": "9/64"
+    },
+    "one_step_walk": {
+      "note": "A walk that moves one step up or down with equal chances. The reflection principle gives P(highest value in n steps >= c) = P(end >= c) + P(end > c), a closed form the recursion must reproduce exactly.",
+      "steps": 20,
+      "level": 4
+    },
+    "zero_alarms_bound": {
+      "note": "With 0 alarms in n runs the upper limit u of the exact interval solves (1 - u)^n = 0.025.",
+      "runs": 20
+    }
+  },
+  "negative_controls": {
+    "note": "Comparisons that must fail. The simulated share of on-plan runs with an alarm at the calibrated tolerance is compared with the exact probability of a tolerance that is `tolerance_offset` courses lower.",
+    "tolerance_offset": 2
+  },
+  "transfer_task": {
+    "note": "Hypothetical two-person team for the learner task. Not Streeling data and not a forecast.",
+    "weekly_output_ways": {"0": 1, "1": 1, "2": 1},
+    "planned_weekly_output": 1,
+    "weeks": 4,
+    "weekly_limit": 0,
+    "long_horizon_weeks": 12,
+    "tolerance": 2,
+    "slow_output_ways": {"0": 1, "1": 1},
+    "record": [2, 1, 2, 2, 0, 1, 0, 0, 1, 0, 1, 0],
+    "record_first_slow_week": 5,
+    "cusum_reference_value": "1/4",
+    "cusum_decision_interval": 2
+  }
+}

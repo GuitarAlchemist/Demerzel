@@ -1,29 +1,38 @@
-# Jarvis Phase 4: Always-On Desktop Shell
+# Jarvis Phase 4: Native-First Desktop Companion
 
 > Addresses: GuitarAlchemist/Demerzel#179
 
+**Revised:** 2026-07-21 after Codex Computer Use and Remote became available on Windows.
+
 ## Summary
 
-Persistent desktop presence for Demerzel — an always-on governance companion that watches, suggests, and acts proactively.
+Persistent desktop presence for Demerzel using Codex's supported Windows
+surfaces first. Galactic Protocol supplies coordination; Computer Use supplies
+scoped GUI actuation; Remote supplies phone/secondary-device supervision.
 
 ## Architecture
 
 ```
-Electron/Tauri desktop shell
-  ├── Prime Radiant widget (persistent governance dashboard)
-  ├── Screen watcher (Windows MCP → visual context)
-  ├── Proactive suggestions (driver cycle + cron triggers)
-  └── Local inference (RTX 5080, zero cloud cost)
+Codex desktop app (Windows)
+  ├── Galactic MCP bridge → presence, claims, inbox, acknowledgements
+  ├── Lifecycle hooks → near-live active-session delivery
+  ├── Computer Use → foreground GUI verification and multi-app workflows
+  ├── Remote → mobile steering, approvals, screenshots, and review
+  └── Optional Prime Radiant/Tauri widget → only for measured native UI gaps
 ```
 
 ## Components
 
-### Desktop Shell
-- **Framework**: Tauri (Rust backend, web frontend) preferred over Electron for:
-  - Lower memory footprint (~10x less than Electron)
-  - Native system tray integration
-  - Rust backend aligns with ix ecosystem
-- **Fallback**: Electron if Tauri's webview limitations block features
+### Native shell first
+
+- Use the Codex desktop app rather than building an Electron/Tauri host in the
+  first slice.
+- Install and enable Computer Use; invoke it with `@Computer` or `@AppName`.
+- On Windows, keep the target application visible on the active desktop.
+- Use official Remote for phone/secondary-device supervision. Do not build a
+  custom remote WebSocket bridge.
+- Reconsider Tauri only after measuring a missing fleet dashboard, idle-alert,
+  or governance-visualization capability.
 
 ### Prime Radiant Widget
 - Always-visible governance health dashboard
@@ -33,14 +42,18 @@ Electron/Tauri desktop shell
 - Clickable drill-downs to full governance browser
 
 ### Screen Watching
-- **Windows MCP** integration for screenshot capture
-- Context-aware: detect IDE, terminal, browser, Discord
-- Trigger governance checks based on visual context
-- Privacy: local-only processing, no cloud upload
+
+- Use Computer Use only for a named, visible app and a scoped flow.
+- Prefer structured MCP/plugin access when an app exposes it; use pixels only
+  when GUI state is the evidence.
+- Do not implement ambient whole-desktop surveillance.
+- Treat visible app content, screenshots, clipboard state, and signed-in browser
+  pages as sensitive context.
 
 ### Proactive Suggestions
-- Driver cycle runs on configurable interval (default: 30min)
-- Cron-triggered governance scans
+
+- Use Codex Automations/hooks for scheduled and lifecycle work.
+- Galactic claims remain the source of lane ownership.
 - Toast notifications for:
   - Submodule staleness detected
   - Belief state degradation
@@ -48,18 +61,20 @@ Electron/Tauri desktop shell
   - Cross-repo drift detected
 
 ### Local Inference
-- All AI inference on RTX 5080
-- Zero cloud API cost for routine operations
-- Cloud fallback only for complex reasoning tasks
-- Models: Kokoro (TTS), Whisper (STT), local LLM (suggestions)
+
+- Keep Kokoro/Whisper/local-model experiments as optional cost and privacy
+  optimizations; they are no longer a blocker for desktop control.
+- Do not claim zero cloud processing when using Codex Computer Use or Remote.
 
 ## Checklist
 
-- [ ] Electron or Tauri desktop shell
-- [ ] Prime Radiant as persistent governance widget
-- [ ] Screen watching via Windows MCP
-- [ ] Proactive suggestions (driver cycle + cron)
-- [ ] Local only, zero cloud cost (RTX 5080)
+- [x] Shared cross-session claim ledger adopted
+- [x] Galactic MCP + lifecycle-hook tracer bullet implemented
+- [ ] User reviews `/hooks` and starts a new Codex chat
+- [ ] Computer Use plugin enabled and verified on one low-risk Windows app
+- [ ] Claim-aware GUI verification demonstrated end-to-end
+- [ ] Remote supervision verified from one supported secondary device
+- [ ] Measure whether a Prime Radiant/Tauri widget is still justified
 
 ## Governance
 
@@ -67,10 +82,11 @@ Electron/Tauri desktop shell
 - **Article 3 (Reversibility)**: All proactive actions must be undoable
 - **Article 2 (Transparency)**: Show reasoning for every suggestion
 - **Article 8 (Observability)**: Widget IS the observability surface
+- **Article 9 (Bounded Autonomy)**: Computer Use remains app-scoped and approval-gated
 
 ## Dependencies
 
 - Phase 2 (TTS) — voice output for spoken alerts
-- Phase 3 (Perception) — visual critic for screen context
-- RTX 5080 for local inference
-- Windows MCP server
+- Codex Computer Use plugin and per-app permission
+- Galactic live-session bridge
+- Optional Phase 3 visual critic for domain-specific screenshot analysis

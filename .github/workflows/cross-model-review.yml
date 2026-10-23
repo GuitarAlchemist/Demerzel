@@ -84,45 +84,21 @@ jobs:
       - name: Select reviewer model
         if: env.SKIP_REVIEW != 'true'
         id: reviewer
+        env:
+          # Secret values are environment data, never shell source.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_AI_KEY: ${{ secrets.GOOGLE_AI_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AUTHOR: ${{ steps.detect.outputs.author }}
         run: |
-          AUTHOR="${{ steps.detect.outputs.author }}"
-
-          # No model reviews its own work
-          case "$AUTHOR" in
-            claude)
-              # Prefer Gemini for Claude-authored PRs
-              if [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
-                REVIEWER="gemini"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-            gemini)
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-            codex)
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              else
-                REVIEWER="gemini"
-              fi
-              ;;
-            human)
-              # Any model can review human work; prefer Claude
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              elif [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
-                REVIEWER="gemini"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-          esac
-
+          set -euo pipefail
+          error_file=$(mktemp)
+          rc=0
+          REVIEWER=$(python3 scripts/select_reviewer.py --author "$AUTHOR" 2>"$error_file") || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::$(tr '\n' ' ' < "$error_file")"
+            exit "$rc"
+          fi
           echo "reviewer=$REVIEWER" >> "$GITHUB_OUTPUT"
           echo "Selected reviewer: $REVIEWER (author was $AUTHOR)"
 
@@ -152,11 +128,11 @@ jobs:
           4. LOLLI DETECTION: Does this create artifacts without named consumers? Does it add governance weight without proportional value?
           5. CONSTITUTIONAL COMPLIANCE: Check against Demerzel's 11-article constitution — especially Article 4 (Proportionality), Article 3 (Reversibility), Article 9 (Bounded Autonomy)
 
+          You are NOT told who or what authored this diff. Author identity is not
+          evidence — judge the diff on its content alone.
+
           Output format — use exactly this structure:
           ## Cross-Model Review
-
-          **Author model:** AUTHOR_MODEL
-          **Reviewer model:** REVIEWER_MODEL
 
           ### Findings
           - [CATEGORY] Finding description
@@ -170,12 +146,13 @@ jobs:
           DIFF:
           PROMPT_EOF
 
-          # Append the actual diff
+          # Append the actual diff.
+          # Deliberately NO author/reviewer identity in the prompt: judges shift
+          # verdicts on author-model labels alone (self-enhancement bias,
+          # arXiv:2604.16790). Author detection is used only to SELECT the
+          # reviewer; attribution is appended to the posted comment AFTER the
+          # verdict, in the "Post review to PR" step.
           cat /tmp/pr_diff.txt >> /tmp/review_prompt.txt
-
-          # Replace placeholders
-          sed -i "s/AUTHOR_MODEL/${{ steps.detect.outputs.author }}/" /tmp/review_prompt.txt
-          sed -i "s/REVIEWER_MODEL/${{ steps.reviewer.outputs.reviewer }}/" /tmp/review_prompt.txt
 
       - name: Run Claude review
         if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'claude'
@@ -183,8 +160,21 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
+          # A failed review must not masquerade as a review. The previous form
+          # (`|| echo <placeholder> > /tmp/review_result.txt`) discarded
+          # llm_call's stderr, wrote that placeholder into the review body,
+          # and exited 0 -- so an absent OPENAI_API_KEY and a retired
+          # model id both read as green runs for a week while every PR went
+          # unreviewed. Surface the real diagnostic and let the run go red.
+          # rc carries llm_call's classification: 2 usage, 3 API/transport,
+          # 4 empty/blocked response.
+          rc=0
           bash .github/scripts/llm_call.sh claude "$(cat /tmp/review_prompt.txt)" 2048 \
-            > /tmp/review_result.txt || echo "Review failed: no response" > /tmp/review_result.txt
+            > /tmp/review_result.txt 2> /tmp/review_error.txt || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Claude review failed (llm_call exit $rc): $(tr '\n' ' ' < /tmp/review_error.txt)"
+            exit "$rc"
+          fi
 
       - name: Run Gemini review
         if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'gemini'
@@ -193,8 +183,17 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
           LLM_GEMINI_MODEL: gemini-2.5-flash
         run: |
+          # NOTE: GOOGLE_AI_KEY is not currently set on this repo, so this step
+          # fails every time gemini is selected. That is now visible instead of
+          # silent -- deliberately left in rotation per owner decision; add the
+          # secret or drop gemini from "Select reviewer model" to resolve.
+          rc=0
           bash .github/scripts/llm_call.sh gemini "$(cat /tmp/review_prompt.txt)" 2048 \
-            > /tmp/review_result.txt || echo "Review failed: no response" > /tmp/review_result.txt
+            > /tmp/review_result.txt 2> /tmp/review_error.txt || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Gemini review failed (llm_call exit $rc): $(tr '\n' ' ' < /tmp/review_error.txt)"
+            exit "$rc"
+          fi
 
       - name: Run Codex review
         if: env.SKIP_REVIEW != 'true' && steps.reviewer.outputs.reviewer == 'codex'
@@ -202,8 +201,13 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          rc=0
           bash .github/scripts/llm_call.sh codex "$(cat /tmp/review_prompt.txt)" 2048 \
-            > /tmp/review_result.txt || echo "Review failed: no response" > /tmp/review_result.txt
+            > /tmp/review_result.txt 2> /tmp/review_error.txt || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::Codex review failed (llm_call exit $rc): $(tr '\n' ' ' < /tmp/review_error.txt)"
+            exit "$rc"
+          fi
 
       - name: Post review to PR
         if: env.SKIP_REVIEW != 'true'

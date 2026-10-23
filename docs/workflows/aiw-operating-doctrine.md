@@ -301,9 +301,10 @@ job_spec (explore/shape)
 The AIW router chooses how an already-shaped issue becomes an agent execution episode and should own:
 
 1. **Provider selection**
-   - choose from Claude Code, Codex, Jules, Gemini, Ollama, NotebookLM, Augment/Antigravity, etc.;
+   - choose a backend from the `config/afk-backends.yaml` registry (Claude Code, local sandcastle, remote cloud worker, generic shell, etc.);
    - prefer local/free providers first when adequate;
-   - escalate only when evidence justifies it.
+   - escalate only when evidence justifies it;
+   - new backends can be added without changing the governor because the AFK harness uses the `AFKBackend` adapter contract.
 2. **Budget control**
    - read budget caps from the job spec;
    - estimate context/token cost before invocation;
@@ -388,6 +389,25 @@ adapter:
     - cancel
     - estimate_cost
 ```
+
+### AFK backend registry
+
+The AFK implement governor is tool-agnostic: it loads backends from `config/afk-backends.yaml` and drives them through the `AFKBackend` contract in `scripts/afk_backends/`. A new backend is added by creating an adapter module and a registry entry; the governor does not change.
+
+Registry entries declare the adapter class, the AIW budget provider used for cost gating, an `enabled` flag, and an optional `config` block. The provider must match the actual API or compute that will be billed. The local Podman sandcastle forwards `ANTHROPIC_API_KEY` and runs `claudeCode(opus)`, so it is attributed to `anthropic-api` (`metered-cloud`, `requires_manual_approval: true`) — **not** to `claude-code-cli`, which is a `local-seat` subscription provider that requires no approval. #863 was mis-fixed twice by naming a free `local-seat` id here (`codex-cli`, then `claude-code-cli`); both were well-formed and allowlisted, so nothing caught either. When a backend forwards a metered key, name the metered provider.
+
+Some backends have no inherent attribution: what a `remote` HTTP worker bills is a property of the endpoint an operator configures, not of the adapter, so any static id is a guess — and the guess that shipped (`claude-code-cli`) was a free `local-seat` one, #863's shape again (#915). Such an entry sets `provider_from_config: true` and omits the top-level `provider`; the attribution is read from `config.provider`, and the registry **refuses to load the entry with `enabled: true` while that is unset**. Enabling the lane without stating what it bills is a load error, and an unattributed backend that somehow reaches the budget gate fails closed rather than reserving under a default.
+
+Current shipped backends:
+
+| Name | Adapter | Provider | Execution environment |
+|------|---------|----------|----------------------|
+| `claude-code` | `afk_backends.claude_code.ClaudeCodeBackend` | `claude-code-cli` | Local Claude Code desktop subscription |
+| `local` | `afk_backends.sandcastle.SandcastleBackend` | `anthropic-api` | Podman sandcastle in sibling `../afk-harness`; forwards `ANTHROPIC_API_KEY`, so metered and approval-gated |
+| `remote` | `afk_backends.remote.RemoteBackend` | from `config.provider` (`provider_from_config: true`) | HTTP cloud worker (Vercel, Codespaces, etc.) |
+| `shell` | `afk_backends.shell.ShellBackend` | `generic-shell` | Configurable local command; proves non-Claude abstraction |
+
+The harness fails closed on unknown backends, disabled backends, and backends whose configuration is missing or invalid. This keeps the AFK surface bounded, observable, and reviewable regardless of which AI tool is behind the adapter.
 
 ## Follow-up Implementation
 

@@ -1,5 +1,24 @@
 # Demerzel Activity Log
 
+> **ARCHIVED — SUPERSEDED (2026-07-20).** This freeform activity log was
+> write-only: appended by the Seldon/driver cycle through 2026-03-23 and never
+> read by any script, workflow, or policy since. Its last write was
+> 2026-03-23 (`30097ec`, a seldon-auto-research cycle). The only remaining
+> writer, `.github/workflows/seldon-plan.yml`, `git add`s this file but its
+> agent-invocation step is disabled (dead-green, disabled per ix#63,
+> 2026-05-24), so nothing appends here anymore.
+>
+> Verdict (hari #29 loop audit — "kill or archive-with-verdict"):
+> **write-only / dead — no reader, no live producer.** Kept, not deleted, for
+> its historical March record.
+>
+> Superseded by the structured, machine-read cycle state that replaced the
+> narrative log: `state/seldon-plan/` (Seldon Plan cycle state) and
+> `state/streeling/research-cycles/` (per-cycle research records). The
+> audit-trailed decision log is `state/evolution/*.evolution.json`
+> (ML-governance cycle summaries, CI-validated by
+> `scripts/validate_governance.py`).
+
 Automatically appended by Demerzel after each governance action.
 
 ---

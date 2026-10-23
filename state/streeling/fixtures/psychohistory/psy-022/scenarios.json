@@ -1,0 +1,173 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-022-competing-explanations",
+  "kind": "assumed inputs, analysis choices and cited scales; nothing in this file is measured in the Demerzel repository",
+  "rounding": {
+    "log_likelihood_decimals": 3,
+    "criterion_decimals": 3,
+    "parameter_decimals": 6,
+    "share_decimals": 4,
+    "expected_days_decimals": 2,
+    "autocorrelation_decimals": 4,
+    "ratio_decimals": 2,
+    "note": "A criterion (AIC, BIC) is computed from the log-likelihood already rounded to 3 decimals, and a difference from the rounded criteria, so that every figure can be recomputed by hand from the figures stored next to it."
+  },
+  "candidates": {
+    "note": "Three distributions for the number of events in one day. Each treats the days as independent draws from one distribution: none has a parameter for the order of the days.",
+    "models": [
+      {
+        "key": "poisson",
+        "name": "Poisson",
+        "free_parameters": 1,
+        "probability": "P(X = k) = exp(-lambda) lambda^k / k!",
+        "log_likelihood": "sum(x) ln(lambda) - n lambda - sum(ln(x!))",
+        "maximum": "lambda = mean (closed form)"
+      },
+      {
+        "key": "geometric",
+        "name": "geometric",
+        "free_parameters": 1,
+        "probability": "P(X = k) = (1 - q) q^k",
+        "log_likelihood": "n ln(1 - q) + sum(x) ln(q)",
+        "maximum": "q = mean / (1 + mean) (closed form)"
+      },
+      {
+        "key": "negative_binomial",
+        "name": "negative binomial",
+        "free_parameters": 2,
+        "probability": "P(X = k) = [r (r + 1) ... (r + k - 1) / k!] (r / (r + mu))^r (mu / (r + mu))^k",
+        "log_likelihood": "sum over days of [ln(r) + ln(r + 1) + ... + ln(r + x - 1)] - sum(ln(x!)) + n r ln(r / (r + mu)) + sum(x) ln(mu / (r + mu))",
+        "maximum": "mu = mean (closed form); r by a one-parameter search (r = 1 is the geometric, r -> infinity the Poisson)"
+      }
+    ]
+  },
+  "search": {
+    "note": "The negative binomial's r is the zero of the score d(log L)/dr = sum over j of (days with a count above j) / (r + j) - n ln(1 + mean / r), found by bisection on the geometric mean of a bracket. A sample whose variance (divisor n) does not exceed its mean has no finite zero: its fit is the Poisson limit. A sample whose score is still positive at the upper bound is fitted at that bound.",
+    "score_bisection": {
+      "lower": 1e-06,
+      "upper": 1000000.0,
+      "relative_tolerance": 1e-10,
+      "other_starting_brackets": [[0.01, 100.0], [0.2, 3.0]]
+    },
+    "golden_section": {
+      "note": "An independent check: a golden-section search that maximises the log-likelihood itself, used on all three models from three starting intervals each. It never produces a result of the lesson.",
+      "interval_tolerance": 1e-07,
+      "poisson_lambda_intervals": [[0.1, 50.0], [1.0, 10.0], [4.0, 6.0]],
+      "geometric_q_intervals": [[0.01, 0.99], [0.5, 0.95], [0.8, 0.9]],
+      "negative_binomial_r_intervals": [[0.01, 50.0], [0.1, 2.0], [0.3, 0.6]],
+      "negative_binomial_mu_interval": [1.0, 20.0]
+    },
+    "agreement_tolerance": 1e-06,
+    "score_grid": {"from": 0.0001, "to": 10000.0, "step_factor": "2^(1/8)"},
+    "limit_checks": {
+      "geometric_at_r": 1.0,
+      "geometric_tolerance": 1e-09,
+      "poisson_at_r": 1000000.0,
+      "poisson_gap_formula": "log L(negative binomial at r) - log L(Poisson) ~ n (variance with divisor n - mean) / (2 r) for large r",
+      "poisson_relative_tolerance": 0.001
+    },
+    "hand_computed_case": {
+      "counts": [0, 1, 3],
+      "working": "n = 3, sum = 4, mean = 4/3. Poisson: 4 ln(4/3) - 4 - ln(3!) = 1.150728 - 4 - 1.791759. Geometric, q = 4/7: 3 ln(3/7) + 4 ln(4/7) = -2.541894 - 2.238463. Negative binomial at r = 2, mu = 4/3: P(0) = 0.6^2 = 0.36, P(1) = 2 * 0.36 * 0.4 = 0.288, P(3) = 4 * 0.36 * 0.4^3 = 0.09216; ln(0.36 * 0.288 * 0.09216).",
+      "negative_binomial_r": 2.0,
+      "expected_log_likelihoods": {"poisson": -4.641031, "geometric": -4.780357, "negative_binomial_at_r_2": -4.650675}
+    },
+    "not_overdispersed_case": {
+      "counts": [2, 3, 3, 4],
+      "expected": "variance 0.5 does not exceed the mean 3, so the negative binomial fit is the Poisson limit"
+    }
+  },
+  "adequacy_bins": [
+    {"label": "0", "from": 0, "to": 0},
+    {"label": "1", "from": 1, "to": 1},
+    {"label": "2", "from": 2, "to": 2},
+    {"label": "3 to 11", "from": 3, "to": 11},
+    {"label": "12 to 44", "from": 12, "to": 44},
+    {"label": "45 or more", "from": 45, "to": null}
+  ],
+  "sensitivity": {
+    "note": "An analysis choice, not an observation: refit the three candidates after leaving out the k busiest days. 4 is the number of days that hold 286 of the 594 events (the four busiest days of the syllabus); 11 is every day with 12 events or more.",
+    "busiest_days_left_out": [0, 1, 2, 4, 11],
+    "deleted_triggers": {
+      "note": "Borrowed, not measured by this fixture: twelve trigger files were deleted without being archived, seven dated 2026-03-20 and five dated 2026-06-30 (PSY-009 reads them from the repository history; 'git log --diff-filter=D --name-only' at the pinned commit lists them). They are added to those two days to see whether the survivor set moves the ranking.",
+      "extra_events_by_day": {"2026-03-20": 7, "2026-06-30": 5}
+    }
+  },
+  "recovery": {
+    "note": "Seeded check. Each fitted model in turn generates samples of independent days; all three models are refitted to every sample and each criterion picks one. A sample is drawn by inverting the cumulative distribution with random.Random(seed * 1000 + days).random().",
+    "replicates": 5000,
+    "days": [15, 30, 60, 119],
+    "seeds": {"poisson": 220001, "geometric": 220002, "negative_binomial": 220003},
+    "pmf_tail": 1e-18
+  },
+  "dependence": {
+    "shuffles": 10000,
+    "shuffle_seed": 220010,
+    "control_seed": 220011,
+    "sticky_geometric": {
+      "note": "An assumed process, not a model of the project: each day repeats the previous day's count with the copy probability and is otherwise a fresh draw from the fitted geometric. Every day then has exactly the geometric distribution, and the lag-1 autocorrelation of the process equals the copy probability. It isolates the one assumption the three candidates share.",
+      "copy_probability_rule": "the lag-1 autocorrelation of the observed daily counts, rounded to 2 decimals",
+      "seed": 220020,
+      "days": 119,
+      "replicates": 5000
+    }
+  },
+  "cited_scales": {
+    "note": "Quoted from the two sources, which were read for this module. Neither scale is a probability that a model is true.",
+    "aic_difference": {
+      "source": "Burnham and Anderson (2004), 'Multimodel Inference: Understanding AIC and BIC in Model Selection', Sociological Methods & Research 33(2), p. 271",
+      "quantity": "Delta_i = AIC_i - AIC_min, for a model i of the candidate set",
+      "bands": [
+        {"from": 0, "to": 2, "label": "substantial support"},
+        {"from": 4, "to": 7, "label": "considerably less support"},
+        {"from": 10, "to": null, "label": "essentially no support"}
+      ],
+      "between_bands": "between the bands the source names",
+      "what_the_source_says": "It calls these 'simple rules of thumb' and 'rough guidelines'; Delta_i measures how plausible it is that fitted model i is 'the best approximating model in the candidate set'. On p. 279, discussing BIC, it adds that observing a posterior model probability p_t near 1 'does not justify an inference that model g_t is truth (such a statistical inference requires an a priori certainty that the true model is in the model set)'."
+    },
+    "twice_log_bayes_factor": {
+      "source": "Kass and Raftery (1995), 'Bayes Factors', Journal of the American Statistical Association 90(430), p. 777",
+      "quantity": "2 ln(B10), the Bayes factor for hypothesis 1 against hypothesis 0; a BIC difference is a rough approximation to it (p. 778)",
+      "bands": [
+        {"from": 0, "to": 2, "label": "not worth more than a bare mention"},
+        {"from": 2, "to": 6, "label": "positive"},
+        {"from": 6, "to": 10, "label": "strong"},
+        {"from": 10, "to": null, "label": "very strong"}
+      ],
+      "between_bands": "not applicable: the bands are contiguous",
+      "what_the_source_says": "'these categories are not a calibration of the Bayes factor, but rather a rough descriptive statement about standards of evidence in scientific investigation' (p. 777). The Schwarz criterion 'may be viewed as a rough approximation to the logarithm of the Bayes factor'; minus twice it 'is often called the Bayesian information criterion (BIC)'; 'the relative error of exp(S) in approximating B12 is generally O(1)' (p. 778)."
+    }
+  },
+  "hypothesis_thresholds": {
+    "note": "The hypothesis of the research cycle was written before the fixture ran. These thresholds make its parts checkable; the two 'within' tolerances and the 1% share were fixed after the fits and the autocorrelation had been seen in an exploratory run, but before the seeded check ran.",
+    "poisson_trails_the_best_model_by_more_than_log_likelihood_units": 1000,
+    "negative_binomial_beats_geometric_by_more_than_aic_points": 10,
+    "negative_binomial_beats_geometric_by_more_than_bic_points": 10,
+    "true_generator_selected_share_at_least": 0.8,
+    "aic_picks_negative_binomial_when_geometric_is_true": {"expected": "P(chi-square with 1 degree of freedom > 2)", "within": 0.03},
+    "bic_picks_negative_binomial_when_geometric_is_true": {"expected": "P(chi-square with 1 degree of freedom > ln(days))", "within": 0.02},
+    "lag1_autocorrelation_above": 0.3,
+    "share_of_shuffles_reaching_the_observed_lag1_at_most": 0.01
+  },
+  "worked_examples": {
+    "exercise_3": {
+      "note": "An imaginary two-week log, not project data: BIC is assumed to be lower for the geometric than for the negative binomial by the stated difference. The two shares come from the seeded check at that length.",
+      "days": 15,
+      "bic_difference_in_favour_of_the_geometric": 1.1
+    },
+    "exercise_4": {
+      "busiest_days_left_out": 4
+    }
+  },
+  "transfer_task": {
+    "note": "A hypothetical help desk, not Streeling data: tickets opened per day over 14 consecutive days.",
+    "unit": "tickets per day",
+    "counts": [0, 0, 1, 0, 6, 8, 5, 0, 1, 0, 0, 1, 6, 0],
+    "worked_by_hand": {
+      "note": "The mean is 28 / 14 = 2, so every deviation is a whole number and the two sums can be done on paper.",
+      "deviations_from_the_mean": [-2, -2, -1, -2, 4, 6, 3, -2, -1, -2, -2, -1, 4, -2],
+      "sum_of_squared_deviations": 108,
+      "sum_of_products_of_neighbouring_deviations": 34
+    }
+  }
+}

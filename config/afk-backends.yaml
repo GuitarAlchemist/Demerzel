@@ -1,0 +1,72 @@
+schema_version: "1.0"
+
+# AFK backend registry.
+# Each entry maps a backend name (the value passed to --backend) to the Python
+# adapter class that implements the AFKBackend contract and to the AIW budget
+# provider used for cost gating.
+#
+# The adapter path is relative to the scripts/ directory, because
+# scripts/run_afk_cycle.py adds scripts/ to sys.path before loading backends.
+backends:
+  claude-code:
+    adapter: "afk_backends.claude_code.ClaudeCodeBackend"
+    provider: "claude-code-cli"
+    description: "Headless Claude Code on the interactive subscription (no container)."
+    enabled: true
+
+  local:
+    adapter: "afk_backends.sandcastle.SandcastleBackend"
+    # Attribute a backend to the provider it ACTUALLY BILLS. This line was
+    # codex-cli, then claude-code-cli (#877) -- both local-seat with
+    # requires_manual_approval: false, so metered spend cleared the gate either
+    # way. The description below was correct the whole time; only the value was
+    # wrong. See #863.
+    provider: "anthropic-api"
+    description: "Podman sandcastle via the sibling ../afk-harness project. Forwards ANTHROPIC_API_KEY and runs claudeCode(opus), so it is metered Anthropic API spend and requires a manual approval artifact."
+    enabled: true
+
+  remote:
+    adapter: "afk_backends.remote.RemoteBackend"
+    # NO static provider here, deliberately. What this backend bills depends
+    # entirely on the endpoint an operator configures, so no single provider is
+    # correct for it in the abstract, and the previous placeholder
+    # (claude-code-cli, a free local-seat subscription) let a metered HTTP worker
+    # clear the gate as if it cost nothing -- #915, the same shape as #863. The
+    # attribution is derived from config.provider below, and the registry
+    # REFUSES TO LOAD this entry with enabled: true while that is unset, so
+    # enabling the lane without stating what it bills is a load error rather
+    # than a comment nobody reads.
+    provider_from_config: true
+    description: "HTTP cloud worker (Vercel, Codespaces, or any AFK-compatible endpoint). Disabled by default until an endpoint is configured. Its budget provider is whatever the configured endpoint bills, declared in config.provider — the adapter has no inherent cost attribution."
+    enabled: false
+    config:
+      # provider: "anthropic-api"    # REQUIRED before enabling: the allowlisted
+      #                              # AIW provider (state/driver/aiw-budget-policy.json)
+      #                              # that the endpoint below ACTUALLY bills.
+      # endpoint: "https://example.com/afk-worker"
+      # api_key_env: "DEMERZEL_REMOTE_API_KEY"
+      # timeout: 300
+
+  shell:
+    adapter: "afk_backends.shell.ShellBackend"
+    provider: "generic-shell"
+    description: "Generic configurable shell command. Proves the AFKBackend abstraction works with any non-Claude tool that reads a JSON issue from stdin and emits a JSON result on stdout. Disabled by default until a command is configured."
+    enabled: false
+    config:
+      # command: ["python", "my_afk_agent.py"]
+      # timeout: 300
+      # needs_local_repo: true
+      # env:
+      #   MY_AGENT_MODE: "afk"
+
+  junie:
+    adapter: "afk_backends.junie.JunieBackend"
+    provider: "junie-cli"
+    description: "JetBrains Junie CLI agent. Runs as a terminal agent in the ephemeral repo path and detects the branch/commits it creates. Disabled by default until Junie is installed and configured."
+    enabled: false
+    config:
+      # command: ["junie", "--headless"]
+      # task_template: "Implement GitHub issue #{number}: {title}\n\n{body}"
+      # timeout: 600
+      # api_key_env: "JUNIE_API_KEY"
+      # branch_prefix: "agent/issue-"

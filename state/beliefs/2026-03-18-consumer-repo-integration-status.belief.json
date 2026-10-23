@@ -1,6 +1,6 @@
 {
   "proposition": "Consumer repo integration is complete — all 3 repos have current submodules, state directories, governance CLAUDE.md sections, and persona definitions",
-  "truth_value": "T",
+  "truth_value": "P",
   "confidence": 0.85,
   "evidence": {
     "supporting": [
@@ -20,14 +20,36 @@
         "source": "2026-03-18-session-work",
         "claim": "ga submodule updated (144 commits), state/ created, CLAUDE.md updated (18 policies), 7 agent personas defined, build fixed",
         "timestamp": "2026-03-18T00:00:00Z",
-        "reliability": 0.90
+        "reliability": 0.9
+      },
+      {
+        "source": "consumer-repo re-verification 2026-09-12",
+        "claim": "ix and tars remain integrated: each carries a governance/demerzel submodule, a governance/state directory and a governance section in CLAUDE.md. ix pins 706e656 (0 commits behind Demerzel master), tars pins c15360b (1 behind). ga also carries the submodule, governance/state and governance/personas.",
+        "timestamp": "2026-09-12T00:00:00Z",
+        "reliability": 0.99
+      },
+      {
+        "source": "consumer-repo re-verification 2026-09-13",
+        "claim": "All three consumers pin Demerzel master f8fbebd (0 behind) and carry governance/state; tars adds governance/agents and ga governance/personas. ga's auto-update now opens and advances a single update PR (two post-fix runs green, one open PR).",
+        "timestamp": "2026-09-13T00:00:00Z",
+        "reliability": 0.99
       }
     ],
     "contradicting": []
   },
   "previous_value": "F",
-  "last_updated": "2026-03-23T00:00:00Z",
-  "refresh_note": "2026-03-23: PR #13 was closed because governance scaffolding was committed directly to ga main (commit 11abf7af). Contradiction resolved — all 3 repos now have governance on main branch. Confidence upgraded from 0.85 to 0.90.",
-  "confidence_override": 0.90,
-  "evaluated_by": "demerzel"
+  "last_updated": "2026-09-13T00:00:00Z",
+  "refresh_note": "2026-03-23: PR #13 was closed because governance scaffolding was committed directly to ga main (commit 11abf7af). Contradiction resolved — all 3 repos now have governance on main branch. Confidence upgraded from 0.85 to 0.90. | 2026-09-12: expired 173d and re-verified against the sibling repos. ix and tars are current; ga is 791 commits behind because its auto-update workflow dies of SIGPIPE before opening a PR. The conjunction is false, so T -> F. The March confidence_override (0.90) is removed as superseded. | 2026-09-13: ga caught up via #658/#660; all three repos 0 behind. F -> P, not T: submodule currency is measured, but the 'persona definitions' conjunct was only re-checked for tars (governance/agents) and ga (governance/personas), not ix.",
+  "evaluated_by": "demerzel/pdca-decisions-2026-09-13",
+  "resolved_contradictions": [
+    {
+      "source": "consumer-repo re-verification 2026-09-12",
+      "claim": "ga's governance/demerzel submodule pins 25346b7 (2026-04-03), 791 commits behind Demerzel master; its last bump was 7647f9b5 on 2026-04-04. The 'current submodules' conjunct is false. Root cause: ga's submodule-auto-update.yml fails on every run. On large updates it runs `git log --oneline \"$CURRENT..$LATEST\" | head -15` under `-o pipefail`; head closes the pipe and git log dies of SIGPIPE (exit 141) after the branch push but before `gh pr create`. Same-day re-runs then fail non-fast-forward on the dated branch. Result: 52 orphan chore/update-demerzel-* branches on ga and zero update PRs ever opened. Demerzel's submodule-notify did raise ga issue #582 (2026-08-05, 736 behind), which is still open.",
+      "timestamp": "2026-09-12T00:00:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-13T00:00:00Z",
+      "resolution": "Resolved. ga #658 fixed the SIGPIPE in submodule-auto-update.yml; its first run opened ga #660, merged 2026-09-13 as 0aa3f797, moving governance/demerzel from 25346b7 to f8fbebd. ga issue #582 closed.",
+      "resolution_verified_by": "GitHub contents API on 2026-09-13: governance/demerzel in ix, tars and ga all pin f8fbebd1, 0 commits behind Demerzel master f8fbebd"
+    }
+  ]
 }

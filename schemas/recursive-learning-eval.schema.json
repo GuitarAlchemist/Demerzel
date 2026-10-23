@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/recursive-learning-eval.schema.json",
+  "title": "RecursiveLearningEvalArtifact",
+  "description": "Envelope for every artifact produced by the recursive-learning-eval self-evaluation cycle (policy:recursive-learning-eval). Makes the policy's two constitutional guardrails machine-enforced rather than declarative: recursion depth is bounded at 2 (recursion.depth_3_and_beyond — PROHIBITED), and every proposal must be classified as understanding rather than goal modification (Asimov Article 4 — 'Knowledge acquisition is always permitted; goal acquisition requires authorization'). Emitters reach disk via demerzel_kit.write_artifact(path, data, schema='recursive-learning-eval'), which validates before writing so a boundary-crossing artifact never lands.",
+  "type": "object",
+  "required": ["schema", "kind", "period", "recursion_depth"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "recursive-learning-eval",
+      "description": "Fixed discriminator — always 'recursive-learning-eval'"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "eval-input",
+        "eval-grades",
+        "eval-diagnosis",
+        "eval-proposals",
+        "eval-report",
+        "meta-eval",
+        "meta-metrics"
+      ],
+      "description": "Which phase artifact this is; maps to self_evaluation_cycle.phases and state.files"
+    },
+    "period": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2]|Q[1-4])$",
+      "description": "Reporting period — 'YYYY-MM' for monthly depth-1 artifacts, 'YYYY-QN' for quarterly depth-2 meta-eval"
+    },
+    "recursion_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "description": "0=base learning, 1=learning eval, 2=meta-eval. THE HARD BOUND: depth 3+ is prohibited by the policy (the cost of meta-analysis exceeds the value of insight). If depth-2 reveals problems the fix is to simplify depth-1, never to add depth-3. Enforces behavioral test rle-bt-004."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC3339 emission timestamp; callers stamp with demerzel_kit.now_iso()"
+    },
+    "proposals": {
+      "type": "array",
+      "description": "Kaizen improvements to the learning system. Required (possibly empty) when kind is 'eval-proposals'.",
+      "items": { "$ref": "#/$defs/proposal" }
+    },
+    "meta_metrics": { "$ref": "#/$defs/meta_metrics" },
+    "anti_patterns_detected": {
+      "type": "array",
+      "description": "Anti-pattern ids flagged during the diagnose phase",
+      "items": {
+        "type": "string",
+        "enum": ["groundhog_day", "pattern_graveyard", "hope_based_learning", "metric_vanity"]
+      }
+    },
+    "conscience_signals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/conscience_signal" }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form analyst commentary; never load-bearing for a gate"
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "eval-proposals" } } },
+      "then": { "required": ["proposals"] }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "meta-eval" } } },
+      "then": {
+        "properties": { "recursion_depth": { "const": 2 } },
+        "description": "A meta-eval IS the depth-2 artifact by definition"
+      }
+    }
+  ],
+  "$defs": {
+    "proposal": {
+      "type": "object",
+      "required": [
+        "id",
+        "failure_pattern",
+        "proposed_change",
+        "affected_agent",
+        "expected_impact",
+        "effort",
+        "requires_authorization",
+        "article_4_check"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^rle-[0-9]{4}-(0[1-9]|1[0-2])-[0-9]{3}$",
+          "description": "rle-{yyyy}-{mm}-{nnn}"
+        },
+        "failure_pattern": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which anti-pattern or failure_taxonomy category this addresses"
+        },
+        "proposed_change": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Specific modification to the learning system"
+        },
+        "affected_agent": {
+          "type": "string",
+          "enum": [
+            "continuous-learning-pipeline",
+            "seldon-teaching-pipeline",
+            "grammar-evolution-pipeline",
+            "self-evaluation-cycle"
+          ]
+        },
+        "expected_impact": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which meta-metric should improve, and by how much"
+        },
+        "effort": { "type": "string", "enum": ["low", "medium", "high"] },
+        "classification": {
+          "type": "string",
+          "enum": ["pipeline_fix", "threshold_tuning", "process_redesign", "new_capability"]
+        },
+        "requires_authorization": {
+          "type": "boolean",
+          "const": true,
+          "description": "ALWAYS true. A proposal is a recommendation to a human, never a self-granted licence to act (Article 9 — Bounded Autonomy). Encoded as a const so an emitter cannot quietly downgrade it."
+        },
+        "article_4_check": {
+          "type": "string",
+          "enum": ["understanding"],
+          "description": "THE ARTICLE 4 BOUNDARY. Only 'understanding' is representable: a proposal may describe what could be improved and why. A proposal that changes what the system learns, its priorities, its promotion thresholds, its pipeline structure, its evaluation scope, or its meta-metric definitions is goal acquisition and is rejected here — there is no enum value that admits it. Enforces behavioral test rle-bt-005."
+        }
+      }
+    },
+    "meta_metrics": {
+      "type": "object",
+      "description": "Values are nullable because they are genuinely undefined in identifiable states — a first cycle has no prior cycle to divide by, and effectiveness ratios are 0/0 until a proposal is authorized and enacted. null means 'not computable', which is distinct from 0.",
+      "additionalProperties": false,
+      "properties": {
+        "learning_acceleration": { "$ref": "#/$defs/nullable_ratio" },
+        "teaching_improvement": { "$ref": "#/$defs/nullable_ratio" },
+        "knowledge_retention": { "$ref": "#/$defs/nullable_ratio" },
+        "transfer_efficiency_days": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Mean days from lesson creation to cross-domain delivery"
+        },
+        "meta_false_positive_rate": { "$ref": "#/$defs/nullable_unit_interval" },
+        "undefined_reason": {
+          "type": "string",
+          "description": "Required reading when any metric is null — e.g. 'no prior cycle', 'zero proposals enacted'. Prevents a null being silently read as a healthy zero."
+        }
+      }
+    },
+    "nullable_ratio": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Non-negative ratio, or null when the denominator is zero"
+    },
+    "nullable_unit_interval": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Proportion in [0,1], or null when the denominator is zero"
+    },
+    "conscience_signal": {
+      "type": "object",
+      "required": ["signal_type", "weight", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "signal_type": {
+          "type": "string",
+          "enum": [
+            "retention_failure",
+            "teaching_degradation",
+            "learning_deceleration",
+            "repetition_waste",
+            "measurement_disconnect",
+            "eval_ineffectiveness",
+            "article_4_boundary"
+          ]
+        },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "action": {
+          "type": "string",
+          "description": "What the signal recommends. Recommendation only — see requires_authorization."
+        },
+        "requires_authorization": {
+          "type": "boolean",
+          "description": "true when the recommended action would modify goals, priorities, pipeline structure, evaluation scope, or meta-metric definitions (policy §6 requires_authorization). Such an action may be reported but never auto-enacted."
+        }
+      }
+    }
+  }
+}

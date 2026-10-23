@@ -16,7 +16,7 @@ evolution <- ix.io.read("state/evolution/*.evolution.json")
 --- - Recon profiles → [reconnaissance-profile.schema.json](schemas/reconnaissance-profile.schema.json)
 --- - PDCA state → [kaizen-pdca-state.schema.json](logic/kaizen-pdca-state.schema.json)
 --- - Knowledge state → [knowledge-state.schema.json](logic/knowledge-state.schema.json)
---- - Loop state → [loop-state.schema.json](logic/loop-state.schema.json)
+--- - Loop state → [loop-state.schema.json](schemas/loop-state.schema.json)
 level_1 <- fan_out(
     ix.io.glob("personas/*.persona.yaml")
       → tars.validate_schema("schemas/persona.schema.json"),
@@ -29,7 +29,7 @@ level_1 <- fan_out(
     ix.io.glob("state/streeling/**/*.json")
       → tars.validate_schema("logic/knowledge-state.schema.json"),
     ix.io.glob("state/loops/*.json")
-      → tars.validate_schema("logic/loop-state.schema.json")
+      → tars.validate_schema("schemas/loop-state.schema.json")
   )
   → confidence_calibration                 -- Are validation results reliable?
 

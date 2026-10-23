@@ -1,0 +1,31 @@
+# Canonical DSP safety bounds — the SINGLE source for the constitutional limits
+# that gate `scripts/validate_dsp_loop.py`.
+#
+# These numbers were previously stated TWICE: as Python literals in
+# `run_hari_consensus()` and again as English prose inside the
+# `EvaluateSignalSwarm` prompt in `baml_src/schema.baml`. Two statements of one
+# rule is a "harvest, don't declare" violation (ADR-0002) — retuning one without
+# the other silently desynchronises the deterministic gate from the LLM gate.
+#
+# Both consumers now read this file. Retuning a bound is a one-line edit here.
+#
+# Article 4 note: these are *goal* parameters, not understanding. The validation
+# loop may MEASURE against them and may PROPOSE new values; it must never write
+# back to this file. Changes here are a human authorization event.
+schema_version: 1
+
+bounds:
+  thd_max:
+    value: 0.15
+    operator: "<="
+    role: Auditor
+    meaning: "Total harmonic distortion proxy. Above this the Auditor votes False (excessive high-frequency noise)."
+  std_dev_max:
+    value: 0.85
+    operator: "<="
+    role: Architect
+    meaning: "Hard-clipping limit. Above this the Architect votes Contradictory (structural boundary violation)."
+
+reference:
+  pure_sine_std_dev: 0.707
+  meaning: "RMS of an undistorted unit sine — the lower anchor for the std_dev scale."

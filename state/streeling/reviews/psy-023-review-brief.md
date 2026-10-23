@@ -1,0 +1,48 @@
+# PSY-023 bounded review brief
+
+Status: **open**. This is a human-review and learner-trial packet, not an approval receipt and not evidence that any project schedule was monitored or that the project is on or off a plan.
+
+## Frozen target and inputs
+
+- English course: `state/streeling/courses/psychohistory/en/psy-023-monitoring-a-plan.md`, Git blob `f074af1ae18f149769d62eca02738c46ee4f8746` (the blob identifies the exact text; `git log --diff-filter=A --format=%H -- state/streeling/courses/psychohistory/en/psy-023-monitoring-a-plan.md` names the commit that added the file).
+- Fixture data in `state/streeling/fixtures/psychohistory/psy-023/`, programs in `scripts/streeling_fixtures/psychohistory/psy-023/`:
+  - `scenarios.json`: Git blob `ee7e4130fe9238bad409f3ed4c0a393538d6ed24`
+  - `scripts/streeling_fixtures/psychohistory/psy-023/analyze.py`: Git blob `f92daffc2cfb1c7ad37a5e80fc3b496d4b404b1b`
+  - `results.json`: Git blob `d365b57a9d869973d9a3cbc412474d34429c97b6`
+  - `README.md`: Git blob `fba20a55c3e33792d95c1de1058d93d9ea1fafe4`
+- Observed source: none. The fixture is synthetic and reads no repository file. The lesson quotes one line for scale, line 57 of `README.md` at Demerzel commit `4b03838800dcd4894f1e026461979bff1d985ca8` (Git blob `efb2701ee3cc91d379d449439b9fadadf030e7f2`).
+- Production record: `state/streeling/course-productions/cp-psychohistory-2026-10-13-023.json`; review and publication flags are false.
+
+A later course edit changes its blob. Review that diff explicitly before extending a verdict to the new source.
+
+## Subject and method review
+
+1. Rerun the fixture from the repository root: `python -I -B scripts/streeling_fixtures/psychohistory/psy-023/analyze.py`, then the same with `--check` (about 6 seconds; it must report 24 self-checks and a match). Confirm that the script reads only `scenarios.json` and that every assumption the lesson uses (plan, 10 drafts, slowdown from week 53 to 6 drafts, reference value 1, 5% target, costs, seeds) is stated there.
+2. Recompute the closed forms by hand: `11/1024 = 0.010742` for one week at or under 1 course; `1 − (1 − 11/1024)^105 = 0.678266` and an average run length of `1024/11 = 93.09` weeks; the per-week chance a 5% target over 105 weeks would need, 0.000488 (0.000476 by the bound `T × a`), against `1/1024 = 0.000977` for the strictest limit. For the band at week 26, recompute the threshold (17 courses behind, a total of 113 or less) and its probability 0.020247 as a binomial tail of 260 fair coins.
+3. Recompute the probabilities of crossing at least once with code of your own (a Markov chain on the shortfall, or on Page's sum, is enough): 0.170761 for the 2-standard-deviation band checked every week, 0.045372 for the tolerance 32, 0.037333 for the cumulative sum 8, and the calibration (31 gives 0.052439, 7 gives 0.084257). Recount the hand-computed case in the fixture's README: 8 and 9 of 64 histories.
+4. Check the mean delays (16.5 weeks for the tolerance 32, 7.85 for the cumulative sum 8, ratio 0.4754) and the definition behind them: slow weeks seen when the alarm comes, counted only in plans still silent at week 52. Would counting the plans that had already raised a false alarm change the comparison?
+5. Check the sources. Page (1954): the author confirmed the bibliographic record and the DOI on Crossref but did not open the article; compare the lesson's statement of the scheme (sum of the scores at least h above its lowest earlier value) with the article, and confirm that the recursive form is presented as an equivalent form checked by the fixture, not as Page's text. Check both quotations against NIST/SEMATECH section 6.3.2.3.1 (the second ends with "(increased)"), and the references to Brook and Evans (1972) and Armitage, McPherson and Rowe (1969) as cited. Confirm that no formula the author derived is attributed to a source.
+6. Check the plan. The figure of 25 courses in each of 21 departments comes from a draft curriculum specification outside the repository, as in PSY-010. Search the tree at the pinned commit for it (the author found none), confirm 23 department records of which 21 have a course folder (none for metaqa and systems-engineering), and README line 57 ("23 departments, 21 course tracks"). Read the lesson for any sentence that presents the plan as a project fact, or that suggests the project is on or off its plan.
+7. Check the sampling errors. Each simulated share in the lesson comes with its binomial standard error and an exact 95% interval (for example 13,552 of 20,000: 0.6776, standard error 0.003305). One of 28 simulated intervals misses its exact value: decision interval 9, 274 of 20,000 runs, interval [0.012135, 0.015409] against 0.016362, 2.97 standard errors below. Decide whether the lesson reports it fairly.
+8. Challenge the model and the conclusion. Weekly output is a count of fair coins (variance 5/2), independent from week to week, with one abrupt and permanent slowdown that the reference value is tuned to. Is "every rule trades false alarms for delay" supported beyond this model? Does the lesson give enough weight to its own counter-cases: bursty output of the same mean (0.704574 and 1.000000 to six decimals for the calibrated rules), a milder slowdown on which the cumulative sum is slower (41.45 against 32.78 weeks, alarms after week 105 included), and costs under which the calibrated decision interval 8 is never the cheapest (7 for a false-alarm cost of 20, 9 for 100)? Exercise 5's tie, 26.62 from the table's rounded figures, is 26.55 from the exact ones. Is "this model cannot say which rule suits the project" narrow enough?
+9. Attempt the five exercises before reading their answer blocks. Record ambiguity, missing inputs or arithmetic errors with section references.
+
+## Answer-free learner trial
+
+Give [`psy-023-learner-task.md`](psy-023-learner-task.md) without this brief or the course answer blocks. Record prior experience with probability and quality-control charts, elapsed time, the unedited response, confusion, and any lesson revision followed by retest.
+
+Expected answers, copied from `results.json` under `transfer_task` (a hypothetical team, computed from `scenarios.json`):
+
+- Question 1: mean 1, variance 2/3; after 4 weeks the shortfall's standard deviation is `sqrt(4 × 2/3) = 1.633`. 15 of the 81 histories end at least 2 courses behind: probability 15/81 = 0.185185.
+- Question 2: alarm chance 1/3 per normal week, average run length 3 weeks. At least one alarm within 4 weeks: `1 − (2/3)^4 = 65/81 = 0.802469`; within 12 weeks 0.992293. After the slowdown a week gives nothing with chance 1/2, so the mean delay is 2 weeks.
+- Question 3: the tolerance of 2 fires at least once in 20 of the 81 histories, 0.246914. Single looks at the end of weeks 1 to 4: 0, 1/9, 4/27 and 5/27; their sum is 0.444444. The probability of at least one alarm is at least the largest single look, 5/27 = 0.185185, because a history above the threshold at week 4 has fired by then; it is below the sum because the looks overlap (one history can be above the threshold at several weeks) and the sum counts such histories more than once.
+- Question 4: cumulative shortfall −1, −1, −2, −3, −2, −2, −1, 0, 0, 1, 1, 2; Page's sum 0, 0, 0, 0, 0.75, 0.5, 1.25, 2, 1.75, 2.5, 2.25, 3. The cumulative sum fires in week 8 after 4 slow weeks; the tolerance fires in week 12 after 8 slow weeks, because the shortfall first has to make up the 3-course lead (lowest value −3) of the first four weeks, which the cumulative sum discarded.
+- Question 5 has no single answer. A sufficient plan fixes the rule, the threshold and the horizon before the data arrive, calibrates the threshold to a stated false-alarm probability over the whole 52 weeks (not per week) on a stated model of normal weeks, names the slowdown to detect and the accepted delay, says what happens after an alarm, and gives an observation that would falsify the model (for example a share of empty weeks, or a variance of weekly output, far from the assumed 1/3 and 2/3). It says that a threshold calibrated on this model does not hold if output is burstier, and that an alarm does not establish its cause.
+
+Score five criteria 0–2: (1) the single look, with the variance, the standard deviation and the count of 15 of 81; (2) the weekly limit, with the closed form for at least one alarm, the average run length and the mean delay; (3) the tolerance checked every week, counted (20 of 81) and placed between the largest single look and the sum, with the reason; (4) the record, with both paths and both alarm weeks, and the banked lead identified as the reason for the later tolerance alarm; (5) a monitoring plan fixed in advance with a calibration over the whole horizon and a falsifier, and the hypothetical team kept apart from Streeling evidence. A proposed pilot pass is at least 8/10 without presenting the team or the coin model as measurements; evaluate this threshold after an actual learner trial. No result exists yet.
+
+## Verdict and publication boundary
+
+No verdict exists. When one is given, record reviewer identifier or pseudonym, UTC date, course blob, kind (`subject` or `learner`), evidence, findings, and `approved`, `changes_requested`, or `not_assessed`. When this brief was written (2026-10-13), there was no translation of PSY-023 and no learner had attempted the task.
+
+Keep the review and publish flags false until actual verdicts and learner evidence are recorded. After accepted source integration, the page still has to be generated, deployed and read back anonymously with its source SHA before anyone calls PSY-023 published.

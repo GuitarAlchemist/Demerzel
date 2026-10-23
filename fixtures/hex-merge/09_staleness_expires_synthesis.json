@@ -1,0 +1,26 @@
+{
+  "name": "staleness_expires_synthesis",
+  "description": "Opposite-polarity parents at rounds 1 (tars T 1.0) and 5 (ix F 1.0) on the same claim_key, current_round=5, staleness_k=3 -> cutoff=2. The round-1 parent is dropped BEFORE synthesis, so the pair no longer coexists and NO contradiction is synthesized: the surviving state is just the F. Pins the min(parents) round stamp / evidence-recompute semantics (2026-07-20, GuitarAlchemist/hari#27): a synthesized C is supported only while BOTH parents are inside the staleness window, so a carried C stamped min(1,5)=1 would expire at exactly this cutoff — carried state and fresh recompute agree. Under the old max-stamp a carried C (round 5) would have outlived its round-1 parent as a ghost contradiction.",
+  "input": {
+    "observations": [
+      {"source": "tars", "diagnosis_id": "d", "round": 1, "ordinal": 0, "claim_key": "k::valuable", "variant": "T", "weight": 1.0},
+      {"source": "ix",   "diagnosis_id": "d", "round": 5, "ordinal": 1, "claim_key": "k::valuable", "variant": "F", "weight": 1.0}
+    ],
+    "current_round": 5,
+    "staleness_k": 3
+  },
+  "expected": {
+    "observations_count": 1,
+    "contradictions_count": 0,
+    "contradictions": [],
+    "distribution": {
+      "T": 0.0,
+      "P": 0.0,
+      "U": 0.0,
+      "D": 0.0,
+      "F": 1.0,
+      "C": 0.0
+    },
+    "escalation_triggered": false
+  }
+}

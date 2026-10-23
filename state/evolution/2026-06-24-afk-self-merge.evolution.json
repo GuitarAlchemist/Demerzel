@@ -1,15 +1,19 @@
 {
   "id": "gel-afk-self-merge-2026-06-24",
   "artifact": "afk-graduated-self-merge",
+  "citation_paths": [
+    "scripts/run_afk_cycle.py"
+  ],
   "artifact_type": "capability",
   "metrics": {
-    "citation_count": 1,
+    "citation_count": 14,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-06-24T01:20:00Z",
+    "last_cited": "2026-08-03T04:11:46Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {

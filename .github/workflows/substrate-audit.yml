@@ -1,0 +1,105 @@
+name: Substrate Audit
+
+# belief-currency-policy.yaml enforcement.substrate_audit (added 1.2.0).
+#
+# The policy's monthly "audit belief accuracy" item, mechanized. The belief
+# lint (governance-validate.yml, beliefs job) checks PROCESS compliance — did
+# the holder re-evaluate when dissent arrived? This job checks EPISTEMIC
+# compliance — does each hand-maintained verdict still follow from the recorded
+# evidence once hari's hexavalent substrate combines it? The lint deliberately
+# WARNs on `dissent-held` and defers the authoritative call here.
+#
+# It replays state/beliefs/ through hari and fails ONLY on the re-evaluation
+# trigger the policy names: a hand-maintained affirmative verdict (T/P) that the
+# substrate resolves to Contradictory (irreconcilable evidence). Every other
+# divergence is surfaced as a ::warning without failing — the v0 projection
+# mapping is deliberately crude and produces benign within-chain artifacts.
+#
+# On 2026-07-20 a first manual replay found behavioral-test-coverage had held
+# T@0.8 for four months alongside its own contradicting evidence
+# (GuitarAlchemist/hari docs/research/2026-07-20-demerzel-belief-replay.md).
+# This is the tripwire that would have caught it on 2026-03-23.
+#
+# Read-only on Demerzel (contents: read); never commits, never writes state.
+
+on:
+  schedule:
+    # Monthly, 06:00 UTC on the 1st — the policy's monthly cadence
+    # (staleness_rules / scheduled.monthly "Audit belief accuracy").
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    # The hari substrate is a Rust workspace; a cold cargo build is ~10-15 min.
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Demerzel
+        uses: actions/checkout@v4
+        with:
+          path: demerzel
+
+      # hari owns the substrate (projector + hari-core replay). Pinned to main
+      # for now; PREFER pinning to a hari release tag once hari cuts one, so the
+      # audit's verdict semantics can't shift under Demerzel without a bump here.
+      - name: Checkout hari substrate
+        uses: actions/checkout@v4
+        with:
+          repository: GuitarAlchemist/hari
+          ref: main
+          path: hari
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            hari/target
+          key: ${{ runner.os }}-hari-cargo-${{ hashFiles('hari/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-hari-cargo-
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Project the hand-maintained belief files into a replayable ResearchTrace.
+      # PYTHONIOENCODING=utf-8 guards the known Windows/encoding trap; harmless
+      # on ubuntu runners but kept so local reruns match CI.
+      - name: Project beliefs to trace
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python hari/scripts/demerzel/beliefs_to_trace.py demerzel > trace.json
+
+      - name: Build hari-core
+        run: cargo build --release -p hari-core --manifest-path hari/Cargo.toml
+
+      - name: Replay trace through the substrate
+        run: |
+          hari/target/release/hari-core replay trace.json > report.json
+          cat report.json
+
+      # Compare substrate verdicts against the hand-maintained truth_values.
+      # Exits nonzero only on the re-evaluation-trigger class (affirmative hand
+      # verdict resolved Contradictory by the substrate).
+      - name: Substrate audit check
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python demerzel/scripts/substrate_audit_check.py \
+            --report report.json \
+            --beliefs-dir demerzel/state/beliefs

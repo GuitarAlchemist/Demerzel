@@ -25,6 +25,11 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/sessionstart-digest.ps1"
+          },
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py SessionStart",
+            "timeout": 15
           }
         ]
       }
@@ -39,6 +44,44 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/correction-detector.ps1"
+          },
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py UserPromptSubmit",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py ToolActivity",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py PreToolUse",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py SessionEnd",
+            "timeout": 15
           }
         ]
       }
@@ -50,6 +93,16 @@
           {
             "type": "command",
             "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/digest-activity-tracker.ps1"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py PostToolUse",
+            "timeout": 15
           }
         ]
       },

@@ -1,0 +1,13 @@
+# PSY-012 learner task — no answer key
+
+You have read **Early-Warning Signals and Their False Alarms**. Complete this transfer task without opening the course answer blocks. Every number below is a hypothetical input for an exercise: none is a measurement of a project, and none is a result of the lesson's simulation.
+
+1. A system follows the lesson's fold model with step h = 0.02 and a noise standard deviation of 0.5. Far from the fold q = 20; near it q = 2.5. For each, compute the local coefficient phi = 1 − 2hq, the variance of the fluctuations (noise variance divided by 1 − phi²) and their standard deviation. By what factor does the variance grow between the two?
+2. Seven consecutive rolling values of the variance are `2.1, 1.9, 2.4, 2.2, 2.0, 2.7, 3.1`. The seven rolling values of the lag-1 autocorrelation at the same positions are `0.41, 0.38, 0.47, 0.44, 0.52, 0.61, 0.58`. For each list, count the concordant and the discordant pairs and compute Kendall's tau. Compute M, the smaller of the two taus, and say whether the rule "alarm when M ≥ 0.5" fires. Show the pairs you counted as discordant.
+3. In a monitoring log, a rule fired for 138 of 300 systems later known to have been approaching a transition, and for 27 of 450 systems known to have been stationary. Compute the detection rate and the false-alarm rate. If 5% of all monitored systems are approaching a transition, what share of the alarms is true?
+4. Two series are waiting to be analysed.
+   - A series of 60 points, with a window of 20 points. How many rolling values does each indicator have? What threshold does the textbook test put on each tau, with T = 1.645 × sqrt(2(2m + 5) / (9m(m − 1)))? Explain in one or two sentences why a tau just above that threshold is weak evidence of a trend in rolling values.
+   - A series of 30 values: 4 repeated 12 times, then 9 repeated 10 times, then 10 repeated 8 times. With a window of 6, how many windows are there, and how many hold a single value? What are the variance and the lag-1 autocorrelation in such a window? Decide whether the rolling indicators should be computed on this series, and state your criterion.
+5. You are handed 90 nightly values of a governance metric and asked whether it warns of a regime shift. Write a plan: the checks you make before computing any indicator, the alarm rule and the control you fix in advance, and one outcome that would make you withdraw an alarm (a falsifier).
+
+Return your calculations, your plan and your uncertainty. Write "not assessed" where evidence is absent. The reviewer scores the unedited response separately; this task contains no answers.

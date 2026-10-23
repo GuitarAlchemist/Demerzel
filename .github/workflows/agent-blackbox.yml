@@ -107,9 +107,14 @@ jobs:
           fi
           PYTHONPATH=.agent-blackbox python -m cli.agent_blackbox "${analyze_args[@]}"
 
+      # Reporting must never decide the gate. A transient 5xx on the comments API
+      # says nothing about the risk of the change, so this step retries and is
+      # allowed to fail; the verdict is enforced below, and stays fail-closed.
       - name: Comment risk report
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
+          retries: 3
           script: |
             const fs = require('fs');
             const marker = '<!-- agent-blackbox-risk-report -->';

@@ -35,4 +35,4 @@ Demerzel may initiate loops for governance tasks only (compliance remediation, K
 Domain work loops are agent-initiated. Dispatched via Galactic Protocol directives.
 
 ## Source
-`policies/autonomous-loop-policy.yaml`, `logic/loop-state.schema.json`
+`policies/autonomous-loop-policy.yaml`, `schemas/loop-state.schema.json`

@@ -9,7 +9,7 @@ permissions:
   discussions: write
 
 env:
-  CLAUDE_MODEL: claude-sonnet-4-20250514
+  CLAUDE_MODEL: claude-sonnet-5
   CLAUDE_MAX_TOKENS: 1024
 
 defaults:

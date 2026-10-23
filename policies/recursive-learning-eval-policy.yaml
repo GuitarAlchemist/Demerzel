@@ -25,6 +25,29 @@ applies_to:
   - tars
   - ix
 
+implementation_status:
+  as_of: "2026-07-29"
+  state: partially_implemented
+  summary: |
+    The constitutional guardrails are enforced; the evaluation cycle is not yet
+    built. Recorded here rather than left implicit, because a registered policy
+    with no executor is precisely the `promotion_lolli` failure this policy
+    itself defines ("promoted to policy without real downstream consumers"), and
+    the anti-lolli-inflation policy is entitled to see it declared.
+  enforced:
+    - "Recursion bound (max_depth 2) — schema + executable test"
+    - "Article 4 boundary (article_4_check, requires_authorization) — schema + executable test"
+  not_yet_built:
+    - "The five-phase self_evaluation_cycle has no executor; no gather/grade/diagnose/propose/report runs"
+    - "state/learning/eval/meta-metrics.json does not exist — all five meta-metrics are uncomputed"
+    - "state/learning/observations.jsonl (the continuous_learning_agent's primary input, and gather source #1) does not exist"
+    - "No monthly cycle has run since effective_date 2026-03-28, against freshness_cycles: 1"
+    - "behavioral_tests rle-bt-001/002/003/006/007/009/010 remain declarative — only 004 and 005 execute"
+  consequence: |
+    Until an executor exists the policy constrains nothing at runtime. Its value
+    today is that the two boundaries are now unrepresentable-if-violated, so the
+    cycle cannot be built wrong in those two respects later.
+
 constitutional_basis:
   - Asimov Article 4 (Separation of Understanding and Goals) — recursive self-improvement produces understanding, not autonomous goal modification
   - Asimov Article 5 (Consequence Invariance) — learning eval must not distort its own findings based on what it wants to be true
@@ -413,6 +436,8 @@ recursion:
     format:
       recursion_depth: 0  # 0=base, 1=learning eval, 2=meta-eval
     enforcement: "Schema validation rejects artifacts with recursion_depth > 2"
+    enforced_by: "schemas/recursive-learning-eval.schema.json#/properties/recursion_depth (maximum: 2)"
+    tested_by: "scripts/test_recursive_learning_eval_schema.py::RecursionDepthBound — the executable form of rle-bt-004"
 
 # ============================================================================
 # SECTION 5: Conscience Integration
@@ -424,42 +449,64 @@ conscience_integration:
     If we have the data, the tools, and the time to learn, and we do not learn,
     that is a governance deficiency that conscience must register.
 
+  article_4_note: |
+    Signals fire automatically on thresholds; their `action` is a RECOMMENDATION
+    and is never auto-enacted. Each mapping therefore carries an explicit
+    `article_4_class`. Where the recommended action would cross into a §6
+    requires_authorization item, `requires_authorization: true` says so at the
+    point of recommendation — without this marker a threshold-fired signal could
+    walk the system across the Article 4 boundary that §6 draws, using nothing
+    but its own `action` string.
+
   signal_mappings:
     - condition: "Knowledge retention (KR) drops below 0.60"
       signal_type: "retention_failure"
       weight: 0.7
       message: "Taught knowledge is not persisting — learning investment is being wasted"
       action: "Add retention root-cause analysis to next eval cycle"
+      article_4_class: understanding      # analysis of why, not a change to what we learn
+      requires_authorization: false
 
     - condition: "Teaching improvement (TI) drops below 0.85 for 2 consecutive months"
       signal_type: "teaching_degradation"
       weight: 0.6
       message: "Teaching quality declining — students learning less over time"
       action: "Review lesson quality and assessment calibration"
+      article_4_class: understanding      # review only; RE-calibrating is a §6 item
+      requires_authorization: false
 
     - condition: "Learning acceleration (LA) drops below 0.7 for 2 consecutive months"
       signal_type: "learning_deceleration"
       weight: 0.6
       message: "Learning is slowing significantly — possible saturation or pipeline breakdown"
       action: "Distinguish healthy saturation from pipeline failure"
+      article_4_class: understanding
+      requires_authorization: false
 
     - condition: "Groundhog day anti-pattern detected (same lesson 3+ times)"
       signal_type: "repetition_waste"
       weight: 0.6
       message: "Repeating the same lesson without it sticking — method needs fundamental change"
-      action: "Redesign lesson delivery for the failing topic"
+      action: "Report the failing topic and propose a lesson-delivery redesign for review"
+      article_4_class: goal_change        # §6: "Redesigning the teaching pipeline structure"
+      requires_authorization: true
 
     - condition: "Metric vanity anti-pattern detected (good metrics, bad D_c)"
       signal_type: "measurement_disconnect"
       weight: 0.8
       message: "Learning metrics say we are learning but governance value says we are not — trust the D_c"
       action: "Audit meta-metric definitions for alignment with actual value"
+      article_4_class: understanding      # the audit is understanding; ACTING on it is not
+      requires_authorization: false
+      escalation_note: "Any resulting change to a meta-metric definition or healthy range is a §6 requires_authorization item and must be routed through the propose phase."
 
     - condition: "Depth-2 meta-eval finds same failure patterns 3 months running"
       signal_type: "eval_ineffectiveness"
       weight: 0.7
       message: "Self-evaluation is identifying problems but not driving improvement"
       action: "Escalate to human — the learning evaluation system may need redesign"
+      article_4_class: understanding      # escalation IS the authorization request
+      requires_authorization: true
 
   conscience_thresholds:
     single_signal: "Log and include in next eval report"
@@ -495,6 +542,8 @@ article_4_guardrails:
   enforcement:
     mechanism: "Every eval-proposal must include article_4_check field"
     valid_values: ["understanding"]   # Only valid value — goal changes rejected at schema level
+    enforced_by: "schemas/recursive-learning-eval.schema.json#/$defs/proposal — article_4_check is a single-value enum and requires_authorization is const true, so neither a goal-modifying proposal nor a self-authorizing one is representable"
+    tested_by: "scripts/test_recursive_learning_eval_schema.py::Article4Boundary — the executable form of rle-bt-005"
     violation_response: |
       If a proposal is classified as goal modification rather than understanding:
       1. Block the proposal
@@ -556,7 +605,20 @@ observability:
 # State
 # ============================================================================
 state:
-  directory: "state/learning/"
+  # `state/learning/` itself belongs to the demerzel:meta-brainstorm skill,
+  # whose README declares a different file convention
+  # (`YYYY-MM-DD-<slug>.learning.json`). Two owners writing one directory under
+  # two conventions is how a read-time consumer ends up globbing the wrong
+  # files, so this policy's artifacts live in a subdirectory of their own.
+  directory: "state/learning/eval/"
+  schema: "recursive-learning-eval"   # schemas/recursive-learning-eval.schema.json
+  emitter_contract: |
+    Every artifact below is written through
+    `demerzel_kit.write_artifact(path, data, schema="recursive-learning-eval")`,
+    which validates BEFORE writing. This is what makes the recursion bound and
+    the Article 4 boundary enforced rather than declared: an artifact with
+    recursion_depth > 2, or a proposal classified as anything but
+    "understanding", raises and never reaches disk.
   files:
     meta_metrics: "meta-metrics.json"
     eval_input: "eval-input-{yyyy-mm}.json"

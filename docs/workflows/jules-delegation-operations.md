@@ -7,7 +7,7 @@ This document records the current, practical operating model for using Google Ju
 Demerzel supports two Jules paths:
 
 1. **Human-applied `jules` label** — the preferred path today.
-2. **GitHub Actions API delegation** through `.github/workflows/jules-auto-delegate.yml` — available only if `JULES_API_KEY` exists as a repository Actions secret.
+2. **GitHub Actions API delegation** through `.github/workflows/jules-auto-delegate.yml` — available only if `JULES_PAID_API_KEY` exists in the protected `jules-paid-default-branch` GitHub environment.
 
 As of this document, the API-key path should be treated as optional. If the key is not present, the workflow logs a notice in Actions and does not comment/spam issues.
 
@@ -74,13 +74,14 @@ For each issue:
 
 `.github/workflows/jules-auto-delegate.yml` listens to `ready-for-agent` and `worker:jules`, but delegates only when both labels are present.
 
-If `JULES_API_KEY` is missing, the workflow logs a notice and exits without commenting on the issue. This prevents repeated noise while keeping the API path ready for future use.
+If `JULES_PAID_API_KEY` is missing, the workflow logs a notice and exits without commenting on the issue. This prevents repeated noise while keeping the API path ready for future use.
 
-If `JULES_API_KEY` becomes available later:
+If `JULES_PAID_API_KEY` becomes available later:
 
-1. Add it as repository secret `JULES_API_KEY`.
-2. Re-run the workflow manually with `workflow_dispatch`, or re-apply `ready-for-agent`/`worker:jules`.
-3. Keep the batch size small until the behavior is verified.
+1. Add it as environment secret `JULES_PAID_API_KEY` in `jules-paid-default-branch`; never add it as a repository-wide secret.
+2. Restrict that environment to the protected default branch.
+3. Re-run the workflow manually with `workflow_dispatch` from the default branch.
+4. Keep the batch size small until the behavior is verified.
 
 ## Backpressure rules
 
@@ -105,6 +106,6 @@ If Jules does not pick up an issue after a manual `jules` label:
 
 If the API workflow posts or logs a problem:
 
-- `JULES_API_KEY` missing: use manual `jules` label or add the secret.
+- `JULES_PAID_API_KEY` missing: use the manual `jules` label or configure the protected environment secret.
 - AFK halt active: resolve or expire `governance/state/afk-halt.json` first.
 - duplicate marker present: check the existing PR/comment before forcing another delegation.

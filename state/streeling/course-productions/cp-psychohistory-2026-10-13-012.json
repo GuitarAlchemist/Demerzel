@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-012",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-012",
+  "module_id": "psy-012-early-warning-false-alarms",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "40 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2464,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a deterministic synthetic fixture (a noisy fold approach against stationary AR(1) controls, 1,000 seeded runs per batch, estimator checked against AR(1) theory, self-checks that stop the script) and on a blob-checked extract of the quality trend at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, on which no indicator is computed because two of its three numeric fields never change and the third changes only by steps on two runs. The simulated detection and false-alarm rates describe one approach scenario and are not measurements or forecasts of the project. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-15T14:46:09Z"
+}

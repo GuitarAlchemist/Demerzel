@@ -1,6 +1,7 @@
 {
   "id": "gel-memristive-markov",
   "artifact": "crates/memristive-markov (ix)",
+  "citation_paths": [],
   "artifact_type": "runtime_code",
   "metrics": {
     "citation_count": 0,

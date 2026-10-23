@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guitaralchemist.github.io/schemas/contracts/claude-compaction-event.schema.json",
+  "title": "Claude fleet compaction lifecycle event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "ts",
+    "event",
+    "session_id",
+    "repo",
+    "branch",
+    "trigger",
+    "source",
+    "project_setting",
+    "transcript_path_sha256",
+    "summary_chars",
+    "summary_sha256"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "ts": { "type": "string", "format": "date-time" },
+    "event": {
+      "enum": ["pre_compact", "post_compact", "session_rehydrated"]
+    },
+    "session_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "repo": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "branch": { "type": "string", "minLength": 1, "maxLength": 240 },
+    "trigger": { "type": ["string", "null"], "maxLength": 32 },
+    "source": { "type": ["string", "null"], "maxLength": 32 },
+    "project_setting": {
+      "enum": ["supported", "obsolete-key", "inherited", "invalid-json"]
+    },
+    "transcript_path_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "summary_chars": { "type": ["integer", "null"], "minimum": 0 },
+    "summary_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

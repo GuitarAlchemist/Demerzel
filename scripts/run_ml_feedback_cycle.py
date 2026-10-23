@@ -3,6 +3,11 @@
 Demerzel run_ml_feedback_cycle — the orchestrator that turns the four hand-run
 ML-feedback legs into ONE unattended, bounded self-improvement cycle.
 
+Execution policy: externally-scheduled.
+An operator-managed cron or Task Scheduler owns the mutating cycle's cadence.
+GitHub Actions `ml-governance-schedule.yml` is a read-only freshness tripwire and
+strict dry-run smoke; it never runs the mutating cycle.
+
 It runs, in dependency order, a single pass of pipelines/ml-feedback-loop.ixql
 (standing in for the absent IxQL executor):
 
@@ -17,10 +22,10 @@ It runs, in dependency order, a single pass of pipelines/ml-feedback-loop.ixql
                         bounded auto-apply or escalate to human review
   4. Summarize        — write one cycle summary to state/oversight/
 
-One invocation = one cycle. Cadence comes from whatever schedules this (cron /
-Task Scheduler), NOT from a cycle-count gate here — the ml-feedback policy defines
-no per-day cap, and WAKE-time count gates have wedged loops before. The only
-loop-level bound is the HALT switch; per-decision bounds live in the governor.
+One invocation = one cycle. Cadence belongs to the external operator scheduler,
+NOT to a cycle-count gate here — the ml-feedback policy defines no per-day cap,
+and WAKE-time count gates have wedged loops before. The only loop-level bound is
+the HALT switch; per-decision bounds live in the governor.
 
 Producers that find nothing to do exit 4 (no-op) and are reported as such, not as
 errors. A producer/harvest error is logged but does not abort the cycle (the
@@ -31,15 +36,40 @@ Usage:
   python scripts/run_ml_feedback_cycle.py --dry-run       # plan only, no writes
   python scripts/run_ml_feedback_cycle.py --repos ix tars # limit consumer harvest
   python scripts/run_ml_feedback_cycle.py --producer-source worktree  # use ix working tree
+  python scripts/run_ml_feedback_cycle.py --dry-run --strict  # CI smoke: errored steps are fatal
+  python scripts/run_ml_feedback_cycle.py --commit         # land the belief refresh on master
 
 Producers default to ix origin/main (branch-independent), materialized into
 state/.cache/ix-producers/, so a scheduled cycle is unaffected by which branch
 ix's working tree is on. Use --producer-source worktree to run local edits.
 
+--commit closes the loop's LANDING leg, which was a human. The committed evidence
+trail is state/beliefs/*.belief.json (the cycle summaries under state/oversight/
+are gitignored runtime I/O), and ml-governance-schedule.yml's freshness leg goes
+RED when that trail goes stale. Until now the refresh reached the repo only if an
+operator noticed and committed it: it went 43 days uncommitted (2026-07-30 ->
+2026-09-12) while the Task Scheduler entry succeeded daily, and the previous
+landing was also a hand-patch (2875014, "uncommitted in the working tree ...
+preserved rather than discarded"). A loop whose output depends on someone
+remembering is a loop that dies while its producer stays green.
+
+The output is made branch-independent to match the input: --commit refuses to run
+from a checkout that does not push to master, because the stale refresh had been
+written onto a feature branch 110 commits behind it, where no amount of
+committing would have satisfied the guard. It fast-forwards BEFORE the cycle runs
+(master takes bot commits daily from demerzel-quality-trend.yml, so a cycle that
+wrote first would be unpushable), stages only state/beliefs/ so unrelated edits
+never ride along, and treats a rejected push as a re-sync-and-retry rather than a
+dead loop.
+
 Exit codes:
   0  cycle ran (any mix of applied/escalated/no-op)
-  1  usage / environment error (e.g. ix producers not found)
+  1  usage / environment error (e.g. ix producers not found), or --strict
+     and one or more steps errored (e.g. an unresolved producer)
   3  aborted: HALT-ALL marker in effect
+  5  --commit could not guarantee a landing (checkout does not push to master, or
+     it has diverged from origin/master) — refused BEFORE running the cycle, so a
+     refresh is never produced where it cannot land
 """
 from __future__ import annotations
 
@@ -47,29 +77,17 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
+import demerzel_halt as halt
 import demerzel_kit as kit
 
 
-def _halt_active() -> tuple[bool, str]:
-    """Mirror demerzel_halt.py: ~/.demerzel/HALT-ALL present and not expired."""
-    marker = Path.home() / ".demerzel" / "HALT-ALL"
-    if not marker.is_file():
-        return False, ""
-    try:
-        data = json.loads(marker.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return True, "HALT-ALL present but unreadable — treating as halted (fail-safe)"
-    exp = data.get("expires_at")
-    if exp:
-        try:
-            if datetime.fromisoformat(exp.replace("Z", "+00:00")) < datetime.now(timezone.utc):
-                return False, ""  # expired -> consumers treat as absent
-        except ValueError:
-            pass
-    return True, f"HALT-ALL in effect (reason: {data.get('reason', 'n/a')})"
+def _halt_active(path: Path | None = None, now: datetime | None = None) -> tuple[bool, str]:
+    """Thin decider over the shared HALT-ALL reader (demerzel_halt.is_active owns
+    the marker path, schema, expiry, and fail-safe semantics)."""
+    return halt.is_active(path.parent if path else None, now=now)
 
 
 def _run(label: str, cmd: list[str], dry: bool) -> dict:
@@ -86,6 +104,120 @@ def _run(label: str, cmd: list[str], dry: bool) -> dict:
     if p.stdout.strip():
         out["stdout_tail"] = p.stdout.strip().splitlines()[-1][:200]
     return out
+
+
+BELIEF_PATH = "state/beliefs"
+
+
+def _git(root: Path, *args: str, timeout: int = 120) -> subprocess.CompletedProcess:
+    """Run one git command in root. Never raises on a non-zero exit: callers
+    decide, because 'nothing to commit' and 'cannot push' are different answers."""
+    return subprocess.run(["git", "-C", str(root), *args],
+                          capture_output=True, text=True, timeout=timeout)
+
+
+def _sync_master(root: Path, dry: bool) -> dict:
+    """Guarantee the cycle's output can land, BEFORE producing any of it.
+
+    Fail-closed on three distinct ways a landing is impossible, each reported by
+    name rather than as a generic git error:
+      - wrong line      -> the checkout does not push to master, so the refresh
+                           would land where the freshness guard never looks (how
+                           it went 43 days stale on a feature branch)
+      - cannot ff       -> the checkout carries commits origin/master lacks;
+                           ff-only refuses rather than merging or discarding them
+      - no remote       -> offline; the commit would be unpushable
+
+    The test is "does this checkout push to master", not "is it named master".
+    Requiring the name would force the scheduled worktree to hold master itself,
+    and git allows one checkout per branch - that would block a `git checkout
+    master` in the operator's main tree for as long as the loop exists. A branch
+    whose upstream is origin/master lands in exactly the same place.
+    """
+    label = "sync:master"
+    if dry:
+        return {"step": label, "status": "planned",
+                "cmd": f"git -C {root} fetch origin master && git merge --ff-only origin/master"}
+
+    head = _git(root, "rev-parse", "--abbrev-ref", "HEAD")
+    branch = head.stdout.strip()
+    upstream = _git(root, "rev-parse", "--abbrev-ref", "@{upstream}").stdout.strip()
+    if head.returncode != 0 or (branch != "master" and upstream != "origin/master"):
+        return {"step": label, "status": "error",
+                "note": f"refusing to commit from '{branch or '?'}' "
+                        f"(upstream '{upstream or 'none'}') - it does not push to "
+                        f"master, where the belief trail is read"}
+
+    fetch = _git(root, "fetch", "origin", "master")
+    if fetch.returncode != 0:
+        return {"step": label, "status": "error",
+                "note": f"fetch failed: {(fetch.stderr.strip().splitlines() or [''])[-1][:160]}"}
+
+    ff = _git(root, "merge", "--ff-only", "origin/master")
+    if ff.returncode != 0:
+        return {"step": label, "status": "error",
+                "note": f"'{branch}' is not fast-forwardable to origin/master "
+                        f"(local divergence or unpushed commits): "
+                        f"{(ff.stderr.strip().splitlines() or [''])[-1][:160]}"}
+    return {"step": label, "status": "ok", "note": ff.stdout.strip().splitlines()[-1][:160]
+            if ff.stdout.strip() else "already up to date"}
+
+
+def _commit_beliefs(root: Path, dry: bool) -> dict:
+    """Land the belief refresh. A cycle that changed no belief is a no-op, not a
+    failure - the governor legitimately applies a zero delta - but it is reported,
+    because 'nothing changed' and 'nothing landed' must stay distinguishable in
+    the evidence trail."""
+    label = "commit:beliefs"
+    if dry:
+        return {"step": label, "status": "planned",
+                "cmd": f"git -C {root} add -- {BELIEF_PATH} && git commit && "
+                       f"git push origin HEAD:master"}
+
+    add = _git(root, "add", "--", BELIEF_PATH)
+    if add.returncode != 0:
+        return {"step": label, "status": "error",
+                "note": f"add failed: {(add.stderr.strip().splitlines() or [''])[-1][:160]}"}
+
+    # Staged-vs-HEAD, scoped to the belief trail: the only diff that matters here.
+    if _git(root, "diff", "--cached", "--quiet", "--", BELIEF_PATH).returncode == 0:
+        return {"step": label, "status": "no-op", "note": "no belief changed this cycle"}
+
+    msg = (f"state(ml-feedback): belief refresh {kit.now_iso()[:10]}\n\n"
+           f"Committed by the cycle's own landing leg (run_ml_feedback_cycle.py "
+           f"--commit), not by hand. The belief trail is what "
+           f"ml-governance-schedule.yml reads to decide the loop is alive.")
+    commit = _git(root, "commit", "-m", msg)
+    if commit.returncode != 0:
+        return {"step": label, "status": "error",
+                "note": f"commit failed: {(commit.stderr.strip().splitlines() or [''])[-1][:160]}"}
+
+    # HEAD:master, not the current branch's own name: the checkout may be a
+    # dedicated landing branch tracking origin/master (see _sync_master).
+    push = _git(root, "push", "origin", "HEAD:master")
+    if push.returncode != 0:
+        # The pre-cycle fetch cannot rule out a race: master takes bot commits
+        # daily (demerzel-quality-trend.yml) and a cycle runs for minutes. This
+        # was not theoretical - the first real landing was rejected exactly here,
+        # by a nightly-deltas commit that arrived mid-cycle. One bounded re-sync;
+        # a conflict aborts rather than guessing at someone else's belief edit.
+        _git(root, "fetch", "origin", "master")
+        rebase = _git(root, "rebase", "origin/master")
+        if rebase.returncode != 0:
+            _git(root, "rebase", "--abort")
+            return {"step": label, "status": "error",
+                    "note": "push rejected and rebase onto origin/master conflicted - "
+                            "belief trail has NOT landed; resolve by hand"}
+        push = _git(root, "push", "origin", "HEAD:master")
+
+    if push.returncode != 0:
+        # The commit exists locally; say so, because the guard reads the remote and
+        # a silent local-only commit is the failure mode this leg exists to end.
+        return {"step": label, "status": "error",
+                "note": f"committed locally but push failed - belief trail has NOT landed: "
+                        f"{(push.stderr.strip().splitlines() or [''])[-1][:160]}"}
+    sha = _git(root, "rev-parse", "--short", "HEAD").stdout.strip()
+    return {"step": label, "status": "ok", "note": f"pushed {sha} to origin/master"}
 
 
 PRODUCERS = ["confidence_calibrator", "staleness_predictor",
@@ -137,7 +269,19 @@ def main(argv: list[str]) -> int:
                     help="source ix producers from origin/main (default, branch-independent) "
                          "or the ix working tree")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 1 if any step errors; without it a dry-run always "
+                         "exits 0, so a smoke check could pass on an incoherent plan")
+    ap.add_argument("--commit", action="store_true",
+                    help="fast-forward master, then commit and push the belief refresh "
+                         "(state/beliefs/) - the loop's landing leg. Refuses off master.")
     args = ap.parse_args(argv)
+
+    # 0. HALT kill switch
+    halted, why = _halt_active()
+    if halted:
+        print(f"ABORT: {why}", file=sys.stderr)
+        return 3
 
     py = sys.executable
     ix_root = (args.repos_root / "ix").resolve()
@@ -148,13 +292,18 @@ def main(argv: list[str]) -> int:
               f"ix={ix_root})", file=sys.stderr)
         return 1
 
-    # 0. HALT kill switch
-    halted, why = _halt_active()
-    if halted:
-        print(f"ABORT: {why}", file=sys.stderr)
-        return 3
-
     steps = []
+
+    # 0b. Landing guarantee - before producing anything. A refresh written where
+    # it cannot land is worse than no refresh: the producer stays green and the
+    # freshness guard goes stale, which is the failure this leg ends.
+    if args.commit:
+        sync = _sync_master(root, args.dry_run)
+        steps.append(sync)
+        if sync["status"] == "error":
+            print(f"ABORT: {sync['note']}", file=sys.stderr)
+            return 5
+
     # 1. Harvest — compliance reports per consumer (feeds §3c)
     for repo in args.repos:
         steps.append(_run(f"harvest:{repo}",
@@ -177,6 +326,11 @@ def main(argv: list[str]) -> int:
                + (["--dry-run"] if args.dry_run else []), args.dry_run)
     steps.append(gov)
 
+    # 4. Land - the belief trail is the loop's only committed evidence.
+    landing = _commit_beliefs(root, args.dry_run) if args.commit else None
+    if landing:
+        steps.append(landing)
+
     summary = {
         "cycle_at": kit.now_iso(),
         "dry_run": args.dry_run,
@@ -197,6 +351,15 @@ def main(argv: list[str]) -> int:
     print(json.dumps(summary, indent=2))
     for s in steps:
         print(f"  {s['status']:8} {s['step']}  {s.get('note','')}", file=sys.stderr)
+    # A failed landing is loud with or without --strict. The cycle's whole value is
+    # its committed trail; exiting 0 here would recreate the silent death exactly -
+    # scheduler reports success, guard goes stale, nobody is told.
+    if landing and landing["status"] == "error":
+        print(f"landing failed: {landing['note']}", file=sys.stderr)
+        return 1
+    if args.strict and summary["tally"]["errors"]:
+        print(f"strict: {summary['tally']['errors']} step(s) errored", file=sys.stderr)
+        return 1
     return 0
 
 

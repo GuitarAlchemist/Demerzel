@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'logic/governance-evolution.schema.json'
+      - 'state/beliefs/**'
       - 'state/evolution/**'
       - 'constitutions/**'
       - 'personas/**'
@@ -11,8 +12,11 @@ on:
       - 'schemas/**'
       - 'tests/behavioral/**'
       - 'README.md'
+      - 'BACKLOG.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      - 'baml_src/**'
+      - 'baml_client/**'
       - '.github/loop-health.yml'
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
@@ -20,6 +24,7 @@ on:
   pull_request:
     paths:
       - 'logic/governance-evolution.schema.json'
+      - 'state/beliefs/**'
       - 'state/evolution/**'
       - 'constitutions/**'
       - 'personas/**'
@@ -27,8 +32,15 @@ on:
       - 'schemas/**'
       - 'tests/behavioral/**'
       - 'README.md'
+      - 'BACKLOG.md'
       - 'governance-manifest.json'
       - 'scripts/**'
+      # baml_src/ and baml_client/ trigger the `baml-drift` job below. Without them a
+      # PR touching ONLY the contract or its generated client would not start this
+      # workflow at all, making the drift job a guard on a path that never executes —
+      # the same defect #919 is about, one level up.
+      - 'baml_src/**'
+      - 'baml_client/**'
       - '.github/loop-health.yml'
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
@@ -57,6 +69,46 @@ jobs:
       - name: Run governance validator
         run: python scripts/validate_governance.py
 
+  # belief-currency-policy 1.1.0 enforcement: the policy's staleness and
+  # contradiction rules were declaration-only until 2026-07-20, when a
+  # machine replay found a belief held T@0.8 for four months alongside
+  # its own contradicting evidence. This lint is the tripwire; the
+  # monthly substrate replay (hari) is the deeper audit.
+  beliefs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Belief-currency lint
+        run: python scripts/belief_lint.py
+
+  # staleness-detection-policy 1.3.0 lifecycle_scope, mechanized. Warn-only:
+  # terminal records are exempt, open work and live state are aged by last
+  # commit time. Full history is required: on a shallow clone every file dates
+  # to the checkout commit, and the scan exits 2 rather than pass falsely.
+  staleness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install pyyaml
+
+      - name: Lifecycle staleness scan
+        run: python scripts/staleness_scan.py
+
   manifest:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -84,6 +136,56 @@ jobs:
             exit 1
           fi
 
+  # BACKLOG.md contains a marked block of mechanically derived repository facts.
+  # Regenerate it and diff the tracked file: status alone would also report unrelated
+  # untracked runner files and would not show the author what values became stale.
+  backlog-facts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate backlog facts
+        run: python scripts/backlog_facts.py
+
+      - name: Backlog facts must be up to date
+        run: |
+          if ! git diff --exit-code BACKLOG.md; then
+            echo "::error::BACKLOG.md facts are stale. Run: python scripts/backlog_facts.py"
+            exit 1
+          fi
+
+  # ADR-0005 §Decision.4 — baml_client/ is committed but DERIVED, so it can fall out of
+  # step with baml_src/. The check itself is not new: scripts/verify.ps1 has had it since
+  # ADR-0005, and its comment said "that only stays honest if CI diffs them". CI did not —
+  # no workflow invoked verify.ps1, and 23 generated files reached master stale behind
+  # that gap before anyone noticed (#919). This job is the missing caller.
+  #
+  # Same discipline, and deliberately the same shape, as "Manifest must be up to date"
+  # above: regenerate the derived artifact, fail if the committed copy differs.
+  baml-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # The BAML generator ships as an npm package; the version is pinned inside
+      # check_baml_drift.ps1, read from baml_src/baml_project.baml.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # pwsh is preinstalled on ubuntu-latest runners. The check is PowerShell because it
+      # already existed as PowerShell — porting it to bash would fork the logic, which is
+      # the failure this issue is about.
+      - name: BAML client must be up to date
+        shell: pwsh
+        run: ./scripts/check_baml_drift.ps1
+
   unit-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -97,8 +199,19 @@ jobs:
       # jsonschema enables the validate()/write_artifact() seam in demerzel_kit;
       # without it those tests skip rather than fail (graceful degradation).
       # pyyaml is required by test_ecosystem_freshness (registry parsing).
+      # baml-py AND pydantic let test_baml_claude_code import the committed generated
+      # client; without them five tests SKIP, including the tripwire that the DSP grader
+      # never takes the in-band path and so never bills a provider the AIW budget policy
+      # does not gate. Same reasoning as jsonschema above: a gate that skips is not a gate.
+      #
+      # baml-py is pinned to the generator version in baml_src/baml_project.baml — a
+      # mismatch makes the client refuse to import, which is the failure these lines exist
+      # to prevent. pydantic is needed separately: the generator is `python/pydantic`, so
+      # `baml_client/types.py` imports pydantic, and baml-py does NOT pull it in. Installing
+      # baml-py alone left the five tests still skipping (verified: run 30509701057 reported
+      # `OK (skipped=6)` with baml-py present and pydantic absent).
       - name: Install deps
-        run: pip install jsonschema pyyaml
+        run: pip install jsonschema pyyaml baml-py==0.223.0 pydantic
 
       # The scripts/ emitters are the operational code; demerzel_kit makes their
       # gh/filesystem calls an injectable seam so convene() et al. are testable

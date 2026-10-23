@@ -128,7 +128,7 @@ Il temperamento equabile aggiusta leggermente questi rapporti per far suonare tu
 
 ### Esercizio Pratico
 
-Misura la distanza dal capotasto al 12° tasto sulla tua chitarra, poi misura dal 12° tasto all'osso del ponticello. Dovrebbero essere quasi esattamente uguali — confermando che il 12° tasto dimezza la lunghezza della corda, raddoppiando la frequenza (un'ottava). Ora misura dal capotasto al tasto 7: dovrebbe essere circa 2/3 della lunghezza totale della corda, corrispondente al rapporto 3:2 di una quinta giusta.
+Misura la distanza dal capotasto al 12° tasto sulla tua chitarra, poi misura dal 12° tasto all'osso del ponticello. Dovrebbero essere quasi esattamente uguali — confermando che il 12° tasto dimezza la lunghezza della corda, raddoppiando la frequenza (un'ottava). Ora misura dal tasto 7 all'osso del ponticello: dovrebbe essere circa 2/3 della lunghezza totale della corda (la distanza dal capotasto al tasto 7 è il terzo restante), corrispondente al rapporto 3:2 di una quinta giusta.
 
 ---
 

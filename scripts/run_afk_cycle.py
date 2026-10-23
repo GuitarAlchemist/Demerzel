@@ -2,6 +2,12 @@
 """
 Demerzel run_afk_cycle — the AFK implement-lane governor.
 
+Execution policy: manual-or-external.
+No GitHub Actions workflow schedules this driver. An operator or external harness
+owns cadence and invokes one bounded cycle after issue authorization, HALT, and
+budget preflight. Because provider runs can spend metered budget, no automatic
+freshness guard or self-starting schedule is wanted.
+
 Reads the `agent-implement` GitHub issue queue, honors HALT, classifies risk per
 policies/autonomous-loop-policy.yaml, and for each eligible (non-critical) issue
 invokes the agent-agnostic sandcastle harness (../afk-harness) which runs headless
@@ -17,10 +23,29 @@ origin; PRs are independent. The whole queue is always processed — concurrency
 a throughput cap, not a truncation (waves of --max-parallel at a time).
 
 Backends (--backend):
-  local        — per-agent ephemeral clone + Podman sandbox (default; runs on this box)
-  claude-code  — per-agent ephemeral clone + headless `claude -p` (no container;
-                 bills the interactive subscription, not the spend-capped API key)
-  remote       — Vercel isolated sandboxes (NOT yet implemented; seam reserved)
+  claude-code  — DEFAULT. Per-agent ephemeral clone + headless `claude -p`, no
+                 container. ANTHROPIC_API_KEY is stripped from the child env, so
+                 the CLI falls back to the interactive subscription.
+  local        — per-agent ephemeral clone + Podman sandbox. Runs on this box and
+                 FORWARDS ANTHROPIC_API_KEY into the sandbox, i.e. it bills
+                 metered Anthropic API spend. Attributed to `anthropic-api`
+                 (metered-cloud, requires_manual_approval) by
+                 config/afk-backends.yaml, so the AIW gate BLOCKS it. The governor
+                 can never clear that gate on its own: _budget_reserve calls
+                 reserve() with approval=None, and only the gate's own CLI reads
+                 .octo/aiw-approval.json. To run this lane, pre-reserve the job via
+                 the aiw_budget_gate CLI with a bound approval artifact; the
+                 governor then clears via job-id reuse. The release leg is NOT
+                 plumbed -- a metered job needs a trusted receipt that
+                 _budget_release never passes, so every approved run leaves an open
+                 reservation (#896). Treat `local` as operator-driven.
+  remote       — HTTP cloud worker at an operator-configured endpoint (#879).
+                 Disabled by default, and it has NO inherent cost attribution:
+                 what it bills is a property of the endpoint, so
+                 config/afk-backends.yaml marks it provider_from_config and the
+                 provider is read from that entry's config.provider. The registry
+                 refuses to load it with enabled: true while that is unset, and an
+                 unattributed backend fails closed at the gate (#915).
 
 Usage:
   python scripts/run_afk_cycle.py --dry-run            # classify + plan, no side effects
@@ -37,22 +62,27 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
 import tempfile
+import threading
+import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import aiw_budget_gate as budget  # noqa: E402  (fail-closed AIW budget preflight)
 import council_emit  # noqa: E402  (sibling module in scripts/; self-merge gate)
+import demerzel_halt as halt  # noqa: E402  (shared HALT-ALL reader seam)
 import demerzel_kit as kit  # noqa: E402  (shared gh / write-artifact seam)
+import galactic_bridge  # noqa: E402  (fleet claims ledger, ~/.agents/claims.jsonl)
+import gaia_bus  # noqa: E402  (session liveness: a killed governor stops heartbeating)
+from afk_backends import AFKBackend  # noqa: E402
+from afk_backends.registry import RegistryError, get_backend, provider_for  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]            # repos/Demerzel
-HARNESS_DIR = ROOT.parent / "afk-harness"             # sibling, outside Demerzel
 PROMPT_FILE = ROOT / "prompts" / "afk-implement.prompt.md"
 LABEL = "agent-implement"
 REPO_SLUG = "GuitarAlchemist/Demerzel"
@@ -69,12 +99,10 @@ SELF_MERGE_MIN_CONFIDENCE = 0.7       # minimum post_council_confidence
 
 # ── AIW budget enforcement (#471) ──────────────────────────────────────────
 # Every worker invocation goes through the fail-closed budget gate first: no
-# granted reservation, no invocation. Each backend maps to an allowlisted
-# provider so the gate applies its per-job / per-cycle caps and local-first rule.
-BACKEND_PROVIDER = {
-    "local": "codex-cli",             # ../afk-harness sandcastle runs Codex CLI
-    "claude-code": "claude-code-cli",  # headless `claude -p` on the subscription
-}
+# granted reservation, no invocation. The backend registry (config/afk-backends.yaml)
+# maps each backend to an allowlisted provider so the gate applies its per-job /
+# per-cycle caps and local-first rule.
+
 # Recognized budget numbers an issue may carry to tighten the policy defaults.
 _BUDGET_KEYS = (
     "estimated_cost_usd", "estimated_total_tokens", "estimated_model_calls",
@@ -108,9 +136,7 @@ def _budget_request(issue: dict, backend: str) -> dict:
     """Build an AIW budget request for one issue+backend. Raises for a backend
     with no budgeted provider mapping (fail closed — an unmapped worker is never
     reserved)."""
-    provider = BACKEND_PROVIDER.get(backend)
-    if provider is None:
-        raise ValueError(f"backend {backend!r} has no budgeted provider mapping")
+    provider = provider_for(backend)
     req = {"job_id": f"aiw-{issue.get('number')}", "provider": provider}
     req.update(_parse_budget_block(issue.get("body") or ""))
     return req
@@ -120,10 +146,17 @@ def _budget_reserve(issue: dict, backend: str) -> tuple[bool, dict]:
     """Fail-closed budget preflight before any worker invocation. Returns
     ``(allowed, result)``; ANY error is a block, never an invocation."""
     try:
-        policy = budget._load(budget.POLICY_PATH)
+        policy = budget.load_policy(budget.POLICY_PATH)
         result = budget.reserve(policy, _budget_request(issue, backend),
                                 budget.CYCLE_LEDGER_PATH)
-    except Exception as exc:  # a broken/absent policy must fail closed
+    except budget.PolicyInvalid as exc:
+        # Distinct from budget_preflight_error on purpose: "the policy file is
+        # broken" and "this job does not fit the budget" demand opposite
+        # responses, and an operator reading the cycle output could not tell
+        # them apart when both surfaced as the same reason (#794).
+        return False, {"decision": "block", "reasons": ["policy_invalid"],
+                       "error": str(exc)[:200]}
+    except Exception as exc:  # any other preflight failure must also fail closed
         return False, {"decision": "block", "reasons": ["budget_preflight_error"],
                        "error": str(exc)[:200]}
     return result.get("decision") == "allow", result
@@ -132,31 +165,51 @@ def _budget_reserve(issue: dict, backend: str) -> tuple[bool, dict]:
 def _budget_release(issue: dict, actual_cost_usd: float = 0.0) -> None:
     """Best-effort reservation release after an episode; a reconciliation hiccup
     must never break the loop. Local-seat backends carry no marginal spend."""
+    job_id = f"aiw-{issue.get('number')}"
     try:
-        budget.release(budget.CYCLE_LEDGER_PATH, f"aiw-{issue.get('number')}",
-                       actual_cost_usd, policy=budget._load(budget.POLICY_PATH))
+        budget.release(budget.CYCLE_LEDGER_PATH, job_id, actual_cost_usd,
+                       policy=budget.load_policy(budget.POLICY_PATH))
+        return
     except Exception as exc:
-        print(f"budget release skipped for #{issue.get('number')}: {exc}",
-              file=sys.stderr)
+        release_error = exc
 
-
-def halt_active() -> tuple[bool, str]:
-    """Mirror run_ml_feedback_cycle: ~/.demerzel/HALT-ALL present and not expired."""
-    marker = Path.home() / ".demerzel" / "HALT-ALL"
-    if not marker.is_file():
-        return False, ""
+    # A metered reservation (e.g. `local` -> anthropic-api) cannot be released
+    # here: release() demands a trusted provider receipt and the governor has
+    # none to offer. Leaving it open was the #896 wedge — active_packets never
+    # fell, and four such episodes blocked every lane including the healthy
+    # subscription one. Abandon it instead: the slot is freed and the reserved
+    # ESTIMATE is charged to actual spend, but nothing is claimed as verified.
+    # Deliberately NOT synthesising a receipt — _validate_receipt checks
+    # structure, not authenticity, so a self-issued one would pass and turn the
+    # metered-spend control into a no-op.
     try:
-        data = json.loads(marker.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return True, "HALT-ALL present but unreadable — treating as halted (fail-safe)"
-    exp = data.get("expires_at")
-    if exp:
-        try:
-            if datetime.fromisoformat(exp.replace("Z", "+00:00")) < datetime.now(timezone.utc):
-                return False, ""
-        except ValueError:
-            pass
-    return True, f"HALT-ALL in effect (reason: {data.get('reason', 'n/a')})"
+        abandoned = budget.abandon(budget.CYCLE_LEDGER_PATH, job_id, str(release_error))
+        print(f"budget reservation abandoned for #{issue.get('number')}: charged "
+              f"${abandoned['charged_estimate_usd']:.2f} as UNVERIFIED spend "
+              f"({release_error})", file=sys.stderr)
+        return
+    except Exception:  # noqa: BLE001 — fall through to the audit note below
+        pass
+
+    # Neither release nor abandon worked (e.g. the reservation was never written,
+    # or the ledger is unreadable). Release failure must never break the loop, but
+    # a swallowed one leaves the reservation open, so the ledger over-reports
+    # committed spend and max_parallel_packets fills with reservations that never
+    # clear. Write the swallow down so that state is detectable (#794).
+    try:
+        noted = budget.note_release_failure(
+            budget.CYCLE_LEDGER_PATH, job_id, str(release_error))
+    except Exception:  # noqa: BLE001 — recording a failure must never become one
+        noted = False
+    print(f"budget release skipped for #{issue.get('number')}: {release_error}"
+          f"{'' if noted else ' (and the ledger note could not be written)'}",
+          file=sys.stderr)
+
+
+def halt_active(path: Path | None = None, now: datetime | None = None) -> tuple[bool, str]:
+    """Thin decider over the shared HALT-ALL reader (demerzel_halt.is_active owns
+    the marker path, schema, expiry, and fail-safe semantics)."""
+    return halt.is_active(path.parent if path else None, now=now)
 
 
 def _haystack(issue: dict) -> str:
@@ -222,129 +275,6 @@ def _prepare_clone(issue: dict) -> str:
         subprocess.run(["git", "-C", clone, "remote", "set-url", "origin", url],
                        capture_output=True, text=True, timeout=30, check=True)
     return clone
-
-
-def _invoke_harness(issue: dict, repo_path: str) -> dict:
-    """Run the sandcastle harness for one issue against repo_path. Returns
-    {branch,commits,blocked}.
-
-    Invokes node with the tsx loader directly rather than `npx tsx`: on Windows
-    `npx` is `npx.cmd` (no .exe) and Python's subprocess cannot CreateProcess it
-    without a shell — and a shell would expose the issue body to command
-    injection. `node` is a real executable and args pass straight through as argv.
-    """
-    cmd = ["node", "--import", "tsx", str(HARNESS_DIR / ".sandcastle" / "main.mts"),
-           "--repo", str(repo_path), "--issue", str(issue.get("number")),
-           "--title", issue.get("title", ""), "--body", issue.get("body", "")]
-    p = subprocess.run(cmd, cwd=str(HARNESS_DIR), capture_output=True, text=True, timeout=1800)
-    if p.returncode != 0:
-        return {"branch": None, "commits": [], "blocked": f"harness exit {p.returncode}: {p.stderr.strip()[:200]}"}
-    last = [l for l in p.stdout.strip().splitlines() if l.strip().startswith("{")]
-    if not last:
-        return {"branch": None, "commits": [], "blocked": "harness produced no JSON result"}
-    return json.loads(last[-1])
-
-
-def _invoke_harness_remote(issue: dict) -> dict:
-    """Backend seam for Vercel isolated sandboxes (Approach C). Not yet
-    implemented — returns a clean blocked result so --backend remote is a no-op
-    rather than a crash until the remote provider lands."""
-    return {"branch": None, "commits": [],
-            "blocked": "remote backend (Vercel isolated sandboxes) not implemented yet — use --backend local"}
-
-
-CLAUDE_CODE_TIMEOUT = 1800  # seconds for one headless `claude -p` agent run
-
-
-def _claude_code_prompt(issue: dict) -> str:
-    """The instruction handed to the headless Claude Code agent. The issue body
-    already carries the full implementation spec (pattern + success criteria), so
-    this only frames the autonomy contract: implement, test, commit — no push/PR
-    (the governor owns those)."""
-    num = issue.get("number")
-    return (
-        "You are an autonomous AFK engineer working in a fresh clone of the "
-        "Demerzel governance repo, on a dedicated branch. Implement the issue "
-        "below end-to-end, then COMMIT your work on the current branch with a "
-        "conventional-commit message (feat/refactor/test). Be surgical — change "
-        "only what the issue requires. After editing, run "
-        "`python -m unittest discover -s scripts -p \"test_*.py\"` and make sure it "
-        "passes before committing. Do NOT push and do NOT open a pull request; "
-        "just commit locally.\n\n"
-        f"=== ISSUE #{num}: {issue.get('title', '')} ===\n\n"
-        f"{issue.get('body', '')}"
-    )
-
-
-def _invoke_harness_claude_code(issue: dict, repo_path: str) -> dict:
-    """Backend: delegate one issue to a headless Claude Code agent (`claude -p`)
-    in repo_path instead of the Podman sandbox. Returns {branch,commits,blocked} —
-    the same contract as the other backends, so the governor's push/PR/council
-    wrappers are unchanged.
-
-    Three deliberate choices:
-      * ANTHROPIC_API_KEY is stripped from the child env so `claude` bills the
-        interactive subscription, not the spend-capped API key — the reason this
-        backend exists (the Podman backend's claude-code hits that cap).
-      * The agent runs under a SCOPED tool allowlist (not skip-permissions): it may
-        edit/read files and run only `python`/`git` — enough to migrate, test, and
-        commit, but not arbitrary commands. A non-listed tool is denied rather than
-        prompting (headless), so the blast radius is the allowlist, not the host.
-      * Isolation is also the ephemeral clone (a git boundary). Even so this is a
-        weaker boundary than the container backend; use for trusted, mechanical
-        issues — the risk classifier keeps critical/high out of the auto lane.
-    """
-    num = issue.get("number")
-    branch = f"agent/issue-{num}"
-    try:
-        subprocess.run(["git", "-C", repo_path, "checkout", "-b", branch],
-                       capture_output=True, text=True, timeout=30, check=True)
-        base = subprocess.run(["git", "-C", repo_path, "rev-parse", "HEAD"],
-                              capture_output=True, text=True, timeout=30).stdout.strip()
-        env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
-        cmd = ["claude", "-p", _claude_code_prompt(issue),
-               "--output-format", "json",
-               "--allowedTools", "Edit", "Write", "Read", "Grep", "Glob",
-               "Bash(python *)", "Bash(python3 *)", "Bash(git *)"]
-        p = subprocess.run(cmd, cwd=repo_path, capture_output=True, text=True,
-                           timeout=CLAUDE_CODE_TIMEOUT, env=env)
-    except (OSError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as exc:
-        return {"branch": None, "commits": [], "blocked": f"claude-code invoke failed: {exc}"}
-
-    # The agent is told to commit; if it left changes uncommitted, capture them so a
-    # real implementation isn't lost to a missing commit step.
-    dirty = subprocess.run(["git", "-C", repo_path, "status", "--porcelain"],
-                           capture_output=True, text=True, timeout=30).stdout.strip()
-    if dirty:
-        subprocess.run(["git", "-C", repo_path, "add", "-A"],
-                       capture_output=True, text=True, timeout=60)
-        subprocess.run(["git", "-C", repo_path, "commit", "-m",
-                        f"feat: implement #{num} via AFK claude-code backend"],
-                       capture_output=True, text=True, timeout=60)
-    commits = subprocess.run(["git", "-C", repo_path, "log", "--format=%s", f"{base}..HEAD"],
-                             capture_output=True, text=True, timeout=30).stdout.strip()
-    if not commits:
-        tail = (p.stderr or p.stdout or "").strip()[-200:]
-        return {"branch": None, "commits": [],
-                "blocked": f"claude-code made no commits (exit {p.returncode}): {tail}"}
-    return {"branch": branch, "commits": commits.splitlines(), "blocked": None}
-
-
-def _ensure_podman() -> tuple[bool, str]:
-    """Restart-robustness: make sure the Podman machine is up before sandboxing.
-    Idempotent — 'already running' is success. Returns (ok, note)."""
-    try:
-        chk = subprocess.run(["podman", "machine", "list", "--format", "{{.Running}}"],
-                             capture_output=True, text=True, timeout=30)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return False, f"podman not available: {exc}"
-    if chk.returncode == 0 and "true" in chk.stdout.lower():
-        return True, "podman machine already running"
-    start = subprocess.run(["podman", "machine", "start"],
-                           capture_output=True, text=True, timeout=180)
-    if start.returncode == 0 or "already running" in (start.stderr + start.stdout).lower():
-        return True, "podman machine started"
-    return False, f"podman machine start failed: {start.stderr.strip()[:160]}"
 
 
 def _open_pr(issue: dict, branch: str, repo_path: str) -> str:
@@ -588,10 +518,136 @@ def _run_harvest(dry: bool, today: str) -> int:
     return 0
 
 
-def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dict, dict]:
+AFK_CLAIMS_REPO = "demerzel"
+AFK_HEARTBEAT_S = 5 * 60  # refresh well inside gaia_bus.HEARTBEAT_WINDOW_S (30 min)
+AFK_SESSION_PREFIX = "afk-"
+
+
+class _GaiaLiveness:
+    """Keeps the governor's session live in Gaia while it may hold a lane.
+
+    The claims ledger has no expiry, so a governor killed mid-issue would hold
+    `afk-issue-<n>` forever. Instead of a TTL (lane durations are bimodal; any
+    fixed number is wrong for one mode), the holder heartbeats and a later
+    governor treats a silent AFK holder as dead. The first beat is synchronous so
+    liveness exists before the claim row does.
+    """
+
+    def __init__(self, session: str):
+        self.session = session
+        self._stop = threading.Event()
+        self._thread = threading.Thread(target=self._run, name=f"gaia-{session}", daemon=True)
+
+    def _beat(self) -> None:
+        store = gaia_bus.Store()
+        try:
+            store.heartbeat(self.session)
+        except gaia_bus.GaiaError as exc:
+            print(f"warn: gaia heartbeat failed for {self.session}: {exc}", file=sys.stderr)
+        finally:
+            store.close()
+
+    def _run(self) -> None:
+        while not self._stop.wait(AFK_HEARTBEAT_S):
+            self._beat()
+
+    def start(self) -> None:
+        self._beat()
+        self._thread.start()
+
+    def stop(self) -> None:
+        if self._stop.is_set():
+            return
+        self._stop.set()
+        self._thread.join(timeout=10)
+        store = gaia_bus.Store()
+        try:
+            store.release_session(self.session)
+        except gaia_bus.GaiaError as exc:
+            print(f"warn: could not end gaia session {self.session}: {exc}", file=sys.stderr)
+        finally:
+            store.close()
+
+
+def _holder_is_dead(holder: str) -> bool:
+    """Only another AFK governor's claim can be judged dead: AFK sessions are the
+    ones that heartbeat for their lanes, so an interactive holder is never
+    reclaimed. An unreachable bus fails closed (the holder counts as live)."""
+    if not holder.startswith(AFK_SESSION_PREFIX):
+        return False
+    store = gaia_bus.Store()
+    try:
+        return not store.is_live(holder)
+    except gaia_bus.GaiaError:
+        return False
+    finally:
+        store.close()
+
+
+def _claim_lane(issue: dict, session: str) -> tuple[bool, str | None]:
+    """Claim this issue's lane in the fleet claims ledger before any spend.
+
+    Returns (claimed, held_by). held_by is the conflict message when another
+    live session holds the lane: the issue must be skipped. The ledger is an
+    advisory collision-avoidance channel, not a lock server (Galactic Protocol),
+    so an unavailable ledger warns and proceeds unclaimed rather than halting
+    the lane. Uses galactic_bridge.Ledger for its lock and conflict check.
+    """
+    lane = f"afk-issue-{issue.get('number')}"
+    note = f"AFK governor implementing issue #{issue.get('number')}"
+    ledger = galactic_bridge.Ledger()
+    try:
+        try:
+            ledger.claim(session, AFK_CLAIMS_REPO, lane, note=note)
+            return True, None
+        except galactic_bridge.BridgeError as exc:
+            if not str(exc).startswith("claim conflict"):
+                print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}",
+                      file=sys.stderr)
+                return False, None
+            conflict = str(exc)
+        current = ledger.current_claim(AFK_CLAIMS_REPO, lane)
+        holder = current["session"] if current else ""
+        if not _holder_is_dead(holder):
+            return False, conflict
+        # A killed governor: reclaim atomically (a racing governor gets a conflict).
+        ledger.reclaim(session, AFK_CLAIMS_REPO, lane, holder,
+                       note=f"{note}; {holder} has no Gaia heartbeat in "
+                            f"{gaia_bus.HEARTBEAT_WINDOW_S // 60} min")
+        print(f"info: reclaimed {lane} from dead governor {holder}", file=sys.stderr)
+        return True, None
+    except galactic_bridge.BridgeError as exc:
+        return False, str(exc)
+    except OSError as exc:
+        print(f"warn: claims ledger unavailable, proceeding unclaimed: {exc}", file=sys.stderr)
+        return False, None
+
+
+def _finish_claim(issue: dict, session: str, decision: dict, state: dict) -> None:
+    """Close the lane: done with the PR as evidence, otherwise released."""
+    lane = f"afk-issue-{issue.get('number')}"
+    try:
+        if state.get("status") == "completed" and decision.get("pr"):
+            galactic_bridge.Ledger().update_claim(
+                session, AFK_CLAIMS_REPO, lane, "done", evidence=decision["pr"],
+                note="AFK governor opened a PR")
+        else:
+            galactic_bridge.Ledger().update_claim(
+                session, AFK_CLAIMS_REPO, lane, "released",
+                note=f"AFK governor stopped: {decision.get('action')}")
+    except (galactic_bridge.BridgeError, OSError) as exc:
+        print(f"warn: could not close claim {lane}: {exc}", file=sys.stderr)
+
+
+def _process_issue(issue: dict, seq: int, today: str, backend: str,
+                    adapter: AFKBackend) -> tuple[dict, dict]:
     """Live processing of ONE issue end-to-end (runs inside the thread pool).
     Each call is independent: its own clone, its own branch, its own PR, its own
-    loop-state file. Returns (decision, state)."""
+    loop-state file. Returns (decision, state).
+
+    The adapter is responsible for turning the issue into a branch with commits;
+    the governor owns the clone, budget, PR, and loop-state.
+    """
     risk, mode = classify_risk(issue)
     eligible = is_eligible(issue)
     state = build_loop_state(issue, seq, risk, mode, today)
@@ -606,6 +662,24 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
         _write_loop_state(state)
         return decision, state
 
+    # Claim the lane before any spend, so two governors (or a governor and an
+    # interactive session) never implement the same issue at once.
+    # Unique per run: seq is only the issue's position in this run's queue, so two
+    # runs on the same day would otherwise share a session and never conflict.
+    session = f"{AFK_SESSION_PREFIX}{today}-{seq}-{uuid.uuid4().hex[:8]}"
+    liveness = _GaiaLiveness(session)
+    liveness.start()
+    claimed, held_by = _claim_lane(issue, session)
+    if not claimed:
+        liveness.stop()
+    if held_by:
+        decision["action"] = "skip:lane-held"
+        decision["lane_holder"] = held_by
+        state["status"] = "halted"
+        state["halt_reason"] = held_by[:200]
+        _write_loop_state(state)
+        return decision, state
+
     # Budget preflight (#471): a worker is NEVER invoked without a granted
     # reservation. A blocked/errored preflight fails closed — no clone, no spend.
     allowed, budget_result = _budget_reserve(issue, backend)
@@ -614,42 +688,48 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
         decision["action"] = f"blocked:budget:{','.join(reasons)}"
         state["status"] = "halted"
         state["halt_reason"] = f"budget: {', '.join(reasons)}"
+        if claimed:
+            _finish_claim(issue, session, decision, state)
+            liveness.stop()
         _write_loop_state(state)
         return decision, state
 
     clone = None
     try:
-        if backend == "remote":
-            hr = _invoke_harness_remote(issue)
-            repo_for_push = None
-        elif backend == "claude-code":
+        if adapter.needs_local_repo():
             clone = _prepare_clone(issue)
-            hr = _invoke_harness_claude_code(issue, clone)
+            hr = adapter.invoke(issue, clone)
             repo_for_push = clone
         else:
-            clone = _prepare_clone(issue)
-            hr = _invoke_harness(issue, clone)
-            repo_for_push = clone
+            hr = adapter.invoke(issue, None)
+            repo_for_push = None
 
         if hr.get("blocked"):
             decision["action"] = f"blocked:{hr['blocked']}"
             state["status"] = "halted"
             state["halt_reason"] = str(hr["blocked"])
         elif hr.get("branch"):
-            pr = _open_pr(issue, hr["branch"], repo_for_push)
-            decision["pr"] = pr
-            decision["branch"] = hr["branch"]
-            if pr.startswith("pr-create-failed"):
-                # A failed PR must NOT be reported as completed.
-                decision["action"] = "stalled:pr-create-failed"
+            if repo_for_push is None:
+                # Cloud backends that do not use a local clone are responsible for
+                # opening their own PR. This branch is defensive until #879 lands.
+                decision["action"] = "stalled:no-local-repo-for-push"
                 state["status"] = "stalled"
-                state["halt_reason"] = pr
+                state["halt_reason"] = "backend returned a branch but has no local repo to push"
             else:
-                state["iterations"].append({
-                    "iteration": 1, "timestamp": kit.now_iso(),
-                    "action": f"opened PR for #{issue.get('number')}",
-                    "outcome": "progress", "governance_decision": None})
-                state["status"] = "completed"
+                pr = _open_pr(issue, hr["branch"], repo_for_push)
+                decision["pr"] = pr
+                decision["branch"] = hr["branch"]
+                if pr.startswith("pr-create-failed"):
+                    # A failed PR must NOT be reported as completed.
+                    decision["action"] = "stalled:pr-create-failed"
+                    state["status"] = "stalled"
+                    state["halt_reason"] = pr
+                else:
+                    state["iterations"].append({
+                        "iteration": 1, "timestamp": kit.now_iso(),
+                        "action": f"opened PR for #{issue.get('number')}",
+                        "outcome": "progress", "governance_decision": None})
+                    state["status"] = "completed"
         else:
             # Harness returned neither a branch nor a blocked reason (e.g. agent
             # made no commits). Do not leave status pinned at 'running'.
@@ -665,6 +745,9 @@ def _process_issue(issue: dict, seq: int, today: str, backend: str) -> tuple[dic
             shutil.rmtree(clone, ignore_errors=True)
         # Reconcile the reservation: local-seat backends carry no marginal spend.
         _budget_release(issue, actual_cost_usd=0.0)
+        if claimed:
+            _finish_claim(issue, session, decision, state)
+            liveness.stop()
 
     _write_loop_state(state)
     return decision, state
@@ -699,10 +782,16 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--max-parallel", type=int, default=3,
                     help="max concurrent AFK agents (default 3); the whole queue is "
                          "still processed in waves of this size")
-    ap.add_argument("--backend", choices=["local", "remote", "claude-code"], default="local",
-                    help="local = per-agent clone + Podman (default); "
-                         "claude-code = per-agent clone + headless `claude -p` (no container, "
-                         "bills the subscription not the spend-capped API key); "
+    ap.add_argument("--backend", choices=["local", "remote", "claude-code"],
+                    default="claude-code",
+                    help="claude-code = per-agent clone + headless `claude -p` (default; no "
+                         "container, bills the interactive subscription because "
+                         "ANTHROPIC_API_KEY is stripped from the child env); "
+                         "local = per-agent clone + Podman sandbox — NOTE this forwards "
+                         "ANTHROPIC_API_KEY and bills metered API spend; attributed to "
+                         "anthropic-api (metered-cloud) so the gate blocks it from the "
+                         "governor unless the job was pre-reserved via the "
+                         "aiw_budget_gate CLI with an approval artifact (#863); "
                          "remote = Vercel isolated sandboxes (not yet implemented)")
     ap.add_argument("--harvest", action="store_true",
                     help="self-merge pass: gate already-open AFK PRs through the "
@@ -740,9 +829,26 @@ def main(argv: list[str]) -> int:
         _print_summary(decisions, len(issues), True, args.max_parallel, args.backend, today)
         return 0
 
-    # Live: ensure the sandbox backend is ready once, up front.
-    if args.backend == "local" and issues:
-        ok, pnote = _ensure_podman()
+    # Live: an invalid policy is not a per-job condition, so discovering it once
+    # per reservation is both noisy and too late — the first job blocks, every
+    # subsequent job blocks for the same reason, and any release in flight is
+    # swallowed. Establish that the gate can function before starting work (#794).
+    if issues:
+        try:
+            budget.load_policy(budget.POLICY_PATH)
+        except budget.PolicyInvalid as exc:
+            print(f"ABORT: budget policy is invalid, refusing to start a cycle: {exc}",
+                  file=sys.stderr)
+            return 2
+
+    # Live: ensure the selected backend is ready once, up front.
+    try:
+        adapter = get_backend(args.backend)
+    except RegistryError as exc:
+        print(f"ABORT: backend registry error: {exc}", file=sys.stderr)
+        return 1
+    if issues:
+        ok, pnote = adapter.prepare()
         if not ok:
             print(f"ABORT: {pnote}", file=sys.stderr)
             return 1
@@ -754,7 +860,7 @@ def main(argv: list[str]) -> int:
 
     decisions_by_seq: dict[int, dict] = {}
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futs = {ex.submit(_process_issue, issue, seq, today, args.backend): seq
+        futs = {ex.submit(_process_issue, issue, seq, today, args.backend, adapter): seq
                 for seq, issue in enumerate(issues, start=1)}
         for fut in as_completed(futs):
             seq = futs[fut]

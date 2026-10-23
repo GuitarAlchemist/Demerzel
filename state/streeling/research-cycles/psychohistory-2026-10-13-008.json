@@ -1,0 +1,29 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-008",
+  "department": "psychohistory",
+  "question": "The archived trigger log holds 594 events over 119 calendar days, 100 of them active. Is an average of \"about five events a day\" a usable description for planning?",
+  "production_path": [
+    "investigation: read the syllabus's shared counts of the trigger log, the archived trigger files, the push-triggered-spam pattern record and the producer workflow at the pinned commit; found that each file is one run of a workflow retired on 2026-07-18",
+    "hypothesis: written from the shared counts alone (594 events, 119 days, 100 active, busiest days 109, 72, 60 and 45) before the fixture existed",
+    "extract: snapshot one row per event into observed-input.json, refusing a trigger folder whose file count, Git tree id or manifest digest differs from the pin",
+    "model: daily counts over calendar days with empty days included, a Poisson benchmark with the observed mean summed in exact arithmetic, and the index of dispersion on the sample variance",
+    "test: composition of the busiest days by type against the pattern record, weekday and weekend split, 7-day and 17-day blocks, day boundary moved by 6, 12 and 18 hours, standard error of the mean",
+    "adversarial: evenly spread, seeded constant-rate and planted-burst control logs; tampered copies of the source folder (one changed byte, one removed file, one edited record) each stop extract.py; the objection that a long-horizon total needs only the mean",
+    "test: byte-identical reruns on Windows and Linux, 35 self-checks, five answered exercises and an answer-free transfer task",
+    "revision after an independent review: the Poisson probability of k events, the quantile rules, the episode rule and the standard-error formulas are stated in the lesson; analyze() is split into one function per section of results.json with unchanged output; a sensitivity section adds the twelve trigger files that PSY-009 found deleted without being archived"
+  ],
+  "hypothesis": "The daily counts of the archived trigger log are strongly overdispersed against a Poisson process with the same mean: an index of dispersion above 10, far more empty days than the benchmark expects (under one), and fewer than one calendar day in ten within one event of the mean, so \"about five events a day\" is not a usable planning description. Secondary expectation: the busiest days consist mostly of push events, as the project's push-triggered-spam record suggests.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the folder state/triggers/archived holds 594 trigger files (Git tree 2da37c16496d39c0c9137897c8be2b0c6d6b7978, manifest digest checked by extract.py) stamped from 2026-03-20 to 2026-07-16: 119 UTC calendar days, 100 with at least one event and 19 with none, a mean of 594/119 = 4.99 events per calendar day. Twelve further trigger files were deleted without being archived (seven dated 2026-03-20, five dated 2026-06-30; counted by PSY-009, not read by this fixture): with them the mean would be 5.09 and the index of dispersion 39.40 instead of 39.77.",
+    "The sample variance of the daily counts (divisor n - 1) is 198.52 and the index of dispersion 39.77, about 298 standard deviations above the value 1 of a Poisson process. A Poisson benchmark with the same mean expects 0.81 empty days against 19 observed, 4.04 one-event days against 63, 59.17 days with 4 to 6 events against 4 (3.36% of the days), and 0.64 days with 12 or more events against 11.",
+    "The secondary expectation was wrong: push events are 77 of the 286 events of the four busiest days (26.92%), below their 34.85% share of the whole log, and the two busiest June days hold 4 and 0 pushes. The pattern record matches the push counts of 2026-03-21 and 2026-03-22 (41 and 32) but not the June burst days, which are issues and discussions.",
+    "Longer windows do not rescue the mean: over 17 blocks of 7 days the index of dispersion is 104.41 and the median block holds 8 events against a mean of 34.94, and the 11 burst days form two episodes 86 days apart, so this sample cannot say how often bursts occur. Controls: the same code returns an index of 0.0017 for an evenly spread log and 1.23 for a seeded constant-rate log of the same size.",
+    "The fixture reran byte-identically on Windows and Linux and its 35 self-checks passed; no count model was fitted, no cause of a burst was established, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed. Research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T00:32:25Z"
+}

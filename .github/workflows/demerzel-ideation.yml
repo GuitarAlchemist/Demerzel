@@ -163,10 +163,16 @@ jobs:
           LLM_SYSTEM=$(jq -rn '"You are Demerzel and Seldon, governance coordinator and chancellor of Streeling University for the GuitarAlchemist AI ecosystem.\n\nGenerate 3-5 FRESH ideas based on the current ecosystem state. Ideas must be:\n1. Concrete and actionable (not vague aspirations)\n2. Grounded in what just changed (recent commits, open issues, conscience signals)\n3. Novel — do NOT repeat ideas that are already open issues\n4. Spanning different domains: governance, music theory, ML/AI, cross-repo integration, research\n\nFor each idea, output:\n- Title (concise, issue-ready)\n- Source (what triggered this idea — a commit, a gap, a pattern)\n- Problem (what is wrong or missing)\n- Proposal (specific action)\n- Priority (P0-P3)\n- Repos affected\n- Streeling department (which department should own this research)\n\nFormat as markdown with ### headers per idea. Be creative but practical."')
           PROMPT=$(jq -rn --arg ctx "$CONTEXT" '("Generate fresh ideation based on current ecosystem state:\n\n" + $ctx)')
           export LLM_SYSTEM
-          if ! IDEAS=$(LLM_CLAUDE_MODEL=claude-sonnet-4-6-20250514 bash .github/scripts/llm_call.sh claude "$PROMPT" 3000 2>/tmp/llm_err); then
-            echo "::warning::AI ideation failed: $(cat /tmp/llm_err)"
+          # No per-caller LLM_CLAUDE_MODEL override: this step used to pin
+          # claude-sonnet-4-6-20250514, an id that never existed, so every call
+          # 404'd (#860). The seam default governs — one place to keep current.
+          if ! IDEAS=$(bash .github/scripts/llm_call.sh claude "$PROMPT" 3000 2>/tmp/llm_err); then
+            # No ideas means no discussion and no issues — the outcome this
+            # workflow exists for did not happen. Fail loudly rather than
+            # skipping the producing steps behind a green check.
+            echo "::error::AI ideation failed: $(cat /tmp/llm_err)"
             echo "IDEA_COUNT=0" >> $GITHUB_OUTPUT
-            exit 0
+            exit 1
           fi
 
           # Count ideas (### headers)
@@ -226,10 +232,13 @@ jobs:
           LLM_SYSTEM=$(jq -rn --arg existing "$EXISTING_ISSUES" \
             '("You are a critical reviewer. Review these ideas. REJECT any that duplicate existing issues.\n\nExisting open issues:\n" + $existing + "\n\nFor each idea respond as JSON array:\n[{\"idea_number\": 1, \"verdict\": \"APPROVE|MODIFY|REJECT\", \"rationale\": \"...\", \"issue_title\": \"...\", \"labels\": [\"enhancement\"]}]\n\nBe rigorous. Reject duplicates and vague ideas.")')
           export LLM_SYSTEM
-          if ! REVIEW_TEXT=$(LLM_CLAUDE_MODEL=claude-sonnet-4-6-20250514 bash .github/scripts/llm_call.sh claude "$IDEAS" 1500 2>/tmp/llm_err); then
-            echo "::warning::Idea review failed: $(cat /tmp/llm_err)"
+          # Seam default governs here too — see the ideation step above (#860).
+          if ! REVIEW_TEXT=$(bash .github/scripts/llm_call.sh claude "$IDEAS" 1500 2>/tmp/llm_err); then
+            # Unreviewed ideas are never promoted to issues, so a swallowed
+            # failure here is the same dead-green loop one step later.
+            echo "::error::Idea review failed: $(cat /tmp/llm_err)"
             echo "REVIEW_READY=false" >> $GITHUB_OUTPUT
-            exit 0
+            exit 1
           fi
 
           # Extract JSON from response

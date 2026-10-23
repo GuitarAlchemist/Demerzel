@@ -1,0 +1,28 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-024",
+  "department": "psychohistory",
+  "question": "Aggregate laws assume many independent actors. Who actually generated the recorded events?",
+  "production_path": [
+    "investigation: read the trigger files, the trigger workflow as it stands at the pin (a later version of the one that wrote them; earlier versions not read), .github/CODEOWNERS, .mailmap and AGENTS.md at the pinned commit; found that sender is github.actor and that repo is the name of the repository the workflow runs in",
+    "investigation: read the commit history of the pin with commands that need commits and trees only (rev-list, log, shortlog, log --name-status); a first look at the two author counts came before the hypothesis was written down",
+    "extract: replace every sender, author, address, committer and co-author value by a label, stop if a raw identity string would be written, pin the archive by its manifest digest and the other files by Git blob",
+    "model: concentration index (sum of squared shares), effective number (its inverse) and half-coverage count for each record and for five imaginary ensembles",
+    "test: bound the sender index under assumed senders for the twelve deleted files; count the commit record under three definitions of an identity; seeded simulation of a share-weighted average of independent actors",
+    "adversarial: planted second sender, planted wrong commit subject and planted identity string as negative controls, tampered inputs, and the objection that the sender field makes one sender likely whatever the number of agents",
+    "test: byte-identical rerun of both scripts, 37 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "(1) Every trigger event whose sender can be read at the pin carries one sender and one repository, so the effective number of senders is 1, and the twelve deleted files cannot raise it above 1.1 whatever they held. (2) The commit history, a second record of activity, shows the same single dominant account: one author string holds the large majority of the commits and automation identities only a small remainder, so the effective number of commit authors is at most 1.5.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 all 594 archived trigger events (2026-03-20 to 2026-07-16) and the 8 later events left outside the archive carry one sender label and one repo: 602 events, effective number of senders 1. The workflow file at the pin, a later version of the one that wrote them, sets sender to github.actor and repo to the name of its own repository, and none of an event's 9 keys names a persona, a session or a model.",
+    "Of the 615 trigger events ever added, 603 remain at the pin and 12 were deleted without being archived; their content cannot be read from a blobless clone. 11 were added by commits under the workflow's identity whose subjects name the same repo; the twelfth, a self_initiated trigger and not a repository event, by another commit under author A's string, whose subject reports the driver's first autonomous cycle. Giving each of the twelve a different new sender leaves the effective number at 1.0408 (H = 0.960821), below the 1.1 fixed in advance: part 1 holds, as a bound and not as an observation.",
+    "The 1,599 commits reachable from the pin carry 2 author strings with 860 and 739 commits: H = 0.502863 and an effective number of 1.9886, above the 1.5 fixed in advance, so part 2 fails as written. The second string is the identity that four workflows configure and 613 of its 739 commits carry the trigger workflow's subject; without them the effective number is 1.2869, a reading chosen after seeing the counts and not used for the verdict.",
+    "The author field under-resolves in both directions: one author string uses two addresses (622 and 238 commits, hence 3 identities and an effective number of 2.5835 by address) that the repository's .mailmap merges, and 615 of that author's 860 commits (71.51%) carry a Co-authored-by trailer. Five imaginary ensembles of 14 actors give effective numbers from 14 down to 1.2334 (synthetic, for scale).",
+    "Both scripts reran byte-identically and the 37 self-checks passed. No deleted file was read, no identity was matched to a person, part 2 of the hypothesis was written down after a first look at the author counts, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "refute",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T03:10:17Z"
+}

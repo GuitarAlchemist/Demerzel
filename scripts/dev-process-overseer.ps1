@@ -4,6 +4,10 @@
 # recommends whether Claude Code should continue, switch to /goal, run a /loop,
 # or pause for operator attention.
 #
+# Exit code mirrors the verdict: 0 only when workflowMode is 'loop-eligible',
+# 1 otherwise. A reader that only parses the printed report cannot tell a green
+# run from a red one, and every consumer of this script is a gate.
+#
 # Usage:
 #   pwsh Scripts/dev-process-overseer.ps1
 #   pwsh Scripts/dev-process-overseer.ps1 -Domain chatbot-qa
@@ -13,6 +17,12 @@
 param(
     [string]$RepoRoot = (Resolve-Path .).Path,
     [string]$Domain = '',
+    # last.json records a status; it does not recompute it. Past this age the
+    # recorded oracle_status is treated as 'unknown' rather than believed (#782
+    # - a hand-written "ok" reported green for two months after the oracle went
+    # red). 24h matches the bound supervised-loop-preflight.ps1 already applies
+    # to this script's own artifact, so the whole gate chain expires together.
+    [int]$OracleMaxAgeHours = 24,
     [switch]$Json,
     [string]$OutPath = 'state/governance/dev-process-overseer.json',
     [switch]$NoEmit
@@ -50,6 +60,34 @@ function Read-JsonOrNull {
     } catch {
         return $null
     }
+}
+
+function Get-AgeHoursOrNull {
+    param([object]$Value)
+
+    # ConvertFrom-Json converts a well-formed ISO-8601 timestamp to [datetime]
+    # on its own (Kind Utc for a trailing Z, Local for an offset, Unspecified
+    # for neither) and leaves anything it cannot parse as a [string]. Measured
+    # on pwsh 7.6.3 — both shapes reach here, so both are handled.
+    $moment = [datetime]::MinValue
+    if ($Value -is [datetime]) {
+        $moment = $Value
+    } elseif ($Value -is [string]) {
+        $styles = [System.Globalization.DateTimeStyles]::AdjustToUniversal -bor `
+            [System.Globalization.DateTimeStyles]::AssumeUniversal
+        $culture = [System.Globalization.CultureInfo]::InvariantCulture
+        if (-not [datetime]::TryParse($Value, $culture, $styles, [ref]$moment)) { return $null }
+    } else {
+        return $null
+    }
+
+    # Harness artifacts record UTC; reading an offset-less stamp as local time
+    # would shift the age by the machine's offset.
+    if ($moment.Kind -eq [System.DateTimeKind]::Unspecified) {
+        $moment = [datetime]::SpecifyKind($moment, [System.DateTimeKind]::Utc)
+    }
+
+    return ((Get-Date).ToUniversalTime() - $moment.ToUniversalTime()).TotalHours
 }
 
 function Get-HomeDirectoryOrNull {
@@ -287,12 +325,16 @@ foreach ($baselinePath in $baselineFiles) {
     $oracleStatus = $null
     $metricValue = $null
     $lastWriteTime = $null
+    $oracleEmittedAt = $null
+    $oracleAgeHours = $null
     if (Test-Path -LiteralPath $lastPath) {
         $lastWriteTime = (Get-Item -LiteralPath $lastPath).LastWriteTime.ToString('o')
     }
     if ($last) {
         if ($last.PSObject.Properties.Name -contains 'oracle_status') { $oracleStatus = $last.oracle_status }
         if ($last.PSObject.Properties.Name -contains 'metric_value') { $metricValue = $last.metric_value }
+        $oracleEmittedAt = Get-ObjectPropertyOrNull -Object $last -Names @('emitted_at')
+        $oracleAgeHours = Get-AgeHoursOrNull -Value $oracleEmittedAt
     }
 
     if (-not $last) {
@@ -303,6 +345,19 @@ foreach ($baselinePath in $baselineFiles) {
         Add-Finding $findings 'block' 'oracle-shape-invalid' `
             "Domain '$domainName' last.json is missing metric_value or oracle_status." `
             'Treat the oracle as unreliable. Keep Claude in supervised mode until the oracle emits the baseline contract shape.'
+    } elseif ($null -eq $oracleAgeHours) {
+        # No usable emitted_at means the record cannot be expired, so it would
+        # be believed forever. Unknown age is unknown status.
+        $oracleStatus = 'unknown'
+        Add-Finding $findings 'block' 'oracle-timestamp-unreadable' `
+            "Domain '$domainName' last.json has no readable emitted_at, so its oracle_status cannot be expired." `
+            'Re-run the declared oracle and emit last.json with an ISO-8601 emitted_at before trusting its status.'
+    } elseif ($oracleAgeHours -gt $OracleMaxAgeHours) {
+        $recordedStatus = $oracleStatus
+        $oracleStatus = 'unknown'
+        Add-Finding $findings 'block' 'oracle-status-stale' `
+            ("Domain '$domainName' last.json records oracle_status '$recordedStatus' from {0}h ago (max {1}h); treating it as unknown." -f [Math]::Round($oracleAgeHours, 1), $OracleMaxAgeHours) `
+            'Re-run the declared oracle so the recorded status reflects an actual run. A recorded status is not a measurement.'
     } elseif ($oracleStatus -ne 'ok') {
         Add-Finding $findings 'block' 'oracle-not-ok' `
             "Domain '$domainName' oracle_status is '$oracleStatus'." `
@@ -342,6 +397,9 @@ foreach ($baselinePath in $baselineFiles) {
         lastJsonPath       = if (Test-Path -LiteralPath $lastPath) { [System.IO.Path]::GetRelativePath($RepoRoot, $lastPath) -replace '\\', '/' } else { $null }
         lastJsonWriteTime  = $lastWriteTime
         oracleStatus       = $oracleStatus
+        oracleEmittedAt    = $oracleEmittedAt
+        oracleAgeHours     = if ($null -eq $oracleAgeHours) { $null } else { [Math]::Round($oracleAgeHours, 1) }
+        oracleMaxAgeHours  = $OracleMaxAgeHours
         metricValue        = $metricValue
         outOfScopeDirty    = @($outOfScope)
         protectedDirty     = @($protectedTouched)
@@ -409,9 +467,13 @@ if (-not $NoEmit -and $artifactPath) {
     Move-Item -LiteralPath $temporaryPath -Destination $artifactPath -Force
 }
 
+# Green is exit 0 and nothing else. Anything short of loop-eligible has to be
+# visible to a caller that never reads the report body.
+$exitCode = if ($workflowMode -eq 'loop-eligible') { 0 } else { 1 }
+
 if ($Json) {
     $report | ConvertTo-Json -Depth 12
-    exit 0
+    exit $exitCode
 }
 
 Write-Host "Development process overseer" -ForegroundColor Cyan
@@ -438,3 +500,5 @@ Write-Host $goalTemplate
 Write-Host ''
 Write-Host 'Recommended Claude /loop:' -ForegroundColor Cyan
 Write-Host $loopTemplate
+
+exit $exitCode

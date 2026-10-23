@@ -28,7 +28,11 @@ set -euo pipefail
 CLAUDE_URL="${LLM_CLAUDE_URL:-https://api.anthropic.com/v1/messages}"
 GEMINI_URL="${LLM_GEMINI_URL:-https://generativelanguage.googleapis.com/v1beta/models}"
 OPENAI_URL="${LLM_OPENAI_URL:-https://api.openai.com/v1/chat/completions}"
-CLAUDE_MODEL="${LLM_CLAUDE_MODEL:-claude-sonnet-4-20250514}"
+# Use undated model ids. A dated snapshot is a time bomb: the previous default
+# here passed its retirement date and every caller of this seam started 404ing,
+# which is what killed demerzel-capability-expansion (#703). Guarded by
+# scripts/test_no_retired_models.py.
+CLAUDE_MODEL="${LLM_CLAUDE_MODEL:-claude-sonnet-5}"
 GEMINI_MODEL="${LLM_GEMINI_MODEL:-gemini-2.0-flash}"
 OPENAI_MODEL="${LLM_OPENAI_MODEL:-gpt-4o}"
 
@@ -65,8 +69,13 @@ _emit() {
 
 _call_claude() {
   local prompt="$1" max="$2" raw
+  # thinking is disabled explicitly, not by omission. On sonnet-4 omitting it meant
+  # "no thinking"; from sonnet-5 on, omitting it means *adaptive* thinking — and
+  # max_tokens caps thinking + text together, so callers passing 1024..4096 would
+  # start getting truncated answers. Disabling preserves the pre-#703 contract.
+  # A caller that wants thinking should raise max_tokens and opt in deliberately.
   raw=$(jq -n --arg m "$CLAUDE_MODEL" --argjson mx "$max" --arg p "$prompt" --arg s "${LLM_SYSTEM:-}" \
-      '{model:$m, max_tokens:$mx, messages:[{role:"user", content:$p}]}
+      '{model:$m, max_tokens:$mx, thinking:{type:"disabled"}, messages:[{role:"user", content:$p}]}
        + (if $s == "" then {} else {system:$s} end)' \
     | _http_post "$CLAUDE_URL" \
         -H "x-api-key: ${ANTHROPIC_API_KEY:-}" \

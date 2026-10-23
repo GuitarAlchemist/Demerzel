@@ -1,0 +1,17 @@
+# BAML codegen is byte-sensitive to line endings, and not in a way git can normalise away.
+#
+# `baml_client/inlinedbaml.py` embeds the CONTENT of every `baml_src/*.baml` file as an
+# escaped Python string literal. So a CRLF checkout does not just change inlinedbaml.py's
+# own line endings — it changes the characters INSIDE that string, from `\n` to `\r\n`.
+# git's autocrlf normalisation operates on a file's line endings, not on escape sequences
+# within a literal, so `git diff` cannot see past it.
+#
+# Without this, the `baml-drift` job in governance-validate.yml compares a client
+# regenerated on Linux (LF, `\n`) against one committed from Windows (CRLF, `\r\n`) and
+# reports drift on every single PR, against a baml_client/ that is perfectly in step with
+# its source. A guard that cries wolf on every run is worse than no guard: it teaches
+# people to click past it. (#919)
+#
+# Pinning both trees to LF makes the generator's output identical on every platform.
+baml_src/** text eol=lf
+baml_client/** text eol=lf

@@ -1,0 +1,119 @@
+{
+  "audit": "governance-audit-policy",
+  "level": 2,
+  "date": "2026-07-25",
+  "auditor": "demerzel",
+  "read_only": true,
+  "summary": {
+    "checks_total": 6,
+    "checks_passed": 4,
+    "checks_failed": 1,
+    "checks_noted": 1,
+    "artifacts_scanned": 146,
+    "cross_reference_failures": 1,
+    "stale_artifacts_found": 8
+  },
+  "checks": [
+    {
+      "id": "audit-2-1-behavioral-test-coverage",
+      "status": "PASS",
+      "severity_if_failed": "high",
+      "scanned": 17,
+      "failing": 0,
+      "note": "All personas have a corresponding behavioral case file in tests/behavioral/ (e.g., {persona}-cases.md). Files are substantive and contain assertions. Note: actual naming convention is {persona}-cases.md while policy specifies {persona}.test.md or {persona}.test.yaml — a convention drift, but coverage is complete."
+    },
+    {
+      "id": "audit-2-2-estimator-pairing-resolution",
+      "status": "PASS",
+      "severity_if_failed": "high",
+      "scanned": 17,
+      "failing": 0,
+      "note": "All personas with estimator_pairing reference the existing skeptical-auditor persona. No broken pairings."
+    },
+    {
+      "id": "audit-2-3-policy-references-resolution",
+      "status": "PASS",
+      "severity_if_failed": "high",
+      "scanned": 12,
+      "failing": 0,
+      "note": "Sampled policy/constitution references in personas, constitutions, and skills resolve to existing files. No dangling references detected in the sample."
+    },
+    {
+      "id": "audit-2-4-schema-ref-resolution",
+      "status": "FAIL",
+      "severity_if_failed": "critical",
+      "scanned": 8,
+      "failing": 1,
+      "note": "logic/governance-evolution.schema.json used /schemas/logic/tetravalent-state for assessment.effectiveness $ref, but the tetravalent-state schema $id is /schemas/tetravalent-state. This was the lone inconsistent reference; all other logic schemas use the /schemas/ form. Fixed as a separate maintenance action after this audit."
+    },
+    {
+      "id": "audit-2-5-orphaned-artifacts-detection",
+      "status": "NOTE",
+      "severity_if_failed": "medium",
+      "scanned": 47,
+      "failing": 0,
+      "note": "No governance artifacts with zero incoming references were flagged in the core inventory. docs/architecture.md was not available for a full orphan scan, so this check is noted rather than passed."
+    },
+    {
+      "id": "audit-2-6-stale-artifacts-detection",
+      "status": "FAIL",
+      "severity_if_failed": "medium",
+      "scanned": 28,
+      "failing": 8,
+      "note": "8 state files have not been updated in more than 7 days (the policy staleness threshold): 2 beliefs from 2026-03-23, 3 evolution logs from 2026-03-17/20, 1 evolution log from 2026-04-03, 1 PDCA record from 2026-03-17, and metasync-log.json (date parse error). Recommend review for compounding or archival."
+    }
+  ],
+  "findings": [
+    {
+      "id": "finding-4-evolution-schema-unresolved-ref",
+      "severity": "critical",
+      "artifact": "logic/governance-evolution.schema.json",
+      "evidence_files": [
+        "logic/governance-evolution.schema.json",
+        "logic/tetravalent-state.schema.json"
+      ],
+      "recommendation": "Correct the $ref from /schemas/logic/tetravalent-state to /schemas/tetravalent-state. Validate the schema compiles and the $ref resolves. (Done as a separate maintenance action.)"
+    },
+    {
+      "id": "finding-5-stale-state-files",
+      "severity": "medium",
+      "artifact": "state/beliefs/, state/evolution/, state/pdca/",
+      "evidence_files": [
+        "state/beliefs/2026-03-17-behavioral-test-coverage.belief.json",
+        "state/beliefs/2026-03-18-consumer-repo-integration-status.belief.json",
+        "state/evolution/2026-03-17-alignment-policy.evolution.json",
+        "state/evolution/2026-03-17-asimov-constitution.evolution.json",
+        "state/evolution/2026-03-17-default-constitution.evolution.json",
+        "state/evolution/2026-03-20-memristive-markov.evolution.json",
+        "state/evolution/2026-04-03-visual-governance.evolution.json",
+        "state/pdca/2026-03-17-behavioral-test-gap.pdca.json"
+      ],
+      "recommendation": "Run a compounding cycle on stale artifacts: either update their assessments with current evidence, archive them, or mark them as historical. Also fix state/evolution/metasync-log.json date parsing so staleness can be measured correctly."
+    },
+    {
+      "id": "finding-6-behavioral-test-naming-convention",
+      "severity": "note",
+      "artifact": "tests/behavioral/",
+      "evidence_files": [
+        "policies/governance-audit-policy.yaml",
+        "tests/behavioral/demerzel-cases.md",
+        "tests/behavioral/skeptical-auditor-cases.md"
+      ],
+      "recommendation": "Align the behavioral test naming convention with the policy (rename to {persona}.test.md or update the policy to match the existing -cases.md convention)."
+    }
+  ],
+  "state_updates": {
+    "beliefs_written": [
+      "state/beliefs/2026-07-25-cross-reference-integrity.belief.json"
+    ],
+    "evolution_written": [
+      "state/evolution/2026-07-25-governance-evolution-schema.evolution.json"
+    ],
+    "beliefs_updated": [
+      "state/beliefs/2026-07-25-schema-conformance.belief.json"
+    ],
+    "evolution_updated": [
+      "state/evolution/2026-07-25-kaizen-pdca-schema.evolution.json"
+    ]
+  }
+}

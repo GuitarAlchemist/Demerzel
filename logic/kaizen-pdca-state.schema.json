@@ -2,100 +2,122 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/kaizen-pdca-state",
   "title": "Kaizen PDCA Cycle State",
-  "description": "Tracks the state of a Plan-Do-Check-Act improvement cycle with tetravalent logic integration",
+  "description": "Tracks a single Plan-Do-Check-Act improvement cycle. Schema follows real instances in state/pdca/.",
   "type": "object",
-  "required": ["id", "proposition", "model", "phase", "belief_state", "iterations"],
+  "required": ["id", "cycle_phase", "hypothesis"],
   "properties": {
     "id": {
       "type": "string",
       "pattern": "^pdca-[a-z0-9-]+$",
-      "description": "Unique identifier for this PDCA cycle (e.g., pdca-reduce-log-verbosity)"
+      "description": "Unique identifier for this PDCA cycle (e.g., pdca-2026-03-15-coverage)"
     },
-    "proposition": {
-      "type": "string",
-      "description": "What improvement is being tested (e.g., 'Reducing log verbosity will improve response time by 10%')"
-    },
-    "model": {
-      "type": "string",
-      "enum": ["reactive", "proactive", "innovative"],
-      "description": "Which Kaizen model this improvement falls under"
-    },
-    "phase": {
+    "cycle_phase": {
       "type": "string",
       "enum": ["plan", "do", "check", "act"],
       "description": "Current phase of the PDCA cycle"
     },
-    "baseline": {
-      "type": "object",
-      "properties": {
-        "metric": {
-          "type": "string",
-          "description": "What is being measured"
-        },
-        "value": {
-          "type": "number",
-          "description": "Baseline measurement value"
-        },
-        "unit": {
-          "type": "string",
-          "description": "Unit of measurement"
-        },
-        "measured_at": {
-          "type": "string",
-          "format": "date-time"
-        }
-      },
-      "required": ["metric", "value"],
-      "description": "Measurement before the change"
-    },
-    "success_criteria": {
+    "kaizen_kind": {
       "type": "string",
-      "description": "What constitutes improvement (e.g., 'response time decreases by at least 10%')"
+      "enum": ["reactive", "proactive", "innovative"],
+      "description": "Type of kaizen initiative"
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "The improvement hypothesis being tested"
+    },
+    "work_type": {
+      "type": "string",
+      "description": "Category of work being improved"
+    },
+    "source_cycle": {
+      "type": "string",
+      "description": "Identifier of the parent cycle, if this is a follow-up cycle"
+    },
+    "experiment": {
+      "type": "boolean",
+      "description": "Whether this cycle is run as an experiment"
+    },
+    "requires_human_approval": {
+      "type": "boolean",
+      "description": "Whether the act phase requires human approval"
+    },
+    "evaluated_by": {
+      "type": "string",
+      "description": "Agent or persona managing this cycle"
     },
     "belief_state": {
       "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
-      "description": "Tetravalent belief state for the improvement proposition — reuses the existing tetravalent-state.schema.json structure"
+      "description": "Tetravalent belief state for the hypothesis (optional)"
     },
-    "iterations": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 3,
-      "description": "Count of PDCA iterations completed (max 3 before human review)"
+    "baseline": {
+      "type": "object",
+      "description": "Baseline measurements before the cycle"
+    },
+    "success_criteria": {
+      "type": "string",
+      "description": "What constitutes improvement for this cycle"
+    },
+    "plan": {
+      "type": "object",
+      "description": "Plan phase details",
+      "properties": {
+        "description": { "type": "string" },
+        "success_criteria": { "type": "string" },
+        "risks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_date": { "type": "string" },
+        "budget": {
+          "type": "object",
+          "properties": {
+            "effort_hours": { "type": "number" },
+            "review_cycles": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "do": {
+      "type": "object",
+      "description": "Do phase details",
+      "properties": {
+        "action_taken": { "type": "string" },
+        "completed_at": { "type": "string" }
+      }
+    },
+    "check": {
+      "type": "object",
+      "description": "Check phase details",
+      "properties": {
+        "checked_at": { "type": "string" },
+        "evidence": { "type": "string" },
+        "success_criteria_met": { "type": "boolean" },
+        "next_check_target": { "type": "string" }
+      }
+    },
+    "act": {
+      "type": "object",
+      "description": "Act phase details",
+      "properties": {
+        "decided_at": { "type": "string" },
+        "acted_at": { "type": "string" },
+        "decision": { "type": "string" },
+        "rationale": { "type": "string" },
+        "next_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
     },
     "outcome": {
       "type": "string",
-      "enum": ["in_progress", "standardized", "reverted", "escalated"],
-      "default": "in_progress",
+      "enum": ["adopted", "adapted", "abandoned"],
       "description": "Final outcome of the cycle"
     },
     "five_whys": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["level", "question", "answer", "belief_state"],
-        "properties": {
-          "level": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 5,
-            "description": "Which 'Why' level (1-5)"
-          },
-          "question": {
-            "type": "string",
-            "description": "The 'Why' question asked at this level"
-          },
-          "answer": {
-            "type": "string",
-            "description": "The causal explanation at this level"
-          },
-          "belief_state": {
-            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state",
-            "description": "Tetravalent belief state for this causal claim"
-          }
-        }
-      },
-      "maxItems": 5,
-      "description": "Optional root cause analysis levels — each level is a belief state"
+      "items": { "type": "string" },
+      "description": "Optional root-cause analysis strings"
     },
     "waste_category": {
       "type": "string",
@@ -105,9 +127,29 @@
         "stale_artifacts",
         "unnecessary_escalation",
         "context_loss",
-        "ceremony_without_value"
+        "ceremony_without_value",
+        "muda",
+        "mura",
+        "muri"
       ],
       "description": "Optional — which waste category this cycle addresses"
+    },
+    "iterations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["iteration", "phase", "timestamp"],
+        "properties": {
+          "iteration": { "type": "integer", "minimum": 1 },
+          "phase": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "action": { "type": "string" },
+          "evidence": { "type": "string" },
+          "belief_state": {
+            "$ref": "https://github.com/GuitarAlchemist/Demerzel/schemas/tetravalent-state"
+          }
+        }
+      }
     },
     "created_at": {
       "type": "string",
@@ -116,10 +158,6 @@
     "last_updated": {
       "type": "string",
       "format": "date-time"
-    },
-    "evaluated_by": {
-      "type": "string",
-      "description": "Agent or persona managing this cycle"
     }
   }
 }
