@@ -30,6 +30,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install governance validator dependency
+        run: pip install 'jsonschema==4.21.1'
+
       - name: Checkout Agent Blackbox
         uses: actions/checkout@v4
         with:

@@ -26,6 +26,8 @@ import json
 import sys
 from pathlib import Path
 
+from validate_epistemic_research import validate_proposal
+
 REPO = Path(__file__).resolve().parent.parent
 SCHEMA = REPO / "logic" / "governance-evolution.schema.json"
 EVOLUTION_DIR = REPO / "state" / "evolution"
@@ -33,6 +35,7 @@ CONTRACTS_DIR = REPO / "schemas" / "contracts"
 REPORTS_DIR = REPO / "state" / "oversight" / "compliance-reports"
 LOOPS_DIR = REPO / "state" / "loops"
 LOOP_SCHEMA = REPO / "schemas" / "loop-state.schema.json"
+EPISTEMIC_FIXTURES = REPO / "fixtures"
 
 
 def check_evolution_enums() -> tuple[int, int]:
@@ -164,6 +167,36 @@ def check_loop_states(loops_dir: Path = LOOPS_DIR) -> tuple[int, int]:
     return ok, bad
 
 
+def check_epistemic_research_contract(
+    fixtures_dir: Path = EPISTEMIC_FIXTURES,
+) -> tuple[int, int]:
+    """Keep the Gaia proposal schema connected to an executable receiver gate."""
+    files = sorted(fixtures_dir.glob("epistemic-research-proposal*.json"))
+    if not files:
+        print("FAIL no epistemic research proposal fixture — contract is unexercised")
+        return 0, 1
+
+    ok = bad = 0
+    for path in files:
+        try:
+            proposal = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            bad += 1
+            print(f"FAIL {path.relative_to(REPO)}")
+            print(f"  - not valid JSON: {exc}")
+            continue
+        issues = validate_proposal(proposal)
+        if issues:
+            bad += 1
+            print(f"FAIL {path.relative_to(REPO)}")
+            for issue in issues:
+                print(f"  - {issue}")
+        else:
+            ok += 1
+            print(f"OK   {path.relative_to(REPO)}")
+    return ok, bad
+
+
 def main() -> int:
     print("=== Evolution log: schema enum validation ===")
     e_ok, e_bad = check_evolution_enums()
@@ -177,7 +210,11 @@ def main() -> int:
     c_ok, c_bad = check_compliance_reports()
     print(f"Result: {c_ok} valid, {c_bad} invalid\n")
 
-    total_bad = e_bad + l_bad + c_bad
+    print("=== Epistemic research proposals: contract validation ===")
+    r_ok, r_bad = check_epistemic_research_contract()
+    print(f"Result: {r_ok} valid, {r_bad} invalid\n")
+
+    total_bad = e_bad + l_bad + c_bad + r_bad
     if total_bad:
         print(f"FAILED: {total_bad} violation(s) — see above.")
         return 1

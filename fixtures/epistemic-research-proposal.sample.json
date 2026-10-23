@@ -1,0 +1,75 @@
+{
+  "schema": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/epistemic-research-proposal-v0.1",
+  "kind": "epistemic-research-proposal",
+  "status": "advisory",
+  "proposalId": "erp-d66cc391e55ff7bfa97a778cef8fb2b9db3282c2c49d9fb31440c66689e62822",
+  "revision": {
+    "algorithm": "sha256",
+    "digest": "d66cc391e55ff7bfa97a778cef8fb2b9db3282c2c49d9fb31440c66689e62822"
+  },
+  "createdAt": "2026-08-14T17:30:00.000Z",
+  "expiresAt": "2026-08-15T17:30:00.000Z",
+  "origin": {
+    "repo": "gaia",
+    "actor": "gaia-coordinator",
+    "inputRevision": {
+      "algorithm": "sha256",
+      "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "gap": {
+    "kind": "unmapped-concept",
+    "subject": "semantic-region:distributed-authority",
+    "observation": "No accepted artifact defines the authority boundary for this region.",
+    "evidenceRefs": [
+      {
+        "uri": "artifact://workgraph/revision-17",
+        "algorithm": "sha256",
+        "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ]
+  },
+  "question": "Which authority boundary is consistent with the accepted evidence?",
+  "hypotheses": [
+    {
+      "id": "h0",
+      "role": "null",
+      "statement": "The current artifacts are sufficient and no new boundary is required.",
+      "falsifier": "A competency question has no answer in any accepted fresh artifact."
+    },
+    {
+      "id": "h1",
+      "role": "alternative",
+      "statement": "A distinct advisory boundary is required.",
+      "falsifier": "Every declared competency question resolves through the existing bus contract."
+    }
+  ],
+  "probe": {
+    "description": "Evaluate the two hypotheses against an immutable evidence snapshot.",
+    "negativeControl": "An unrelated accepted artifact must not change the verdict.",
+    "maxCost": {
+      "value": 0,
+      "unit": "incremental-paid-usd"
+    },
+    "reversible": true
+  },
+  "uncertainty": {
+    "unit": "ppm",
+    "T": 0,
+    "P": 0,
+    "U": 1000000,
+    "D": 0,
+    "F": 0,
+    "C": 0,
+    "rationale": "No discriminating probe has run yet."
+  },
+  "authority": {
+    "mode": "advisory",
+    "executionAuthorized": false,
+    "requested": []
+  },
+  "vocabulary": {
+    "id": "gaia-epistemic",
+    "version": "0.1.0"
+  }
+}
