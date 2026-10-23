@@ -91,7 +91,7 @@ if state.daily_cycle_count >= 6:
 
 ## Step 2: SELECT Department (Coverage Ratio)
 
-Load all department files from `state/streeling/departments/*.department.json`.
+Load all department files from `../learn/streeling/departments/*.department.json`.
 Load corresponding weights files for `metadata.cycle_count`.
 
 Compute **coverage ratio** for each department:
@@ -131,7 +131,7 @@ Kill switch: inactive | Cycles today: {n}/6
 ## Step 3: GAPS — Completeness Instinct Question Generation
 
 Load `state/completeness/known-gaps.json` filtered to the selected department.
-Also load `state/streeling/departments/{dept}.department.json` for `research_areas`
+Also load `../learn/streeling/departments/{dept}.department.json` for `research_areas`
 and `curriculum` (to avoid generating duplicate questions).
 
 ### Priority Order for Question Selection
@@ -221,7 +221,7 @@ Produce course material **only if** `belief_value == "T"` AND `confidence >= 0.8
 
 ### Course File
 
-Save to `state/streeling/courses/{department}/en/{module_id}.md`.
+Save to `../learn/streeling/courses/{department}/en/{module_id}.md`. Write it in a branch of `../learn/` (a clone of spareilleux/learn), never in this repository, and publish it as a pull request there (see `seldon-course-pipeline`, Phase 6).
 
 `module_id` format: `{dept-code}-{NNN}-{slug}` — NNN is the next sequence number for the department.
 

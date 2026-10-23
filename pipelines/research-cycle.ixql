@@ -10,9 +10,9 @@
 --- - **0.3** curriculum gap count (prioritize knowledge gaps)
 --- - **0.2** U-belief ratio (prioritize unresolved beliefs)
 --- - **0.1** random exploration
-departments <- ix.io.read("state/streeling/departments/*.department.json")
+departments <- ix.io.read("../learn/streeling/departments/*.department.json")
 weights     <- ix.io.read("state/streeling/departments/*.weights.json")
-university  <- ix.io.read("state/streeling/university.json")
+university  <- ix.io.read("../learn/streeling/university.json")
 
 department <- when department_arg:
     departments → filter(name == department_arg)
@@ -28,10 +28,10 @@ department <- when department_arg:
 
 --- ## Step 2: LOAD Department Context
 dept_context <- parallel(
-    ix.io.read("state/streeling/departments/{department.name}.department.json"),
+    ix.io.read("../learn/streeling/departments/{department.name}.department.json"),
     ix.io.read("state/streeling/departments/{department.name}.weights.json"),
     ix.io.read("grammars/{department.grammar}.ebnf"),
-    ix.io.glob("state/streeling/courses/{department.name}/en/*.md")
+    ix.io.glob("../learn/streeling/courses/{department.name}/en/*.md")
   )
 
 --- ## Step 3: GENERATE Research Question
@@ -104,21 +104,19 @@ course <- when conclusion.conclude in ["confirm", "discover_question"]:
         level: tars.infer_level(investigation),
         findings: investigation.evidence
       )
-    → write("state/streeling/courses/{department.name}/en/{module_id}.md", markdown)
+    → write("../learn/streeling/courses/{department.name}/en/{module_id}.md", markdown)
 
 --- ### Multilingual Translation
---- Per [multilingual policy](policies/multilingual-policy.yaml), courses are translated to 5 languages with cultural adaptation.
+--- Courses are translated to French and Spanish, the languages learn publishes, with cultural adaptation.
+--- Courses are written in ../learn/ (a clone of spareilleux/learn) and published there by pull request.
 translations <- when course:
   fan_out(
     tars.translate(course, lang: "es", adapt: "cultural"),
-    tars.translate(course, lang: "fr", adapt: "cultural"),
-    tars.translate(course, lang: "pt", adapt: "cultural"),
-    tars.translate(course, lang: "it", adapt: "cultural"),
-    tars.translate(course, lang: "de", adapt: "cultural")
+    tars.translate(course, lang: "fr", adapt: "cultural")
   )
   → fan_out(
       translations.map(t =>
-        write("state/streeling/courses/{department.name}/{t.lang}/{module_id}.{t.lang}.md", markdown)
+        write("../learn/streeling/courses/{department.name}/{t.lang}/{module_id}.{t.lang}.md", markdown)
       )
     )
 
@@ -159,7 +157,7 @@ cycle_log <- parallel(conclusion, reflection, course, grammar_evolution)
       -- Flag curriculum gaps
       when investigation.reveals_uncovered_topic:
         department.curriculum.add(new_topic)
-        log department to "state/streeling/departments/{department.name}.department.json"
+        log department to "../learn/streeling/departments/{department.name}.department.json"
 
       -- Trigger follow-ups
       when conclusion.conclude == "discover_question":

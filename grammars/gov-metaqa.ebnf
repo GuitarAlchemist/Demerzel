@@ -7,7 +7,7 @@
 (* Domain: test types, adequacy criteria, oracles, test generation, *)
 (*         governance integration, mutation testing, metamorphic testing *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum, governance audits *)
-(* See: state/streeling/departments/metaqa.department.json *)
+(* See: ../learn/streeling/departments/metaqa.department.json *)
 (* Living grammar: evolves via research cycles *)
 (* Bootstrapped by: /demerzel metabuild metaqa *)
 

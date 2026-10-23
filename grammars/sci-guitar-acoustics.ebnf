@@ -5,7 +5,7 @@
 (* Purpose: Generate research questions, structure investigations, *)
 (*          and classify findings in guitar sound synthesis and acoustic modeling *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum, ga WASM synth *)
-(* See: state/streeling/departments/guitar-acoustics.department.json *)
+(* See: ../learn/streeling/departments/guitar-acoustics.department.json *)
 (* Living grammar: evolves through research cycles per grammar-evolution-policy *)
 (* Bootstrapped by: /demerzel metabuild guitar-acoustics *)
 

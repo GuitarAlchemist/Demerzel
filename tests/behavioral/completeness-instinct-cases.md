@@ -89,7 +89,7 @@ validates:
 
 ## Test 6: Department Without Behavioral Test
 
-**Given:** A new department is bootstrapped via `/demerzel metabuild`. The department artifact exists at `state/streeling/departments/new-dept.department.json` and a grammar exists at `grammars/sci-new-dept.ebnf`, but `tests/behavioral/new-dept-cases.md` does not exist
+**Given:** A new department is bootstrapped via `/demerzel metabuild`. The department artifact exists at `../learn/streeling/departments/new-dept.department.json` and a grammar exists at `grammars/sci-new-dept.ebnf`, but `tests/behavioral/new-dept-cases.md` does not exist
 **When:** The completeness instinct runs its department-creation trigger
 **Then:**
 - Identifies the missing behavioral test as an implied-but-missing artifact

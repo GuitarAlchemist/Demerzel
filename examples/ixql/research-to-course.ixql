@@ -6,7 +6,7 @@
 
 --- ## Step 1: Select Department
 --- Weighted scoring across four dimensions to pick the most impactful department.
-departments <- ix.io.read("state/streeling/departments/*.department.json")
+departments <- ix.io.read("../learn/streeling/departments/*.department.json")
 weights     <- ix.io.read("state/streeling/departments/*.weights.json")
 
 department <- departments
@@ -20,10 +20,10 @@ department <- departments
 
 --- ## Step 2: Load Context and Sample Research Question
 dept_context <- parallel(
-    ix.io.read("state/streeling/departments/{department.name}.department.json"),
+    ix.io.read("../learn/streeling/departments/{department.name}.department.json"),
     ix.io.read("state/streeling/departments/{department.name}.weights.json"),
     ix.io.read("grammars/{department.grammar}.ebnf"),
-    ix.io.glob("state/streeling/courses/{department.name}/en/*.md")
+    ix.io.glob("../learn/streeling/courses/{department.name}/en/*.md")
   )
 
 --- ### Grammar-Weighted Sampling
@@ -94,7 +94,7 @@ course <- when conclusion.conclude == "confirm":
         findings: investigation.evidence
       )
     → tars.validate_schema(schema: "schemas/course-module.schema.json")
-    → write("state/streeling/courses/{department.name}/en/{module_id}.md", markdown)
+    → write("../learn/streeling/courses/{department.name}/en/{module_id}.md", markdown)
 
 --- ## Step 6: Translate to 5 Languages
 --- Per [multilingual policy](policies/multilingual-policy.yaml), cultural adaptation applied.
@@ -109,7 +109,7 @@ translations <- when course:
   → fan_out(
       translations.map(t =>
         write(
-          "state/streeling/courses/{department.name}/{t.lang}/{module_id}.{t.lang}.md",
+          "../learn/streeling/courses/{department.name}/{t.lang}/{module_id}.{t.lang}.md",
           markdown
         )
       )

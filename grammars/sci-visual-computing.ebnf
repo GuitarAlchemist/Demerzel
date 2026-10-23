@@ -5,7 +5,7 @@
 (* Purpose: Generate research questions, structure investigations, *)
 (*          and classify findings across the full visual rendering spectrum *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum *)
-(* See: state/streeling/departments/visual-computing.department.json *)
+(* See: ../learn/streeling/departments/visual-computing.department.json *)
 (* Living grammar: evolves through research cycles per grammar-evolution-policy *)
 (* Bootstrapped by: /demerzel metabuild visual-computing *)
 

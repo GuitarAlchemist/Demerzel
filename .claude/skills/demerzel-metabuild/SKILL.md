@@ -40,24 +40,27 @@ Level 3: Create a factory of factory → factories on demand (this skill)
 1. Grammar:        grammars/{prefix}-{domain}.ebnf
                    (weighted productions from domain description)
 
-2. Department:     state/streeling/departments/{domain}.department.json
+2. Department:     ../learn/streeling/departments/{domain}.department.json
                    (head persona, research areas, curriculum, consumer repos)
 
 3. Weights:        state/streeling/departments/{domain}.weights.json
                    (uniform initial weights, zero cycle count)
 
-4. Course dir:     state/streeling/courses/{domain}/en/
+4. Course dir:     ../learn/streeling/courses/{domain}/en/
                    (empty, ready for course-pipeline)
 
-5. University:     state/streeling/university.json
+5. University:     ../learn/streeling/university.json
                    (updated with new department)
 
 6. Behavioral test: tests/behavioral/{domain}-cases.md
                     (5+ test cases for the department's persona behavior)
 
-7. README:         state/streeling/courses/{domain}/README.md
+7. README:         ../learn/streeling/courses/{domain}/README.md
                    (course catalog for the department)
 ```
+
+Items 2, 4, 5 and 7 belong to spareilleux/learn: create them in a branch of `../learn/` and open one pull
+request there. Items 1, 3 and 6 stay in this repository.
 
 **Process:**
 

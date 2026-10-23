@@ -6,7 +6,7 @@
 (*          and classify findings in systems engineering *)
 (* Domain: lifecycle, architecture, integration, interfaces, verification *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum *)
-(* See: state/streeling/departments/systems-engineering.department.json *)
+(* See: ../learn/streeling/departments/systems-engineering.department.json *)
 (* Living grammar: evolves via research cycles *)
 (* Bootstrapped by: /demerzel metabuild systems-engineering *)
 
