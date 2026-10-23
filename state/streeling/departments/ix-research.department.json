@@ -1,0 +1,29 @@
+{
+  "department": "ix-research",
+  "full_name": "Department of IX Research",
+  "head_persona": "skeptical-auditor",
+  "established": "2026-10-16",
+  "domain": "Experiments on IX, the GuitarAlchemist Rust workspace: streaming pipelines, expert routing under budgets, sandboxed stages, agentic loops and the oracles that judge them, each published with its receipts",
+  "research_areas": [
+    "Streaming pipelines with back-pressure and upstream cancellation (ix-stream)",
+    "Expert routing under budgets: mixture-of-experts gates, per-context bandits, shadow prices and capacity (ix-stream gate, ix-rl)",
+    "Feedback without channel cycles: algedonic signals on a lossy bus",
+    "Deadlock checks of pipeline graphs with Petri nets before a run (ix-petri, ix-pipeline)",
+    "Pipeline stages in any WASI language, sandboxed with fuel, memory and output caps (ix-wasm)",
+    "Agentic loops under carved budgets, judged by held-out oracles and promoted by a person (ix-loop)",
+    "Pre-registered evaluation of routers and classifiers against recorded receipts (state/router-spike)",
+    "Node design for agentic pipelines: a family times a verb, roles as skills with per-call tool grants"
+  ],
+  "consumer_repos": ["ix", "ga", "Demerzel"],
+  "related_departments": ["computer-science", "cybernetics", "metaqa", "systems-engineering", "psychohistory"],
+  "curriculum": [
+    "IXR-001: Streams Under Budgets — back-pressure up to DuckDB, an algedonic bus, a learned gate under a money budget and a capacity limit, and a Petri check before the run (ix-stream at 14dccd0)",
+    "IXR-002 (planned): Stages in Any Language — WASI modules in wasmi with fuel, memory and output caps, a seeded clock and random source, and content-addressed builds (ix-wasm)",
+    "IXR-003 (planned): Loops That Write Loops — sandboxed Lua, budgets carved from a parent, held-out judging, and promotion as a person's act (ix-loop, PR 383)",
+    "IXR-004 (planned): A Router Study, Pre-Registered — zero-shot Jev against the local embedding router over the full skill universe and on human-written questions (state/router-spike)",
+    "IXR-005 (planned): A Node Is a Family Times a Verb — why agentic roles are skills with per-call tool grants, not new node kinds"
+  ],
+  "course_count": 1,
+  "status": "active",
+  "notes": "Opened 2026-10-16 to collect the IX research of the agentic-pipelines sessions. Every number in a course must come from a receipt (a pinned commit, a result file, a test run) and say which; a claim whose receipt was lost is reported as lost, not repeated. No research-cycle record exists yet for this department: IXR-001 came from a tracer slice run in a Claude Code session, not from /seldon research-cycle. Its weights file holds uniform priors and zero cycles, as a bootstrapped department's does; it has no grammar of its own and no behavioral test yet."
+}

@@ -1,0 +1,448 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-007-power-law-or-not",
+  "kind": "observed",
+  "labels": "artifact names and citation paths are written with a space on each side of every slash, so that this file is not counted as a citation of the artifacts it lists",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "commit_check": "every file below has the Git blob id recorded for this commit (CRLF normalised to LF)",
+    "files": [
+      {
+        "path": "logic/fractal-compounding.md",
+        "git_blob": "0d2f259717b203c41eeb247f6d8ee9dec2e8dc62"
+      },
+      {
+        "path": "state/evolution/2026-03-17-alignment-policy.evolution.json",
+        "git_blob": "c8dbaeda5c8bf1b8fe063f9828c86e39df718a9d"
+      },
+      {
+        "path": "state/evolution/2026-03-17-asimov-constitution.evolution.json",
+        "git_blob": "7c7915e2bd167b2959cfa32ee69632b12273fe57"
+      },
+      {
+        "path": "state/evolution/2026-03-17-default-constitution.evolution.json",
+        "git_blob": "589a32f81d53181a64eec9a62e15777ba3d39010"
+      },
+      {
+        "path": "state/evolution/2026-03-18-compounding-cycle.evolution.json",
+        "git_blob": "ce24deb5744ae454cb40c9f80fddf237d313d9bf"
+      },
+      {
+        "path": "state/evolution/2026-03-20-autonomous-driver.evolution.json",
+        "git_blob": "8465478632590e1679ec93c725d5383f8b67e2ab"
+      },
+      {
+        "path": "state/evolution/2026-03-20-memristive-markov.evolution.json",
+        "git_blob": "32686dbbc6c42df9bb19a7e8afec99cdd63b5a58"
+      },
+      {
+        "path": "state/evolution/2026-04-03-visual-governance.evolution.json",
+        "git_blob": "5df5099a57099363c4e317dafe0dcac495ac0005"
+      },
+      {
+        "path": "state/evolution/2026-04-30-hari-subjective-logic.evolution.json",
+        "git_blob": "979b7a14153c94134d8cf65770f2d027132a2850"
+      },
+      {
+        "path": "state/evolution/2026-04-30-harness-engineering.evolution.json",
+        "git_blob": "8ff229fd4b018cbbee5f84034907c6ce607371d2"
+      },
+      {
+        "path": "state/evolution/2026-04-30-ix-autoresearch.evolution.json",
+        "git_blob": "ef399e0139f95ed407906a7246065e39158a2ea3"
+      },
+      {
+        "path": "state/evolution/2026-04-30-the-sentinel.evolution.json",
+        "git_blob": "ce0702627a6c588b0e53751bdb7d3384c57b381b"
+      },
+      {
+        "path": "state/evolution/2026-06-21-ml-feedback-loop.evolution.json",
+        "git_blob": "0c0bdf6c1853d92c6878bc2caee732ac092507ad"
+      },
+      {
+        "path": "state/evolution/2026-06-24-afk-self-merge.evolution.json",
+        "git_blob": "c996d0b573bfe50de90e2f9a51e65c4d073f43ab"
+      },
+      {
+        "path": "state/evolution/2026-07-23-galactic-v1.3-ratification.evolution.json",
+        "git_blob": "7184c7d18ddd23ae1dfc7e71a1860cf7b4bc02d4"
+      },
+      {
+        "path": "state/evolution/2026-07-25-governance-evolution-schema.evolution.json",
+        "git_blob": "4b2340c05df5428c58801d59c22b9b0a8ad09610"
+      },
+      {
+        "path": "state/evolution/2026-07-25-kaizen-pdca-schema.evolution.json",
+        "git_blob": "967b0654efc0ee9d679ff8a0363cc309dccd3065"
+      },
+      {
+        "path": "state/evolution/2026-07-25-loop-state-schema.evolution.json",
+        "git_blob": "1e1c7958fa9ad25f3d67f5e87aa339dbf107cfa4"
+      },
+      {
+        "path": "state/evolution/2026-07-29-afk-backend-adapter.evolution.json",
+        "git_blob": "006f862a2a2a6025a7435c4c9a3b53b854ba773e"
+      },
+      {
+        "path": "state/quality-trend/2026-05.jsonl",
+        "git_blob": "ab1c35d9948c9bfbb1501b20c39b736d92dc0bb2"
+      },
+      {
+        "path": "state/quality-trend/2026-07.jsonl",
+        "git_blob": "57b303ea2ed56d96010345a2acd508bff248486e"
+      },
+      {
+        "path": "state/quality-trend/2026-08.jsonl",
+        "git_blob": "e2b4462797f1ee06f3188154611de0fdbcc07a23"
+      },
+      {
+        "path": "state/quality-trend/2026-09.jsonl",
+        "git_blob": "9b74c1a34378e3f3941c1c0bb054f5b10fe2b64f"
+      },
+      {
+        "path": "state/quality-trend/2026-10.jsonl",
+        "git_blob": "e64c9c855667f2408e1e4f8c894e1be2722afdd1"
+      },
+      {
+        "path": "state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md",
+        "git_blob": "e7a8aeb2accc287595829ed672a9d65284c38ffc"
+      },
+      {
+        "path": "state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md",
+        "git_blob": "75867c85b5946ddddab1df93dc7db72b707f1425"
+      },
+      {
+        "path": "state/streeling/departments/psychohistory.department.json",
+        "git_blob": "67f81dd22dd5c17a6eb41174dd5944475ce2dd6b"
+      }
+    ]
+  },
+  "quality_trend": {
+    "rows": 1548,
+    "runs": 88,
+    "artifacts": 18,
+    "latest_run": {
+      "timestamp": "2026-10-13T18:43:54Z",
+      "rows": 18,
+      "first_row": "state/quality-trend/2026-10.jsonl:217",
+      "last_row": "state/quality-trend/2026-10.jsonl:234",
+      "consecutive_runs_ending_here_with_these_counts": 11,
+      "first_of_those_runs": "2026-10-03T15:31:16Z"
+    },
+    "first_run_with_git_grep_counts": {
+      "timestamp": "2026-09-13T17:52:14Z",
+      "rows": 18,
+      "rows_with_citation_source_git_grep_v1": 16,
+      "rows_flagged_rebaseline": 16
+    },
+    "last_run_before_git_grep_counts": {
+      "timestamp": "2026-09-13T15:24:53Z",
+      "rows": 18
+    }
+  },
+  "citation_counts": [
+    {
+      "artifact": "policies / alignment-policy.yaml",
+      "citation_count": 44,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:217",
+      "count_before_git_grep": 3,
+      "evolution_record": "state/evolution/2026-03-17-alignment-policy.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "policies / alignment-policy.yaml"
+      ]
+    },
+    {
+      "artifact": "constitutions / asimov.constitution.md",
+      "citation_count": 65,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:218",
+      "count_before_git_grep": 5,
+      "evolution_record": "state/evolution/2026-03-17-asimov-constitution.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "constitutions / asimov.constitution.md"
+      ]
+    },
+    {
+      "artifact": "constitutions / default.constitution.md",
+      "citation_count": 47,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:219",
+      "count_before_git_grep": 11,
+      "evolution_record": "state/evolution/2026-03-17-default-constitution.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "constitutions / default.constitution.md"
+      ]
+    },
+    {
+      "artifact": "meta / compounding-cycle",
+      "citation_count": 5,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:220",
+      "count_before_git_grep": 4,
+      "evolution_record": "state/evolution/2026-03-18-compounding-cycle.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": [
+        ".claude / skills / demerzel-compound /",
+        "policies / compounding-metrics-policy.yaml"
+      ]
+    },
+    {
+      "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+      "citation_count": 29,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:221",
+      "count_before_git_grep": 1,
+      "evolution_record": "state/evolution/2026-03-20-autonomous-driver.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": [
+        ".claude / skills / demerzel-drive /",
+        "policies / autonomous-loop-policy.yaml"
+      ]
+    },
+    {
+      "artifact": "crates / memristive-markov (ix)",
+      "citation_count": 0,
+      "citation_source": null,
+      "row": "state/quality-trend/2026-10.jsonl:222",
+      "count_before_git_grep": 0,
+      "evolution_record": "state/evolution/2026-03-20-memristive-markov.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": []
+    },
+    {
+      "artifact": "prime-radiant / visual-governance",
+      "citation_count": 55,
+      "citation_source": null,
+      "row": "state/quality-trend/2026-10.jsonl:223",
+      "count_before_git_grep": 55,
+      "evolution_record": "state/evolution/2026-04-03-visual-governance.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": []
+    },
+    {
+      "artifact": "logic / tetravalent-state.schema.json",
+      "citation_count": 23,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:224",
+      "count_before_git_grep": 4,
+      "evolution_record": "state/evolution/2026-04-30-hari-subjective-logic.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "logic / tetravalent-state.schema.json"
+      ]
+    },
+    {
+      "artifact": "docs / governance / harness-engineering-direction.md",
+      "citation_count": 1,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:225",
+      "count_before_git_grep": 8,
+      "evolution_record": "state/evolution/2026-04-30-harness-engineering.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": [
+        "docs / governance / harness-engineering.md"
+      ]
+    },
+    {
+      "artifact": "policies / autonomous-loop-policy.yaml",
+      "citation_count": 29,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:226",
+      "count_before_git_grep": 12,
+      "evolution_record": "state/evolution/2026-04-30-ix-autoresearch.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "policies / autonomous-loop-policy.yaml"
+      ]
+    },
+    {
+      "artifact": "docs / governance / the-sentinel-spec.md",
+      "citation_count": 0,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:227",
+      "count_before_git_grep": 1,
+      "evolution_record": "state/evolution/2026-04-30-the-sentinel.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": [
+        "docs / governance / the-sentinel.md"
+      ]
+    },
+    {
+      "artifact": "ml-feedback-loop",
+      "citation_count": 6,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:228",
+      "count_before_git_grep": 1,
+      "evolution_record": "state/evolution/2026-06-21-ml-feedback-loop.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": [
+        "scripts / run_ml_feedback_cycle.py",
+        "scripts / apply_ml_feedback.py",
+        "pipelines / ml-feedback-loop.ixql"
+      ]
+    },
+    {
+      "artifact": "afk-graduated-self-merge",
+      "citation_count": 14,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:229",
+      "count_before_git_grep": 1,
+      "evolution_record": "state/evolution/2026-06-24-afk-self-merge.evolution.json",
+      "citation_paths_declared": true,
+      "citation_paths": [
+        "scripts / run_afk_cycle.py"
+      ]
+    },
+    {
+      "artifact": "contracts / galactic-protocol.md",
+      "citation_count": 45,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:230",
+      "count_before_git_grep": 2,
+      "evolution_record": "state/evolution/2026-07-23-galactic-v1.3-ratification.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "contracts / galactic-protocol.md"
+      ]
+    },
+    {
+      "artifact": "logic / governance-evolution.schema.json",
+      "citation_count": 17,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:231",
+      "count_before_git_grep": 2,
+      "evolution_record": "state/evolution/2026-07-25-governance-evolution-schema.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "logic / governance-evolution.schema.json"
+      ]
+    },
+    {
+      "artifact": "logic / kaizen-pdca-state.schema.json",
+      "citation_count": 13,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:232",
+      "count_before_git_grep": 3,
+      "evolution_record": "state/evolution/2026-07-25-kaizen-pdca-schema.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "logic / kaizen-pdca-state.schema.json"
+      ]
+    },
+    {
+      "artifact": "schemas / loop-state.schema.json",
+      "citation_count": 15,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:233",
+      "count_before_git_grep": 3,
+      "evolution_record": "state/evolution/2026-07-25-loop-state-schema.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "schemas / loop-state.schema.json"
+      ]
+    },
+    {
+      "artifact": "scripts / afk_backends /",
+      "citation_count": 6,
+      "citation_source": "git-grep-v1",
+      "row": "state/quality-trend/2026-10.jsonl:234",
+      "count_before_git_grep": 0,
+      "evolution_record": "state/evolution/2026-07-29-afk-backend-adapter.evolution.json",
+      "citation_paths_declared": false,
+      "citation_paths": [
+        "scripts / afk_backends /"
+      ]
+    }
+  ],
+  "shared_citation_paths": [
+    {
+      "citation_path": "policies / autonomous-loop-policy.yaml",
+      "artifacts": [
+        "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "policies / autonomous-loop-policy.yaml"
+      ],
+      "artifacts_that_list_it_in_citation_paths": [
+        "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0"
+      ],
+      "artifacts_counted_on_their_own_name": [
+        "policies / autonomous-loop-policy.yaml"
+      ]
+    }
+  ],
+  "power_law_mentions": {
+    "terms_searched_case_insensitive": [
+      "power law",
+      "power-law",
+      "pareto",
+      "zipf"
+    ],
+    "department_record": {
+      "path": "state/streeling/departments/psychohistory.department.json",
+      "strings": [
+        {
+          "json_path": "research_areas[1]",
+          "line": 10,
+          "text": "Fractal compounding analysis — measuring D_c, power laws, learning momentum"
+        },
+        {
+          "json_path": "research_areas[8]",
+          "line": 17,
+          "text": "Power law dynamics — Pareto/Zipf distributions in artifact effectiveness"
+        },
+        {
+          "json_path": "curriculum[3]",
+          "line": 26,
+          "text": "Power Law Detection: identifying Pareto distributions in governance data"
+        }
+      ]
+    },
+    "published_lessons": [
+      {
+        "path": "state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md",
+        "lines": 174,
+        "lines_matching": 0,
+        "matching_line_numbers": []
+      },
+      {
+        "path": "state/streeling/courses/psychohistory/en/psy-002-governance-phase-transitions.md",
+        "lines": 211,
+        "lines_matching": 0,
+        "matching_line_numbers": []
+      }
+    ],
+    "search_control": "the same search finds 3 strings in the department record, so a count of 0 in a lesson is not a search that matches nothing"
+  },
+  "psy_001_compounding_dimension": {
+    "path": "state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md",
+    "line": 66,
+    "text": "D_c = log(value_ratio) / log(scale_ratio)"
+  },
+  "specification_rule": {
+    "path": "logic/fractal-compounding.md",
+    "detection_rule": {
+      "line": 56,
+      "text": "If the top 20% of governance artifacts account for more than 60% of citations, a power law is present.",
+      "top_percent_of_artifacts": 20,
+      "more_than_percent_of_citations": 60
+    },
+    "lines_naming_the_evolution_records": [
+      {
+        "line": 60,
+        "text": "Tracked via: `state/evolution/*.evolution.json` citation counts, analyzable by SymPy MCP."
+      },
+      {
+        "line": 138,
+        "text": "- State: `state/evolution/*.evolution.json` (citation tracking for power law detection)"
+      }
+    ],
+    "first_source_of_psy_001": {
+      "path": "state/streeling/courses/psychohistory/en/psy-001-intro-fractal-compounding.md",
+      "line": 173
+    }
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-025-capstone-preregistered-forecast",
+  "kind": "hand-written: four forecast records, the expected verdict of the validator on each, invented outcomes, invented file layouts, assumptions and the inputs of the learner task. Nothing in this file is measured in the repository; the observed data are in observed-input.json.",
+  "random_seed": null,
+  "random_seed_note": "No random number is drawn: every result is an exact count, or an exact rational computation rounded when it is written.",
+  "rounding": {
+    "probability_decimals": 6,
+    "score_decimals": 6,
+    "interval_decimals": 4,
+    "day_decimals": 3
+  },
+  "base_rate_windows": {
+    "note": "Analysis choice: a window lasts as long as the forecasts' horizon (92 days, from the pinned commit to the resolution time, rounded down to whole days). Windows are laid back to back, ending at the pinned commit, as many as fit after the first module commit. The alignment table moves the end back one day at a time, as long as the same number of windows still fits. The research cycle's hypothesis expected a broad base rate below 0.1; the table lists the alignments at which that holds.",
+    "window_days": 92,
+    "alignment_step_days": 1,
+    "hypothesis_rate_below": 0.1
+  },
+  "records": [
+    {
+      "id": "music-rise-2027-01-13",
+      "status": "worked example of a forecast record: an exercise in writing a forecast, not a commitment of the department and not a prediction it endorses",
+      "question": "Will the Streeling course library hold more than 19 distinct Music modules at 2027-01-13T23:59:59Z?",
+      "kind": "probability",
+      "value_at_writing": {
+        "value": 19,
+        "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+        "how": "the counting rule below applied to state/streeling/courses at that commit"
+      },
+      "resolution_source": {
+        "repository": "GuitarAlchemist/Demerzel",
+        "branch": "master",
+        "location": "state/streeling/courses/",
+        "commit_rule": "Fetched after resolution_time: the last commit of the first-parent chain of master (or of the default branch if master is renamed) whose committer date is at or before resolution_time, given by git rev-list -1 --first-parent --before=2027-01-13T23:59:59Z origin/master; then git ls-tree -r --name-only <commit> -- state/streeling/courses lists the files, each read at that commit."
+      },
+      "resolution_time": "2027-01-13T23:59:59Z",
+      "resolution_rule": {
+        "counts": "Distinct module ids of the Music department, over .md files only. A file's module id is the module_id of its front matter or, when it has none, its file name without .md and without a language suffix such as .fr. A file belongs to Music when its front matter says department: music or, without one, when the nearest folder above it that is not a two-letter language folder is named music.",
+        "unit": "Each module id counts once, whatever the number of languages, copies or folders in which it appears.",
+        "excluded": "README.md and index.md pages, department records, files outside the library, and published copies such as the public site: only the source library counts.",
+        "if_moved": "If master, at the resolution commit, names another place as the library's source or as part of it (a README, a pointer file, or a commit message), apply the same rule there too, at that place's last commit at or before resolution_time, whether or not state/streeling/courses still exists; a module id found in several places counts once over all of them.",
+        "void_if": "No library can be found by these rules; commit 4b03838 is not an ancestor of the resolution commit; the record has no timestamp (see written_at_evidence) by resolution_time; or the rule's Music count differs from 19 at any first-parent commit of master after 4b03838 whose committer date precedes that timestamp. A void forecast is reported as void, never scored as 0."
+      },
+      "reference_class": "Streeling departments holding at least one English module at the start of a 92-day window, over the two back-to-back 92-day windows that end at commit 4b03838 (36 department-windows). Event: the department's module count at the end of the window exceeds its count at the start.",
+      "base_rate": {
+        "events": 2,
+        "trials": 36,
+        "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+        "command": "git log --topo-order --reverse --no-renames --name-status --format='%H %ct' 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/courses   (replay the added and deleted <department>/en/<name>.md paths, README.md excluded, and compare each department's count at the two window boundaries)"
+      },
+      "forecast": {
+        "p": 0.7
+      },
+      "reference_forecast": {
+        "p": 0.055556
+      },
+      "adjustment": "Music is one of the two departments whose count rose in the latest window (6 to 19), and its newest module is dated on the day of the pinned commit. The Music-only class gives 1 rise in 2 windows, whose exact interval is too wide to set a number, so 0.7 is the author's judgment, written down before the outcome.",
+      "falsifier": {
+        "statement": "The count at the resolution commit is 19 or fewer: 0.7 then scores worse than the base rate would have, and the departure from the base rate failed on this question.",
+        "outcomes": [[0, 0]]
+      },
+      "author_can_influence_outcome": false,
+      "author_influence_note": "The author of this record writes no Music module and cannot merge into the resolution source. R20 judges the record's author, whoever writes it, and nobody else: the maintainers who would merge this record also decide which modules of every department are merged (commit 4b03838 is itself the squash merge of pull request #1196, MUS-022). The record cannot remove that influence, only disclose it.",
+      "written_at": "2026-10-14T13:39:06Z",
+      "written_at_evidence": "None yet beyond the author's statement: the record sits in an uncommitted file. Its timestamp will be the mergedAt time that GitHub records for the first GuitarAlchemist/Demerzel pull request that merges the record's final text into master (gh pr view <number> --json mergedAt), or a timestamping service's record of the file's hash, whichever is earlier. Not used: the pull request's createdAt, which dates the request and not its final text; push times, which GitHub's events API lists for 30 days only; and commit dates, which the committer's machine sets."
+    },
+    {
+      "id": "music-count-2027-01-13",
+      "status": "worked example of a forecast record: an exercise in writing a forecast, not a commitment of the department and not a prediction it endorses",
+      "question": "How many distinct Music modules will the Streeling course library hold at 2027-01-13T23:59:59Z?",
+      "kind": "interval",
+      "value_at_writing": {
+        "value": 19,
+        "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+        "how": "the counting rule below applied to state/streeling/courses at that commit"
+      },
+      "resolution_source": {
+        "repository": "GuitarAlchemist/Demerzel",
+        "branch": "master",
+        "location": "state/streeling/courses/",
+        "commit_rule": "Fetched after resolution_time: the last commit of the first-parent chain of master (or of the default branch if master is renamed) whose committer date is at or before resolution_time, given by git rev-list -1 --first-parent --before=2027-01-13T23:59:59Z origin/master; then git ls-tree -r --name-only <commit> -- state/streeling/courses lists the files, each read at that commit."
+      },
+      "resolution_time": "2027-01-13T23:59:59Z",
+      "resolution_rule": {
+        "counts": "Distinct module ids of the Music department, over .md files only. A file's module id is the module_id of its front matter or, when it has none, its file name without .md and without a language suffix such as .fr. A file belongs to Music when its front matter says department: music or, without one, when the nearest folder above it that is not a two-letter language folder is named music.",
+        "unit": "Each module id counts once, whatever the number of languages, copies or folders in which it appears.",
+        "excluded": "README.md and index.md pages, department records, files outside the library, and published copies such as the public site: only the source library counts.",
+        "if_moved": "If master, at the resolution commit, names another place as the library's source or as part of it (a README, a pointer file, or a commit message), apply the same rule there too, at that place's last commit at or before resolution_time, whether or not state/streeling/courses still exists; a module id found in several places counts once over all of them.",
+        "void_if": "No library can be found by these rules; commit 4b03838 is not an ancestor of the resolution commit; the record has no timestamp (see written_at_evidence) by resolution_time; or the rule's Music count differs from 19 at any first-parent commit of master after 4b03838 whose committer date precedes that timestamp. A void forecast is reported as void, never scored as 0."
+      },
+      "reference_class": "Streeling departments holding at least one English module at the start of a 92-day window, over the two back-to-back 92-day windows that end at commit 4b03838 (36 department-windows). Event: the department's module count at the end of the window exceeds its count at the start.",
+      "base_rate": {
+        "events": 2,
+        "trials": 36,
+        "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+        "command": "git log --topo-order --reverse --no-renames --name-status --format='%H %ct' 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/courses   (replay the added and deleted <department>/en/<name>.md paths, README.md excluded, and compare each department's count at the two window boundaries)"
+      },
+      "forecast": {
+        "lower": 19,
+        "upper": 25,
+        "coverage": 0.8,
+        "meaning": "a central 80% interval by its stated level, which sets alpha = 0.2 in the interval score: lower is the author's 0.1 quantile, and upper is at or above the author's 0.9 quantile, since author_beliefs gives six chances in seven or more of 25 or fewer after a rise. With 0.3 on 19 itself (author_beliefs), the author's own probability that [19, 25] covers is at least 0.9, not 0.8."
+      },
+      "author_beliefs": {
+        "p_count_stays_19": 0.3,
+        "p_at_most_upper_if_it_rises_at_least": [6, 7],
+        "note": "From the adjustment below: 1 - 0.7 on 19 itself, and six chances in seven or more of 25 or fewer modules if the count rises."
+      },
+      "reference_forecast": {
+        "lower": 19,
+        "upper": 19,
+        "coverage": 0.8,
+        "meaning": "persistence: in 34 of the 36 department-windows the count did not change, so both quantiles of the reference class are 'no change'"
+      },
+      "adjustment": "Same reason as music-rise-2027-01-13, whose 0.7 leaves 0.3 on 19, so the 0.1 quantile stays at 19; if the count rises, the author puts 25 or fewer modules at six chances in seven or more, so the 0.9 quantile is at most 25, which is taken as the upper end.",
+      "falsifier": {
+        "statement": "The count at the resolution commit is 19 or fewer: the interval then scores worse than the persistence interval [19, 19].",
+        "outcomes": [[0, 19]]
+      },
+      "author_can_influence_outcome": false,
+      "author_influence_note": "The author of this record writes no Music module and cannot merge into the resolution source. R20 judges the record's author, whoever writes it, and nobody else: the maintainers who would merge this record also decide which modules of every department are merged (commit 4b03838 is itself the squash merge of pull request #1196, MUS-022). The record cannot remove that influence, only disclose it.",
+      "written_at": "2026-10-14T13:39:06Z",
+      "written_at_evidence": "None yet beyond the author's statement: the record sits in an uncommitted file. Its timestamp will be the mergedAt time that GitHub records for the first GuitarAlchemist/Demerzel pull request that merges the record's final text into master (gh pr view <number> --json mergedAt), or a timestamping service's record of the file's hash, whichever is earlier. Not used: the pull request's createdAt, which dates the request and not its final text; push times, which GitHub's events API lists for 30 days only; and commit dates, which the committer's machine sets."
+    },
+    {
+      "id": "library-growth-draft",
+      "status": "deliberately flawed draft, for the learner to repair; library-growth-repaired is one repair",
+      "question": "Streeling will keep growing fast next quarter.",
+      "kind": "probability",
+      "resolution_source": {
+        "repository": "the repo",
+        "branch": "",
+        "location": "the courses folder",
+        "commit_rule": ""
+      },
+      "resolution_time": "next quarter",
+      "resolution_rule": {
+        "counts": "the courses in the courses folder",
+        "unit": "",
+        "excluded": "",
+        "if_moved": "",
+        "void_if": ""
+      },
+      "reference_class": "",
+      "base_rate": null,
+      "forecast": {
+        "p": "likely"
+      },
+      "reference_forecast": null,
+      "adjustment": "",
+      "falsifier": null,
+      "author_can_influence_outcome": true,
+      "author_influence_note": "The batch that writes this record adds modules to the library.",
+      "written_at": "2026-10-14T13:39:06Z",
+      "written_at_evidence": ""
+    },
+    {
+      "id": "library-growth-repaired",
+      "status": "repair of library-growth-draft; an exercise, not a commitment or a prediction of the department",
+      "question": "Will the Streeling course library hold more than 66 distinct modules outside the Psychohistory department at 2027-01-13T23:59:59Z?",
+      "kind": "probability",
+      "value_at_writing": {
+        "value": 66,
+        "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+        "how": "the counting rule below applied to state/streeling/courses at that commit"
+      },
+      "resolution_source": {
+        "repository": "GuitarAlchemist/Demerzel",
+        "branch": "master",
+        "location": "state/streeling/courses/",
+        "commit_rule": "Fetched after resolution_time: the last commit of the first-parent chain of master (or of the default branch if master is renamed) whose committer date is at or before resolution_time, given by git rev-list -1 --first-parent --before=2027-01-13T23:59:59Z origin/master; then git ls-tree -r --name-only <commit> -- state/streeling/courses lists the files, each read at that commit."
+      },
+      "resolution_time": "2027-01-13T23:59:59Z",
+      "resolution_rule": {
+        "counts": "Distinct module ids of every department except Psychohistory, over .md files only. A file's module id is the module_id of its front matter or, when it has none, its file name without .md and without a language suffix such as .fr. A file's department is the department of its front matter or, without one, the nearest folder above it that is not a two-letter language folder.",
+        "unit": "Each module id counts once, whatever the number of languages, copies or folders in which it appears.",
+        "excluded": "Psychohistory modules, README.md and index.md pages, department records, files outside the library, and published copies such as the public site: only the source library counts.",
+        "if_moved": "If master, at the resolution commit, names another place as the library's source or as part of it (a README, a pointer file, or a commit message), apply the same rule there too, at that place's last commit at or before resolution_time, whether or not state/streeling/courses still exists; a module id found in several places counts once over all of them.",
+        "void_if": "No library can be found by these rules; commit 4b03838 is not an ancestor of the resolution commit; the record has no timestamp (see written_at_evidence) by resolution_time; or the rule's count outside Psychohistory differs from 66 at any first-parent commit of master after 4b03838 whose committer date precedes that timestamp. A void forecast is reported as void, never scored as 0."
+      },
+      "reference_class": "The library outside Psychohistory over the two back-to-back 92-day windows that end at commit 4b03838. Event: its module count at the end of the window exceeds its count at the start.",
+      "base_rate": {
+        "events": 1,
+        "trials": 2,
+        "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+        "command": "git log --topo-order --reverse --no-renames --name-status --format='%H %ct' 4b03838800dcd4894f1e026461979bff1d985ca8 -- state/streeling/courses   (replay the added and deleted <department>/en/<name>.md paths, README.md and psychohistory excluded, and compare the count at the window boundaries)"
+      },
+      "forecast": {
+        "p": 0.75
+      },
+      "reference_forecast": {
+        "p": 0.5
+      },
+      "adjustment": "Music was adding modules up to the day of the pinned commit, and this event contains music-rise-2027-01-13 unless modules are removed elsewhere, so it is given at least that record's 0.7.",
+      "falsifier": {
+        "statement": "The count at the resolution commit is 66 or fewer: 0.75 then scores worse than the base rate would have.",
+        "outcomes": [[0, 0]]
+      },
+      "author_can_influence_outcome": false,
+      "author_influence_note": "The batch that writes this record adds Psychohistory modules only, which the question excludes, and its author cannot merge into the resolution source. R20 judges the record's author, whoever writes it, and nobody else: the maintainers who would merge this record also decide which modules of every department are merged. Open pull request #1195 (read on GitHub on 2026-10-14, outside the fixture) adds 22 new Cybernetics module files; merged before the resolution time, it alone would take the count above 66, and merged before the record's timestamp it would void the record.",
+      "written_at": "2026-10-14T13:39:06Z",
+      "written_at_evidence": "None yet beyond the author's statement: the record sits in an uncommitted file. Its timestamp will be the mergedAt time that GitHub records for the first GuitarAlchemist/Demerzel pull request that merges the record's final text into master (gh pr view <number> --json mergedAt), or a timestamping service's record of the file's hash, whichever is earlier. Not used: the pull request's createdAt, which dates the request and not its final text; push times, which GitHub's events API lists for 30 days only; and commit dates, which the committer's machine sets."
+    }
+  ],
+  "expected_validation": {
+    "note": "Known answer, written before the first run: the rules each record must fail. An empty list means the record passes.",
+    "music-rise-2027-01-13": [],
+    "music-count-2027-01-13": [],
+    "library-growth-draft": ["R02", "R04", "R05", "R06", "R07", "R09", "R10", "R11", "R12", "R13", "R14", "R15", "R16", "R18", "R20", "R22"],
+    "library-growth-repaired": []
+  },
+  "validator_controls": {
+    "note": "Copies of a worked record with one field changed, and the rules each copy must fail. The last probability control changes the forecast to its reference and must pass.",
+    "cases": [
+      {"record": "music-rise-2027-01-13", "change": "resolution_rule.void_if", "value": "", "expected": ["R11"]},
+      {"record": "music-rise-2027-01-13", "change": "forecast.p", "value": 1.2, "expected": ["R15"]},
+      {"record": "music-rise-2027-01-13", "change": "falsifier.outcomes", "value": [[1, 1]], "expected": ["R19"]},
+      {"record": "music-rise-2027-01-13", "change": "resolution_time", "value": "2026-10-01T00:00:00Z", "expected": ["R08"]},
+      {"record": "music-rise-2027-01-13", "change": "author_can_influence_outcome", "value": null, "expected": ["R20"]},
+      {"record": "music-count-2027-01-13", "change": "forecast.upper", "value": 40, "expected": ["R19"]},
+      {"record": "music-rise-2027-01-13", "change": "forecast.p+adjustment+falsifier.outcomes", "value": [0.055556, "", []], "expected": []}
+    ]
+  },
+  "invented_outcomes": {
+    "note": "INVENTED outcomes, for illustration only. Nobody knows the real outcome before the resolution time; these values are neither observed nor forecast.",
+    "music-rise-2027-01-13": [0, 1],
+    "music-count-2027-01-13": [18, 19, 21, 25, 28]
+  },
+  "verbal_probability": {
+    "note": "Assumption for exercise 1: two readers turn the word 'likely' into two different numbers.",
+    "word": "likely",
+    "readings": [0.6, 0.8]
+  },
+  "coverage_scale": {
+    "note": "Scale for one sentence of the lesson: how often ten intervals, each covering with probability 0.9 (the least coverage of the worked interval under its author's beliefs), cover seven times or fewer.",
+    "intervals": 10,
+    "coverage": 0.9,
+    "covered_at_most": 7
+  },
+  "hypothetical_layouts": {
+    "note": "INVENTED file lists in the format of observed-input.json (path, front-matter module_id or '-', front-matter department or '-'), used to test the counting rule on situations a scorer may meet. Not observed.",
+    "cases": [
+      {
+        "id": "moved-root-english",
+        "situation": "The library has moved to another repository, where English files sit at the department's root and translations in two-letter folders; one new English file has no front matter.",
+        "department": "music",
+        "files": [
+          "music/index.md - -",
+          "music/mus-001-what-is-a-chord.md mus-001-what-is-a-chord music",
+          "music/mus-023-voice-leading.md - -",
+          "music/fr/mus-001-what-is-a-chord.fr.md mus-001-what-is-a-chord music",
+          "music/fr/mus-023-voice-leading.fr.md mus-023-voice-leading music",
+          "musicology/mcl-003-performance-practice.md mcl-003-performance-practice musicology"
+        ],
+        "expected_count": 2
+      },
+      {
+        "id": "translation-only",
+        "situation": "A module exists only in French, and a README sits in the English folder.",
+        "department": "music",
+        "files": [
+          "music/en/README.md - -",
+          "music/en/mus-001-what-is-a-chord.md mus-001-what-is-a-chord music",
+          "music/fr/mus-024-orchestration.fr.md mus-024-orchestration music"
+        ],
+        "expected_count": 2
+      }
+    ]
+  },
+  "known_answers": {
+    "note": "Exact 95% intervals checked against values computed elsewhere.",
+    "two_of_six": {"events": 2, "trials": 6, "lower": 0.0433, "upper": 0.7772, "source": "PSY-017, section 2 (the same Clopper-Pearson construction)"},
+    "one_of_two": {"events": 1, "trials": 2, "formula": "lower = 1 - sqrt(0.975), upper = sqrt(0.975)"}
+  },
+  "transfer_task": {
+    "note": "Hypothetical plugin registry for the learner task. Not Streeling data, not observed, not a forecast.",
+    "draft_record": {
+      "id": "plugins-rise-2027-q1",
+      "question": "Will the plugin registry list more than 12 plugins at the end of the first quarter of 2027?",
+      "kind": "probability",
+      "resolution_source": {
+        "repository": "example-org/plugin-registry",
+        "branch": "main",
+        "location": "plugins/",
+        "commit_rule": "the last commit of main at or before resolution_time"
+      },
+      "resolution_time": "end of Q1 2027",
+      "resolution_rule": {
+        "counts": "plugin manifests in plugins/",
+        "unit": "one per plugin name",
+        "excluded": "templates and examples",
+        "if_moved": "count in the folder that the registry's README names",
+        "void_if": ""
+      },
+      "reference_class": "registry-quarters of comparable registries: 40 quarters",
+      "base_rate": {
+        "events": 3,
+        "trials": 40,
+        "commit": "0123456789abcdef0123456789abcdef01234567",
+        "command": ""
+      },
+      "forecast": {"p": 0.4},
+      "reference_forecast": {"p": 0.075},
+      "adjustment": "the maintainers announced a plugin contest",
+      "falsifier": {"statement": "no new plugin by the resolution time", "outcomes": [[0, 0]]},
+      "author_can_influence_outcome": null,
+      "written_at": "2026-12-20T10:00:00Z",
+      "written_at_evidence": "pull request opened on the registry; the hosting service records the time"
+    },
+    "expected_failures": ["R07", "R11", "R14", "R20"],
+    "interval": {"lower": 12, "upper": 16, "coverage": 0.9},
+    "reference_interval": {"lower": 12, "upper": 12, "coverage": 0.9},
+    "invented_outcomes": [10, 12, 15, 19]
+  }
+}

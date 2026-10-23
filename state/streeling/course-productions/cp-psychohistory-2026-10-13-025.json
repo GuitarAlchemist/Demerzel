@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-025",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-025",
+  "module_id": "psy-025-capstone-preregistered-forecast",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "U",
+      "belief_confidence": 0.6
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2349,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the history and of the 255 files of state/streeling/courses at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, on four hand-written forecast records checked by 22 field rules, and on a deterministic analysis whose 22 self-checks pass. The base rate (2 of 36 department-windows) rests on two windows and moves with their alignment, below 10% at only 10 of 23 alignments, so the research cycle's conclusion is insufficient; the worked forecasts about the Music department are exercises, not commitments of the department, and every scored outcome is invented. No record has resolved or been timestamped by a third party. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-15T14:46:09Z"
+}

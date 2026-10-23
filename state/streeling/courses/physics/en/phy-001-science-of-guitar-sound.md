@@ -128,7 +128,7 @@ Equal temperament slightly adjusts these ratios to make all keys sound equally g
 
 ### Practice Exercise
 
-Measure the distance from the nut to the 12th fret on your guitar, then measure from the 12th fret to the saddle. They should be almost exactly equal — confirming that the 12th fret halves the string length, doubling the frequency (one octave). Now measure nut to fret 7: it should be roughly 2/3 of the total string length, matching the 3:2 ratio of a perfect fifth.
+Measure the distance from the nut to the 12th fret on your guitar, then measure from the 12th fret to the saddle. They should be almost exactly equal — confirming that the 12th fret halves the string length, doubling the frequency (one octave). Now measure from fret 7 to the saddle: it should be roughly 2/3 of the total string length (the nut-to-fret-7 stretch is the remaining third), matching the 3:2 ratio of a perfect fifth.
 
 ---
 

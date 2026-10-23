@@ -1,0 +1,28 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-014",
+  "department": "psychohistory",
+  "question": "How far ahead can a deterministic model be trusted when its starting state is known only approximately?",
+  "production_path": [
+    "hypothesis: written with its numeric thresholds at 2026-10-13T23:08:57Z, before any fixture file existed, by an author session that was then interrupted; it is recorded here unchanged",
+    "takeover: a second author session reviewed the scenarios.json and analyze.py left behind, which had never run to completion (two unbound variables, placeholder fingerprint constants), and rewrote the script before the first complete run",
+    "model: the logistic map at r = 2.9, 3.2, 3.7 and 4; 1,000 seeded starting points settled on the attractor, each run twice with initial errors from 1e-3 to 1e-12",
+    "test: Lyapunov exponents from 1,000,000 steps against three known values, first step at which each pair differs by a tolerance against ln(tolerance / error) / exponent, and the thresholds of the hypothesis evaluated by the script",
+    "adversarial: a hand-computed case, a planted phase error as negative control for the zero counts of the stable regimes, two algebraically equal forms of the map to expose the limit of double precision, and an independent recomputation with math.log outside the fixture",
+    "adversarial: the gap table of the stable regimes, the horizons of the chaotic regimes and the two runs of section 4 repeated on 1,024-bit Python integers from the same starting doubles, to separate what belongs to the map from what belongs to double-precision arithmetic, with an independent recomputation in 150-digit decimals outside the fixture",
+    "test: byte-identical reruns on CPython 3.9.25, 3.12.12 and 3.14.2 under Windows and 3.14.4 under Linux, 41 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "In a chaotic regime of the logistic map, the mean number of steps before two starts that differ by d0 are 0.1 apart rises by a fixed amount per decimal digit of initial precision, within 10% of ln(10)/lambda (3.32 steps per digit at r = 4), while its level differs from ln(0.1/d0)/lambda by an offset of at most 5 steps that varies by less than 2 steps across d0 from 1e-3 to 1e-12; in the stable and periodic regimes no pair of nearby starts ever reaches the tolerance.",
+  "test_method": "simulation",
+  "evidence": [
+    "Synthetic fixture, seed 20261013, 1,000 pairs of runs per setting and no repository file read: exponents estimated from 1,000,000 steps are -0.105361 at r = 2.9, -0.916291 at r = 3.2, 0.354696 at r = 3.7 (standard error 0.000298) and 0.693144 at r = 4, against the known ln 0.9 = -0.105361, ln 0.4 = -0.916291 and ln 2 = 0.693147; the first 10,000-step block reproduces to six decimals the four exponents printed in MAT-024 at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (-0.105361, -0.916291, 0.350235, 0.693135).",
+    "For a tolerance of 0.1 the mean horizon rises from 12.93 to 71.05 steps at r = 3.7 and from 6.79 to 36.69 steps at r = 4 as the initial error falls from 1e-3 to 1e-12: 6.46 and 3.32 steps per decimal digit against 6.49 and 3.32 from ln(10)/exponent (ratios 0.9954 and 1.0), with offsets from the formula between -0.39 and 0.22 steps, inside every threshold of the hypothesis. Recomputed on 1,024-bit integers from the same starting doubles, 3 of 10,000 horizons change at r = 3.7 and 1 of 10,000 at r = 4, by at most 2 steps, and the steps per digit are again 6.46 and 3.32: the horizons belong to the map.",
+    "At r = 2.9 and at r = 3.2 none of the 20,000 combinations of pair, initial error and tolerance reached a tolerance; only 40 of them are distinct in each setting, because the 1,000 settled starting points are 2 numbers there. The same detector reached the tolerance in all 20,000 combinations of each chaotic setting and fired at step 1 on a planted phase error of 0.286 in the two-cycle.",
+    "Limits of the arithmetic, measured: a double-precision run is 0.1 away from the high-precision run of its own start after 53.27 steps on average at r = 4 and 99.55 at r = 3.7, so states printed for later steps (0.673899 and 0.002785 at step 100 in section 4, against 0.991939 and 0.735222 in high precision) describe the computation, not the map, and the zeros of the gap table at r = 3.2 are the resolution of doubles (median gap 1.1e-17 at step 20 in high precision). results.json was byte-identical on rerun and across four Python builds on Windows and Linux, and its 41 self-checks passed.",
+    "Nothing was measured in the project: no Lyapunov exponent exists for any project quantity, the reading for roadmaps is an analogy, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.8,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T03:04:00Z"
+}

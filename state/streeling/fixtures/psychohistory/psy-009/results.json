@@ -1,0 +1,2730 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-009-concentration-and-heavy-tails",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "folder": "state/triggers/archived",
+    "files": 594,
+    "manifest_sha256": "3e33b3e795b977277c52c99d59c48f15ae60f95d28f5524c641d3ec066f10393"
+  },
+  "rounding": {
+    "rule": "exact fractions of integers, rounded half up once when written",
+    "share_decimals": 6,
+    "percent_decimals": 2,
+    "gini_decimals": 4,
+    "mean_decimals": 2
+  },
+  "observed": {
+    "kind": "computed from the observed event rows",
+    "day_rule": "the day of an event is the UTC date of its JSON timestamp",
+    "first_day": "2026-03-20",
+    "last_day": "2026-07-16",
+    "events_by_type": {
+      "discussion_created": 252,
+      "issue_opened": 135,
+      "push": 207
+    },
+    "design_stated_by_the_repository": {
+      "queue_depth_max_triggers": 50,
+      "staleness_hours": 72,
+      "deduplication_rule": "same `type` + `repo` + `ref` → merged, keep most recent",
+      "manual_cycles_run_before_retirement": 3,
+      "orphaned_triggers_stated_by_the_skill_file": 594,
+      "workflow_retired_on": "2026-07-18",
+      "orphans_stated_by_the_workflow_file": 594
+    },
+    "distinct_type_repo_ref_combinations": 3,
+    "calendar_days": 119,
+    "events": 594,
+    "active_days": 100,
+    "empty_days": 19,
+    "busiest_days": [
+      {
+        "busiest_days": 1,
+        "events": 109,
+        "exact": "109/594",
+        "value": 0.183502,
+        "percent": 18.35
+      },
+      {
+        "busiest_days": 2,
+        "events": 181,
+        "exact": "181/594",
+        "value": 0.304714,
+        "percent": 30.47
+      },
+      {
+        "busiest_days": 3,
+        "events": 241,
+        "exact": "241/594",
+        "value": 0.405724,
+        "percent": 40.57
+      },
+      {
+        "busiest_days": 4,
+        "events": 286,
+        "exact": "286/594",
+        "value": 0.481481,
+        "percent": 48.15
+      },
+      {
+        "busiest_days": 5,
+        "events": 312,
+        "exact": "312/594",
+        "value": 0.525253,
+        "percent": 52.53
+      },
+      {
+        "busiest_days": 10,
+        "events": 415,
+        "exact": "415/594",
+        "value": 0.698653,
+        "percent": 69.87
+      },
+      {
+        "busiest_days": 20,
+        "events": 492,
+        "exact": "492/594",
+        "value": 0.828283,
+        "percent": 82.83
+      }
+    ],
+    "days_needed_for_half": {
+      "half_percent": 50,
+      "days": 5,
+      "events": 312,
+      "exact": "312/594",
+      "value": 0.525253,
+      "percent": 52.53
+    },
+    "lorenz_points": [
+      {
+        "quietest_days_percent": 50,
+        "days": 60,
+        "events": 41,
+        "share": {
+          "exact": "41/594",
+          "value": 0.069024,
+          "percent": 6.9
+        },
+        "the_other_days": 59,
+        "their_events": 553
+      },
+      {
+        "quietest_days_percent": 75,
+        "days": 90,
+        "events": 79,
+        "share": {
+          "exact": "79/594",
+          "value": 0.132997,
+          "percent": 13.3
+        },
+        "the_other_days": 29,
+        "their_events": 515
+      },
+      {
+        "quietest_days_percent": 90,
+        "days": 108,
+        "events": 161,
+        "share": {
+          "exact": "161/594",
+          "value": 0.271044,
+          "percent": 27.1
+        },
+        "the_other_days": 11,
+        "their_events": 433
+      },
+      {
+        "quietest_days_percent": 95,
+        "days": 114,
+        "events": 282,
+        "share": {
+          "exact": "282/594",
+          "value": 0.474747,
+          "percent": 47.47
+        },
+        "the_other_days": 5,
+        "their_events": 312
+      }
+    ],
+    "gini_calendar_days": {
+      "exact": "9176/11781",
+      "value": 0.7789
+    },
+    "gini_active_days": {
+      "exact": "1459/1980",
+      "value": 0.7369
+    },
+    "gini_largest_possible_on_these_days": {
+      "exact": "118/119",
+      "value": 0.9916
+    },
+    "mean_per_calendar_day": {
+      "exact": "594/119",
+      "value": 4.99
+    },
+    "mean_per_active_day": {
+      "exact": "297/50",
+      "value": 5.94
+    },
+    "median_calendar_day": {
+      "exact": "1",
+      "value": 1.0
+    },
+    "days_above_the_mean": 19,
+    "days_at_or_below_the_mean": 100
+  },
+  "busiest_days": {
+    "kind": "computed",
+    "ranked": [
+      {
+        "rank": 1,
+        "day": "2026-03-22",
+        "events": 109
+      },
+      {
+        "rank": 2,
+        "day": "2026-06-28",
+        "events": 72
+      },
+      {
+        "rank": 3,
+        "day": "2026-03-21",
+        "events": 60
+      },
+      {
+        "rank": 4,
+        "day": "2026-06-27",
+        "events": 45
+      },
+      {
+        "rank": 5,
+        "day": "2026-07-02",
+        "events": 26
+      },
+      {
+        "rank": 6,
+        "day": "2026-06-21",
+        "events": 24
+      },
+      {
+        "rank": 7,
+        "day": "2026-06-29",
+        "events": 20
+      },
+      {
+        "rank": 8,
+        "day": "2026-06-30",
+        "events": 20
+      },
+      {
+        "rank": 9,
+        "day": "2026-07-01",
+        "events": 20
+      },
+      {
+        "rank": 10,
+        "day": "2026-06-25",
+        "events": 19
+      },
+      {
+        "rank": 11,
+        "day": "2026-03-27",
+        "events": 18
+      },
+      {
+        "rank": 12,
+        "day": "2026-05-16",
+        "events": 8
+      },
+      {
+        "rank": 13,
+        "day": "2026-06-23",
+        "events": 8
+      },
+      {
+        "rank": 14,
+        "day": "2026-06-24",
+        "events": 8
+      },
+      {
+        "rank": 15,
+        "day": "2026-03-20",
+        "events": 7
+      },
+      {
+        "rank": 16,
+        "day": "2026-03-30",
+        "events": 7
+      },
+      {
+        "rank": 17,
+        "day": "2026-04-11",
+        "events": 7
+      },
+      {
+        "rank": 18,
+        "day": "2026-03-29",
+        "events": 5
+      },
+      {
+        "rank": 19,
+        "day": "2026-05-02",
+        "events": 5
+      },
+      {
+        "rank": 20,
+        "day": "2026-03-28",
+        "events": 4
+      }
+    ],
+    "the_four_busiest_days_as_runs_of_consecutive_dates": [
+      {
+        "days": [
+          "2026-03-21",
+          "2026-03-22"
+        ],
+        "events": 169
+      },
+      {
+        "days": [
+          "2026-06-27",
+          "2026-06-28"
+        ],
+        "events": 117
+      }
+    ],
+    "events_of_the_four_busiest_days_by_type": {
+      "discussion_created": 110,
+      "issue_opened": 99,
+      "push": 77
+    },
+    "episodes_of_burst_days": {
+      "rule": "Analysis choice, taken from PSY-008 so that both lessons name the same groups: a burst day has at least burst_day_from events (PSY-008's threshold, above the 99% quantile of its Poisson benchmark), and burst days at most gap_days apart belong to one episode.",
+      "burst_day_from": 12,
+      "gap_days": 7,
+      "burst_days": 11,
+      "episodes": [
+        {
+          "first_burst_day": "2026-03-21",
+          "last_burst_day": "2026-03-27",
+          "burst_days": 3,
+          "events_on_burst_days": 187,
+          "busiest_days_inside": [
+            "2026-03-21",
+            "2026-03-22"
+          ]
+        },
+        {
+          "first_burst_day": "2026-06-21",
+          "last_burst_day": "2026-07-02",
+          "burst_days": 8,
+          "events_on_burst_days": 246,
+          "busiest_days_inside": [
+            "2026-06-27",
+            "2026-06-28"
+          ]
+        }
+      ],
+      "days_between_the_episodes": [
+        86
+      ],
+      "days_between_the_two_pairs_of_busiest_days": {
+        "from": "2026-03-22",
+        "to": "2026-06-27",
+        "days": 97
+      }
+    },
+    "busiest_windows_of_consecutive_days": [
+      {
+        "window_days": 2,
+        "first_day": "2026-03-21",
+        "last_day": "2026-03-22",
+        "events": 169,
+        "exact": "169/594",
+        "value": 0.284512,
+        "percent": 28.45
+      },
+      {
+        "window_days": 7,
+        "first_day": "2026-06-27",
+        "last_day": "2026-07-03",
+        "events": 206,
+        "exact": "206/594",
+        "value": 0.346801,
+        "percent": 34.68
+      }
+    ],
+    "days_by_count": {
+      "0": 19,
+      "1": 63,
+      "2": 13,
+      "3": 3,
+      "4": 2,
+      "5": 2,
+      "7": 3,
+      "8": 3,
+      "18": 1,
+      "19": 1,
+      "20": 3,
+      "24": 1,
+      "26": 1,
+      "45": 1,
+      "60": 1,
+      "72": 1,
+      "109": 1
+    }
+  },
+  "lorenz_and_gini": {
+    "kind": "computed",
+    "gini_formula": "G = sum over i of (2 i - n - 1) x_i / (n T), with the n daily counts sorted in increasing order x_1 <= ... <= x_n and T their total",
+    "other_formulas_checked_equal": [
+      "mean absolute difference between two days / (2 * mean)",
+      "1 - 2 * area under the Lorenz polygon"
+    ],
+    "lorenz_curve_cumulative_events_from_the_quietest_day": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      65,
+      67,
+      69,
+      71,
+      73,
+      75,
+      77,
+      79,
+      81,
+      83,
+      85,
+      87,
+      89,
+      92,
+      95,
+      98,
+      102,
+      106,
+      111,
+      116,
+      123,
+      130,
+      137,
+      145,
+      153,
+      161,
+      179,
+      198,
+      218,
+      238,
+      258,
+      282,
+      308,
+      353,
+      413,
+      485,
+      594
+    ],
+    "hand_computed_cases": [
+      {
+        "name": "all_days_equal",
+        "counts": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "gini": {
+          "exact": "0",
+          "value": 0.0
+        },
+        "share_of_the_busiest_day": "1/4"
+      },
+      {
+        "name": "everything_on_one_day",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          10
+        ],
+        "gini": {
+          "exact": "4/5",
+          "value": 0.8
+        },
+        "share_of_the_busiest_day": "1"
+      },
+      {
+        "name": "toy_log",
+        "counts": [
+          0,
+          1,
+          1,
+          2,
+          6
+        ],
+        "gini": {
+          "exact": "13/25",
+          "value": 0.52
+        },
+        "share_of_the_busiest_day": "3/5"
+      },
+      {
+        "name": "toy_log_active_days_only",
+        "counts": [
+          1,
+          1,
+          2,
+          6
+        ],
+        "gini": {
+          "exact": "2/5",
+          "value": 0.4
+        },
+        "share_of_the_busiest_day": "3/5"
+      }
+    ]
+  },
+  "mean_and_median": {
+    "kind": "computed",
+    "mean_per_calendar_day": {
+      "exact": "594/119",
+      "value": 4.99
+    },
+    "median_calendar_day": {
+      "exact": "1",
+      "value": 1.0
+    },
+    "most_frequent_daily_count": {
+      "events": 1,
+      "days": 63
+    },
+    "quantiles_nearest_rank": {
+      "p50": 1,
+      "p75": 2,
+      "p90": 8,
+      "p95": 24,
+      "p99": 72
+    },
+    "quantile_rule": "nearest rank: the p% quantile of n values sorted in increasing order is the value at position ceil(p * n / 100)",
+    "median_rule": "the middle value of the n values sorted in increasing order; when n is even, the mean of the two middle values (the nearest-rank 50% quantile would take the lower of the two)",
+    "without_the_busiest_days": [
+      {
+        "days_dropped": 1,
+        "events_dropped": 109,
+        "events_left": 485,
+        "days_left": 118,
+        "mean": {
+          "exact": "485/118",
+          "value": 4.11
+        },
+        "mean_change_percent": -17.66,
+        "median": {
+          "exact": "1",
+          "value": 1.0
+        }
+      },
+      {
+        "days_dropped": 4,
+        "events_dropped": 286,
+        "events_left": 308,
+        "days_left": 115,
+        "mean": {
+          "exact": "308/115",
+          "value": 2.68
+        },
+        "mean_change_percent": -46.34,
+        "median": {
+          "exact": "1",
+          "value": 1.0
+        }
+      }
+    ],
+    "by_month": [
+      {
+        "month": "2026-03",
+        "days": 12,
+        "events": 212,
+        "mean": {
+          "exact": "53/3",
+          "value": 17.67
+        },
+        "median": {
+          "exact": "9/2",
+          "value": 4.5
+        }
+      },
+      {
+        "month": "2026-04",
+        "days": 30,
+        "events": 35,
+        "mean": {
+          "exact": "7/6",
+          "value": 1.17
+        },
+        "median": {
+          "exact": "1",
+          "value": 1.0
+        }
+      },
+      {
+        "month": "2026-05",
+        "days": 31,
+        "events": 43,
+        "mean": {
+          "exact": "43/31",
+          "value": 1.39
+        },
+        "median": {
+          "exact": "1",
+          "value": 1.0
+        }
+      },
+      {
+        "month": "2026-06",
+        "days": 30,
+        "events": 239,
+        "mean": {
+          "exact": "239/30",
+          "value": 7.97
+        },
+        "median": {
+          "exact": "1",
+          "value": 1.0
+        }
+      },
+      {
+        "month": "2026-07",
+        "days": 16,
+        "events": 65,
+        "mean": {
+          "exact": "65/16",
+          "value": 4.06
+        },
+        "median": {
+          "exact": "3/2",
+          "value": 1.5
+        }
+      }
+    ],
+    "read_to_date": [
+      {
+        "read_on": "2026-03-31",
+        "days": 12,
+        "events": 212,
+        "mean_to_date": {
+          "exact": "53/3",
+          "value": 17.67
+        },
+        "median_to_date": {
+          "exact": "9/2",
+          "value": 4.5
+        },
+        "mean_rounded_up": 18,
+        "busiest_day_to_date": 109,
+        "percentiles_to_date": {
+          "p50": 4,
+          "p75": 7,
+          "p90": 60,
+          "p95": 109,
+          "p99": 109
+        }
+      },
+      {
+        "read_on": "2026-04-30",
+        "days": 42,
+        "events": 247,
+        "mean_to_date": {
+          "exact": "247/42",
+          "value": 5.88
+        },
+        "median_to_date": {
+          "exact": "1",
+          "value": 1.0
+        },
+        "mean_rounded_up": 6,
+        "busiest_day_to_date": 109,
+        "percentiles_to_date": {
+          "p50": 1,
+          "p75": 2,
+          "p90": 7,
+          "p95": 18,
+          "p99": 109
+        }
+      },
+      {
+        "read_on": "2026-05-31",
+        "days": 73,
+        "events": 290,
+        "mean_to_date": {
+          "exact": "290/73",
+          "value": 3.97
+        },
+        "median_to_date": {
+          "exact": "1",
+          "value": 1.0
+        },
+        "mean_rounded_up": 4,
+        "busiest_day_to_date": 109,
+        "percentiles_to_date": {
+          "p50": 1,
+          "p75": 1,
+          "p90": 5,
+          "p95": 8,
+          "p99": 109
+        }
+      },
+      {
+        "read_on": "2026-06-30",
+        "days": 103,
+        "events": 529,
+        "mean_to_date": {
+          "exact": "529/103",
+          "value": 5.14
+        },
+        "median_to_date": {
+          "exact": "1",
+          "value": 1.0
+        },
+        "mean_rounded_up": 6,
+        "busiest_day_to_date": 109,
+        "percentiles_to_date": {
+          "p50": 1,
+          "p75": 2,
+          "p90": 8,
+          "p95": 20,
+          "p99": 72
+        }
+      },
+      {
+        "read_on": "2026-07-16",
+        "days": 119,
+        "events": 594,
+        "mean_to_date": {
+          "exact": "594/119",
+          "value": 4.99
+        },
+        "median_to_date": {
+          "exact": "1",
+          "value": 1.0
+        },
+        "mean_rounded_up": 5,
+        "busiest_day_to_date": 109,
+        "percentiles_to_date": {
+          "p50": 1,
+          "p75": 2,
+          "p90": 8,
+          "p95": 24,
+          "p99": 72
+        }
+      }
+    ],
+    "mean_to_date_range": {
+      "lowest": 3.97,
+      "highest": 17.67,
+      "highest_over_lowest": 4.45
+    }
+  },
+  "robustness": {
+    "kind": "computed: the same measures under other analysis choices (day boundary, types counted), and the log as the design's deduplication rule would have merged it",
+    "day_boundary": {
+      "note": "Analysis choice. The lesson counts days in UTC; each offset recounts them with the day boundary moved by that many hours (the local date of a clock set to UTC plus the offset).",
+      "rows": [
+        {
+          "offset_hours": -11,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7844,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -10,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7844,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -9,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7844,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -8,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7844,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -7,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7819,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -6,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 113,
+          "top_4_events": 320,
+          "top_4_share_percent": 53.87,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7822,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -5,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 113,
+          "top_4_events": 320,
+          "top_4_share_percent": 53.87,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7817,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -4,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 102,
+          "top_4_events": 290,
+          "top_4_share_percent": 48.82,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7762,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -3,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 105,
+          "top_4_events": 289,
+          "top_4_share_percent": 48.65,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7735,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -2,
+          "calendar_days": 119,
+          "active_days": 101,
+          "busiest_day_events": 105,
+          "top_4_events": 286,
+          "top_4_share_percent": 48.15,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7708,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": -1,
+          "calendar_days": 119,
+          "active_days": 101,
+          "busiest_day_events": 105,
+          "top_4_events": 286,
+          "top_4_share_percent": 48.15,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7745,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 0,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 109,
+          "top_4_events": 286,
+          "top_4_share_percent": 48.15,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7789,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 1,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 119,
+          "top_4_events": 286,
+          "top_4_share_percent": 48.15,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7834,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 2,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 137,
+          "top_4_events": 286,
+          "top_4_share_percent": 48.15,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7818,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 3,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 141,
+          "top_4_events": 289,
+          "top_4_share_percent": 48.65,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7822,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 4,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 141,
+          "top_4_events": 289,
+          "top_4_share_percent": 48.65,
+          "days_needed_for_half": 5,
+          "gini_calendar_days": 0.7792,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 5,
+          "calendar_days": 119,
+          "active_days": 100,
+          "busiest_day_events": 150,
+          "top_4_events": 325,
+          "top_4_share_percent": 54.71,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7854,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 6,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 152,
+          "top_4_events": 327,
+          "top_4_share_percent": 55.05,
+          "days_needed_for_half": 3,
+          "gini_calendar_days": 0.788,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 7,
+          "calendar_days": 119,
+          "active_days": 98,
+          "busiest_day_events": 128,
+          "top_4_events": 316,
+          "top_4_share_percent": 53.2,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7878,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 8,
+          "calendar_days": 119,
+          "active_days": 96,
+          "busiest_day_events": 116,
+          "top_4_events": 320,
+          "top_4_share_percent": 53.87,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7914,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 9,
+          "calendar_days": 120,
+          "active_days": 97,
+          "busiest_day_events": 113,
+          "top_4_events": 319,
+          "top_4_share_percent": 53.7,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7907,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 10,
+          "calendar_days": 120,
+          "active_days": 97,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7911,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 11,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7844,
+          "median_calendar_day": 1.0
+        },
+        {
+          "offset_hours": 12,
+          "calendar_days": 119,
+          "active_days": 99,
+          "busiest_day_events": 113,
+          "top_4_events": 318,
+          "top_4_share_percent": 53.54,
+          "days_needed_for_half": 4,
+          "gini_calendar_days": 0.7844,
+          "median_calendar_day": 1.0
+        }
+      ],
+      "top_4_share_percent_lowest": {
+        "offset_hours": -2,
+        "value": 48.15,
+        "events": 286
+      },
+      "top_4_share_percent_highest": {
+        "offset_hours": 6,
+        "value": 55.05,
+        "events": 327
+      },
+      "offsets_where_the_four_busiest_days_hold_at_least_half": 15,
+      "offsets": 24,
+      "gini_lowest": 0.7708,
+      "gini_highest": 0.7914
+    },
+    "type_subsets": {
+      "note": "Analysis choice: the same measures on the events of one group of types, over the same calendar days.",
+      "without_push": {
+        "types": [
+          "discussion_created",
+          "issue_opened"
+        ],
+        "calendar_days": 119,
+        "events": 387,
+        "active_days": 88,
+        "empty_days": 31,
+        "busiest_days": [
+          {
+            "busiest_days": 1,
+            "events": 77,
+            "exact": "77/387",
+            "value": 0.198966,
+            "percent": 19.9
+          },
+          {
+            "busiest_days": 4,
+            "events": 209,
+            "exact": "209/387",
+            "value": 0.540052,
+            "percent": 54.01
+          },
+          {
+            "busiest_days": 10,
+            "events": 284,
+            "exact": "284/387",
+            "value": 0.73385,
+            "percent": 73.39
+          }
+        ],
+        "days_needed_for_half": {
+          "half_percent": 50,
+          "days": 4,
+          "events": 209,
+          "exact": "209/387",
+          "value": 0.540052,
+          "percent": 54.01
+        },
+        "lorenz_points": [
+          {
+            "quietest_days_percent": 50,
+            "days": 60,
+            "events": 29,
+            "share": {
+              "exact": "29/387",
+              "value": 0.074935,
+              "percent": 7.49
+            },
+            "the_other_days": 59,
+            "their_events": 358
+          }
+        ],
+        "gini_calendar_days": {
+          "exact": "12014/15351",
+          "value": 0.7826
+        },
+        "gini_active_days": {
+          "exact": "8015/11352",
+          "value": 0.706
+        },
+        "gini_largest_possible_on_these_days": {
+          "exact": "118/119",
+          "value": 0.9916
+        },
+        "mean_per_calendar_day": {
+          "exact": "387/119",
+          "value": 3.25
+        },
+        "mean_per_active_day": {
+          "exact": "387/88",
+          "value": 4.4
+        },
+        "median_calendar_day": {
+          "exact": "1",
+          "value": 1.0
+        },
+        "days_above_the_mean": 12,
+        "days_at_or_below_the_mean": 107
+      },
+      "push_only": {
+        "types": [
+          "push"
+        ],
+        "calendar_days": 119,
+        "events": 207,
+        "active_days": 31,
+        "empty_days": 88,
+        "busiest_days": [
+          {
+            "busiest_days": 1,
+            "events": 41,
+            "exact": "41/207",
+            "value": 0.198068,
+            "percent": 19.81
+          },
+          {
+            "busiest_days": 4,
+            "events": 107,
+            "exact": "107/207",
+            "value": 0.516908,
+            "percent": 51.69
+          },
+          {
+            "busiest_days": 10,
+            "events": 155,
+            "exact": "155/207",
+            "value": 0.748792,
+            "percent": 74.88
+          }
+        ],
+        "days_needed_for_half": {
+          "half_percent": 50,
+          "days": 4,
+          "events": 107,
+          "exact": "107/207",
+          "value": 0.516908,
+          "percent": 51.69
+        },
+        "lorenz_points": [
+          {
+            "quietest_days_percent": 50,
+            "days": 60,
+            "events": 0,
+            "share": {
+              "exact": "0/207",
+              "value": 0.0,
+              "percent": 0.0
+            },
+            "the_other_days": 59,
+            "their_events": 207
+          }
+        ],
+        "gini_calendar_days": {
+          "exact": "21914/24633",
+          "value": 0.8896
+        },
+        "gini_active_days": {
+          "exact": "3698/6417",
+          "value": 0.5763
+        },
+        "gini_largest_possible_on_these_days": {
+          "exact": "118/119",
+          "value": 0.9916
+        },
+        "mean_per_calendar_day": {
+          "exact": "207/119",
+          "value": 1.74
+        },
+        "mean_per_active_day": {
+          "exact": "207/31",
+          "value": 6.68
+        },
+        "median_calendar_day": {
+          "exact": "0",
+          "value": 0.0
+        },
+        "days_above_the_mean": 22,
+        "days_at_or_below_the_mean": 97
+      }
+    },
+    "deduplicated_once_a_day": {
+      "kind": "synthetic: the rule is stated by the design (observed); waking once at the end of each UTC day is assumed, because the driver was never scheduled",
+      "rule": "same `type` + `repo` + `ref` → merged, keep most recent",
+      "distinct_type_repo_ref_combinations_in_the_log": 3,
+      "trigger_files": 594,
+      "merged_triggers": 132,
+      "largest_day": 3,
+      "days_by_merged_count": {
+        "0": 19,
+        "1": 80,
+        "2": 8,
+        "3": 12
+      },
+      "merged_as_share_of_files": {
+        "exact": "132/594",
+        "value": 0.222222,
+        "percent": 22.22
+      },
+      "busiest_days": [
+        {
+          "busiest_days": 1,
+          "events": 3,
+          "exact": "3/132",
+          "value": 0.022727,
+          "percent": 2.27
+        },
+        {
+          "busiest_days": 4,
+          "events": 12,
+          "exact": "12/132",
+          "value": 0.090909,
+          "percent": 9.09
+        },
+        {
+          "busiest_days": 10,
+          "events": 30,
+          "exact": "30/132",
+          "value": 0.227273,
+          "percent": 22.73
+        }
+      ],
+      "gini_calendar_days": {
+        "exact": "1291/3927",
+        "value": 0.3287
+      },
+      "mean_per_calendar_day": {
+        "exact": "132/119",
+        "value": 1.11
+      },
+      "median_calendar_day": {
+        "exact": "1",
+        "value": 1.0
+      }
+    }
+  },
+  "poisson_control": {
+    "kind": "synthetic: logs with the observed total and number of days, each event on a day drawn uniformly at random",
+    "note": "Synthetic logs with the observed number of events and of calendar days and no concentration beyond chance: every event falls on a day chosen uniformly at random, independently of the others. This is a homogeneous Poisson process conditioned on its total.",
+    "generator": "rng = random.Random(seed); for each log, for each event: day = min(days - 1, int(rng.random() * days))",
+    "logs": 2000,
+    "seed": 20261013,
+    "days": 119,
+    "events_per_log": 594,
+    "summary_keys": "min, the 2.5th and 97.5th percentiles (nearest rank), the median (nearest rank), max and mean over the logs",
+    "summaries": {
+      "busiest_day_events": {
+        "min": 9,
+        "p2_5": 10,
+        "median": 11,
+        "p97_5": 15,
+        "max": 18,
+        "mean": 11.58,
+        "as_percent_of_all_events": {
+          "min": 1.52,
+          "mean": 1.95,
+          "max": 3.03
+        }
+      },
+      "top_4_events": {
+        "min": 34,
+        "p2_5": 37,
+        "median": 41,
+        "p97_5": 47,
+        "max": 52,
+        "mean": 41.59,
+        "as_percent_of_all_events": {
+          "min": 5.72,
+          "mean": 7.0,
+          "max": 8.75
+        }
+      },
+      "top_10_events": {
+        "min": 81,
+        "p2_5": 86,
+        "median": 94,
+        "p97_5": 103,
+        "max": 110,
+        "mean": 93.8,
+        "as_percent_of_all_events": {
+          "min": 13.64,
+          "mean": 15.79,
+          "max": 18.52
+        }
+      },
+      "days_needed_for_half": {
+        "min": 36,
+        "p2_5": 38,
+        "median": 40,
+        "p97_5": 43,
+        "max": 44,
+        "mean": 40.28
+      },
+      "events_on_the_quietest_half_of_days": {
+        "min": 173,
+        "p2_5": 180,
+        "median": 196,
+        "p97_5": 210,
+        "max": 220,
+        "mean": 195.48,
+        "as_percent_of_all_events": {
+          "min": 29.12,
+          "mean": 32.91,
+          "max": 37.04
+        }
+      },
+      "gini_calendar_days": {
+        "min": 0.1958,
+        "p2_5": 0.216,
+        "median": 0.2468,
+        "p97_5": 0.2804,
+        "max": 0.2995,
+        "mean": 0.2475
+      },
+      "median_calendar_day": {
+        "min": 4.0,
+        "p2_5": 5.0,
+        "median": 5.0,
+        "p97_5": 5.0,
+        "max": 5.0,
+        "mean": 4.98
+      },
+      "empty_days": {
+        "min": 0,
+        "p2_5": 0,
+        "median": 1,
+        "p97_5": 3,
+        "max": 7,
+        "mean": 0.78
+      },
+      "mean_change_percent_without_the_busiest_day": {
+        "min": -2.21,
+        "p2_5": -1.7,
+        "median": -1.02,
+        "p97_5": -0.85,
+        "max": -0.68,
+        "mean": -1.12
+      },
+      "smallest_capacity_without_a_late_event": {
+        "min": 5,
+        "p2_5": 5,
+        "median": 6,
+        "p97_5": 6,
+        "max": 7,
+        "mean": 5.97
+      },
+      "p95_of_daily_counts": {
+        "min": 8,
+        "p2_5": 8,
+        "median": 9,
+        "p97_5": 10,
+        "max": 11,
+        "mean": 8.99
+      },
+      "late_events_with_capacity_p95": {
+        "min": 0,
+        "p2_5": 0,
+        "median": 0,
+        "p97_5": 0,
+        "max": 0,
+        "mean": 0.0
+      },
+      "late_events_with_capacity_mean_rounded_up": {
+        "min": 0,
+        "p2_5": 0,
+        "median": 81,
+        "p97_5": 346,
+        "max": 493,
+        "mean": 108.46
+      },
+      "left_at_end_with_capacity_mean_rounded_up": {
+        "min": 0,
+        "p2_5": 1,
+        "median": 12,
+        "p97_5": 31,
+        "max": 48,
+        "mean": 13.23
+      },
+      "handled_on_arrival_day_with_capacity_mean_rounded_up": {
+        "min": 8,
+        "p2_5": 32,
+        "median": 107,
+        "p97_5": 208,
+        "max": 283,
+        "mean": 109.4
+      },
+      "longest_wait_days_with_capacity_mean_rounded_up": {
+        "min": 3,
+        "p2_5": 3,
+        "median": 5,
+        "p97_5": 9,
+        "max": 12,
+        "mean": 5.35
+      }
+    },
+    "observed_log_with_the_same_measures": {
+      "busiest_day_events": 109,
+      "top_4_events": 286,
+      "top_10_events": 415,
+      "days_needed_for_half": 5,
+      "events_on_the_quietest_half_of_days": 41,
+      "gini_calendar_days": 0.7789,
+      "median_calendar_day": 1.0,
+      "empty_days": 19,
+      "mean_change_percent_without_the_busiest_day": -17.66,
+      "smallest_capacity_without_a_late_event": 34,
+      "p95_of_daily_counts": 24,
+      "late_events_with_capacity_p95": 49,
+      "late_events_with_capacity_mean_rounded_up": 489,
+      "left_at_end_with_capacity_mean_rounded_up": 154,
+      "handled_on_arrival_day_with_capacity_mean_rounded_up": 57,
+      "longest_wait_days_with_capacity_mean_rounded_up": 33
+    },
+    "synthetic_logs_at_least_as_concentrated_as_the_observed_log": {
+      "busiest_day_events": 0,
+      "top_4_events": 0,
+      "top_10_events": 0,
+      "gini_calendar_days": 0,
+      "empty_days": 0,
+      "smallest_capacity_without_a_late_event": 0,
+      "days_needed_for_half": 0,
+      "events_on_the_quietest_half_of_days": 0,
+      "median_calendar_day": 0
+    },
+    "comparison_directions": "counts of synthetic logs whose value is >= the observed one, except days_needed_for_half, events_on_the_quietest_half_of_days and median_calendar_day (<=)",
+    "known_answer_empty_days": {
+      "exact_expectation": 0.7917,
+      "batch_mean": 0.784,
+      "tolerance": 0.1,
+      "formula": "days * ((days - 1) / days) ** events"
+    },
+    "replication": {
+      "seed": 20261014,
+      "logs": 2000,
+      "gini_calendar_days": {
+        "main_batch_mean": 0.2475,
+        "replication_batch_mean": 0.2471,
+        "tolerance": 0.005
+      },
+      "top_4_share_percent": {
+        "main_batch_mean": 7.0,
+        "replication_batch_mean": 7.01,
+        "tolerance": 0.25
+      }
+    },
+    "negative_control": {
+      "what": "the same comparisons after adding the observed log to the batch: each count must rise by exactly 1",
+      "counts_with_the_observed_log_added": {
+        "busiest_day_events": 1,
+        "top_4_events": 1,
+        "top_10_events": 1,
+        "gini_calendar_days": 1,
+        "empty_days": 1,
+        "smallest_capacity_without_a_late_event": 1,
+        "days_needed_for_half": 1,
+        "events_on_the_quietest_half_of_days": 1,
+        "median_calendar_day": 1
+      }
+    }
+  },
+  "capacity": {
+    "kind": "synthetic: an assumed handling rule applied to the observed daily counts; the repository states that the consumer of these triggers was never scheduled, so nothing here was measured",
+    "handling_rule": "Each day, after the day's arrivals, at most `capacity` events are handled, oldest first. Events that are not handled wait for the next day. Capacity that is not used on a day is lost. The wait of an event is the number of days between its arrival day and the day it is handled (0 = handled on its arrival day).",
+    "wait_tolerance_days": 3,
+    "wait_tolerance_note": "The design's staleness limit (72 hours, observed) read at the fixture's one-day resolution: an event is late when it is not handled within 3 days of its arrival day. An event still waiting on the last day is late if those 3 days have run out, and undetermined otherwise.",
+    "queue_limit_from_the_design": 50,
+    "mean_per_calendar_day": {
+      "exact": "594/119",
+      "value": 4.99
+    },
+    "plans": [
+      {
+        "plan": "mean_rounded_up",
+        "rule": "the mean number of events per calendar day, rounded up to a whole event",
+        "capacity_per_day": 5,
+        "capacity_offered": 595,
+        "handled": 440,
+        "handled_on_arrival_day": 57,
+        "handled_later_within_tolerance": 43,
+        "handled_late": 340,
+        "left_at_end": 154,
+        "left_at_end_already_late": 149,
+        "left_at_end_undetermined": 5,
+        "late_events": 489,
+        "longest_wait_of_a_handled_event_days": 33,
+        "oldest_event_left_at_end_age_days": 18,
+        "largest_backlog_at_end_of_day": 205,
+        "largest_backlog_day_index_from_0": 104,
+        "days_ending_with_a_backlog": 79,
+        "days_ending_above_the_queue_limit": 57,
+        "capacity_as_a_multiple_of_the_mean": 1.0,
+        "capacity_used": {
+          "exact": "440/595",
+          "value": 0.739496,
+          "percent": 73.95
+        },
+        "largest_backlog_day": "2026-07-02"
+      },
+      {
+        "plan": "p90",
+        "rule": "nearest-rank quantile of the daily counts",
+        "capacity_per_day": 8,
+        "capacity_offered": 952,
+        "handled": 518,
+        "handled_on_arrival_day": 95,
+        "handled_later_within_tolerance": 101,
+        "handled_late": 322,
+        "left_at_end": 76,
+        "left_at_end_already_late": 71,
+        "left_at_end_undetermined": 5,
+        "late_events": 393,
+        "longest_wait_of_a_handled_event_days": 20,
+        "oldest_event_left_at_end_age_days": 16,
+        "largest_backlog_at_end_of_day": 169,
+        "largest_backlog_day_index_from_0": 104,
+        "days_ending_with_a_backlog": 54,
+        "days_ending_above_the_queue_limit": 40,
+        "capacity_as_a_multiple_of_the_mean": 1.6,
+        "capacity_used": {
+          "exact": "518/952",
+          "value": 0.544118,
+          "percent": 54.41
+        },
+        "largest_backlog_day": "2026-07-02"
+      },
+      {
+        "plan": "p95",
+        "rule": "nearest-rank quantile of the daily counts",
+        "capacity_per_day": 24,
+        "capacity_offered": 2856,
+        "handled": 594,
+        "handled_on_arrival_day": 251,
+        "handled_later_within_tolerance": 294,
+        "handled_late": 49,
+        "left_at_end": 0,
+        "left_at_end_already_late": 0,
+        "left_at_end_undetermined": 0,
+        "late_events": 49,
+        "longest_wait_of_a_handled_event_days": 6,
+        "oldest_event_left_at_end_age_days": null,
+        "largest_backlog_at_end_of_day": 121,
+        "largest_backlog_day_index_from_0": 2,
+        "days_ending_with_a_backlog": 15,
+        "days_ending_above_the_queue_limit": 8,
+        "capacity_as_a_multiple_of_the_mean": 4.81,
+        "capacity_used": {
+          "exact": "594/2856",
+          "value": 0.207983,
+          "percent": 20.8
+        },
+        "largest_backlog_day": "2026-03-22"
+      },
+      {
+        "plan": "p99",
+        "rule": "nearest-rank quantile of the daily counts",
+        "capacity_per_day": 72,
+        "capacity_offered": 8568,
+        "handled": 594,
+        "handled_on_arrival_day": 557,
+        "handled_later_within_tolerance": 37,
+        "handled_late": 0,
+        "left_at_end": 0,
+        "left_at_end_already_late": 0,
+        "left_at_end_undetermined": 0,
+        "late_events": 0,
+        "longest_wait_of_a_handled_event_days": 1,
+        "oldest_event_left_at_end_age_days": null,
+        "largest_backlog_at_end_of_day": 37,
+        "largest_backlog_day_index_from_0": 2,
+        "days_ending_with_a_backlog": 1,
+        "days_ending_above_the_queue_limit": 0,
+        "capacity_as_a_multiple_of_the_mean": 14.42,
+        "capacity_used": {
+          "exact": "594/8568",
+          "value": 0.069328,
+          "percent": 6.93
+        },
+        "largest_backlog_day": "2026-03-22"
+      },
+      {
+        "plan": "peak",
+        "rule": "the busiest day",
+        "capacity_per_day": 109,
+        "capacity_offered": 12971,
+        "handled": 594,
+        "handled_on_arrival_day": 594,
+        "handled_later_within_tolerance": 0,
+        "handled_late": 0,
+        "left_at_end": 0,
+        "left_at_end_already_late": 0,
+        "left_at_end_undetermined": 0,
+        "late_events": 0,
+        "longest_wait_of_a_handled_event_days": 0,
+        "oldest_event_left_at_end_age_days": null,
+        "largest_backlog_at_end_of_day": 0,
+        "largest_backlog_day_index_from_0": null,
+        "days_ending_with_a_backlog": 0,
+        "days_ending_above_the_queue_limit": 0,
+        "capacity_as_a_multiple_of_the_mean": 21.84,
+        "capacity_used": {
+          "exact": "594/12971",
+          "value": 0.045794,
+          "percent": 4.58
+        },
+        "largest_backlog_day": null
+      }
+    ],
+    "smallest_capacity_without_a_late_event": {
+      "capacity_per_day": 34,
+      "as_a_multiple_of_the_mean": 6.81,
+      "late_events_with_one_unit_less": 4,
+      "capacity_offered": 4046,
+      "handled": 594,
+      "handled_on_arrival_day": 360,
+      "longest_wait_of_a_handled_event_days": 3,
+      "largest_backlog_at_end_of_day": 101,
+      "days_ending_above_the_queue_limit": 2,
+      "capacity_used": {
+        "exact": "594/4046",
+        "value": 0.146812,
+        "percent": 14.68
+      }
+    },
+    "late_events_by_capacity_from_1": [
+      585,
+      579,
+      574,
+      529,
+      489,
+      444,
+      417,
+      393,
+      368,
+      349,
+      327,
+      316,
+      298,
+      282,
+      265,
+      245,
+      228,
+      203,
+      185,
+      163,
+      120,
+      80,
+      56,
+      49,
+      44,
+      39,
+      34,
+      29,
+      24,
+      19,
+      14,
+      9,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "plans_sized_on_an_earlier_reading": {
+      "kind": "synthetic: the same assumed rule; each plan is sized on the days read up to a date and run on the days that follow",
+      "note": "Every plan above is sized on the same days it is then run on, which no planner can do. To show what that hindsight is worth, each plan is also sized on the days read up to each date of `checkpoints` except the last, then run on the days that follow, starting with an empty queue (which favours the plan).",
+      "readings": [
+        {
+          "read_on": "2026-03-31",
+          "days_read": 12,
+          "days_left": 107,
+          "events_on_the_days_left": 382,
+          "busiest_day_left": 72,
+          "smallest_capacity_without_a_late_event_on_the_days_read": 34,
+          "smallest_capacity_without_a_late_event_on_the_days_left": 24,
+          "plans": [
+            {
+              "plan": "mean_rounded_up",
+              "capacity_read_on_that_day": 18,
+              "capacity_read_on_the_whole_log": 5,
+              "capacity_offered": 1926,
+              "handled": 382,
+              "left_at_end": 0,
+              "late_events": 117,
+              "longest_wait_of_a_handled_event_days": 6,
+              "largest_backlog_at_end_of_day": 95,
+              "capacity_used": {
+                "exact": "382/1926",
+                "value": 0.198339,
+                "percent": 19.83
+              }
+            },
+            {
+              "plan": "p90",
+              "capacity_read_on_that_day": 60,
+              "capacity_read_on_the_whole_log": 8,
+              "capacity_offered": 6420,
+              "handled": 382,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 1,
+              "largest_backlog_at_end_of_day": 12,
+              "capacity_used": {
+                "exact": "382/6420",
+                "value": 0.059502,
+                "percent": 5.95
+              }
+            },
+            {
+              "plan": "p95",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 24,
+              "capacity_offered": 11663,
+              "handled": 382,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "382/11663",
+                "value": 0.032753,
+                "percent": 3.28
+              }
+            },
+            {
+              "plan": "p99",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 72,
+              "capacity_offered": 11663,
+              "handled": 382,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "382/11663",
+                "value": 0.032753,
+                "percent": 3.28
+              }
+            },
+            {
+              "plan": "peak",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 109,
+              "capacity_offered": 11663,
+              "handled": 382,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "382/11663",
+                "value": 0.032753,
+                "percent": 3.28
+              }
+            }
+          ]
+        },
+        {
+          "read_on": "2026-04-30",
+          "days_read": 42,
+          "days_left": 77,
+          "events_on_the_days_left": 347,
+          "busiest_day_left": 72,
+          "smallest_capacity_without_a_late_event_on_the_days_read": 34,
+          "smallest_capacity_without_a_late_event_on_the_days_left": 24,
+          "plans": [
+            {
+              "plan": "mean_rounded_up",
+              "capacity_read_on_that_day": 6,
+              "capacity_read_on_the_whole_log": 5,
+              "capacity_offered": 462,
+              "handled": 219,
+              "left_at_end": 128,
+              "late_events": 231,
+              "longest_wait_of_a_handled_event_days": 18,
+              "largest_backlog_at_end_of_day": 193,
+              "capacity_used": {
+                "exact": "219/462",
+                "value": 0.474026,
+                "percent": 47.4
+              }
+            },
+            {
+              "plan": "p90",
+              "capacity_read_on_that_day": 7,
+              "capacity_read_on_the_whole_log": 8,
+              "capacity_offered": 539,
+              "handled": 245,
+              "left_at_end": 102,
+              "late_events": 214,
+              "longest_wait_of_a_handled_event_days": 18,
+              "largest_backlog_at_end_of_day": 181,
+              "capacity_used": {
+                "exact": "245/539",
+                "value": 0.454545,
+                "percent": 45.45
+              }
+            },
+            {
+              "plan": "p95",
+              "capacity_read_on_that_day": 18,
+              "capacity_read_on_the_whole_log": 24,
+              "capacity_offered": 1386,
+              "handled": 347,
+              "left_at_end": 0,
+              "late_events": 117,
+              "longest_wait_of_a_handled_event_days": 6,
+              "largest_backlog_at_end_of_day": 95,
+              "capacity_used": {
+                "exact": "347/1386",
+                "value": 0.250361,
+                "percent": 25.04
+              }
+            },
+            {
+              "plan": "p99",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 72,
+              "capacity_offered": 8393,
+              "handled": 347,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "347/8393",
+                "value": 0.041344,
+                "percent": 4.13
+              }
+            },
+            {
+              "plan": "peak",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 109,
+              "capacity_offered": 8393,
+              "handled": 347,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "347/8393",
+                "value": 0.041344,
+                "percent": 4.13
+              }
+            }
+          ]
+        },
+        {
+          "read_on": "2026-05-31",
+          "days_read": 73,
+          "days_left": 46,
+          "events_on_the_days_left": 304,
+          "busiest_day_left": 72,
+          "smallest_capacity_without_a_late_event_on_the_days_read": 34,
+          "smallest_capacity_without_a_late_event_on_the_days_left": 24,
+          "plans": [
+            {
+              "plan": "mean_rounded_up",
+              "capacity_read_on_that_day": 4,
+              "capacity_read_on_the_whole_log": 5,
+              "capacity_offered": 184,
+              "handled": 124,
+              "left_at_end": 180,
+              "late_events": 263,
+              "longest_wait_of_a_handled_event_days": 19,
+              "largest_backlog_at_end_of_day": 217,
+              "capacity_used": {
+                "exact": "124/184",
+                "value": 0.673913,
+                "percent": 67.39
+              }
+            },
+            {
+              "plan": "p90",
+              "capacity_read_on_that_day": 5,
+              "capacity_read_on_the_whole_log": 8,
+              "capacity_offered": 230,
+              "handled": 150,
+              "left_at_end": 154,
+              "late_events": 253,
+              "longest_wait_of_a_handled_event_days": 18,
+              "largest_backlog_at_end_of_day": 205,
+              "capacity_used": {
+                "exact": "150/230",
+                "value": 0.652174,
+                "percent": 65.22
+              }
+            },
+            {
+              "plan": "p95",
+              "capacity_read_on_that_day": 8,
+              "capacity_read_on_the_whole_log": 24,
+              "capacity_offered": 368,
+              "handled": 228,
+              "left_at_end": 76,
+              "late_events": 199,
+              "longest_wait_of_a_handled_event_days": 16,
+              "largest_backlog_at_end_of_day": 169,
+              "capacity_used": {
+                "exact": "228/368",
+                "value": 0.619565,
+                "percent": 61.96
+              }
+            },
+            {
+              "plan": "p99",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 72,
+              "capacity_offered": 5014,
+              "handled": 304,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "304/5014",
+                "value": 0.06063,
+                "percent": 6.06
+              }
+            },
+            {
+              "plan": "peak",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 109,
+              "capacity_offered": 5014,
+              "handled": 304,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "304/5014",
+                "value": 0.06063,
+                "percent": 6.06
+              }
+            }
+          ]
+        },
+        {
+          "read_on": "2026-06-30",
+          "days_read": 103,
+          "days_left": 16,
+          "events_on_the_days_left": 65,
+          "busiest_day_left": 26,
+          "smallest_capacity_without_a_late_event_on_the_days_read": 34,
+          "smallest_capacity_without_a_late_event_on_the_days_left": 10,
+          "plans": [
+            {
+              "plan": "mean_rounded_up",
+              "capacity_read_on_that_day": 6,
+              "capacity_read_on_the_whole_log": 5,
+              "capacity_offered": 96,
+              "handled": 65,
+              "left_at_end": 0,
+              "late_events": 21,
+              "longest_wait_of_a_handled_event_days": 6,
+              "largest_backlog_at_end_of_day": 34,
+              "capacity_used": {
+                "exact": "65/96",
+                "value": 0.677083,
+                "percent": 67.71
+              }
+            },
+            {
+              "plan": "p90",
+              "capacity_read_on_that_day": 8,
+              "capacity_read_on_the_whole_log": 8,
+              "capacity_offered": 128,
+              "handled": 65,
+              "left_at_end": 0,
+              "late_events": 7,
+              "longest_wait_of_a_handled_event_days": 4,
+              "largest_backlog_at_end_of_day": 30,
+              "capacity_used": {
+                "exact": "65/128",
+                "value": 0.507813,
+                "percent": 50.78
+              }
+            },
+            {
+              "plan": "p95",
+              "capacity_read_on_that_day": 20,
+              "capacity_read_on_the_whole_log": 24,
+              "capacity_offered": 320,
+              "handled": 65,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 1,
+              "largest_backlog_at_end_of_day": 6,
+              "capacity_used": {
+                "exact": "65/320",
+                "value": 0.203125,
+                "percent": 20.31
+              }
+            },
+            {
+              "plan": "p99",
+              "capacity_read_on_that_day": 72,
+              "capacity_read_on_the_whole_log": 72,
+              "capacity_offered": 1152,
+              "handled": 65,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "65/1152",
+                "value": 0.056424,
+                "percent": 5.64
+              }
+            },
+            {
+              "plan": "peak",
+              "capacity_read_on_that_day": 109,
+              "capacity_read_on_the_whole_log": 109,
+              "capacity_offered": 1744,
+              "handled": 65,
+              "left_at_end": 0,
+              "late_events": 0,
+              "longest_wait_of_a_handled_event_days": 0,
+              "largest_backlog_at_end_of_day": 0,
+              "capacity_used": {
+                "exact": "65/1744",
+                "value": 0.037271,
+                "percent": 3.73
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "same_rule_on_the_synthetic_logs": {
+      "kind": "synthetic arrivals and an assumed rule",
+      "logs": 2000,
+      "smallest_capacity_without_a_late_event": {
+        "min": 5,
+        "p2_5": 5,
+        "median": 6,
+        "p97_5": 6,
+        "max": 7,
+        "mean": 5.97
+      },
+      "p95_of_daily_counts": {
+        "min": 8,
+        "p2_5": 8,
+        "median": 9,
+        "p97_5": 10,
+        "max": 11,
+        "mean": 8.99
+      },
+      "late_events_with_capacity_p95": {
+        "min": 0,
+        "p2_5": 0,
+        "median": 0,
+        "p97_5": 0,
+        "max": 0,
+        "mean": 0.0
+      },
+      "late_events_with_capacity_mean_rounded_up": {
+        "min": 0,
+        "p2_5": 0,
+        "median": 81,
+        "p97_5": 346,
+        "max": 493,
+        "mean": 108.46
+      },
+      "left_at_end_with_capacity_mean_rounded_up": {
+        "min": 0,
+        "p2_5": 1,
+        "median": 12,
+        "p97_5": 31,
+        "max": 48,
+        "mean": 13.23
+      },
+      "handled_on_arrival_day_with_capacity_mean_rounded_up": {
+        "min": 8,
+        "p2_5": 32,
+        "median": 107,
+        "p97_5": 208,
+        "max": 283,
+        "mean": 109.4
+      },
+      "longest_wait_days_with_capacity_mean_rounded_up": {
+        "min": 3,
+        "p2_5": 3,
+        "median": 5,
+        "p97_5": 9,
+        "max": 12,
+        "mean": 5.35
+      },
+      "observed_log": {
+        "smallest_capacity_without_a_late_event": 34,
+        "p95_of_daily_counts": 24,
+        "late_events_with_capacity_p95": 49,
+        "late_events_with_capacity_mean_rounded_up": 489,
+        "left_at_end_with_capacity_mean_rounded_up": 154,
+        "handled_on_arrival_day_with_capacity_mean_rounded_up": 57,
+        "longest_wait_days_with_capacity_mean_rounded_up": 33
+      },
+      "logs_with_at_least_one_late_event": {
+        "with_capacity_mean_rounded_up": 1919,
+        "with_capacity_p95": 0
+      }
+    },
+    "hand_case": {
+      "counts": [
+        1,
+        7,
+        0,
+        0,
+        2
+      ],
+      "capacity": 2,
+      "wait_tolerance_days": 1,
+      "handled": 9,
+      "handled_on_arrival_day": 4,
+      "handled_late": 3,
+      "left_at_end": 1,
+      "left_at_end_already_late": 0,
+      "longest_wait_of_a_handled_event_days": 3,
+      "largest_backlog_at_end_of_day": 5,
+      "days_ending_with_a_backlog": 4
+    }
+  },
+  "candidate_logs": {
+    "kind": "synthetic: imaginary summaries classified against the synthetic logs",
+    "note": "Imaginary summaries used by one exercise: logs with the observed number of events and days, described only by two measures. Neither exists.",
+    "logs": {
+      "A": {
+        "top_4_events": 42,
+        "top_4_share": {
+          "exact": "42/594",
+          "value": 0.070707,
+          "percent": 7.07
+        },
+        "gini_calendar_days": 0.25,
+        "against_the_synthetic_logs": {
+          "top_4_events": "inside the central 95% of the synthetic logs",
+          "gini_calendar_days": "inside the central 95% of the synthetic logs"
+        },
+        "against_the_observed_log": {
+          "top_4_events_observed": 286,
+          "top_4_events_as_percent_of_observed": 14.69,
+          "gini_observed": 0.7789,
+          "less_concentrated_than_observed_on_both": true
+        }
+      },
+      "B": {
+        "top_4_events": 89,
+        "top_4_share": {
+          "exact": "89/594",
+          "value": 0.149832,
+          "percent": 14.98
+        },
+        "gini_calendar_days": 0.45,
+        "against_the_synthetic_logs": {
+          "top_4_events": "above every synthetic log",
+          "gini_calendar_days": "above every synthetic log"
+        },
+        "against_the_observed_log": {
+          "top_4_events_observed": 286,
+          "top_4_events_as_percent_of_observed": 31.12,
+          "gini_observed": 0.7789,
+          "less_concentrated_than_observed_on_both": true
+        }
+      }
+    }
+  },
+  "transfer_task": {
+    "kind": "synthetic: a hypothetical support desk, not Streeling data",
+    "note": "Hypothetical support desk for the learner task: tickets opened per day over two weeks. Not Streeling data and not a forecast.",
+    "unit": "tickets opened per day",
+    "daily_counts": [
+      2,
+      1,
+      0,
+      3,
+      2,
+      1,
+      1,
+      2,
+      36,
+      22,
+      9,
+      3,
+      1,
+      1
+    ],
+    "sorted_in_increasing_order": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      9,
+      22,
+      36
+    ],
+    "concentration": {
+      "calendar_days": 14,
+      "events": 84,
+      "active_days": 13,
+      "empty_days": 1,
+      "busiest_days": [
+        {
+          "busiest_days": 1,
+          "events": 36,
+          "exact": "36/84",
+          "value": 0.428571,
+          "percent": 42.86
+        },
+        {
+          "busiest_days": 2,
+          "events": 58,
+          "exact": "58/84",
+          "value": 0.690476,
+          "percent": 69.05
+        },
+        {
+          "busiest_days": 3,
+          "events": 67,
+          "exact": "67/84",
+          "value": 0.797619,
+          "percent": 79.76
+        }
+      ],
+      "days_needed_for_half": {
+        "half_percent": 50,
+        "days": 2,
+        "events": 58,
+        "exact": "58/84",
+        "value": 0.690476,
+        "percent": 69.05
+      },
+      "lorenz_points": [
+        {
+          "quietest_days_percent": 50,
+          "days": 7,
+          "events": 7,
+          "share": {
+            "exact": "7/84",
+            "value": 0.083333,
+            "percent": 8.33
+          },
+          "the_other_days": 7,
+          "their_events": 77
+        }
+      ],
+      "gini_calendar_days": {
+        "exact": "19/28",
+        "value": 0.6786
+      },
+      "gini_active_days": {
+        "exact": "17/26",
+        "value": 0.6538
+      },
+      "gini_largest_possible_on_these_days": {
+        "exact": "13/14",
+        "value": 0.9286
+      },
+      "mean_per_calendar_day": {
+        "exact": "6",
+        "value": 6.0
+      },
+      "mean_per_active_day": {
+        "exact": "84/13",
+        "value": 6.46
+      },
+      "median_calendar_day": {
+        "exact": "2",
+        "value": 2.0
+      },
+      "days_above_the_mean": 3,
+      "days_at_or_below_the_mean": 11
+    },
+    "without_the_busiest_days": [
+      {
+        "days_dropped": 1,
+        "events_dropped": 36,
+        "events_left": 48,
+        "days_left": 13,
+        "mean": {
+          "exact": "48/13",
+          "value": 3.69
+        },
+        "mean_change_percent": -38.46,
+        "median": {
+          "exact": "2",
+          "value": 2.0
+        }
+      }
+    ],
+    "capacity": {
+      "handling_rule": "the rule of scenarios.json, capacity.handling_rule, with tickets for events",
+      "wait_tolerance_days": 1,
+      "plans": [
+        {
+          "plan": "mean_rounded_up",
+          "rule": "the mean number of tickets per calendar day, rounded up to a whole ticket",
+          "capacity_per_day": 6,
+          "capacity_offered": 84,
+          "handled": 48,
+          "handled_on_arrival_day": 18,
+          "handled_later_within_tolerance": 6,
+          "handled_late": 24,
+          "left_at_end": 36,
+          "left_at_end_already_late": 35,
+          "left_at_end_undetermined": 1,
+          "late_events": 59,
+          "longest_wait_of_a_handled_event_days": 5,
+          "oldest_event_left_at_end_age_days": 4,
+          "largest_backlog_at_end_of_day": 49,
+          "largest_backlog_day_index_from_0": 10,
+          "days_ending_with_a_backlog": 6,
+          "capacity_as_a_multiple_of_the_mean": 1.0,
+          "capacity_used": {
+            "exact": "48/84",
+            "value": 0.571429,
+            "percent": 57.14
+          }
+        },
+        {
+          "plan": "p90",
+          "rule": "nearest-rank quantile of the daily counts",
+          "capacity_per_day": 22,
+          "capacity_offered": 308,
+          "handled": 84,
+          "handled_on_arrival_day": 55,
+          "handled_later_within_tolerance": 29,
+          "handled_late": 0,
+          "left_at_end": 0,
+          "left_at_end_already_late": 0,
+          "left_at_end_undetermined": 0,
+          "late_events": 0,
+          "longest_wait_of_a_handled_event_days": 1,
+          "oldest_event_left_at_end_age_days": null,
+          "largest_backlog_at_end_of_day": 14,
+          "largest_backlog_day_index_from_0": 8,
+          "days_ending_with_a_backlog": 3,
+          "capacity_as_a_multiple_of_the_mean": 3.67,
+          "capacity_used": {
+            "exact": "84/308",
+            "value": 0.272727,
+            "percent": 27.27
+          }
+        }
+      ],
+      "smallest_capacity_without_a_late_ticket": 20,
+      "late_tickets_with_one_unit_less": 1,
+      "with_that_capacity": {
+        "capacity_per_day": 20,
+        "capacity_offered": 280,
+        "handled": 84,
+        "handled_on_arrival_day": 43,
+        "handled_later_within_tolerance": 41,
+        "handled_late": 0,
+        "left_at_end": 0,
+        "left_at_end_already_late": 0,
+        "left_at_end_undetermined": 0,
+        "late_events": 0,
+        "longest_wait_of_a_handled_event_days": 1,
+        "oldest_event_left_at_end_age_days": null,
+        "largest_backlog_at_end_of_day": 18,
+        "largest_backlog_day_index_from_0": 9,
+        "days_ending_with_a_backlog": 3
+      }
+    }
+  },
+  "checks": [
+    {
+      "check": "recount from the event rows equals the counts made by extract.py",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the two design files state the number of orphaned triggers that the folder holds",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the quietest days and the other days hold all the events",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "the three formulas for the Gini coefficient agree",
+      "times_evaluated": 20,
+      "passed": true
+    },
+    {
+      "check": "adding empty days moves the Gini coefficient by the exact identity G_all = 1 - (m / n)(1 - G_active)",
+      "times_evaluated": 5,
+      "passed": true
+    },
+    {
+      "check": "shares of the busiest days never decrease and stay at or below 1",
+      "times_evaluated": 5,
+      "passed": true
+    },
+    {
+      "check": "mean times days = events; days above the mean + the others = days",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the fourth and fifth busiest days are not tied, so 'the four busiest days' names four dates",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the table of days by count covers every day and every event",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the Lorenz curve ends at the total",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the months partition the log",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the last checkpoint is the whole log",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "percentiles read to date: those of the last reading are those of the whole log, and at every reading they do not decrease with the level and stay at or below the busiest day read",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the median is the middle value, or the mean of the two middle values when their number is even; the nearest-rank 50th percentile then takes the lower of the two",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "moving the day boundary keeps every event",
+      "times_evaluated": 24,
+      "passed": true
+    },
+    {
+      "check": "a day boundary moved by 0 hours reproduces the UTC daily counts",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: a boundary moved by a whole day shifts the dates and changes no count",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the two type subsets are disjoint and hold every event between them",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the events of the four busiest days, split by type, add up",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "each pair of busiest days lies inside one episode of burst days, the two pairs inside different episodes, and the episodes hold every burst day once",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "every event has the same repo and ref, so the type is the only part of the deduplication key that varies",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "merged triggers: at least one on every active day and never more than the number of types",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the wait tolerance in days is the design's staleness limit in hours",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "capacity accounting: handled + left = arrivals; on the day + later + late = handled",
+      "times_evaluated": 11005,
+      "passed": true
+    },
+    {
+      "check": "a capacity equal to the busiest day leaves nothing waiting",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "more capacity never makes more events late",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the smallest sufficient capacity is exact: no late event with it, at least one with one unit less",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: with no capacity nothing is handled and every event is left",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "a reading date splits the log into days read and days left, and neither part is empty",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "days left: no late event with their smallest sufficient capacity, at least one with one unit less",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "every synthetic log has the observed number of events and days",
+      "times_evaluated": 2000,
+      "passed": true
+    },
+    {
+      "check": "the synthetic batch has the stated number of logs",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "known answer: the batch mean of empty days is the exact expectation n ((n - 1) / n) ** T, within tolerance",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the replication batch (another seed) agrees with the main batch within the stated tolerance",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "negative control: the observed log, added to the batch, is counted once by every comparison",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed case: the Gini coefficient and the share of the busiest day are the values worked by hand",
+      "times_evaluated": 4,
+      "passed": true
+    },
+    {
+      "check": "all days equal gives a Gini coefficient of 0",
+      "times_evaluated": 3,
+      "passed": true
+    },
+    {
+      "check": "everything on one day of n gives a Gini coefficient of (n - 1) / n",
+      "times_evaluated": 3,
+      "passed": true
+    },
+    {
+      "check": "synthetic logs with a late event: none when the largest number of late events is 0, more than half of the logs when the median number is above 0",
+      "times_evaluated": 2,
+      "passed": true
+    },
+    {
+      "check": "the capacity rule reproduces the case worked by hand",
+      "times_evaluated": 8,
+      "passed": true
+    },
+    {
+      "check": "transfer task: one unit of capacity less than the smallest sufficient one leaves a late ticket",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}

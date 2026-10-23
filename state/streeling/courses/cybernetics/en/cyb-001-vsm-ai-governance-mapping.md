@@ -1,0 +1,115 @@
+---
+module_id: cyb-001-vsm-ai-governance-mapping
+department: cybernetics
+course: "Cybernetic governance foundations"
+prerequisites: []
+produced_by: seldon-plan
+research_cycle: cybernetics-2026-03-22-001
+version: "1.0.0"
+---
+
+# CYB-001: Viable System Model Mapping to AI Governance
+
+**Department:** Cybernetics
+**Module ID:** CYB-001
+**Produced by:** Seldon Plan Cycle cybernetics-2026-03-22-001
+**Belief:** T, confidence 0.82
+**Date:** 2026-03-22
+
+## Research Question
+
+Does Stafford Beer's Viable System Model (VSM) provide a complete structural mapping for AI governance frameworks, and what gaps emerge when applying VSM's five systems to Demerzel's architecture?
+
+## Summary
+
+The Viable System Model maps structurally to AI governance frameworks with high fidelity. All five VSM systems plus System 3* have clear counterparts in Demerzel's architecture. Four significant gaps emerge (three in section 2, the missing algedonic channel in section 4) that require adaptation beyond classical VSM. The algedonic channel was implemented the same day, in `policies/algedonic-channel-policy.yaml` (section 4).
+
+## VSM-to-Demerzel Mapping
+
+| VSM System | Function | Demerzel Counterpart |
+|---|---|---|
+| System 1 (Operations) | Primary value-producing activities | ix, tars, ga (operational repos performing ML, reasoning, music) |
+| System 2 (Coordination) | Anti-oscillation, scheduling, conflict prevention | Galactic Protocol contracts, cross-repo communication standards |
+| System 3 (Control) | Internal regulation, resource allocation, optimization | Driver cycle (PDCA), policies (27 active), belief state management |
+| System 3* (Audit) | Sporadic audit channel, bypassing normal reporting | RECON policy, governance audits, skeptical-auditor persona |
+| System 4 (Intelligence) | Environment scanning, future planning, adaptation | Seldon Plan research cycles, completeness instinct, grammar evolution |
+| System 5 (Policy/Identity) | Purpose, values, identity, ultimate authority | Asimov Constitution (Articles 0-5), conscience system, Zeroth Law |
+
+## Key Findings
+
+### 1. The Mapping Is Structurally Valid (T, 0.82)
+
+Both independent assessments (Claude via web research, GPT-4o cross-validation) confirm that VSM's five-system decomposition maps cleanly to AI governance architectures. Recent work (2025 Ashby Workshops, enterprise agentic systems literature, MDPI Systems journal) validates this mapping in practice.
+
+### 2. Three Gaps Emerge
+
+**Gap A: Temporal Dynamics**
+VSM was designed for human organizations with human-speed feedback loops. AI agent governance operates at machine speed — millisecond decision cycles vs. weekly management meetings. Demerzel's PDCA cycle and belief state updates partially address this, but the model needs explicit clock-speed separation between governance layers.
+
+**Gap B: Recursive Depth**
+VSM is recursive — each System 1 operation is itself a viable system. In Demerzel, ix contains sub-agents (skills), each of which could have its own governance stack. The current architecture supports one level of recursion (Demerzel → consumer repos) but not deeper nesting. This is a design choice, not a flaw — but VSM theory suggests viability at every level.
+
+**Gap C: Non-Human S5**
+VSM's System 5 assumes human judgment for identity and purpose. Demerzel's S5 (the Asimov Constitution) is codified rather than emergent — it cannot evolve through lived experience the way a human board of directors does. The conscience and proto-conscience policies are Demerzel's adaptation: synthetic mechanisms for value reflection that classical VSM does not account for.
+
+### 3. Ashby's Law of Requisite Variety Applies Directly
+
+Ashby's law is stated on outcomes: where every disturbance receives a response and no response brings two disturbances to the same outcome, keeping every outcome acceptable needs at least as much regulatory variety as the disturbances carry, less the variety of the outcomes governance may accept. In Demerzel terms:
+
+- **Variety amplifiers:** Seldon Plan (research), completeness instinct (gap detection), grammar evolution (structural adaptation)
+- **Variety attenuators:** Policies (constrain agent behavior), constitutions (reduce decision space), persona constraints (limit scope per role)
+
+The 2025 Ashby Workshops at Fathom explicitly applied requisite variety to AI governance, producing the Independent Verification Organizations (IVO) policy model — confirming this principle's relevance to modern AI systems.
+
+### 4. Missing Algedonic Channel (Gap D)
+
+VSM theory describes an **algedonic channel** — an emergency signal path that bypasses the normal management hierarchy. When a System 1 unit encounters a crisis (pain signal) or breakthrough (pleasure signal), it can signal directly to System 5 without routing through Systems 2, 3, or 4.
+
+When this module was written, Demerzel lacked this bypass. All escalation flowed through the driver (System 3): if ix detected a Zeroth Law violation, it had to wait for the driver's next PDCA cycle to escalate. The module proposed a file-based algedonic channel:
+
+- Operational repos write to `state/algedonic/{repo}-{timestamp}.signal`
+- Signal contains: severity (pain/pleasure), source repo, description, constitutional article triggered
+- System 5 (constitution enforcement) checks for signals before any other processing
+- Pain signals invoking Asimov Article 0 (Zeroth Law) trigger immediate halt
+
+**Implemented the same day.** `policies/algedonic-channel-policy.yaml` (effective 2026-03-22) defines the channel, and its design differs from this proposal. The path runs from S1 directly to S5, and S2, S3 and S4 cannot suppress, filter or delay an alert. Every alert notifies a human, who must acknowledge it, and is validated against the Asimov constitution (S5). Alerts are stored as `state/algedonic/{date}-{signal_id}.alert.json`, not as `.signal` files, and automatic halt depends on severity: only a `critical` alert halts. Read the list above as the proposal that led to the policy, not as a channel still to build.
+
+### 5. Variety Assessment by Component
+
+| Component | Variety Role | Assessment |
+|-----------|-------------|------------|
+| 27 policies | Attenuator | Strong — reduces operational variety to manageable scope |
+| 14 personas | Amplifier | Good — multiplies response capability across domains |
+| Hexavalent logic (T/P/U/D/F/C) | Attenuator | Good — reduces infinite uncertainty to 6 discrete states |
+| Galactic Protocol | Attenuator | Adequate — constrains cross-repo variety |
+| Seldon Plan | Amplifier | Good — expands knowledge variety proactively |
+| Constitution | Attenuator | Strong — ultimate variety reducer (Zeroth Law) |
+
+The ratings in the table are qualitative and were not measured, and so is the module's overall reading, that Demerzel is better at constraining than at expanding its response repertoire. The counts in the first two rows, 27 policies and 14 personas, are an inventory, not a variety: adding a duplicate policy or persona changes a count without changing the responses governance can give or the disturbances it faces. Whether attenuation outweighs amplification can only be read from the per-cycle records of Recommendation 5.
+
+## Implications for Demerzel
+
+1. **Add algedonic channel** — Highest-priority structural gap. Emergency bypass from S1 to S5 for Zeroth Law violations. Implemented: `policies/algedonic-channel-policy.yaml`.
+2. **Clock-speed governance layers** — Explicit separation of fast-loop (per-request) vs. slow-loop (per-cycle) governance, matching VSM's operational vs. strategic timescales.
+3. **Recursive governance template** — The templates/ directory already provides CLAUDE.md snippets for consumer repos; extending this to sub-agent governance would deepen VSM recursion.
+4. **Conscience as synthetic S5** — Demerzel's proto-conscience policy is a novel extension beyond classical VSM, providing value-reflection capability without human judgment. This is worth further research.
+5. **Measure variety on outcomes** — The ratio of policy count to persona count is an inventory balance, not a variety ratio: a duplicate policy or persona changes it without changing the responses governance can give or the disturbances it faces. Measure each cycle instead: record each disturbance met, the response given (none, if none) and its outcome on the essential variables, then count the distinct disturbances, responses and outcomes.
+
+## Sources
+
+- Beer, S. (1972). *Brain of the Firm*. Allen Lane.
+- Beer, S. (1979). *The Heart of Enterprise*. John Wiley.
+- Beer, S. (1985). *Diagnosing the System for Organizations*. John Wiley.
+- Ashby, W. R. (1956). *An Introduction to Cybernetics*. Chapman & Hall.
+- Fearne, D. (2025). "Applying Stafford Beer's VSM to Create The Autonomous AI Organisation." Medium.
+- Gorelkin, M. (2025). "Stafford Beer's VSM for Building Enterprise Agentic Systems." Medium.
+- Fathom (2025). Ashby Workshops — AI governance and requisite variety.
+- MDPI Systems (2025). "The Viable System Model and the Taxonomy of Organizational Pathologies in the Age of AI."
+- Schwaninger, M. (2024). "What is variety engineering and why do we need it?" Systems Research and Behavioral Science.
+
+## Cross-References
+
+- Grammar: `grammars/sci-cybernetics.ebnf` (lines 49-65, VSM section)
+- Department: `state/streeling/departments/cybernetics.department.json`
+- Policy: `policies/seldon-plan-policy.yaml`
+- Policy: `policies/algedonic-channel-policy.yaml` (the algedonic channel, section 4)
