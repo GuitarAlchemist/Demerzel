@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-019-combining-correlated-forecasters",
+  "kind": "assumed inputs for a synthetic model; nothing in this file is measured in the Demerzel repository",
+  "rounding": {
+    "exact_decimals": 6,
+    "simulated_decimals": 4,
+    "difference_decimals": 6,
+    "standard_errors_decimals": 2,
+    "percent_decimals": 2
+  },
+  "error_model": {
+    "forecast": "forecast_i = outcome + error_i",
+    "error": "error_i = bias + sigma * (sqrt(rho) * C + sqrt(1 - rho) * I_i)",
+    "parts": {
+      "bias": "the same number for every forecaster on every occasion",
+      "C": "the common part: one draw per occasion, shared by every forecaster",
+      "I_i": "the individual part: one draw per occasion and per forecaster"
+    },
+    "draw": "(random.Random(seed).random() - 0.5) * sqrt(12): uniform between -sqrt(3) and sqrt(3), mean 0, variance 1; C and every I_i are drawn independently",
+    "consequences": "each error has mean bias and variance sigma^2; two errors have correlation rho",
+    "sigma": "1",
+    "note": "A textbook model chosen because every quantity in the lesson has a closed form for it. It is not a model of the project's agents, whose errors nobody has measured. Here 'outcome' stands for the best forecast possible: these errors leave out the part of the outcome nobody could foresee, which yes_no_outcome puts back."
+  },
+  "grid": {
+    "k_max": 14,
+    "rhos": ["0", "0.3", "0.6", "0.9"],
+    "lesson_ks": [1, 2, 5, 14]
+  },
+  "simulation": {
+    "seed": 20261019,
+    "occasions": 200000,
+    "draw_order": "per occasion: C, then I_1 to I_14; the same draws serve every rho and every k (the average of the first k forecasters)",
+    "spread_ks": [5, 14],
+    "direct_check": {
+      "occasions": 1000,
+      "tolerance": 1e-9,
+      "note": "The first occasions are generated again; each error is built on its own and the errors are averaged one by one. The sums of the fast path at that occasion must agree."
+    }
+  },
+  "hypothesis_thresholds": {
+    "note": "Written at 2026-10-14T02:11:34Z, before analyze.py existed, and copied unchanged into the research cycle's hypothesis.",
+    "standard_errors_limit": 4,
+    "rho_for_the_claims": "0.6",
+    "fourteenth_same_source_gain_below_percent": 1,
+    "independent_newcomer_equal_weight_gain_above_percent": 10
+  },
+  "exact_enumeration": {
+    "note": "C and every I_i are +1 or -1 with probability 1/2 each (mean 0, variance 1). Every sign pattern is listed and weighted exactly, in fractions.",
+    "hand_case": {
+      "note": "Worked by hand in the README: sqrt(0.36) = 0.6 and sqrt(0.64) = 0.8 are exact.",
+      "k": 2,
+      "rho": "0.36",
+      "expected_mse": "0.68"
+    }
+  },
+  "shared_bias": {
+    "seed": 20261020,
+    "occasions": 100000,
+    "rho": "0.3",
+    "bias": "0.5",
+    "ks": [1, 5, 14]
+  },
+  "newcomer": {
+    "note": "Thirteen forecasters on one model reading one context, then a fourteenth of four kinds. The split of the shared variance between context and model is invented.",
+    "panel_size": 13,
+    "error": "error_i = sqrt(context_share) * X_context(i) + sqrt(model_share) * Y_model(i) + sqrt(1 - context_share - model_share) * I_i, with sigma = 1 and no bias",
+    "context_share": "0.3",
+    "model_share": "0.3",
+    "kinds": [
+      {"key": "same_model_same_context", "shares_context": true, "shares_model": true},
+      {"key": "other_model_same_context", "shares_context": true, "shares_model": false},
+      {"key": "same_model_own_context", "shares_context": false, "shares_model": true},
+      {"key": "other_model_own_context", "shares_context": false, "shares_model": false}
+    ],
+    "seed": 20261021,
+    "occasions": 100000,
+    "draw_order": "per occasion: X for the panel's context, X for another context, Y for the panel's model, Y for another model, then I_1 to I_14"
+  },
+  "agreement_of_two": {
+    "note": "A reading that the policy does not state: its confidence settings are taken as probabilities of being right on a yes/no question. Two judges are each right with probability p; rho is the correlation between 'judge 1 is right' and 'judge 2 is right'. On a yes/no question two wrong answers coincide.",
+    "accuracy_from": "the number of single_model in observed-input.json",
+    "agreement_value_from": "the number of two_model_agreement in observed-input.json",
+    "disagreement_value_from": "the number of two_model_disagreement in observed-input.json",
+    "correlations": ["0", "0.3", "0.6", "0.9", "1"]
+  },
+  "scored_log": {
+    "note": "What a log of scored forecasts could tell about rho if the errors left out the part of the outcome nobody could foresee (yes_no_outcome puts it back). One log = a number of occasions, each with the errors of every agent. Estimate: 1 - (k / (k - 1)) * mean spread / mean squared error of one agent.",
+    "agents_from": "the number of personas of the panel in observed-input.json",
+    "seed": 20261023,
+    "logs": 1000,
+    "occasions_per_log": [20, 100],
+    "rhos": ["0", "0.3", "0.6"],
+    "percentiles": [5, 50, 95],
+    "percentile_rule": "nearest rank: the value at position ceil(q / 100 * logs) of the sorted estimates",
+    "draw_order": "per log and per occasion: C, then one I per agent; a log of 20 occasions is the first 20 of the 100"
+  },
+  "yes_no_outcome": {
+    "note": "Logs scored against a yes/no outcome, which puts back the part of the outcome nobody could foresee. On each pull request the true probability p is uniform between the two bounds and the outcome is 1 with probability p. A persona forecasts p + s * (sqrt(rho) * C + sqrt(1 - rho) * I_i); the outsider forecasts p + s * I_o and shares nothing with the panel but the outcome. Every part is +1 or -1 with probability 1/2 (mean 0, variance 1), so every forecast stays between 0 and 1 and the closed forms need no clipping. Error = forecast - outcome.",
+    "probability_low": "0.3",
+    "probability_high": "0.7",
+    "forecaster_sd": "0.21",
+    "personas_from": "the number of personas of the panel in observed-input.json",
+    "rhos": ["0", "0.6"],
+    "seed": 20261024,
+    "logs": 1000,
+    "pull_requests_per_log": [20, 100, 500],
+    "percentiles": [5, 50, 95],
+    "draw_order": "per log and per pull request: p, the outcome draw, C, I_1 to I_k, I_o; the same draws serve both rhos; a log of 20 pull requests is the first 20 of the 500",
+    "estimate_from_the_spread": "1 - (k / (k - 1)) * mean spread / mean variance of one persona's errors (each persona's mean error subtracted)",
+    "estimate_against_the_outsider": "(mean covariance of two personas' errors - mean covariance of a persona's and the outsider's errors) / (mean variance of a persona's errors - mean covariance of a persona's and the outsider's errors); sample covariances with n - 1"
+  },
+  "worked_examples": {
+    "note": "Inputs of the lesson's exercises that are not already listed above.",
+    "exercise_2": {"k": 5, "rho": "0.3"},
+    "exercise_3": {"panel": 5, "rho": "0.6", "grow_to": 14},
+    "exercise_4": {"bias": "0.5", "rho": "0.3", "k": 14, "doubled_k": 28},
+    "exercise_5": {"correlations": ["0", "0.6"]}
+  },
+  "transfer_task": {
+    "note": "Hypothetical estimating team for the learner task. Not Streeling data and not a forecast.",
+    "unit": "week",
+    "forecasters": 8,
+    "error_sd": "6",
+    "rho": "0.25",
+    "bias": "-3",
+    "worth_targets": [3, 4],
+    "grow_to": 80
+  }
+}

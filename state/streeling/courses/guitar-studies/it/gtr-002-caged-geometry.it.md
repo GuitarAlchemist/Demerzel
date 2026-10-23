@@ -26,15 +26,17 @@ version: "1.0.0"
 
 Ogni chitarrista impara questi cinque accordi maggiori aperti fin dall'inizio. Ciascuno ha un'impronta geometrica distinta:
 
+I diagrammi si leggono dalla corda 6 (Mi grave) alla corda 1 (Mi acuto); `x` indica una corda che non si suona.
+
 ### Forma C (Do)
 ```
-x 3 2 0 1 0    Corde: 5-4-3-2-1
+x 3 2 0 1 0    Corde: 6-5-4-3-2-1
   F 3 5 F 3    Intervalli: Fondamentale-3M-5G-Fondamentale-3M
 ```
 
 ### Forma A (La)
 ```
-x 0 2 2 2 0    Corde: 5-4-3-2-1
+x 0 2 2 2 0    Corde: 6-5-4-3-2-1
   F 5 F 3 5    Intervalli: Fondamentale-5G-Fondamentale-3M-5G
 ```
 
@@ -52,8 +54,8 @@ F 5 F 3 5 F    Intervalli: Fondamentale-5G-Fondamentale-3M-5G-Fondamentale
 
 ### Forma D (Re)
 ```
-x x 0 2 3 2    Corde: 4-3-2-1
-  F 5 F 3      Intervalli: Fondamentale-5G-Fondamentale-3M
+x x 0 2 3 2    Corde: 6-5-4-3-2-1
+    F 5 F 3    Intervalli: Fondamentale-5G-Fondamentale-3M
 ```
 
 **Osservazione chiave:** Ogni forma contiene solo tre classi di altezza: Fondamentale, Terza Maggiore e Quinta Giusta. Le differenze sono nel *voicing* — in quale ottava appare ogni nota e quali corde le portano.

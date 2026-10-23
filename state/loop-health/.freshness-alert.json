@@ -10,6 +10,10 @@
       "workflow": "demerzel-capability-expansion.yml"
     },
     {
+      "kind": "stale",
+      "workflow": "demerzel-discussion-lifecycle.yml"
+    },
+    {
       "kind": "failed_run",
       "workflow": "demerzel-ideation.yml"
     },
@@ -18,8 +22,8 @@
       "workflow": "jules-auto-delegate.yml"
     },
     {
-      "kind": "failed_run",
-      "workflow": "substrate-audit.yml"
+      "kind": "expired_disable",
+      "workflow": "seldon-plan.yml"
     }
   ]
 }

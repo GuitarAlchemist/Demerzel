@@ -1,0 +1,30 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-009",
+  "department": "psychohistory",
+  "question": "How much of the trigger activity sits in the few busiest days, and what does that do to an average-based capacity plan?",
+  "production_path": [
+    "investigation: took over an interrupted author session; reran the inherited extract.py against the pinned folder (byte-identical snapshot), kept it and extended it, and rewrote the scenario file",
+    "investigation: read the workflow that wrote the triggers and the retired driver's skill file at the pinned commit; found the stated queue limit (50 triggers), staleness limit (72 hours), deduplication rule and the statement that the driver was never scheduled",
+    "extract: snapshot the 594 archived trigger files, pinned as one folder (file count, Git tree id, manifest digest), and the design statements of two files pinned by Git blob id",
+    "hypothesis: written to a scratch file before any analysis of the daily counts, from the coordinator's recount only",
+    "model: top-k shares, Lorenz points and the Gini coefficient over calendar and active days, mean against median, the mean without the busiest days and read to date, and an assumed capacity rule with plans sized on the mean and on quantiles",
+    "test: 2,000 seeded synthetic logs with the observed total and number of days as the benchmark of no concentration beyond chance, with a second batch, a known-answer check of the generator and a planted copy of the observed log",
+    "adversarial: day boundary moved over 24 clocks, type subsets, the design's deduplication rule with an assumed daily wake, tampered inputs on copies outside the repository, and the Git history of deleted trigger files",
+    "adversarial: after a check of the draft by the coordinator (not a human subject review), each capacity plan was also sized on the days read up to four earlier dates and run on the days left, and the synthetic logs with a late event were counted",
+    "test: byte-identical reruns under Python 3.9, 3.12 and 3.14, 41 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "Written before the analysis, knowing only the coordinator's recount (594 events, 119 calendar days, busiest days 109, 72, 60 and 45): the four busiest days hold close to half of the events; the Gini coefficient of the daily counts over the 119 calendar days is at least 0.70; none of 2,000 Poisson-like logs with the same total and number of days reaches a top-four share of 15% or a Gini coefficient of 0.35; and a daily capacity sized on the mean (5 events) leaves some event waiting more than 30 days, while a capacity sized on the 95th percentile of the daily counts keeps every wait under 7 days.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the folder state/triggers/archived holds 594 trigger files (Git tree 2da37c16496d39c0c9137897c8be2b0c6d6b7978) dated 2026-03-20 to 2026-07-16: 119 calendar days, 100 active and 19 empty. The four busiest days hold 286 events, 48.15%, and the Gini coefficient of the daily counts is 0.7789 over calendar days and 0.7369 over active days, above the 0.70 of the hypothesis.",
+    "In 2,000 synthetic logs of 594 events placed uniformly at random on 119 days (seed 20261013) the four busiest days hold 34 to 52 events, at most 8.75%, and the Gini coefficient lies between 0.1958 and 0.2995, so none reaches 15% or 0.35. A planted copy of the observed log is counted by every comparison, and a second batch drawn with another seed agrees within the stated tolerance.",
+    "Under an assumed handling rule (at most c events a day, oldest first, late after 3 days) a capacity of 5 leaves 489 late events, a longest wait of 33 days and 154 events unhandled, and the 95th-percentile capacity of 24 keeps every wait at 6 days or less, as the hypothesis said. That capacity still leaves 49 events late by the design's 72-hour limit, and the smallest capacity with no late event is 34 a day, against 5 to 7 in the synthetic logs. Every one of these plans is sized with hindsight, on the 119 days it is run on: read on 2026-05-31 the 95th percentile was 8, not 24, and a capacity of 8 leaves 199 late events and a longest wait of 16 days on the 46 days left.",
+    "Not anticipated by the hypothesis: the four busiest days are two pairs of consecutive dates (169 and 117 events) and their share ranges from 48.15% to 55.05% over 24 day boundaries; a capacity of 5 also leaves late events in 1,919 of the 2,000 synthetic logs (81 in the median log); and the design's own deduplication rule, with an assumed daily wake, reduces the 594 files to 132 merged triggers with a Gini coefficient of 0.3287.",
+    "Git history at the pin lists 12 trigger files deleted without being archived (seven dated 2026-03-20, five dated 2026-06-30, none on one of the four busiest days), so the archive is a survivor set; the capacity rule is assumed and the repository states that the consumer was never scheduled; when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T00:27:51Z"
+}

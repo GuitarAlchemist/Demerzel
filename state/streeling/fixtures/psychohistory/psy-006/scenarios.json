@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-006-transition-matrix-from-counts",
+  "kind": "assumed or chosen inputs; nothing in this file is measured in the Demerzel repository",
+  "random_seed": null,
+  "random_seed_note": "The analysis draws no random numbers: every result is an exact count, a ratio of counts, a linear solve in exact fractions, or a bound located by integer comparisons.",
+  "number_format_note": "Probabilities that must be exact are written as strings ('0.95', '0.97') and parsed as exact fractions, so that no binary rounding enters.",
+  "rounding": {
+    "ratio_decimals": 6,
+    "percent_decimals": 3,
+    "day_decimals": 3
+  },
+  "confidence": {
+    "note": "Analysis choice. Every bound in this fixture is one-sided: an upper bound is the largest probability that the observed count does not reject at the 5% level, a lower bound the smallest. The rule of three (3/n) approximates the upper bound for a count of zero.",
+    "level": "0.95"
+  },
+  "bound_search": {
+    "note": "Analysis choice. A bound is the solution p of a binomial tail equation. It is located between two neighbouring points of a grid with this many steps from 0 to 1, by exact integer comparisons, and then rounded.",
+    "grid_steps": 1000000000
+  },
+  "rule_of_three": {
+    "note": "Imaginary sample sizes, used only to show where the rule of three is close to the exact bound and where it is not.",
+    "numerator": 3,
+    "sample_sizes": [1, 3, 5, 10, 30, 100, 300, 1000]
+  },
+  "smoothing": {
+    "note": "Analysis choice. Pseudo-count added to every cell of a row before normalising: 1 is add-one (Laplace) smoothing; 0.5 is shown only to make the dependence on this choice visible. Whether the pseudo-counts are spread over the six declared labels or over the labels that occur is also a choice; both are computed.",
+    "pseudo_counts": ["1", "0.5"],
+    "scan_rows_up_to_pairs": 2000
+  },
+  "governance_questions": {
+    "note": "Analysis choices for reading the stored governance matrix as a model: where the chain starts, which state counts as the event, how many cycles ahead, and the probabilities for which 'how many event-free observations until the upper bound falls below this' is answered.",
+    "start_state": "Healthy",
+    "target_state": "Freeze",
+    "horizons_cycles": [1, 3, 10],
+    "bound_thresholds": ["0.1", "0.05", "0.01"]
+  },
+  "sticky_alternative": {
+    "note": "Synthetic. An imaginary matrix over the stored model's states that keeps each state with the probability below and spreads the rest evenly over the other states. It has the same stationary distribution as the stored uniform matrix and is not an estimate of anything.",
+    "stay_probability": "0.97"
+  },
+  "seed_table_reading": {
+    "note": "Assumption made only to confront the seed table with the counts: one step of the table is one consecutive-row pair. The repository does not say how long a step is. 'steps' are the numbers of steps over which the probability of the one observed label change is computed.",
+    "steps": [1, 2]
+  },
+  "transfer_task": {
+    "note": "Hypothetical weekly status log of a fleet of services, for the learner task. Not Streeling data and not a forecast.",
+    "states": ["green", "amber", "red"],
+    "counts": {
+      "green": {"green": 412, "amber": 6, "red": 0},
+      "amber": {"green": 5, "amber": 31, "red": 2},
+      "red": {"green": 3, "amber": 0, "red": 4}
+    },
+    "smoothing_pseudo_count": "1",
+    "smoothing_rows": ["green", "red"],
+    "stored_matrix": "uniform",
+    "start_state": "green",
+    "target_state": "red",
+    "horizons_steps": [1, 2, 5],
+    "estimated_matrix_horizons_steps": [1, 2],
+    "bound_target": "0.005"
+  }
+}

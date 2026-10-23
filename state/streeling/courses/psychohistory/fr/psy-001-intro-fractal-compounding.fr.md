@@ -171,5 +171,5 @@ La discipline de la psychohistoire l'accepte. Nous ne visons pas la prédiction 
 - Le théorème de Noether s'applique aux processus de gouvernance à invariance d'échelle
 - La distinction ERGOL/LOLLI de l'*Economicon* de JPP s'applique à la mesure de valeur en gouvernance
 - Une dimension fractale comprise entre 1,2 et 1,6 est corrélée à une croissance de gouvernance durable
-- Sources : [Spécification de Capitalisation Fractale](../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (théorème de Noether), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (incomplétude de Gödel)
+- Sources : [Spécification de Capitalisation Fractale](../../../../../logic/fractal-compounding.md), [Bourbakof](https://archive.org/details/TheseAnglaise) (théorème de Noether), [Economicon](https://archive.org/details/Economicon-English-JeanPierrePetit) (ERGOL/LOLLI), [Logotron](https://archive.org/details/TheseAnglaise) (incomplétude de Gödel)
 - État de croyance : T(0.70) F(0.05) U(0.20) C(0.05)
