@@ -65,3 +65,4 @@ state/dsp-validation/*.json
 # paths into a developer's own clone) and not governance state, so it must never
 # be committed to a public repo. The tracked, portable equivalent is `.mcp.json`.
 mcp_config.json
+assets/generated/*.png
