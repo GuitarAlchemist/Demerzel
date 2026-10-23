@@ -1,0 +1,27 @@
+{
+  "department": "ix-research",
+  "grammar_version": "1.0.0",
+  "hypothesis_weights": {
+    "inductive": 0.2,
+    "deductive": 0.2,
+    "abductive": 0.2,
+    "analogical": 0.2,
+    "combinatorial": 0.2
+  },
+  "test_weights": {
+    "empirical": 0.1667,
+    "formal_proof": 0.1667,
+    "simulation": 0.1667,
+    "thought_experiment": 0.1667,
+    "cross_validation": 0.1666,
+    "adversarial": 0.1666
+  },
+  "metadata": {
+    "last_updated": "2026-10-16",
+    "cycle_count": 0,
+    "total_T": 0,
+    "total_F": 0,
+    "total_U": 0,
+    "total_C": 0
+  }
+}

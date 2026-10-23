@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-005",
+  "department": "psychohistory",
+  "question": "If a model predicts tomorrow's effectiveness label for each governance artifact, what accuracy does \"nothing changes\" already reach on the recorded quality trend?",
+  "production_path": [
+    "investigation: read scripts/quality_trend.py and the five quality-trend JSONL files at the pinned commit; found that effectiveness_from is copied from the artifact's previous row and that the first run is a flagged baseline",
+    "extract: snapshot labels, timestamps and baseline flags into observed-input.json, refusing any source file whose Git blob differs from the pin",
+    "model: define one forecast as two consecutive labelled rows of one artifact and cross-check it against the in-row from/to pairs",
+    "test: score persistence, a constant-label forecast and four imaginary forecasters by accuracy and by skill against persistence, split by the time between runs",
+    "adversarial: planted label flip and planted missing label as negative controls, tampered inputs, and the objection that the only change lies on the step from a seed row to the first feeder run",
+    "test: byte-identical rerun of the analysis, 26 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "On the recorded quality trend, \"the label stays the same\" is correct for more than 99% of consecutive label pairs, so accuracy cannot separate a useful forecasting model from a useless one, and too few labels change for a skill score against persistence to resolve anything.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the quality trend holds 1,548 rows in 88 runs (one flagged baseline run and 87 feeder runs from 2026-07-18 to 2026-10-13) for 18 artifacts; 1,529 pairs of consecutive labelled rows exist and 1 of them changed (U to F), so the persistence forecast is correct for 1,528 of 1,529 pairs, 99.93%.",
+    "Reading effectiveness_from against effectiveness_to inside a row gives 1,540 pairs because it includes 11 baseline rows that have no earlier row; outside those rows the two readings give the same 1,529 pairs with 0 mismatches, and a planted mismatch is detected.",
+    "The one change lies on the 78.5-day step from a baseline row to the first feeder run and coincides with a demoted event dated 2026-07-18 in the artifact's evolution record; between feeder runs 0 of 1,518 pairs changed (0 of 1,433 for runs about a day apart), so a skill score against persistence is undefined there.",
+    "Scored on the same 1,529 pairs, four imaginary forecasters (synthetic, defined by assumed error counts) reach accuracies from 99.80% to 100% with skills of -2, -1, 0 and 1, and the hindsight forecast \"always T\" reaches 50.69%; the analysis reran byte-identically and its 26 self-checks passed.",
+    "No forecasting model was trained or run, the edit history of the evolution records was not read, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-13T22:43:22Z"
+}

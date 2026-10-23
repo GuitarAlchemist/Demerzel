@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-010",
+  "department": "psychohistory",
+  "question": "English course modules were added in bursts. What do exponential, logistic and linear fits to the cumulative count each predict for reaching 525, and can the history tell them apart?",
+  "production_path": [
+    "investigation: took over an interrupted session; reran its extract (one git ls-tree per commit), rewrote it around a single git log --name-status call with a replay check, and confirmed that both methods give the same 73 commit rows",
+    "extract: snapshot commit ids, committer and author dates and the English module names at each commit into observed-input.json, from commits and trees only, refusing a shallow clone or a history that differs from the pin",
+    "model: end-of-day counts on 207 UTC days, a 7-day burst rule, three growth laws (line, exponential, logistic with ceiling 525) and a half-module rule for reaching the target; the hypothesis was written before any fit was run",
+    "test: least-squares fits at three cut-off dates, a profile over the logistic ceiling, exact step fits and burst scenarios",
+    "adversarial: negative controls (a noisy line, a planted logistic seen past and before its turn), fits on the active days only, on log counts and on author dates, an independent refit with SciPy outside the fixture, and the objection that the series records production decisions, not a growth law",
+    "test: byte-identical reruns under Python 3.9, 3.12 and 3.14 on Windows and 3.14 on Linux, 39 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "Fitted by least squares to the daily count of English modules, a line, an exponential and a logistic curve with ceiling 525 leave residual sums of squares within a factor of two of one another, while their dates for reaching 525 differ by more than five years; refitting without the last burst moves each of those dates by more than five years. The history therefore cannot tell the three growth laws apart and supports no single date for 525.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, 73 of the 1,599 reachable commits touch state/streeling/courses; they add 73 English module paths and remove 5, leaving 68 modules (13.0% of the plan's 525). The end-of-day count changes on 12 of 207 days, and 37 of the 68 modules arrived in the last 17 days, in a burst still open at the pin, which itself adds a module.",
+    "Least-squares fits to the 207 daily counts leave residual sums of 11,462.4 (line), 11,100.5 (exponential) and 11,130.8 (logistic, ceiling 525), a spread of 3.3%, while their dates for 525 are 2044-01-21, 2029-06-24 and 2036-03-29, 14.6 years apart. Each fit's residuals change sign 3 times in 206 comparisons (107 for a seeded line with independent noise), and a two-level staircase reaches a residual sum of 1,564.1.",
+    "With the ceiling fixed at 12 values from 69 to 100,000 the logistic's residual sum falls at every step, from 11,469.8 to 11,100.7, so no ceiling can be estimated; the same profile recovers a planted ceiling of 525 on a seeded logistic seen past its turn and is flat within 0.4% on one seen before it.",
+    "Refitted on the history up to 2026-09-26, the eve of the last burst, the three dates become 2088-12-21, 2037-10-26 and 2062-12-02 (44.9, 8.3 and 26.7 years later); fitted up to 2026-04-05 they were 2028-08-16, 2026-08-02 and 2027-04-16. Repeating the three observed bursts (an assumption) gives 0.5 to 27.8 years; the cases that take their size from the open burst are upper bounds.",
+    "No interval, likelihood or information criterion was computed, the modules' content was not read, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T00:51:32Z"
+}

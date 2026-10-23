@@ -1,23 +1,32 @@
 --- ## Research Finding: Quantitative Variety Ratio Measurement
 --- Belief: **T**, confidence: 0.85, cycle: cybernetics-2026-03-23-003
 --- Third Seldon Plan cycle. First quantitative measurement framework.
+--- Revised 2026-09-30 with the CYB-003 rewrite (PR #1164): the dimensional ratios (1.82, 17.00, 0.56),
+--- the 3-bit regulatory gap and the use of 666 policy pairs as a disturbance estimate are withdrawn.
+--- Revised 2026-10-01 (PR #1164): persona selection and the decision labels are bounded from above
+--- by the catalogue, not established as varieties; the disturbance estimates no longer bound V_D either way.
+--- The Ashby bound applies only to a cycle whose record shows every disturbance answered and no response
+--- bringing two disturbances to the same outcome (Metric 3 of the course). Section 6 of
+--- grammars/sci-cybernetics.ebnf now states the law on outcomes with these conditions, hence grammar_evolved.
+--- A zero count has no log2 and is recorded as a label, as in Metric 3: idle or full block for an
+--- attenuator, quiet or unanswered for a cycle's disturbances and responses.
 RESEARCH_FINDING {
   department: "cybernetics",
   question: "How can Demerzel measure its variety ratio quantitatively?",
-  conclusion: "Variety ratio must be measured across three independent dimensions: behavioral (R=1.82, healthy), structural (R=17.00, caution — high generativity), regulatory (R=0.56, by design — conservative). The formula V=log2(N) applied per dimension avoids the error of naive additive models. A 3-bit gap exists between regulatory response variety (6.32 bits) and internal disturbance variety (9.38 bits), absorbed by human escalation, constitutional override, and PDCA cycling. Policy-interaction complexity (37 policies, 666 pairwise combinations) is the dominant disturbance source and grows quadratically.",
+  conclusion: "Variety must be counted on outcomes, dimension by dimension (behavioral, structural, regulatory), with V = log2(N) for a count N > 0. A zero count has no log2 and is recorded as a label, not a number: a cycle that meets no disturbance (N_D = 0) is quiet, and one that meets disturbances and gives no response (N_D > 0, N_R = 0) is unanswered. Three counting rules apply: a product of component counts is a joint state space only if the components vary independently, and otherwise an upper bound; a count of rules is not a count of states, so an attenuator is measured by A = log2(N_in / N_out) on the outcomes that reach it and pass it, where a cycle in which nothing reaches it (N_in = 0) is recorded as idle and one in which inputs reach it and none passes (N_in > 0, N_out = 0) as a full block, not as numbers; and an inventory is not a set of outcomes. No variety is measured yet. The inventory at commit 74cf7c5 and the definitions bound two of them from above: persona selection at most 3.81 bits (14 personas), and the decision labels, three separate vocabularies, at most 6.91 bits combined (120 combinations); how much of either is in use needs records of the personas chosen and the labels decisions carry. Structural, response and disturbance varieties and every attenuation are not measured; the disturbance estimates count sources, states and events rather than distinct disturbances, so they bound disturbance variety neither from below nor from above, and no Ashby gap can be computed from the inventory. Ashby's Law is stated on outcomes: V_D - V_R_amp bounds outcome variety only in a cycle that meets at least one disturbance and whose record shows that every disturbance met received a response and that no response brought two disturbances to the same outcome; in any other cycle, quiet and unanswered cycles included, the bound is not applicable. Regulation is therefore measured by recording, per cycle, each disturbance met, the response given (none, if none) and its outcome on the essential variables.",
   evidence: [
     "Ashby (1956) Chapter 7: V = log2(N) is the formal definition of variety",
     "Beer (1979) Chapter 6: variety engineering requires separate amplifier/attenuator accounting",
-    "GPT-4o cross-validation confirms V=log2(N) formula and R<1 for regulatory dimension",
-    "Dimensional separation avoids GPT-4o's additive error (negative variety is meaningless)",
-    "Demerzel component inventory: 14 personas, 27 grammars, 37 policies, 17 constitutional articles"
+    "GPT-4o cross-validation confirms the V=log2(N) formula",
+    "schemas/persona.schema.json fixes one voice and one goal_directedness per persona, so persona attributes do not multiply into profiles",
+    "Demerzel component inventory at 74cf7c5: 14 personas, 60 persona constraints, 27 grammars, 1,129 grammar rule definitions, 37 policies, 17 constitutional articles"
   ],
   belief: {value: "T", confidence: 0.85},
   course_produced: true,
-  grammar_evolved: false,
+  grammar_evolved: true,
   follow_up_questions: [
-    "Can the 3-bit regulatory gap be closed by hierarchical policy grouping?",
-    "How should grammar production usage be tracked to detect dead productions?",
-    "What is the information-theoretic relationship between tetravalent logic and Shannon entropy?"
+    "How can each disturbance met, the response given and its outcome on the essential variables be logged in each cycle, so that regulation can be measured? Once it is, does hierarchical policy grouping reduce the disturbances that policy interactions produce, or only the number of policy pairs?",
+    "How should grammar production usage be tracked to detect dead productions and inform structural attenuation?",
+    "What is the information-theoretic relationship between Demerzel's hexavalent logic (T/P/U/D/F/C) and Shannon entropy — does U (Unknown) carry more bits than T (True)?"
   ]
 } -> KNOWLEDGE_STATE "cybernetics/findings/cybernetics-2026-03-23-003"

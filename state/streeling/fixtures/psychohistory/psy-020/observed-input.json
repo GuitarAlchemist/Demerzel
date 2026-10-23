@@ -1,0 +1,1492 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-020-goodhart-and-reflexivity",
+  "kind": "observed",
+  "label_convention": "Artifact names, citation paths and the paths of files found by the search are data labels, written with a space on each side of every slash: a tracked file that contained them literally would be counted as a citation by the rule studied here. The paths under 'source' and 'quoted_passages' are files this fixture reads by name; the one among them that is a citation path (the compounding-metrics policy) is written spaced too.",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "tree": "93a30b4afccee2e2cf7733d6223943ffeca86e86",
+    "commit_check": "git ls-tree -r <commit> gave the manifest below, and every byte searched has the blob id that manifest records for its path",
+    "manifest": {
+      "command": "git ls-tree -r 4b03838800dcd4894f1e026461979bff1d985ca8",
+      "files": 2062,
+      "files_by_mode": {
+        "100644": 2059,
+        "100755": 3
+      },
+      "sha256": "156ff20220ab2e92bab0ce7361a47326f10431f6a281446234199e57bd97d2a8",
+      "sha256_of": "the lines '<blob id> <path>' sorted by path bytes, each ended by a line feed"
+    },
+    "files": [
+      {
+        "path": "scripts/evolution_metrics.py",
+        "git_blob": "024da5615525dbd351265dfdb2f9040485e77b7f",
+        "role": "the producer of citation_count"
+      },
+      {
+        "path": "scripts/quality_trend.py",
+        "git_blob": "6180a21d72e1c4f4c89197e701e202dce079b5a8",
+        "role": "the feeder of the quality trend"
+      },
+      {
+        "path": "policies/anti-lolli-inflation-policy.yaml",
+        "git_blob": "7896a6141a2013c2bf2cfd91392de6b3745b52d9",
+        "role": "the policy that reads the count"
+      },
+      {
+        "path": "state/driver/lolli-ergol-history.json",
+        "git_blob": "737dfc45560b27f292c177c6afa3dc8721fb5dc0",
+        "role": "the policy's history file"
+      },
+      {
+        "path": "logic/fractal-compounding.md",
+        "git_blob": "0d2f259717b203c41eeb247f6d8ee9dec2e8dc62",
+        "role": "the rule that calls a concentration of citations healthy"
+      },
+      {
+        "path": "policies / compounding-metrics-policy.yaml",
+        "git_blob": "24563e01d0d49909c9b6a41ac51c67a6a6117e48",
+        "role": "the policy that sets a target for that concentration (a citation path, written spaced)"
+      },
+      {
+        "path": "state/evolution/2026-03-17-alignment-policy.evolution.json",
+        "git_blob": "c8dbaeda5c8bf1b8fe063f9828c86e39df718a9d",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-03-17-asimov-constitution.evolution.json",
+        "git_blob": "7c7915e2bd167b2959cfa32ee69632b12273fe57",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-03-17-default-constitution.evolution.json",
+        "git_blob": "589a32f81d53181a64eec9a62e15777ba3d39010",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-03-18-compounding-cycle.evolution.json",
+        "git_blob": "ce24deb5744ae454cb40c9f80fddf237d313d9bf",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-03-20-autonomous-driver.evolution.json",
+        "git_blob": "8465478632590e1679ec93c725d5383f8b67e2ab",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-03-20-memristive-markov.evolution.json",
+        "git_blob": "32686dbbc6c42df9bb19a7e8afec99cdd63b5a58",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-04-03-visual-governance.evolution.json",
+        "git_blob": "5df5099a57099363c4e317dafe0dcac495ac0005",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-04-30-hari-subjective-logic.evolution.json",
+        "git_blob": "979b7a14153c94134d8cf65770f2d027132a2850",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-04-30-harness-engineering.evolution.json",
+        "git_blob": "8ff229fd4b018cbbee5f84034907c6ce607371d2",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-04-30-ix-autoresearch.evolution.json",
+        "git_blob": "ef399e0139f95ed407906a7246065e39158a2ea3",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-04-30-the-sentinel.evolution.json",
+        "git_blob": "ce0702627a6c588b0e53751bdb7d3384c57b381b",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-06-21-ml-feedback-loop.evolution.json",
+        "git_blob": "0c0bdf6c1853d92c6878bc2caee732ac092507ad",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-06-24-afk-self-merge.evolution.json",
+        "git_blob": "c996d0b573bfe50de90e2f9a51e65c4d073f43ab",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-07-23-galactic-v1.3-ratification.evolution.json",
+        "git_blob": "7184c7d18ddd23ae1dfc7e71a1860cf7b4bc02d4",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-07-25-governance-evolution-schema.evolution.json",
+        "git_blob": "4b2340c05df5428c58801d59c22b9b0a8ad09610",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-07-25-kaizen-pdca-schema.evolution.json",
+        "git_blob": "967b0654efc0ee9d679ff8a0363cc309dccd3065",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-07-25-loop-state-schema.evolution.json",
+        "git_blob": "1e1c7958fa9ad25f3d67f5e87aa339dbf107cfa4",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/evolution/2026-07-29-afk-backend-adapter.evolution.json",
+        "git_blob": "006f862a2a2a6025a7435c4c9a3b53b854ba773e",
+        "role": "evolution record"
+      },
+      {
+        "path": "state/quality-trend/2026-05.jsonl",
+        "git_blob": "ab1c35d9948c9bfbb1501b20c39b736d92dc0bb2",
+        "role": "quality-trend rows"
+      },
+      {
+        "path": "state/quality-trend/2026-07.jsonl",
+        "git_blob": "57b303ea2ed56d96010345a2acd508bff248486e",
+        "role": "quality-trend rows"
+      },
+      {
+        "path": "state/quality-trend/2026-08.jsonl",
+        "git_blob": "e2b4462797f1ee06f3188154611de0fdbcc07a23",
+        "role": "quality-trend rows"
+      },
+      {
+        "path": "state/quality-trend/2026-09.jsonl",
+        "git_blob": "9b74c1a34378e3f3941c1c0bb054f5b10fe2b64f",
+        "role": "quality-trend rows"
+      },
+      {
+        "path": "state/quality-trend/2026-10.jsonl",
+        "git_blob": "e64c9c855667f2408e1e4f8c894e1be2722afdd1",
+        "role": "quality-trend rows"
+      }
+    ]
+  },
+  "producer_rule": {
+    "script": "scripts/evolution_metrics.py",
+    "exclusion_pathspecs": [
+      ":!state/evolution",
+      ":!state/quality-trend",
+      ":!**/archived/**",
+      ":!governance-manifest.json"
+    ],
+    "reimplemented_as": "a file is searched when its path is not one of state/evolution, state/quality-trend, governance-manifest.json, does not lie under one of them and does not contain '/archived/'; it is counted for an artifact when its bytes contain one of the artifact's citation paths and it is not that path or a file under it"
+  },
+  "scan": {
+    "tracked_files": 2062,
+    "files_excluded_by_the_pathspecs": 637,
+    "files_searched": 1425,
+    "bytes_searched": 14873445,
+    "citation_paths_listed": 20,
+    "distinct_citation_paths": 19,
+    "files_containing_a_path": 202,
+    "controls": {
+      "file_listing_every_path": {
+        "counts_raised": 16,
+        "largest_raise": 1,
+        "sum_of_raises": 16
+      },
+      "same_file_in_an_excluded_folder": {
+        "counts_raised": 0,
+        "largest_raise": 0,
+        "sum_of_raises": 0
+      },
+      "same_file_under_an_archived_folder": {
+        "counts_raised": 0,
+        "largest_raise": 0,
+        "sum_of_raises": 0
+      },
+      "file_listing_every_spaced_label": {
+        "counts_raised": 0,
+        "largest_raise": 0,
+        "sum_of_raises": 0
+      },
+      "pinned_files_containing_a_spaced_label": 0
+    }
+  },
+  "citation_paths": [
+    {
+      "key": "a",
+      "path": "policies / alignment-policy.yaml",
+      "files_containing_it": 44
+    },
+    {
+      "key": "b",
+      "path": "constitutions / asimov.constitution.md",
+      "files_containing_it": 65
+    },
+    {
+      "key": "c",
+      "path": "constitutions / default.constitution.md",
+      "files_containing_it": 47
+    },
+    {
+      "key": "d",
+      "path": ".claude / skills / demerzel-compound /",
+      "files_containing_it": 2
+    },
+    {
+      "key": "e",
+      "path": "policies / compounding-metrics-policy.yaml",
+      "files_containing_it": 3
+    },
+    {
+      "key": "f",
+      "path": ".claude / skills / demerzel-drive /",
+      "files_containing_it": 5
+    },
+    {
+      "key": "g",
+      "path": "policies / autonomous-loop-policy.yaml",
+      "files_containing_it": 29
+    },
+    {
+      "key": "h",
+      "path": "logic / tetravalent-state.schema.json",
+      "files_containing_it": 23
+    },
+    {
+      "key": "i",
+      "path": "docs / governance / harness-engineering.md",
+      "files_containing_it": 2
+    },
+    {
+      "key": "j",
+      "path": "docs / governance / the-sentinel.md",
+      "files_containing_it": 0
+    },
+    {
+      "key": "k",
+      "path": "scripts / run_ml_feedback_cycle.py",
+      "files_containing_it": 4
+    },
+    {
+      "key": "l",
+      "path": "scripts / apply_ml_feedback.py",
+      "files_containing_it": 4
+    },
+    {
+      "key": "m",
+      "path": "pipelines / ml-feedback-loop.ixql",
+      "files_containing_it": 1
+    },
+    {
+      "key": "n",
+      "path": "scripts / run_afk_cycle.py",
+      "files_containing_it": 15
+    },
+    {
+      "key": "o",
+      "path": "contracts / galactic-protocol.md",
+      "files_containing_it": 45
+    },
+    {
+      "key": "p",
+      "path": "logic / governance-evolution.schema.json",
+      "files_containing_it": 17
+    },
+    {
+      "key": "q",
+      "path": "logic / kaizen-pdca-state.schema.json",
+      "files_containing_it": 13
+    },
+    {
+      "key": "r",
+      "path": "schemas / loop-state.schema.json",
+      "files_containing_it": 15
+    },
+    {
+      "key": "s",
+      "path": "scripts / afk_backends /",
+      "files_containing_it": 7
+    }
+  ],
+  "artifacts": [
+    {
+      "key": "A",
+      "record": "state/evolution/2026-03-17-alignment-policy.evolution.json",
+      "artifact": "policies / alignment-policy.yaml",
+      "artifact_type": "policy",
+      "created_at": "2026-03-17T20:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "policies / alignment-policy.yaml"
+      ],
+      "path_keys": "a",
+      "recorded": {
+        "citation_count": 44,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-10-02T20:05:16Z",
+        "promotion_candidate": true,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 44,
+        "files_by_path": [
+          44
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "B",
+      "record": "state/evolution/2026-03-17-asimov-constitution.evolution.json",
+      "artifact": "constitutions / asimov.constitution.md",
+      "artifact_type": "constitution",
+      "created_at": "2026-03-17T20:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "constitutions / asimov.constitution.md"
+      ],
+      "path_keys": "b",
+      "recorded": {
+        "citation_count": 65,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-07-29T03:21:48Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 65,
+        "files_by_path": [
+          65
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "C",
+      "record": "state/evolution/2026-03-17-default-constitution.evolution.json",
+      "artifact": "constitutions / default.constitution.md",
+      "artifact_type": "constitution",
+      "created_at": "2026-03-17T20:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "constitutions / default.constitution.md"
+      ],
+      "path_keys": "c",
+      "recorded": {
+        "citation_count": 47,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-07-29T03:21:48Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 47,
+        "files_by_path": [
+          47
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "D",
+      "record": "state/evolution/2026-03-18-compounding-cycle.evolution.json",
+      "artifact": "meta / compounding-cycle",
+      "artifact_type": "meta",
+      "created_at": "2026-03-18T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [
+        ".claude / skills / demerzel-compound /",
+        "policies / compounding-metrics-policy.yaml"
+      ],
+      "path_keys": "de",
+      "recorded": {
+        "citation_count": 5,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-13T14:18:51Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 5,
+        "files_by_path": [
+          2,
+          3
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "E",
+      "record": "state/evolution/2026-03-20-autonomous-driver.evolution.json",
+      "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+      "artifact_type": "skill",
+      "created_at": "2026-03-20T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [
+        ".claude / skills / demerzel-drive /",
+        "policies / autonomous-loop-policy.yaml"
+      ],
+      "path_keys": "fg",
+      "recorded": {
+        "citation_count": 29,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-10-02T20:05:16Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": true
+      },
+      "recount": {
+        "files": 29,
+        "files_by_path": [
+          5,
+          28
+        ],
+        "own_files_containing_a_path": 1
+      }
+    },
+    {
+      "key": null,
+      "record": "state/evolution/2026-03-20-memristive-markov.evolution.json",
+      "artifact": "crates / memristive-markov (ix)",
+      "artifact_type": "runtime_code",
+      "created_at": "2026-03-20T00:00:00Z",
+      "measurable": false,
+      "unmeasurable_reason": "citation_paths is empty (the producer's mark for an artifact outside this repository)",
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [],
+      "path_keys": "",
+      "recorded": {
+        "citation_count": 0,
+        "citation_source": null,
+        "last_cited": null,
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": null
+    },
+    {
+      "key": null,
+      "record": "state/evolution/2026-04-03-visual-governance.evolution.json",
+      "artifact": "prime-radiant / visual-governance",
+      "artifact_type": "capability",
+      "created_at": "2026-04-03T00:00:00Z",
+      "measurable": false,
+      "unmeasurable_reason": "citation_paths is empty (the producer's mark for an artifact outside this repository)",
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [],
+      "path_keys": "",
+      "recorded": {
+        "citation_count": 55,
+        "citation_source": null,
+        "last_cited": "2026-04-03T00:00:00Z",
+        "promotion_candidate": true,
+        "deprecation_candidate": false
+      },
+      "recount": null
+    },
+    {
+      "key": "F",
+      "record": "state/evolution/2026-04-30-hari-subjective-logic.evolution.json",
+      "artifact": "logic / tetravalent-state.schema.json",
+      "artifact_type": "schema",
+      "created_at": "2026-04-30T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "logic / tetravalent-state.schema.json"
+      ],
+      "path_keys": "h",
+      "recorded": {
+        "citation_count": 23,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-13T14:18:51Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 23,
+        "files_by_path": [
+          23
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "G",
+      "record": "state/evolution/2026-04-30-harness-engineering.evolution.json",
+      "artifact": "docs / governance / harness-engineering-direction.md",
+      "artifact_type": "capability",
+      "created_at": "2026-04-30T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [
+        "docs / governance / harness-engineering.md"
+      ],
+      "path_keys": "i",
+      "recorded": {
+        "citation_count": 1,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-04-11T18:37:58Z",
+        "promotion_candidate": true,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 1,
+        "files_by_path": [
+          1
+        ],
+        "own_files_containing_a_path": 1
+      }
+    },
+    {
+      "key": "H",
+      "record": "state/evolution/2026-04-30-ix-autoresearch.evolution.json",
+      "artifact": "policies / autonomous-loop-policy.yaml",
+      "artifact_type": "policy",
+      "created_at": "2026-04-30T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "policies / autonomous-loop-policy.yaml"
+      ],
+      "path_keys": "g",
+      "recorded": {
+        "citation_count": 29,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-10-02T20:05:16Z",
+        "promotion_candidate": true,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 29,
+        "files_by_path": [
+          29
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "I",
+      "record": "state/evolution/2026-04-30-the-sentinel.evolution.json",
+      "artifact": "docs / governance / the-sentinel-spec.md",
+      "artifact_type": "persona",
+      "created_at": "2026-04-30T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [
+        "docs / governance / the-sentinel.md"
+      ],
+      "path_keys": "j",
+      "recorded": {
+        "citation_count": 0,
+        "citation_source": "git-grep-v1",
+        "last_cited": null,
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 0,
+        "files_by_path": [
+          0
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "J",
+      "record": "state/evolution/2026-06-21-ml-feedback-loop.evolution.json",
+      "artifact": "ml-feedback-loop",
+      "artifact_type": "capability",
+      "created_at": "2026-06-21T20:40:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [
+        "scripts / run_ml_feedback_cycle.py",
+        "scripts / apply_ml_feedback.py",
+        "pipelines / ml-feedback-loop.ixql"
+      ],
+      "path_keys": "klm",
+      "recorded": {
+        "citation_count": 6,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-12T15:02:41Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 6,
+        "files_by_path": [
+          3,
+          3,
+          0
+        ],
+        "own_files_containing_a_path": 2
+      }
+    },
+    {
+      "key": "K",
+      "record": "state/evolution/2026-06-24-afk-self-merge.evolution.json",
+      "artifact": "afk-graduated-self-merge",
+      "artifact_type": "capability",
+      "created_at": "2026-06-24T01:20:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "citation_paths",
+      "citation_paths": [
+        "scripts / run_afk_cycle.py"
+      ],
+      "path_keys": "n",
+      "recorded": {
+        "citation_count": 14,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-08-03T04:11:46Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 14,
+        "files_by_path": [
+          14
+        ],
+        "own_files_containing_a_path": 1
+      }
+    },
+    {
+      "key": "L",
+      "record": "state/evolution/2026-07-23-galactic-v1.3-ratification.evolution.json",
+      "artifact": "contracts / galactic-protocol.md",
+      "artifact_type": "contract",
+      "created_at": "2026-07-23T13:30:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "contracts / galactic-protocol.md"
+      ],
+      "path_keys": "o",
+      "recorded": {
+        "citation_count": 45,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-10-02T20:05:16Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 45,
+        "files_by_path": [
+          45
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "M",
+      "record": "state/evolution/2026-07-25-governance-evolution-schema.evolution.json",
+      "artifact": "logic / governance-evolution.schema.json",
+      "artifact_type": "schema",
+      "created_at": "2026-07-25T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "logic / governance-evolution.schema.json"
+      ],
+      "path_keys": "p",
+      "recorded": {
+        "citation_count": 17,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-13T14:18:51Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 17,
+        "files_by_path": [
+          17
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "N",
+      "record": "state/evolution/2026-07-25-kaizen-pdca-schema.evolution.json",
+      "artifact": "logic / kaizen-pdca-state.schema.json",
+      "artifact_type": "schema",
+      "created_at": "2026-07-25T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "logic / kaizen-pdca-state.schema.json"
+      ],
+      "path_keys": "q",
+      "recorded": {
+        "citation_count": 13,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-12T17:51:01Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 13,
+        "files_by_path": [
+          13
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "O",
+      "record": "state/evolution/2026-07-25-loop-state-schema.evolution.json",
+      "artifact": "schemas / loop-state.schema.json",
+      "artifact_type": "schema",
+      "created_at": "2026-07-25T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "schemas / loop-state.schema.json"
+      ],
+      "path_keys": "r",
+      "recorded": {
+        "citation_count": 15,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-12T17:51:01Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 15,
+        "files_by_path": [
+          15
+        ],
+        "own_files_containing_a_path": 0
+      }
+    },
+    {
+      "key": "P",
+      "record": "state/evolution/2026-07-29-afk-backend-adapter.evolution.json",
+      "artifact": "scripts / afk_backends /",
+      "artifact_type": "capability",
+      "created_at": "2026-07-29T00:00:00Z",
+      "measurable": true,
+      "unmeasurable_reason": null,
+      "citation_paths_from": "artifact",
+      "citation_paths": [
+        "scripts / afk_backends /"
+      ],
+      "path_keys": "s",
+      "recorded": {
+        "citation_count": 6,
+        "citation_source": "git-grep-v1",
+        "last_cited": "2026-09-13T15:42:14Z",
+        "promotion_candidate": false,
+        "deprecation_candidate": false
+      },
+      "recount": {
+        "files": 6,
+        "files_by_path": [
+          6
+        ],
+        "own_files_containing_a_path": 1
+      }
+    }
+  ],
+  "files_containing_a_path": {
+    ".claude / skills / alignment-check / SKILL.md": "a",
+    ".claude / skills / constitution / SKILL.md": "c",
+    ".claude / skills / demerzel-audit / SKILL.md": "hpqr",
+    ".claude / skills / demerzel-bootstrap-governance / SKILL.md": "o",
+    ".claude / skills / demerzel-bs-decode / SKILL.md": "c",
+    ".claude / skills / demerzel-compound / SKILL.md": "p",
+    ".claude / skills / demerzel-directive / SKILL.md": "o",
+    ".claude / skills / demerzel-discord-dispatch / SKILL.md": "abc",
+    ".claude / skills / demerzel-drive / SKILL.md": "ago",
+    ".claude / skills / demerzel-evolve / SKILL.md": "p",
+    ".claude / skills / demerzel-lolli-remediate / SKILL.md": "a",
+    ".claude / skills / demerzel-loop / SKILL.md": "gr",
+    ".claude / skills / demerzel-metasync / SKILL.md": "a",
+    ".claude / skills / demerzel-patterns / SKILL.md": "g",
+    ".claude / skills / demerzel-recon / SKILL.md": "hp",
+    ".claude / skills / demerzel-roadmap / SKILL.md": "g",
+    ".claude / skills / demerzel-self-diagnostic / SKILL.md": "acg",
+    ".claude / skills / demerzel-team / SKILL.md": "abcg",
+    ".claude / skills / demerzel / SKILL.md": "bco",
+    ".claude / skills / ga-ask / SKILL.md": "a",
+    ".claude / skills / ga-ralph / SKILL.md": "g",
+    ".claude / skills / seldon-auto-research / SKILL.md": "g",
+    ".claude / skills / seldon-deliver / SKILL.md": "o",
+    ".claude / skills / tetravalent / SKILL.md": "h",
+    ".github / DISCUSSION_TEMPLATE / constitutional-proposal.yml": "bc",
+    ".github / ISSUE_TEMPLATE / bug_report.md": "bc",
+    ".github / ISSUE_TEMPLATE / feature_request.md": "c",
+    ".github / PULL_REQUEST_TEMPLATE.md": "c",
+    ".github / issue-templates / belief-state-persistence.md": "o",
+    ".github / issue-templates / governance-integration.md": "bco",
+    ".github / scripts / ga-chatbot-answer.sh": "o",
+    ".github / scripts / generate-wiki.sh": "bco",
+    ".github / scripts / showcase-generate.sh": "g",
+    ".github / workflows / governance-validate.yml": "p",
+    ".github / workflows / ml-governance-schedule.yml": "k",
+    ".github / workflows / project-automation.yml": "bcg",
+    ".github / workflows / streeling-daily.yml": "go",
+    ".gitignore": "l",
+    "BACKLOG.md": "n",
+    "CODE_OF_CONDUCT.md": "b",
+    "SECURITY.md": "c",
+    "config / afk-backends.yaml": "n",
+    "contracts / a2a-mcp-routing.md": "aco",
+    "contracts / directives / cross-pipeline-scanner.directive.md": "bco",
+    "contracts / directives / fuzzy-du-implementation.directive.md": "a",
+    "contracts / directives / mog-executor.directive.md": "a",
+    "contracts / directives / recursive-governance-directive.md": "o",
+    "contracts / ga-orchestrator-architecture.md": "ac",
+    "contracts / galactic-protocol.md": "blp",
+    "docs / agents / afk-agent.md": "gn",
+    "docs / agents / demerzel-onboarding-for-ai-agents.md": "bchpqr",
+    "docs / agents / triage-labels.md": "n",
+    "docs / architecture.md": "o",
+    "docs / articles / ergol-vs-lolli-lessons.md": "e",
+    "docs / automation-manifest.md": "o",
+    "docs / design / 2026-03-28-fractal-algedonic-architecture.md": "h",
+    "docs / governance / harness-engineering.md": "i",
+    "docs / governance / harness-signature-layer.md": "i",
+    "docs / grammar-pipeline.md": "ag",
+    "docs / guides / csharp15-discriminated-unions.md": "c",
+    "docs / ixql-cookbook.md": "o",
+    "docs / methodology / agentic-engineering.md": "o",
+    "docs / org-readme-draft.md": "bc",
+    "docs / reports / 2026-04-30-compound-corrective.md": "dp",
+    "docs / solutions / harness / 2026-07-28-a-constraint-is-worth-its-enforcement-path.md": "r",
+    "docs / solutions / harness / 2026-07-29-afk-backend-adapter-contract.md": "ns",
+    "docs / specs / cross-repo-mcp-glue.md": "o",
+    "docs / specs / ga-marketplace-design.md": "o",
+    "docs / specs / tars-ix-mcp-bridge.md": "ao",
+    "docs / superpowers / plans / 2026-03-14-alignment-framework.md": "abc",
+    "docs / superpowers / plans / 2026-03-14-kaizen-framework.md": "hq",
+    "docs / superpowers / plans / 2026-03-15-autonomous-loop-governance.md": "g",
+    "docs / superpowers / plans / 2026-03-15-demerzel-persona.md": "a",
+    "docs / superpowers / plans / 2026-03-15-foundation-operational-guide.md": "bcq",
+    "docs / superpowers / plans / 2026-03-15-galactic-protocol.md": "bo",
+    "docs / superpowers / plans / 2026-03-15-governance-meta-compounding.md": "op",
+    "docs / superpowers / plans / 2026-03-15-streeling-knowledge-framework.md": "h",
+    "docs / superpowers / plans / 2026-03-17-consumer-repo-integration.md": "bc",
+    "docs / superpowers / plans / 2026-03-17-wiki-auto-contribution.md": "o",
+    "docs / superpowers / plans / 2026-03-20-autonomous-driver.md": "afgor",
+    "docs / superpowers / plans / 2026-03-21-batch-b-governance-extensions.md": "ah",
+    "docs / superpowers / plans / 2026-03-22-mog-implementation-plan.md": "a",
+    "docs / superpowers / plans / 2026-06-22-afk-agent-harness-doctrine.md": "abgnr",
+    "docs / superpowers / plans / 2026-07-21-galactic-protocol-followups.md": "o",
+    "docs / superpowers / specs / 2026-03-14-alignment-framework-design.md": "bc",
+    "docs / superpowers / specs / 2026-03-14-kaizen-framework-design.md": "q",
+    "docs / superpowers / specs / 2026-03-15-autonomous-loop-governance-design.md": "g",
+    "docs / superpowers / specs / 2026-03-15-galactic-protocol-design.md": "o",
+    "docs / superpowers / specs / 2026-03-15-governance-meta-compounding-design.md": "op",
+    "docs / superpowers / specs / 2026-03-17-consumer-repo-integration-design.md": "o",
+    "docs / superpowers / specs / 2026-03-19-autonomous-driver-design.md": "r",
+    "docs / superpowers / specs / 2026-03-21-batch-b-governance-extensions-design.md": "ao",
+    "docs / superpowers / specs / 2026-03-21-mcp-orchestration-grammar-design.md": "a",
+    "docs / superpowers / specs / 2026-03-24-ix-cli-design.md": "a",
+    "docs / superpowers / specs / 2026-06-22-afk-agent-harness-doctrine-design.md": "gknr",
+    "docs / superpowers / specs / 2026-07-30-gaia-semantic-bus-design.md": "n",
+    "docs / workflows / aiw-operating-doctrine.md": "s",
+    "examples / agent-cards / communal-steward.agent-card.json": "b",
+    "examples / agent-cards / convolution-agent.agent-card.json": "b",
+    "examples / agent-cards / critical-theorist.agent-card.json": "b",
+    "examples / agent-cards / default.agent-card.json": "b",
+    "examples / agent-cards / demerzel.agent-card.json": "b",
+    "examples / agent-cards / kaizen-optimizer.agent-card.json": "b",
+    "examples / agent-cards / rational-administrator.agent-card.json": "b",
+    "examples / agent-cards / recovery-agent.agent-card.json": "b",
+    "examples / agent-cards / reflective-architect.agent-card.json": "b",
+    "examples / agent-cards / seldon.agent-card.json": "b",
+    "examples / agent-cards / skeptical-auditor.agent-card.json": "b",
+    "examples / agent-cards / system-integrator.agent-card.json": "b",
+    "examples / agent-cards / validator-reflector.agent-card.json": "b",
+    "examples / agent-cards / virtuous-leader.agent-card.json": "b",
+    "examples / claude-code / minimal-agent-config.md": "ac",
+    "examples / external-sync-envelope-github-wiki.json": "b",
+    "examples / ixql / cross-repo-directive.ixql": "o",
+    "examples / ixql / governance-to-test.ixql": "bc",
+    "examples / sample-agent-card.json": "b",
+    "examples / sample-data / governance-evolution-seed.json": "abcg",
+    "examples / sample-data / knowledge-package-governance.json": "b",
+    "examples / sample-data / knowledge-state-in-progress.json": "b",
+    "examples / sample-data / knowledge-state-learned.json": "b",
+    "examples / scenarios / constitutional-violation.md": "bc",
+    "examples / scenarios / knowledge-transfer.md": "bho",
+    "examples / scenarios / pdca-cycle-complete.md": "ahq",
+    "examples / scenarios / reconnaissance-sync.md": "abh",
+    "examples / scenarios / zeroth-law-escalation.md": "ab",
+    "governance-health.json": "s",
+    "grammars / sci-ml-pipelines.ebnf": "a",
+    "grammars / sci-systems-engineering.ebnf": "o",
+    "logic / fractal-compounding.md": "a",
+    "logic / fuzzy-membership.md": "a",
+    "logic / governance-evolution.schema.json": "c",
+    "pipelines / constitutional-evolution.ixql": "bc",
+    "pipelines / driver-cycle.ixql": "f",
+    "pipelines / governance-audit.ixql": "bcoqr",
+    "pipelines / metasync.ixql": "o",
+    "policies / adaptive-fanout-policy.yaml": "g",
+    "policies / adversarial-resilience-policy.yaml": "abcgho",
+    "policies / autonomous-loop-policy.yaml": "abcrs",
+    "policies / context-engine-policy.yaml": "ac",
+    "policies / context-management-policy.yaml": "a",
+    "policies / governance-audit-policy.yaml": "bhq",
+    "policies / governance-process-policy.yaml": "bc",
+    "policies / kaizen-policy.yaml": "hq",
+    "policies / meta-learning-policy.yaml": "e",
+    "policies / ml-governance-feedback-policy.yaml": "hpq",
+    "policies / multi-model-orchestration-policy.yaml": "ao",
+    "policies / seldon-plan-policy.yaml": "g",
+    "policies / streeling-policy.yaml": "h",
+    "policies / teaching-effectiveness-policy.yaml": "eh",
+    "schemas / agent-card.schema.json": "b",
+    "scripts / afk_backends / __init__.py": "ns",
+    "scripts / apply_ml_feedback.py": "hl",
+    "scripts / council_emit.py": "gn",
+    "scripts / run_afk_cycle.py": "gnr",
+    "scripts / run_ml_feedback_cycle.py": "km",
+    "scripts / test_afk_backends.py": "s",
+    "scripts / test_cycle_driver_execution_policy.py": "kn",
+    "scripts / test_gaia_bus.py": "n",
+    "scripts / test_run_afk_cycle.py": "abr",
+    "scripts / validate_governance.py": "pr",
+    "state / beliefs / 2026-03-17-demerzel-framework-integrity.belief.json": "qr",
+    "state / beliefs / 2026-07-25-cross-reference-integrity.belief.json": "p",
+    "state / beliefs / 2026-07-25-schema-conformance.belief.json": "qr",
+    "state / beliefs / 2026-07-29-afk-backend-adapter.belief.json": "gns",
+    "state / constitution / SUPERSEDED.md": "p",
+    "state / constitution / evolution-history.json": "bc",
+    "state / oversight / ml-recommendations / README.md": "l",
+    "state / pdca / 2026-05-01-compound-freshness-check.pdca.json": "d",
+    "state / pdca / 2026-05-01-evolution-schema-follows-reality.pdca.json": "hp",
+    "state / pdca / 2026-05-01-subjective-logic-tetravalent-upgrade.pdca.json": "h",
+    "state / snapshots / 2026-07-25-audit-level1.snapshot.json": "hnpq",
+    "state / snapshots / 2026-07-25-audit-level2.snapshot.json": "hp",
+    "state / streeling / courses / computer-science / en / cs-002-governing-agentic-loops.md": "fg",
+    "state / streeling / courses / computer-science / es / cs-002-governing-agentic-loops.es.md": "fg",
+    "state / streeling / courses / computer-science / fr / cs-002-governing-agentic-loops.fr.md": "fg",
+    "state / streeling / courses / cybernetics / en / cyb-002-active-dampening-cross-repo-oscillation.md": "o",
+    "state / streeling / courses / cybernetics / es / cyb-002-active-dampening-cross-repo-oscillation.es.md": "o",
+    "state / streeling / courses / cybernetics / fr / cyb-002-active-dampening-cross-repo-oscillation.fr.md": "o",
+    "state / streeling / courses / semiotics / en / sem-001-signs-in-governance.md": "a",
+    "state / streeling / courses / semiotics / es / sem-001-signs-in-governance.es.md": "a",
+    "state / streeling / courses / semiotics / fr / sem-001-signs-in-governance.fr.md": "a",
+    "templates / AGENTS.md": "bco",
+    "templates / CLAUDE.md.snippet": "bc",
+    "templates / agent-card.template.json": "b",
+    "templates / agents / ga-AGENTS.md": "bco",
+    "templates / agents / ix-AGENTS.md": "bco",
+    "templates / agents / tars-AGENTS.md": "bco",
+    "templates / persona-to-agent-card.md": "bo",
+    "templates / recursive-governance-kit / CLAUDE.md.snippet": "bc",
+    "templates / recursive-governance-kit / README.md": "bo",
+    "templates / recursive-governance-kit / constitution.md": "b",
+    "tests / behavioral / asimov-law-cases.md": "a",
+    "tests / behavioral / auto-remediation-cases.md": "c",
+    "tests / behavioral / context-engine-cases.md": "b",
+    "tests / behavioral / demerzel-cases.md": "a",
+    "tests / behavioral / ga-orchestrator-cases.md": "ac",
+    "tests / behavioral / meta-compounding-cases.md": "c",
+    "tests / behavioral / ml-governance-feedback-cases.md": "h",
+    "tests / behavioral / scheduled-research-cases.md": "g",
+    "tests / behavioral / seldon-cases.md": "bc",
+    "tests / behavioral / self-diagnostic-cases.md": "a",
+    "tests / behavioral / systems-engineering-cases.md": "c"
+  },
+  "quality_trend": {
+    "rows": 1548,
+    "runs": 88,
+    "artifacts": 18,
+    "rows_with_a_citation_count": 1537,
+    "rows_with_a_non_zero_delta_citations": [
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "policies / alignment-policy.yaml",
+        "delta_citations": 3,
+        "citation_count": 3,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "constitutions / asimov.constitution.md",
+        "delta_citations": 5,
+        "citation_count": 5,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "constitutions / default.constitution.md",
+        "delta_citations": 11,
+        "citation_count": 11,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "meta / compounding-cycle",
+        "delta_citations": 4,
+        "citation_count": 4,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "delta_citations": 1,
+        "citation_count": 1,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "prime-radiant / visual-governance",
+        "delta_citations": 55,
+        "citation_count": 55,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "logic / tetravalent-state.schema.json",
+        "delta_citations": 4,
+        "citation_count": 4,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "docs / governance / harness-engineering-direction.md",
+        "delta_citations": 8,
+        "citation_count": 8,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "policies / autonomous-loop-policy.yaml",
+        "delta_citations": 12,
+        "citation_count": 12,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "docs / governance / the-sentinel-spec.md",
+        "delta_citations": 1,
+        "citation_count": 1,
+        "previous_row": "no count",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "ml-feedback-loop",
+        "delta_citations": 1,
+        "citation_count": 1,
+        "previous_row": "none",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-18T12:00:00Z",
+        "artifact": "afk-graduated-self-merge",
+        "delta_citations": 1,
+        "citation_count": 1,
+        "previous_row": "none",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-29T00:19:14Z",
+        "artifact": "contracts / galactic-protocol.md",
+        "delta_citations": 2,
+        "citation_count": 2,
+        "previous_row": "none",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "artifact": "logic / governance-evolution.schema.json",
+        "delta_citations": 2,
+        "citation_count": 2,
+        "previous_row": "none",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "artifact": "logic / kaizen-pdca-state.schema.json",
+        "delta_citations": 3,
+        "citation_count": 3,
+        "previous_row": "none",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-07-29T13:52:24Z",
+        "artifact": "schemas / loop-state.schema.json",
+        "delta_citations": 3,
+        "citation_count": 3,
+        "previous_row": "none",
+        "previous_count": null,
+        "citation_source": null,
+        "rebaseline": false
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "policies / alignment-policy.yaml",
+        "delta_citations": 2,
+        "citation_count": 44,
+        "previous_row": "count",
+        "previous_count": 42,
+        "citation_source": "git-grep-v1",
+        "rebaseline": false
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "skills / demerzel-drive + policies / autonomous-loop-policy v1.1.0",
+        "delta_citations": 2,
+        "citation_count": 29,
+        "previous_row": "count",
+        "previous_count": 27,
+        "citation_source": "git-grep-v1",
+        "rebaseline": false
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "policies / autonomous-loop-policy.yaml",
+        "delta_citations": 2,
+        "citation_count": 29,
+        "previous_row": "count",
+        "previous_count": 27,
+        "citation_source": "git-grep-v1",
+        "rebaseline": false
+      },
+      {
+        "run": "2026-10-03T15:31:16Z",
+        "artifact": "contracts / galactic-protocol.md",
+        "delta_citations": 2,
+        "citation_count": 45,
+        "previous_row": "count",
+        "previous_count": 43,
+        "citation_source": "git-grep-v1",
+        "rebaseline": false
+      }
+    ],
+    "latest_run": {
+      "timestamp": "2026-10-13T18:43:54Z",
+      "rows": 18,
+      "sum_of_citation_counts": 414,
+      "equal_to_the_evolution_records": true
+    }
+  },
+  "quoted_passages": {
+    "producer_definition": {
+      "file": "scripts/evolution_metrics.py",
+      "first_line": 12,
+      "last_line": 15,
+      "text": [
+        "citation_count  tracked files that mention any of the artifact's citation",
+        "paths (`git grep -lF`), excluding the artifact's own files,",
+        "archived/, state/evolution/, state/quality-trend/ and the",
+        "generated governance-manifest.json."
+      ]
+    },
+    "producer_citation_paths": {
+      "file": "scripts/evolution_metrics.py",
+      "first_line": 20,
+      "last_line": 23,
+      "text": [
+        "Citation paths are the entry's `citation_paths` list when present, else its",
+        "`artifact` when that is a tracked path. An explicit empty list marks an",
+        "artifact that lives outside this repository (unmeasurable here). Anything",
+        "else is reported as unmeasurable and left untouched."
+      ]
+    },
+    "producer_source_label": {
+      "file": "scripts/evolution_metrics.py",
+      "first_line": 42,
+      "last_line": 42,
+      "text": [
+        "CITATION_SOURCE = \"git-grep-v1\""
+      ]
+    },
+    "producer_exclusions": {
+      "file": "scripts/evolution_metrics.py",
+      "first_line": 43,
+      "last_line": 43,
+      "text": [
+        "EXCLUDED = (\":!state/evolution\", \":!state/quality-trend\", \":!**/archived/**\", \":!governance-manifest.json\")"
+      ]
+    },
+    "producer_search": {
+      "file": "scripts/evolution_metrics.py",
+      "first_line": 80,
+      "last_line": 82,
+      "text": [
+        "for ref in git(root, \"grep\", \"-lF\", \"-e\", p, \"--\", \".\", *EXCLUDED).splitlines():",
+        "if ref and not owned_by(ref, paths):",
+        "refs.add(ref)"
+      ]
+    },
+    "producer_count": {
+      "file": "scripts/evolution_metrics.py",
+      "first_line": 86,
+      "last_line": 86,
+      "text": [
+        "return len(refs), last"
+      ]
+    },
+    "feeder_reads_count": {
+      "file": "scripts/quality_trend.py",
+      "first_line": 76,
+      "last_line": 76,
+      "text": [
+        "citation = int(metrics.get(\"citation_count\", 0) or 0)"
+      ]
+    },
+    "policy_citations": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 43,
+      "last_line": 43,
+      "text": [
+        "citations: \"Times an artifact is referenced in decisions, manifests, research, or other artifacts\""
+      ]
+    },
+    "policy_ergol": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 48,
+      "last_line": 48,
+      "text": [
+        "ERGOL_n = citations_n + pdca_completions_n + u_to_t_transitions_n + knowledge_transfers_n"
+      ]
+    },
+    "policy_lolli": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 62,
+      "last_line": 62,
+      "text": [
+        "formula: \"LOLLI_n = count(artifacts created in cycle N)\""
+      ]
+    },
+    "policy_ratio": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 69,
+      "last_line": 69,
+      "text": [
+        "formula: \"ratio_n = LOLLI_n / max(ERGOL_n, 1)\""
+      ]
+    },
+    "policy_freeze_trigger": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 97,
+      "last_line": 97,
+      "text": [
+        "trigger: \"lolli_ergol_ratio > 3.0 for 3 consecutive cycles\""
+      ]
+    },
+    "policy_zero_rule": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 139,
+      "last_line": 140,
+      "text": [
+        "zero_citation_window: 14   # days",
+        "rule: \"Any artifact with 0 citations after 14 days of creation is flagged for deprecation review\""
+      ]
+    },
+    "policy_citation_source": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 305,
+      "last_line": 305,
+      "text": [
+        "- \"state/evolution/*.evolution.json — citation_count delta\""
+      ]
+    },
+    "policy_zero_scan": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 317,
+      "last_line": 317,
+      "text": [
+        "action: \"Scan all artifacts created > 14 days ago; flag any with citation_count = 0\""
+      ]
+    },
+    "policy_healthy": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 332,
+      "last_line": 333,
+      "text": [
+        "healthy:",
+        "max_ratio: 1.5"
+      ]
+    },
+    "policy_watch": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 337,
+      "last_line": 339,
+      "text": [
+        "watch:",
+        "min_ratio: 1.5",
+        "max_ratio: 2.5"
+      ]
+    },
+    "policy_warning": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 343,
+      "last_line": 345,
+      "text": [
+        "warning:",
+        "min_ratio: 2.5",
+        "max_ratio: 3.0"
+      ]
+    },
+    "policy_freeze": {
+      "file": "policies/anti-lolli-inflation-policy.yaml",
+      "first_line": 349,
+      "last_line": 351,
+      "text": [
+        "freeze:",
+        "min_ratio: 3.0",
+        "consecutive_cycles: 3"
+      ]
+    },
+    "power_law_detection_rule": {
+      "file": "logic/fractal-compounding.md",
+      "first_line": 56,
+      "last_line": 56,
+      "text": [
+        "**Detection rule:** If the top 20% of governance artifacts account for more than 60% of citations, a power law is present. This is healthy — it means compounding is concentrating value where it matters."
+      ]
+    },
+    "power_law_data": {
+      "file": "logic/fractal-compounding.md",
+      "first_line": 60,
+      "last_line": 60,
+      "text": [
+        "Tracked via: `state/evolution/*.evolution.json` citation counts, analyzable by SymPy MCP."
+      ]
+    },
+    "power_law_integration": {
+      "file": "logic/fractal-compounding.md",
+      "first_line": 138,
+      "last_line": 138,
+      "text": [
+        "- State: `state/evolution/*.evolution.json` (citation tracking for power law detection)"
+      ]
+    },
+    "metrics_policy_rule": {
+      "file": "policies / compounding-metrics-policy.yaml",
+      "first_line": 118,
+      "last_line": 118,
+      "text": [
+        "rule: \"Top 20% of governance artifacts account for > 60% of citations → power law present (healthy)\""
+      ]
+    },
+    "metrics_policy_source": {
+      "file": "policies / compounding-metrics-policy.yaml",
+      "first_line": 120,
+      "last_line": 120,
+      "text": [
+        "detection_source: \"state/evolution/*.evolution.json citation_count fields\""
+      ]
+    },
+    "metrics_policy_share": {
+      "file": "policies / compounding-metrics-policy.yaml",
+      "first_line": 219,
+      "last_line": 222,
+      "text": [
+        "- name: power_law_health",
+        "formula: \"citation_share of top 20% artifacts\"",
+        "target: \"0.60–0.85\"",
+        "alert: \"> 0.90 (fragile concentration)\""
+      ]
+    }
+  },
+  "policy": {
+    "file": "policies/anti-lolli-inflation-policy.yaml",
+    "zero_citation_window_days": 14,
+    "ratio_bands": {
+      "healthy_below": 1.5,
+      "watch_from": 1.5,
+      "watch_to": 2.5,
+      "warning_from": 2.5,
+      "warning_to": 3.0,
+      "freeze_from": 3.0,
+      "freeze_after_consecutive_cycles": 3
+    },
+    "history_file": "state/driver/lolli-ergol-history.json",
+    "history_cycles": [
+      {
+        "cycle": "001",
+        "timestamp": "2026-03-23T22:00:00Z",
+        "method": "demerzel-lolli-remediate dogfood",
+        "lolli_count": 419,
+        "ergol_count": 311,
+        "ratio": 1.35,
+        "ratio_status": "healthy",
+        "artifacts_deleted": 12,
+        "deleted_artifacts_listed": 12
+      }
+    ]
+  },
+  "power_law_rule": {
+    "rule_file": "logic/fractal-compounding.md",
+    "policy_file": "policies / compounding-metrics-policy.yaml",
+    "top_percent": 20,
+    "share_above_percent": 60,
+    "policy_target_share": [
+      0.6,
+      0.85
+    ],
+    "policy_alert_above_share": 0.9,
+    "population": "the citation_count of every evolution record (detection_source of the policy)"
+  },
+  "correction_note": {
+    "record": "state/evolution/2026-04-30-the-sentinel.evolution.json",
+    "artifact": "docs / governance / the-sentinel-spec.md",
+    "event_type": "cross_repo_validation",
+    "event_timestamp": "2026-09-13T00:00:00Z",
+    "quote": "Correction, 2026-09-13. The first measured citation count (scripts/evolution_metrics.py, #1077) is 0, which reads as 'nothing uses this spec'. That is true only inside Demerzel: the metric cannot see sibling repositories.",
+    "quote_is": "the first sentences of the event's context; the rest of the context is not copied"
+  }
+}

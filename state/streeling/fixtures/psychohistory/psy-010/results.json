@@ -1,0 +1,1358 @@
+{
+  "module_id": "psy-010-growth-curves-short-series",
+  "rounding": "residual sums (sse) to 1 decimal, root-mean-square errors and ratios of residual sums to 3, fitted parameters to 6 significant digits, days and years to 1 decimal, percentages to 1 (2 for the profile's distance from the exponential), levels and other quotients to 2; 'exact' is the unrounded fraction",
+  "source": {
+    "repository": "GuitarAlchemist/Demerzel",
+    "commit": "4b03838800dcd4894f1e026461979bff1d985ca8",
+    "history_path": "state/streeling/courses",
+    "objects_read": "commits and trees only; no command reads the content of a file"
+  },
+  "observed": {
+    "kind": "observed: counted from observed-input.json",
+    "commits_reachable_from_pin": 1599,
+    "commits_touching_the_folder": 73,
+    "commits_that_change_the_module_count": 52,
+    "first_commit_utc": "2026-03-21T19:39:16Z",
+    "last_commit_utc": "2026-10-13T22:01:18Z",
+    "module_additions": 73,
+    "module_removals": 5,
+    "modules_at_pin": 68,
+    "pairs_of_consecutive_commits_sharing_a_committer_second": 2,
+    "commits_with_a_flat_layout_file": 6,
+    "flat_layout_path_names": 10,
+    "files_at_pin": 255,
+    "files_at_pin_by_class": {
+      "module": 68,
+      "en_readme": 2,
+      "translation": 181,
+      "readme": 4,
+      "flat_layout": 0
+    },
+    "department_folders": 21,
+    "departments_with_a_module": 18,
+    "department_records": 23,
+    "department_records_without_a_course_folder": [
+      "metaqa",
+      "systems-engineering"
+    ],
+    "largest_department": {
+      "name": "mathematics",
+      "modules": 25
+    },
+    "largest_gap_between_author_and_committer_date_days": 1.3,
+    "commits_whose_author_and_committer_dates_fall_on_different_utc_days": 1
+  },
+  "plan": {
+    "kind": "assumed input (scenarios.json): the curriculum plan's figure",
+    "target_modules": 525,
+    "reach_level": 524.5,
+    "modules_at_pin": 68,
+    "remaining": 457,
+    "share_of_plan_percent": 13.0
+  },
+  "series": {
+    "kind": "computed from observed-input.json: end-of-day counts by committer date (UTC)",
+    "first_day": "2026-03-21",
+    "last_day": "2026-10-13",
+    "days": 207,
+    "active_days": 12,
+    "days_without_change": 195,
+    "percent_of_days_without_change": 94.2,
+    "change_points": [
+      {
+        "day": 0,
+        "date": "2026-03-21",
+        "count": 13,
+        "change": 13
+      },
+      {
+        "day": 1,
+        "date": "2026-03-22",
+        "count": 17,
+        "change": 4
+      },
+      {
+        "day": 2,
+        "date": "2026-03-23",
+        "count": 19,
+        "change": 2
+      },
+      {
+        "day": 3,
+        "date": "2026-03-24",
+        "count": 23,
+        "change": 4
+      },
+      {
+        "day": 15,
+        "date": "2026-04-05",
+        "count": 31,
+        "change": 8
+      },
+      {
+        "day": 190,
+        "date": "2026-09-27",
+        "count": 32,
+        "change": 1
+      },
+      {
+        "day": 191,
+        "date": "2026-09-28",
+        "count": 37,
+        "change": 5
+      },
+      {
+        "day": 195,
+        "date": "2026-10-02",
+        "count": 60,
+        "change": 23
+      },
+      {
+        "day": 196,
+        "date": "2026-10-03",
+        "count": 63,
+        "change": 3
+      },
+      {
+        "day": 197,
+        "date": "2026-10-04",
+        "count": 66,
+        "change": 3
+      },
+      {
+        "day": 200,
+        "date": "2026-10-07",
+        "count": 67,
+        "change": 1
+      },
+      {
+        "day": 206,
+        "date": "2026-10-13",
+        "count": 68,
+        "change": 1
+      }
+    ],
+    "longest_pause": {
+      "days": 174,
+      "from": "2026-04-06",
+      "to": "2026-09-26",
+      "count_throughout": 31
+    },
+    "by_clock": {
+      "max_gap_days": 7,
+      "rows": [
+        {
+          "utc_offset_hours": -11,
+          "days": 207,
+          "active_days": 10,
+          "bursts": 3,
+          "burst_sizes": [
+            23,
+            8,
+            37
+          ],
+          "last_day_is_active": true
+        },
+        {
+          "utc_offset_hours": -5,
+          "days": 207,
+          "active_days": 10,
+          "bursts": 3,
+          "burst_sizes": [
+            23,
+            8,
+            37
+          ],
+          "last_day_is_active": true
+        },
+        {
+          "utc_offset_hours": -4,
+          "days": 207,
+          "active_days": 10,
+          "bursts": 3,
+          "burst_sizes": [
+            23,
+            8,
+            37
+          ],
+          "last_day_is_active": true
+        },
+        {
+          "utc_offset_hours": 0,
+          "days": 207,
+          "active_days": 12,
+          "bursts": 3,
+          "burst_sizes": [
+            23,
+            8,
+            37
+          ],
+          "last_day_is_active": true
+        },
+        {
+          "utc_offset_hours": 2,
+          "days": 208,
+          "active_days": 13,
+          "bursts": 3,
+          "burst_sizes": [
+            23,
+            8,
+            37
+          ],
+          "last_day_is_active": true
+        },
+        {
+          "utc_offset_hours": 12,
+          "days": 207,
+          "active_days": 10,
+          "bursts": 3,
+          "burst_sizes": [
+            23,
+            8,
+            37
+          ],
+          "last_day_is_active": true
+        }
+      ],
+      "other_clocks": 5,
+      "fewest_active_days_on_another_clock": 10,
+      "most_active_days_on_another_clock": 13,
+      "same_bursts_on_every_clock": true
+    },
+    "busiest_day": {
+      "date": "2026-10-02",
+      "change": 23,
+      "commits_that_change_the_count": 23,
+      "largest_change_in_one_commit": 1,
+      "first_commit_utc": "2026-10-02T20:04:43Z",
+      "last_commit_utc": "2026-10-02T21:14:50Z",
+      "span_seconds": 4207,
+      "window_seconds": 120,
+      "most_commits_within_the_window": 14,
+      "window_first_commit_utc": "2026-10-02T20:06:10Z",
+      "window_last_commit_utc": "2026-10-02T20:08:02Z"
+    }
+  },
+  "bursts": {
+    "kind": "computed from the daily series under the burst convention in scenarios.json",
+    "max_gap_days": 7,
+    "bursts": [
+      {
+        "first_day": "2026-03-21",
+        "last_day": "2026-03-24",
+        "span_days": 4,
+        "active_days": 4,
+        "count_before": 0,
+        "count_after": 23,
+        "net_modules": 23,
+        "share_of_final_count_percent": 33.8,
+        "ends_on_the_last_day_of_the_series": false
+      },
+      {
+        "first_day": "2026-04-05",
+        "last_day": "2026-04-05",
+        "span_days": 1,
+        "active_days": 1,
+        "count_before": 23,
+        "count_after": 31,
+        "net_modules": 8,
+        "share_of_final_count_percent": 11.8,
+        "ends_on_the_last_day_of_the_series": false
+      },
+      {
+        "first_day": "2026-09-27",
+        "last_day": "2026-10-13",
+        "span_days": 17,
+        "active_days": 7,
+        "count_before": 31,
+        "count_after": 68,
+        "net_modules": 37,
+        "share_of_final_count_percent": 54.4,
+        "ends_on_the_last_day_of_the_series": true
+      }
+    ],
+    "start_to_start_intervals_days": [
+      15,
+      175
+    ],
+    "last_burst_share_of_days_percent": 8.2,
+    "last_burst_open_at_the_pin": true,
+    "last_day_a_new_module_would_join_the_last_burst": "2026-10-20",
+    "number_of_bursts_by_max_gap_days": {
+      "1": 6,
+      "3": 5,
+      "4": 4,
+      "7": 3,
+      "12": 2
+    }
+  },
+  "fits": {
+    "kind": "computed: least squares on the daily counts, at three cut-off dates",
+    "end_of_previous_burst": {
+      "as_of": "2026-04-05",
+      "days_of_history": 16,
+      "count_on_that_day": 31,
+      "models": {
+        "line": {
+          "parameters": {
+            "intercept": {
+              "exact": "1219/68",
+              "value": 17.9265
+            },
+            "slope_per_day": {
+              "exact": "49/85",
+              "value": 0.576471
+            }
+          },
+          "points": 16,
+          "sse": 94.0,
+          "rmse": 2.424,
+          "fitted_on_last_day": 26.57,
+          "observed_minus_fitted_on_last_day": 4.43,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 878.8,
+            "day_index": 879,
+            "date": "2028-08-16",
+            "days_after_pinned_date": 673,
+            "years_after_pinned_date": 1.8
+          },
+          "predicted_for_pinned_date": 136.68,
+          "observed_on_pinned_date": 68
+        },
+        "exponential": {
+          "parameters": {
+            "value_at_day_0": 18.3029,
+            "rate_per_day": 0.025169,
+            "doubling_time_days": 27.5
+          },
+          "points": 16,
+          "sse": 97.4,
+          "rmse": 2.467,
+          "fitted_on_last_day": 26.7,
+          "observed_minus_fitted_on_last_day": 4.3,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 133.3,
+            "day_index": 134,
+            "date": "2026-08-02",
+            "days_after_pinned_date": -72,
+            "years_after_pinned_date": -0.2
+          },
+          "predicted_for_pinned_date": 3267.78,
+          "observed_on_pinned_date": 68
+        },
+        "logistic": {
+          "parameters": {
+            "ceiling": 525,
+            "rate_per_day": 0.026314,
+            "midpoint_day": 126.23,
+            "value_at_day_0": 18.2895
+          },
+          "points": 16,
+          "sse": 97.3,
+          "rmse": 2.465,
+          "fitted_on_last_day": 26.69,
+          "observed_minus_fitted_on_last_day": 4.31,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 390.6,
+            "day_index": 391,
+            "date": "2027-04-16",
+            "days_after_pinned_date": 185,
+            "years_after_pinned_date": 0.5
+          },
+          "predicted_for_pinned_date": 467.68,
+          "observed_on_pinned_date": 68
+        }
+      }
+    },
+    "eve_of_last_burst": {
+      "as_of": "2026-09-26",
+      "days_of_history": 190,
+      "count_on_that_day": 31,
+      "models": {
+        "line": {
+          "parameters": {
+            "intercept": {
+              "exact": "511997/18145",
+              "value": 28.217
+            },
+            "slope_per_day": {
+              "exact": "3536/163305",
+              "value": 0.0216527
+            }
+          },
+          "points": 190,
+          "sse": 1060.9,
+          "rmse": 2.363,
+          "fitted_on_last_day": 32.31,
+          "observed_minus_fitted_on_last_day": -1.31,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 22920.1,
+            "day_index": 22921,
+            "date": "2088-12-21",
+            "days_after_pinned_date": 22715,
+            "years_after_pinned_date": 62.2
+          },
+          "predicted_for_pinned_date": 32.68,
+          "observed_on_pinned_date": 68
+        },
+        "exponential": {
+          "parameters": {
+            "value_at_day_0": 28.3367,
+            "rate_per_day": 0.000688769,
+            "doubling_time_days": 1006.4
+          },
+          "points": 190,
+          "sse": 1070.9,
+          "rmse": 2.374,
+          "fitted_on_last_day": 32.28,
+          "observed_minus_fitted_on_last_day": -1.28,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 4237.0,
+            "day_index": 4237,
+            "date": "2037-10-26",
+            "days_after_pinned_date": 4031,
+            "years_after_pinned_date": 11.0
+          },
+          "predicted_for_pinned_date": 32.66,
+          "observed_on_pinned_date": 68
+        },
+        "logistic": {
+          "parameters": {
+            "ceiling": 525,
+            "rate_per_day": 0.000732547,
+            "midpoint_day": 3909.65,
+            "value_at_day_0": 28.33
+          },
+          "points": 190,
+          "sse": 1070.3,
+          "rmse": 2.373,
+          "fitted_on_last_day": 32.28,
+          "observed_minus_fitted_on_last_day": -1.28,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 13404.7,
+            "day_index": 13405,
+            "date": "2062-12-02",
+            "days_after_pinned_date": 13199,
+            "years_after_pinned_date": 36.1
+          },
+          "predicted_for_pinned_date": 32.66,
+          "observed_on_pinned_date": 68
+        }
+      }
+    },
+    "pinned_date": {
+      "as_of": "2026-10-13",
+      "days_of_history": 207,
+      "count_on_that_day": 68,
+      "models": {
+        "line": {
+          "parameters": {
+            "intercept": {
+              "exact": "528815/21528",
+              "value": 24.5641
+            },
+            "slope_per_day": {
+              "exact": "56723/739128",
+              "value": 0.0767431
+            }
+          },
+          "points": 207,
+          "sse": 11462.4,
+          "rmse": 7.441,
+          "fitted_on_last_day": 40.37,
+          "observed_minus_fitted_on_last_day": 27.63,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 6514.4,
+            "day_index": 6515,
+            "date": "2044-01-21",
+            "days_after_pinned_date": 6309,
+            "years_after_pinned_date": 17.3
+          },
+          "residual_signs": {
+            "comparisons": 206,
+            "sign_changes": 3,
+            "longest_run_days": 111,
+            "positive_residual_days": 81
+          },
+          "catches_up_with_observed_count": {
+            "level": 68.0,
+            "reached": true,
+            "day": 566.0,
+            "day_index": 566,
+            "date": "2027-10-08",
+            "days_after_pinned_date": 360,
+            "years_after_pinned_date": 1.0
+          }
+        },
+        "exponential": {
+          "parameters": {
+            "value_at_day_0": 24.6004,
+            "rate_per_day": 0.00257104,
+            "doubling_time_days": 269.6
+          },
+          "points": 207,
+          "sse": 11100.5,
+          "rmse": 7.323,
+          "fitted_on_last_day": 41.78,
+          "observed_minus_fitted_on_last_day": 26.22,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 1190.1,
+            "day_index": 1191,
+            "date": "2029-06-24",
+            "days_after_pinned_date": 985,
+            "years_after_pinned_date": 2.7
+          },
+          "residual_signs": {
+            "comparisons": 206,
+            "sign_changes": 3,
+            "longest_run_days": 105,
+            "positive_residual_days": 87
+          },
+          "catches_up_with_observed_count": {
+            "level": 68.0,
+            "reached": true,
+            "day": 395.5,
+            "day_index": 396,
+            "date": "2027-04-21",
+            "days_after_pinned_date": 190,
+            "years_after_pinned_date": 0.5
+          }
+        },
+        "logistic": {
+          "parameters": {
+            "ceiling": 525,
+            "rate_per_day": 0.00272281,
+            "midpoint_day": 1106.31,
+            "value_at_day_0": 24.6092
+          },
+          "points": 207,
+          "sse": 11130.8,
+          "rmse": 7.333,
+          "fitted_on_last_day": 41.65,
+          "observed_minus_fitted_on_last_day": 26.35,
+          "plan": {
+            "level": 524.5,
+            "reached": true,
+            "day": 3660.9,
+            "day_index": 3661,
+            "date": "2036-03-29",
+            "days_after_pinned_date": 3455,
+            "years_after_pinned_date": 9.5
+          },
+          "residual_signs": {
+            "comparisons": 206,
+            "sign_changes": 3,
+            "longest_run_days": 105,
+            "positive_residual_days": 87
+          },
+          "catches_up_with_observed_count": {
+            "level": 68.0,
+            "reached": true,
+            "day": 406.6,
+            "day_index": 407,
+            "date": "2027-05-02",
+            "days_after_pinned_date": 201,
+            "years_after_pinned_date": 0.6
+          }
+        }
+      }
+    }
+  },
+  "comparison": {
+    "kind": "computed: the three least-squares fits to the full daily series",
+    "lowest_sse": "exponential",
+    "highest_sse": "line",
+    "highest_sse_over_lowest": 1.033,
+    "sse_spread_percent_of_lowest": 3.3,
+    "plan_date_earliest": "exponential",
+    "plan_date_latest": "line",
+    "plan_date_spread_days": 5324,
+    "plan_date_spread_years": 14.6,
+    "sign_changes_of_residuals": {
+      "line": 3,
+      "exponential": 3,
+      "logistic": 3
+    },
+    "plan_date_moves_when_last_burst_is_removed_years": {
+      "line": 44.9,
+      "exponential": 8.3,
+      "logistic": 26.7
+    },
+    "plan_date_moves_during_the_pause_years": {
+      "line": 60.3,
+      "exponential": 11.2,
+      "logistic": 35.6
+    },
+    "logistic_second_half": {
+      "half_of_ceiling": 262.5,
+      "half_reached": {
+        "level": 262.5,
+        "reached": true,
+        "day": 1106.3,
+        "day_index": 1107,
+        "date": "2029-04-01",
+        "days_after_pinned_date": 901,
+        "years_after_pinned_date": 2.5
+      },
+      "days_from_half_to_plan_level": 2554.6,
+      "years_from_half_to_plan_level": 7.0,
+      "odds_at_plan_level": 1049.0,
+      "log_of_odds_at_plan_level": 6.95559
+    }
+  },
+  "sensitivity": {
+    "kind": "computed: three other reasonable choices, same data",
+    "fitted_to_the_active_days_only": {
+      "points": 12,
+      "plan_dates": {
+        "line": "2033-07-08",
+        "exponential": "2027-11-09",
+        "logistic": "2030-12-15"
+      },
+      "plan_years_after_pinned_date": {
+        "line": 6.7,
+        "exponential": 1.1,
+        "logistic": 4.2
+      }
+    },
+    "exponential_fitted_to_log_counts": {
+      "parameters": {
+        "value_at_day_0": 25.7168,
+        "rate_per_day": 0.00201307
+      },
+      "sse_in_modules": 11419.0,
+      "plan": {
+        "level": 524.5,
+        "reached": true,
+        "day": 1497.9,
+        "day_index": 1498,
+        "date": "2030-04-27",
+        "days_after_pinned_date": 1292,
+        "years_after_pinned_date": 3.5
+      }
+    },
+    "author_dates_instead_of_committer_dates": {
+      "days_on_which_the_series_differs": 1,
+      "plan_dates": {
+        "line": "2044-04-11",
+        "exponential": "2029-07-07",
+        "logistic": "2036-05-12"
+      },
+      "plan_date_shift_days": {
+        "line": 81,
+        "exponential": 13,
+        "logistic": 44
+      }
+    }
+  },
+  "ceiling_profile": {
+    "kind": "computed: the logistic refitted to the full daily series with the ceiling fixed at each value",
+    "exponential_sse": 11100.5,
+    "rows": [
+      {
+        "ceiling": 69,
+        "rate_per_day": 0.00448277,
+        "midpoint_day": 130.335,
+        "sse": 11469.8,
+        "rmse": 7.444,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 3.33
+      },
+      {
+        "ceiling": 70,
+        "rate_per_day": 0.00443522,
+        "midpoint_day": 136.795,
+        "sse": 11460.9,
+        "rmse": 7.441,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 3.25
+      },
+      {
+        "ceiling": 75,
+        "rate_per_day": 0.00422908,
+        "midpoint_day": 168.35,
+        "sse": 11422.4,
+        "rmse": 7.428,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 2.9
+      },
+      {
+        "ceiling": 80,
+        "rate_per_day": 0.00406407,
+        "midpoint_day": 198.608,
+        "sse": 11391.3,
+        "rmse": 7.418,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 2.62
+      },
+      {
+        "ceiling": 100,
+        "rate_per_day": 0.00363921,
+        "midpoint_day": 306.903,
+        "sse": 11310.3,
+        "rmse": 7.392,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 1.89
+      },
+      {
+        "ceiling": 150,
+        "rate_per_day": 0.00319542,
+        "midpoint_day": 509.174,
+        "sse": 11224.1,
+        "rmse": 7.364,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 1.11
+      },
+      {
+        "ceiling": 250,
+        "rate_per_day": 0.00291214,
+        "midpoint_day": 760.345,
+        "sse": 11168.4,
+        "rmse": 7.345,
+        "plan_date": null,
+        "plan_years_after_pinned_date": null,
+        "sse_above_exponential_percent": 0.61
+      },
+      {
+        "ceiling": 525,
+        "rate_per_day": 0.00272281,
+        "midpoint_day": 1106.31,
+        "sse": 11130.8,
+        "rmse": 7.333,
+        "plan_date": "2036-03-29",
+        "plan_years_after_pinned_date": 9.5,
+        "sse_above_exponential_percent": 0.27
+      },
+      {
+        "ceiling": 1000,
+        "rate_per_day": 0.00264852,
+        "midpoint_day": 1389.42,
+        "sse": 11116.0,
+        "rmse": 7.328,
+        "plan_date": "2030-02-15",
+        "plan_years_after_pinned_date": 3.3,
+        "sse_above_exponential_percent": 0.14
+      },
+      {
+        "ceiling": 2500,
+        "rate_per_day": 0.00260147,
+        "midpoint_day": 1772.58,
+        "sse": 11106.6,
+        "rmse": 7.325,
+        "plan_date": "2029-09-04",
+        "plan_years_after_pinned_date": 2.9,
+        "sse_above_exponential_percent": 0.05
+      },
+      {
+        "ceiling": 10000,
+        "rate_per_day": 0.00257858,
+        "midpoint_day": 2328.84,
+        "sse": 11102.0,
+        "rmse": 7.323,
+        "plan_date": "2029-07-10",
+        "plan_years_after_pinned_date": 2.7,
+        "sse_above_exponential_percent": 0.01
+      },
+      {
+        "ceiling": 100000,
+        "rate_per_day": 0.00257179,
+        "midpoint_day": 3231.18,
+        "sse": 11100.7,
+        "rmse": 7.323,
+        "plan_date": "2029-06-25",
+        "plan_years_after_pinned_date": 2.7,
+        "sse_above_exponential_percent": 0.0
+      }
+    ],
+    "lowest_sse_at_ceiling": 100000,
+    "highest_sse_at_ceiling": 69,
+    "lowest_sse_is_at_the_largest_ceiling_tried": true,
+    "sse_falls_at_every_step_up_in_ceiling": true,
+    "highest_sse_over_lowest": 1.033,
+    "spread_percent_of_lowest": 3.3
+  },
+  "step_models": {
+    "kind": "computed: exact piecewise-constant fits to the full daily series",
+    "change_points_0": {
+      "parameters": 1,
+      "sse": 15815.5,
+      "level": 32.47
+    },
+    "change_points_1": {
+      "parameters": 3,
+      "sse": 1564.1,
+      "rmse": 2.749,
+      "change_days": [
+        195
+      ],
+      "change_dates": [
+        "2026-10-02"
+      ],
+      "levels": [
+        30.41,
+        65.92
+      ]
+    },
+    "change_points_2": {
+      "parameters": 5,
+      "sse": 321.8,
+      "rmse": 1.247,
+      "change_days": [
+        15,
+        195
+      ],
+      "change_dates": [
+        "2026-04-05",
+        "2026-10-02"
+      ],
+      "levels": [
+        21.67,
+        31.14,
+        65.92
+      ]
+    },
+    "change_points_3": {
+      "parameters": 7,
+      "sse": 181.2,
+      "rmse": 0.936,
+      "change_days": [
+        15,
+        191,
+        195
+      ],
+      "change_dates": [
+        "2026-04-05",
+        "2026-09-28",
+        "2026-10-02"
+      ],
+      "levels": [
+        21.67,
+        31.01,
+        37.0,
+        65.92
+      ]
+    },
+    "change_points_for_an_exact_fit": 11,
+    "lowest_curve_sse_over_one_change_sse": 7.1
+  },
+  "burst_scenarios": {
+    "kind": "synthetic: arithmetic on the observed bursts under the repetition assumption in scenarios.json",
+    "remaining_modules": 457,
+    "observed_burst_sizes": [
+      23,
+      8,
+      37
+    ],
+    "observed_start_to_start_intervals_days": [
+      15,
+      175
+    ],
+    "cases": {
+      "mean_size_mean_interval": {
+        "size": 22.67,
+        "interval_days": 95.0,
+        "bursts_before_rounding_up": {
+          "exact": "1371/68",
+          "value": 20.1618
+        },
+        "bursts_needed": 21,
+        "days_after_pinned_date": 1995,
+        "years_after_pinned_date": 5.5,
+        "date": "2032-03-30",
+        "upper_bound_because_the_last_burst_is_open": true
+      },
+      "largest_size_shortest_interval": {
+        "size": 37.0,
+        "interval_days": 15.0,
+        "bursts_before_rounding_up": {
+          "exact": "457/37",
+          "value": 12.3514
+        },
+        "bursts_needed": 13,
+        "days_after_pinned_date": 195,
+        "years_after_pinned_date": 0.5,
+        "date": "2027-04-26",
+        "upper_bound_because_the_last_burst_is_open": true
+      },
+      "smallest_size_longest_interval": {
+        "size": 8.0,
+        "interval_days": 175.0,
+        "bursts_before_rounding_up": {
+          "exact": "457/8",
+          "value": 57.125
+        },
+        "bursts_needed": 58,
+        "days_after_pinned_date": 10150,
+        "years_after_pinned_date": 27.8,
+        "date": "2054-07-28",
+        "upper_bound_because_the_last_burst_is_open": false
+      }
+    }
+  },
+  "negative_controls": {
+    "kind": "synthetic: series with known answers, same length as the observed one",
+    "noisy_line": {
+      "what": "a line plus independent noise, fitted by a line: residual signs",
+      "fitted_slope_per_day": 0.082593,
+      "comparisons": 206,
+      "sign_changes": 107,
+      "longest_run_days": 10,
+      "positive_residual_days": 100
+    },
+    "planted_logistic_past_its_turn": {
+      "what": "a logistic curve with a known ceiling plus independent noise, refitted with the ceiling fixed at each value",
+      "planted_ceiling": 525,
+      "planted_value_on_last_day": 522.39,
+      "profile": [
+        {
+          "ceiling": 400,
+          "sse": 860357.5
+        },
+        {
+          "ceiling": 450,
+          "sse": 280494.4
+        },
+        {
+          "ceiling": 500,
+          "sse": 34379.3
+        },
+        {
+          "ceiling": 525,
+          "sse": 8751.7
+        },
+        {
+          "ceiling": 550,
+          "sse": 29596.0
+        },
+        {
+          "ceiling": 600,
+          "sse": 150885.4
+        },
+        {
+          "ceiling": 700,
+          "sse": 437921.6
+        },
+        {
+          "ceiling": 1000,
+          "sse": 894670.1
+        },
+        {
+          "ceiling": 2500,
+          "sse": 1315293.9
+        },
+        {
+          "ceiling": 10000,
+          "sse": 1463799.6
+        },
+        {
+          "ceiling": 100000,
+          "sse": 1502759.5
+        }
+      ],
+      "lowest_sse_at_ceiling": 525,
+      "highest_sse_at_ceiling": 100000,
+      "lowest_sse_is_at_the_largest_ceiling_tried": false,
+      "sse_falls_at_every_step_up_in_ceiling": false,
+      "highest_sse_over_lowest": 171.71,
+      "spread_percent_of_lowest": 17071.0
+    },
+    "planted_logistic_before_its_turn": {
+      "what": "a logistic curve with a known ceiling plus independent noise, refitted with the ceiling fixed at each value",
+      "planted_ceiling": 525,
+      "planted_value_on_last_day": 43.12,
+      "profile": [
+        {
+          "ceiling": 69,
+          "sse": 8872.1
+        },
+        {
+          "ceiling": 70,
+          "sse": 8872.1
+        },
+        {
+          "ceiling": 75,
+          "sse": 8872.8
+        },
+        {
+          "ceiling": 80,
+          "sse": 8874.0
+        },
+        {
+          "ceiling": 100,
+          "sse": 8879.6
+        },
+        {
+          "ceiling": 150,
+          "sse": 8888.6
+        },
+        {
+          "ceiling": 250,
+          "sse": 8895.8
+        },
+        {
+          "ceiling": 525,
+          "sse": 8901.2
+        },
+        {
+          "ceiling": 1000,
+          "sse": 8903.5
+        },
+        {
+          "ceiling": 2500,
+          "sse": 8904.9
+        },
+        {
+          "ceiling": 10000,
+          "sse": 8905.6
+        },
+        {
+          "ceiling": 100000,
+          "sse": 8905.8
+        }
+      ],
+      "lowest_sse_at_ceiling": 69,
+      "highest_sse_at_ceiling": 100000,
+      "lowest_sse_is_at_the_largest_ceiling_tried": false,
+      "sse_falls_at_every_step_up_in_ceiling": false,
+      "highest_sse_over_lowest": 1.004,
+      "spread_percent_of_lowest": 0.4
+    }
+  },
+  "transfer_task": {
+    "note": "Hypothetical songbook for the learner task. Not Streeling data and not a forecast. The exponential and logistic parameters are given to the learner; analyze.py checks that they are the least-squares values rounded to four significant digits, and computes the expected answers from the given values.",
+    "kind": "synthetic: computed from the hypothetical inputs in scenarios.json",
+    "q1_series": {
+      "weeks": 10,
+      "active_weeks": [
+        0,
+        3,
+        8,
+        9
+      ],
+      "active_week_count": 4,
+      "last_burst_weeks": [
+        8,
+        9
+      ],
+      "arrived_in_last_burst": 21,
+      "final_count": 36,
+      "share_of_final_count_percent": 58.3,
+      "share_of_weeks_percent": 20.0
+    },
+    "q2_line": {
+      "points": 10,
+      "sums": {
+        "n": 10,
+        "sum_t": 45,
+        "sum_y": 162,
+        "sum_t_squared": 285,
+        "sum_t_y": 981
+      },
+      "slope_per_week": {
+        "exact": "168/55",
+        "value": 3.05455
+      },
+      "intercept": {
+        "exact": "27/11",
+        "value": 2.45455
+      },
+      "sse": {
+        "exact": "12312/55",
+        "value": 223.9
+      },
+      "reach_level": 199.5,
+      "reach_week_before_rounding_up": 64.51,
+      "reach_week": 65
+    },
+    "q3_exponential": {
+      "given": {
+        "value_at_week_0": 5.11,
+        "rate_per_week": 0.2139
+      },
+      "least_squares_fit": {
+        "value_at_week_0": 5.11041,
+        "rate_per_week": 0.21395,
+        "doubling_time_weeks": 3.2
+      },
+      "sse_from_given": 137.6,
+      "reach_week_before_rounding_up": 17.13,
+      "reach_week": 18,
+      "line_sse_over_exponential_sse": 1.627,
+      "weeks_between_line_and_exponential": 47
+    },
+    "q3_logistic": {
+      "given": {
+        "ceiling": 200,
+        "rate_per_week": 0.2352,
+        "midpoint_week": 15.66
+      },
+      "least_squares_fit": {
+        "ceiling": 200,
+        "rate_per_week": 0.235244,
+        "midpoint_week": 15.6586,
+        "value_at_week_0": 4.90328
+      },
+      "sse_from_given": 143.7,
+      "odds_at_reach_level": 399.0,
+      "weeks_from_midpoint_to_reach_level": 25.46,
+      "reach_week_before_rounding_up": 41.12,
+      "reach_week": 42,
+      "reaches_its_ceiling_exactly": false
+    },
+    "q4_last_burst_removed": {
+      "points": 8,
+      "sums": {
+        "n": 8,
+        "sum_t": 28,
+        "sum_y": 93,
+        "sum_t_squared": 140,
+        "sum_t_y": 393
+      },
+      "slope_per_week": {
+        "exact": "45/28",
+        "value": 1.60714
+      },
+      "intercept": {
+        "exact": "6/1",
+        "value": 6.0
+      },
+      "sse": {
+        "exact": "1215/28",
+        "value": 43.4
+      },
+      "reach_level": 199.5,
+      "reach_week_before_rounding_up": 120.4,
+      "reach_week": 121,
+      "predicted_for_last_week": 20.46,
+      "observed_on_last_week": 36,
+      "reach_week_moved_by": 56,
+      "reach_week_ratio": 1.86
+    },
+    "q5_values_in_the_week_the_exponential_reaches_the_target": {
+      "week": 18,
+      "line": 57.44,
+      "exponential_from_given": 240.18,
+      "logistic_from_given": 126.84,
+      "note": "no single answer to question 5: the review brief says what a sufficient plan contains"
+    }
+  },
+  "checks": [
+    {
+      "check": "line: residuals sum to zero and are orthogonal to time (normal equations, exact)",
+      "times_evaluated": 12,
+      "passed": true
+    },
+    {
+      "check": "hand-computed line through (0,0), (1,1), (2,1): slope 1/2, intercept 1/6, residual sum 1/6",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed reach: the line y = t first rounds to 10 at t = 9.5, so on day 10",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "curve fit: residual sum after the search is not above the residual sum at the grid start",
+      "times_evaluated": 49,
+      "passed": true
+    },
+    {
+      "check": "planted exponential 3 * exp(0.05 t) is recovered",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "planted logistic with ceiling 525, rate 0.03 and midpoint day 100 is recovered",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "a logistic curve whose ceiling equals the level never reaches it; with the half-unit margin it does",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "hand-computed bursts of 2, 2, 5, 5, 5, 9: active days 0, 2, 5; three bursts at a gap of 1, one at a gap of 3",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "each commit: removed modules were present and added ones were not",
+      "times_evaluated": 73,
+      "passed": true
+    },
+    {
+      "check": "each commit: the replayed module set has the recorded size",
+      "times_evaluated": 73,
+      "passed": true
+    },
+    {
+      "check": "each commit: the path classes sum to the files",
+      "times_evaluated": 73,
+      "passed": true
+    },
+    {
+      "check": "recount equals extract.py's counts: commits, additions, removals, modules at the pin",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "additions - removals = modules at the pin",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "modules per department, recounted from the commit rows, equal extract.py's listing at the pin",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "plan: departments x courses per department = target",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "daily series: booking net changes per day equals taking the last commit of each day",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "daily series: the last day holds the modules at the pin",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "clocks: the UTC row reproduces the daily series and its bursts",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "busiest day: the changes of its commits add up to the day's change",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "daily series: the changes on the active days sum to the final count",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "bursts: net modules of the bursts sum to the final count and active days are partitioned",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "bursts: the rule finds at least three bursts, so that two cut-offs exist",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "curve fit: residuals orthogonal to both columns of the Jacobian (stationary point)",
+      "times_evaluated": 47,
+      "passed": true
+    },
+    {
+      "check": "reach rule: the curve is at or above the level on the reported day and below it the day before",
+      "times_evaluated": 25,
+      "passed": true
+    },
+    {
+      "check": "cut-offs: the two earlier histories end on the same count (nothing was added during the pause)",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "every fit at every cut-off reaches the plan level",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the least-squares exponential has a residual sum no larger than the log-scale trendline's",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "limit: the logistic with the largest ceiling tried is within 0.1% of the exponential's residual sum",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "the plan-ceiling row of the profile is the logistic fit of the comparison",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "steps: the fit without a change point is the sum of squares around the mean",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "steps: the one-change fit found by dynamic programming equals a brute-force search over every split",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "steps: the residual sum never rises when a change point is added",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "steps: a staircase with a change point on every active day reproduces the series exactly",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: a line with independent noise changes residual sign at least five times as often as the observed fits",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: the ceiling profile recovers a planted ceiling once the series has passed its turn",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "negative control: the same profile is flat (under 10% spread) when the planted curve is seen before its turn",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the stated last burst starts on an active week after a pause",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the given exponential parameters are the least-squares ones, rounded",
+      "times_evaluated": 1,
+      "passed": true
+    },
+    {
+      "check": "transfer task: the given logistic parameters are the least-squares ones, rounded",
+      "times_evaluated": 1,
+      "passed": true
+    }
+  ]
+}
