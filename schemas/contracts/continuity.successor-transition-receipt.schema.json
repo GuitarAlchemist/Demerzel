@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "continuity.successor-transition-receipt/1",
+  "title": "Continuity successor transition receipt",
+  "description": "Portable post-consumption evidence for the bounded Gaia issue #76 continuity tracer. This receipt carries no execution authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "workIdentity",
+    "workGeneration",
+    "successorSlot",
+    "successor",
+    "commitmentDigest",
+    "incomingReviewDigest",
+    "decisionDigest",
+    "decision",
+    "outputArtifact",
+    "consumptionDigest",
+    "consumption",
+    "authority",
+    "receiptDigest"
+  ],
+  "properties": {
+    "schema": { "const": "continuity.successor-transition-receipt/1" },
+    "workIdentity": { "$ref": "#/$defs/digest" },
+    "workGeneration": { "const": 0 },
+    "successorSlot": { "type": "string", "const": "review-successor" },
+    "successor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actorRef", "sessionRef", "sessionGeneration"],
+      "properties": {
+        "actorRef": { "$ref": "#/$defs/asciiIdentifier" },
+        "sessionRef": { "$ref": "#/$defs/asciiIdentifier" },
+        "sessionGeneration": { "const": 1 }
+      }
+    },
+    "commitmentDigest": { "$ref": "#/$defs/digest" },
+    "incomingReviewDigest": { "$ref": "#/$defs/digest" },
+    "decisionDigest": { "$ref": "#/$defs/digest" },
+    "decision": { "const": "ACCEPTED_FOR_NEXT_STAGE" },
+    "outputArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mediaType", "sha256", "bytes"],
+      "properties": {
+        "mediaType": { "type": "string", "pattern": "^[ -~]{1,128}$" },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "bytes": { "type": "integer", "minimum": 1, "maximum": 65536 }
+      }
+    },
+    "consumptionDigest": { "$ref": "#/$defs/digest" },
+    "consumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consumerIdentity", "consumedAtRef", "ordinal"],
+      "properties": {
+        "consumerIdentity": { "$ref": "#/$defs/asciiIdentifier" },
+        "consumedAtRef": { "$ref": "#/$defs/digest" },
+        "ordinal": { "const": 0 }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effects"],
+      "properties": {
+        "effects": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "receiptDigest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "asciiIdentifier": { "type": "string", "pattern": "^[!-~]{1,128}$" }
+  }
+}
