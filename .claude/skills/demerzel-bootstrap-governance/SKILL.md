@@ -96,4 +96,4 @@ After bootstrap completes:
 - Template: `templates/recursive-governance-kit/`
 - Galactic Protocol: `contracts/galactic-protocol.md`
 - Directive: `contracts/directives/recursive-governance-directive.md`
-- VSM Course: `state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md`
+- VSM Course: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`

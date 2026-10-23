@@ -12,12 +12,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import demerzel_halt as halt
+
 ROOT = Path(__file__).resolve().parents[1]
 BAML_SRC = ROOT / "baml_src"
 BAML_CLIENT = ROOT / "baml_client"
 CACHE_PATH = ROOT / ".tmp" / "dsp_validation" / "parameter_cache.json"
 CONSCIENCE_DIR = ROOT / "state" / "conscience" / "signals"
-HALT_PATH = Path.home() / ".demerzel" / "HALT-ALL"
 
 def check_baml():
     print("=== BAML ADOPTION PROGRESS ===")
@@ -66,17 +68,11 @@ def check_learning():
     else:
         print("  [Observations Log] Empty: No session observations captured yet.")
 
-def check_blockers():
+def check_blockers(marker_dir: Path | None = None):
     print("\n=== GOVERNANCE BLOCKERS & SEVERITIES ===")
-    if HALT_PATH.is_file():
-        try:
-            with open(HALT_PATH, "r") as f:
-                data = json.load(f)
-            print(f"  🚨 [BLOCKER] HALT-ALL active!")
-            print(f"    Reason: {data.get('reason', 'n/a')}")
-            print(f"    Expires: {data.get('expires_at', 'n/a')}")
-        except Exception:
-            print("  🚨 [BLOCKER] HALT-ALL file present but unreadable (fail-safe trigger)")
+    halted, why = halt.is_active(marker_dir)
+    if halted:
+        print(f"  🚨 [BLOCKER] {why}")
     else:
         print("    [PASS] No active HALT-ALL kill-switches.")
 

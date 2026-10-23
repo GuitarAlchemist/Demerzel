@@ -1,53 +1,70 @@
 {
   "proposition": "Remediation-strategy effectiveness is tracked from PDCA outcomes; fragile strategies stay human-gated.",
   "truth_value": "P",
-  "confidence": 0.86,
+  "confidence": 0.9,
   "evidence": {
     "supporting": [
       {
-        "source": "ml-feedback-recommendation 79f54a8c-798d-40e5-9de8-3d1cd0db35fa",
-        "claim": "Across 6 outcome-bearing PDCA records: proactive=0.333(n=3), standardize=1.0(n=3). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
-        "timestamp": "2026-07-30T13:00:06Z",
-        "reliability": 0.86
+        "source": "ml-feedback-recommendation ae271ae2-019b-4564-af03-e0b551ae5078",
+        "claim": "Across 8 outcome-bearing PDCA records: abandon=0.0(n=2), proactive=0.0(n=2), standardize=1.0(n=4). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
+        "timestamp": "2026-10-22T13:00:05Z",
+        "reliability": 0.9
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-07-30T13:00:06Z",
+  "last_updated": "2026-10-22T13:00:05Z",
   "evaluated_by": "demerzel",
   "strategy_success_rates": {
+    "abandon": {
+      "success_rate": 0.0,
+      "attempts": 2,
+      "successes": 0
+    },
     "proactive": {
-      "success_rate": 0.333,
-      "attempts": 3,
-      "successes": 1
+      "success_rate": 0.0,
+      "attempts": 2,
+      "successes": 0
     },
     "standardize": {
       "success_rate": 1.0,
-      "attempts": 3,
-      "successes": 3
+      "attempts": 4,
+      "successes": 4
     }
   },
   "prior_strategy_success_rates": {
+    "abandon": {
+      "success_rate": 0.0,
+      "attempts": 2,
+      "successes": 0
+    },
     "proactive": {
-      "success_rate": 0.333,
-      "attempts": 3,
-      "successes": 1
+      "success_rate": 0.0,
+      "attempts": 2,
+      "successes": 0
     },
     "standardize": {
       "success_rate": 1.0,
-      "attempts": 3,
-      "successes": 3
+      "attempts": 4,
+      "successes": 4
     }
   },
   "advisory_escalation_changes": [
     {
+      "strategy": "abandon",
+      "success_rate": 0.0,
+      "n": 2,
+      "change": "keep manual / high-risk (do not auto-remediate)",
+      "requires_human_approval": true
+    },
+    {
       "strategy": "proactive",
-      "success_rate": 0.333,
-      "n": 3,
+      "success_rate": 0.0,
+      "n": 2,
       "change": "keep manual / high-risk (do not auto-remediate)",
       "requires_human_approval": true
     }
   ],
   "risk_classes_modified": 0,
-  "source_recommendation": "79f54a8c-798d-40e5-9de8-3d1cd0db35fa"
+  "source_recommendation": "ae271ae2-019b-4564-af03-e0b551ae5078"
 }

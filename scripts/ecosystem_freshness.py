@@ -130,6 +130,30 @@ EVENT_PRODUCERS: dict[str, dict] = {
 # AdapterError (exit 2) instead. 100 items/page.
 _MAX_SUPPLY_PAGES = 20
 
+# Hard REQUEST ceiling for one event-supply evaluation (#963). The activation
+# cutoff is immutable, so the set of pull requests "updated since the cutoff"
+# only ever grows, and the adapter spends roughly two requests per pull request
+# in it. Measured read-only against GuitarAlchemist/Demerzel on the activation
+# day: 11 obligations, 22 requests, ~11s. At the repository's observed velocity
+# (~112 pull requests touched per 30 days) that reaches GITHUB_TOKEN's 1,000
+# requests/hour/repository primary rate limit within months, where it would
+# surface as an opaque mid-retrieval HTTP 403.
+#
+# This budget is ~27x the measured baseline and ~60% of the hourly token
+# allowance: high enough that no plausible month of activity trips it, low
+# enough to fire FIRST, as a legible "retrieval is no longer affordable" alarm
+# naming this constant, instead of the rate limiter firing illegibly.
+#
+# It bounds COST, never the obligation set: exceeding it raises AdapterError
+# (exit 2) exactly like _MAX_SUPPLY_PAGES, because retrieval that stopped early
+# is incomplete, and incomplete retrieval must never be read as absence. Note
+# what this deliberately does NOT do — it does not narrow the retrieval window
+# to keep the cost down. An obligation the monitor stops retrieving is an
+# obligation it silently forgets. For why the sliding retrieval floor proposed
+# in #963 cannot supply this bound without durable carry-forward state, see
+# `docs/architecture/event-supply-retrieval-bound.md`.
+_MAX_SUPPLY_REQUESTS = 600
+
 # Timestamps are issued by GitHub but compared against the runner's clock, so a
 # genuinely fresh event can read a hair "in the future" under NTP skew. Rejecting
 # those as forged would be pure cry-wolf. The tolerance is deliberately tiny
@@ -239,8 +263,35 @@ def default_actions_runner(
     return runs[0] if runs else None
 
 
-def _github_get(endpoint: str, token: str, what: str):
+class _RequestBudget:
+    """Requests one event-supply evaluation may spend before failing closed.
+
+    Counting lives here rather than in a module-level total so that the ceiling
+    is per-evaluation and testable without network: the unit suite asserts the
+    exact request count for a given supply shape.
+    """
+
+    def __init__(self, limit: int) -> None:
+        self.limit = limit
+        self.spent = 0
+
+    def spend(self, what: str) -> None:
+        self.spent += 1
+        if self.spent > self.limit:
+            raise AdapterError(
+                f"event-supply retrieval exceeded its {self.limit}-request "
+                f"budget at {what}; retrieval is incomplete and cannot be read "
+                "as absence. The activation cutoff is immutable by design, so "
+                "the pull requests to evaluate only accumulate — bounding this "
+                "needs durable carry-forward state, not a narrower window"
+            )
+
+
+def _github_get(endpoint: str, token: str, what: str,
+                budget: _RequestBudget | None = None):
     """Read-only authenticated GET against the GitHub API. Raises AdapterError."""
+    if budget is not None:
+        budget.spend(what)
     request = Request(endpoint, headers={
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
@@ -266,6 +317,7 @@ def _collect_relevant_pulls(
     event: str,
     token: str,
     since: datetime,
+    budget: _RequestBudget | None = None,
 ) -> list[dict]:
     """Pull requests with GitHub-recorded activity at or after `since`.
 
@@ -297,6 +349,7 @@ def _collect_relevant_pulls(
             }),
             token,
             f"{event} supply on {repository} page {page}",
+            budget,
         )
         if not isinstance(pull_page, list):
             raise AdapterError(
@@ -336,6 +389,7 @@ def _collect_target_runs(
     event: str,
     token: str,
     since: datetime,
+    budget: _RequestBudget | None = None,
 ) -> list:
     """Every `pull_request_target` run back to the activation cutoff.
 
@@ -358,6 +412,7 @@ def _collect_target_runs(
             + urlencode({"event": event, "per_page": 100, "page": page}),
             token,
             f"{workflow} secured pull-request runs page {page}",
+            budget,
         )
         page_runs = (payload.get("workflow_runs")
                      if isinstance(payload, dict) else None)
@@ -426,8 +481,11 @@ def default_event_supply_runner(
             f"`{event}`; without one the relevant history has no boundary"
         )
 
+    budget = _RequestBudget(_MAX_SUPPLY_REQUESTS)
     repo_path = quote(repository, safe="/")
-    pulls = _collect_relevant_pulls(repo_path, repository, event, token, since)
+    pulls = _collect_relevant_pulls(
+        repo_path, repository, event, token, since, budget
+    )
     if not pulls:
         return []
 
@@ -435,7 +493,7 @@ def default_event_supply_runner(
     target_runs: list | None = None
     if event == "pull_request_target":
         target_runs = _collect_target_runs(
-            repo_path, workflow, event, token, since
+            repo_path, workflow, event, token, since, budget
         )
 
     for index, pull in enumerate(pulls):
@@ -475,6 +533,7 @@ def default_event_supply_runner(
                 }),
                 token,
                 f"{workflow} runs for {head_sha}",
+                budget,
             )
             runs = payload.get("workflow_runs") if isinstance(payload, dict) else None
             if not isinstance(runs, list):
@@ -501,6 +560,7 @@ def default_event_supply_runner(
                 f"{quote(head_sha, safe='')}",
                 token,
                 f"head commit {head_sha}",
+                budget,
             )
             commit_data = commit.get("commit") if isinstance(commit, dict) else None
             committer = (commit_data.get("committer")
@@ -552,6 +612,7 @@ def default_event_supply_runner(
                     f"{quote(head_sha, safe='')}/pulls",
                     token,
                     f"pull requests associated with {head_sha}",
+                    budget,
                 )
                 if not isinstance(associated_pulls, list):
                     raise AdapterError(
@@ -1021,6 +1082,16 @@ def _eval_event_producer(
 
     results: list[tuple[str, str]] = []
     waived = 0
+
+    # First pass: separate the obligations this run actually judges from the
+    # ones it waives or reports malformed. The ambiguity test further down needs
+    # to know which pulls a head commit carries, and it has to count exactly the
+    # obligations that reach the correlation step — a pull waived for predating
+    # the activation cutoff, or reported malformed, is never judged, so letting
+    # it make a commit "ambiguous" would refuse a legitimate identityless run
+    # and fabricate a stale finding. Deriving the set from this pass's output
+    # rather than from `supplies` keeps the two in step by construction.
+    judged: list[tuple[object, int, str, datetime, str]] = []
     for item in supplies:
         if not isinstance(item, (list, tuple)) or len(item) != 2:
             results.append((
@@ -1093,6 +1164,17 @@ def _eval_event_producer(
             ))
             continue
 
+        judged.append((run, pull_number, head_sha, occurred_at, obligation_label))
+
+    # One commit can head several pulls (the same head branch opened against two
+    # bases, or a branch reused), and the identityless fallback below leans on
+    # the commit alone — so it has to know when the commit does not identify a
+    # single judged pull.
+    head_sha_pulls: dict[str, set[int]] = {}
+    for _run, judged_pull, judged_sha, _occurred_at, _label in judged:
+        head_sha_pulls.setdefault(judged_sha, set()).add(judged_pull)
+
+    for run, pull_number, head_sha, occurred_at, obligation_label in judged:
         event_age = _age_days(occurred_at, now)
         if run is None:
             if event_age <= max_days:
@@ -1151,16 +1233,45 @@ def _eval_event_producer(
             ))
             continue
 
-        correlated = any(
-            run_pull["number"] == pull_number
-            and (
-                run_head_sha == head_sha
-                or (
-                    isinstance(run_pull.get("head"), dict)
-                    and run_pull["head"].get("sha") == head_sha
+        # When the run still carries pull identities, the obligation's pull
+        # number must be among them: two pulls can share one head commit (the
+        # same head branch opened against two bases), and each gets its own run
+        # reviewing its own base diff, so one pull's run never answers the
+        # other's even though the heads match.
+        #
+        # The head_sha alone is accepted only when NO identity survives, which
+        # is the state of a pull CLOSED WITHOUT MERGING whose head branch was
+        # then deleted: GitHub drops `pull_requests` from the run payload once
+        # the branch is gone, and the `/commits/{sha}/pulls` fallback recovers
+        # the association only for merged pulls. `identity_pulls` is then empty
+        # and `any()` over it is False however plainly the workflow ran — which
+        # reported Demerzel PR #1104 stale even though run 35288036450 had
+        # succeeded against its exact head. With nothing else left to go on, the
+        # commit the run executed against is the evidence.
+        #
+        # Unless that commit heads several pulls. Once both of them are closed
+        # unmerged with the branch deleted, neither run carries an identity and
+        # the guard above has no surviving conflict left to catch, while
+        # `default_event_supply_runner` queries by head_sha with `per_page=1`
+        # and hands the same newest run to both obligations. Discharging both
+        # from one run would let an unanswered pull read healthy off the other
+        # pull's run, so an ambiguous commit is refused as evidence instead.
+        shared_pulls = head_sha_pulls.get(head_sha, set())
+        sha_is_ambiguous = len(shared_pulls) > 1
+        correlated = (
+            any(
+                run_pull["number"] == pull_number
+                and (
+                    run_head_sha == head_sha
+                    or (
+                        isinstance(run_pull.get("head"), dict)
+                        and run_pull["head"].get("sha") == head_sha
+                    )
                 )
+                for run_pull in identity_pulls
             )
-            for run_pull in identity_pulls
+            if identity_pulls
+            else run_head_sha == head_sha and not sha_is_ambiguous
         )
         status = run.get("status")
         if status not in {"queued", "in_progress", "completed"}:
@@ -1173,11 +1284,17 @@ def _eval_event_producer(
 
         if not correlated:
             kind = "pending" if event_age <= max_days else "stale"
+            reason = (
+                f"candidate run carries no pull identity and its head commit "
+                f"heads {len(shared_pulls)} pulls, so it cannot be attributed "
+                f"to this one"
+                if sha_is_ambiguous and not identity_pulls
+                else "candidate belongs to another PR/head"
+            )
             results.append((
                 kind,
                 f"{obligation_label} has no correlated run after {event_age:.1f}d "
-                f"(allowance {max_days:g}d); candidate belongs to another PR/head: "
-                f"{url}",
+                f"(allowance {max_days:g}d); {reason}: {url}",
             ))
             continue
         if status in {"queued", "in_progress"}:

@@ -469,6 +469,19 @@ class Store:
         with self._write() as conn:
             self._heartbeat(conn, session)
 
+    def is_live(self, session: str) -> bool:
+        """True iff the session heartbeat inside HEARTBEAT_WINDOW_S.
+
+        Judged by timestamp, not by row presence, so it does not depend on a
+        sweep having run."""
+        conn = self._connect()
+        try:
+            row = conn.execute("SELECT heartbeat_at FROM sessions WHERE session=?",
+                               (session,)).fetchone()
+        except sqlite3.Error as error:
+            raise BusUnreachable(f"gaia store at {self.path} is unusable: {error}") from error
+        return row is not None and row["heartbeat_at"] > self._now() - HEARTBEAT_WINDOW_S
+
     def _heartbeat(self, conn, session: str) -> None:
         conn.execute(
             "INSERT INTO sessions (session, heartbeat_at) VALUES (?, ?) "

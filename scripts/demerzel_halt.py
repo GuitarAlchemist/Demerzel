@@ -88,6 +88,34 @@ def archive_dir() -> Path:
     return marker_dir() / "halts"
 
 
+_default_marker_dir = marker_dir
+
+
+def is_active(marker_dir: Path | None = None, *, now: datetime | None = None) -> tuple[bool, str]:
+    """Reader seam: fail-closed (active, reason) HALT-ALL check for consumer scripts.
+
+    Wraps kit.halt_state() so a consumer doesn't need to re-derive the marker
+    path or re-implement the present/valid/expired branch, nor the human-readable
+    reason string — the same (active, reason) logic was independently
+    copy-pasted as a local `halt_active()` / `_halt_active()` helper in both
+    run_afk_cycle.py and run_ml_feedback_cycle.py, and re-implemented without
+    schema/expiry awareness in monitor_baml_and_learning.py.
+
+    `marker_dir` defaults to ~/.demerzel (the contract's marker_dir()); `now`
+    defaults to the current UTC time. Returns `(False, "")` when not halted;
+    otherwise `(True, <human-readable reason>)`, including the fail-safe
+    reasons for an unreadable/invalid marker.
+    """
+    path = (marker_dir or _default_marker_dir()) / "HALT-ALL"
+    state = kit.halt_state(path, now or datetime.now(timezone.utc))
+    if not state["active"]:
+        return False, ""
+    if not state["valid"]:
+        return True, (f"HALT-ALL {state['reason']} — treating as halted (fail-safe): "
+                      f"{state['errors']}")
+    return True, f"HALT-ALL in effect (reason: {state['reason']})"
+
+
 _TYPE_CHECKS = {
     "object": lambda v: isinstance(v, dict),
     "array": lambda v: isinstance(v, list),

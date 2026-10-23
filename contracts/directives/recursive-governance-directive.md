@@ -74,6 +74,6 @@ Both require logged reasoning with constitutional citations.
 
 - Kit: `templates/recursive-governance-kit/`
 - Skill: `/demerzel bootstrap-governance`
-- VSM theory: `state/streeling/courses/cybernetics/en/CYB-001-vsm-ai-governance-mapping.md`
+- VSM theory: `state/streeling/courses/cybernetics/en/cyb-001-vsm-ai-governance-mapping.md`
 - Galactic Protocol: `contracts/galactic-protocol.md`
 - Issue: https://github.com/GuitarAlchemist/Demerzel/issues/167

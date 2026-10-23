@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-022",
+  "department": "psychohistory",
+  "question": "The daily trigger counts can be explained as Poisson, geometric or negative binomial: which explanation do the data favour, how decisively, and what does the winner still fail to describe?",
+  "production_path": [
+    "investigation: read the archived trigger folder at the pinned commit, PSY-008's extraction of the same folder, and the deletion history of the trigger folder (read-only git log, outside the fixture)",
+    "extract: count events per UTC calendar day into observed-input.json, refusing a folder whose file count, manifest digest or Git tree id differs from the pin",
+    "model: maximum-likelihood fits of a Poisson, a geometric and a negative binomial distribution, closed forms where they exist and a bracketed score bisection for r, checked against closed forms, limits, a hand-computed case and three starting brackets",
+    "test: AIC and BIC from the rounded log-likelihoods, the two cited scales, a seeded check of how often each criterion selects the true generator at 15, 30, 60 and 119 days, and the large-sample chi-square expectation",
+    "adversarial: refits without the busiest days and with the deleted trigger files added back, expected days per band, lag-1 autocorrelation against 10,000 shuffles, a sticky geometric process, negative controls, and the objection that the four busiest days are data",
+    "test: byte-identical rerun under CPython 3.9, 3.12 and 3.14 on Windows and 3.14 on Linux, 37 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "On the 119 daily trigger counts, AIC and BIC both rank negative binomial first, geometric second and Poisson last; the Poisson is worse by more than 1,000 log-likelihood units and the negative binomial beats the geometric by more than 10 points of AIC and BIC. In seeded samples of 119 independent days drawn from each fitted model, each criterion selects the true generator in at least 80% of samples, with AIC choosing the over-large negative binomial about 16% of the time when the geometric is true and BIC about 3%. The lag-1 autocorrelation of the observed counts is above 0.3 and outside what shuffled days give, so all three candidates share an assumption (independent days) that the data violate.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the 594 archived triggers fall on 119 calendar days (19 with none, 63 with one, the busiest with 109). Maximum-likelihood log-likelihoods are -1007.841 (Poisson, lambda 4.991597), -321.518 (geometric, q 594/713) and -298.913 (negative binomial, r 0.430337); AIC 2017.682, 645.036, 601.826 and BIC 2020.461, 647.815, 607.384 rank negative binomial, geometric, Poisson, with the negative binomial ahead of the geometric by 43.21 AIC and 40.431 BIC points. The Poisson trails the best model by 708.928 log-likelihood units, not more than 1,000: that part of the hypothesis is refuted, and 6 of its 7 parts hold.",
+    "In the seeded check (synthetic, 5,000 samples of 119 independent days per generator) each criterion selected the true generator in at least 84.30% of samples (AIC with the geometric true; BIC 97.08%). With the geometric true, AIC chose the negative binomial in 15.70% and BIC in 2.92% of samples, against large-sample expectations of 15.73% and 2.88%; the largest geometric-sample gain was 12.934, against the observed 45.21. At 15 days the criteria picked a true negative binomial in only 57.28% (AIC) and 49.84% (BIC) of samples.",
+    "The lag-1 autocorrelation of the daily counts is 0.4587 (3 of 10,000 shuffles reach it) and 0.3861 on ranks (none of 10,000). In a sticky geometric process that repeats the previous day with probability 0.46, AIC chose the negative binomial in 40.16% and BIC in 19.22% of 5,000 samples, while 1 sample reached a gain of 45.21.",
+    "The ranking rests on four days in two pairs of neighbours: without them the geometric minus negative binomial difference is 1.578 AIC and -1.167 BIC points. The fitted negative binomial expects 40.0 empty days against 19 observed and 15.85 one-event days against 63. Adding back twelve trigger files deleted without being archived gives 44.566 and 41.787. The analysis reran byte-identically and its 37 self-checks passed.",
+    "No model of dependence between days was fitted, no small-sample correction of AIC and no out-of-sample comparison was made, the thresholds that make three hypothesis parts checkable (the two 'within' tolerances and the 1% shuffle share) were set after exploratory fits but before the seeded check, the seeded check was raised from 2,000 to 5,000 samples per cell because the Monte Carlo error at 2,000 left its shares one to two standard errors from runs with other seeds (same seed formula, the first 2,000 samples included, no verdict changed), and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T03:30:36Z"
+}

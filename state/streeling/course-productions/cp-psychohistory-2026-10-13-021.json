@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-021",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-021",
+  "module_id": "psy-021-conservation-claims",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2346,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the trigger folders at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (603 event files), on the add and delete records of that folder in the commit's Git history (615 trigger files created, 12 deleted without being archived) and on a deterministic analysis whose 21 self-checks pass. The balances between the files and the history hold by construction of Git and are labelled so; the ledgers with a lost or copied event and the series of learning momentum are synthetic, and the reading of Noether's theorem and the four labels given to statements are the author's judgement. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-15T14:46:09Z"
+}

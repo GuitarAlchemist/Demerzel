@@ -84,45 +84,21 @@ jobs:
       - name: Select reviewer model
         if: env.SKIP_REVIEW != 'true'
         id: reviewer
+        env:
+          # Secret values are environment data, never shell source.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_AI_KEY: ${{ secrets.GOOGLE_AI_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AUTHOR: ${{ steps.detect.outputs.author }}
         run: |
-          AUTHOR="${{ steps.detect.outputs.author }}"
-
-          # No model reviews its own work
-          case "$AUTHOR" in
-            claude)
-              # Prefer Gemini for Claude-authored PRs
-              if [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
-                REVIEWER="gemini"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-            gemini)
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-            codex)
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              else
-                REVIEWER="gemini"
-              fi
-              ;;
-            human)
-              # Any model can review human work; prefer Claude
-              if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-                REVIEWER="claude"
-              elif [ -n "${{ secrets.GOOGLE_AI_KEY }}" ]; then
-                REVIEWER="gemini"
-              else
-                REVIEWER="codex"
-              fi
-              ;;
-          esac
-
+          set -euo pipefail
+          error_file=$(mktemp)
+          rc=0
+          REVIEWER=$(python3 scripts/select_reviewer.py --author "$AUTHOR" 2>"$error_file") || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::$(tr '\n' ' ' < "$error_file")"
+            exit "$rc"
+          fi
           echo "reviewer=$REVIEWER" >> "$GITHUB_OUTPUT"
           echo "Selected reviewer: $REVIEWER (author was $AUTHOR)"
 

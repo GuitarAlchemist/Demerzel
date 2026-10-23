@@ -166,6 +166,39 @@ class GalacticBridgeTests(unittest.TestCase):
         self.assertNotIn("hookSpecificOutput", next_result)
 
 
+class ReclaimTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory(dir=Path.cwd())
+        self.addCleanup(self.temp.cleanup)
+        self.ledger = Ledger(Path(self.temp.name),
+                             claims_path=Path(self.temp.name) / "claims.jsonl")
+        self.ledger.claim("afk-dead", "demerzel", "afk-issue-1", now=NOW)
+
+    def test_reclaim_releases_the_dead_holder_then_claims(self) -> None:
+        self.ledger.reclaim("afk-new", "demerzel", "afk-issue-1", "afk-dead",
+                            note="silent", now=NOW)
+        current = self.ledger.current_claim("demerzel", "afk-issue-1")
+        self.assertEqual((current["session"], current["status"]), ("afk-new", "claimed"))
+        rows, _ = self.ledger._load_claim_rows()
+        self.assertEqual([(r["session"], r["status"]) for r in rows],
+                         [("afk-dead", "claimed"), ("afk-dead", "released"), ("afk-new", "claimed")])
+        self.assertIn("reclaimed by afk-new", rows[1]["note"])
+
+    def test_second_reclaimer_of_the_same_dead_lane_loses(self) -> None:
+        self.ledger.reclaim("afk-first", "demerzel", "afk-issue-1", "afk-dead", now=NOW)
+        with self.assertRaisesRegex(BridgeError, "claim conflict"):
+            self.ledger.reclaim("afk-second", "demerzel", "afk-issue-1", "afk-dead", now=NOW)
+        self.assertEqual(self.ledger.current_claim("demerzel", "afk-issue-1")["session"], "afk-first")
+
+    def test_reclaim_refuses_a_lane_already_closed(self) -> None:
+        self.ledger.update_claim("afk-dead", "demerzel", "afk-issue-1", "done", now=NOW)
+        with self.assertRaisesRegex(BridgeError, "claim conflict"):
+            self.ledger.reclaim("afk-new", "demerzel", "afk-issue-1", "afk-dead", now=NOW)
+
+    def test_current_claim_is_none_for_an_unknown_lane(self) -> None:
+        self.assertIsNone(self.ledger.current_claim("demerzel", "afk-issue-2"))
+
+
 class SessionClaimSchemaTests(unittest.TestCase):
     """Anti-theater guard: the committed claim-row schema must actually accept
     the committed sanitized fixture (fixtures/galactic/session-claims.sample.jsonl).

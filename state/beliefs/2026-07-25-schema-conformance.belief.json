@@ -21,23 +21,36 @@
         "claim": "The duplicate loop-state schemas were collapsed to one source of truth: logic/loop-state.schema.json was deleted and schemas/loop-state.schema.json is now the single enforced copy (used by demerzel_kit.py at write time). Both state/loops/*.loop.json instances validate successfully against schemas/loop-state.schema.json. Issue #852 closed as superseded.",
         "timestamp": "2026-07-28T00:00:00Z",
         "reliability": 0.99
-      }
-    ],
-    "contradicting": [
-      {
-        "source": "/demerzel audit level 1 (2026-07-25) — audit-1-3-pdca-state-schema",
-        "claim": "All 8 state/pdca/*.pdca.json instances fail validation against kaizen-pdca-state.schema.json. Instances use fields cycle_phase/hypothesis/kaizen_kind and lack the schema-required proposition/model/phase/belief_state/iterations. The schema and instances have diverged.",
-        "timestamp": "2026-07-25T00:00:00Z",
-        "reliability": 0.99
       },
       {
-        "source": "/demerzel audit level 1 (2026-07-25) — loop-state check",
-        "claim": "Both state/loops/*.loop.json instances fail validation against loop-state.schema.json. Instances use loop_id/risk/repo/governance_mode while the schema requires id/risk_level/target_repo/worker/reviewer/current_iteration/convergence.",
-        "timestamp": "2026-07-25T00:00:00Z",
+        "source": "substrate-audit re-evaluation 2026-09-12",
+        "claim": "Re-verified 2026-09-12 against the proposition's explicit scope (PDCA states and autonomous-loop states): 0/8 PDCA instances and 0/4 loop-state instances fail validation. Both dissenting items dated 2026-07-25 predate the 2026-07-28 fixes already recorded in this belief's supporting evidence.",
+        "timestamp": "2026-09-12T00:00:00Z",
         "reliability": 0.99
       }
-    ]
+    ],
+    "contradicting": []
   },
-  "last_updated": "2026-07-28T00:00:00Z",
-  "evaluated_by": "demerzel"
+  "last_updated": "2026-09-12T00:00:00Z",
+  "evaluated_by": "demerzel/substrate-audit-reeval",
+  "resolved_contradictions": [
+    {
+      "source": "/demerzel audit level 1 (2026-07-25) — audit-1-3-pdca-state-schema",
+      "claim": "All 8 state/pdca/*.pdca.json instances fail validation against kaizen-pdca-state.schema.json. Instances use fields cycle_phase/hypothesis/kaizen_kind and lack the schema-required proposition/model/phase/belief_state/iterations. The schema and instances have diverged.",
+      "timestamp": "2026-07-25T00:00:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Superseded by this belief's own supporting evidence: logic/kaizen-pdca-state.schema.json was rewritten to the real instance shape (cycle_phase, hypothesis, kaizen_kind). The item was never retired after the fix.",
+      "resolution_verified_by": "jsonschema Draft7 validation on 2026-09-12: 0/8 state/pdca/*.pdca.json fail; schema required fields are ['id','cycle_phase','hypothesis'], which the instances carry"
+    },
+    {
+      "source": "/demerzel audit level 1 (2026-07-25) — loop-state check",
+      "claim": "Both state/loops/*.loop.json instances fail validation against loop-state.schema.json. Instances use loop_id/risk/repo/governance_mode while the schema requires id/risk_level/target_repo/worker/reviewer/current_iteration/convergence.",
+      "timestamp": "2026-07-25T00:00:00Z",
+      "reliability": 0.99,
+      "resolved_at": "2026-09-12T00:00:00Z",
+      "resolution": "Superseded by this belief's own supporting evidence: the duplicate loop-state schemas were collapsed to schemas/loop-state.schema.json, whose required fields match the instances (loop_id, risk, repo, governance_mode). The item was never retired after the fix.",
+      "resolution_verified_by": "jsonschema Draft7 validation on 2026-09-12: 0/4 state/loops/*.loop.json fail; logic/loop-state.schema.json is absent as intended"
+    }
+  ]
 }

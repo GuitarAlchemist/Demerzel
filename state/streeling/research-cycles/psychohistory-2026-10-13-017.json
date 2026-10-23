@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-017",
+  "department": "psychohistory",
+  "question": "A belief file records that 2 of 6 high-confidence beliefs were later revised and nudges a threshold by -0.1. What can six observations say about calibration?",
+  "production_path": [
+    "investigation: read the calibration belief, the 20 other belief files, the feedback policy, the pipeline specification and the applying script at the pinned commit; found that the stored nudge is a running total clamped to +/-0.1, that the applying script copies the belief's confidence and claim from a recommendation, and that the rule which counts the six is not in the pinned repository",
+    "investigation: read the counting script of the ix repository (commit 6418fcc69012108af266544ec4cf5a931a8f78e8, outside the pin) for the counting rule, the template of the claim and the formula of the recommendation's confidence",
+    "extract: snapshot the 21 belief files, the quoted rule lines and the two other files of the belief folders (a YAML list of 19 beliefs and the archive's ledger) into observed-input.json, refusing any source file whose Git blob differs from the pin and any belief file the pin does not have",
+    "model: read the six as independent trials with one revision rate; exact binomial tails, a Clopper-Pearson interval by bisection, the smallest sample by exhaustive search, and the stored total as a small Markov chain checked by a seeded simulation",
+    "adversarial: negative controls (a line no file reaches, a line every file reaches, a planted archived file), tampered inputs, and the objection of a uniform prior on the rate",
+    "test: byte-identical rerun of the analysis, 32 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "Six observations cannot separate a calibrated forecaster from an overconfident one: the exact 95% interval for 2 of 6 will contain 15% and be wider than 0.6; a forecaster whose high-confidence beliefs are revised 15% of the time will show 2 or more revisions in 6 in more than one sample in ten; telling 15% from 33% with a 5% false-alarm rate and 80% power will need at least 25 observations; and the pinned nudge rule, fed six fresh observations per cycle, will lower the threshold of a calibrated forecaster in more than half of the cycles.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the calibration belief (truth value P, confidence 0.92, threshold_nudge -0.1, applied_delta 0.0) is written by the applying script, which copies its confidence and its one supporting claim, 2 of 6 high-confidence beliefs later revised, from a recommendation document emitted by a producer in the ix repository. That producer's counting rule (ix commit 6418fcc69012108af266544ec4cf5a931a8f78e8, outside the pin), applied to the 21 pinned belief files, rebuilds the claim character for character: four current files and two archived ones at confidence 0.85 or more. A YAML list of 19 beliefs in the same folder, 9 of them at 0.85 or more, is not read by that rule.",
+    "Read as six independent trials, 2 of 6 gives an exact two-sided 95% interval from 0.0433 to 0.7772 (width 0.7339) that contains 15%, 10% and 5%. A forecaster revised 15% of the time shows 2 or more revisions among six with probability 0.223516, and exactly 2 of 6 is 1.8687 times as probable at one third as at 15%.",
+    "Separating 15% from one third with a false alarm of at most 5% and a detection of at least 80% needs 33 observations (9 or more of 33: 0.049479 and 0.821185), 5.5 times the six. At n = 6 the rule within that false-alarm limit, 3 or more, misses the higher rate with probability 0.680384.",
+    "Under the pinned formula and clamp, a synthetic forecaster calibrated at 15% who supplies six fresh beliefs per cycle is nudged down in 0.62285 of the cycles and has its stored total at the -0.1 limit with probability 0.894076 after 4 cycles, against 0.999228 at one third; a seeded simulation of 20,000 runs agrees within 0.007234. The analysis reran byte-identically and its 32 self-checks passed.",
+    "The six are not independent trials (the record counts itself, two of the six are written by the applying script, and no pinned file shows that a revision was an error), the Git history of the belief was not read, and the hypothesis was written after rough mental estimates of its figures, so it was not blind. When this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.75,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T04:59:45Z"
+}

@@ -376,6 +376,14 @@ class TestLiveness(GaiaTestCase):
         self.clock.advance(gaia_bus.HEARTBEAT_WINDOW_S + 1)
         self.assertIsNone(self.check(self.repo_fixture.root, "session-B", "issue-863"))
 
+    def test_is_live_follows_the_heartbeat_window(self):
+        self.assertTrue(self.store.is_live("session-A"))
+        self.assertFalse(self.store.is_live("session-never-seen"))
+        self.clock.advance(gaia_bus.HEARTBEAT_WINDOW_S - 1)
+        self.assertTrue(self.store.is_live("session-A"))
+        self.clock.advance(2)
+        self.assertFalse(self.store.is_live("session-A"))
+
     def test_session_end_releases_every_claim_the_session_holds(self):
         self.store.release_session("session-A")
         self.assertIsNone(self.check(self.repo_fixture.root, "session-B", "issue-863"))

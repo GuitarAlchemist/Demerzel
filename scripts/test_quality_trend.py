@@ -49,6 +49,43 @@ class QualityTrendTests(unittest.TestCase):
             self.assertAlmostEqual(0.3, row["delta_compliance"])
             self.assertEqual("U", row["effectiveness_from"])
             self.assertEqual("T", row["effectiveness_to"])
+            self.assertFalse(row["rebaseline"])
+
+    def _rows(self, current_source, previous_source, previous_count=3):
+        with tempfile.TemporaryDirectory() as root:
+            evolution = Path(root) / "evolution"
+            output = Path(root) / "quality"
+            evolution.mkdir()
+            output.mkdir()
+            metrics = {"citation_count": 42}
+            if current_source:
+                metrics["citation_source"] = current_source
+            (evolution / "sample.evolution.json").write_text(json.dumps(
+                {"artifact": "sample", "metrics": metrics}), encoding="utf-8")
+            if previous_count is not None:
+                prev = {"artifact": "sample", "citation_count": previous_count}
+                if previous_source:
+                    prev["citation_source"] = previous_source
+                (output / "2026-09.jsonl").write_text(json.dumps(prev) + "\n", encoding="utf-8")
+            rows, _ = build_rows(str(evolution), str(output), NOW)
+            return rows[0]
+
+    def test_change_of_citation_source_is_a_rebaseline_not_a_jump(self):
+        row = self._rows("git-grep-v1", None)
+        self.assertTrue(row["rebaseline"])
+        self.assertEqual(0, row["delta_citations"])
+        self.assertEqual(42, row["citation_count"])
+        self.assertEqual("git-grep-v1", row["citation_source"])
+
+    def test_same_citation_source_reports_the_real_delta(self):
+        row = self._rows("git-grep-v1", "git-grep-v1", previous_count=40)
+        self.assertFalse(row["rebaseline"])
+        self.assertEqual(2, row["delta_citations"])
+
+    def test_first_line_for_an_artifact_is_not_a_rebaseline(self):
+        row = self._rows("git-grep-v1", None, previous_count=None)
+        self.assertFalse(row["rebaseline"])
+        self.assertEqual(42, row["delta_citations"])
 
 
 class QualityTrendFreshnessTests(unittest.TestCase):

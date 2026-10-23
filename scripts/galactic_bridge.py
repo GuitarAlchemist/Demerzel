@@ -389,6 +389,69 @@ class Ledger:
             self._append_claim_row(row)
         return row
 
+    def current_claim(self, repo: str, lane: str) -> dict[str, Any] | None:
+        """The latest row for exactly (repo, lane), or None. Read-only."""
+        repo = _safe_name(repo.lower(), "repo")
+        lane = _safe_name(lane, "lane")
+        claim_rows, _ = self._load_claim_rows()
+        return next((row for row in self._latest_claim_rows(claim_rows)
+                     if row["repo"].lower() == repo and row["lane"] == lane), None)
+
+    def reclaim(
+        self,
+        session_id: str,
+        repo: str,
+        lane: str,
+        stale_session: str,
+        note: str = "",
+        now: datetime | None = None,
+    ) -> dict[str, Any]:
+        """Take over a lane whose holder the caller has proven dead.
+
+        Deciding death is the caller's job (this ledger has no liveness of its
+        own for claims). What this method guarantees is atomicity: under the
+        claims lock the lane must still be actively held by stale_session, so
+        two callers racing to reclaim the same dead lane cannot both win - the
+        second sees the first's claim and gets a conflict. Appends a released
+        row on the dead holder's behalf, then this session's claimed row.
+        """
+        now = now or utc_now()
+        session_id = _safe_name(session_id, "session_id")
+        stale_session = _safe_name(stale_session, "stale_session")
+        repo = _safe_name(repo.lower(), "repo")
+        lane = _safe_name(lane, "lane")
+        with _file_lock(self.claims_lock_path):
+            claim_rows, _ = self._load_claim_rows()
+            current = next((row for row in self._latest_claim_rows(claim_rows)
+                            if row["repo"].lower() == repo and row["lane"] == lane), None)
+            if (not current or current["status"] not in {"claimed", "in-progress"}
+                    or current["session"] != stale_session):
+                holder = current["session"] if current else "nobody"
+                raise BridgeError(
+                    f"claim conflict: {repo}/{lane} is no longer held by {stale_session} "
+                    f"(latest holder {holder})")
+            released = {
+                "ts": isoformat(now),
+                "repo": repo,
+                "lane": lane,
+                "status": "released",
+                "session": stale_session,
+                "evidence": None,
+                "note": f"reclaimed by {session_id}: {note.strip()}"[:500],
+            }
+            row = {
+                "ts": isoformat(now),
+                "repo": repo,
+                "lane": lane,
+                "status": "claimed",
+                "session": session_id,
+                "evidence": None,
+                "note": note.strip()[:500],
+            }
+            self._append_claim_row(released)
+            self._append_claim_row(row)
+        return row
+
     def append_claim_event(
         self,
         session_id: str,

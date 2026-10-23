@@ -3,13 +3,14 @@
   "artifact": "logic/governance-evolution.schema.json",
   "artifact_type": "schema",
   "metrics": {
-    "citation_count": 2,
+    "citation_count": 17,
     "violation_count": 0,
     "compliance_rate": 0.0,
-    "last_cited": "2026-07-25T00:00:00Z",
+    "last_cited": "2026-09-13T14:18:51Z",
     "last_violated": null,
     "promotion_candidate": false,
-    "deprecation_candidate": false
+    "deprecation_candidate": false,
+    "citation_source": "git-grep-v1"
   },
   "events": [
     {
