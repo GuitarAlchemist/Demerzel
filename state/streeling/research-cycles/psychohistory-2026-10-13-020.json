@@ -1,0 +1,27 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-020",
+  "department": "psychohistory",
+  "question": "The quality trend counts citations with git grep; what happens to such a proxy once agents know it is watched?",
+  "production_path": [
+    "investigation: read scripts/evolution_metrics.py, scripts/quality_trend.py, the anti-LOLLI policy and its history file, the power-law detection rule of logic/fractal-compounding.md and the compounding-metrics policy at the pinned commit; found that citation_count is the number of tracked files that contain one of an artifact's citation paths as a literal string, outside four excluded locations",
+    "extract: list the pinned tree with git ls-tree, read every file's pinned bytes (the working tree when it holds the pinned blob, Git objects otherwise), reimplement the producer's rule and snapshot counts, counted files and quoted lines into observed-input.json with spaced labels",
+    "model: recount the 16 counts from the file table, then add synthetic files (a catalogue of every path, single-path files, a lesson and its translations) to the observed counts and measure the change of each count and of the 120 order relations",
+    "test: enumerate a synthetic effort model (300 cases at reward weights 0, 1/2 and 1) with a seeded sample of 400 agents, and a reflexive forecast that starts from one observed count",
+    "adversarial: a planted catalogue on the pinned tree, in an excluded folder, under a folder named archived and with spaced labels; a dropped file, swapped counts and a spaced mention as negative controls; the objection that the count only promises mentions",
+    "test: byte-identical reruns of the extraction and the analysis, 25 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "The citation count records mentions, not use, so it can be moved by adding files: on the pinned tree, one added file that lists every citation path raises each measurable artifact's count by exactly 1 and leaves the order of the artifacts unchanged, while a file that mentions a single path changes the order of neighbouring artifacts for some paths. In a synthetic model where each agent puts its effort where its own reward is highest, moving the reward from real value to the proxy raises the mean proxy, lowers the mean real value, and brings the correlation between proxy and value below 0.5.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8, the producer's counting rule applied to the 2,062 tracked files (1,425 searched after the four exclusion pathspecs) reproduces the recorded citation_count of 16 of 16 measurable artifacts: 359 counts supplied by 200 files, of which 123 are Markdown, 9 are Python programs and 92 name two or more artifacts.",
+    "Synthetic additions to those observed counts: one file listing all 19 citation paths raises each of the 16 counts by 1 (sum 359 to 375, +4.46%) and changes 0 of 120 order relations; the same file in an excluded folder or written with spaced labels raises none; a file naming a single path changes at least one order relation for 11 of the 19 paths.",
+    "In a synthetic effort model (300 enumerated cases; an agent inflates when w x g > a), moving the reward weight on the proxy from 0 to 1 raises the mean proxy from 5.5 to 7.15 (+30%), lowers the mean real value from 5.5 to 3.85 (-30%) and brings the proxy-value correlation from 0.9619 to 0.2785, below the 0.5 written in advance; a seeded sample of 400 agents gives 0.965, 0.5026 and 0.3735 at the three weights.",
+    "The anti-LOLLI policy collects the citation_count delta for its ERGOL term and freezes artifact creation when LOLLI / ERGOL stays above 3.0 for 3 cycles, but its history file holds one cycle (2026-03-23, ratio 1.35), and the record of the one artifact with a count of 0 has deprecation_candidate false; a detection rule (logic/fractal-compounding.md line 56, repeated by the compounding-metrics policy, which gives that share a target of 0.60-0.85) calls the citations healthy when the top 20% of artifacts hold more than 60% of them. On the 18 recorded counts (sum 414) the top 4 hold 212 (51.21%) and the top 3 hold 40.34%, and 31 synthetic files naming the citation paths of the three measurable artifacts among the top 4 would take the share to 60.16%.",
+    "Nothing in the fixture shows that any count was inflated: no counted file was classified as use or mention, and the effort model and the reflexive forecast (a forecast of 44 committed in a file naming the path becomes 45) are assumed mechanisms; the analysis reran byte-identically with its 25 self-checks passing. When this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "confirm",
+  "belief_value": "P",
+  "belief_confidence": 0.7,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T05:14:32Z"
+}
