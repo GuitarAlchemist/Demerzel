@@ -51,7 +51,7 @@ class QualityTrendTests(unittest.TestCase):
             self.assertEqual("T", row["effectiveness_to"])
             self.assertFalse(row["rebaseline"])
 
-    def _rows(self, current_source, previous_source, previous_count=3):
+    def _rows(self, current_source, previous_source, previous_count=3, tag=None):
         with tempfile.TemporaryDirectory() as root:
             evolution = Path(root) / "evolution"
             output = Path(root) / "quality"
@@ -60,6 +60,8 @@ class QualityTrendTests(unittest.TestCase):
             metrics = {"citation_count": 42}
             if current_source:
                 metrics["citation_source"] = current_source
+            if tag:
+                metrics["citation_rebaseline"] = tag
             (evolution / "sample.evolution.json").write_text(json.dumps(
                 {"artifact": "sample", "metrics": metrics}), encoding="utf-8")
             if previous_count is not None:
@@ -86,6 +88,18 @@ class QualityTrendTests(unittest.TestCase):
         row = self._rows("git-grep-v1", None, previous_count=None)
         self.assertFalse(row["rebaseline"])
         self.assertEqual(42, row["delta_citations"])
+
+    def test_new_rebaseline_tag_is_a_rebaseline_not_a_drop(self):
+        row = self._rows("git-grep-v1", "git-grep-v1", previous_count=50, tag="streeling-moved-to-learn")
+        self.assertTrue(row["rebaseline"])
+        self.assertEqual(0, row["delta_citations"])
+        self.assertEqual("git-grep-v1+streeling-moved-to-learn", row["citation_source"])
+
+    def test_recorded_rebaseline_tag_reports_the_real_delta(self):
+        row = self._rows("git-grep-v1", "git-grep-v1+streeling-moved-to-learn", previous_count=40,
+                         tag="streeling-moved-to-learn")
+        self.assertFalse(row["rebaseline"])
+        self.assertEqual(2, row["delta_citations"])
 
 
 class QualityTrendFreshnessTests(unittest.TestCase):

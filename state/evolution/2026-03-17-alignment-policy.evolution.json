@@ -10,6 +10,7 @@
     "last_violated": null,
     "promotion_candidate": true,
     "deprecation_candidate": false,
+    "citation_rebaseline": "streeling-moved-to-learn",
     "citation_source": "git-grep-v1"
   },
   "events": [
