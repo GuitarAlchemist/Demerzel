@@ -1,80 +1,24 @@
-# Streeling University — Course Catalog
+# Streeling University — courses have moved to learn
 
-## Structure
+Since 2026-10-21, Streeling courses are written and published in
+[spareilleux/learn](https://github.com/spareilleux/learn), not here:
 
-```
-courses/
-  {department}/           # One directory per department
-    en/                   # English (primary)
-    es/                   # Spanish
-    pt/                   # Portuguese
-    fr/                   # French
-    it/                   # Italian
-    de/                   # German
-```
+| What | Where in learn |
+|---|---|
+| Modules, English, French and Spanish | [`streeling/courses/<department>/{en,fr,es}/`](https://github.com/spareilleux/learn/tree/main/streeling/courses) |
+| Department files (`*.department.json`), `university.json`, `curriculum-references.json` | [`streeling/`](https://github.com/spareilleux/learn/tree/main/streeling) |
+| Fixtures: programs and data behind a module's evidence | [`code/streeling/<department>/<module>/`](https://github.com/spareilleux/learn/tree/main/code/streeling) |
+| Production records and their schema, review packets | [`streeling/course-productions/`](https://github.com/spareilleux/learn/tree/main/streeling/course-productions), [`streeling/reviews/`](https://github.com/spareilleux/learn/tree/main/streeling/reviews) |
+| The published pages | <https://spareilleux.github.io/learn/streeling/> |
 
-**Naming convention:** `{DEPT-CODE}-{SEQ}-{slug}.{lang}.md` (e.g., `gaa-001-your-first-chord.es.md`)
+learn copied them from this repository at commit
+[`1beb089`](https://github.com/GuitarAlchemist/Demerzel/tree/1beb0890faec827e1a9e5532abfdc97908de441d/state/streeling),
+which still holds the files as they were here. To write or fix a course, open a pull request in learn, from a clone
+next to this one (`../learn/`); its `AGENTS.md` gives the conventions.
 
-## Available Courses
+## What stays here
 
-### Guitar Alchemist Academy
-
-| Code | Title | Level | Duration | Languages |
-|------|-------|-------|----------|-----------|
-| [GAA-001](guitar-alchemist-academy/en/gaa-001-your-first-chord.md) | Your First Chord — E Minor | Beginner | 20 min | en, es, pt, fr, it, de |
-
-**Curriculum path:** Nigredo (Beginner) → Albedo (Intermediate) → Citrinitas (Advanced) → Rubedo (Master)
-
-### Psychohistory
-
-| Code | Title | Level | Duration | Languages |
-|------|-------|-------|----------|-----------|
-| [PSY-001](psychohistory/en/psy-001-intro-fractal-compounding.md) | Introduction to Fractal Compounding | Intermediate | 30 min | en, es, pt, fr, it, de |
-
-**Curriculum path:** Foundations → Statistical Mechanics → Power Laws → Phase Transitions → Crisis Prediction
-
-### IX Research
-
-| Code | Title | Level | Duration | Languages |
-|------|-------|-------|----------|-----------|
-| [IXR-001](ix-research/en/ixr-001-streams-under-budgets.md) | Streams Under Budgets: Back-Pressure, a Learned Gate and a Petri Check | Intermediate | 40 min | en, fr, es |
-
-**Research index:** the five IX studies with their pinned receipts are listed in [ix-research/README.md](ix-research/README.md). IXR-001 has no research-cycle record and awaits human review.
-
-## Departments Without Courses (Yet)
-
-These departments have grammars and research areas defined but no courses produced. Run `/seldon research-cycle {dept}` followed by `/seldon course-pipeline {dept}` to generate.
-
-| Department | Grammar | Status |
-|-----------|---------|--------|
-| Music | music-theory.ebnf | Ready for research cycles |
-| Guitar Studies | guitar-technique.ebnf | Ready |
-| Musicology | musicology-analysis.ebnf | Ready |
-| Mathematics | mathematical-proof.ebnf | Ready |
-| Physics | acoustics-physics.ebnf | Ready |
-| Computer Science | algorithms.ebnf | Ready |
-| Product Management | product-management.ebnf | Ready |
-| Futurology | futurology.ebnf | Ready |
-| Philosophy | philosophy.ebnf | Ready |
-| Cognitive Science | cognitive-science.ebnf | Ready |
-| World Music & Languages | (technique grammars) | Ready |
-
-## How Courses Are Produced
-
-```
-/seldon research-cycle [dept]     # Generate research question, investigate, assess
-        ↓
-/seldon course-pipeline [dept]    # Outline → content → translate → review → publish
-        ↓
-courses/{dept}/{lang}/{code}.md   # Published course in 6 languages
-```
-
-See: [`seldon-research-cycle`](../../../.claude/skills/seldon-research-cycle/SKILL.md) and [`seldon-course-pipeline`](../../../.claude/skills/seldon-course-pipeline/SKILL.md)
-
-## Quality Standards
-
-- Courses require research cycle with `belief_confidence >= 0.5`
-- Auto-publish at `>= 0.7` confidence; human review for `0.5-0.7`
-- Each course must have practice exercises
-- Translations follow [multilingual policy](../../../policies/multilingual-policy.yaml) with cultural adaptation
-- All courses reference their source research cycle for traceability
+- The German, Italian and Portuguese translations in `<department>/{de,it,pt}/`, frozen: learn publishes English,
+  French and Spanish only. Their English source is in learn, and it may have changed since they were translated.
+- The department weights, `../departments/*.weights.json`, which `seldon-research-cycle` and tars read.
+- The research cycles, `../research-cycles/`, and the rest of `state/streeling/`.
