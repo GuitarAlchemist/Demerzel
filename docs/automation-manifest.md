@@ -35,7 +35,7 @@ cron(every: 4h, window: "06:00-22:00 UTC", max_per_day: 6)
   → guard: kill_switch_inactive AND daily_count < 6
   → question_generation(completeness_instinct, dept_weights)
   → seldon_research_pipeline(question, cross_model: [claude, chatgpt])
-  → novelty_detection(against: state/streeling/courses/)
+  → novelty_detection(against: ../learn/streeling/courses/)
   → when novel AND confidence >= 0.8:
       seldon_course_pipeline(question, findings)
   → compound(dept_weights, knowledge_gaps, grammar_follow_ups)

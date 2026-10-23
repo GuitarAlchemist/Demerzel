@@ -20,7 +20,7 @@
 - Phase 1 (SPAWN): kill switch absent, daily cap not reached → team created with Seldon + Auditor
 - Phase 2 (SELECT): `guitar-studies` selected (lowest coverage ratio 0.25)
 - Phase 3 (INVESTIGATE): question generated from grammar, cross-validated across Claude + GPT + NotebookLM
-- Phase 4 (PRODUCE): T(0.87) >= 0.8 → course material produced and written to `state/streeling/courses/guitar-studies/en/{module_id}.md`
+- Phase 4 (PRODUCE): T(0.87) >= 0.8 → course material produced and written to `../learn/streeling/courses/guitar-studies/en/{module_id}.md`
 - Phase 5 (AUDIT): Auditor validates citations, confidence calibration, belief consistency — no issues
 - Phase 6 (COMPOUND): weights updated (+0.05), daily counter incremented to 3, Discord notified with course link
 - Phase 7 (DISSOLVE): team dissolved, cycle logged, LOG.md updated
@@ -85,7 +85,7 @@
 **Pass criteria:**
 - Zero side effects on any state file
 - `daily_cycle_count` remains 0
-- No files created in `state/streeling/research-cycles/`, `state/streeling/courses/`, or `state/conscience/signals/`
+- No files created in `state/streeling/research-cycles/`, `../learn/streeling/courses/`, or `state/conscience/signals/`
 - LOG.md contains kill switch abort entry
 - No team resource allocated or leaked
 

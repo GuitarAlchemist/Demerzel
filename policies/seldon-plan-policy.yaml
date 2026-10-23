@@ -77,7 +77,7 @@ Before any work:
 ### Context Rebuild
 Read:
 - `state/seldon-plan/state.json` — daily count, last question asked, next department
-- `state/streeling/departments/*.department.json` — all departments + last cycle timestamps
+- `../learn/streeling/departments/*.department.json` — all departments + last cycle timestamps
 - `state/streeling/departments/*.weights.json` — grammar weights per department
 - `state/seldon-plan/novelty-registry.json` — known findings (for novelty detection)
 - `state/completeness/known-gaps.json` — open gaps from completeness instinct
@@ -221,7 +221,7 @@ If new evidence contradicts an existing T belief with high confidence:
 Only if finding is **novel** AND belief_value = T AND confidence >= 0.75.
 
 Follow the course module format from `seldon-research-cycle` SKILL.md:
-- Save to `state/streeling/courses/{department}/en/{module_id}.md`
+- Save to `../learn/streeling/courses/{department}/en/{module_id}.md`
 - Apply multilingual translation per `multilingual-policy.yaml` if department is in scope
 - Update department curriculum gap list
 
@@ -302,7 +302,7 @@ Increment `consecutive_auto_cycles`. Reset to 0 when human invokes `/seldon rese
 3. Scheduler state → `state/seldon-plan/state.json`
 4. IxQL finding → `state/seldon-plan/ixql-findings/{cycle_id}.ixql` (if applicable)
 5. Department weights → `state/streeling/departments/{dept}.weights.json`
-6. Course material → `state/streeling/courses/...` (if produced)
+6. Course material → `../learn/streeling/courses/...` (if produced)
 7. Evolution log → `state/evolution/` (if grammar evolved or belief updated)
 8. Conscience signals → `state/conscience/signals/` (if anomaly detected)
 9. Follow-up triggers → `state/triggers/` (if applicable)

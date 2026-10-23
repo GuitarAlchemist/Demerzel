@@ -38,5 +38,5 @@ Suggested page hierarchy:
 ## Reference
 
 - Issue: GuitarAlchemist/Demerzel#26
-- Academy: state/streeling/departments/guitar-alchemist-academy.department.json
+- Academy: ../learn/streeling/departments/guitar-alchemist-academy.department.json
 - Multilingual: policies/multilingual-policy.yaml
