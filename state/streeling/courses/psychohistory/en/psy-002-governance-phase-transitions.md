@@ -21,7 +21,7 @@ After this lesson, you will be able to:
 - Define what a phase transition means in a governance system
 - Identify six measurable signals that precede regime shifts
 - Distinguish first-order (abrupt) from second-order (continuous) governance transitions
-- Apply the variety ratio as an order parameter for governance regime classification
+- Apply the variety ratio as a candidate order parameter for governance regime classification
 - Design a monitoring dashboard from governance state files
 
 ---
@@ -49,7 +49,7 @@ Most governance transitions are second-order — continuous, hard to pinpoint, b
 
 ### Signal 1: Belief Distribution Skew
 
-Your governance state tracks beliefs as tetravalent values: T (True), F (False), U (Unknown), C (Contradictory). The ratio `T/U` is the **crystallization index** — how much of your knowledge has solidified.
+Demerzel's logic is hexavalent: T (True), P (Probable), U (Unknown), D (Doubtful), F (False), C (Contradictory). The ratio `T/U` is the **crystallization index** — how much of your knowledge has solidified. It is a four-state projection: the department weights files count only `total_T`, `total_F`, `total_U` and `total_C`, with no count for P or D, so the index cannot see a probable or doubtful belief, nor a move between T and P or between D and F. Computing it over all six values would need P and D counts that these files do not carry.
 
 ```
 crystallization_index = total_T / max(total_U, 1)
@@ -64,7 +64,7 @@ When this ratio changes rapidly — `d(T/U)/dt` exceeding 2 standard deviations 
 
 ### Signal 2: Health Score Velocity
 
-The governance health score R (currently tracked in `state/governance-health.json`) acts as a thermodynamic potential. Its derivative tells you about regime proximity:
+The governance health score R is Demerzel's resilience score, defined in `CONTEXT.md` as `R = injections_caught / injections_total`: the share of faults injected into governance that its detection catches. `state/resilience/history.json` records it as `overall_score`, one record per chaos cycle, and the root `governance-health.json` holds the latest value. R acts as a thermodynamic potential, and its derivative tells you about regime proximity:
 
 ```
 velocity = dR/dt (health score change per cycle)
@@ -97,25 +97,25 @@ When `marginal_return → 0` over 3+ consecutive policy additions, the system ha
 
 ### Signal 4: Cross-Repo Coupling Strength
 
-Demerzel governs four repos (demerzel, ix, tars, ga). Measure correlation between their compliance rates:
+Demerzel governs four repos (demerzel, ix, tars, ga). Record each repo's compliance rate once per cycle, and over a window of the last W cycles average the absolute values of the Pearson correlations of the six repo pairs (a single cycle gives one rate per repo, from which no correlation can be computed). Take W of at least 30 cycles, the same in every window you compare: with W = 2 every correlation is exactly ±1, and over short windows chance alone gives large values, since for two independent repos the expected |r| is about 0.8/√(W − 1), 0.27 at W = 10 and 0.15 at W = 30, against the 0.3 threshold below. Take absolute values because two repos that move in opposite directions, with a correlation near −1, are as tightly coupled as two that move together, and correlations of opposite sign would cancel in a signed mean. A constant series, such as a repo holding at 100%, has no correlation with anything: leave its pairs out, and compare two windows only over the pairs defined in both. A mean over a different set of pairs measures something else, and dropping weak pairs alone can lift it into the tightly coupled regime. If no pair remains, coupling is undefined for the window:
 
 ```
-coupling = pearson_correlation(compliance_rates across repos)
+coupling = mean_{i<j} |pearson_correlation(rates_i[W], rates_j[W])|
 ```
 
 | Coupling | Regime |
 |----------|--------|
 | < 0.3 | Loosely coupled — repos evolve independently |
-| 0.3 - 0.7 | Normal coupling — governance provides coherence |
+| 0.3 - 0.7 | Normal coupling — repos partly move in step, together or in opposition |
 | > 0.7 | Tightly coupled — changes propagate everywhere |
 
-A sudden jump in coupling (loose → tight) means the system is transitioning to centralized governance. A sudden drop means fragmentation. Both are phase transitions.
+A sudden jump in coupling (loose → tight) means the repos have started to move in lockstep, but not in which direction: the mean discards signs, so two repos improving while the other two decline in lockstep give every pair |r| = 1, the maximum coupling, although the ecosystem is polarizing rather than centralizing. Before reading a jump as centralization, check the signs of the six correlations: all positive means the repos move together; positive within two groups and negative between them means two camps. A sudden drop means the repos move more independently, as in fragmentation. Either may mark a phase transition if other signals converge on it (Section 3).
 
 ### Signal 5: Conscience Signal Frequency
 
-In statistical mechanics, fluctuations increase near a phase boundary — this is called **critical opalescence** (the fluid becomes cloudy right before boiling).
+In statistical mechanics, fluctuations grow without bound as a system approaches a critical point, where the transition is continuous (second-order). Near the liquid–gas critical point this shows as **critical opalescence**: density fluctuations grow to the scale of the wavelength of light, and the fluid turns milky. Ordinary boiling, a first-order transition, has no such precursor.
 
-The governance equivalent: conscience signals (anomalies, escalations, contradictions) increase in frequency before a phase transition.
+The governance analogy therefore applies to continuous transitions: conscience signals (anomalies, escalations, contradictions) would increase in frequency as the system approaches one. An abrupt, first-order transition, such as a kill switch, need not announce itself.
 
 ```
 signal_rate = conscience_signals_count / time_window
@@ -125,21 +125,25 @@ A 2x increase in signal rate over 3 cycles is a strong indicator that the system
 
 **Where to measure:** `state/conscience/signals/` directory
 
-### Signal 6: Variety Ratio as Order Parameter
+### Signal 6: Variety Ratio as a Candidate Order Parameter
 
-From cybernetics (CYB-003), the variety ratio measures whether governance has sufficient complexity to handle its environment:
+From cybernetics, the variety ratio compares the regulator with its environment, not amplifiers with attenuators inside the regulator. It is computed per cycle from counts of the distinct responses governance gives and the distinct disturbances it meets:
 
 ```
-variety_ratio = governance_variety / environmental_variety
+variety_ratio = distinct_responses / distinct_disturbances
 ```
 
-This is the **order parameter** for governance phase transitions:
+In bits, log2(variety_ratio) = V_R - V_D, with V = log2 of each count. A ratio of the bit values, V_R / V_D, would break this identity, and would divide by zero in a cycle that meets a single distinct disturbance, where V_D = log2(1) = 0. A cycle that meets no disturbance has no ratio.
 
-- `variety_ratio < 1.0`: Reactive regime (insufficient variety, governance lags environment)
-- `variety_ratio ≈ 1.0`: Critical point (Ashby's Law of Requisite Variety exactly met)
-- `variety_ratio > 1.0`: Proactive regime (governance has surplus capacity)
+It is a **candidate order parameter** for governance regimes, with 1.0 as a chosen boundary:
 
-Crossing 1.0 is a second-order phase transition. The system doesn't break — it qualitatively changes its relationship to its environment.
+- `variety_ratio < 1.0`: Reactive regime (fewer distinct responses than distinct disturbances)
+- `variety_ratio ≈ 1.0`: Boundary (as many distinct responses as distinct disturbances)
+- `variety_ratio > 1.0`: Proactive regime (more distinct responses than distinct disturbances)
+
+The ratio does not say whether governance regulates. Ashby's Law is stated on outcomes: where no response brings two disturbances to the same outcome and N_η outcomes are acceptable, carrying V_η = log2(N_η) bits, regulating every disturbance needs V_R >= V_D - V_η. So a ratio below 1 is compatible with full regulation when enough outcomes are acceptable, or when one response brings several disturbances to the same acceptable outcome, where the law does not apply. A ratio above 1 can still fail, when the responses given are not the ones the disturbances need. Whether governance regulates is read from the outcome of each disturbance, given the response, and the counts themselves come from records of the disturbances met and the responses given in each cycle.
+
+Crossing 1.0 means only that distinct responses first match distinct disturbances in number; it is not by itself a phase transition. The ratio can pass through 1 smoothly, when one more response becomes available, with no qualitative change in the system. Calling a crossing a second-order transition would need a model of the order parameter that shows critical behavior near 1.0, such as the growing fluctuations of Signal 5; until then, treat 1.0 as a regime boundary.
 
 ---
 
@@ -165,7 +169,7 @@ Crossing 1.0 is a second-order phase transition. The system doesn't break — it
                     └────────────────── t (time/cycles)
 ```
 
-Each horizontal line is a phase boundary. The governance system crosses these boundaries when enough signals align. No single signal is sufficient — look for **convergence** of 3+ signals indicating the same transition direction.
+Each horizontal line is a chosen regime boundary, not a measured phase boundary. The governance system crosses these boundaries when enough signals align. No single signal is sufficient — look for **convergence** of 3+ signals indicating the same transition direction.
 
 ---
 
@@ -177,11 +181,11 @@ Using the current Demerzel governance state:
    - `total_T = ?`, `total_U = ?`
    - `crystallization_index = total_T / max(total_U, 1)`
 
-2. Look at the health score R = 0.64. Which regime is the system in? What would need to change to cross the 0.7 boundary?
+2. Take R as the `overall_score` of the latest record in `state/resilience/history.json`. Which regime is the system in? What would need to change to cross the next boundary?
 
-3. Count the policies in `policies/` and the health score. Estimate the current marginal return of the last policy added.
+3. In the same file, cycle chaos-003 records, in `metafixes_applied`, a new policy file and a section added to an existing policy, and in `level_deltas` a gain at level L4, while R rose from 0.64 (chaos-002) to 0.73. Compute the aggregate return of that cycle's changes. Why can the 0.09 rise not be credited to the new policy alone, and what observation would isolate its return? Between chaos-003 and chaos-004, R rose to 0.82 without a new policy file: what does that say about measuring returns per policy count?
 
-4. **Thought experiment:** If all four consumer repos suddenly achieve 100% compliance, what phase transition does that represent? Is it desirable?
+4. **Thought experiment:** If all three consumer repos (ix, tars, ga) suddenly achieve 100% compliance, what phase transition does that represent? Is it desirable?
 
 ---
 
@@ -189,14 +193,14 @@ Using the current Demerzel governance state:
 
 - Phase transitions in governance are qualitative shifts in how the system operates, not just quantitative growth
 - Six measurable signals can detect approaching transitions: belief skew, health velocity, policy saturation, coupling strength, conscience frequency, and variety ratio
-- The variety ratio (from cybernetics) serves as the order parameter — crossing 1.0 is the most important transition
+- The variety ratio (from cybernetics) is a candidate order parameter — crossing 1.0 marks a regime boundary, not by itself a phase transition, and whether governance regulates is read from outcomes, not from the ratio
 - Most governance transitions are second-order (continuous) — detectable but not abrupt
 - No single signal is sufficient; look for convergence of 3+ signals
 
 ## Further Reading
 
 - [PSY-001: Introduction to Fractal Compounding](psy-001-intro-fractal-compounding.md) — prerequisite on D_c and ERGOL/LOLLI
-- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the order parameter
+- [CYB-003: Measuring Variety Ratio Quantitatively](../../cybernetics/en/cyb-003-measuring-variety-ratio-quantitatively.md) — the candidate order parameter
 - [CYB-001: VSM and AI Governance Mapping](../../cybernetics/en/cyb-001-vsm-ai-governance-mapping.md) — structural prerequisites
 - Statistical mechanics of phase transitions (Landau theory, order parameters, critical exponents)
 - Asimov's Foundation — psychohistory predicts aggregate trends, not individual events

@@ -26,15 +26,17 @@ version: "1.0.0"
 
 Tout guitariste apprend ces cinq accords majeurs ouverts dès le début. Chacun a une empreinte géométrique distincte :
 
+Les diagrammes se lisent de la corde 6 (mi grave) à la corde 1 (mi aigu) ; `x` marque une corde qu'on ne joue pas.
+
 ### Forme C
 ```
-x 3 2 0 1 0    Cordes : 5-4-3-2-1
+x 3 2 0 1 0    Cordes : 6-5-4-3-2-1
   F 3 5 F 3    Intervalles : Fondamentale-3M-5J-Fondamentale-3M
 ```
 
 ### Forme A
 ```
-x 0 2 2 2 0    Cordes : 5-4-3-2-1
+x 0 2 2 2 0    Cordes : 6-5-4-3-2-1
   F 5 F 3 5    Intervalles : Fondamentale-5J-Fondamentale-3M-5J
 ```
 
@@ -52,8 +54,8 @@ F 5 F 3 5 F    Intervalles : Fondamentale-5J-Fondamentale-3M-5J-Fondamentale
 
 ### Forme D
 ```
-x x 0 2 3 2    Cordes : 4-3-2-1
-  F 5 F 3      Intervalles : Fondamentale-5J-Fondamentale-3M
+x x 0 2 3 2    Cordes : 6-5-4-3-2-1
+    F 5 F 3    Intervalles : Fondamentale-5J-Fondamentale-3M
 ```
 
 **Observation clé :** Chaque forme ne contient que trois classes de hauteur : la fondamentale, la tierce majeure et la quinte juste. Les différences résident dans le *renversement* — à quelle octave apparaît chaque note et quelles cordes les portent.

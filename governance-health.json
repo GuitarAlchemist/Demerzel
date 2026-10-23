@@ -8,7 +8,7 @@
   },
   "quality_trend": {
     "latest_artifact": "scripts/afk_backends/",
-    "source": "state/quality-trend/2026-09.jsonl",
-    "computed_at": "2026-09-20T15:12:18Z"
+    "source": "state/quality-trend/2026-10.jsonl",
+    "computed_at": "2026-10-22T16:24:29Z"
   }
 }

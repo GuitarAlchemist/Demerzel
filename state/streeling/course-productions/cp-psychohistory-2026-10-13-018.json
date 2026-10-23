@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "cp-psychohistory-2026-10-13-018",
+  "department": "psychohistory",
+  "research_cycle_id": "psychohistory-2026-10-13-018",
+  "module_id": "psy-018-backtesting-without-leakage",
+  "status": "in_progress",
+  "phases": {
+    "research": {
+      "completed": true,
+      "belief_value": "P",
+      "belief_confidence": 0.7
+    },
+    "outline": {
+      "completed": true,
+      "sections": 4,
+      "estimated_duration": "45 minutes"
+    },
+    "content": {
+      "completed": true,
+      "word_count": 2349,
+      "exercises": 5
+    },
+    "translation": {
+      "completed": true,
+      "languages": [
+        "en",
+        "fr",
+        "es"
+      ]
+    },
+    "review": {
+      "completed": false,
+      "feedback": "English draft resting on a snapshot of the quality-trend citation counts at Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 (1,519 pairs of consecutive rows, 20 with a changed count, 4 of them outside the rebaseline rows) and on a deterministic analysis whose 35 self-checks pass. Every ranking of the three benchmark methods rests on one event, four counts rising by 2 in the same run (one commit of translated lessons, read outside the fixture), so the draft concludes that this sample cannot rank them; the three leaks are measured on that same event, and two of them move the reported error in either direction depending on the cut. The series are restarted at rebaseline rows, a choice the draft itself flags as resting on a value written in the target row. Human subject review, learner trial and publication remain pending; the French and Spanish translations have had no native-speaker review."
+    },
+    "publish": {
+      "completed": false
+    }
+  },
+  "timestamp": "2026-10-15T14:46:09Z"
+}

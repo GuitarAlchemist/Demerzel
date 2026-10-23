@@ -1,0 +1,29 @@
+{
+  "cycle_id": "psychohistory-2026-10-13-025",
+  "department": "psychohistory",
+  "question": "Can we write a forecast about Streeling that a stranger can score later without asking us what we meant?",
+  "production_path": [
+    "investigation: read the author brief, PSY-005, PSY-016, PSY-017 and PSY-010, then listed the English module files of state/streeling/courses and their front matter at the pinned commit; found one module without front matter and translations that share their English module's id",
+    "references: confirmed Nosek et al. 2018, Gneiting and Raftery 2007 and Winkler 1972 on Crossref; read Nosek et al.'s definition of preregistration and Gneiting and Raftery's section 6.2 (interval score, eq. 43); read only the abstract of Winkler 1972",
+    "extract: snapshot of the history of state/streeling/courses (commits and trees only) and of its 255 files at the pin, checked against embedded history constants, pinned blob ids and a manifest digest",
+    "model: wrote four forecast records (two worked records about the Music department, a flawed draft and its repair), 22 field rules with their failure messages, a counting rule meant to survive a move of the library, and reference classes over 92-day windows",
+    "test: validated the records against verdicts written in advance, scored them on invented outcomes with the Brier and interval scores, and computed exact intervals for the base rates and their sensitivity to the alignment of the windows",
+    "adversarial: seven changed copies of a worked record, a planted Music addition, a planted translation without an English module, invented layouts after a move, and the objection that one resolution cannot measure skill",
+    "revision: applied an independent read's findings: one move rule in the records and the lesson, a void clause and a timestamp checkable from the repository (the first merging pull request's mergedAt), the resolution commands, the department rule, the scope of R20, the worked interval's coverage under its author's beliefs, and the window alignments at which the expected base rate holds",
+    "test: byte-identical reruns of extract.py and analyze.py, 22 self-checks, five answered exercises and an answer-free transfer task"
+  ],
+  "hypothesis": "A forecast record becomes scoreable by a stranger when it fixes its source, a counting unit, a rule for a moved source, a void condition, a base rate with a command that recomputes it, and a falsifier stated as the outcomes where it scores worse than its reference; a validator built on such field rules will pass worked records and fail an ordinary draft on most rules. The pinned history will give a base rate of department growth over 92 days below 10%, with an exact interval too wide to set a probability for one department, and a counting rule tested on the pinned library will match the path count only with a fallback for files without front matter.",
+  "test_method": "empirical",
+  "evidence": [
+    "At Demerzel commit 4b03838800dcd4894f1e026461979bff1d985ca8 the course library holds 255 files and 68 English modules in 18 departments (Music 19, Psychohistory 2); a counting rule that reads front matter only finds 67, because one English module has none, while the rule with a file-name fallback matches the path count in all 18 departments and the 181 translated files add no module.",
+    "Over the two back-to-back 92-day windows ending at that commit, the module count rose in 2 of 36 department-windows (Mathematics 1 to 25, Music 6 to 19): base rate 0.055556, exact 95% interval 0.0068 to 0.1866, and Music alone rose in 1 of 2 windows (0.0126 to 0.9874). Moving the windows back 0 to 22 days moves the broad rate between 0.055556 and 0.151515: it is below 10% at 10 of the 23 alignments (0 to 6 and 17 to 19 days back) and not at the other 13 (7 to 16 and 20 to 22 days back, rates 0.1 to 0.151515), so the history cannot decide the 'below 10%' part of the hypothesis, which names no alignment.",
+    "The 22 field rules pass the two worked records and the repaired draft, and fail the flawed draft on 16 rules with 3 more not judged; six changed copies of a worked record fail exactly the broken rule and a seventh passes; the analysis reran byte-identically and its 22 self-checks passed.",
+    "Scored on invented outcomes, the worked probability 0.7 earns a Brier score of 0.09 or 0.49 against 0.891974 or 0.003086 for the stated base rate, and the interval [19, 25], an 80% interval by its stated level that covers with probability at least 0.9 under its author's beliefs, scores 6 when it covers against 0 to 60 for persistence; both score worse than their references exactly when the count stays at 19 or below.",
+    "No record has resolved or carries a third-party timestamp, no stranger has tried to resolve one, and when this record was written (2026-10-13), no human subject review, learner trial, translation or publication of this course existed; research duration was not instrumented and duration_seconds=0 records that limitation."
+  ],
+  "conclusion": "insufficient",
+  "belief_value": "U",
+  "belief_confidence": 0.6,
+  "duration_seconds": 0,
+  "timestamp": "2026-10-14T13:18:51Z"
+}

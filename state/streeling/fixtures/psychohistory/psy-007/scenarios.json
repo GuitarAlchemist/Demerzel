@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1.0",
+  "module_id": "psy-007-power-law-or-not",
+  "kind": "assumed inputs and analysis choices; nothing in this file is measured in the Demerzel repository",
+  "rounding": {
+    "note": "Decimals kept in results.json. Coarse on purpose: a last-bit difference between C libraries must not change a stored digit.",
+    "exponent_decimals": 3,
+    "loglik_decimals": 2,
+    "statistic_decimals": 3,
+    "p_value_decimals": 4,
+    "percent_decimals": 1
+  },
+  "families": {
+    "note": "All three are distributions on the integers x >= x_min, so their likelihoods are comparable. The lognormal is fitted for x_min = 1 only.",
+    "power_law": "discrete power law (zeta distribution): p(x) = x^-alpha / zeta(alpha, x_min), with zeta(alpha, x_min) = sum over k >= 0 of (x_min + k)^-alpha",
+    "exponential": "discrete exponential (geometric): p(x) = (1 - q) q^(x - x_min); maximum likelihood gives q = m / (m + 1), m the mean excess over x_min",
+    "lognormal": "a lognormal variable rounded up to the next integer: p(x) = Phi((ln x - mu) / sigma) - Phi((ln(x - 1) - mu) / sigma), x >= 1"
+  },
+  "power_law_fit": {
+    "alpha_search_from": 1.000001,
+    "alpha_search_to": 20.0,
+    "primary_x_min": 1,
+    "primary_x_min_reason": "keeps every positive count; zeros are set aside because no power law gives a probability to zero",
+    "x_min_candidates": "every distinct positive observed count that leaves at least min_tail_listed values",
+    "min_tail_listed": 5,
+    "min_tail_for_tail_cut": 10,
+    "tail_cut_rule": "among the listed cuts that keep at least min_tail_for_tail_cut values, the one with the smallest Kolmogorov-Smirnov distance to the fitted power law"
+  },
+  "decisive_p_value": 0.1,
+  "decisive_p_value_note": "Convention of Clauset, Shalizi and Newman (2009): the sign of a log-likelihood ratio is trusted when the p-value of the normalised ratio is below 0.1, and a power law is ruled out when its goodness-of-fit p-value is at most 0.1.",
+  "rank_plot": {
+    "r_squared_thresholds": [0.8, 0.9]
+  },
+  "bootstrap": {
+    "note": "Nonparametric: draw 18 values with replacement from the 18 recorded counts, apply the cut, refit the discrete exponent.",
+    "seed": 700701,
+    "replicates": 2000
+  },
+  "simulation_all_positive": {
+    "note": "Synthetic samples of 16 positive counts (the number of positive recorded counts). Each generator uses the parameter fitted to the 16 recorded positive counts, rounded to 2 decimals (the exponential keeps the exact mean 414/16). The script checks that the fitted values round to these.",
+    "sample_size": 16,
+    "x_min": 1,
+    "replicates": 2000,
+    "generators": {
+      "power_law": {"seed": 700711, "alpha": 1.30},
+      "exponential": {"seed": 700712, "mean": 25.875},
+      "lognormal": {"seed": 700713, "mu": 2.78, "sigma": 1.16}
+    }
+  },
+  "simulation_tail": {
+    "note": "Synthetic tails above the tail cut (x_min = 13). Each generator uses the parameter fitted to the 12 recorded counts of 13 or more (alpha rounded to 2 decimals; the exponential keeps the exact mean 396/12). Sample size 12 is the observed tail; the larger sizes show what more data would buy.",
+    "x_min": 13,
+    "sample_sizes": [12, 50, 200],
+    "replicates": 2000,
+    "generators": {
+      "power_law": {"seed": 700721, "alpha": 2.21},
+      "exponential": {"seed": 700722, "mean": 33.0}
+    }
+  },
+  "goodness_of_fit_before_git_grep": {
+    "note": "Synthetic power-law samples for the goodness-of-fit test of the hand-typed counts of the last run before git grep: 16 positive values, x_min = 1, exponent fitted to those counts and rounded to 2 decimals (the script checks it). Same procedure as for the recorded counts.",
+    "seed": 700741,
+    "replicates": 2000,
+    "sample_size": 16,
+    "x_min": 1,
+    "alpha": 1.58
+  },
+  "sampler_checks": {
+    "note": "Draws used only to check the three samplers against their probability formulas.",
+    "seed": 700731,
+    "draws": 20000,
+    "power_law": {"alpha": 2.5, "x_min": 3},
+    "exponential": {"mean": 4.0, "x_min": 2},
+    "lognormal": {"mu": 1.0, "sigma": 0.8}
+  },
+  "transfer_task": {
+    "note": "Hypothetical plugin registry for the learner task. Not Streeling data. Answers use the continuous closed forms, which a learner can compute by hand; the discrete fits of the lesson are stored next to them for comparison.",
+    "downloads": [120, 44, 31, 18, 12, 9, 7, 5, 5, 3, 2, 1, 0, 0],
+    "x_min_values": [1, 5],
+    "standard_error_target": 0.1
+  }
+}
