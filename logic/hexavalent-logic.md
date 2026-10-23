@@ -161,7 +161,7 @@ follows the ladder, but merges everything below `ask_confirmation`. P sits one
 rung stricter than the ladder. U and C escalate at `ask_confirmation` and above and stop below it;
 D and F never act. Where a cell and the ladder disagree, the stricter action
 wins, in the order Proceed < Proceed with note < Confirm first < Escalate <
-Do not act. For example, T below the ladder's `do_not_act` rung is "Do not
+Do not act. For example, T at the ladder's `do_not_act` rung is "Do not
 act", not "Escalate".
 
 ### Transition Rules
