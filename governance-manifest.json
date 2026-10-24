@@ -2620,6 +2620,30 @@
       "to": "confidence:with_note",
       "kind": "confidence_ref",
       "resolved": true
+    },
+    {
+      "from": "logic/hexavalent-logic.md",
+      "to": "confidence:ask_confirmation",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "logic/hexavalent-logic.md",
+      "to": "confidence:autonomous",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "logic/hexavalent-logic.md",
+      "to": "confidence:do_not_act",
+      "kind": "confidence_ref",
+      "resolved": true
+    },
+    {
+      "from": "logic/hexavalent-logic.md",
+      "to": "confidence:with_note",
+      "kind": "confidence_ref",
+      "resolved": true
     }
   ],
   "precedence": [
