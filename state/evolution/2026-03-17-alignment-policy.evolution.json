@@ -3,10 +3,10 @@
   "artifact": "policies/alignment-policy.yaml",
   "artifact_type": "policy",
   "metrics": {
-    "citation_count": 44,
+    "citation_count": 41,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-10-02T20:05:16Z",
+    "last_cited": "2026-10-23T21:46:37Z",
     "last_violated": null,
     "promotion_candidate": true,
     "deprecation_candidate": false,

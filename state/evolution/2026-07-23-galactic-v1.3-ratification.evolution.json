@@ -3,10 +3,10 @@
   "artifact": "contracts/galactic-protocol.md",
   "artifact_type": "contract",
   "metrics": {
-    "citation_count": 45,
+    "citation_count": 42,
     "violation_count": 0,
     "compliance_rate": 1.0,
-    "last_cited": "2026-10-02T20:05:16Z",
+    "last_cited": "2026-10-23T21:46:37Z",
     "last_violated": null,
     "promotion_candidate": false,
     "deprecation_candidate": false,
