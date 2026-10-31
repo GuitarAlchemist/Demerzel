@@ -164,6 +164,14 @@ wins, in the order Proceed < Proceed with note < Confirm first < Escalate <
 Do not act. For example, T at the ladder's `do_not_act` rung is "Do not
 act", not "Escalate".
 
+<!-- The rungs the table and the paragraph above depend on, declared so that renaming
+     one in logic/confidence-thresholds.yaml fails the manifest build instead of
+     silently falsifying this text. scripts/build_manifest.py also requires each one
+     to stay named in the prose, so the declaration cannot drift from the table.
+     ref:confidence#autonomous ref:confidence#with_note
+     ref:confidence#ask_confirmation ref:confidence#do_not_act -->
+
+
 ### Transition Rules
 
 - **U -> P**: Partial evidence gathered supporting truth
