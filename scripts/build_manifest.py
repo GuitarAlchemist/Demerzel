@@ -408,7 +408,8 @@ def check_confidence_refs(inv: dict[str, list[dict[str, Any]]]) -> tuple[list[di
     """Resolve every `ref:confidence#<key>` token against the canonical thresholds
     (logic/confidence-thresholds.yaml). Returns (edges, violations); a token that
     names no such rung is a hard violation. ADR-0002 / Candidate 6 — the values
-    are single-sourced; policies reference a rung instead of restating the number."""
+    are single-sourced; policies and the logic docs reference a rung instead of
+    restating the number."""
     edges: list[dict[str, Any]] = []
     violations: list[str] = []
     if not CONFIDENCE.exists():
@@ -423,6 +424,26 @@ def check_confidence_refs(inv: dict[str, list[dict[str, Any]]]) -> tuple[list[di
             if not ok:
                 violations.append(
                     f"dangling confidence ref: {art['path']} -> ref:confidence#{key} (valid: {sorted(valid)})"
+                )
+    # logic/*.md belongs to no artifact class, so the loop above never reaches the
+    # hexavalent threshold table even though its columns are named rungs. Scan those
+    # docs too, and require a declared rung to be shown in the prose as well: that
+    # makes the coupling bite in both directions, since renaming a rung dangles the
+    # declaration and editing only the declaration leaves the prose unbacked.
+    for path in sorted(REPO.glob("logic/*.md")):
+        rel = path.relative_to(REPO).as_posix()
+        text = path.read_text(encoding="utf-8")
+        for key in sorted(set(_CONFIDENCE_REF.findall(text))):
+            ok = key in valid
+            edges.append({"from": rel, "to": f"confidence:{key}", "kind": "confidence_ref", "resolved": ok})
+            if not ok:
+                violations.append(
+                    f"dangling confidence ref: {rel} -> ref:confidence#{key} (valid: {sorted(valid)})"
+                )
+            elif f"`{key}`" not in text:
+                violations.append(
+                    f"confidence ref declared but not shown: {rel} -> ref:confidence#{key} "
+                    f"(nothing in the prose names `{key}`, so the two can drift apart)"
                 )
     return edges, violations
 
