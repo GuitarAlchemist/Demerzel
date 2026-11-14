@@ -69,7 +69,7 @@ write_json("state/seldon-plan/lock.json", {
 
 Read context:
 - `state/seldon-plan/state.json`
-- `state/streeling/departments/*.department.json`
+- `../learn/streeling/departments/*.department.json`
 - `state/streeling/departments/*.weights.json`
 - `state/seldon-plan/novelty-registry.json`
 - `state/completeness/known-gaps.json`
@@ -184,7 +184,7 @@ else:
 Only if: `classification == "novel"` AND `belief_value == "T"` AND `confidence >= 0.75`
 
 ### Course File
-Save to `state/streeling/courses/{department}/en/{module_id}.md` using the format from `seldon-research-cycle` SKILL.md (same frontmatter, same section structure).
+Save to `../learn/streeling/courses/{department}/en/{module_id}.md` using the format from `seldon-research-cycle` SKILL.md (same frontmatter, same section structure). Write it in a branch of `../learn/` (a clone of spareilleux/learn), never in this repository, and publish it as a pull request there (see `seldon-course-pipeline`, Phase 6).
 
 `module_id` format: `{dept-code}-{NNN}-{slug}` where NNN is next sequence number for this department.
 

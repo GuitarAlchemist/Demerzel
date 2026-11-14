@@ -67,7 +67,7 @@
 **Expected behavior:**
 - Agreement matrix → row 1: T, confidence >= 0.85
 - Since T AND confidence (0.85) >= 0.8 → produce course material
-- Course saved to `state/streeling/courses/{dept}/en/{module_id}.md`
+- Course saved to `../learn/streeling/courses/{dept}/en/{module_id}.md`
 - IxQL fragment includes `→ when T >= 0.8: course_production(...)` line
 - `total_courses_produced` incremented in state
 

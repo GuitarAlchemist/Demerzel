@@ -35,7 +35,7 @@ Tests for the `/demerzel metasync` skill — drift detection and auto-fix betwee
 ## TC-MSYNC-003: Detect stale prose description in README
 
 **Given:** README.md prose contains "a 16-department knowledge framework"
-**And:** `state/streeling/departments/*.department.json` contains 21 files
+**And:** `../learn/streeling/departments/*.department.json` contains 21 files
 
 **When:** `/demerzel metasync --scan` is invoked
 

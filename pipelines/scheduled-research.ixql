@@ -35,7 +35,7 @@ team <- ix.team.create(
 --- ## Phase 2: SELECT
 --- Pick the department with the lowest coverage ratio.
 --- Delegates to research-cycle Step 1 scoring formula.
-departments <- ix.io.read("state/streeling/departments/*.department.json")
+departments <- ix.io.read("../learn/streeling/departments/*.department.json")
 weights     <- ix.io.read("state/streeling/departments/*.weights.json")
 
 department <- departments
@@ -51,10 +51,10 @@ department <- departments
 --- Seldon generates a research question and cross-validates with multiple models.
 --- Per **Article 2** (Transparency), all findings must be explainable.
 dept_context <- parallel(
-    ix.io.read("state/streeling/departments/{department.name}.department.json"),
+    ix.io.read("../learn/streeling/departments/{department.name}.department.json"),
     ix.io.read("state/streeling/departments/{department.name}.weights.json"),
     ix.io.read("grammars/{department.grammar}.ebnf"),
-    ix.io.glob("state/streeling/courses/{department.name}/en/*.md")
+    ix.io.glob("../learn/streeling/courses/{department.name}/en/*.md")
   )
 
 question <- dept_context
@@ -102,7 +102,7 @@ course <- when conclusion.belief == "T" && conclusion.confidence >= 0.8:
         level: tars.infer_level(investigation),
         findings: investigation.evidence
       )
-    → write("state/streeling/courses/{department.name}/en/{module_id}.md", markdown)
+    → write("../learn/streeling/courses/{department.name}/en/{module_id}.md", markdown)
 
 gap_log <- when conclusion.belief in ["U", "C", "F"]:
   ix.io.write("state/streeling/research-gaps/{now()}-{department.name}.gap.json", {
@@ -170,7 +170,7 @@ audit <- team.agent("Auditor")
       when conclusion.belief == "T" && course:
         discord.notify(
           channel: "governance",
-          message: "Scheduled research complete: **{department.name}** — produced course `{module_id}` (T={conclusion.confidence}). [View course](https://github.com/GuitarAlchemist/Demerzel/blob/master/state/streeling/courses/{department.name}/en/{module_id}.md)"
+          message: "Scheduled research complete: **{department.name}** — produced course `{module_id}` (T={conclusion.confidence}). [View course](https://github.com/spareilleux/learn/blob/main/streeling/courses/{department.name}/en/{module_id}.md)"
         )
       when conclusion.belief != "T":
         discord.notify(
