@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://guitar-alchemist/contracts/pr-rationale-v1.json",
   "title": "PR Rationale Snapshot",
-  "description": "Frontmatter schema for state/digests/pr-<num>-<slug>.md, written by .claude/hooks/pr-rationale-capture.ps1 via DigestState's Write-Digest -Kind rationale. Snapshots a PR's title/body/diff stats so the rationale survives later edits. Distinct from the session-digest schema (docs/contracts/digest-schema.json).",
+  "description": "Frontmatter schema for state/digests/pr-<num>-<slug>.md, written by the pr-rationale-capture hook (demerzel-hooks, go/claudehooks), which ports DigestState's Write-Digest -Kind rationale. Snapshots a PR's title/body/diff stats so the rationale survives later edits. Distinct from the session-digest schema (docs/contracts/digest-schema.json).",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "trigger", "captured_at", "branch", "pr_number"],

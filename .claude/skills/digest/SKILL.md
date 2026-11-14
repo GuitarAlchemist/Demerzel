@@ -9,9 +9,9 @@ karpathy_rules: [R1-think-before-coding, R4-goal-driven-execution]
 # /digest
 
 Captures the **meaningful state of the current session** to
-`state/digests/latest.md`. The `.claude/hooks/sessionstart-digest.ps1` hook
-reads it on the next session start and emits it as `additionalContext` for
-the model. Pairs with `.claude/hooks/precompact-digest.ps1` which provides
+`state/digests/latest.md`. The `session-start` hook (`demerzel-hooks`, built from
+`go/claudehooks`) reads it on the next session start and emits it as `additionalContext` for
+the model. Pairs with the `precompact-digest` hook, which provides
 a metadata-only fallback when /digest isn't invoked before auto-compaction.
 
 ## When to run
@@ -132,5 +132,5 @@ evidence.
 
 - `/learnings` — captures surprises into `docs/solutions/`.
 - `/correct` — captures user corrections as permanent `CLAUDE.md` rules.
-- `.claude/hooks/{precompact,sessionstart}-digest.ps1` — auto-fallback + read-back.
+- `demerzel-hooks precompact-digest` / `session-start` (`go/claudehooks`) — auto-fallback + read-back.
 - `state/digests/README.md` — directory layout.

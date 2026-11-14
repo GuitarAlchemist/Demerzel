@@ -9,12 +9,8 @@ on:
       - '.claude/settings.json'
       - '.claude/skills/digest/**'
       - '.claude/skills/correct/**'
-      - '.claude/hooks/digest-*'
-      - '.claude/hooks/DigestState.psm1'
-      - '.claude/hooks/precompact-digest*'
-      - '.claude/hooks/sessionstart-digest*'
-      - '.claude/hooks/pr-rationale-capture*'
-      - '.claude/hooks/correction-detector*'
+      - '.claude/hooks/**'
+      - 'go/claudehooks/**'
       - 'tests/powershell/**'
       - 'CLAUDE.md'
       - '.github/workflows/karpathy-cherny-discipline.yml'
@@ -46,24 +42,67 @@ jobs:
             exit 1
           fi
 
-      - name: Verify required hook scripts exist
+      # DigestState.psm1 is no longer a hook: the /digest skill writes through it (Write-Digest),
+      # and digest-validate.ps1 validates a digest by hand. The hooks are go/claudehooks.
+      - name: Verify the /digest skill's module exists
         shell: bash
         run: |
           missing=0
-          for f in \
-            ".claude/hooks/DigestState.psm1" \
-            ".claude/hooks/precompact-digest.ps1" \
-            ".claude/hooks/sessionstart-digest.ps1" \
-            ".claude/hooks/digest-validate.ps1" \
-            ".claude/hooks/digest-staleness-nudge.ps1" \
-            ".claude/hooks/digest-activity-tracker.ps1" \
-            ".claude/hooks/digest-stop-finalize.ps1"; do
+          for f in ".claude/hooks/DigestState.psm1" ".claude/hooks/digest-validate.ps1"; do
             if [ ! -f "$f" ]; then
-              echo "::error file=$f::Required Karpathy/Cherny hook script missing: $f"
+              echo "::error file=$f::Required digest module missing: $f"
               missing=1
             fi
           done
           exit $missing
+
+      # The hooks are one Go program, go/claudehooks (demerzel-hooks <hook>): no shell in hooks
+      # (the user's rule, 2026-11-05). Mirrors tars's and ix's go/claudehooks.
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/claudehooks/go.mod
+          cache: false
+
+      - name: Vet and test the hooks (go/claudehooks)
+        working-directory: go/claudehooks
+        env:
+          GOPROXY: 'off'
+        run: |
+          go vet ./...
+          go test -count=1 ./...
+
+      - name: Verify every hook is wired to demerzel-hooks, none to a shell or a script
+        shell: bash
+        run: |
+          fail=0
+          commands=$(jq -r '.hooks[][].hooks[].command' .claude/settings.json)
+          for h in precompact-digest digest-staleness-nudge correction-detector digest-activity-tracker pr-rationale-capture digest-stop-finalize; do
+            if ! grep -qxF "\"\$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" $h" <<<"$commands"; then
+              echo "::error file=.claude/settings.json::hook $h is not wired to demerzel-hooks"
+              fail=1
+            fi
+          done
+          if ! grep -qxF 'go -C "$CLAUDE_PROJECT_DIR/go/claudehooks" run ./cmd/demerzel-hooks session-start' <<<"$commands"; then
+            echo "::error file=.claude/settings.json::session-start (digest injection, binary install) is not wired"
+            fail=1
+          fi
+          # EXEMPT, pending its owner: Gaia's bus client (scripts/gaia_hook.py) belongs to the Gaia
+          # lane, which will port it. Exactly these six commands are exempt; any other shell or
+          # script hook, a gaia_hook.py variant included, fails.
+          gaia_exempt='python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py SessionStart
+          python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py UserPromptSubmit
+          python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py ToolActivity
+          python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py PreToolUse
+          python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py SessionEnd
+          python $CLAUDE_PROJECT_DIR/scripts/gaia_hook.py PostToolUse'
+          gaia_exempt=$(sed 's/^ *//' <<<"$gaia_exempt")
+          shelled=$(grep -vxF -f <(printf '%s\n' "$gaia_exempt") <<<"$commands" \
+            | grep -Ei '\b(bash|sh|zsh|pwsh|powershell|python3?|py|node|deno|bun)\b|\.(sh|bash|ps1|psm1|py|js|mjs|cmd|bat)\b' || true)
+          if [ -n "$shelled" ]; then
+            echo "::error file=.claude/settings.json::a hook runs a shell or a script; hooks are Go only (go/claudehooks): $shelled"
+            fail=1
+          fi
+          exit $fail
 
       - name: Verify .claude/settings.json is valid JSON
         run: python -c "import json; json.load(open('.claude/settings.json'))"
