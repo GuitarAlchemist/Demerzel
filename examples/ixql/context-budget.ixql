@@ -46,8 +46,8 @@ candidates <- fan_out(
     when task_signals.category == "research":
       parallel(
         ix.io.glob("grammars/*.ebnf"),
-        ix.io.glob("state/streeling/departments/*.department.json"),
-        ix.io.glob("state/streeling/courses/{dept}/en/*.md")
+        ix.io.glob("../learn/streeling/departments/*.department.json"),
+        ix.io.glob("../learn/streeling/courses/{dept}/en/*.md")
       ),
 
     when task_signals.repo_scope:

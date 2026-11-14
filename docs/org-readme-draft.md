@@ -23,7 +23,7 @@ We build composable systems where AI agents operate under principled governance 
 
 | Step | What You Learn | Where |
 |------|---------------|-------|
-| 1 | Play your first chord (Em) | [GAA-001](https://github.com/GuitarAlchemist/Demerzel/blob/master/state/streeling/courses/guitar-alchemist-academy/en/gaa-001-your-first-chord.md) |
+| 1 | Play your first chord (Em) | [GAA-001](https://github.com/spareilleux/learn/blob/main/streeling/courses/guitar-alchemist-academy/en/gaa-001-your-first-chord.md) |
 | 2 | Chord construction from intervals | [ga](https://github.com/GuitarAlchemist/ga) `ChordExplanationSkill` |
 | 3 | Scales and modes | ga `ScaleInfoSkill`, `ModeExplorationSkill` |
 | 4 | Voice leading and progressions | ga `HarmonicAnalysisSkill` |

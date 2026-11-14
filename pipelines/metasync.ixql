@@ -112,8 +112,8 @@ readme_drift <- parallel(
       grammars: "grammars/*.ebnf",
       tests: "tests/behavioral/*-cases.md",
       schemas: "schemas/*.schema.json",
-      departments: "state/streeling/departments/*.department.json",
-      courses: "state/streeling/courses/**/en/*.md",
+      departments: "../learn/streeling/departments/*.department.json",
+      courses: "../learn/streeling/courses/**/en/*.md",
       skills: ".claude/skills/*/SKILL.md"
     ),
     ix.io.read("README.md") → tars.extract_counts()

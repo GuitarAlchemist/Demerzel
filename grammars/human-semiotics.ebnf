@@ -5,7 +5,7 @@
 (* Purpose: Generate research questions, structure semiotic investigations, *)
 (*          and classify findings in sign systems and agent communication *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum, Demerzel governance *)
-(* See: state/streeling/departments/semiotics.department.json *)
+(* See: ../learn/streeling/departments/semiotics.department.json *)
 (* Living grammar: evolves through research cycles per grammar-evolution-policy *)
 (* Bootstrapped by: /demerzel metabuild semiotics *)
 

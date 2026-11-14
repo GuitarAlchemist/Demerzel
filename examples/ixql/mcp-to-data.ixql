@@ -96,7 +96,7 @@ outputs <- enriched
         → fan_out(
             clusters.map(c =>
               write(
-                "state/streeling/courses/computer-science/en/MCP-{c.theme_slug}.md",
+                "../learn/streeling/courses/computer-science/en/MCP-{c.theme_slug}.md",
                 tars.produce_course(findings: c.evidence, level: "intermediate")
               )
             )

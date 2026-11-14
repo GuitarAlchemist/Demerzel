@@ -5,7 +5,7 @@
 (* Purpose: Generate research questions, structure investigations, *)
 (*          and classify findings in audio engineering domains *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum *)
-(* See: state/streeling/departments/audio-engineering.department.json *)
+(* See: ../learn/streeling/departments/audio-engineering.department.json *)
 (* Living grammar: evolves through research cycles per grammar-evolution-policy *)
 (* Bootstrapped by: /demerzel metabuild audio-engineering *)
 

@@ -44,8 +44,8 @@ priority = (days_since_last_cycle * 0.4)
          + (random_exploration * 0.1)
 ```
 
-Load from `state/streeling/university.json` for the department list.
-Load `state/streeling/departments/{dept}.department.json` for context.
+Load from `../learn/streeling/university.json` for the department list.
+Load `../learn/streeling/departments/{dept}.department.json` for context.
 Load `state/streeling/departments/{dept}.weights.json` for grammar weights.
 
 If no research cycles exist yet (`state/streeling/research-cycles/` is empty or missing), pick the department with the most curriculum items to maximize first-cycle value.
@@ -163,7 +163,7 @@ version: "1.0.0"
 *Belief: {value} (confidence: {confidence})*
 ```
 
-Save to: `state/streeling/courses/{department}/en/{module_id}.md`
+Save to: `../learn/streeling/courses/{department}/en/{module_id}.md`. Write it in a branch of `../learn/` (a clone of spareilleux/learn), never in this repository, and publish it as a pull request there (see `seldon-course-pipeline`, Phase 6).
 
 ### Multilingual Translation
 

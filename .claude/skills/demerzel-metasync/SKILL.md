@@ -30,8 +30,8 @@ The README.md contains a `## Artifact Counts` table. MetaSync verifies each row 
 | Schemas | `schemas/*.json` | count .json files |
 | Behavioral tests | `tests/behavioral/*.md` | count .md files |
 | Skills | `.claude/skills/*/` | count directories |
-| Departments | `state/streeling/departments/*.department.json` | count .department.json files |
-| Courses | `state/streeling/courses/**/en/` | count `en/` directories |
+| Departments | `../learn/streeling/departments/*.department.json` | count .department.json files |
+| Courses | `../learn/streeling/courses/**/en/` | count `en/` directories |
 
 ### 2. CLAUDE.md Description Counts
 
@@ -92,7 +92,7 @@ Verify these match actual counts.
 
 ### 8. Streeling University Description
 
-README body text says "16-department knowledge framework" — verify against actual department count in `state/streeling/departments/`.
+README body text says "16-department knowledge framework" — verify against actual department count in `../learn/streeling/departments/`.
 
 ## Process
 

@@ -35,8 +35,8 @@ Otherwise, invoke `/seldon research-cycle [department]` to run a fresh research 
 
 Generate a course outline from research findings:
 
-1. Read department curriculum (`state/streeling/departments/{dept}.department.json`)
-2. Check existing courses to avoid duplication (`state/streeling/courses/{dept}/en/`)
+1. Read department curriculum (`../learn/streeling/departments/{dept}.department.json`)
+2. Check existing courses to avoid duplication (`../learn/streeling/courses/{dept}/en/`)
 3. Determine level (beginner/intermediate/advanced) based on:
    - If finding extends a beginner topic → intermediate
    - If finding is foundational → beginner
@@ -96,23 +96,22 @@ version: "1.0.0"
 - Tone matches department persona's voice settings
 - No unexplained jargon — define terms on first use
 
-Save to: `state/streeling/courses/{department}/en/{module_id}.md`
+Save to: `../learn/streeling/courses/{department}/en/{module_id}.md`
 
 ## Phase 4: TRANSLATE
 
 Check `policies/multilingual-policy.yaml` for translation requirements.
 
-For each required language (currently: es, pt, fr):
+For each language learn publishes besides English (fr, es; de, it and pt are no longer produced):
 
 1. Translate content preserving structure and frontmatter
 2. Apply cultural adaptation:
    - **Spanish (es):** Use Latin American music examples where relevant, formal "usted" for technical content
-   - **Portuguese (pt):** Brazilian Portuguese with bossa nova / MPB examples for music
    - **French (fr):** Metropolitan French, reference chanson tradition for music
 3. Preserve all Markdown formatting, code blocks, and frontmatter fields
 4. Add language suffix to module_id in frontmatter
 
-Save to: `state/streeling/courses/{department}/{lang}/{module_id}.{lang}.md`
+Save to: `../learn/streeling/courses/{department}/{lang}/{module_id}.{lang}.md`
 
 **Gate:** Translation must preserve all sections, exercises, and key terms. Quick verification: section count must match English version.
 
@@ -137,9 +136,11 @@ If confidence < 0.5: auto-reject (should have been caught at Phase 1 gate).
 ## Phase 6: PUBLISH
 
 1. Verify all files are written to correct paths
-2. Log pipeline run to `state/streeling/course-productions/{pipeline_id}.json` conforming to `schemas/course-production.schema.json`
+2. Log pipeline run to `../learn/streeling/course-productions/{pipeline_id}.json` conforming to `../learn/streeling/schemas/course-production.schema.json`
 3. Update department weights if research cycle was fresh (delegate to research-cycle compound step)
-4. Commit all course files with conventional commit:
+4. In `../learn/` (a clone of spareilleux/learn), on a new branch: add the course files and the production
+   record, run `npm run sync:streeling`, commit the source together with its generated pages, and open a pull
+   request in spareilleux/learn. Follow learn's `AGENTS.md`; never write course files into this repository:
    ```
    feat: {DEPT-CODE}-{SEQ} — {course title}
    ```
@@ -150,7 +151,7 @@ Course Published: {module_id}
 Department: {department}
 Title: {title}
 Level: {level} | Duration: {duration}
-Languages: en, es, pt, fr
+Languages: en, fr, es
 Research: {cycle_id} (belief: {value}, confidence: {confidence})
 Files: {count} files across {language_count} languages
 ```
@@ -160,13 +161,13 @@ Files: {count} files across {language_count} languages
 When invoked with `batch`, scan `state/streeling/research-cycles/` for cycles with:
 - `conclusion` = `confirm` or `discover_question`
 - `belief_confidence` >= 0.5
-- No corresponding course in `state/streeling/courses/{dept}/en/`
+- No corresponding course in `../learn/streeling/courses/{dept}/en/`
 
 Run the pipeline (phases 2-6) for each qualifying cycle. Print batch summary.
 
 ## Pipeline State
 
-Pipeline runs are logged to `state/streeling/course-productions/{pipeline_id}.json`.
+Pipeline runs are logged to `../learn/streeling/course-productions/{pipeline_id}.json`.
 
 This allows:
 - Resuming interrupted pipelines

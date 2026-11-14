@@ -6,7 +6,7 @@
 (*          and classify findings in information theory *)
 (* Domain: entropy, channels, compression, complexity, governance information *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum *)
-(* See: state/streeling/departments/information-theory.department.json *)
+(* See: ../learn/streeling/departments/information-theory.department.json *)
 (* Living grammar: evolves via research cycles *)
 (* Bootstrapped by: /demerzel metabuild information-theory *)
 

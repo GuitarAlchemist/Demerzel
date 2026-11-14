@@ -6,7 +6,7 @@
 (*          and classify findings in cybernetics and control theory *)
 (* Domain: feedback loops, control theory, VSM, homeostasis *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum *)
-(* See: state/streeling/departments/cybernetics.department.json *)
+(* See: ../learn/streeling/departments/cybernetics.department.json *)
 (* Living grammar: evolves via research cycles *)
 (* Bootstrapped by: /demerzel metabuild cybernetics *)
 

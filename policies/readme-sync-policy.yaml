@@ -61,10 +61,10 @@ sync_fields_definition:
     source: "count files in personas/*.persona.yaml"
     current: 14
   department_count:
-    source: "count files in state/streeling/departments/*.department.json"
+    source: "count files in ../learn/streeling/departments/*.department.json"
     current: 13
   course_count:
-    source: "count .md files in state/streeling/courses/**/en/"
+    source: "count .md files in ../learn/streeling/courses/**/en/"
     current: 14
   language_count:
     source: "count from policies/multilingual-policy.yaml tier_2"
