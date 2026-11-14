@@ -1,0 +1,11 @@
+{
+  "id": "gasgiant-jovian-01",
+  "provider": "comfyui-local",
+  "workflow": "assets/comfyui/workflows/tileable-gasgiant.json",
+  "model": "sd_xl_base_1.0.safetensors",
+  "sampler": "euler",
+  "seed": 424242,
+  "prompt": "seamless tileable texture of a jovian gas giant's cloud bands, horizontal turbulent belts and zones, ochre cream and rust, subtle storm eddies, high detail, equirectangular, no seams",
+  "negative_prompt": "seams, borders, frame, watermark, text, stars, background, vignette",
+  "consumer_ref": "prime-radiant/solar-system: gas-giant surface material (#726 tracer-bullet render proof; scales into #727)"
+}
