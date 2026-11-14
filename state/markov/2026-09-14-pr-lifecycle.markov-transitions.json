@@ -1,0 +1,464 @@
+{
+  "description": "Seldon PR-lifecycle Markov transitions distilled from 1,255 PRs across ix, ga, tars, Demerzel, hari and gaia (epic #596). Each row in transitions and transitions_by_worker conforms to schemas/seldon/markov-transition.schema.json.",
+  "advisory": true,
+  "as_of": "2026-09-14T21:01:50Z",
+  "source": {
+    "producer": "GuitarAlchemist/ix memristive-markov examples/work_history.rs",
+    "producer_pr": "https://github.com/GuitarAlchemist/ix/pull/343",
+    "producer_commit": "7906bdd",
+    "fetch": "scripts/fetch-pr-lifecycle.sh (read-only GitHub GraphQL; aborts on truncated timelines)",
+    "fixture": "crates/memristive-markov/tests/fixtures/pr-lifecycle-2026-09-14.jsonl",
+    "command": "cargo run -p memristive-markov --example work_history -- <fixture> 14 0.8 3 5"
+  },
+  "method": {
+    "stale_after_days": 14,
+    "stuck_states": "pr.stuck_draft / pr.stuck_ready by origin; transient, not absorbing; rows into them carry no median_duration_hours (the step sits at the stale threshold)",
+    "worker_inference": "branch prefix codex/, claude/, jules; others unattributed and omitted from transitions_by_worker",
+    "worker_min_outgoing": 5,
+    "worker_min_outgoing_note": "a worker's from_state block is published only if at least 5 transitions leave it",
+    "merge_candidate_signals": {
+      "observed": [
+        "fleet:merge-ready label",
+        "agent-blackbox-reviewed label"
+      ],
+      "unobserved_in_snapshot": [
+        "APPROVED review"
+      ],
+      "on_draft": "sticky; the PR becomes pr.merge_candidate when flipped ready"
+    },
+    "absorption_censoring": "p_unresolved is PRs still open at as_of; compare outcomes with p_merged_given_resolved",
+    "ready_flips_note": "most draft->ready flips are scripted: see ready_flips.merged_within_60s",
+    "absorption_is_chain_implied": "absorption is what the first-order chain fitted to transitions implies, not what happened: every PR in a state gets that state's average next-step mix, whatever its history. Observed outcomes differ where history matters (all 17 stuck_draft PRs later flipped ready merged, so stuck_draft merges 17/21 = 0.810 of resolved PRs against the implied 0.752). Read observed_outcomes for what happened; stuck_draft has only 21 resolved PRs, so neither figure is precise to three decimals",
+    "observed_outcomes_note": "final state at as_of of the PRs whose lifecycle visits each state, same lifecycle rules and stale window; open is right-censoring. Not emitted by the ix example yet: computed from the same fixture by the independent re-implementation used to review ix#343, which reproduces every other number in this file exactly"
+  },
+  "prs": 1255,
+  "transitions": [
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.ready_for_review",
+      "probability": 0.6568047337278107,
+      "median_duration_hours": 3.806388888888889,
+      "sample_size": 111
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.merge_candidate",
+      "probability": 0.05917159763313609,
+      "median_duration_hours": 2.2047222222222222,
+      "sample_size": 10
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.rejected",
+      "probability": 0.08284023668639054,
+      "median_duration_hours": 37.49319444444444,
+      "sample_size": 14
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.stuck_draft",
+      "probability": 0.20118343195266272,
+      "sample_size": 34
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.draft",
+      "probability": 0.0024916943521594683,
+      "median_duration_hours": 0.2436111111111111,
+      "sample_size": 3
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merge_candidate",
+      "probability": 0.07308970099667775,
+      "median_duration_hours": 0.7511111111111111,
+      "sample_size": 88
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merged",
+      "probability": 0.8305647840531561,
+      "median_duration_hours": 0.3169444444444445,
+      "sample_size": 1000
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.rejected",
+      "probability": 0.057308970099667775,
+      "median_duration_hours": 1.7686111111111111,
+      "sample_size": 69
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.stuck_ready",
+      "probability": 0.036544850498338874,
+      "sample_size": 44
+    },
+    {
+      "from_state": "pr.merge_candidate",
+      "to_state": "pr.merged",
+      "probability": 0.98,
+      "median_duration_hours": 0.05638888888888889,
+      "sample_size": 98
+    },
+    {
+      "from_state": "pr.merge_candidate",
+      "to_state": "pr.rejected",
+      "probability": 0.02,
+      "median_duration_hours": 2.1238888888888887,
+      "sample_size": 2
+    },
+    {
+      "from_state": "pr.stuck_draft",
+      "to_state": "pr.ready_for_review",
+      "probability": 0.8095238095238095,
+      "median_duration_hours": 498.8411111111111,
+      "sample_size": 17
+    },
+    {
+      "from_state": "pr.stuck_draft",
+      "to_state": "pr.rejected",
+      "probability": 0.19047619047619047,
+      "median_duration_hours": 236.8038888888889,
+      "sample_size": 4
+    },
+    {
+      "from_state": "pr.stuck_ready",
+      "to_state": "pr.draft",
+      "probability": 0.02857142857142857,
+      "median_duration_hours": 1200.6825,
+      "sample_size": 1
+    },
+    {
+      "from_state": "pr.stuck_ready",
+      "to_state": "pr.merge_candidate",
+      "probability": 0.05714285714285714,
+      "median_duration_hours": 820.8340277777778,
+      "sample_size": 2
+    },
+    {
+      "from_state": "pr.stuck_ready",
+      "to_state": "pr.merged",
+      "probability": 0.6285714285714286,
+      "median_duration_hours": 242.53013888888887,
+      "sample_size": 22
+    },
+    {
+      "from_state": "pr.stuck_ready",
+      "to_state": "pr.rejected",
+      "probability": 0.2857142857142857,
+      "median_duration_hours": 537.5952777777778,
+      "sample_size": 10
+    }
+  ],
+  "transitions_by_worker": [
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merge_candidate",
+      "probability": 0.2028985507246377,
+      "median_duration_hours": 0.11875,
+      "worker": "claude",
+      "sample_size": 14
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merged",
+      "probability": 0.7536231884057971,
+      "median_duration_hours": 0.3176388888888889,
+      "worker": "claude",
+      "sample_size": 52
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.stuck_ready",
+      "probability": 0.043478260869565216,
+      "worker": "claude",
+      "sample_size": 3
+    },
+    {
+      "from_state": "pr.merge_candidate",
+      "to_state": "pr.merged",
+      "probability": 1.0,
+      "median_duration_hours": 0.06486111111111112,
+      "worker": "claude",
+      "sample_size": 14
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.ready_for_review",
+      "probability": 0.7761194029850746,
+      "median_duration_hours": 1.4255555555555555,
+      "worker": "codex",
+      "sample_size": 52
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.merge_candidate",
+      "probability": 0.07462686567164178,
+      "median_duration_hours": 2.1422222222222222,
+      "worker": "codex",
+      "sample_size": 5
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.rejected",
+      "probability": 0.029850746268656716,
+      "median_duration_hours": 4.702222222222222,
+      "worker": "codex",
+      "sample_size": 2
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.stuck_draft",
+      "probability": 0.11940298507462686,
+      "worker": "codex",
+      "sample_size": 8
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.draft",
+      "probability": 0.00909090909090909,
+      "median_duration_hours": 0.2436111111111111,
+      "worker": "codex",
+      "sample_size": 1
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merge_candidate",
+      "probability": 0.10909090909090909,
+      "median_duration_hours": 0.05611111111111111,
+      "worker": "codex",
+      "sample_size": 12
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merged",
+      "probability": 0.8636363636363636,
+      "median_duration_hours": 0.03388888888888889,
+      "worker": "codex",
+      "sample_size": 95
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.rejected",
+      "probability": 0.00909090909090909,
+      "median_duration_hours": 0.46444444444444444,
+      "worker": "codex",
+      "sample_size": 1
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.stuck_ready",
+      "probability": 0.00909090909090909,
+      "worker": "codex",
+      "sample_size": 1
+    },
+    {
+      "from_state": "pr.merge_candidate",
+      "to_state": "pr.merged",
+      "probability": 1.0,
+      "median_duration_hours": 0.030833333333333334,
+      "worker": "codex",
+      "sample_size": 17
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.ready_for_review",
+      "probability": 0.4,
+      "median_duration_hours": 47.77361111111111,
+      "worker": "jules",
+      "sample_size": 4
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.rejected",
+      "probability": 0.2,
+      "median_duration_hours": 40.70180555555555,
+      "worker": "jules",
+      "sample_size": 2
+    },
+    {
+      "from_state": "pr.draft",
+      "to_state": "pr.stuck_draft",
+      "probability": 0.4,
+      "worker": "jules",
+      "sample_size": 4
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.merged",
+      "probability": 0.9,
+      "median_duration_hours": 0.003611111111111111,
+      "worker": "jules",
+      "sample_size": 9
+    },
+    {
+      "from_state": "pr.ready_for_review",
+      "to_state": "pr.rejected",
+      "probability": 0.1,
+      "median_duration_hours": 87.35916666666667,
+      "worker": "jules",
+      "sample_size": 1
+    }
+  ],
+  "absorption": [
+    {
+      "state": "pr.draft",
+      "p_merged": 0.7313844692471991,
+      "p_rejected": 0.15397292804559376,
+      "p_unresolved": 0.11464260270720716,
+      "p_merged_given_resolved": 0.8260895221337672,
+      "sample_size": 169
+    },
+    {
+      "state": "pr.ready_for_review",
+      "p_merged": 0.9176632628829254,
+      "p_rejected": 0.06711944906198052,
+      "p_unresolved": 0.015217288055094036,
+      "p_merged_given_resolved": 0.9318433922043348,
+      "sample_size": 1204
+    },
+    {
+      "state": "pr.merge_candidate",
+      "p_merged": 0.98,
+      "p_rejected": 0.02,
+      "p_unresolved": 0.0,
+      "p_merged_given_resolved": 0.98,
+      "sample_size": 100
+    },
+    {
+      "state": "pr.stuck_draft",
+      "p_merged": 0.4588316314414627,
+      "p_rejected": 0.15120678335451967,
+      "p_unresolved": 0.3899615852040176,
+      "p_merged_given_resolved": 0.7521356365646442,
+      "sample_size": 21
+    },
+    {
+      "state": "pr.stuck_ready",
+      "p_merged": 0.5611678288465273,
+      "p_rejected": 0.23168120291012712,
+      "p_unresolved": 0.20715096824334567,
+      "p_merged_given_resolved": 0.707786484399421,
+      "sample_size": 35
+    }
+  ],
+  "observed_outcomes": [
+    {
+      "state": "pr.draft",
+      "prs_visiting": 172,
+      "merged": 135,
+      "rejected": 19,
+      "open": 18
+    },
+    {
+      "state": "pr.ready_for_review",
+      "prs_visiting": 1210,
+      "merged": 1110,
+      "rejected": 82,
+      "open": 18
+    },
+    {
+      "state": "pr.merge_candidate",
+      "prs_visiting": 100,
+      "merged": 98,
+      "rejected": 2,
+      "open": 0
+    },
+    {
+      "state": "pr.stuck_draft",
+      "prs_visiting": 34,
+      "merged": 17,
+      "rejected": 4,
+      "open": 13
+    },
+    {
+      "state": "pr.stuck_ready",
+      "prs_visiting": 44,
+      "merged": 24,
+      "rejected": 11,
+      "open": 9
+    }
+  ],
+  "ready_flips": {
+    "ready_flips": 138,
+    "merged_within_60s": 75
+  },
+  "held_out": {
+    "cutoff": "2026-07-29T04:26:59Z",
+    "train_sequences": 1004,
+    "test_sequences": 251,
+    "test_transitions": 355,
+    "max_order": 3,
+    "min_observations": 5,
+    "scores": [
+      {
+        "model": "order0_marginal",
+        "accuracy": 0.6112676056338028,
+        "log_loss": [
+          {
+            "epsilon": 1e-06,
+            "log_loss": 1.5025236465743712
+          },
+          {
+            "epsilon": 0.001,
+            "log_loss": 1.5010346347901216
+          },
+          {
+            "epsilon": 0.01,
+            "log_loss": 1.490491388495105
+          }
+        ]
+      },
+      {
+        "model": "first_order",
+        "accuracy": 0.828169014084507,
+        "log_loss": [
+          {
+            "epsilon": 1e-06,
+            "log_loss": 0.7855634122789611
+          },
+          {
+            "epsilon": 0.001,
+            "log_loss": 0.7084218741811251
+          },
+          {
+            "epsilon": 0.01,
+            "log_loss": 0.6887467835024885
+          }
+        ]
+      },
+      {
+        "model": "vlmm",
+        "accuracy": 0.828169014084507,
+        "log_loss": [
+          {
+            "epsilon": 1e-06,
+            "log_loss": 0.8728196280277825
+          },
+          {
+            "epsilon": 0.001,
+            "log_loss": 0.7373072449989603
+          },
+          {
+            "epsilon": 0.01,
+            "log_loss": 0.6982149109963998
+          }
+        ]
+      }
+    ],
+    "disagreement": {
+      "vlmm_only_correct": 0,
+      "first_order_only_correct": 0,
+      "clusters_favoring_vlmm": 0,
+      "clusters_favoring_first_order": 0,
+      "cluster_sign_test_p": 1.0
+    },
+    "vlmm_order_histogram": [
+      0,
+      260,
+      95,
+      0
+    ]
+  }
+}
