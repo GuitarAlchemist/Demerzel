@@ -95,6 +95,7 @@ Cross-repo communication protocol (Galactic Protocol) defining how Demerzel comm
 
 - **Outbound:** Governance directives, knowledge packages (Demerzel → consumers)
 - **Inbound:** Compliance reports, belief snapshots, learning outcomes (consumers → Demerzel)
+- **Read-only evidence:** Gaia continuity successor-transition receipts, vendored and digest-pinned for contract validation without granting effect authority
 - **Bidirectional:** External sync envelopes for integration with external systems (Confluence, knowledge graphs, etc.)
 
 Contract schemas in `schemas/contracts/` define message formats. The protocol specification in `contracts/galactic-protocol.md` defines behavioral semantics — flows, error handling, and message ordering.
