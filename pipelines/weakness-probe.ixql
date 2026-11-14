@@ -10,7 +10,7 @@ beliefs       <- ix.io.read("state/beliefs/*.belief.json")
 evolution     <- ix.io.read("state/evolution/*.evolution.json")
 manifests     <- ix.io.read("state/manifests/*.manifest.json")
 conscience    <- ix.io.read("state/conscience/signals/*.signal.json")
-departments   <- ix.io.read("state/streeling/departments/*.department.json")
+departments   <- ix.io.read("../learn/streeling/departments/*.department.json")
 weights       <- ix.io.read("state/streeling/departments/*.weights.json")
 
 --- ## Probe 1: Repo Health

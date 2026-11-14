@@ -7,7 +7,7 @@
 (* Domain: graph theory, centrality, community detection, resilience, *)
 (*          network models, multiplex networks, network dynamics *)
 (* Consumed by: Seldon research-cycle, Streeling curriculum *)
-(* See: state/streeling/departments/network-science.department.json *)
+(* See: ../learn/streeling/departments/network-science.department.json *)
 (* Living grammar: evolves via research cycles *)
 (* Bootstrapped by: /demerzel metabuild network-science *)
 
