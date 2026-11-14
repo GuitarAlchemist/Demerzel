@@ -21,12 +21,12 @@ state/digests/
 | Writer | Trigger | Content |
 |---|---|---|
 | `/digest` skill | Model-invoked at breakpoints | Rich — all sections populated |
-| `.claude/hooks/precompact-digest.ps1` (PreCompact hook) | Auto on compaction | Metadata only (fallback if /digest didn't run) |
-| `.claude/hooks/digest-stop-finalize.ps1` (Stop hook) | Auto on session end | Metadata only (if /digest didn't run in last 10 min) |
+| `demerzel-hooks precompact-digest` (PreCompact hook) | Auto on compaction | Metadata only (fallback if /digest didn't run) |
+| `demerzel-hooks digest-stop-finalize` (Stop hook) | Auto on session end | Metadata only (if /digest didn't run in last 10 min) |
 
 ## Who reads
 
-- **`.claude/hooks/sessionstart-digest.ps1`** (SessionStart hook) — emits
+- **`demerzel-hooks session-start`** (SessionStart hook) — emits
   `latest.md` to stdout; Claude Code injects it as `additionalContext`
   for the model on session start.
 

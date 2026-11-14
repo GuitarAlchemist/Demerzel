@@ -131,6 +131,9 @@ fact lives in one place and is read out, never restated.
   writes, and auto-resets counters by trigger. `Test-Digest` replaced
   `digest-validate.ps1`'s hand-coded rules with a schema read (ADR-0003). First
   unit-testable seam in the hook layer (`tests/powershell/DigestState.Tests.ps1`, Pester).
+  Since 2026-11-14 the hooks themselves are Go (no shell in hooks): **`demerzel-hooks`**
+  (`scripts/claudehooks`, one subcommand per hook) ports `Write-Digest`'s hook half, still
+  validating against the same schemas. `DigestState.psm1` stays as the `/digest` skill's writer.
 
 ## Architecture seams (designed + built 2026-06-21, Candidate 2)
 

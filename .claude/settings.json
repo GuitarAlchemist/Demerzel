@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/precompact-digest.ps1"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" precompact-digest"
           }
         ]
       }
@@ -24,7 +24,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/sessionstart-digest.ps1"
+            "command": "go -C \"$CLAUDE_PROJECT_DIR/scripts/claudehooks\" run ./cmd/demerzel-hooks session-start",
+            "timeout": 120
           },
           {
             "type": "command",
@@ -39,11 +40,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/digest-staleness-nudge.ps1"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" digest-staleness-nudge"
           },
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/correction-detector.ps1"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" correction-detector"
           },
           {
             "type": "command",
@@ -92,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/digest-activity-tracker.ps1"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" digest-activity-tracker"
           }
         ]
       },
@@ -111,7 +112,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/pr-rationale-capture.ps1"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" pr-rationale-capture"
           }
         ]
       }
@@ -121,7 +122,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pwsh -NoProfile -File $CLAUDE_PROJECT_DIR/.claude/hooks/digest-stop-finalize.ps1"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/bin/demerzel-hooks\" digest-stop-finalize"
           }
         ]
       }
