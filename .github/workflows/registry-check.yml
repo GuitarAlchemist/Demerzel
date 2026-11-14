@@ -1,0 +1,318 @@
+name: Registry Check
+
+# Breaking-change gate for schemas/capability-registry.json.
+#
+# Compares the registry on the default branch with the registry the PR would
+# merge. `ix-registry-check` (GuitarAlchemist/ix) fails on a removed repo,
+# tool category or tool name. The `github` block, which
+# .github/actions/ecosystem reads with jq, is checked here: any value in it
+# that is removed or changed fails. A dotted path listed in
+# schemas/capability-registry.allowlist on the default branch is allowed.
+#
+# Why pull_request_target (#641: a PR must not weaken the guardrail that
+# gates it). With `pull_request`, the workflow file, the ix pin and the
+# allowlist would all be read from the PR itself. With `pull_request_target`
+# this file comes from the default branch (or from the commit a ruleset pins),
+# the build manifest from the same commit as this file, and the baseline
+# registry and the allowlist from the default branch tip. Changing any of
+# them takes a separate PR that is merged first.
+#
+# pull_request_target runs with base-repository privileges, so this job
+# never checks out, builds or executes PR code. The PR's registry is read as
+# data with `git show` and parsed by a checker built from a pinned ix commit
+# with a locked dependency set and a pinned toolchain, without any cache.
+# The pins live in .github/registry-check/pins.env, read from the same commit
+# as this file. The build step fails if the checked-out ix commit, or the
+# rustc version recorded in the built binary, differs from them.
+# The token is read-only, no secrets are used, and checkouts do not persist
+# credentials. Checker output is printed with workflow commands disabled
+# and HTML-escaped in the job summary.
+#
+# The job runs on every PR into the default branch (no `paths:` filter) so it
+# can be a required check. Whether the checker runs is decided from git
+# objects: the registry and allowlist entries in the PR's merge commit versus
+# the default branch tip. The build is skipped only when both are identical.
+# A PR that changes the git attributes the merge commit assigns to the
+# registry fails before that comparison, because attributes change what a
+# checkout writes without changing the blob.
+# `edited` is included so retargeting a PR re-runs the check. The job is
+# never skipped on `edited`, because a skipped run would replace an earlier
+# failure with a passing conclusion.
+#
+# Limits. Attribute sources outside the repository (a consumer's
+# .git/info/attributes, core.attributesFile, core.autocrlf) are invisible
+# here, and so is a consumer that ignores a jq parse error: consumers of the
+# registry must fail on unreadable input themselves.
+#
+# .github/workflows/registry-check-build.yml builds the vendored manifest and
+# pins on PRs that change them, before they land here.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+    branches: [master]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: registry-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  registry-breaking-change:
+    name: registry-breaking-change
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # The build manifest must come from the same commit as this file. When
+      # a ruleset runs this workflow pinned to a commit, that commit is not
+      # the default branch tip, and a manifest read from the tip could build
+      # something else. The baseline registry and allowlist are still read
+      # from the freshly fetched default branch tip below.
+      - name: Checkout this workflow's commit
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+
+      # Same parsing as registry-check-build.yml.
+      - name: Read build pins
+        id: pins
+        run: |
+          set -euo pipefail
+          pins=.github/registry-check/pins.env
+          body=$(grep -vE '^(#.*)?$' "$pins" || true)
+          ix_sha=$(printf '%s\n' "$body" | sed -n 's/^IX_SHA=\([0-9a-f]\{40\}\)$/\1/p')
+          toolchain=$(printf '%s\n' "$body" | sed -n 's/^RUST_TOOLCHAIN=\([0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)$/\1/p')
+          if [ "$(printf '%s\n' "$body" | wc -l)" != 2 ] || [ -z "$ix_sha" ] || [ -z "$toolchain" ]; then
+            echo "::error::$pins must contain exactly one IX_SHA=<40 hex> line and one RUST_TOOLCHAIN=<x.y.z> line."
+            exit 1
+          fi
+          echo "ix_sha=$ix_sha" >> "$GITHUB_OUTPUT"
+          echo "toolchain=$toolchain" >> "$GITHUB_OUTPUT"
+
+      - name: Bind merge commit and extract registries
+        id: extract
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          OUT: ${{ runner.temp }}/registry
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUT"
+
+          # refs/pull/N/merge is the PR merged into its base tip: parent 1 is
+          # the base, the commit itself is what merging yields. GitHub
+          # recomputes it asynchronously and leaves a stale one behind when
+          # the PR conflicts. Accept it only when the API reports the PR
+          # mergeable into the default branch with that exact merge commit
+          # for this head, and its first parent is the default branch tip.
+          # Never check it out. A failed API call, or one without a base ref,
+          # is retried; only a real base ref other than the default branch
+          # fails at once.
+          merged=""
+          api_read=false
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            info=$(gh api "repos/$REPO/pulls/$PR_NUMBER" \
+              --jq '"\(.mergeable) \(.merge_commit_sha) \(.head.sha) \(.base.ref)"') || info=""
+            read -r mergeable merge_sha api_head base_ref <<< "${info:-null null null null}"
+            if [ -z "$base_ref" ] || [ "$base_ref" = null ]; then
+              echo "::warning::Could not read PR #$PR_NUMBER from the GitHub API (attempt $attempt of 10)."
+              sleep 6
+              continue
+            fi
+            api_read=true
+            if [ "$base_ref" != "$DEFAULT_BRANCH" ]; then
+              echo "::error::This gate only evaluates PRs into $DEFAULT_BRANCH."
+              exit 1
+            fi
+            if [ "$mergeable" = false ]; then
+              echo "::error::PR conflicts with the base branch. Resolve conflicts, then push again."
+              exit 1
+            fi
+            if [ "$mergeable" = true ] && [ "$api_head" = "$HEAD_SHA" ] \
+              && git fetch --no-tags --depth=2 origin \
+                "+refs/pull/$PR_NUMBER/merge:refs/remotes/pr/merge" \
+                "+refs/heads/$DEFAULT_BRANCH:refs/remotes/pr/default" \
+              && [ "$(git rev-parse refs/remotes/pr/merge)" = "$merge_sha" ] \
+              && [ "$(git rev-parse 'refs/remotes/pr/merge^2')" = "$HEAD_SHA" ] \
+              && [ "$(git rev-parse 'refs/remotes/pr/merge^1')" = "$(git rev-parse refs/remotes/pr/default)" ]; then
+              merged=refs/remotes/pr/merge
+              break
+            fi
+            sleep 6
+          done
+          if [ "$api_read" = false ]; then
+            echo "::error::The GitHub API did not return PR #$PR_NUMBER in 10 attempts. Re-run the job."
+            exit 1
+          fi
+          if [ -z "$merged" ]; then
+            echo "::error::No up-to-date merge commit for head $HEAD_SHA on $DEFAULT_BRANCH. Re-run the job, or push again if the PR has a newer head."
+            exit 1
+          fi
+          baseline=refs/remotes/pr/default
+
+          # Git attributes (e.g. working-tree-encoding, eol, filter) change
+          # what a checkout writes for the registry without changing its
+          # blob, so the blob comparison below cannot see them. Fail when the
+          # attributes that .gitattributes files in the merge commit assign
+          # to the registry differ from the default branch. Only attributes
+          # that change the checked-out bytes are compared (a macro such as
+          # `binary` shows up through its expansion to `text`); diff, merge,
+          # export and linguist attributes are not. `--source` reads them
+          # from each commit's tree, not from this checkout.
+          checkout_attrs="text eol crlf working-tree-encoding filter ident"
+          attrs_baseline=$(git check-attr --source="$baseline" $checkout_attrs -- schemas/capability-registry.json)
+          attrs_merge=$(git check-attr --source="$merged" $checkout_attrs -- schemas/capability-registry.json)
+          if [ "$attrs_baseline" != "$attrs_merge" ]; then
+            echo "::error::This PR changes the git attributes of schemas/capability-registry.json (.gitattributes). That changes what consumers check out without changing the registry blob. A maintainer has to review such a change and merge it past this check."
+            exit 1
+          fi
+
+          # Relevance comes from the objects the check would compare, not from
+          # the PR's file listing (which can disagree with the merge result).
+          # `git ls-tree` gives mode, type and object id; any difference,
+          # including a path present on one side only, runs the check. A
+          # registry missing on the default branch also runs it. Any git
+          # error fails the step.
+          relevant=false
+          for path in schemas/capability-registry.json schemas/capability-registry.allowlist; do
+            at_baseline=$(git ls-tree "$baseline" -- "$path")
+            at_merge=$(git ls-tree "$merged" -- "$path")
+            if [ "$at_baseline" != "$at_merge" ]; then
+              relevant=true
+            fi
+          done
+          if [ -z "$(git ls-tree "$baseline" -- schemas/capability-registry.json)" ]; then
+            relevant=true
+          fi
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          if [ "$relevant" = false ]; then
+            echo "Registry and allowlist are identical in the merge commit and on $DEFAULT_BRANCH; nothing to check."
+            exit 0
+          fi
+
+          if ! git show "$baseline:schemas/capability-registry.json" > "$OUT/old.json" 2>/dev/null; then
+            echo "::notice::$DEFAULT_BRANCH has no capability registry; nothing to compare against."
+            echo '{}' > "$OUT/old.json"
+          fi
+          # Deleting or moving the registry removes every capability at once.
+          if ! git show "$merged:schemas/capability-registry.json" > "$OUT/new.json" 2>/dev/null; then
+            echo "::error::schemas/capability-registry.json is missing after merge. Moving or deleting the registry is a breaking change."
+            exit 1
+          fi
+          # Allowlist comes from the default branch only: a PR cannot allow its own break.
+          if git show "$baseline:schemas/capability-registry.allowlist" > "$OUT/allowlist" 2>/dev/null; then
+            echo "ALLOWLIST=$OUT/allowlist" >> "$GITHUB_ENV"
+          fi
+          echo "REGISTRY_DIR=$OUT" >> "$GITHUB_ENV"
+
+      - name: Checkout ix-registry-check source at pinned commit
+        if: steps.extract.outputs.relevant == 'true'
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: GuitarAlchemist/ix
+          ref: ${{ steps.pins.outputs.ix_sha }}
+          path: ix-src
+          persist-credentials: false
+
+      - name: Build ix-registry-check
+        if: steps.extract.outputs.relevant == 'true'
+        env:
+          PIN_IX_SHA: ${{ steps.pins.outputs.ix_sha }}
+          PIN_TOOLCHAIN: ${{ steps.pins.outputs.toolchain }}
+          # Fresh cargo home and target: crate sources are downloaded and
+          # verified against Cargo.lock checksums on every run.
+          CARGO_HOME: ${{ runner.temp }}/cargo-home
+          CARGO_TARGET_DIR: ${{ runner.temp }}/registry-check-target
+        run: |
+          set -euo pipefail
+          rustup toolchain install "$PIN_TOOLCHAIN" --profile minimal --no-self-update
+          cargo "+$PIN_TOOLCHAIN" build --locked --release \
+            --manifest-path .github/registry-check/Cargo.toml
+          checker=$CARGO_TARGET_DIR/release/ix-registry-check
+          # Verify what was built, not what the lines above asked for. Same
+          # check as registry-check-build.yml.
+          built_from=$(git -C ix-src rev-parse HEAD)
+          if [ "$built_from" != "$PIN_IX_SHA" ]; then
+            echo "::error::The checked-out ix commit $built_from is not the pinned $PIN_IX_SHA."
+            exit 1
+          fi
+          built_with=$(grep -aoE 'rustc version [0-9]+\.[0-9]+\.[0-9]+' "$checker" | sort -u || true)
+          if [ "$built_with" != "rustc version $PIN_TOOLCHAIN" ]; then
+            echo "::error::The checker records '${built_with:-no rustc version}', not the pinned rustc $PIN_TOOLCHAIN."
+            exit 1
+          fi
+          echo "CHECKER=$checker" >> "$GITHUB_ENV"
+
+      - name: Check for breaking changes
+        if: steps.extract.outputs.relevant == 'true'
+        run: |
+          set -uo pipefail
+          # Registry names come from the PR. Disable workflow commands while
+          # anything derived from them is printed.
+          token=$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
+          echo "::stop-commands::$token"
+
+          report="$REGISTRY_DIR/report.txt"
+          args=(--old "$REGISTRY_DIR/old.json" --new "$REGISTRY_DIR/new.json")
+          if [ -n "${ALLOWLIST:-}" ]; then
+            args+=(--allowlist "$ALLOWLIST")
+          fi
+          "$CHECKER" "${args[@]}" > "$report" 2>&1
+          rc=$?
+
+          # ix-registry-check models only `version` and `repos`. Every scalar
+          # under `.github` on the default branch (except `_`-prefixed notes)
+          # must still be present and unchanged after merge.
+          allowed="$REGISTRY_DIR/allowed-paths"
+          : > "$allowed"
+          if [ -n "${ALLOWLIST:-}" ]; then
+            sed 's/^[[:space:]]*//; s/[[:space:]]*$//' "$ALLOWLIST" | grep -v -e '^#' -e '^$' > "$allowed" || true
+          fi
+          if github_changed=$(jq -r --slurpfile new "$REGISTRY_DIR/new.json" '
+              (.github // {}) as $old
+              | ($new[0].github) as $n
+              | $old | paths(scalars) as $p
+              | select(all($p[]; (type != "string") or (startswith("_") | not)))
+              | select(($n | try getpath($p) catch null) != ($old | getpath($p)))
+              | ["github"] + ($p | map(tostring)) | join(".")
+            ' "$REGISTRY_DIR/old.json" 2>> "$report"); then
+            github_changed=$(printf '%s\n' "$github_changed" | grep -v '^$' || true)
+            github_breaks=$(printf '%s\n' "$github_changed" | grep -vxF -f "$allowed" || true)
+            github_allowed=$(printf '%s\n' "$github_changed" | grep -xF -f "$allowed" || true)
+            if [ -n "$github_allowed" ]; then
+              {
+                echo "github block changes ALLOWED by allowlist:"
+                printf '%s\n' "$github_allowed" | sed 's/^/  [ALLOW] /'
+              } >> "$report"
+            fi
+            if [ -n "$github_breaks" ]; then
+              {
+                echo "BREAKING CHANGES in the github block:"
+                printf '%s\n' "$github_breaks" | sed 's/^/  [BREAK] /; s/$/ - value removed or changed/'
+              } >> "$report"
+              [ "$rc" -eq 0 ] && rc=1
+            fi
+          else
+            echo "failed to compare the github block" >> "$report"
+            rc=2
+          fi
+
+          cat "$report"
+          # <pre> ends only at a literal </pre>; escaping & < > keeps the
+          # report inside it.
+          {
+            echo "### Capability registry check (exit $rc)"
+            echo
+            echo "<pre>"
+            sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' "$report"
+            echo "</pre>"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::$token::"
+          exit "$rc"
