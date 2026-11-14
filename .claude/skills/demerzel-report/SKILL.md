@@ -63,14 +63,14 @@ CONSCIENCE                       signals: 5 (3 resolved, 2 open)
 
 ### 3. Streeling University Status
 
-**Source:** `state/streeling/university.json`, `state/streeling/departments/`, `state/streeling/research-cycles/`, `state/streeling/courses/`, `state/streeling/course-productions/`, `state/streeling/research/`
+**Source:** `../learn/streeling/university.json`, `../learn/streeling/departments/`, `state/streeling/research-cycles/`, `../learn/streeling/courses/`, `../learn/streeling/course-productions/`, `state/streeling/research/`
 
 Collect and summarize:
 - **Department count:** from `university.json` departments array
 - **Department list:** names of all departments
 - **Research cycles run:** count of files in `state/streeling/research-cycles/`
-- **Courses produced:** count of files in `state/streeling/courses/`
-- **Course productions:** count of files in `state/streeling/course-productions/`
+- **Courses produced:** count of files in `../learn/streeling/courses/`
+- **Course productions:** count of files in `../learn/streeling/course-productions/`
 - **Research papers:** count of files in `state/streeling/research/`
 - **Weight evolution:** if department weight files exist, show latest weights; otherwise note "weights not yet tracked"
 
@@ -146,7 +146,7 @@ GITHUB ISSUES                    12 open
 
 After the dashboard sections, generate a "Stories" section highlighting notable events. Stories are short narrative paragraphs (2-3 sentences) describing significant changes. Scan for:
 
-1. **New courses published** — check `state/streeling/courses/` for files created in the last 7 days
+1. **New courses published** — check `../learn/streeling/courses/` for files created in the last 7 days
 2. **Conscience signals resolved** — signals that moved to `resolved: true` recently
 3. **Belief state changes** — beliefs whose `truth_value` changed (especially F->T or T->F)
 4. **Weight shifts** — department weights that changed significantly (>10%)
@@ -197,7 +197,7 @@ Expanded conscience detail:
 
 Expanded Streeling detail:
 - Per-department breakdown: research cycles run, courses produced, research papers, current weight
-- Curriculum reference status from `state/streeling/curriculum-references.json`
+- Curriculum reference status from `../learn/streeling/curriculum-references.json`
 - Recent course list with titles and production dates
 - Research cycle results summary
 - Department creation timeline
@@ -286,7 +286,7 @@ Use proper markdown headers, tables, and code blocks. Include all dashboard sect
 ### Before Reporting
 1. Read ALL files from `state/beliefs/` (excluding `archived/` subdirectory for main counts)
 2. Read ALL files from `state/conscience/signals/`, `state/conscience/regrets/`, `state/conscience/patterns/`, `state/conscience/digests/`
-3. Read `state/streeling/university.json` and list `state/streeling/courses/`, `state/streeling/research-cycles/`, `state/streeling/course-productions/`, `state/streeling/research/`
+3. Read `../learn/streeling/university.json` and list `../learn/streeling/courses/`, `state/streeling/research-cycles/`, `../learn/streeling/course-productions/`, `state/streeling/research/`
 4. Read ALL files from `state/evolution/`
 5. Read integration beliefs for cross-repo health
 6. Run `gh issue list` for GitHub issues

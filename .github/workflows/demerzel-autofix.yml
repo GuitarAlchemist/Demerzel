@@ -78,7 +78,7 @@ jobs:
           BELIEF_COUNT=$(ls state/beliefs/*.json 2>/dev/null | wc -l)
           SIGNAL_COUNT=$(ls state/conscience/signals/*.json 2>/dev/null | wc -l)
           PATTERN_COUNT=$(ls state/conscience/patterns/*.json 2>/dev/null | wc -l)
-          DEPT_COUNT=$(ls state/streeling/departments/*.json 2>/dev/null | wc -l)
+          DEPT_COUNT=$(ls state/streeling/departments/*.weights.json 2>/dev/null | wc -l)
 
           # Recent git activity
           RECENT_COMMITS=$(git log --oneline -10 --format="%h %s")
