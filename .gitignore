@@ -7,7 +7,7 @@
 state/digests/*
 !state/digests/README.md
 
-# The hooks binary, built from go/claudehooks by the session-start hook.
+# The hooks binary, built from scripts/claudehooks by the session-start hook.
 .claude/hooks/bin/
 
 # /teach generated courses (personal, regenerable)

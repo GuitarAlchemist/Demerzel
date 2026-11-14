@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "go -C \"$CLAUDE_PROJECT_DIR/go/claudehooks\" run ./cmd/demerzel-hooks session-start",
+            "command": "go -C \"$CLAUDE_PROJECT_DIR/scripts/claudehooks\" run ./cmd/demerzel-hooks session-start",
             "timeout": 120
           },
           {

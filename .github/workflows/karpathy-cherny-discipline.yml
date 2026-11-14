@@ -10,7 +10,7 @@ on:
       - '.claude/skills/digest/**'
       - '.claude/skills/correct/**'
       - '.claude/hooks/**'
-      - 'go/claudehooks/**'
+      - 'scripts/claudehooks/**'
       - 'tests/powershell/**'
       - 'CLAUDE.md'
       - '.github/workflows/karpathy-cherny-discipline.yml'
@@ -43,7 +43,7 @@ jobs:
           fi
 
       # DigestState.psm1 is no longer a hook: the /digest skill writes through it (Write-Digest),
-      # and digest-validate.ps1 validates a digest by hand. The hooks are go/claudehooks.
+      # and digest-validate.ps1 validates a digest by hand. The hooks are scripts/claudehooks.
       - name: Verify the /digest skill's module exists
         shell: bash
         run: |
@@ -56,15 +56,15 @@ jobs:
           done
           exit $missing
 
-      # The hooks are one Go program, go/claudehooks (demerzel-hooks <hook>): no shell in hooks
+      # The hooks are one Go program, scripts/claudehooks (demerzel-hooks <hook>): no shell in hooks
       # (the user's rule, 2026-11-05). Mirrors tars's and ix's go/claudehooks.
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go/claudehooks/go.mod
+          go-version-file: scripts/claudehooks/go.mod
           cache: false
 
-      - name: Vet and test the hooks (go/claudehooks)
-        working-directory: go/claudehooks
+      - name: Vet and test the hooks (scripts/claudehooks)
+        working-directory: scripts/claudehooks
         env:
           GOPROXY: 'off'
         run: |
@@ -82,7 +82,7 @@ jobs:
               fail=1
             fi
           done
-          if ! grep -qxF 'go -C "$CLAUDE_PROJECT_DIR/go/claudehooks" run ./cmd/demerzel-hooks session-start' <<<"$commands"; then
+          if ! grep -qxF 'go -C "$CLAUDE_PROJECT_DIR/scripts/claudehooks" run ./cmd/demerzel-hooks session-start' <<<"$commands"; then
             echo "::error file=.claude/settings.json::session-start (digest injection, binary install) is not wired"
             fail=1
           fi
@@ -99,7 +99,7 @@ jobs:
           shelled=$(grep -vxF -f <(printf '%s\n' "$gaia_exempt") <<<"$commands" \
             | grep -Ei '\b(bash|sh|zsh|pwsh|powershell|python3?|py|node|deno|bun)\b|\.(sh|bash|ps1|psm1|py|js|mjs|cmd|bat)\b' || true)
           if [ -n "$shelled" ]; then
-            echo "::error file=.claude/settings.json::a hook runs a shell or a script; hooks are Go only (go/claudehooks): $shelled"
+            echo "::error file=.claude/settings.json::a hook runs a shell or a script; hooks are Go only (scripts/claudehooks): $shelled"
             fail=1
           fi
           exit $fail
