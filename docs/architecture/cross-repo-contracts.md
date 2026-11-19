@@ -17,6 +17,15 @@ are typically peers under the same parent directory.
   emits via `pipelines/qa-architect-cycle.ixql`. Also owns
   `docs/contracts/2026-05-02-optick-sae-artifact.contract.md`, consumed by
   `qa_score_quality_drift`.
+- **gaia → Demerzel continuity receipt** (`../gaia/`) — Gaia owns
+  `contracts/continuity.successor-transition-receipt.schema.json` and the bounded
+  fixtures that describe one consumed generation-0 → generation-1 successor
+  transition. Demerzel vendors the exact bytes under `schemas/contracts/` and
+  `fixtures/contracts/`, pins their SHA-256 digests in
+  `scripts/test_continuity_successor_contract.py`, and validates them read-only.
+  The receipt is content-addressed and authority-empty: schema validation proves
+  shape and canonical digest agreement, not producer identity, merge authority,
+  implementation authority, or permission to replay an effect.
 - **ix** (`../ix/`, Rust ML algorithms) — the `ix-optick-sae` crate is *intended* to
   produce `state/voicings/optick.index` and SAE artifacts under
   `state/quality/optick-sae/` for cross-cycle quality-drift evidence.
