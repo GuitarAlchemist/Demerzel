@@ -16,7 +16,9 @@
         "pr.merge_candidate",
         "pr.merged",
         "pr.rejected",
-        "issue.stuck"
+        "issue.stuck",
+        "pr.stuck_draft",
+        "pr.stuck_ready"
       ],
       "description": "The starting state of the transition."
     },
@@ -31,7 +33,9 @@
         "pr.merge_candidate",
         "pr.merged",
         "pr.rejected",
-        "issue.stuck"
+        "issue.stuck",
+        "pr.stuck_draft",
+        "pr.stuck_ready"
       ],
       "description": "The destination state of the transition."
     },
