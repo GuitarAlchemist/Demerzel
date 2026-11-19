@@ -51,6 +51,13 @@
       "trusted_receipt_issuer": "api.anthropic.com"
     },
     {
+      "id": "comfyui-local",
+      "tier": "local-seat",
+      "cost_model": "local-gpu",
+      "lane": "asset-generation",
+      "requires_manual_approval": false
+    },
+    {
       "id": "gemini-cli",
       "tier": "metered-cloud",
       "cost_model": "provider-billing",
@@ -86,6 +93,7 @@
     "augment-code",
     "generic-shell",
     "anthropic-api",
+    "comfyui-local",
     "gemini-cli",
     "jules",
     "junie-cli",
