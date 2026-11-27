@@ -5,15 +5,15 @@
   "evidence": {
     "supporting": [
       {
-        "source": "ml-feedback-recommendation 9d0b1468-0c62-457d-abd1-a33fa0727690",
+        "source": "ml-feedback-recommendation 2a21bcd3-9cfd-4985-bb77-d300afabad5c",
         "claim": "Across 8 outcome-bearing PDCA records: abandon=0.0(n=2), proactive=0.0(n=2), standardize=1.0(n=4). Automation candidates: ['standardize']. Sample sizes are small \u00e2\u20ac\u201d rates are directional, not conclusive.",
-        "timestamp": "2026-11-26T17:45:00Z",
+        "timestamp": "2026-11-27T01:10:06Z",
         "reliability": 0.9
       }
     ],
     "contradicting": []
   },
-  "last_updated": "2026-11-26T17:45:00Z",
+  "last_updated": "2026-11-27T01:10:06Z",
   "evaluated_by": "demerzel",
   "strategy_success_rates": {
     "abandon": {
@@ -66,5 +66,5 @@
     }
   ],
   "risk_classes_modified": 0,
-  "source_recommendation": "9d0b1468-0c62-457d-abd1-a33fa0727690"
+  "source_recommendation": "2a21bcd3-9cfd-4985-bb77-d300afabad5c"
 }
