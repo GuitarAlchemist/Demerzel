@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/epistemic-research-proposal-v0.1",
+  "title": "Epistemic Research Proposal",
+  "description": "A content-addressed advisory proposal emitted by Gaia when accepted evidence cannot answer a bounded competency question. Validation grants no authority and runs no probe.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "kind",
+    "status",
+    "proposalId",
+    "revision",
+    "createdAt",
+    "expiresAt",
+    "origin",
+    "gap",
+    "question",
+    "hypotheses",
+    "probe",
+    "uncertainty",
+    "authority",
+    "vocabulary"
+  ],
+  "properties": {
+    "schema": { "const": "https://github.com/GuitarAlchemist/Demerzel/schemas/contracts/epistemic-research-proposal-v0.1" },
+    "kind": { "const": "epistemic-research-proposal" },
+    "status": { "const": "advisory" },
+    "proposalId": { "type": "string", "pattern": "^erp-[a-f0-9]{64}$" },
+    "revision": { "$ref": "#/$defs/revision" },
+    "createdAt": { "$ref": "#/$defs/canonicalTime" },
+    "expiresAt": { "$ref": "#/$defs/canonicalTime" },
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "actor", "inputRevision"],
+      "properties": {
+        "repo": { "const": "gaia" },
+        "actor": { "$ref": "#/$defs/nonEmpty" },
+        "inputRevision": { "$ref": "#/$defs/revision" }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "subject", "observation", "evidenceRefs"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "missing-evidence",
+            "contradiction",
+            "stale-dependency",
+            "out-of-distribution",
+            "unmapped-concept",
+            "failed-control",
+            "unexpected-observation",
+            "capability-gap"
+          ]
+        },
+        "subject": { "$ref": "#/$defs/nonEmpty" },
+        "observation": { "$ref": "#/$defs/nonEmpty" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["uri", "algorithm", "digest"],
+            "properties": {
+              "uri": { "$ref": "#/$defs/nonEmpty" },
+              "algorithm": { "const": "sha256" },
+              "digest": { "$ref": "#/$defs/digest" }
+            }
+          }
+        }
+      }
+    },
+    "question": { "$ref": "#/$defs/nonEmpty" },
+    "hypotheses": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "role", "statement", "falsifier"],
+        "properties": {
+          "id": { "$ref": "#/$defs/nonEmpty" },
+          "role": { "enum": ["null", "alternative"] },
+          "statement": { "$ref": "#/$defs/nonEmpty" },
+          "falsifier": { "$ref": "#/$defs/nonEmpty" }
+        }
+      },
+      "contains": {
+        "type": "object",
+        "required": ["role"],
+        "properties": { "role": { "const": "null" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "negativeControl", "maxCost", "reversible"],
+      "properties": {
+        "description": { "$ref": "#/$defs/nonEmpty" },
+        "negativeControl": { "$ref": "#/$defs/nonEmpty" },
+        "maxCost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "unit"],
+          "properties": {
+            "value": { "const": 0 },
+            "unit": { "$ref": "#/$defs/nonEmpty" }
+          }
+        },
+        "reversible": { "const": true }
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "T", "P", "U", "D", "F", "C", "rationale"],
+      "properties": {
+        "unit": { "const": "ppm" },
+        "T": { "$ref": "#/$defs/mass" },
+        "P": { "$ref": "#/$defs/mass" },
+        "U": { "$ref": "#/$defs/mass" },
+        "D": { "$ref": "#/$defs/mass" },
+        "F": { "$ref": "#/$defs/mass" },
+        "C": { "$ref": "#/$defs/mass" },
+        "rationale": { "$ref": "#/$defs/nonEmpty" }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "executionAuthorized", "requested"],
+      "properties": {
+        "mode": { "const": "advisory" },
+        "executionAuthorized": { "const": false },
+        "requested": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "vocabulary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "const": "gaia-epistemic" },
+        "version": { "const": "0.1.0" }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmpty": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "canonicalTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
+    },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "mass": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "digest"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    }
+  }
+}
