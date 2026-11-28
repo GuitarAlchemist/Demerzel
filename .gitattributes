@@ -15,3 +15,7 @@
 # Pinning both trees to LF makes the generator's output identical on every platform.
 baml_src/** text eol=lf
 baml_client/** text eol=lf
+
+# Gaia continuity contracts are byte-pinned against the producer repository.
+schemas/contracts/continuity.successor-transition-receipt.schema.json -text
+fixtures/contracts/continuity.successor-transition-receipt.*.json -text
